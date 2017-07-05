@@ -17,10 +17,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ActiveProfiles({"dev","cache"})
+@ActiveProfiles({"dev"})
 public class CvTermGraphTest extends CoreUnitBaseTest {
 
-    protected CvTermGraph createGraph(TerminologyCv terminologyCv, TerminologyService service) {
+    private CvTermGraph createGraph(TerminologyCv terminologyCv, TerminologyService service) {
         return new CvTermGraph(terminologyCv, service);
     }
 
@@ -181,5 +181,23 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
             Assert.assertTrue(expectedEdges.contains(edgeNodes));
         }
+    }
+
+    @Test
+    public void testBloodTermAncestorSubgraphView() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.NextprotAnatomyCv, terminologyService);
+
+        CvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("TS-0079"));
+
+        CvTermGraph.View view = ancestorGraph.toView();
+
+        List<CvTermGraph.View.Node> nodes = view.getNodes();
+
+        Assert.assertEquals("TS-0079 ancestor graph", view.getLabel());
+        Assert.assertEquals(7, nodes.size());
+        Assert.assertEquals(8, view.getEdges().size());
+        Assert.assertTrue(nodes.stream().anyMatch(n -> n.getAccession().equals("TS-0079") && n.getName().equals("Blood")));
+        Assert.assertTrue(nodes.stream().anyMatch(n -> n.getAccession().equals("TS-0449") && n.getName().equals("Hematopoietic and immune systems")));
     }
 }

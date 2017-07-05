@@ -25,7 +25,10 @@ public class CvTermGraph implements Serializable {
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
 
-    protected final TerminologyCv terminologyCv;
+    private static String ACCESSION_KEY = "accession";
+    private static String NAME_KEY = "name";
+
+    private final TerminologyCv terminologyCv;
     protected final IntGraph graph;
 
     public CvTermGraph(TerminologyCv terminologyCv, TerminologyService service) {
@@ -37,7 +40,6 @@ public class CvTermGraph implements Serializable {
 
         this.terminologyCv = terminologyCv;
         graph = new IntGraph(terminologyCv.name() + " graph");
-
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
     }
@@ -59,7 +61,8 @@ public class CvTermGraph implements Serializable {
         int nodeId = Math.toIntExact(cvTerm.getId());
 
         graph.addNode(nodeId);
-        graph.setNodeLabel(nodeId, cvTerm.getAccession());
+        graph.addNodeMetadata(nodeId, ACCESSION_KEY, cvTerm.getAccession());
+        graph.addNodeMetadata(nodeId, NAME_KEY, cvTerm.getName());
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
@@ -86,11 +89,19 @@ public class CvTermGraph implements Serializable {
     }
 
     /**
-     * @return the CvTerm with given id
+     * @return the CvTerm accession
      */
     public String getCvTermAccessionById(int id) {
 
-        return graph.getNodeLabel(id);
+        return graph.getNodeMetadataValue(id, ACCESSION_KEY);
+    }
+
+    /**
+     * @return the CvTerm with given id
+     */
+    public String getCvTermNameById(int id) {
+
+        return graph.getNodeMetadataValue(id, NAME_KEY);
     }
 
     /**
@@ -98,7 +109,7 @@ public class CvTermGraph implements Serializable {
      */
     public int getCvTermIdByAccession(String accession) throws NotFoundNodeException {
 
-        int cvTerm = graph.getNode(accession);
+        int cvTerm = graph.getNodeFromMetadata(accession);
 
         if (cvTerm == -1)
             throw this.new NotFoundNodeException(accession);
@@ -111,7 +122,7 @@ public class CvTermGraph implements Serializable {
      */
     public boolean hasCvTermAccession(String cvTermAccession) {
 
-        return graph.getNode(cvTermAccession) != -1;
+        return graph.getNodeFromMetadata(cvTermAccession) != -1;
     }
 
     int[] getSources() {
@@ -151,7 +162,17 @@ public class CvTermGraph implements Serializable {
 
     public CvTermGraph calcAncestorSubgraph(int cvTermId) {
 
-        return new CvTermGraph(terminologyCv, graph.calcAncestorSubgraph(cvTermId));
+        int[] ancestors = graph.getAncestors(cvTermId);
+
+        int[] nodes = new int[ancestors.length+1];
+        System.arraycopy(ancestors, 0, nodes, 0, ancestors.length);
+        nodes[nodes.length-1] = cvTermId;
+
+        IntGraph sg = graph.calcSubgraph(nodes);
+
+        sg.setGraphLabel(sg.getNodeMetadataValue(cvTermId, ACCESSION_KEY)+" ancestor graph");
+
+        return new CvTermGraph(terminologyCv, sg);
     }
 
     public int[] getParents(int cvTermId) {
@@ -184,7 +205,7 @@ public class CvTermGraph implements Serializable {
 
         for (int nid : graph.getNodes()) {
             View.Node node = new View.Node();
-            node.setData(nid, graph.getNodeLabel(nid));
+            node.setData(nid, graph.getNodeMetadataValue(nid, ACCESSION_KEY), graph.getNodeMetadataValue(nid, NAME_KEY));
             view.addNode(node);
         }
 
@@ -242,19 +263,25 @@ public class CvTermGraph implements Serializable {
         public static class Node {
 
             private int id;
-            private String label;
+            private String accession;
+            private String name;
 
             public int getId() {
                 return id;
             }
 
-            public String getLabel() {
-                return label;
+            public String getAccession() {
+                return accession;
             }
 
-            public void setData(int id, String label) {
+            public String getName() {
+                return name;
+            }
+
+            public void setData(int id, String accession, String name) {
                 this.id = id;
-                this.label = label;
+                this.accession = accession;
+                this.name = name;
             }
         }
 

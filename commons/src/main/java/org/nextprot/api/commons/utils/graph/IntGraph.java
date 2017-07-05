@@ -395,7 +395,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
     @Override
     public IntGraph calcSubgraph(int... nodes) {
 
-        IntGraph sg = new IntGraph("subgraph");
+        IntGraph sg = new IntGraph(graphLabel + " (subgraph)");
 
         for (int node : nodes) {
              sg.addNode(node);
