@@ -2,10 +2,13 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
@@ -13,14 +16,19 @@ import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.ProteinExistenceLevel;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EntryReportServiceImpl implements EntryReportService {
+
+	public static String NACETYLATION_REG_EXP = "^N.*?-acetyl.+$";
+	public static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
 
     @Autowired
     private EntryBuilderService entryBuilderService;
@@ -48,6 +56,16 @@ public class EntryReportServiceImpl implements EntryReportService {
         return duplicateReportForEachGene(entry, report);
     }
 
+    @Override
+    public boolean entryIsNAcetyled(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+    	return containsPtmAnnotation(entry, NACETYLATION_REG_EXP, isExperimentalPredicate);
+    }
+    
+    @Override
+    public boolean entryIsPhosphorylated(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+    	return containsPtmAnnotation(entry, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
+    }
+    
     private void setEntryDescription(Entry entry, EntryReport report) {
 
         report.setDescription(entry.getOverview().getRecommendedProteinName().getName());
@@ -221,4 +239,57 @@ public class EntryReportServiceImpl implements EntryReportService {
                 .map(report::duplicateThenSetChromosomalLocation)
                 .collect(Collectors.toList());
     }
+    
+    boolean isGoldAnnotation(Annotation annot) {
+    	boolean result = annot.getQualityQualifier().equals(QualityQualifier.GOLD.name());
+    	//System.out.println("annot " + annot.getAnnotationId() + " quality: " + annot.getQualityQualifier());
+    	return result;
+    }
+    
+    boolean annotationTermMatchesPattern(Annotation annot, String ptmRegExp) {
+    	boolean result = annot.getCvTermName().matches(ptmRegExp);
+    	//System.out.println("annot " + annot.getAnnotationId() + " matches " + ptmRegExp +": " + result);
+    	return result;
+    }
+    
+    boolean isGoldEvidence(AnnotationEvidence evi) {
+    	boolean result = evi.getQualityQualifier().equals(QualityQualifier.GOLD.name());
+    	//System.out.println("annot " + evi.getAnnotationId() +  " evi " + evi.getEvidenceId() + " quality: " + evi.getQualityQualifier());
+    	return result;
+    }
+    
+    boolean isExperimentalEvidence(AnnotationEvidence evi, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+    	boolean result = isExperimentalPredicate.test(evi);
+    	//System.out.println("annot " + evi.getAnnotationId() +  " evi " + evi.getEvidenceId() + " experimental: " + result);
+    	return result;
+    }
+    
+    
+    
+	boolean containsPtmAnnotation(Entry entry, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+		List<Annotation> ptms = entry.getAnnotationsByCategory()
+				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
+
+		//System.out.println(null==ptms ? "ptms:null" : "ptms:" + ptms.size());
+		return nullableListToStream(ptms)
+				.anyMatch(annot -> isGoldAnnotation(annot) &&
+				 		annotationTermMatchesPattern(annot, ptmRegExp) &&
+						annot.getEvidences().stream()
+								.anyMatch(evi -> isGoldEvidence(evi) && isExperimentalEvidence(evi,isExperimentalPredicate)
+						)
+				);
+	}
+
+	/**
+	 * Return a stream from a nullable list
+	 * @param list the list to stream
+	 * @param <T> element type
+	 * @return a Stream
+	 */
+	private static <T> Stream<T> nullableListToStream(List<T> list) {
+
+		return list == null ? Stream.empty() : list.stream();
+	}
+
 }

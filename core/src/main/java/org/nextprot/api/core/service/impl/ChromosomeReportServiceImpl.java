@@ -1,28 +1,33 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.*;
-import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.ChromosomeReport;
+import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistenceLevel;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Service
 public class ChromosomeReportServiceImpl implements ChromosomeReportService {
-
-	static String NACETYLATION_REG_EXP = "^N.*?-acetyl.+$";
-	static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
 
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
@@ -77,14 +82,33 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public List<String> findNAcetylatedEntries(String chromosome) {
 
-		return listPtmEntries(chromosome, NACETYLATION_REG_EXP);
+		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
+		
+		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+				.filter(acc -> 
+					entryReportService.entryIsNAcetyled(
+						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()), 
+						isExperimentalPredicate)
+					)
+				.sorted()
+				.collect(Collectors.toList());
+
 	}
 
 	@Cacheable("phospho-master-unique-names-by-chromosome")
 	@Override
 	public List<String> findPhosphorylatedEntries(String chromosome) {
 
-		return listPtmEntries(chromosome, PHOSPHORYLATION_REG_EXP);
+		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
+		
+		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+				.filter(acc -> 
+					entryReportService.entryIsPhosphorylated(
+						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()), 
+						isExperimentalPredicate)
+					)
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	@Cacheable("unconfirmed-ms-master-unique-names-by-chromosome")
@@ -132,40 +156,5 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		pe2entries.forEach((key, value) -> summary.setEntryCount(key, value.size()));
 	}
 
-	private List<String> listPtmEntries(String chromosome, String ptmRegExp) {
 
-		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
-
-		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> containsPtmAnnotation(
-						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()),
-						ptmRegExp, isExperimentalPredicate))
-				.sorted()
-				.collect(Collectors.toList());
-	}
-
-	boolean containsPtmAnnotation(Entry entry, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
-
-		List<Annotation> ptms = entry.getAnnotationsByCategory()
-				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
-
-		return nullableListToStream(ptms)
-				.anyMatch(annot -> annot.getQualityQualifier().equals(QualityQualifier.GOLD.name()) &&
-						annot.getCvTermName().matches(ptmRegExp) &&
-						annot.getEvidences().stream()
-								.anyMatch(evi -> evi.getQualityQualifier().equals(QualityQualifier.GOLD.name())
-										&& isExperimentalPredicate.test(evi))
-				);
-	}
-
-	/**
-	 * Return a stream from a nullable list
-	 * @param list the list to stream
-	 * @param <T> element type
-	 * @return a Stream
-	 */
-	private static <T> Stream<T> nullableListToStream(List<T> list) {
-
-		return list == null ? Stream.empty() : list.stream();
-	}
 }

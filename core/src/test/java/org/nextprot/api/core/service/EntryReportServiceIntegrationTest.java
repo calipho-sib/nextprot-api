@@ -2,11 +2,15 @@ package org.nextprot.api.core.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +23,12 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired
 	private EntryReportService entryReportService;
+	
+	@Autowired
+	private EntryBuilderService entryBuilderService;
+
+	@Autowired
+	private AnnotationService annotationService;
 
 	@Test
 	public void NX_Q9Y6F7ShouldHave1GeneWith2ChromosomalLocationsAtDifferentDNAStrands() {
@@ -146,7 +156,77 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
     }
 
+    @Ignore 
+	@Test // ok on np_20170413 - see jira https://issues.isb-sib.ch/browse/NEXTPROT-1479
+    public void TheseShouldHaveNAcetylFalse() {  
+    	
+		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
+
+		List<String> negEntries = Arrays.asList(
+				"NX_O00750","NX_Q86SQ9","NX_Q96BN2","NX_O43255","NX_Q9NVJ2","NX_P36406","NX_Q5VYS8","NX_Q13490","NX_Q7LDG7","NX_P55160",
+				"NX_Q9NWS1","NX_Q8NBM4","NX_Q92802","NX_Q9Y2K1","NX_Q16659","NX_Q96NB1","NX_Q9NQC7","NX_O75674","NX_Q13829","NX_Q96C03",
+				"NX_Q96GD4","NX_Q7LBR1","NX_P49427","NX_Q969E2","NX_Q96BX8","NX_Q9NVP2","NX_Q9UI14","NX_Q9BZJ0","NX_Q9H5Z1","NX_P55854",
+				"NX_P57075","NX_P98170","NX_Q6PEV8");
+			int errCnt=0;
+		for (String ac:negEntries) {
+			System.out.println("Entry: " + ac);
+			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
+			boolean result = entryReportService.entryIsNAcetyled(entry, isExperimentalPredicate);
+			if (result==true) {
+				errCnt++;
+				System.out.println("ERROR: " + ac + " NAcetyl should be false");
+			} else {
+				System.out.println("OK: " + ac + " NAcetyl is false");
+			}
+		}
+		Assert.assertEquals(0, errCnt);			
+
+    }
+
+    @Ignore 
+	@Test // ok on np_20170413 - see jira https://issues.isb-sib.ch/browse/NEXTPROT-1479
+    public void TheseShouldHavePhosphorylatedFalse() {  
+    	
+		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
+
+		
+		List<String> negEntries = Arrays.asList(
+				"NX_Q5TC12","NX_Q9NZV5","NX_Q5EBM0","NX_Q96PE7","NX_P12235","NX_O75439","NX_Q92537","NX_A6NH21","NX_Q9Y2R9","NX_Q9Y3E5",
+				"NX_P05141","NX_P12236");
+			int errCnt=0;
+		for (String ac:negEntries) {
+			System.out.println("Entry: " + ac);
+			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
+			boolean result = entryReportService.entryIsPhosphorylated(entry, isExperimentalPredicate);
+			if (result==true) {
+				errCnt++;
+				System.out.println("ERROR: " + ac + " Phosphorylated should be false");
+			} else {
+				System.out.println("OK: " + ac + " Phosphorylated is false");
+			}
+		}
+		Assert.assertEquals(0, errCnt);			
+
+    }
+
 	
+
+	// NP2 implementation is correct. see https://issues.isb-sib.ch/browse/NEXTPROT-1479
+	// on np_20170413, these entries should NOT appear in file HPP_entries_with_phosph_by_chromosome.txt
+	private List<String> entriesWithPhosphoTrueInNP1ButFalseInNP2 = Arrays.asList(
+			"NX_Q5TC12","NX_Q9NZV5","NX_Q5EBM0","NX_Q96PE7","NX_P12235","NX_O75439","NX_Q92537","NX_A6NH21","NX_Q9Y2R9","NX_Q9Y3E5",
+			"NX_P05141","NX_P12236");
+
+	// NP2 implementation is correct. see https://issues.isb-sib.ch/browse/NEXTPROT-1479
+	// on np_20170413, these entries should NOT appear in file HPP_entries_with_nacetyl_by_chromosome.txt
+	private List<String> entriesWithNacetylTrueInNP1ButFalseInNP2 = Arrays.asList(
+			"NX_O00750","NX_Q86SQ9","NX_Q96BN2","NX_O43255","NX_Q9NVJ2","NX_P36406","NX_Q5VYS8","NX_Q13490","NX_Q7LDG7","NX_P55160",
+			"NX_Q9NWS1","NX_Q8NBM4","NX_Q92802","NX_Q9Y2K1","NX_Q16659","NX_Q96NB1","NX_Q9NQC7","NX_O75674","NX_Q13829","NX_Q96C03",
+			"NX_Q96GD4","NX_Q7LBR1","NX_P49427","NX_Q969E2","NX_Q96BX8","NX_Q9NVP2","NX_Q9UI14","NX_Q9BZJ0","NX_Q9H5Z1","NX_P55854",
+			"NX_P57075","NX_P98170","NX_Q6PEV8");
+	
+	
+	// NP2 implementation is correct. 
 	// on np_20170413 these entries have a BRONZE CAB antibody which is taken by error into account in old NP1 implementation
 	private List<String>entriesToBeSkippedOnTestingAntibodyFlag = Arrays.asList(
 			"NX_Q15583","NX_P55895","NX_Q9BZB8","NX_Q9H2X0","NX_P21439","NX_P43146","NX_Q02817","NX_Q96DT0","NX_Q6P1K2","NX_O00631",
