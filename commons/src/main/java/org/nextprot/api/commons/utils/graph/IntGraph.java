@@ -76,8 +76,8 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
         nodeMetadata.get(node).put(key, value);
 
-        if (nodesByMetadataValue.containsKey(value)) {
-            throw new IllegalArgumentException("metadata value " + value + " is already associated with node "+ nodesByMetadataValue.get(value));
+        if (nodesByMetadataValue.containsKey(value) && nodesByMetadataValue.get(value) != node) {
+            throw new IllegalArgumentException("node "+node+": metadata value " + value + " is already associated with node "+ nodesByMetadataValue.get(value));
         }
         nodesByMetadataValue.put(value, node);
     }
