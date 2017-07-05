@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ActiveProfiles({"dev"})
+@ActiveProfiles({"dev", "cache"})
 public class CvTermGraphTest extends CoreUnitBaseTest {
 
     private CvTermGraph createGraph(TerminologyCv terminologyCv, TerminologyService service) {
@@ -199,5 +199,21 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(8, view.getEdges().size());
         Assert.assertTrue(nodes.stream().anyMatch(n -> n.getAccession().equals("TS-0079") && n.getName().equals("Blood")));
         Assert.assertTrue(nodes.stream().anyMatch(n -> n.getAccession().equals("TS-0449") && n.getName().equals("Hematopoietic and immune systems")));
+    }
+
+    @Test
+    public void cvterm1071ShouldHaveAnAccession() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+
+        Assert.assertEquals("GO:0000006", graph.getCvTermAccessionById(1071));
+    }
+
+    @Test
+    public void cvterm1071ShouldHaveAName() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+
+        Assert.assertEquals("high-affinity zinc uptake transmembrane transporter activity", graph.getCvTermNameById(1071));
     }
 }
