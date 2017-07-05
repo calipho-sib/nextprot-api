@@ -386,15 +386,12 @@ public class IntGraph implements DirectedGraph, Externalizable {
     }
 
     @Override
-    public IntGraph calcAncestorSubgraph(int node) {
+    public IntGraph calcSubgraph(int... nodes) {
 
-        int[] ancestors = getAncestors(node);
+        IntGraph sg = new IntGraph("subgraph");
 
-        IntGraph sg = new IntGraph(getNodeLabel(node) + " ancestor graph");
-
-        sg.addNode(node, getNodeLabel(node));
-        for (int i=0 ; i<ancestors.length ; i++) {
-             sg.addNode(ancestors[i], getNodeLabel(ancestors[i]));
+        for (int node : nodes) {
+             sg.addNode(node, getNodeLabel(node));
         }
 
         int[] edges = getInEdges(sg.getNodes());

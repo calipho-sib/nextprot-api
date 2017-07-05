@@ -137,7 +137,7 @@ abstract class BaseIntGraphTest {
 
         populateExampleGraph(graph);
 
-        DirectedGraph sg = graph.calcAncestorSubgraph(4);
+        DirectedGraph sg = graph.calcSubgraph(4, 6, 7, 5);
 
         Assert.assertEquals(4, sg.countNodes());
         Assert.assertTrue(new TIntHashSet(sg.getNodes()).containsAll(new int[] {4, 6, 7, 5}));

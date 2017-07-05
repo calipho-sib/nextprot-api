@@ -291,17 +291,16 @@ public class IntGrph implements DirectedGraph {
     }
 
     @Override
-    public IntGrph calcAncestorSubgraph(int node) {
+    public IntGrph calcSubgraph(int... nodes) {
 
-        LongSet ancestors = new LongHashSet();
-        ancestors.add(node);
-        ancestors.addAll(getAncestors(node));
+        LongSet nodeSet = new LongHashSet();
+        nodeSet.addAll(nodes);
 
-        IntGrph sg = new IntGrph(graph.getSubgraphInducedByVertices(ancestors));
+        IntGrph sg = new IntGrph(graph.getSubgraphInducedByVertices(nodeSet));
 
-        for (long ancestor : ancestors.toLongArray()) {
+        for (long node : nodeSet.toLongArray()) {
 
-            sg.setNodeLabel((int)ancestor, nodeLabels.get((int)ancestor));
+            sg.setNodeLabel((int)node, nodeLabels.get((int)node));
         }
 
         return sg;
