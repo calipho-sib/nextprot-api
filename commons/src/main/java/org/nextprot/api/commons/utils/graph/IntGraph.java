@@ -15,6 +15,8 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
@@ -30,8 +32,8 @@ public class IntGraph implements DirectedGraph, Externalizable {
     private TIntList heads = new TIntArrayList();
     private TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
     private TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
-    private TIntObjectMap<String> nodeLabels = new TIntObjectHashMap<>();
-    private TObjectIntMap<String> nodesByLabel = new TObjectIntHashMap<>();
+    private TIntObjectMap<Map<String, String>> nodeMetadata = new TIntObjectHashMap<>();
+    private TObjectIntMap<String> nodesByMetadataValue = new TObjectIntHashMap<>();
     private TIntObjectMap<String> edgeLabels = new TIntObjectHashMap<>();
 
     public IntGraph() {
@@ -58,10 +60,40 @@ public class IntGraph implements DirectedGraph, Externalizable {
     }
 
     @Override
-    public void addNode(int node, String label) {
+    public void addNodeMetadata(int node, String key, String value) {
 
-        addNode(node);
-        setNodeLabel(node, label);
+        if (!containsNode(node)) {
+            throw new IllegalArgumentException("node " + node+" does not exist");
+        }
+
+        if (!nodeMetadata.containsKey(node)) {
+            nodeMetadata.put(node, new HashMap<>());
+        }
+
+        if (nodeMetadata.get(node).containsKey(key)) {
+            throw new IllegalArgumentException("node metadata key " + key + " already exist");
+        }
+
+        nodeMetadata.get(node).put(key, value);
+
+        if (nodesByMetadataValue.containsKey(value)) {
+            throw new IllegalArgumentException("metadata value " + value + " is already associated with node "+ nodesByMetadataValue.get(value));
+        }
+        nodesByMetadataValue.put(value, node);
+    }
+
+    @Override
+    public String getNodeMetadataValue(int node, String key) {
+
+        if (!nodeMetadata.containsKey(node)) {
+            return null;
+        }
+
+        if (!nodeMetadata.get(node).containsKey(key)) {
+            return null;
+        }
+
+        return nodeMetadata.get(node).get(key);
     }
 
     @Override
@@ -77,38 +109,13 @@ public class IntGraph implements DirectedGraph, Externalizable {
     }
 
     @Override
-    public void setNodeLabel(int node, String label) {
+    public int getNodeFromMetadata(String value) {
 
-        if (!containsNode(node)) {
-            throw new IllegalArgumentException("node " + node+" does not exist");
-        }
-
-        if (nodesByLabel.containsKey(label)) {
-            throw new IllegalArgumentException("node label " + label+" already exist");
-        }
-
-        nodeLabels.put(node, label);
-
-        if (label != null) {
-
-            nodesByLabel.put(label, node);
-        }
-    }
-
-    @Override
-    public String getNodeLabel(int node) {
-
-        return nodeLabels.get(node);
-    }
-
-    @Override
-    public int getNode(String label) {
-
-        if (!nodesByLabel.containsKey(label)) {
+        if (!nodesByMetadataValue.containsKey(value)) {
             return -1;
         }
 
-        return nodesByLabel.get(label);
+        return nodesByMetadataValue.get(value);
     }
 
     @Override
@@ -391,7 +398,10 @@ public class IntGraph implements DirectedGraph, Externalizable {
         IntGraph sg = new IntGraph("subgraph");
 
         for (int node : nodes) {
-             sg.addNode(node, getNodeLabel(node));
+             sg.addNode(node);
+             if (nodeMetadata.containsKey(node)) {
+                 sg.nodeMetadata.put(node, new HashMap<>(nodeMetadata.get(node)));
+             }
         }
 
         int[] edges = getInEdges(sg.getNodes());
@@ -412,8 +422,8 @@ public class IntGraph implements DirectedGraph, Externalizable {
         ((TIntArrayList)heads).writeExternal(out);
         ((TIntObjectHashMap)predecessorLists).writeExternal(out);
         ((TIntObjectHashMap)successorLists).writeExternal(out);
-        ((TIntObjectHashMap)nodeLabels).writeExternal(out);
-        ((TObjectIntHashMap)nodesByLabel).writeExternal(out);
+        ((TIntObjectHashMap)nodeMetadata).writeExternal(out);
+        ((TObjectIntHashMap)nodesByMetadataValue).writeExternal(out);
         ((TIntObjectHashMap)edgeLabels).writeExternal(out);
     }
 
@@ -426,8 +436,8 @@ public class IntGraph implements DirectedGraph, Externalizable {
         ((TIntArrayList)heads).readExternal(in);
         ((TIntObjectHashMap)predecessorLists).readExternal(in);
         ((TIntObjectHashMap)successorLists).readExternal(in);
-        ((TIntObjectHashMap)nodeLabels).readExternal(in);
-        ((TObjectIntHashMap)nodesByLabel).readExternal(in);
+        ((TIntObjectHashMap)nodeMetadata).readExternal(in);
+        ((TObjectIntHashMap)nodesByMetadataValue).readExternal(in);
         ((TIntObjectHashMap)edgeLabels).readExternal(in);
     }
 }

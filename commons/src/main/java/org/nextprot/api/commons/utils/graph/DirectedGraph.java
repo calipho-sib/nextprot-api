@@ -27,29 +27,25 @@ public interface DirectedGraph {
     void addNode(int node);
 
     /**
-     * Add a node with its label in graph
-     * @param node
-     * @param label
-     * @throws IllegalArgumentException if node is negative
+     * Associating metadata to node
+     * @param node the node id
+     * @param key the metadata key
+     * @param value the metadata value
      */
-    void addNode(int node, String label);
+    void addNodeMetadata(int node, String key, String value);
 
     /**
-     * Set a node label
-     * @param node a node id
-     * @param label a node label
+     * Get the value of the metadata associated with the given node
+     * @param node the node to get metadata for
+     * @param key the metadata key
+     * @return the value or null if not found
      */
-    void setNodeLabel(int node, String label);
-
-    /**
-     * @return the node label or null if not defined
-     */
-    String getNodeLabel(int node);
+    String getNodeMetadataValue(int node, String key);
 
     /**
      * @return the node given the label or -1 if not found
      */
-    int getNode(String label);
+    int getNodeFromMetadata(String metadata);
 
     /**
      * Add an edge in graph from tail to head

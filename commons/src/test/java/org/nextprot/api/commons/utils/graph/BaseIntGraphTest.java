@@ -184,17 +184,17 @@ abstract class BaseIntGraphTest {
     public void setNodelabel() throws Exception {
 
         populateExampleGraph(graph);
-        graph.setNodeLabel(1, "node 1");
+        graph.addNodeMetadata(1, "label", "node 1");
 
-        Assert.assertEquals("node 1", graph.getNodeLabel(1));
-        Assert.assertEquals(null, graph.getNodeLabel(2));
+        Assert.assertEquals("node 1", graph.getNodeMetadataValue(1, "label"));
+        Assert.assertEquals(null, graph.getNodeMetadataValue(2, "label"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setNodelabelUnknownNode() throws Exception {
 
         populateExampleGraph(graph);
-        graph.setNodeLabel(14, "node 1");
+        graph.addNodeMetadata(14,"label","node 1");
     }
 
     @Test
