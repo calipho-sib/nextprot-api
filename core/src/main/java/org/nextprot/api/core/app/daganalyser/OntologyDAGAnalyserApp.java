@@ -1,31 +1,17 @@
 package org.nextprot.api.core.app.daganalyser;
 
-import grph.Grph;
-import grph.path.Path;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedApp;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.TerminologyUtils;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This app analyses the graph of all ontologies referenced by neXtProt
@@ -61,17 +47,17 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     @Override
     protected void execute() throws IOException {
 
-        terminologyService = getBean(TerminologyService.class);
+        /*terminologyService = getBean(TerminologyService.class);
 
         System.out.println("*** write to cache timings...");
         readWriteCache(false);
         System.out.println("*** access to cache timings...");
         readWriteCache(true);
         System.out.println("*** calculate statistics...");
-        calcStatisticsForAllOntologies();
+        calcStatisticsForAllOntologies();*/
     }
 
-    private void calcStatisticsForAllOntologies() throws FileNotFoundException {
+    /*private void calcStatisticsForAllOntologies() throws FileNotFoundException {
 
         Set<TerminologyCv> excludedOntology = EnumSet.of(
                 TerminologyCv.NextprotCellosaurusCv, TerminologyCv.MeshAnatomyCv, TerminologyCv.MeshCv);
@@ -185,7 +171,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         t = Instant.now();
         for (TerminologyCv ontology : terminologyCvs) {
 
-            terminologyService.findOntologyGraph(ontology);
+            terminologyService.findCvTermGraph(ontology);
             pb.incrementValue();
         }
         pb.stop();
@@ -251,7 +237,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         }
 
         return timings;
-    }
+    }*/
 
     /**
      * Parse arguments and provides MainConfig object

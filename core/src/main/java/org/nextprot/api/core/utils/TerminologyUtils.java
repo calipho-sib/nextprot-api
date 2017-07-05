@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,18 +59,18 @@ public class TerminologyUtils {
 	public static List<String> getAllAncestorsAccession(String cvTermAccession, TerminologyService terminologyservice) {
 		
 		return getAllAncestorTerms(cvTermAccession, terminologyservice).stream()
-				.map(t->t.getAccession())
+				.map(CvTerm::getAccession)
 				.collect(Collectors.toList());
 	}
 
 	public static List<CvTerm> getAllAncestorTerms(String cvTermAccession, TerminologyService terminologyservice) {
 
 		CvTerm cvTerm = terminologyservice.findCvTermByAccession(cvTermAccession);
-		OntologyDAG graph = terminologyservice.findOntologyGraph(TerminologyCv.valueOf(cvTerm.getOntology()));
+		CvTermGraph graph = terminologyservice.findCvTermGraph(TerminologyCv.valueOf(cvTerm.getOntology()));
 
-		return Arrays.stream(graph.getAncestors(cvTerm.getId())).boxed()
+		return Arrays.stream(graph.getAncestors(cvTerm.getId().intValue())).boxed()
 				.map(graph::getCvTermAccessionById)
-				.map(ac->terminologyservice.findCvTermByAccession(ac))
+				.map(terminologyservice::findCvTermByAccession)
 				.collect(Collectors.toList());
 	}
 

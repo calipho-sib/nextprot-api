@@ -113,6 +113,13 @@
 			<version>4.0.0</version>
 		</dependency>
 
+		<!-- A high performance primitive collections for Java -->
+		<dependency>
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+
 		<!-- A lib to compute sizeof java objects (https://github.com/jbellis/jamm)
 		1. git clone this project then build jar as explained in Readme
         2. start the JVM with "-javaagent:<path to>/jamm.jar"

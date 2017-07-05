@@ -11,7 +11,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -80,10 +80,10 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable("ontology-dag")
-	public OntologyDAG findOntologyGraph(TerminologyCv terminologyCv) {
+	@Cacheable("terminology-graph")
+	public CvTermGraph findCvTermGraph(TerminologyCv terminologyCv) {
 
-		return new OntologyDAG(terminologyCv, this);
+		return new CvTermGraph(terminologyCv, this);
 	}
 
 	@Override
@@ -131,5 +131,4 @@ class TerminologyServiceImpl implements TerminologyService {
 	public List<String> findTerminologyNamesList() {
 		return new ImmutableList.Builder<String>().addAll(terminologyDao.findTerminologyNamesList()).build();
 	}
-
 }
