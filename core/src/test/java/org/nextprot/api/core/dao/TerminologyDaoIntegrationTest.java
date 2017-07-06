@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,7 +32,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		
 		for(TerminologyCv t : tCv){
 			if (! t.equals(TerminologyCv.NextprotCellosaurusCv)) { // TEMP pass thru
-				if(!terminologies.contains(t.name())){
+				if(!terminologies.contains(StringUtils.camelToKebabCase(t.name()))){
 					fail(t + " is not contained anymore");
 				}
 			}
