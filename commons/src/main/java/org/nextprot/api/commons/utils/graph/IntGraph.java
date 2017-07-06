@@ -9,7 +9,6 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import toools.collections.Arrays;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -327,7 +326,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
     @Override
     public boolean isAncestorOf(int queryAncestor, int queryDescendant) {
 
-        return Arrays.contains(getAncestors(queryDescendant), queryAncestor);
+        return arrayContainsElement(getAncestors(queryDescendant), queryAncestor);
     }
 
     @Override
@@ -439,5 +438,16 @@ public class IntGraph implements DirectedGraph, Externalizable {
         ((TIntObjectHashMap)nodeMetadata).readExternal(in);
         ((TObjectIntHashMap)nodesByMetadataValue).readExternal(in);
         ((TIntObjectHashMap)edgeLabels).readExternal(in);
+    }
+
+    static boolean arrayContainsElement(int[] array, int element) {
+
+        for (int anArray : array) {
+            if (anArray == element) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
