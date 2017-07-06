@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@ActiveProfiles({"dev", "cache"})
+@ActiveProfiles({"dev"})
 public class CvTermGraphTest extends CoreUnitBaseTest {
 
     private CvTermGraph createGraph(TerminologyCv terminologyCv, TerminologyService service) {
@@ -33,8 +33,9 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
 
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
-        Assert.assertEquals(10543, graph.countNodes());
-        Assert.assertEquals(12797, graph.countEdges());
+        Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
+                graph.countNodes());
+        Assert.assertEquals(13100, graph.countEdges());
     }
 
     @Test
