@@ -165,8 +165,8 @@ public class CvTermGraph implements Serializable {
         int[] ancestors = graph.getAncestors(cvTermId);
 
         int[] nodes = new int[ancestors.length+1];
-        System.arraycopy(ancestors, 0, nodes, 0, ancestors.length);
-        nodes[nodes.length-1] = cvTermId;
+        nodes[0] = cvTermId;
+        System.arraycopy(ancestors, 0, nodes, 1, ancestors.length);
 
         IntGraph sg = graph.calcSubgraph(nodes);
 

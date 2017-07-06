@@ -30,8 +30,8 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		// recommended names
 		Assert.assertTrue(new EntityNameCollectionTester(recName.getOtherRecommendedEntityNames()).contains(Arrays.asList(
-				mockEntityName("PR_2477891", "2.4.1.175", "EC", "EC"),
-				mockEntityName("PR_2477890", "2.4.1.226", "EC", "EC")
+				mockEntityName( "2.4.1.175", "EC", "EC"),
+				mockEntityName("2.4.1.226", "EC", "EC")
 			)
 		));
 
@@ -40,11 +40,11 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		// alternative names
 		Assert.assertTrue(new EntityNameCollectionTester(overview.getAlternativeProteinNames()).contains(Arrays.asList(
-				mockEntityName("PR_645671", "Chondroitin glucuronyltransferase 1", "protein", "full"),
-				mockEntityNameWithSynonyms("PR_645668", "Chondroitin synthase 1", "protein", "full", Arrays.asList(mockEntityName("PR_645674", "ChSy-1", "protein", "short"))),
-				mockEntityName("PR_645673", "Glucuronosyl-N-acetylgalactosaminyl-proteoglycan 4-beta-N-acetylgalactosaminyltransferase 1", "protein", "full"),
-				mockEntityName("PR_645667", "N-acetylgalactosaminyl-proteoglycan 3-beta-glucuronosyltransferase 1", "protein", "full"),
-				mockEntityName("PR_645677", "N-acetylgalactosaminyltransferase 1", "protein", "full")
+				mockEntityName( "Chondroitin glucuronyltransferase 1", "protein", "full"),
+				mockEntityNameWithSynonyms("Chondroitin synthase 1", "protein", "full", Arrays.asList(mockEntityName( "ChSy-1", "protein", "short"))),
+				mockEntityName( "Glucuronosyl-N-acetylgalactosaminyl-proteoglycan 4-beta-N-acetylgalactosaminyltransferase 1", "protein", "full"),
+				mockEntityName( "N-acetylgalactosaminyl-proteoglycan 3-beta-glucuronosyltransferase 1", "protein", "full"),
+				mockEntityName("N-acetylgalactosaminyltransferase 1", "protein", "full")
 				)
 		));
 
@@ -58,10 +58,10 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertTrue(new EntityNameCollectionTester(geneNames.get(0).getSynonyms()).contains(
 				Arrays.asList(
-						mockEntityName("PR_1162682", "CHSY", "gene name"),
-						mockEntityName("PR_1162681", "CSS1", "gene name"),
-						mockEntityName("PR_1162683", "KIAA0990", "gene name"),
-						mockEntityName("PR_1162685", "UNQ756/PRO1487", "ORF")
+						mockEntityName( "CHSY", "gene name"),
+						mockEntityName("CSS1", "gene name"),
+						mockEntityName( "KIAA0990", "gene name"),
+						mockEntityName("UNQ756/PRO1487", "ORF")
 				)
 		));
 	}
@@ -77,24 +77,24 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		// recommended names
 		Assert.assertTrue(new EntityNameCollectionTester(recName.getOtherRecommendedEntityNames()).contains(Arrays.asList(
-				mockEntityName("PR_2472030", "3.6.4.12", "EC", "EC")
+				mockEntityName( "3.6.4.12", "EC", "EC")
 			)
 		));
 
 		// synonyms
 		Assert.assertTrue(new EntityNameCollectionTester(recName.getSynonyms()).contains(Arrays.asList(
-				mockEntityName("PR_699735", "CHD-9", "protein", "short")
+				mockEntityName("CHD-9", "protein", "short")
 			)
 		));
 
 		// alternative names
 		Assert.assertTrue(new EntityNameCollectionTester(overview.getAlternativeProteinNames()).contains(Arrays.asList(
-				mockEntityName("PR_699741", "ATP-dependent helicase CHD9", "protein", "full"),
-				mockEntityNameWithSynonyms("PR_699745", "Chromatin-related mesenchymal modulator", "protein", "full", Arrays.asList(mockEntityName("PR_699733", "CReMM", "protein", "short"))),
-				mockEntityName("PR_699739", "Chromatin-remodeling factor CHROM1", "protein", "full"),
-				mockEntityName("PR_699737", "Kismet homolog 2", "protein", "full"),
-				mockEntityName("PR_699731", "Peroxisomal proliferator-activated receptor A-interacting complex 320 kDa protein", "protein", "full"),
-				mockEntityName("PR_699742", "PPAR-alpha-interacting complex protein 320 kDa", "protein", "full")
+				mockEntityName( "ATP-dependent helicase CHD9", "protein", "full"),
+				mockEntityNameWithSynonyms( "Chromatin-related mesenchymal modulator", "protein", "full", Arrays.asList(mockEntityName( "CReMM", "protein", "short"))),
+				mockEntityName( "Chromatin-remodeling factor CHROM1", "protein", "full"),
+				mockEntityName( "Kismet homolog 2", "protein", "full"),
+				mockEntityName( "Peroxisomal proliferator-activated receptor A-interacting complex 320 kDa protein", "protein", "full"),
+				mockEntityName("PPAR-alpha-interacting complex protein 320 kDa", "protein", "full")
 				)
 		));
 
@@ -106,16 +106,15 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertTrue(new EntityNameCollectionTester(geneNames.get(0).getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
 
 		Assert.assertTrue(new EntityNameCollectionTester(geneNames.get(0).getSynonyms()).contains(Arrays.asList(
-						mockEntityName("PR_1181043", "KIAA0308", "gene name"),
-						mockEntityName("PR_1181046", "KISH2", "gene name"),
-						mockEntityName("PR_1181048", "PRIC320", "gene name"),
-						mockEntityName("PR_1181047", "AD-013", "ORF"),
-						mockEntityName("PR_1181045", "x0008", "ORF")
+						mockEntityName("KIAA0308", "gene name"),
+						mockEntityName("KISH2", "gene name"),
+						mockEntityName( "PRIC320", "gene name"),
+						mockEntityName( "AD-013", "ORF"),
+						mockEntityName("x0008", "ORF")
 				)
 		));
 	}
 
-	// TODO: it seems that entity name id "MP_" are not stable: we should not assert against their equality
 	@Test
 	public void testChainNamesForP51659() {
 
@@ -126,18 +125,18 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, chainNames.size());
 
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
-				mockEntityNameWithOtherRecNames("MP_21604507", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
+				mockEntityNameWithOtherRecNames("(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
 						Collections.singletonList(
-							mockEntityName("MP_21604508", "1.1.1.n12", "chain", "EC")
+							mockEntityName( "1.1.1.n12", "chain", "EC")
 						)
 				),
-				mockEntityNameWithSynonymsAndOtherRecNames("MP_21604503", "Enoyl-CoA hydratase 2", "protein", "full",
+				mockEntityNameWithSynonymsAndOtherRecNames( "Enoyl-CoA hydratase 2", "protein", "full",
 						Collections.singletonList(
-							mockEntityName("MP_21604506", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
 						),
 						Arrays.asList(
-							mockEntityName("MP_21604504", "4.2.1.107", "chain", "EC"),
-							mockEntityName("MP_21604505", "4.2.1.119", "chain", "EC")
+							mockEntityName("4.2.1.107", "chain", "EC"),
+							mockEntityName( "4.2.1.119", "chain", "EC")
 						)
 				)
 		)));
@@ -152,31 +151,30 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, regionNames.size());
 
 		Assert.assertTrue(new EntityNameCollectionTester(regionNames).contains(Arrays.asList(
-				mockEntityNameWithSynonymsAndOtherRecNames("PR_891643", "Steroid Delta-isomerase", "region name", "full", Collections.singletonList(
-						mockEntityName("PR_891650", "Delta-5-3-ketosteroid isomerase", "region name", "full")
+				mockEntityNameWithSynonymsAndOtherRecNames( "Steroid Delta-isomerase", "region name", "full", Collections.singletonList(
+						mockEntityName( "Delta-5-3-ketosteroid isomerase", "region name", "full")
 				), Collections.singletonList(
-						mockEntityName("PR_2473847", "5.3.3.1", "EC", "EC")
+						mockEntityName( "5.3.3.1", "EC", "EC")
 				)),
-				mockEntityNameWithSynonymsAndOtherRecNames("PR_891656", "3-beta-hydroxy-Delta(5)-steroid dehydrogenase", "region name", "full", Arrays.asList(
-						mockEntityName("PR_891645", "3-beta-hydroxy-5-ene steroid dehydrogenase", "region name", "full"),
-						mockEntityName("PR_891655", "Progesterone reductase", "region name", "full")
+				mockEntityNameWithSynonymsAndOtherRecNames( "3-beta-hydroxy-Delta(5)-steroid dehydrogenase", "region name", "full", Arrays.asList(
+						mockEntityName("3-beta-hydroxy-5-ene steroid dehydrogenase", "region name", "full"),
+						mockEntityName("Progesterone reductase", "region name", "full")
 				), Collections.singletonList(
-						mockEntityName("PR_2473846", "1.1.1.145", "EC", "EC")
+						mockEntityName("1.1.1.145", "EC", "EC")
 				))
 		)));
 
 	}
 
-	private static EntityName mockEntityName(String id, String name, String category) {
+	private static EntityName mockEntityName(String name, String category) {
 
-		return mockEntityName(id, name, category, null);
+		return mockEntityName(name, category, null);
 	}
 
-	private static EntityName mockEntityName(String id, String name, String category, String qualifier) {
+	private static EntityName mockEntityName(String name, String category, String qualifier) {
 
 		EntityName entityName = Mockito.mock(EntityName.class);
 
-		Mockito.when(entityName.getId()).thenReturn(id);
 		Mockito.when(entityName.getQualifier()).thenReturn(qualifier);
 		Mockito.when(entityName.getCategory()).thenReturn(category);
 		Mockito.when(entityName.getName()).thenReturn(name);
@@ -185,27 +183,27 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		return entityName;
 	}
 
-	private static EntityName mockEntityNameWithSynonyms(String id, String name, String category, String qualifier, List<EntityName> synonyms) {
+	private static EntityName mockEntityNameWithSynonyms(String name, String category, String qualifier, List<EntityName> synonyms) {
 
-		EntityName entityName = mockEntityName(id, name, category, qualifier);
+		EntityName entityName = mockEntityName(name, category, qualifier);
 
 		Mockito.when(entityName.getSynonyms()).thenReturn(synonyms);
 
 		return entityName;
 	}
 
-	private static EntityName mockEntityNameWithOtherRecNames(String id, String name, String category, String qualifier, List<EntityName> recNames) {
+	private static EntityName mockEntityNameWithOtherRecNames(String name, String category, String qualifier, List<EntityName> recNames) {
 
-		EntityName entityName = mockEntityName(id, name, category, qualifier);
+		EntityName entityName = mockEntityName(name, category, qualifier);
 
 		Mockito.when(entityName.getOtherRecommendedEntityNames()).thenReturn(recNames);
 
 		return entityName;
 	}
 
-	private static EntityName mockEntityNameWithSynonymsAndOtherRecNames(String id, String name, String category, String qualifier, List<EntityName> synonyms, List<EntityName> recNames) {
+	private static EntityName mockEntityNameWithSynonymsAndOtherRecNames(String name, String category, String qualifier, List<EntityName> synonyms, List<EntityName> recNames) {
 
-		EntityName entityName = mockEntityName(id, name, category, qualifier);
+		EntityName entityName = mockEntityName(name, category, qualifier);
 
 		Mockito.when(entityName.getSynonyms()).thenReturn(synonyms);
 		Mockito.when(entityName.getOtherRecommendedEntityNames()).thenReturn(recNames);
@@ -217,7 +215,6 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertTrue(entityName.isMain());
 		Assert.assertEquals(expectedClass, entityName.getClazz());
-		Assert.assertEquals(expectedId, entityName.getId());
 		Assert.assertEquals(expectedName, entityName.getName());
 	}
 
@@ -229,14 +226,13 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		@Override
 		protected Function<EntityName, String> createElementToKeyFunc() {
-			return entityName -> entityName.getId();
+			return entityName -> entityName.getName();
 		}
 
 		@Override
 		protected boolean isEquals(EntityName element, EntityName expected) {
 
-			return expected.getId().equals(element.getId()) &&
-					expected.getName().equals(element.getName()) &&
+			return expected.getName().equals(element.getName()) &&
 					expected.getCategory().equals(element.getCategory()) &&
 					Objects.equals(expected.getQualifier(), element.getQualifier()) &&
 					hasSynonyms(element, expected) &&
@@ -278,19 +274,13 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		@Override
 		protected Function<EntityName, String> createElementToKeyFunc() {
-			return new Function<EntityName, String>() {
-				@Override
-				public String apply(EntityName entityName) {
-					return entityName.getId();
-				}
-			};
+			return EntityName::getName;
 		}
 
 		@Override
 		protected boolean isEquals(EntityName element, EntityName expected) {
 
-			return expected.getId().equals(element.getId()) &&
-					expected.getName().equals(element.getName()) &&
+			return expected.getName().equals(element.getName()) &&
 					expected.getCategory().equals(element.getCategory());
 		}
 	}

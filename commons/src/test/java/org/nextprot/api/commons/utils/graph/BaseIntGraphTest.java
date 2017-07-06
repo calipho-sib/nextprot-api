@@ -4,7 +4,8 @@ import gnu.trove.set.hash.TIntHashSet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import toools.collections.Arrays;
+
+import static org.nextprot.api.commons.utils.graph.IntGraph.arrayContainsElement;
 
 abstract class BaseIntGraphTest {
 
@@ -119,8 +120,8 @@ abstract class BaseIntGraphTest {
 
         populateExampleGraph(graph);
 
-        Assert.assertTrue(Arrays.contains(graph.getInEdges(2), 0));
-        Assert.assertTrue(Arrays.contains(graph.getInEdges(2), 2));
+        Assert.assertTrue(arrayContainsElement(graph.getInEdges(2), 0));
+        Assert.assertTrue(arrayContainsElement(graph.getInEdges(2), 2));
     }
 
     @Test
@@ -128,8 +129,8 @@ abstract class BaseIntGraphTest {
 
         populateExampleGraph(graph);
 
-        Assert.assertTrue(Arrays.contains(graph.getOutEdges(5), 2));
-        Assert.assertTrue(Arrays.contains(graph.getOutEdges(5), 3));
+        Assert.assertTrue(arrayContainsElement(graph.getOutEdges(5), 2));
+        Assert.assertTrue(arrayContainsElement(graph.getOutEdges(5), 3));
     }
 
     @Test
