@@ -1,6 +1,6 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public interface ExportService {
 	 * 
 	 * @param format The format can be xml or ttl
 	 */
-	List<Future<File>> exportAllEntries(FileFormat format);
+	List<Future<File>> exportAllEntries(NextprotMediaType format);
 
 	/**
 	 * Export entries based on chromosome in the format specified with UTF-8
@@ -30,7 +30,7 @@ public interface ExportService {
 	 * @param chromosome The chromosome name / number
 	 * @param format The format can be xml or ttl
 	 */
-	List<Future<File>> exportEntriesOfChromosome(String chromosome, FileFormat format);
+	List<Future<File>> exportEntriesOfChromosome(String chromosome, NextprotMediaType format);
 
 	/**
 	 * Export entries based on entry names in the format specified with UTF-8
@@ -38,7 +38,7 @@ public interface ExportService {
 	 * 
 	 * @param entryNames The list of entries
 	 */
-	List<Future<File>> exportEntries(Collection<String> entryNames, FileFormat format);
+	List<Future<File>> exportEntries(Collection<String> entryNames, NextprotMediaType format);
 
 	/**
 	 * Export the entry name in the format specified with UTF-8 encoding
@@ -46,7 +46,7 @@ public interface ExportService {
 	 * @param entryName The entry to export
 	 * @param format The export format
 	 */
-	Future<File> exportEntry(String entryName, FileFormat format);
+	Future<File> exportEntry(String entryName, NextprotMediaType format);
 
 	void clearRepository();
 

@@ -78,22 +78,28 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	
 	
 	@Override
-	public List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds) {
+	public List<DbXrefProperty> findDbXrefsProperties(String entryName, List<Long> resourceIds) {
 		
 		List<DbXrefProperty> result = new ArrayList<>();
 		// we must split the query into multiple queries otherwise we get an SQL error:
 		// the number of parameters (list of resource id) cannot exceed 32767 and miss titin has now 43012 xrefs !
 		List<List> paramsList = splitList(resourceIds);
 		for (List l: paramsList) {
+			
 			Map<String,Object> params = new HashMap<>();
+			
 			params.put("resourceIds", l);
-			//System.out.println("AAA sending query with " + l.size() + " elements");
 			List<DbXrefProperty> someProps = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-props-by-resource-ids"), params, new DbXrefPropertyRowMapper());
 			result.addAll(someProps);
+			
+			params.put("entryName", entryName);
+			List<DbXrefProperty> someOtherProps = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-entry-link-props-by-entry-and-resource-ids"), params, new DbXrefPropertyRowMapper());
+			result.addAll(someOtherProps);
 		}
 		//System.out.println("AAA final size is " + result.size());
 		return result;
 	}
+
 
 	@Override
 	public List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(String uniqueName, List<Long> xrefIds) {
@@ -270,4 +276,5 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-antibody-ids"), namedParams, new DbXRefRowMapper());
 		return new HashSet<>(xrefs);
 	}
+
 }

@@ -218,7 +218,8 @@ public class PepXServiceImpl implements PepXService {
 						continue;
 					}
 					if(originalAA != varAnnot.getVariant().getOriginal().charAt(0)){
-						throw new NextProtException("The amino acid " + originalAA + " is not present on the sequence of the isoform (position) " + "(" + isoformName + ")" + variantPosition );
+						LOGGER.warn("The original amino acid " + originalAA + " of the variant is not equal to the amino acid on the sequence of " + isoformName + " at position " + variantPosition );
+						continue;
 					}
 					String variantAA = varAnnot.getVariant().getVariant();
 					if (varAnnot.getVariant().getOriginal().length()==1) { // pepx only handles single substitution or deletion

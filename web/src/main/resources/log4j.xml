@@ -28,6 +28,9 @@
 	<logger name="org.nextprot.api.web">
 		<level value="WARN" />
 	</logger>
+	<logger name="net.sf.ehcache.constructs.web.GenericResponseWrapper">
+		<level value="ERROR" />
+	</logger>
 
 	<logger name="org.nextprot.api.web.CorsFilter">
 		<level value="INFO" />

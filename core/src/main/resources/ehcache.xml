@@ -102,8 +102,7 @@
 		statistics="true">
 	</cache>
 
-	<!-- http://www.ehcache.org/documentation/2.8/get-started/storage-options.html -->
-	<cache name="ontology-dag" overflowToOffHeap="false"
+	<cache name="terminology-graph" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="10"
 		   maxEntriesLocalDisk="100" eternal="true" memoryStoreEvictionPolicy="LFU"
 		   statistics="true">
@@ -278,6 +277,14 @@
 		statistics="true">
 	</cache>
 
+	<cache name="sparql-proxy-cache" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="100000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+
+
 	<!-- Proxies -->
 	<cache name="sparql-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="100"  eternal="true" statistics="true"/>
 	<cache name="pdb-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="10"  eternal="true" statistics="true"/>
@@ -301,5 +308,35 @@
 		   eternal="true"
 		   memoryStoreEvictionPolicy="LFU">
 		<persistence strategy="localTempSwap" />
+	</cache>
+
+	<cache name="chromosome-reports" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+	<cache name="chromosome-summaries" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+	<cache name="nacetylated-master-unique-names-by-chromosome" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+	<cache name="phospho-master-unique-names-by-chromosome" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+	<cache name="unconfirmed-ms-master-unique-names-by-chromosome" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
 	</cache>
 </ehcache>

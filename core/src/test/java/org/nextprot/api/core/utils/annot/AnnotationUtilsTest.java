@@ -435,7 +435,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertEquals(6, annotations.size());
 
 		List<Annotation> filtered = annotations.stream()
-				.filter(annotationService.buildCvTermAncestorPredicate("GO:0005102"))
+				.filter(annotationService.createDescendantTermPredicate("GO:0005102"))
 				.collect(Collectors.toList());
 
 		Assert.assertEquals(3, filtered.size());
@@ -452,7 +452,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
 				.with("subcellular-location")).getAnnotations();
 
-		Assert.assertEquals(21, annotations.size());
+		Assert.assertEquals(23, annotations.size());
 
 		List<Annotation> filtered = annotations.stream()
 				.filter(annotationService.buildPropertyPredicate("topology", null))
@@ -470,8 +470,6 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
 				.with("subcellular-location")).getAnnotations();
-
-		Assert.assertEquals(21, annotations.size());
 
 		List<Annotation> filtered = annotations.stream()
 				.filter(annotationService.buildPropertyPredicate("tOpology", null))

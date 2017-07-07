@@ -43,8 +43,9 @@
         <param-value>pro,cache,security</param-value>
     </context-param>
 
-    <!-- Adds google analytics filter-->
 
+
+    <!-- Adds google analytics filter-->
     <!-- Sends hits to google analytics -->
     <filter>
         <filter-name>ga</filter-name>
@@ -55,7 +56,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    
+
 	<filter>
 	   <filter-name>etagFilter</filter-name>
 	   <filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>

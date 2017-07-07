@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import javax.annotation.Nullable;
@@ -20,12 +21,20 @@ public interface AnnotationService {
 	List<Annotation> findAnnotationsExcludingBed(String entryName);
 
 	/**
-	 * Provide predicate on Annotation that tests if cvterm is the ancestor or one of his descendants
+	 * Provides a predicate object that test if an Annotation cvterm is a descendant of the given cvterm ancestor
 	 *
 	 * @param ancestorAccession the ancestor cvterm accession
 	 * @return a new predicate
 	 */
-	Predicate<Annotation> buildCvTermAncestorPredicate(String ancestorAccession);
+	Predicate<Annotation> createDescendantTermPredicate(String ancestorAccession);
+
+	/**
+	 * Provides a predicate object that test if an AnnotationEvidence evidence code is a descendant of the given evidence ancestor
+	 *
+	 * @param ancestorEvidenceCode the ancestor evidence code accession
+	 * @return a new predicate
+	 */
+	Predicate<AnnotationEvidence> createDescendantEvidenceTermPredicate(String ancestorEvidenceCode);
 
 	/**
 	 * Provide predicate on Annotation that tests if either propertyName exists or propertyName/propertyValue exists

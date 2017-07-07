@@ -6,10 +6,12 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
@@ -36,6 +38,7 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
+	@Autowired private EntryReportService entryReportService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -92,6 +95,18 @@ public class EntryController {
 		return "entry";
 	}
 
+	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<EntryReport> getEntryReport(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
+
+		return entryReportService.reportEntry(entryName).stream()
+				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(EntryReport.newByChromosomalPositionComparator()))
+				.collect(Collectors.toList());
+	}
+
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
@@ -132,7 +147,7 @@ public class EntryController {
 	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValueOrAccession) {
 
 		final Predicate<Annotation> cvTermPredicate = (ancestorCvTerm != null) ?
-				annotationService.buildCvTermAncestorPredicate(ancestorCvTerm) :
+				annotationService.createDescendantTermPredicate(ancestorCvTerm) :
 				annotation -> true;
 
 		final Predicate<Annotation> propertyPredicate = (propertyName != null) ?
