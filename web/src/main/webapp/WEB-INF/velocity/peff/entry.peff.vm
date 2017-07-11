@@ -1,4 +1,4 @@
 #foreach($isoform in $entry.isoforms)
->nxp:$NXUtils.buildPeffHeader($entry, $isoform)$StringUtils.getCR()
+$NXUtils.buildPeffHeader($entry, $isoform)$StringUtils.getCR()
 $StringUtils.wrapText($isoform.getSequence(), 60)$StringUtils.getCR()
 #end

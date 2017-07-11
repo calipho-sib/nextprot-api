@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 
@@ -16,20 +17,19 @@ import java.util.List;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by fnikitin on 04/06/15.
- */
-public class PeffFormatterMasterTest {
+public class PeffHeaderFormatterImplTest {
 
     ///// Peff \Processed key
     @Test
     public void testMatureProteinAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(17, 609, AnnotationCategory.MATURE_PROTEIN)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(17, 609, AnnotationCategory.MATURE_PROTEIN))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Processed=(17|609|CHAIN)", peff);
     }
@@ -37,11 +37,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testSignalPeptideAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(1, 29, AnnotationCategory.SIGNAL_PEPTIDE)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(1, 29, AnnotationCategory.SIGNAL_PEPTIDE))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Processed=(1|29|SIGNAL)", peff);
     }
@@ -49,11 +51,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testMaturationPeptideAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(20, 213, AnnotationCategory.MATURATION_PEPTIDE)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(20, 213, AnnotationCategory.MATURATION_PEPTIDE))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Processed=(20|213|PROPEP)", peff);
     }
@@ -61,11 +65,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testMitochondrialTransitPeptideAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(1, 19, AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(1, 19, AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Processed=(1|19|TRANSIT)", peff);
     }
@@ -73,11 +79,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testPeroxisomeTransitPeptideAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(1, 19, AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(1, 19, AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Processed=(1|19|TRANSIT)", peff);
     }
@@ -86,11 +94,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testDisulfideBondAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(31, 96, AnnotationCategory.DISULFIDE_BOND)));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(31, 96, AnnotationCategory.DISULFIDE_BOND))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\ModRes=(31|Disulfide)(96|Disulfide)", peff);
     }
@@ -98,11 +108,13 @@ public class PeffFormatterMasterTest {
     @Test
     public void testGlycoAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(31, 96, AnnotationCategory.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)")));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(31, 96, AnnotationCategory.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\ModRes=(31|N-linked (GlcNAc...))", peff);
     }
@@ -111,11 +123,14 @@ public class PeffFormatterMasterTest {
     @Test
     public void testPsiModAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_A0A087X1C5",
+                Collections.singletonList(newMockAnnotation(31, 31, AnnotationCategory.MODIFIED_RESIDUE, null, "MOD:0001")));
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
-                        Collections.singletonList(newMockAnnotation(31, 31, AnnotationCategory.MODIFIED_RESIDUE, null, "MOD:0001"))),
-                newMockIsoform("NX_A0A087X1C5-1"));
+        Isoform isoform = newMockIsoform("NX_A0A087X1C5-1");
+
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\ModResPsi=(31|MOD:0001)", peff);
     }
@@ -123,16 +138,16 @@ public class PeffFormatterMasterTest {
     @Test
     public void testPsiModAnnotation2() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
-
         Annotation mod1 = newMockAnnotation(196, 196, AnnotationCategory.MODIFIED_RESIDUE, "Phosphothreonine", "MOD:0001");
         Annotation mod2 = newMockAnnotation(339, 339, AnnotationCategory.MODIFIED_RESIDUE, "Phosphoserine", "MOD:0002");
         Annotation mod3 = newMockAnnotation(198, 198, AnnotationCategory.MODIFIED_RESIDUE, "Phosphothreonine", "MOD:0003");
 
-        String peff = formatter.formatIsoformAnnotations(
-                newMockEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3)),
-                newMockIsoform("NX_P22694-1")
-        );
+        Entry entry = newMockEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
+        Isoform isoform = newMockIsoform("NX_P22694-1");
+
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\ModResPsi=(196|MOD:0001)(198|MOD:0003)(339|MOD:0002)", peff);
     }
@@ -141,14 +156,17 @@ public class PeffFormatterMasterTest {
     @Test
     public void testVariantAnnotation() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
-
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_P22694", Arrays.asList(
+        Entry entry = newMockEntry("NX_P22694",
+                Arrays.asList(
                         newMockVariantAnnotation(106, 106, "R", "Q"),
                         newMockVariantAnnotation(300, 300, "T", "M"),
                         newMockVariantAnnotation(26, 26, "A", "P")
-                )),
-                newMockIsoform("NX_P22694-1"));
+                ));
+        Isoform isoform = newMockIsoform("NX_P22694-1");
+
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\Variant=(26|26|P)(106|106|Q)(300|300|M)", peff);
     }
@@ -156,19 +174,21 @@ public class PeffFormatterMasterTest {
     @Test
     public void testMultipleAnnotations() throws Exception {
 
-        PeffFormatterMaster formatter = new PeffFormatterMaster();
+        Entry entry = newMockEntry("NX_P22694", Arrays.asList(
+                newMockAnnotation(1, 515, AnnotationCategory.MATURE_PROTEIN),
+                newMockAnnotation(416, 416, AnnotationCategory.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"),
+                newMockVariantAnnotation(311, 311, "R", "L"),
+                newMockVariantAnnotation(70, 70, "T", "N"),
+                newMockVariantAnnotation(337, 337, "A", "CS"),
+                newMockVariantAnnotation(369, 373, "A", "VHMPY"),
+                newMockVariantAnnotation(383, 383, "A", "R"),
+                newMockVariantAnnotation(428, 428, "A", "E")
+        ));
+        Isoform isoform = newMockIsoform("NX_P22694-1");
 
-        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_P22694", Arrays.asList(
-                        newMockAnnotation(1, 515, AnnotationCategory.MATURE_PROTEIN),
-                        newMockAnnotation(416, 416, AnnotationCategory.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"),
-                        newMockVariantAnnotation(311, 311, "R", "L"),
-                        newMockVariantAnnotation(70, 70, "T", "N"),
-                        newMockVariantAnnotation(337, 337, "A", "CS"),
-                        newMockVariantAnnotation(369, 373, "A", "VHMPY"),
-                        newMockVariantAnnotation(383, 383, "A", "R"),
-                        newMockVariantAnnotation(428, 428, "A", "E")
-                )),
-                newMockIsoform("NX_P22694-1"));
+        PeffHeaderFormatter formatter = new PeffHeaderFormatterImpl(entry, isoform);
+
+        String peff = formatter.format();
 
         Assert.assertEquals("\\ModRes=(416|N-linked (GlcNAc...)) \\Variant=(70|70|N)(311|311|L)(337|337|CS)(369|373|VHMPY)(383|383|R)(428|428|E) \\Processed=(1|515|CHAIN)", peff);
     }
@@ -188,6 +208,7 @@ public class PeffFormatterMasterTest {
 
         when(entry.getUniqueName()).thenReturn(name);
         when(entry.getAnnotationsByIsoform(anyString())).thenReturn(annotations);
+        when(entry.getOverview()).thenReturn(new Overview());
 
         return entry;
     }

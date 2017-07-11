@@ -10,11 +10,12 @@ import java.util.EnumSet;
  *
  * Created by fnikitin on 05/05/15.
  */
-class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
+class ModResPsiFormatter extends PTMInfoFormatter {
 
-    public IsoformPTMPsiPeffFormatter() {
+    public ModResPsiFormatter() {
 
-        super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE), PeffKey.MOD_RES_PSI);
+        super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
+                SequenceDescriptorKey.MOD_RES_PSI);
     }
 
     @Override
