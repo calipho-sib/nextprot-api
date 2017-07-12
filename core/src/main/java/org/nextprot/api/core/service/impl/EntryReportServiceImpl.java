@@ -1,20 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
-import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -23,6 +12,13 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.nextprot.api.commons.utils.StreamUtils.nullableListToStream;
 
 @Service
 public class EntryReportServiceImpl implements EntryReportService {
@@ -280,16 +276,4 @@ public class EntryReportServiceImpl implements EntryReportService {
 						)
 				);
 	}
-
-	/**
-	 * Return a stream from a nullable list
-	 * @param list the list to stream
-	 * @param <T> element type
-	 * @return a Stream
-	 */
-	private static <T> Stream<T> nullableListToStream(List<T> list) {
-
-		return list == null ? Stream.empty() : list.stream();
-	}
-
 }
