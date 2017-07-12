@@ -8,6 +8,7 @@ import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -25,10 +26,8 @@ class IsoformServiceImpl implements IsoformService {
 	@Autowired
 	private IsoformDAO isoformDAO;
 
-	
 	@Autowired
 	private MasterIsoformMappingDao masterIsoformMappingDAO;
-
 	
 	@Override
 	@Cacheable("isoforms")
@@ -57,7 +56,13 @@ class IsoformServiceImpl implements IsoformService {
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
 	}
-	
+
+	@Override
+	public Isoform findIsoformByName(Entry entry, String name) {
+
+		return IsoformUtils.getIsoformByName(entry, name);
+	}
+
 	private class SynonymFunction implements Function<EntityName, String> {
 		public String apply(EntityName isoformSynonym) {
 			return isoformSynonym.getMainEntityName();

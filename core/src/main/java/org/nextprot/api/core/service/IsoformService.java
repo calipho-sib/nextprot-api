@@ -1,9 +1,10 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+
+import java.util.List;
 
 /**
  * Extracts information related to the isoforms
@@ -14,4 +15,5 @@ public interface IsoformService {
 
 	List<Isoform> findIsoformsByEntryName(@ValidEntry String entryName);
 
+	Isoform findIsoformByName(Entry entry, String name);
 }
