@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
@@ -141,5 +142,25 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertEquals(64,maxref);
 	}
 
+	@Test
+	public void shouldFindXrefPsiMod()  {
+
+		String psiId = terminologyService.getCvTermXrefAccession("PTM-0135", "PSI-MOD");
+		Assert.assertEquals("00134", psiId);
+	}
+
+	@Test
+	public void shouldFindXrefMesh()  {
+
+		String accession = terminologyService.getCvTermXrefAccession("TS-0001", "MeSH");
+		Assert.assertEquals("D000005", accession);
+	}
+
+	@Test
+	public void shouldNotFindXrefPsiMod()  {
+
+		String psiId = terminologyService.getCvTermXrefAccession("TS-0001", "PSI-MOD");
+		Assert.assertNull(psiId);
+	}
 }
 
