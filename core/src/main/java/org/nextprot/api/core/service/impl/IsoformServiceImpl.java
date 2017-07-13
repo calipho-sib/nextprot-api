@@ -8,8 +8,8 @@ import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,9 @@ class IsoformServiceImpl implements IsoformService {
 
 	@Autowired
 	private MasterIsoformMappingDao masterIsoformMappingDAO;
+
+	@Autowired
+	private EntityNameService entityNameService;
 	
 	@Override
 	@Cacheable("isoforms")
@@ -39,13 +42,13 @@ class IsoformServiceImpl implements IsoformService {
 		//Groups the synonyms by their main isoform
 		Multimap<String, EntityName> synonymsMultiMap = Multimaps.index(synonyms, new SynonymFunction());
 		for (Isoform isoform : isoforms) {
-			isoform.setSynonyms(synonymsMultiMap.get(isoform.getUniqueName()));
+			isoform.setSynonyms(synonymsMultiMap.get(isoform.getIsoformAccession()));
 		}
 
 		//Attach master mapping to each isoform
 		for (Isoform isoform : isoforms) {
-			if (isoMasterNuPosRanges.containsKey(isoform.getUniqueName())) {
-				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getUniqueName()));
+			if (isoMasterNuPosRanges.containsKey(isoform.getIsoformAccession())) {
+				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getIsoformAccession()));
 			} else {
 				isoform.setMasterMapping(new ArrayList<>());
 			}
@@ -58,9 +61,21 @@ class IsoformServiceImpl implements IsoformService {
 	}
 
 	@Override
-	public Isoform findIsoformByName(Entry entry, String name) {
+	public Isoform findIsoformByName(String entryName, String name) {
 
-		return IsoformUtils.getIsoformByName(entry, name);
+		List<Isoform> isoforms = findIsoformsByEntryName(entryName);
+
+		for (Isoform isoform : isoforms) {
+
+			if (isoform.getIsoformAccession().equals(name)) {
+				return isoform;
+			}
+			else if (entityNameService.hasName(isoform.getMainEntityName(), name)) {
+				return isoform;
+			}
+		}
+
+		return null;
 	}
 
 	private class SynonymFunction implements Function<EntityName, String> {
@@ -68,5 +83,4 @@ class IsoformServiceImpl implements IsoformService {
 			return isoformSynonym.getMainEntityName();
 		}
 	}
-
 }
