@@ -1,6 +1,7 @@
-package org.nextprot.api.core.utils.peff;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 public class SimpleSequenceInfoFormatter extends SequenceInfoFormatter {
 

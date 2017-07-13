@@ -1,12 +1,13 @@
-package org.nextprot.api.core.utils.peff;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
+public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
 
     private static final Map<AnnotationCategory, String> PSI_PEFF_MAP;
 
@@ -21,7 +22,7 @@ class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
         PSI_PEFF_MAP.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
     }
 
-    ProcessedMoleculeFormatter() {
+    public ProcessedMoleculeFormatter() {
 
         super(PSI_PEFF_MAP.keySet(), SequenceDescriptorKey.PROCESSED);
     }
@@ -30,12 +31,10 @@ class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
         sb
-                .append("(")
                 .append(annotation.getStartPositionForIsoform(isoformAccession))
                 .append("|")
                 .append(annotation.getEndPositionForIsoform(isoformAccession))
                 .append("|")
-                .append(PSI_PEFF_MAP.get(annotation.getAPICategory()))
-                .append(")");
+                .append(PSI_PEFF_MAP.get(annotation.getAPICategory()));
     }
 }

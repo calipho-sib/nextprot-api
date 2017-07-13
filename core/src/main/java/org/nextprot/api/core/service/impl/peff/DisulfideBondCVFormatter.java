@@ -1,7 +1,8 @@
-package org.nextprot.api.core.utils.peff;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.EnumSet;
 
@@ -10,15 +11,15 @@ import java.util.EnumSet;
  *
  * Created by fnikitin on 05/05/15.
  */
-class DisulfideBondCVFormatter extends PTMInfoFormatter {
+public class DisulfideBondCVFormatter extends PTMInfoFormatter {
 
-    DisulfideBondCVFormatter() {
+    public DisulfideBondCVFormatter() {
 
         super(EnumSet.of(AnnotationCategory.DISULFIDE_BOND), SequenceDescriptorKey.MOD_RES);
     }
 
     @Override
-    protected final String getModName(Annotation annotation) {
+    protected final String getModAccession(Annotation annotation) {
 
         return "Disulfide";
     }

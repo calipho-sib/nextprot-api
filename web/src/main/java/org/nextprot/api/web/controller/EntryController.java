@@ -36,7 +36,7 @@ public class EntryController {
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
-	@Autowired private IsoformSequenceService isoformSequenceService;
+	@Autowired private PeffService peffService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -112,11 +112,7 @@ public class EntryController {
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
 			@PathVariable("accession") String isoformAccession) {
 
-		String entryAccession = isoformAccession.split("-")[0];
-
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
-
-		return isoformSequenceService.formatSequenceInfoPeff(entry, isoformAccession);
+		return peffService.formatSequenceInfo(isoformAccession);
 	}
 
 	/**

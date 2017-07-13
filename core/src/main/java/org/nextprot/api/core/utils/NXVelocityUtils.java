@@ -8,7 +8,6 @@ import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.core.utils.peff.PeffHeaderFormatterImpl;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public class NXVelocityUtils {
 	 */
 	public static String buildPeffHeader(Entry entry, Isoform isoform) {
 
-		return new PeffHeaderFormatterImpl(entry, isoform).format();
+		return null; //new PeffHeaderFormatterImpl(entry, isoform).format();
 	}
 	
 	public static PropertyWriter getXMLPropertyWriter(AnnotationCategory aModel, String propertyDbName) {

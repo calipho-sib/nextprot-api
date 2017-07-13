@@ -1,7 +1,8 @@
-package org.nextprot.api.core.utils.peff;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.Set;
 
@@ -10,14 +11,15 @@ import java.util.Set;
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class PTMInfoFormatter extends AnnotationBasedSequenceInfoFormatter {
+public abstract class PTMInfoFormatter extends AnnotationBasedSequenceInfoFormatter {
 
     PTMInfoFormatter(Set<AnnotationCategory> supportedApiModel, SequenceDescriptorKey SequenceDescriptorKey) {
 
         super(supportedApiModel, SequenceDescriptorKey);
     }
 
-    protected abstract String getModName(Annotation annotation);
+    protected abstract String getModAccession(Annotation annotation);
+    //protected abstract String getModName(Annotation annotation);
 
     @Override
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
@@ -25,6 +27,9 @@ abstract class PTMInfoFormatter extends AnnotationBasedSequenceInfoFormatter {
         sb
                 .append(annotation.getStartPositionForIsoform(isoformAccession))
                 .append("|")
-                .append(getModName(annotation));
+                .append(getModAccession(annotation))
+                .append("|")
+                //.append(getModName(annotation))
+        ;
     }
 }

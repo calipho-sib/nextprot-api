@@ -1,20 +1,21 @@
-package org.nextprot.api.core.utils.peff;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.EnumSet;
 
 /**
- * A complex variation located on an isoform
+ * A variation located on an isoform
  *
  * Created by fnikitin on 05/05/15.
  */
-class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatter {
+public class VariantSimpleFormatter extends AnnotationBasedSequenceInfoFormatter {
 
-    public VariantComplexFormatter() {
+    public VariantSimpleFormatter() {
 
-        super(EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_COMPLEX);
+        super(EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_SIMPLE);
     }
 
     @Override
@@ -22,8 +23,6 @@ class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatter {
 
         sb
                 .append(annotation.getStartPositionForIsoform(isoformAccession))
-                .append("|")
-                .append(annotation.getEndPositionForIsoform(isoformAccession))
                 .append("|")
                 .append(annotation.getVariant().getVariant());
     }
