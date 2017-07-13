@@ -7,8 +7,8 @@ package org.nextprot.api.core.utils.peff;
 public enum SequenceDescriptorKey {
 
     DB_UNIQUE_ID("DbUniqueId"),
-    P_NAME("Pname"),
-    G_NAME("Gname"),
+    P_NAME("PName"),
+    G_NAME("GName"),
     NCBI_TAX_ID("NcbiTaxId"),
     TAX_NAME("TaxName"),
     LENGTH("Length"),
