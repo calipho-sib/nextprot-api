@@ -7,12 +7,9 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.MasterIsoformMappingService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.web.service.EntryPageService;
@@ -39,6 +36,7 @@ public class EntryController {
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
+	@Autowired private IsoformSequenceService isoformSequenceService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -107,10 +105,18 @@ public class EntryController {
 				.collect(Collectors.toList());
 	}
 
-	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
-		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
+	public IsoformSequenceInfoPeff getIsoformSequenceInfos(
+			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
+			@PathVariable("accession") String isoformAccession) {
+
+		String entryAccession = isoformAccession.split("-")[0];
+
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
+
+		return isoformSequenceService.formatSequenceInfoPeff(entry, isoformAccession);
 	}
 
 	/**
