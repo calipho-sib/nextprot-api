@@ -18,19 +18,21 @@ public interface IsoformService {
 	 * Find the isoform of the given entry matching the given name
 	 * @param entryAccession the entry accession
 	 * @param name the isoform name (any of its name among accession, synonyms...)
-	 * @return found isoform or null if not found
+	 * @return the found isoform or null if not found
 	 */
 	Isoform findIsoformByName(String entryAccession, String name);
 
+	/**
+	 * Find the isoform of the given entry matching the given accession
+	 * @param isoformAccession the isoform accession
+	 * @return the found isoform or null if not found
+	 */
 	default Isoform findIsoformByAccession(String isoformAccession) {
 
-		if (isoformAccession.contains("-")) {
+		if (!isoformAccession.contains("-")) {
 			return null;
 		}
 
-		String entryAccession = isoformAccession.split("-")[0];
-
-
-		return findIsoformByName(entryAccession, isoformAccession);
+		return findIsoformByName(isoformAccession.split("-")[0], isoformAccession);
 	}
 }
