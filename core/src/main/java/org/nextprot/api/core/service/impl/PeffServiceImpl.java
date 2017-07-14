@@ -29,6 +29,7 @@ public class PeffServiceImpl implements PeffService {
         
         IsoformSequenceInfoPeff peff = new IsoformSequenceInfoPeff();
 
+        peff.setIsoformAccession(isoformAccession);
         peff.setIsoformAccessionFormat(formatIsoformAccession(isoformAccession));
         peff.setProteinNameFormat(formatProteinName(isoformAccession));
         peff.setGeneNameFormat(formatGeneName(isoformAccession));
