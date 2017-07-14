@@ -72,7 +72,9 @@ public class IsoformSequenceInfoPeff implements Serializable {
                 getProcessedMoleculeFormat()       // \Processed
         );
 
-        return keyValuePairsList.stream().collect(Collectors.joining(" "));
+        return keyValuePairsList.stream()
+                .filter(kv -> !kv.isEmpty())
+                .collect(Collectors.joining(" "));
     }
 
     public String getIsoformAccession() {

@@ -43,7 +43,7 @@ public abstract class SequenceInfoFormatter {
 
         String value = formatValue(entry, isoformAccession);
 
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
             return "\\" + key.getName() + "=" + value;
         }
 
