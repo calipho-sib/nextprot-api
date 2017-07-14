@@ -34,7 +34,7 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
         }
     }
 
-    private boolean doHandleAnnotation(Annotation annotation) {
+    protected boolean doHandleAnnotation(Annotation annotation, String isoformAccession) {
 
         return supportedApiModels.contains(annotation.getAPICategory());
     }
@@ -53,10 +53,7 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
         for (Annotation annotation : extractAnnotation(entry, isoformAccession)) {
 
-            if (doHandleAnnotation(annotation)) {
-
-                formatAnnotation(isoformAccession, annotation, sb);
-            }
+            formatAnnotation(isoformAccession, annotation, sb);
         }
 
         return sb.toString();
@@ -68,7 +65,7 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoformAccession)) {
 
-            if (doHandleAnnotation(annotation)) {
+            if (doHandleAnnotation(annotation, isoformAccession)) {
 
                 annots.add(annotation);
             }
