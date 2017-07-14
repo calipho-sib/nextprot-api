@@ -38,14 +38,14 @@ public interface TerminologyService {
 
 	/**
 	 * Retrieves terms sorted by ontology
-	 * 
+	 *
 	 * @return
 	 */
 	List<CvTerm> findAllCVTerms();
 
 	/**
 	 * Gets enzyme terminologies
-	 * 
+	 *
 	 * @param entryName
 	 * @return
 	 */
@@ -60,15 +60,16 @@ public interface TerminologyService {
 
 	/**
 	 * Get the list of xref(s) accession found for the specific database
-	 * @param accession the cvterm accession
+	 *
+	 * @param cvTermAccession the cvterm accession
 	 * @param databaseName the database name of the
 	 * @return a xref accessions list
 	 */
-	default List<String> findCvTermXrefAccessionList(String accession, String databaseName) {
+	default List<String> findCvTermXrefAccessionList(String cvTermAccession, String databaseName) {
 
-		Preconditions.checkNotNull(accession);
+		Preconditions.checkNotNull(cvTermAccession);
 
-		CvTerm term = findCvTermByAccession(accession);
+		CvTerm term = findCvTermByAccession(cvTermAccession);
 
 		List<String> accessions = new ArrayList<>();
 
@@ -83,9 +84,17 @@ public interface TerminologyService {
 		return accessions;
 	}
 
-	default String findPsiModAccession(String accession) {
+	/**
+	 * @return the PSI-MOD name of the given cv term or null if not find
+	 */
+	String findPsiModName(String cvTermAccession);
 
-		List<String> accessions = findCvTermXrefAccessionList(accession, "PSI-MOD");
+	/**
+	 * @return the PSI-MOD accession of the given cv term or null if not find
+	 */
+	default String findPsiModAccession(String cvTermAccession) {
+
+		List<String> accessions = findCvTermXrefAccessionList(cvTermAccession, "PSI-MOD");
 
 		if (!accessions.isEmpty()) {
 
