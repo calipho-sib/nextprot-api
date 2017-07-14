@@ -15,18 +15,31 @@ import java.util.function.Function;
 public class ModResPsiFormatter extends PTMInfoFormatter {
 
     private final Function<String, String> uniprotModToPsi;
+    private final Function<String, String> psiAccessionToName;
 
     public ModResPsiFormatter(Function<String, String> uniprotModToPsi) {
+
+        this(uniprotModToPsi, (m) -> (m));
+    }
+
+    public ModResPsiFormatter(Function<String, String> uniprotModToPsi, Function<String, String> psiAccessionToName) {
 
         super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
                 SequenceDescriptorKey.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
+        this.psiAccessionToName = psiAccessionToName;
     }
 
     @Override
     protected String getModAccession(Annotation annotation) {
 
         return uniprotModToPsi.apply(annotation.getCvTermAccessionCode());
+    }
+
+    @Override
+    protected String getModName(Annotation annotation) {
+
+        return psiAccessionToName.apply(getModAccession(annotation));
     }
 }

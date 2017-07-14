@@ -31,10 +31,13 @@ public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoForma
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
         sb
+                .append("(")
                 .append(annotation.getStartPositionForIsoform(isoformAccession))
                 .append("|")
                 .append(annotation.getEndPositionForIsoform(isoformAccession))
                 .append("|")
-                .append(PSI_PEFF_MAP.get(annotation.getAPICategory()));
+                .append(PSI_PEFF_MAP.get(annotation.getAPICategory()))
+                .append(")")
+        ;
     }
 }

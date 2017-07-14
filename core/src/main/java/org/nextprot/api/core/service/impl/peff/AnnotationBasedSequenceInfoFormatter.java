@@ -41,6 +41,11 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
     protected abstract void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb);
 
+    protected Comparator<Annotation> createAnnotationComparator(String isoformAccession) {
+
+        return Comparator.comparingInt(a -> a.getStartPositionForIsoform(isoformAccession));
+    }
+
     @Override
     protected String formatValue(Entry entry, String isoformAccession) {
 
@@ -50,20 +55,18 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
             if (doHandleAnnotation(annotation)) {
 
-                sb.append("(");
                 formatAnnotation(isoformAccession, annotation, sb);
-                sb.append(")");
             }
         }
 
         return sb.toString();
     }
 
-    private List<Annotation> extractAnnotation(Entry entry, String isoformName) {
+    private List<Annotation> extractAnnotation(Entry entry, String isoformAccession) {
 
         List<Annotation> annots = new ArrayList<>();
 
-        for (Annotation annotation : entry.getAnnotationsByIsoform(isoformName)) {
+        for (Annotation annotation : entry.getAnnotationsByIsoform(isoformAccession)) {
 
             if (doHandleAnnotation(annotation)) {
 
@@ -71,7 +74,7 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
             }
         }
 
-        annots.sort(Comparator.comparingInt(a -> a.getStartPositionForIsoform(isoformName)));
+        annots.sort(createAnnotationComparator(isoformAccession));
 
         return annots;
     }

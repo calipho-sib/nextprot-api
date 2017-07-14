@@ -19,17 +19,19 @@ public abstract class PTMInfoFormatter extends AnnotationBasedSequenceInfoFormat
     }
 
     protected abstract String getModAccession(Annotation annotation);
-    //protected abstract String getModName(Annotation annotation);
+    protected abstract String getModName(Annotation annotation);
 
     @Override
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
         sb
+                .append("(")
                 .append(annotation.getStartPositionForIsoform(isoformAccession))
                 .append("|")
                 .append(getModAccession(annotation))
                 .append("|")
-                //.append(getModName(annotation))
+                .append(getModName(annotation))
+                .append(")")
         ;
     }
 }
