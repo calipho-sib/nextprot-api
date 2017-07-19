@@ -9,8 +9,6 @@ public class IsoformSequenceInfoPeff implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String headerFormat;
-
     private String isoformAccession;
 
     private String isoformAccessionFormat;
@@ -41,35 +39,23 @@ public class IsoformSequenceInfoPeff implements Serializable {
 
     private String processedMoleculeFormat;
 
-    public String getHeaderFormat() {
+    public static String toPeffHeader(IsoformSequenceInfoPeff pojo) {
 
-        // lazy building
-        if (headerFormat == null) {
-            this.headerFormat = formatHeader();
-        }
-        return headerFormat;
-    }
-
-    private String formatHeader() {
-
-        String prefixUniqueId = ">nxp:" + getIsoformAccession();
-
-        List<String> keyValuePairsList = Arrays.asList(
-                prefixUniqueId,                    // >nxp
-                getIsoformAccessionFormat(),       // \DbUniqueId
-                getProteinNameFormat(),            // \PName
-                getGeneNameFormat(),               // \GName
-                getNcbiTaxonomyIdentifierFormat(), // \Ncbi
-                getTaxonomyNameFormat(),           // \TaxName
-                getSequenceLengthFormat(),         // \Length
-                getSequenceVersionFormat(),        // \SV
-                getEntryVersionFormat(),           // \EV
-                getProteinEvidenceFormat(),        // \PE
-                getModResPsiFormat(),              // \ModResPsi
-                getModResFormat(),                 // \ModRes
-                getVariantSimpleFormat(),          // \VariantSimple
-                getVariantComplexFormat(),         // \VariantComplex
-                getProcessedMoleculeFormat()       // \Processed
+        List<String> keyValuePairsList = Arrays.asList("nxp:" + pojo.getIsoformAccession(),
+                pojo.getIsoformAccessionFormat(),       // \DbUniqueId
+                pojo.getProteinNameFormat(),            // \PName
+                pojo.getGeneNameFormat(),               // \GName
+                pojo.getNcbiTaxonomyIdentifierFormat(), // \Ncbi
+                pojo.getTaxonomyNameFormat(),           // \TaxName
+                pojo.getSequenceLengthFormat(),         // \Length
+                pojo.getSequenceVersionFormat(),        // \SV
+                pojo.getEntryVersionFormat(),           // \EV
+                pojo.getProteinEvidenceFormat(),        // \PE
+                pojo.getModResPsiFormat(),              // \ModResPsi
+                pojo.getModResFormat(),                 // \ModRes
+                pojo.getVariantSimpleFormat(),          // \VariantSimple
+                pojo.getVariantComplexFormat(),         // \VariantComplex
+                pojo.getProcessedMoleculeFormat()       // \Processed
         );
 
         return keyValuePairsList.stream()

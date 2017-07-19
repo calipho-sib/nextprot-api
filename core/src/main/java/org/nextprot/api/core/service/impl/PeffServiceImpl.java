@@ -47,10 +47,8 @@ public class PeffServiceImpl implements PeffService {
 
         return peff;
     }
-
+    
     // TODO: Refactor this code to traverse Entry once, gather all and then give them to proper formatter
-
-    @Override
     public String formatIsoformAccession(String isoformAccession) {
 
         return new SimpleSequenceInfoFormatter(SequenceDescriptorKey.DB_UNIQUE_ID, isoformAccession)

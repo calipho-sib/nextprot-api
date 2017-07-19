@@ -23,6 +23,13 @@ public interface IsoformService {
 	Isoform findIsoformByName(String entryAccession, String name);
 
 	/**
+	 * Format sequence informations as header in peff format
+	 * @param isoformAccession the isoform accession
+	 * @return the PEFF format header
+	 */
+	String formatPeffHeader(String isoformAccession);
+
+	/**
 	 * Find the isoform of the given entry matching the given accession
 	 * @param isoformAccession the isoform accession
 	 * @return the found isoform or null if not found
