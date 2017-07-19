@@ -137,9 +137,9 @@ class TerminologyServiceImpl implements TerminologyService {
 
 		String psiModAccession = findPsiModAccession(cvTermAccession);
 
-		String filename = getClass().getResource("peff/PSI-MOD.obo").getFile();
+		InputStream is = getClass().getResourceAsStream("peff/PSI-MOD.obo");
 
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
 			String line;
 
