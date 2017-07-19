@@ -7,7 +7,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
 
     @Autowired
@@ -115,6 +115,12 @@ public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
     @Test
     public void testProcessedMoleculeFormat() throws Exception {
 
-        Assert.assertEquals("\\Processed=(1|1360|CHAIN)", peffService.formatProcessedMolecule("NX_P52701-1"));
+        Assert.assertEquals("\\Processed=(1|1360|mature protein)", peffService.formatProcessedMolecule("NX_P52701-1"));
+    }
+
+    @Test
+    public void testProcessedInsulinMoleculeFormat() throws Exception {
+
+        Assert.assertEquals("\\Processed=(1|24|signal peptide)(25|54|mature protein)(57|87|maturation peptide)(90|110|mature protein)", peffService.formatProcessedMolecule("NX_P01308-1"));
     }
 }
