@@ -9,22 +9,22 @@ import java.util.Map;
 
 public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
 
-    private static final Map<AnnotationCategory, String> PSI_PEFF_MAP;
+    private static final Map<AnnotationCategory, String> ANNOTATION_CATEGORY_TO_NAME;
 
     static {
 
-        PSI_PEFF_MAP = new HashMap<>();
+        ANNOTATION_CATEGORY_TO_NAME = new HashMap<>();
 
-        PSI_PEFF_MAP.put(AnnotationCategory.SIGNAL_PEPTIDE, "SIGNAL");
-        PSI_PEFF_MAP.put(AnnotationCategory.MATURATION_PEPTIDE, "PROPEP");
-        PSI_PEFF_MAP.put(AnnotationCategory.MATURE_PROTEIN, "CHAIN");
-        PSI_PEFF_MAP.put(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE, "TRANSIT");
-        PSI_PEFF_MAP.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.SIGNAL_PEPTIDE, "signal peptide");                 // was "SIGNAL"
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MATURATION_PEPTIDE, "maturation peptide");         // was "PROPEP"
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MATURE_PROTEIN, "mature protein");                 // was "CHAIN"
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE, "transit peptide");    // was "TRANSIT"
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "transit peptide"); // was "TRANSIT"
     }
 
     public ProcessedMoleculeFormatter() {
 
-        super(PSI_PEFF_MAP.keySet(), SequenceDescriptorKey.PROCESSED);
+        super(ANNOTATION_CATEGORY_TO_NAME.keySet(), SequenceDescriptorKey.PROCESSED);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoForma
                 .append("|")
                 .append(annotation.getEndPositionForIsoform(isoformAccession))
                 .append("|")
-                .append(PSI_PEFF_MAP.get(annotation.getAPICategory()))
+                .append(ANNOTATION_CATEGORY_TO_NAME.get(annotation.getAPICategory()))
                 .append(")")
         ;
     }
