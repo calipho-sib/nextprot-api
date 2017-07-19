@@ -69,18 +69,6 @@ public class NXVelocityUtils {
 		return String.valueOf(Math.round(d));
 	}
 
-	/**
-	 * Format PEFF header of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
-	 *
-	 * @param entry the entry to find variant from
-	 * @param isoform the isoform to find variant of
-	 * @return a PEFF formatted header
-	 */
-	public static String buildPeffHeader(Entry entry, Isoform isoform) {
-
-		return null; //new PeffHeaderFormatterImpl(entry, isoform).format();
-	}
-	
 	public static PropertyWriter getXMLPropertyWriter(AnnotationCategory aModel, String propertyDbName) {
 		return PropertyApiModel.getXMLWriter(aModel, propertyDbName);
 	}
