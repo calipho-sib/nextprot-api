@@ -98,7 +98,7 @@
 				<entry key="ttl" value="text/turtle" />
 				<entry key="html" value="text/html" />
 				<entry key="fasta" value="text/fasta" />
-				<!--<entry key="peff" value="text/peff" /> -->
+				<entry key="peff" value="text/peff" />
 				<entry key="tsv" value="text/tab-separated-values" />
 				<entry key="txt" value="text/plain" />
 				<entry key="xls" value="application/vnd.ms-excel" />
@@ -135,9 +135,10 @@
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
-				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-					<property name="prefix" value="peff/" /> <property name="suffix" value=".vm"
-					/> <property name="contentType" value="text/peff;charset=UTF-8" /> </bean> -->
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="peff/" />
+					<property name="suffix" value=".vm"/>
+					<property name="contentType" value="text/peff;charset=UTF-8" /> </bean>
 				<bean
 					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="fasta/" />
