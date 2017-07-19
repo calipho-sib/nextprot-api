@@ -31,4 +31,8 @@ public class NXVelocityContext extends VelocityContext {
 		}
 	}
 
+	public void add(String key, Object value) {
+
+		put(key, value);
+	}
 }

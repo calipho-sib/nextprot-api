@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.web.NXVelocityContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,8 +32,12 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void handleEntry(Entry entry) {
+    protected NXVelocityContext newNXVelocityContext(Entry entry) {
 
-        //IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, terminologyMapper);
+        NXVelocityContext velocityContext = super.newNXVelocityContext(entry);
+
+        velocityContext.add("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entry.getUniqueName()));
+
+        return velocityContext;
     }
 }

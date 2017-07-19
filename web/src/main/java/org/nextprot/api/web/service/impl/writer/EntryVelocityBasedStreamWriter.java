@@ -5,6 +5,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
@@ -24,6 +25,7 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
+    protected EntryReportService entryReportService;
     protected VelocityConfig velocityConfig;
     private final Template template;
     private final String viewName;
@@ -36,6 +38,7 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
         Preconditions.checkNotNull(viewName);
 
         entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
+        entryReportService = applicationContext.getBean(EntryReportService.class);
         velocityConfig = applicationContext.getBean(VelocityConfig.class);
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
 
@@ -64,8 +67,7 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
 
         Entry entry = entryBuilderService.build(entryConfig);
 
-        handleEntry(entry);
-        handleTemplateMerge(template, new NXVelocityContext(entry));
+        handleTemplateMerge(template, newNXVelocityContext(entry));
     }
 
     protected void handleTemplateMerge(Template template, VelocityContext context) throws IOException {
@@ -73,5 +75,8 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
         template.merge(context, getStream());
     }
 
-    protected void handleEntry(Entry entry) { }
+    protected NXVelocityContext newNXVelocityContext(Entry entry) {
+
+        return new NXVelocityContext(entry);
+    }
 }
