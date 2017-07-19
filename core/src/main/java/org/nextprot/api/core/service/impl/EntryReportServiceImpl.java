@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,9 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     @Autowired
     private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private IsoformService isoformService;
 
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
@@ -61,7 +66,15 @@ public class EntryReportServiceImpl implements EntryReportService {
     public boolean entryIsPhosphorylated(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
     	return containsPtmAnnotation(entry, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
     }
-    
+
+    @Override
+    public Map<String, String> reportIsoformPeffHeaders(String entryAccession) {
+
+        return isoformService.findIsoformsByEntryName(entryAccession).stream()
+                .collect(Collectors.toMap(Isoform::getIsoformAccession,
+                        isoform -> isoformService.formatPeffHeader(isoform.getIsoformAccession())));
+    }
+
     private void setEntryDescription(Entry entry, EntryReport report) {
 
         report.setDescription(entry.getOverview().getRecommendedProteinName().getName());
