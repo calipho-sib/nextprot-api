@@ -9,7 +9,8 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,11 +26,15 @@ class IsoformServiceImpl implements IsoformService {
 	@Autowired
 	private IsoformDAO isoformDAO;
 
-	
 	@Autowired
 	private MasterIsoformMappingDao masterIsoformMappingDAO;
 
-	
+	@Autowired
+	private EntityNameService entityNameService;
+
+	@Autowired
+	private PeffService peffService;
+
 	@Override
 	@Cacheable("isoforms")
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
@@ -40,13 +45,13 @@ class IsoformServiceImpl implements IsoformService {
 		//Groups the synonyms by their main isoform
 		Multimap<String, EntityName> synonymsMultiMap = Multimaps.index(synonyms, new SynonymFunction());
 		for (Isoform isoform : isoforms) {
-			isoform.setSynonyms(synonymsMultiMap.get(isoform.getUniqueName()));
+			isoform.setSynonyms(synonymsMultiMap.get(isoform.getIsoformAccession()));
 		}
 
 		//Attach master mapping to each isoform
 		for (Isoform isoform : isoforms) {
-			if (isoMasterNuPosRanges.containsKey(isoform.getUniqueName())) {
-				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getUniqueName()));
+			if (isoMasterNuPosRanges.containsKey(isoform.getIsoformAccession())) {
+				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getIsoformAccession()));
 			} else {
 				isoform.setMasterMapping(new ArrayList<>());
 			}
@@ -57,11 +62,35 @@ class IsoformServiceImpl implements IsoformService {
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
 	}
-	
+
+	@Override
+	public Isoform findIsoformByName(String entryName, String name) {
+
+		List<Isoform> isoforms = findIsoformsByEntryName(entryName);
+
+		for (Isoform isoform : isoforms) {
+
+			if (isoform.getIsoformAccession().equals(name)) {
+				return isoform;
+			}
+			else if (entityNameService.hasName(isoform.getMainEntityName(), name)) {
+				return isoform;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	@Cacheable("peff-by-isoform")
+	public String formatPeffHeader(String isoformAccession) {
+
+		return IsoformSequenceInfoPeff.toPeffHeader(peffService.formatSequenceInfo(isoformAccession));
+	}
+
 	private class SynonymFunction implements Function<EntityName, String> {
 		public String apply(EntityName isoformSynonym) {
 			return isoformSynonym.getMainEntityName();
 		}
 	}
-
 }

@@ -8,7 +8,6 @@ import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -17,8 +16,6 @@ import java.util.Map;
 
 public class NXVelocityUtils {
 	
-	private static final PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
-
     private NXVelocityUtils() {
         throw new AssertionError("should not be instanciable");
     }
@@ -72,35 +69,6 @@ public class NXVelocityUtils {
 		return String.valueOf(Math.round(d));
 	}
 
-	/**
-	 * Format PEFF header of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
-	 *
-	 * @param entry the entry to find variant from
-	 * @param isoform the isoform to find variant of
-	 * @return a PEFF formatted header
-	 */
-	public static String buildPeffHeader(Entry entry, Isoform isoform) {
-
-		StringBuilder sb = new StringBuilder().append(isoform.getUniqueName())
-				.append(" \\DbUniqueId=").append(isoform.getUniqueName());
-
-		Overview overview = entry.getOverview();
-
-		if (overview.hasMainProteinName())
-			sb.append("\\Pname=").append(overview.getMainProteinName());
-		if (overview.hasMainGeneName())
-			sb.append("\\Gname=").append(overview.getMainGeneName());
-
-		sb.append("\\NcbiTaxId=9606 \\TaxName=Homo Sapiens \\Length=").append(isoform.getSequence().length())
-				.append("\\SV=").append(overview.getHistory().getSequenceVersion())
-				.append("\\EV=").append(overview.getHistory().getUniprotVersion())
-				.append("\\PE=").append(overview.getProteinExistenceLevel());
-
-		sb.append(PEFF_FORMATTER.formatIsoformAnnotations(entry, isoform));
-
-		return sb.toString();
-	}
-	
 	public static PropertyWriter getXMLPropertyWriter(AnnotationCategory aModel, String propertyDbName) {
 		return PropertyApiModel.getXMLWriter(aModel, propertyDbName);
 	}

@@ -885,8 +885,8 @@
                         suffix = ".tsv";
                     if (headers["Accept"] == "application/vnd.ms-excel")
                         suffix = ".xls";
-                    //if (headers["Accept"] == "text/peff")
-                    //	suffix = "peff";
+                    if (headers["Accept"] == "text/peff")
+                    	suffix = ".peff";
 
 					// extract path
                     if (replacedPath.indexOf('?') != -1) {

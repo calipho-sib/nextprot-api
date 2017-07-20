@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
@@ -141,5 +142,46 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertEquals(64,maxref);
 	}
 
+	@Test
+	public void shouldFindXrefPsiMod()  {
+
+		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("PTM-0135", "PSI-MOD");
+		Assert.assertEquals(1, accessionList.size());
+		Assert.assertEquals("00134", accessionList.get(0));
+	}
+
+	@Test
+	public void shouldFindXrefPsiMod2()  {
+
+		String accession = terminologyService.findPsiModAccession("PTM-0135");
+		Assert.assertEquals("MOD:00134", accession);
+	}
+
+	@Test
+	public void shouldNotFindXrefPsiMod()  {
+
+		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("TS-0001", "PSI-MOD");
+
+		Assert.assertTrue(accessionList.isEmpty());
+	}
+
+	@Test
+	public void shouldFindXrefMesh()  {
+
+		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("TS-0001", "MeSH");
+
+		Assert.assertEquals(1, accessionList.size());
+		Assert.assertEquals("D000005", accessionList.get(0));
+	}
+
+	@Test
+	public void shouldFindMultipleXrefAccessions()  {
+
+		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("TS-0079", "BRENDA");
+
+		Assert.assertEquals(2, accessionList.size());
+		Assert.assertTrue(accessionList.contains("BTO:0000553"));
+		Assert.assertTrue(accessionList.contains("BTO:0000089"));
+	}
 }
 

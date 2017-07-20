@@ -2,13 +2,12 @@ package org.nextprot.api.core.domain;
 
 import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.utils.TerminologyUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.nextprot.api.core.utils.TerminologyUtils;
 
 public class CvTerm implements Serializable {
     
@@ -132,7 +131,7 @@ public class CvTerm implements Serializable {
 
 	public List<DbXref> getFilteredXrefs(String category) {
 		if(xrefs == null) return null;
-		List<DbXref> filteredxrefs = new ArrayList<DbXref>();
+		List<DbXref> filteredxrefs = new ArrayList<>();
 		for (DbXref currxref : xrefs) {
 			if(currxref.getDatabaseCategory().equals(category)) filteredxrefs.add(currxref);
 		}
@@ -145,7 +144,7 @@ public class CvTerm implements Serializable {
 	}
 
 	public List<String> getSameAs() {
-		// To remain compatible with previous API version (Terminology.getAameAs() is used for ttl generation in term.ttl.vm )
+		// To remain compatible with previous API version (Terminology.getSameAs() is used for ttl generation in term.ttl.vm )
 		return TerminologyUtils.convertXrefsToSameAsStrings(getFilteredXrefs("Ontologies"));
 	}
 	
