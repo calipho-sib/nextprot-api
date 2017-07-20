@@ -68,7 +68,10 @@ public class EntryController {
 		}
 
 		model.addAttribute("entry", entry);
-		model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+
+		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
+			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+		}
 
 		return "entry";
 	}
