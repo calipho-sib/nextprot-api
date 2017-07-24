@@ -58,20 +58,25 @@ public class EntryController {
 			@RequestParam(value = "property-value", required = false) String propertyValue,
 			HttpServletRequest request,
 			Model model) {
-		
-		boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
 
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
+    	Entry entry;
 
-		if (ancestorTerm != null || propertyName != null) {
-			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
+
+			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
+			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+		}
+		else {
+			boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
+
+			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
+
+			if (ancestorTerm != null || propertyName != null) {
+				filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+			}
 		}
 
 		model.addAttribute("entry", entry);
-
-		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
-			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
-		}
 
 		return "entry";
 	}
