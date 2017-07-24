@@ -2,6 +2,8 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class IsoformSequenceInfoPeff implements Serializable {
@@ -249,17 +251,75 @@ public class IsoformSequenceInfoPeff implements Serializable {
                 .collect(Collectors.joining(" "));
     }
 
-    public static Map<String, String> toMap(IsoformSequenceInfoPeff pojo) {
+    public static Map<String, Object> toMap(IsoformSequenceInfoPeff pojo) {
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         toKeyValueStringList(pojo).stream()
                 .filter(kvs -> !kvs.isEmpty())
                 .forEach(kvs -> {
                     String[] kv = kvs.split("=");
-                    map.put(kv[0], kv[1]);
+                    map.put(kv[0], valueToObject(PEFF_KEY.valueOf(kv[0].substring(1)), kv[1]));
                 });
 
         return map;
+    }
+
+    // ex:
+    // \ModResPsi      (359|MOD:00046|O-phospho-L-serine)(1716|MOD:00047|O-phospho-L-threonine)(1778|MOD:00046|O-phospho-L-serine)
+    // \ModRes         (82||Disulfide)(110||Disulfide)(234||Disulfide)(247||Disulfide)(178||N-linked (GlcNAc...) (complex))
+    // \VariantSimple  (1|V)(1|I)(2|N)(4|R)(12|V)(13|F)(18|R)
+    // \VariantComplex (130|132|)(288|288|VA)(644|644|)(827|832|)(981|981|AP)(982|982|)(982|984|)
+    // \Processed      (26|281|mature protein)(1|25|signal peptide)
+    public static Object valueToObject(PEFF_KEY key, String value) {
+
+        Map<Integer, Set<String>> map = new HashMap<>();
+
+        Pattern field2Pattern = Pattern.compile("\\((\\d+)\\|(\\w+\\))", Pattern.DOTALL);
+        Pattern field3Pattern = Pattern.compile("\\((\\d+)\\|(\\w*)\\|(\\w+)\\)", Pattern.DOTALL);
+
+        switch (key) {
+            case DbUniqueId:
+            case PName:
+            case GName:
+            case NcbiTaxId:
+            case TaxName:
+            case Length:
+            case SV:
+            case EV:
+            case PE:
+                return value;
+            case ModResPsi:
+                addEntry(map, field3Pattern.matcher(value), 2);
+                break;
+            case ModRes:
+                addEntry(map, field3Pattern.matcher(value), 3);
+                break;
+            case VariantSimple:
+                addEntry(map, field2Pattern.matcher(value), 2);
+                break;
+            case VariantComplex:
+                addEntry(map, field3Pattern.matcher(value), 3);
+                break;
+            case Processed:
+                addEntry(map, field3Pattern.matcher(value), 3);
+                break;
+        }
+
+        return map;
+    }
+
+    private static void addEntry(Map<Integer, Set<String>> map, Matcher matcher, int fieldPos) {
+
+        while (matcher.find()) {
+
+            int pos = Integer.valueOf(matcher.group(1));
+            String field = matcher.group(fieldPos);
+
+            if (!map.containsKey(pos)) {
+                map.put(Integer.valueOf(matcher.group(1)), new HashSet<>());
+            }
+            map.get(pos).add((field != null) ? field : "");
+        }
     }
 }

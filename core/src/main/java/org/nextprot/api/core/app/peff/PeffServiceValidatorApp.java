@@ -51,15 +51,23 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         analysingDifferences(readExpectedIsoformPeffHeaders(), getIsoformPeffHeadersFromAPI());
     }
 
-    private void analysingDifferences(Map<String, Map<String, String>> expected, Map<String, Map<String, String>> observed) {
+    private void analysingDifferences(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
+
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated(observed.size());
+        pb.setTaskName("analysing diffs");
+        pb.start();
+
+        //pb.run(observed, (o) -> compare(expected.get(isoformAccession), o));
 
         for (String isoformAccession : observed.keySet()) {
 
             compare(expected.get(isoformAccession), observed.get(isoformAccession));
+            pb.incrementValue();
         }
+        pb.stop();
     }
 
-    private void compare(Map<String, String> expected, Map<String, String> observed) {
+    private void compare(Map<String, Object> expected, Map<String, Object> observed) {
 
         System.out.println("\n### Analysing isoform "+expected.get(IsoformSequenceInfoPeff.PEFF_KEY.DbUniqueId.getName()) + " ###");
 
@@ -67,8 +75,8 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
 
             String key = peffKey.getName();
 
-            String expectedValue = expected.get(key);
-            String observedValue = observed.get(key);
+            Object expectedValue = expected.get(key);
+            Object observedValue = observed.get(key);
 
             System.out.print("\tComparing value of key "+key+"... ");
             if (!Objects.equals(expectedValue, observedValue)) {
@@ -80,9 +88,9 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         }
     }
 
-    private Map<String, Map<String, String>> readExpectedIsoformPeffHeaders() throws FileNotFoundException {
+    private Map<String, Map<String, Object>> readExpectedIsoformPeffHeaders() throws FileNotFoundException {
 
-        Map<String, Map<String, String>> map = new HashMap<>();
+        Map<String, Map<String, Object>> map = new HashMap<>();
 
         String filename = "/Users/fnikitin/Documents/sib/nextprot/peff/nextprot_all_updatedTo1.0h.peff";
 
@@ -102,7 +110,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
                     String[] kvs = line.split("\\\\");
                     String isoformAccession = kvs[0].split(":")[1].trim();
 
-                    Map<String, String> kvm = new HashMap<>();
+                    Map<String, Object> kvm = new HashMap<>();
 
                     // populating peff key values
                     Arrays.stream(Arrays.copyOfRange(kvs, 1, kvs.length))
@@ -110,7 +118,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
                                 String[] kv = kvStr.trim().split("=");
 
                                 if (kv.length == 2) {
-                                    kvm.put("\\" + kv[0], kv[1]);
+                                    kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
                                 }
                             });
 
@@ -128,7 +136,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         }
     }
 
-    private Map<String, Map<String, String>> getIsoformPeffHeadersFromAPI() throws FileNotFoundException {
+    private Map<String, Map<String, Object>> getIsoformPeffHeadersFromAPI() throws FileNotFoundException {
 
         PeffService peffService = getBean(PeffService.class);
         IsoformService isoformService = getBean(IsoformService.class);
@@ -139,7 +147,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         pb.setTaskName("querying peff headers from api");
         pb.start();
 
-        Map<String, Map<String, String>> map = new HashMap<>();
+        Map<String, Map<String, Object>> map = new HashMap<>();
 
         for (String entryAc : allEntryAcs) {
 
