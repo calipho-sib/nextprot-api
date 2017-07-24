@@ -1,7 +1,9 @@
 package org.nextprot.api.commons.utils.app;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * A simple terminal progress bar.
@@ -122,6 +124,19 @@ import java.util.Objects;
         pb.setIndeterminate(true);
 
         return pb;
+    }
+
+    public <T> void run(Collection<T> objects, Consumer<T> consumer) {
+
+        start();
+
+        for (T object : objects) {
+
+            consumer.accept(object);
+            incrementValue();
+        }
+
+        stop();
     }
 
     public void setView(View view) {

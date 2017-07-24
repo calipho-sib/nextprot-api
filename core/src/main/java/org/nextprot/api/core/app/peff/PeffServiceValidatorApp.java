@@ -15,11 +15,9 @@ import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeffService;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -34,9 +32,12 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
 
     private static final Logger LOGGER = Logger.getLogger(PeffServiceValidatorApp.class);
 
+    private final String outputDirectory;
+
     private PeffServiceValidatorApp(String[] args) throws ParseException {
 
         super(args);
+        outputDirectory = getCommandLineParser().getOutputDirectory();
     }
 
     @Override
@@ -48,44 +49,22 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
     @Override
     protected void execute() throws IOException {
 
-        analysingDifferences(readExpectedIsoformPeffHeaders(), getIsoformPeffHeadersFromAPI());
+        String output = analysingDifferences(readExpectedIsoformPeffHeaders(), getIsoformPeffHeadersFromAPI());
+
+        PrintWriter pw = new PrintWriter(outputDirectory + "/peff-diffs.txt");
+        pw.write(output);
+        pw.close();
     }
 
-    private void analysingDifferences(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
+    private String analysingDifferences(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated(observed.size());
+
         pb.setTaskName("analysing diffs");
-        pb.start();
+        MyConsumer consumer = new MyConsumer(expected, observed);
+        pb.run(observed.keySet(), consumer);
 
-        //pb.run(observed, (o) -> compare(expected.get(isoformAccession), o));
-
-        for (String isoformAccession : observed.keySet()) {
-
-            compare(expected.get(isoformAccession), observed.get(isoformAccession));
-            pb.incrementValue();
-        }
-        pb.stop();
-    }
-
-    private void compare(Map<String, Object> expected, Map<String, Object> observed) {
-
-        System.out.println("\n### Analysing isoform "+expected.get(IsoformSequenceInfoPeff.PEFF_KEY.DbUniqueId.getName()) + " ###");
-
-        for (IsoformSequenceInfoPeff.PEFF_KEY peffKey : IsoformSequenceInfoPeff.PEFF_KEY.values()) {
-
-            String key = peffKey.getName();
-
-            Object expectedValue = expected.get(key);
-            Object observedValue = observed.get(key);
-
-            System.out.print("\tComparing value of key "+key+"... ");
-            if (!Objects.equals(expectedValue, observedValue)) {
-                System.out.println(" [DIFFS]\n\t\texpected="+ expectedValue+"\n\t\tobserved="+observedValue);
-            }
-            else {
-                System.out.println(" [EQUALS]");
-            }
-        }
+        return consumer.getOutput();
     }
 
     private Map<String, Map<String, Object>> readExpectedIsoformPeffHeaders() throws FileNotFoundException {
@@ -187,6 +166,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
      */
     static class ArgumentParser extends CommandLineSpringParser {
 
+        private String outputDirectory;
         private String entriesFilename;
 
         ArgumentParser(String appName) {
@@ -210,9 +190,16 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
+
             if (commandLine.hasOption("f")) {
                 entriesFilename = commandLine.getOptionValue("f");
             }
+        }
+
+        public String getOutputDirectory() {
+
+            return outputDirectory;
         }
 
         Set<String> getNextprotEntriesFromFile() throws FileNotFoundException {
@@ -230,6 +217,60 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         }
     }
 
+    static class MyConsumer implements Consumer<String> {
+
+        private final Map<String, Map<String, Object>> expected;
+        private final Map<String, Map<String, Object>> observed;
+        private final StringBuilder sb = new StringBuilder();
+
+        MyConsumer(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
+            this.expected = expected;
+            this.observed = observed;
+        }
+
+        @Override
+        public void accept(String isoformAccession) {
+
+            compare(expected.get(isoformAccession), observed.get(isoformAccession));
+        }
+
+        private void compare(Map<String, Object> expected, Map<String, Object> observed) {
+
+            sb
+                    .append("\n### Analysing isoform ")
+                    .append(expected.get(IsoformSequenceInfoPeff.PEFF_KEY.DbUniqueId.getName()))
+                    .append(" ###\n");
+
+            for (IsoformSequenceInfoPeff.PEFF_KEY peffKey : IsoformSequenceInfoPeff.PEFF_KEY.values()) {
+
+                String key = peffKey.getName();
+
+                Object expectedValue = expected.get(key);
+                Object observedValue = observed.get(key);
+
+                sb
+                        .append("\tComparing value of key ")
+                        .append(key)
+                        .append("... ");
+
+                if (!Objects.equals(expectedValue, observedValue)) {
+                    sb
+                            .append(" [DIFFS]\n\t\texpected=")
+                            .append(expectedValue)
+                            .append("\n\t\tobserved=")
+                            .append(observedValue)
+                            .append("\n");
+                }
+                else {
+                    sb.append(" [EQUALS]\n");
+                }
+            }
+        }
+
+        public String getOutput() {
+            return sb.toString();
+        }
+    }
     /**
      * @param args contains mandatory and optional arguments
      *  Mandatory : export-dir-path
