@@ -8,11 +8,9 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.PeffService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.web.service.EntryPageService;
@@ -39,6 +37,7 @@ public class EntryController {
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private PeffService peffService;
+	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -119,6 +118,12 @@ public class EntryController {
 			@PathVariable("accession") String isoformAccession) {
 
 		return peffService.formatSequenceInfo(isoformAccession);
+	}
+
+	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 
 	/**
