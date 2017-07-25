@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class EntryControllerTest extends MVCDBUnitBaseTest {
 
     @Test
