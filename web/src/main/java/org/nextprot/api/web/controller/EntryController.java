@@ -99,7 +99,7 @@ public class EntryController {
 	}
 
 	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public List<EntryReport> getEntryReport(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -111,7 +111,7 @@ public class EntryController {
 	}
 
 	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET })
+	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public IsoformSequenceInfoPeff getIsoformSequenceInfos(
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
@@ -131,7 +131,7 @@ public class EntryController {
 	 * @param entryName the nextprot accession number
 	 * @return a map of page label to boolean
 	 */
-	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Map<String, Boolean> testPageDisplay(@PathVariable("entry") String entryName) {
 
@@ -143,7 +143,7 @@ public class EntryController {
 	 * @param entryName the nextprot accession number
 	 * @return the annotation count
 	 */
-	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Integer countAnnotation(@PathVariable("entry") String entryName) {
 
