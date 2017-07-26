@@ -16,6 +16,8 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeffService;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -58,57 +60,24 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
 
     private String analysingDifferences(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(observed.size());
-
-        pb.setTaskName("analysing diffs");
-        MyConsumer consumer = new MyConsumer(expected, observed);
-        pb.run(observed.keySet(), consumer);
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing diffs", observed.size() );
+        DataToCompareConsumer consumer = new DataToCompareConsumer(expected, observed);
+        pb.run(observed.keySet().stream(), consumer);
 
         return consumer.getOutput();
     }
 
     private Map<String, Map<String, Object>> readExpectedIsoformPeffHeaders() throws FileNotFoundException {
 
-        Map<String, Map<String, Object>> map = new HashMap<>();
-
         String filename = "/Users/fnikitin/Documents/sib/nextprot/peff/nextprot_all_updatedTo1.0h.peff";
 
-        ConsoleProgressBar pb = ConsoleProgressBar.indeterminated();
-        pb.setTaskName("reading expected peff headers from file");
-        pb.start();
+        ConsoleProgressBar pb = ConsoleProgressBar.indeterminated("reading expected peff headers from file");
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        try {
+            ExpectedPeffParser parser = new ExpectedPeffParser();
+            pb.run(Files.lines(Paths.get(filename)), parser);
 
-            String line;
-
-            while ((line = br.readLine()) != null) {
-
-                if (line.startsWith(">nxp:")) {
-
-                    // extract isoform accession
-                    String[] kvs = line.split("\\\\");
-                    String isoformAccession = kvs[0].split(":")[1].trim();
-
-                    Map<String, Object> kvm = new HashMap<>();
-
-                    // populating peff key values
-                    Arrays.stream(Arrays.copyOfRange(kvs, 1, kvs.length))
-                            .forEach(kvStr ->  {
-                                String[] kv = kvStr.trim().split("=");
-
-                                if (kv.length == 2) {
-                                    kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
-                                }
-                            });
-
-                    // adding kvs for isoform accession
-                    map.put(isoformAccession, kvm);
-                    pb.incrementValue();
-                }
-            }
-            pb.stop();
-
-            return map;
+            return parser.isoToPeffHeader;
         } catch (IOException e) {
 
             throw new IllegalStateException(e.getMessage()+": cannot open file nextprot_all_updatedTo1.0h.peff");
@@ -117,36 +86,13 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
 
     private Map<String, Map<String, Object>> getIsoformPeffHeadersFromAPI() throws FileNotFoundException {
 
-        PeffService peffService = getBean(PeffService.class);
-        IsoformService isoformService = getBean(IsoformService.class);
-
         Set<String> allEntryAcs = getNextprotEntries();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(allEntryAcs.size());
-        pb.setTaskName("querying peff headers from api");
-        pb.start();
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("querying peff headers from api", allEntryAcs.size());
+        ObservedPeffCollector collector = new ObservedPeffCollector(getBean(PeffService.class), getBean(IsoformService.class));
+        pb.run(allEntryAcs.stream(), collector);
 
-        Map<String, Map<String, Object>> map = new HashMap<>();
-
-        for (String entryAc : allEntryAcs) {
-
-            try {
-                isoformService.findIsoformsByEntryName(entryAc).stream()
-                        .map(Isoform::getIsoformAccession)
-                        .forEach(isoformAccession -> map.put(isoformAccession,
-                                IsoformSequenceInfoPeff.toMap(peffService.formatSequenceInfo(isoformAccession))))
-                ;
-
-                pb.incrementValue();
-            } catch (EntryNotFoundException e) {
-
-                LOGGER.error(e.getMessage() + ": skipping entry " + entryAc);
-            }
-        }
-
-        pb.stop();
-
-        return map;
+        return collector.map;
     }
 
     private Set<String> getNextprotEntries() throws FileNotFoundException {
@@ -217,13 +163,13 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         }
     }
 
-    static class MyConsumer implements Consumer<String> {
+    static class DataToCompareConsumer implements Consumer<String> {
 
         private final Map<String, Map<String, Object>> expected;
         private final Map<String, Map<String, Object>> observed;
         private final StringBuilder sb = new StringBuilder();
 
-        MyConsumer(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
+        DataToCompareConsumer(Map<String, Map<String, Object>> expected, Map<String, Map<String, Object>> observed) {
             this.expected = expected;
             this.observed = observed;
         }
@@ -271,6 +217,66 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
             return sb.toString();
         }
     }
+
+    static class ExpectedPeffParser implements Consumer<String> {
+
+        private final Map<String, Map<String, Object>> isoToPeffHeader = new HashMap<>();
+
+        @Override
+        public void accept(String line) {
+
+            if (line.startsWith(">nxp:")) {
+
+                // extract isoform accession
+                String[] kvs = line.split("\\\\");
+                String isoformAccession = kvs[0].split(":")[1].trim();
+
+                Map<String, Object> kvm = new HashMap<>();
+
+                // populating peff key values
+                Arrays.stream(Arrays.copyOfRange(kvs, 1, kvs.length))
+                        .forEach(kvStr ->  {
+                            String[] kv = kvStr.trim().split("=");
+
+                            if (kv.length == 2) {
+                                kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
+                            }
+                        });
+
+                // adding kvs for isoform accession
+                isoToPeffHeader.put(isoformAccession, kvm);
+            }
+        }
+    }
+
+    static class ObservedPeffCollector implements Consumer<String> {
+
+        private final Map<String, Map<String, Object>> map = new HashMap<>();
+        private final PeffService peffService;
+        private final IsoformService isoformService;
+
+        ObservedPeffCollector(PeffService peffService, IsoformService isoformService) {
+            this.peffService = peffService;
+            this.isoformService = isoformService;
+        }
+
+        @Override
+        public void accept(String entryAccession) {
+
+            try {
+                isoformService.findIsoformsByEntryName(entryAccession).stream()
+                        .map(Isoform::getIsoformAccession)
+                        .forEach(isoformAccession -> map.put(isoformAccession,
+                                IsoformSequenceInfoPeff.toMap(peffService.formatSequenceInfo(isoformAccession)))
+                        )
+                ;
+            } catch (EntryNotFoundException e) {
+
+                LOGGER.error(e.getMessage() + ": skipping entry " + entryAccession);
+            }
+        }
+    }
+
     /**
      * @param args contains mandatory and optional arguments
      *  Mandatory : export-dir-path
