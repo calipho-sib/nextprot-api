@@ -25,20 +25,28 @@ import java.util.stream.Collectors;
 /**
  * Example of parameters:
  *
+ * -o /Users/lcastori/test/peff /Users/lcastori/test/peff/nextprot_all_updatedTo1.0h.peff
+ *
  * <ul>
  * <li>spring config profiles : -p "dev, cache"</li>
- * <li>output directory       : -o /home/npdbxref/output/ </li>
+ * <li>output directory       : -o /Users/lcastori/test/peff </li>
  * </ul>
  */
 public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidatorApp.ArgumentParser> {
 
     private static final Logger LOGGER = Logger.getLogger(PeffServiceValidatorApp.class);
 
+    private final String expectedPeffFilename;
     private final String outputDirectory;
 
     private PeffServiceValidatorApp(String[] args) throws ParseException {
 
         super(args);
+
+        if (!getCommandLineParser().hasRemainingArguments()) {
+            throw new IllegalArgumentException("missing file nextprot_all_updatedTo1.0h.peff");
+        }
+        expectedPeffFilename = getCommandLineParser().getRemainingArguments().get(0);
         outputDirectory = getCommandLineParser().getOutputDirectory();
     }
 
@@ -69,13 +77,11 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
 
     private Map<String, Map<String, Object>> readExpectedIsoformPeffHeaders() throws FileNotFoundException {
 
-        String filename = "/Users/fnikitin/Documents/sib/nextprot/peff/nextprot_all_updatedTo1.0h.peff";
-
         ConsoleProgressBar pb = ConsoleProgressBar.indeterminated("reading expected peff headers from file");
 
         try {
             ExpectedPeffParser parser = new ExpectedPeffParser();
-            pb.run(Files.lines(Paths.get(filename)), parser);
+            pb.run(Files.lines(Paths.get(expectedPeffFilename)).filter(l -> l.startsWith(">nxp:")), parser);
 
             return parser.isoToPeffHeader;
         } catch (IOException e) {
@@ -225,27 +231,24 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         @Override
         public void accept(String line) {
 
-            if (line.startsWith(">nxp:")) {
+            // extract isoform accession
+            String[] kvs = line.split("\\\\");
+            String isoformAccession = kvs[0].split(":")[1].trim();
 
-                // extract isoform accession
-                String[] kvs = line.split("\\\\");
-                String isoformAccession = kvs[0].split(":")[1].trim();
+            Map<String, Object> kvm = new HashMap<>();
 
-                Map<String, Object> kvm = new HashMap<>();
+            // populating peff key values
+            Arrays.stream(Arrays.copyOfRange(kvs, 1, kvs.length))
+                    .forEach(kvStr ->  {
+                        String[] kv = kvStr.trim().split("=");
 
-                // populating peff key values
-                Arrays.stream(Arrays.copyOfRange(kvs, 1, kvs.length))
-                        .forEach(kvStr ->  {
-                            String[] kv = kvStr.trim().split("=");
+                        if (kv.length == 2) {
+                            kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
+                        }
+                    });
 
-                            if (kv.length == 2) {
-                                kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
-                            }
-                        });
-
-                // adding kvs for isoform accession
-                isoToPeffHeader.put(isoformAccession, kvm);
-            }
+            // adding kvs for isoform accession
+            isoToPeffHeader.put(isoformAccession, kvm);
         }
     }
 
