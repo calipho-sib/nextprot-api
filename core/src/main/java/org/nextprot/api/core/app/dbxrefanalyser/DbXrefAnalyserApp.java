@@ -71,8 +71,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
         Set<String> allEntryAcs = getNextprotEntries();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(allEntryAcs.size());
-        pb.setTaskName("visiting nextprot entries");
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting nextprot entries", allEntryAcs.size());
         pb.start();
 
         for (String entryAc : allEntryAcs) {
@@ -120,8 +119,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(allCvTerms.size());
-        pb.setTaskName("visiting all cv terms");
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting all cv terms", allCvTerms.size());
 
         pb.start();
 
