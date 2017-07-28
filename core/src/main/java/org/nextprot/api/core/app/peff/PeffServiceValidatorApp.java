@@ -25,13 +25,14 @@ import java.util.stream.Collectors;
 /**
  * Example of parameters:
  *
- * -o /Users/lcastori/test/peff /Users/lcastori/test/peff/nextprot_all_updatedTo1.0h.peff
+ * -f /home/fnikitin/Projects/nextprot-api/core/src/main/resources/org/nextprot/api/core/app/peff/few-entries.txt
+ * -o /home/fnikitin/Projects/resources/peff /home/fnikitin/Projects/resources/peff/nextprot_all_updatedTo1.0h.peff
  *
  * <ul>
  * <li>spring config profiles : -p "dev, cache"</li>
  * <li>output directory       : -o /Users/lcastori/test/peff </li>
  * </ul>
- */
+*/
 public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidatorApp.ArgumentParser> {
 
     private static final Logger LOGGER = Logger.getLogger(PeffServiceValidatorApp.class);
@@ -44,7 +45,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
         super(args);
 
         if (!getCommandLineParser().hasRemainingArguments()) {
-            throw new IllegalArgumentException("missing file nextprot_all_updatedTo1.0h.peff");
+            throw new IllegalArgumentException("missing expected nextprot peff headers file");
         }
         expectedPeffFilename = getCommandLineParser().getRemainingArguments().get(0);
         outputDirectory = getCommandLineParser().getOutputDirectory();
