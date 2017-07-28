@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -149,6 +150,14 @@ public class Entry implements KeyValueRepresentation {
 		return annotations.stream().collect(Collectors.groupingBy(a -> {
 			return StringUtils.camelToKebabCase(a.getApiTypeName());
 		}));
+	}
+
+	public List<Annotation> getAnnotationsByCategory(AnnotationCategory category) {
+		if(annotations == null) return new ArrayList<>();
+
+		return annotations.stream()
+				.filter(a -> a.getAPICategory() == category)
+				.collect(Collectors.toList());
 	}
 
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
