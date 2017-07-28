@@ -99,6 +99,10 @@ public class EntryController {
 			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);
 		}
 
+		if (request.getRequestURI().toLowerCase().endsWith(".tsv")) {
+			model.addAttribute("tab","\t");
+		}
+
 		model.addAttribute("entry", entry);
 		return "entry";
 	}

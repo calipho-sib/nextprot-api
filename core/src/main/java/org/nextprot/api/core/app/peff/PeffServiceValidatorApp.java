@@ -25,11 +25,14 @@ import java.util.stream.Collectors;
 /**
  * Example of parameters:
  *
- * -o /Users/lcastori/test/peff /Users/lcastori/test/peff/nextprot_all_updatedTo1.0h.peff
+ * -p "dev, cache"
+ * -o /home/fnikitin/Projects/resources/peff
+ * -f /home/fnikitin/Projects/nextprot-api/core/src/main/resources/org/nextprot/api/core/app/peff/few-entries.txt
+ * /home/fnikitin/Projects/resources/peff/nextprot_all_updatedTo1.0h.peff
  *
  * <ul>
  * <li>spring config profiles : -p "dev, cache"</li>
- * <li>output directory       : -o /Users/lcastori/test/peff </li>
+ * <li>output directory       : -o /home/fnikitin/Projects/resources/peff </li>
  * </ul>
  */
 public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidatorApp.ArgumentParser> {
