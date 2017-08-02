@@ -3,6 +3,7 @@ package org.nextprot.api.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -45,6 +46,13 @@ public class Entry implements KeyValueRepresentation {
 
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
+	}
+
+	public Optional<ExperimentalContext> getExperimentalContext(long id) {
+
+		return experimentalContexts.stream()
+				.filter(ec -> ec.getContextId() == id)
+				.findAny();
 	}
 
 	public void setExperimentalContexts(List<ExperimentalContext> experimentalContexts) {
