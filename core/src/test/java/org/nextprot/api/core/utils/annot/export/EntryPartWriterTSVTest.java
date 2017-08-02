@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.annot.export;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -24,5 +25,7 @@ public class EntryPartWriterTSVTest extends CoreUnitBaseTest {
         writer.write(entry);
 
         String output = writer.getOutputString();
+        String headers = output.split("\n")[0];
+        Assert.assertEquals("ENTRY_ACCESSION\tTERM_ACCESSION\tTERM_NAME\tANNOTATION_QUALITY\tECO_ACCESSION\tECO_NAME\tEVIDENCE_ASSIGNED_BY\tEVIDENCE_QUALITY\tEXPRESSION_LEVEL\tSTAGE_ACCESSION\tSTAGE_NAME", headers);
     }
 }
