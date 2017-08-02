@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.nextprot.api.core.utils.annot.export.EntryPartExporter.Header.*;
+import static org.nextprot.api.core.utils.annot.export.Header.*;
 
 /**
  * Export data depending on the type of annotation to export (expression-profile, variants, ...)
@@ -30,7 +30,7 @@ public class EntryPartExporterImpl implements EntryPartExporter {
 
         switch (subPart) {
             case "expression-profile":
-                builder.withHeaders(STAGE_ACCESSION, STAGE_NAME);
+                builder.addColumn(STAGE_ACCESSION, STAGE_NAME);
                 break;
             //default:
             //    throw new NextProtException("unknown subpart "+subPart);
@@ -44,9 +44,9 @@ public class EntryPartExporterImpl implements EntryPartExporter {
         return headers;
     }
 
-    public List<List<String>> getRows(Entry entry) {
+    public List<Row> exportRows(Entry entry) {
 
-        List<List<String>> rows = new ArrayList<>();
+        List<Row> rows = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotations()) {
 
@@ -56,7 +56,7 @@ public class EntryPartExporterImpl implements EntryPartExporter {
         return rows;
     }
 
-    private void writeEvidenceRows(List<List<String>> rows, Entry entry, Annotation annotation) {
+    private void writeEvidenceRows(List<Row> rows, Entry entry, Annotation annotation) {
 
         for (AnnotationEvidence evidence : annotation.getEvidences()) {
 
@@ -84,7 +84,7 @@ public class EntryPartExporterImpl implements EntryPartExporter {
             updateRow(row, ORGANELLE_ACCESSION,  ec.getOrganelleAC());
             updateRow(row, ORGANELLE_NAME,      (ec.getOrganelle() != null) ? ec.getOrganelle().getName() : "null");
 
-            rows.add(row);
+            rows.add(new Row(row));
         }
     }
 
@@ -121,13 +121,19 @@ public class EntryPartExporterImpl implements EntryPartExporter {
                     ECO_ACCESSION,
                     ECO_NAME,
                     EVIDENCE_ASSIGNED_BY,
+                    EVIDENCE_QUALITY,
                     EXPRESSION_LEVEL
             ));
         }
 
-        Builder withHeaders(Header... headers) {
+        Builder addColumn(Header... headers) {
 
-            this.headers.addAll(Arrays.asList(headers));
+            for (Header header : headers) {
+                if (!this.headers.contains(header)) {
+                    this.headers.add(header);
+                }
+            }
+
             return this;
         }
 

@@ -39,7 +39,7 @@ public class EntryPartWriterTSV extends EntryPartWriter<ByteArrayOutputStream> {
     @Override
     public void writeRows(Entry entry, ByteArrayOutputStream outputStream) throws IOException {
 
-        outputStream.write(exporter.getRows(entry).stream()
+        outputStream.write(exporter.exportRows(entry).stream()
                 .map(row -> row.stream().collect(Collectors.joining("\t")))
                 .collect(Collectors.joining("\n")).getBytes());
     }
