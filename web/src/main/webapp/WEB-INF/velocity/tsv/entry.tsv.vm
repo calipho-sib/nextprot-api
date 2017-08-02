@@ -1,6 +1,1 @@
-Entry accession${tab}Term name${tab}Term accession${tab}Term description${tab}Quality${tab}ecoCodeAccession${tab}ecoCodeName${tab}assignedBy${tab}database${tab}resource accession
-#foreach($annotation in $entry.getAnnotations())
-    ##foreach($evidence in $entry.getEvidences())
-$entry.getUniqueName()${tab}$annotation.getCvTermName()${tab}$annotation.getCvTermAccessionCode()${tab}annotation.getCvTermDescription())${tab}$annotation.getQualityQualifier()##${tab}$evidence.getEvidenceCodeAC()${tab}$evidence.getEvidenceCodeName()${tab}$evidence.getAssignedBy()${tab}$evidence.getResourceDb()${tab}$evidence.getResourceAccession()
-    ##end
-#end
+$tsv

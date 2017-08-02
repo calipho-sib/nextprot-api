@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
@@ -13,6 +14,8 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
+import org.nextprot.api.core.utils.annot.export.EntryPartWriterTSV;
 import org.nextprot.api.web.service.EntryPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -22,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -100,7 +104,14 @@ public class EntryController {
 		}
 
 		if (request.getRequestURI().toLowerCase().endsWith(".tsv")) {
-			model.addAttribute("tab","\t");
+			try {
+				EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(blockOrSubpart));
+				writer.write(entry);
+
+				model.addAttribute("tsv", writer.getOutputString());
+			} catch (IOException e) {
+				throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in tsv format", e);
+			}
 		}
 
 		model.addAttribute("entry", entry);
