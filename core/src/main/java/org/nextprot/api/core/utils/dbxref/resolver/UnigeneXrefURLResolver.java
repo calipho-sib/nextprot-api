@@ -18,10 +18,10 @@ class UnigeneXrefURLResolver extends DefaultDbXrefURLResolver {
         return xref.getAccession().split("\\.")[1];
     }
 
-    private static class StampS1Resolver extends StampBaseResolver {
+    private static class StampDResolver extends StampBaseResolver {
 
-        public StampS1Resolver() {
-            super("s1");
+        public StampDResolver() {
+            super("d");
         }
 
         @Override
@@ -31,10 +31,10 @@ class UnigeneXrefURLResolver extends DefaultDbXrefURLResolver {
         }
     }
 
-    private static class StampS2Resolver extends StampBaseResolver {
+    private static class StampSResolver extends StampBaseResolver {
 
-        public StampS2Resolver() {
-            super("s2");
+        public StampSResolver() {
+            super("s");
         }
     }
 
@@ -45,8 +45,8 @@ class UnigeneXrefURLResolver extends DefaultDbXrefURLResolver {
 
             Set<StampBaseResolver> stampResolvers = new HashSet<>(2);
 
-            stampResolvers.add(new StampS1Resolver());
-            stampResolvers.add(new StampS2Resolver());
+            stampResolvers.add(new StampDResolver());
+            stampResolvers.add(new StampSResolver());
 
             return stampResolvers;
         }

@@ -233,10 +233,10 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveUniGene() throws Exception {
 
-        DbXref xref = createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2");
+        DbXref xref = createDbXref("Hs.83634", "UniGene", "https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%d&CID=%s");
 
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%d&CID=%s", xref.getLinkUrl());
     }
 
     @Test
