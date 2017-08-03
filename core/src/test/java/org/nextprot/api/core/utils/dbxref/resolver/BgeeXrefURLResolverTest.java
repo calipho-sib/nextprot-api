@@ -19,9 +19,11 @@ public class BgeeXrefURLResolverTest {
     @Test
     public void testResolveBgeeENSG() throws Exception {
 
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+    	String cleanAC ="stage_id=HsapDO:0000083&organ_id=EV:0100046&gene_id=ENSG00000124532&stage_children=on";
+    	  
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref(cleanAC, "Bgee", "http://bgee.org/bgee/bgee?page=expression&action=data&%");
 
-        Assert.assertEquals("http://bgee.org/?page=gene&gene_id=ENSG00000172534", resolver.resolve(xref));
+        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&" + cleanAC, resolver.resolve(xref));
     }
 
     // entry/P51610/xref.json
