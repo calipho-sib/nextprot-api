@@ -7,28 +7,30 @@ import java.io.OutputStream;
 
 /**
  * Writes entry parts information in specific format (i.e. xls, tsv, ...)
- * @param <T> OutputStream output type
  */
-public abstract class EntryPartWriter<T extends OutputStream> {
+public abstract class EntryPartWriter {
 
-    private final T outputStream;
+    private final OutputStream outputStream;
 
-    EntryPartWriter() {
+    EntryPartWriter(OutputStream os) {
 
-        this.outputStream = newOutputStream();
+        this.outputStream = os;
     }
 
     public void write(Entry entry) throws IOException {
 
-        writeHeader(outputStream);
-        writeRows(entry, outputStream);
+        writeHeader();
+        writeRows(entry);
+        flush();
     }
 
-    T getOutputStream() {
+    public OutputStream getOutputStream() {
         return outputStream;
     }
 
-    protected abstract T newOutputStream();
-    protected abstract void writeHeader(T outputStream) throws IOException;
-    protected abstract void writeRows(Entry entry, T outputStream) throws IOException;
+    protected abstract void writeHeader() throws IOException;
+    protected abstract void writeRows(Entry entry) throws IOException;
+    protected void flush() throws IOException {
+        outputStream.flush();
+    }
 }

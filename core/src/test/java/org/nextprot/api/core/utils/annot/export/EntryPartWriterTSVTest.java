@@ -9,6 +9,9 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+
 @ActiveProfiles({ "dev" })
 public class EntryPartWriterTSVTest extends CoreUnitBaseTest {
 
@@ -18,14 +21,20 @@ public class EntryPartWriterTSVTest extends CoreUnitBaseTest {
     @Test
     public void getExpressionProfileOutputString() throws Exception {
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         String subpart = "expression-profile";
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").with(subpart));
 
-        EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(subpart));
+        EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(subpart), baos);
         writer.write(entry);
 
-        String output = writer.getOutputString();
-        String headers = output.split("\n")[0];
-        Assert.assertEquals("ENTRY_ACCESSION\tTERM_ACCESSION\tTERM_NAME\tANNOTATION_QUALITY\tECO_ACCESSION\tECO_NAME\tEVIDENCE_ASSIGNED_BY\tEVIDENCE_QUALITY\tEXPRESSION_LEVEL\tSTAGE_ACCESSION\tSTAGE_NAME", headers);
+        String output = baos.toString(StandardCharsets.UTF_8.name());
+        baos.close();
+
+        String[] headers = output.split("\n");
+
+        Assert.assertEquals(534, headers.length);
+        Assert.assertEquals("ENTRY_ACCESSION\tCATEGORY\tTERM_ACCESSION\tTERM_NAME\tQUALITY\tECO_ACCESSION\tECO_NAME\tNEGATIVE\tEXPRESSION_LEVEL\tSTAGE_ACCESSION\tSTAGE_NAME\tSOURCE\tURL", headers[0]);
     }
 }

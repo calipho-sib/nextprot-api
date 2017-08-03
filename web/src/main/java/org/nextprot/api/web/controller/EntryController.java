@@ -25,7 +25,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -105,10 +107,13 @@ public class EntryController {
 
 		if (request.getRequestURI().toLowerCase().endsWith(".tsv")) {
 			try {
-				EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(blockOrSubpart));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			    EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(blockOrSubpart), baos);
 				writer.write(entry);
 
-				model.addAttribute("tsv", writer.getOutputString());
+				model.addAttribute("tsv", baos.toString(StandardCharsets.UTF_8.name()));
+				baos.close();
 			} catch (IOException e) {
 				throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in tsv format", e);
 			}
