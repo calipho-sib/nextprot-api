@@ -1,108 +1,129 @@
 package org.nextprot.api.core.utils.annot.export;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import static org.nextprot.api.core.utils.annot.export.Header.*;
+import static org.nextprot.api.core.utils.annot.export.EntryPartExporter.Header.*;
 
 /**
  * Export data depending on the type of annotation to export (expression-profile, variants, ...)
  */
 public class EntryPartExporterImpl implements EntryPartExporter {
 
-    private final List<Header> headers;
+    private final Map<Header, Integer> headers;
+    private final List<Header> headerList;
 
     private EntryPartExporterImpl(Builder builder) {
 
         headers = builder.headers;
+        headerList = buildList(headers);
     }
 
-    public static EntryPartExporterImpl fromSubPart(String subPart) {
+    public static EntryPartExporterImpl fromSubPart(String... subParts) {
 
         Builder builder = new Builder();
 
-        switch (subPart) {
-            case "expression-profile":
-                builder.addColumn(STAGE_ACCESSION, STAGE_NAME);
-                break;
-            //default:
-            //    throw new NextProtException("unknown subpart "+subPart);
+        for (String subPart : subParts) {
+
+            if ("expression-profile".equals(subPart)) {
+                builder.addColumns(8, EXPRESSION_LEVEL, STAGE_ACCESSION, STAGE_NAME);
+            }
         }
 
         return builder.build();
     }
 
-    @Override
-    public List<Header> exportHeaders() {
-        return headers;
+    private static List<Header> buildList(Map<Header, Integer> headers) {
+
+        Header[] a = new Header[headers.size()];
+
+        headers.forEach((key, value) -> a[value] = key);
+
+        return Arrays.asList(a);
     }
 
+    @Override
+    public List<Header> exportHeaders() {
+
+        return headerList;
+    }
+
+    @Override
     public List<Row> exportRows(Entry entry) {
 
         List<Row> rows = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotations()) {
 
-            writeEvidenceRows(rows, entry, annotation);
+            collectRows(rows, entry, annotation);
         }
 
         return rows;
     }
 
-    private void writeEvidenceRows(List<Row> rows, Entry entry, Annotation annotation) {
+    private void collectRows(List<Row> rows, Entry entry, Annotation annotation) {
 
         for (AnnotationEvidence evidence : annotation.getEvidences()) {
 
-            List<String> row = new ArrayList<>();
+            Row row = new Row(headerList.size());
 
-            updateRow(row, ENTRY_ACCESSION,      entry.getUniqueName());
-            updateRow(row, TERM_ACCESSION,       annotation.getCvTermAccessionCode());
-            updateRow(row, TERM_NAME,            annotation.getCvTermName());
-            updateRow(row, ANNOTATION_QUALITY,   annotation.getQualityQualifier());
-            updateRow(row, ECO_ACCESSION,        evidence.getEvidenceCodeAC());
-            updateRow(row, ECO_NAME,             evidence.getEvidenceCodeName());
-            updateRow(row, EVIDENCE_ASSIGNED_BY, evidence.getAssignedBy());
-            updateRow(row, EVIDENCE_QUALITY,     evidence.getQualityQualifier());
-            updateRow(row, EXPRESSION_LEVEL,     evidence.getExpressionLevel());
+            setRowValue(row, ENTRY_ACCESSION,     entry.getUniqueName());
+            setRowValue(row, CATEGORY,            StringUtils.camelToKebabCase(annotation.getApiTypeName()));
+            setRowValue(row, TERM_ACCESSION,      annotation.getCvTermAccessionCode());
+            setRowValue(row, TERM_NAME,           annotation.getCvTermName());
+            setRowValue(row, ECO_ACCESSION,       evidence.getEvidenceCodeAC());
+            setRowValue(row, ECO_NAME,            evidence.getEvidenceCodeName());
+            setRowValue(row, QUALITY,             evidence.getQualityQualifier());
+            setRowValue(row, NEGATIVE,            String.valueOf(evidence.isNegativeEvidence()));
+            setRowValue(row, EXPRESSION_LEVEL,    evidence.getExpressionLevel());
+            setRowValue(row, SOURCE,              evidence.getAssignedBy());
+            setRowValue(row, URL,                 entry.getXref(evidence.getResourceId()).map(DbXref::getResolvedUrl).orElse("null"));
+            setExperimentalContextRowValues(row, entry, evidence);
 
-            ExperimentalContext ec = entry.getExperimentalContext(evidence.getExperimentalContextId())
-                    .orElseThrow(() -> new NextProtException("missing experimental context for "+evidence.getEvidenceCodeAC()));
-
-            updateRow(row, STAGE_ACCESSION,      ec.getDevelopmentalStageAC());
-            updateRow(row, STAGE_NAME,          (ec.getDevelopmentalStage() != null) ? ec.getDevelopmentalStage().getName() : "null");
-            updateRow(row, CELL_LINE_ACCESSION,  ec.getCellLineAC());
-            updateRow(row, CELL_LINE_NAME,      (ec.getCellLine() != null) ? ec.getCellLine().getName() : "null");
-            updateRow(row, DISEASE_ACCESSION,    ec.getDiseaseAC());
-            updateRow(row, DISEASE_NAME,        (ec.getDisease() != null) ? ec.getDisease().getName() : "null");
-            updateRow(row, ORGANELLE_ACCESSION,  ec.getOrganelleAC());
-            updateRow(row, ORGANELLE_NAME,      (ec.getOrganelle() != null) ? ec.getOrganelle().getName() : "null");
-
-            rows.add(new Row(row));
+            rows.add(row);
         }
     }
 
-    private void updateRow(List<String> row, Header header, String value) {
+    private void setExperimentalContextRowValues(Row row , Entry entry, AnnotationEvidence evidence) {
 
-        if (!exportHeaders().contains(header)) {
+        ExperimentalContext ec = entry.getExperimentalContext(evidence.getExperimentalContextId())
+                .orElseThrow(() -> new NextProtException("missing experimental context for " + evidence.getEvidenceCodeAC()));
+
+        if (ec.getDevelopmentalStage() != null) {
+            setRowValue(row, STAGE_ACCESSION, ec.getDevelopmentalStageAC());
+            setRowValue(row, STAGE_NAME, ec.getDevelopmentalStage().getName());
+        }
+
+        if (ec.getCellLine() != null) {
+            setRowValue(row, CELL_LINE_ACCESSION, ec.getCellLineAC());
+            setRowValue(row, CELL_LINE_NAME, ec.getCellLine().getName());
+        }
+
+        if (ec.getDisease() != null) {
+            setRowValue(row, DISEASE_ACCESSION, ec.getDiseaseAC());
+            setRowValue(row, DISEASE_NAME, ec.getDisease().getName());
+        }
+
+        if (ec.getOrganelle() != null) {
+            setRowValue(row, ORGANELLE_ACCESSION, ec.getOrganelleAC());
+            setRowValue(row, ORGANELLE_NAME, ec.getOrganelle().getName());
+        }
+    }
+
+    private void setRowValue(Row row, Header header, String value) {
+
+        if (!headerList.contains(header)) {
             return;
         }
 
-        if (!headers.contains(header)) {
-            throw new NextProtException("unknown header "+header);
-        }
-
-        if (headers.get(row.size()) != header) {
-            throw new NextProtException("incorrect header "+header + " at position "+row.size()+ ": expected "+headers.get(row.size()));
-        }
-
-        row.add(value);
+        row.setValue(headers.get(header), value);
     }
 
     /**
@@ -110,34 +131,51 @@ public class EntryPartExporterImpl implements EntryPartExporter {
      */
     static class Builder {
 
-        private final List<Header> headers = new ArrayList<>();
+        private final Map<Header, Integer> headers = new HashMap<>();
 
         Builder() {
-            headers.addAll(Arrays.asList(
-                    ENTRY_ACCESSION,
-                    TERM_ACCESSION,
-                    TERM_NAME,
-                    ANNOTATION_QUALITY,
-                    ECO_ACCESSION,
-                    ECO_NAME,
-                    EVIDENCE_ASSIGNED_BY,
-                    EVIDENCE_QUALITY,
-                    EXPRESSION_LEVEL
-            ));
+            headers.put(ENTRY_ACCESSION, 0);
+            headers.put(CATEGORY,        1);
+            headers.put(TERM_ACCESSION,  2);
+            headers.put(TERM_NAME,       3);
+            headers.put(QUALITY,         4);
+            headers.put(ECO_ACCESSION,   5);
+            headers.put(ECO_NAME,        6);
+            headers.put(NEGATIVE,        7);
+            headers.put(SOURCE,         -2);
+            headers.put(URL,            -1);
         }
 
-        Builder addColumn(Header... headers) {
+        Builder addColumns(Header... headers) {
+
+            return addColumns(8, headers);
+        }
+
+        Builder addColumns(int insertPoint, Header... headers) {
 
             for (Header header : headers) {
-                if (!this.headers.contains(header)) {
-                    this.headers.add(header);
+
+                if (!this.headers.containsKey(header)) {
+                    this.headers.put(header, insertPoint++);
                 }
             }
 
             return this;
         }
 
+        private void fixRelativeIndices() {
+
+            for (Header header : headers.keySet()) {
+
+                if (headers.get(header) < 0) {
+                    headers.put(header, headers.size()+headers.get(header));
+                }
+            }
+        }
+
         EntryPartExporterImpl build() {
+
+            fixRelativeIndices();
 
             return new EntryPartExporterImpl(this);
         }

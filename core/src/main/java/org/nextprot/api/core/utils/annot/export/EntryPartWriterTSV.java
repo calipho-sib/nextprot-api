@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.Entry;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
@@ -46,8 +47,6 @@ public class EntryPartWriterTSV extends EntryPartWriter<ByteArrayOutputStream> {
 
     public String getOutputString() throws UnsupportedEncodingException {
 
-        return getOutputStream().toString("UTF-8");
+        return getOutputStream().toString(StandardCharsets.UTF_8.name());
     }
-
-
 }

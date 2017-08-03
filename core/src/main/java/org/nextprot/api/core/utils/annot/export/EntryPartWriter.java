@@ -7,13 +7,13 @@ import java.io.OutputStream;
 
 /**
  * Writes entry parts information in specific format (i.e. xls, tsv, ...)
- * @param <T> OutputStream type
+ * @param <T> OutputStream output type
  */
 public abstract class EntryPartWriter<T extends OutputStream> {
 
     private final T outputStream;
 
-    protected EntryPartWriter() {
+    EntryPartWriter() {
 
         this.outputStream = newOutputStream();
     }
@@ -24,7 +24,7 @@ public abstract class EntryPartWriter<T extends OutputStream> {
         writeRows(entry, outputStream);
     }
 
-    protected T getOutputStream() {
+    T getOutputStream() {
         return outputStream;
     }
 
