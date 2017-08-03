@@ -48,4 +48,14 @@ public class ConstantLinkXrefURLResolverTest {
 
         Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
     }
+    
+    @Test
+    public void testResolveUCSC() throws Exception {
+
+        DefaultDbXrefURLResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.UCSC);
+
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXrefWithEntry("NX_ENTRY_AC", "UCSC_AC", "UCSC", "/some/link/to/override/");
+
+        Assert.assertEquals("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=ENTRY_AC", resolver.resolve(xref));
+    }
 }

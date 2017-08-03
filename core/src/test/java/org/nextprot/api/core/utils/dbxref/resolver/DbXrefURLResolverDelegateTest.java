@@ -242,12 +242,14 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveUCSC() throws Exception {
 
-        DbXref xref = createDbXref("uc004fjp.3", "UCSC", "http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=%s1&org=%s2");
-
-        Assert.assertEquals("http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc004fjp.3&org=human", resolver.resolve(xref));
-        Assert.assertEquals("http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=%s1&org=%s2", xref.getLinkUrl());
+        DbXref xref = createDbXrefWithEntry("NX_Q9UPW6", "uc002uuy.2", "UCSC", "http://www.some.org/this/template/should/be/overriden/%s");
+        Assert.assertEquals("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=Q9UPW6", resolver.resolve(xref));
+        Assert.assertEquals("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u", xref.getLinkUrl());
     }
 
+    
+    
+    
     @Test
     public void testResolveIntAct() throws Exception {
 
@@ -504,6 +506,9 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
     }
 
+    
+    
+    
     public static DbXref createDbXrefWithEntry(String entryAccession, String accession, String dbName, String linkURL) {
 
         DbXref xref = createDbXref(accession, dbName, linkURL);
