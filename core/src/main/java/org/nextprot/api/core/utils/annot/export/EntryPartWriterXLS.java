@@ -54,13 +54,6 @@ public class EntryPartWriterXLS extends EntryPartWriter {
     }
 
     @Override
-    protected void flush() throws IOException {
-
-        workbook.write(getOutputStream());
-        super.flush();
-    }
-
-    @Override
     public void writeRows(Entry entry) throws IOException {
 
         List<EntryPartExporter.Row> rows = exporter.exportRows(entry);
@@ -72,6 +65,13 @@ public class EntryPartWriterXLS extends EntryPartWriter {
 
             rowIndex++;
         }
+    }
+
+    @Override
+    protected void flush() throws IOException {
+
+        workbook.write(getOutputStream());
+        super.flush();
     }
 
     private void writeRow(HSSFRow row, EntryPartExporter.Row record) {

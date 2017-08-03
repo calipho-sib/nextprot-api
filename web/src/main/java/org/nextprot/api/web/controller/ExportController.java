@@ -5,8 +5,14 @@ import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
+import org.nextprot.api.core.utils.annot.export.EntryPartWriter;
+import org.nextprot.api.core.utils.annot.export.EntryPartWriterTSV;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -21,7 +27,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
@@ -47,6 +55,9 @@ public class ExportController {
 
     @Autowired
     private MasterIdentifierService masterIdentifierService;
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -121,6 +132,24 @@ public class ExportController {
 
         } catch (Exception e) {
             throw new NextProtException(e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(value = "/export/entry/{entry}/{blockOrSubpart}", method = {RequestMethod.GET})
+    public void streamEntrySubPart(HttpServletRequest request, HttpServletResponse response,
+                                  @PathVariable("entry") String entryName,
+                                  @PathVariable("blockOrSubpart") String blockOrSubpart) {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withBed(true));
+
+        try {
+            EntryPartWriter writer = EntryPartWriter.valueOf(NextprotMediaType.valueOf(request),
+                    EntryPartExporterImpl.fromSubPart(blockOrSubpart),
+                    response.getOutputStream());
+
+            writer.write(entry);
+        } catch (IOException e) {
+            throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in "+NextprotMediaType.valueOf(request)+ " format", e);
         }
     }
 

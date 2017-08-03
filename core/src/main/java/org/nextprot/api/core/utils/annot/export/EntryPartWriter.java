@@ -1,6 +1,8 @@
 package org.nextprot.api.core.utils.annot.export;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +26,7 @@ public abstract class EntryPartWriter {
         flush();
     }
 
-    public OutputStream getOutputStream() {
+    OutputStream getOutputStream() {
         return outputStream;
     }
 
@@ -32,5 +34,18 @@ public abstract class EntryPartWriter {
     protected abstract void writeRows(Entry entry) throws IOException;
     protected void flush() throws IOException {
         outputStream.flush();
+    }
+
+    public static EntryPartWriter valueOf(NextprotMediaType format, EntryPartExporter exporter, OutputStream os) {
+
+        switch (format) {
+
+            case XLS:
+                return new EntryPartWriterXLS(exporter, os);
+            case TSV:
+                return new EntryPartWriterTSV(exporter, os);
+            default:
+                throw new NextProtException("No writer implementation for " + format);
+        }
     }
 }
