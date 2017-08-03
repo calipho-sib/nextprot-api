@@ -10,6 +10,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.web.service.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +117,10 @@ public class JSONDocRoleController extends JSONDocController {
 							String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
 
 							ApiMethodDoc methodDoc = cloneMethodDoc(met, path, description, true, true);
+
+							if (model == AnnotationCategory.EXPRESSION_PROFILE) {
+								methodDoc.getProduces().add(NextprotMediaType.TSV_MEDIATYPE_VALUE);
+							}
 
 							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("term-child-of", "An optional cv term filter: export annotations " +
 									"which cv term matches the cv term parameter or one of its descendants"));
