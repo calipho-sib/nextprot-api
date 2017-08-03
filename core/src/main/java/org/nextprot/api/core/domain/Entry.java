@@ -116,6 +116,15 @@ public class Entry implements KeyValueRepresentation {
 		return xrefs;
 	}
 
+	/**
+	 * @return the dbxref with given id
+	 */
+	public Optional<DbXref> getXref(long id) {
+		return xrefs.stream()
+				.filter(xr -> xr.getDbXrefId() == id)
+				.findFirst();
+	}
+
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
 	}
