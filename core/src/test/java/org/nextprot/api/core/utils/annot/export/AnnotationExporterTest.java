@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.export;
 
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Assert;
@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.utils.annot.export.AnnotationExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 

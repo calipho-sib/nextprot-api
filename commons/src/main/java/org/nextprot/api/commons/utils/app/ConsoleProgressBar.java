@@ -2,6 +2,8 @@ package org.nextprot.api.commons.utils.app;
 
 import java.io.PrintStream;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * A simple terminal progress bar.
@@ -102,7 +104,7 @@ import java.util.Objects;
         this.view = new View();
     }
 
-    public static ConsoleProgressBar determinated(int maximum) {
+    public static ConsoleProgressBar determinated(String taskName, int maximum) {
 
         ConsoleProgressBar pb = new ConsoleProgressBar();
 
@@ -110,30 +112,38 @@ import java.util.Objects;
         pb.setMaximum(maximum);
 
         pb.setIndeterminate(false);
+        pb.view.setTaskName(taskName);
 
         return pb;
     }
 
-    public static ConsoleProgressBar indeterminated() {
+    public static ConsoleProgressBar indeterminated(String taskName) {
 
         ConsoleProgressBar pb = new ConsoleProgressBar();
 
         pb.setMinimum(0);
         pb.setIndeterminate(true);
+        pb.view.setTaskName(taskName);
 
         return pb;
+    }
+
+    public <T> void run(Stream<T> stream, Consumer<T> consumer) {
+
+        start();
+
+        stream.forEach(o -> {
+            consumer.accept(o);
+            incrementValue();
+        });
+
+        stop();
     }
 
     public void setView(View view) {
 
         this.view = view;
     }
-
-    public void setTaskName(String name) {
-
-        view.setTaskName(name);
-    }
-
 
     public final void setMinimum(int minimum) {
 

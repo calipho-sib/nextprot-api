@@ -371,6 +371,12 @@
 			<version>2.6</version>
 		</dependency>
 
+		<!-- access microsoft format files -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.13</version>
+		</dependency>
 	</dependencies>
 
     <build>

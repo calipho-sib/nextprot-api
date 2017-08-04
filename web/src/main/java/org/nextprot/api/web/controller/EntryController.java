@@ -4,17 +4,18 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.PeffService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
+import org.nextprot.api.core.utils.annot.export.EntryPartWriterTSV;
 import org.nextprot.api.web.service.EntryPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,6 +25,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -39,6 +43,7 @@ public class EntryController {
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private PeffService peffService;
+	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -58,20 +63,25 @@ public class EntryController {
 			@RequestParam(value = "property-value", required = false) String propertyValue,
 			HttpServletRequest request,
 			Model model) {
-		
-		boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
 
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
+    	Entry entry;
 
-		if (ancestorTerm != null || propertyName != null) {
-			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
+
+			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
+			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+		}
+		else {
+			boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
+
+			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
+
+			if (ancestorTerm != null || propertyName != null) {
+				filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+			}
 		}
 
 		model.addAttribute("entry", entry);
-
-		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
-			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
-		}
 
 		return "entry";
 	}
@@ -95,12 +105,26 @@ public class EntryController {
 			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);
 		}
 
+		if (request.getRequestURI().toLowerCase().endsWith(".tsv")) {
+			try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			    EntryPartWriterTSV writer = new EntryPartWriterTSV(EntryPartExporterImpl.fromSubPart(blockOrSubpart), baos);
+				writer.write(entry);
+
+				model.addAttribute("tsv", baos.toString(StandardCharsets.UTF_8.name()));
+				baos.close();
+			} catch (IOException e) {
+				throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in tsv format", e);
+			}
+		}
+
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public List<EntryReport> getEntryReport(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -112,7 +136,7 @@ public class EntryController {
 	}
 
 	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET })
+	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public IsoformSequenceInfoPeff getIsoformSequenceInfos(
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
@@ -121,12 +145,18 @@ public class EntryController {
 		return peffService.formatSequenceInfo(isoformAccession);
 	}
 
+	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
+	}
+
 	/**
 	 * Hidden service reporting page displayability used by nextprot ui
 	 * @param entryName the nextprot accession number
 	 * @return a map of page label to boolean
 	 */
-	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Map<String, Boolean> testPageDisplay(@PathVariable("entry") String entryName) {
 
@@ -138,7 +168,7 @@ public class EntryController {
 	 * @param entryName the nextprot accession number
 	 * @return the annotation count
 	 */
-	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Integer countAnnotation(@PathVariable("entry") String entryName) {
 
