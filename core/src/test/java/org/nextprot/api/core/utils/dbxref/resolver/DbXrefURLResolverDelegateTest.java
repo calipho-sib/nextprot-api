@@ -506,8 +506,8 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveChitars() throws Exception {
 
-        DbXref xref = createDbXref("ESR1", "ChiTaRS", "http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1");
-        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
+        DbXref xref = createDbXref("HIST1H3B", "ChiTaRS", "http://ww.example.com/should/be/replaced/by/preferred/%s");
+        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=HIST1H3B&human=1", resolver.resolve(xref));
     }
 
     
