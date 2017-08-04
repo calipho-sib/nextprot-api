@@ -15,14 +15,14 @@ import java.io.IOException;
  *
  * @param <P> the command line parser class type
  */
-public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
+public abstract class SpringBasedTask<P extends CommandLineSpringParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(SpringBasedApp.class);
+    private static final Logger LOGGER = Logger.getLogger(SpringBasedTask.class);
 
     private final P argumentParser;
     private final SpringConfig config;
 
-    public SpringBasedApp(String[] args) throws ParseException {
+    public SpringBasedTask(String[] args) throws ParseException {
 
         argumentParser = newCommandLineParser();
         config = argumentParser.parseSpringConfig(args);
@@ -44,7 +44,9 @@ public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
     public void run() throws IOException {
 
         startApplicationContext();
+        LOGGER.info("task started...");
         execute();
+        LOGGER.info("task completed");
         stopApplicationContext();
     }
 

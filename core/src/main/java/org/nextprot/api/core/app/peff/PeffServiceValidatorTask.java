@@ -9,7 +9,7 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
 import org.nextprot.api.core.service.IsoformService;
@@ -35,14 +35,14 @@ import java.util.stream.Collectors;
  * <li>output directory       : -o /home/fnikitin/Projects/resources/peff </li>
  * </ul>
  */
-public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidatorApp.ArgumentParser> {
+public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidatorTask.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(PeffServiceValidatorApp.class);
+    private static final Logger LOGGER = Logger.getLogger(PeffServiceValidatorTask.class);
 
     private final String expectedPeffFilename;
     private final String outputDirectory;
 
-    private PeffServiceValidatorApp(String[] args) throws ParseException {
+    private PeffServiceValidatorTask(String[] args) throws ParseException {
 
         super(args);
 
@@ -56,7 +56,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser(PeffServiceValidatorApp.class.getSimpleName());
+        return new ArgumentParser(PeffServiceValidatorTask.class.getSimpleName());
     }
 
     @Override
@@ -293,7 +293,7 @@ public class PeffServiceValidatorApp extends SpringBasedApp<PeffServiceValidator
     public static void main(String[] args) {
 
         try {
-            new PeffServiceValidatorApp(args).run();
+            new PeffServiceValidatorTask(args).run();
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");

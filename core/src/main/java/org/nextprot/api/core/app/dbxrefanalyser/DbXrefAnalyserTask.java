@@ -9,7 +9,7 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.TerminologyService;
@@ -35,13 +35,13 @@ import java.util.stream.Collectors;
  *
  * Created by fnikitin on 09/08/16.
  */
-public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.ArgumentParser> {
+public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(DbXrefAnalyserApp.class);
+    private static final Logger LOGGER = Logger.getLogger(DbXrefAnalyserTask.class);
 
     private final String outputDirectory;
 
-    private DbXrefAnalyserApp(String[] args) throws ParseException {
+    private DbXrefAnalyserTask(String[] args) throws ParseException {
 
         super(args);
         outputDirectory = getCommandLineParser().getOutputDirectory();
@@ -50,7 +50,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser(DbXrefAnalyserApp.class.getSimpleName());
+        return new ArgumentParser(DbXrefAnalyserTask.class.getSimpleName());
     }
 
     @Override
@@ -195,7 +195,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     public static void main(String[] args) {
 
         try {
-            new DbXrefAnalyserApp(args).run();
+            new DbXrefAnalyserTask(args).run();
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");

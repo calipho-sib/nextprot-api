@@ -7,7 +7,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.IOException;
@@ -22,16 +22,16 @@ import java.text.DecimalFormat;
  * guess using predefined specifications
  * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
  */
-public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserApp.ArgumentParser> {
+public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyserTask.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(OntologyDAGAnalyserApp.class);
+    private static final Logger LOGGER = Logger.getLogger(OntologyDAGAnalyserTask.class);
 
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     private TerminologyService terminologyService;
     private TerminologyCv[] terminologyCvs;
 
-    private OntologyDAGAnalyserApp(String[] args) throws ParseException {
+    private OntologyDAGAnalyserTask(String[] args) throws ParseException {
 
         super(args);
         terminologyCvs = TerminologyCv.values();
@@ -41,7 +41,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser(OntologyDAGAnalyserApp.class.getSimpleName());
+        return new ArgumentParser(OntologyDAGAnalyserTask.class.getSimpleName());
     }
 
     @Override
@@ -285,7 +285,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     public static void main(String[] args) {
 
         try {
-            new OntologyDAGAnalyserApp(args).run();
+            new OntologyDAGAnalyserTask(args).run();
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");

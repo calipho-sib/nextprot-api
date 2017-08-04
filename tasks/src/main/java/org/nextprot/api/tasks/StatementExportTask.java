@@ -9,7 +9,7 @@ import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ import java.util.Map;
  *
  * Created by fnikitin on 09/08/16.
  */
-public class StatementExportApp extends SpringBasedApp<StatementExportApp.ArgumentParser> {
+public class StatementExportTask extends SpringBasedTask<StatementExportTask.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(StatementExportApp.class);
+    private static final Logger LOGGER = Logger.getLogger(StatementExportTask.class);
 
-    private StatementExportApp(String[] args) throws ParseException {
+    private StatementExportTask(String[] args) throws ParseException {
 
         super(args);
     }
@@ -175,6 +175,6 @@ public class StatementExportApp extends SpringBasedApp<StatementExportApp.Argume
      */
     public static void main(String[] args) throws Exception {
 
-        new StatementExportApp(args).run();
+        new StatementExportTask(args).run();
     }
 }

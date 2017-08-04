@@ -4,12 +4,16 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.logging.Logger;
+
 /**
  * Spring Configuration object
  */
 public class SpringConfig {
 
-    // To disable the cache temporarily: comment-out the cachemanager variable and references, and remove 'cache' from the "spring.profiles.active" properties
+    private static final Logger LOGGER = Logger.getLogger(SpringConfig.class.getName());
+
+    // To disable the cache remove 'cache' from the "spring.profiles.active" properties
     private CacheManager cacheManager = null;
     private ClassPathXmlApplicationContext ctx = null;
 
@@ -23,6 +27,8 @@ public class SpringConfig {
     public SpringConfig(String profiles) {
 
         this.profiles = profiles;
+
+        LOGGER.info("Spring config profiles: "+profiles);
     }
 
     /**
@@ -40,15 +46,22 @@ public class SpringConfig {
         System.setProperty("spring.profiles.active", profiles);
         ctx = new ClassPathXmlApplicationContext(getXmlConfigResourceLocations());
 
-        if (profiles.matches(".*cache.*"))
+        LOGGER.info("starting application context");
+
+        if (profiles.contains("cache")) {
             cacheManager = ctx.getBean(CacheManager.class);
+            LOGGER.info("cache manager startup");
+        }
     }
 
     public void stopApplicationContext() {
 
         if (cacheManager != null) {
             ((EhCacheCacheManager) cacheManager).getCacheManager().shutdown();
+            LOGGER.info("cache manager shutdown");
         }
+
+        LOGGER.info("stopping application context");
     }
 
     public <T> T getBean(Class<T> requiredType) {
