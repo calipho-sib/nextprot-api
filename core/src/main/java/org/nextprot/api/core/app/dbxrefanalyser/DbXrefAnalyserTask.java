@@ -18,7 +18,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,6 +56,26 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
     }
 
     @Override
+    protected void putParams(Map<String, Object> parameters) {
+
+        try {
+            parameters.put("entries to analyse", getNextprotEntries().size());
+        } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            System.exit(2);
+        }
+
+        parameters.put("output files", Arrays.asList(
+                outputDirectory + "/allentries-xrefs-url.tsv",
+                outputDirectory + "/allterminologies-xrefs-url.tsv"
+        ));
+        parameters.put("log files", Arrays.asList(
+                outputDirectory + "/allentries-xrefs-url.log",
+                outputDirectory + "/allterminologies-xrefs-url.log"
+        ));
+    }
+
+    @Override
     protected void execute() throws IOException {
 
         analyseNextprotEntriesDbXrefs();
@@ -62,7 +84,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
     private void analyseNextprotEntriesDbXrefs() throws IOException {
 
-        LOGGER.info("**** Finding dbxrefs from entry accession...");
+        LOGGER.info("**** Analysing dbxrefs from entry accession...");
 
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
                 outputDirectory + "/allentries-xrefs-url.log");
@@ -71,7 +93,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
         Set<String> allEntryAcs = getNextprotEntries();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting nextprot entries", allEntryAcs.size());
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt entries)", allEntryAcs.size());
         pb.start();
 
         for (String entryAc : allEntryAcs) {
@@ -110,7 +132,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
     private void analyseCvTermsDbXrefs() throws IOException {
 
-        LOGGER.info("**** Finding dbxrefs from terminology...");
+        LOGGER.info("**** Analysing dbxrefs from terminology...");
 
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allterminologies-xrefs-url.tsv",
                 outputDirectory + "/allterminologies-xrefs-url.log");
@@ -119,7 +141,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting all cv terms", allCvTerms.size());
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt cv terms)", allCvTerms.size());
 
         pb.start();
 
@@ -168,7 +190,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : ".";
 
             if (commandLine.hasOption("f")) {
                 entriesFilename = commandLine.getOptionValue("f");

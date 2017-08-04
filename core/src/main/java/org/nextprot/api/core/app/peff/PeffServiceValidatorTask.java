@@ -60,6 +60,20 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
     }
 
     @Override
+    protected void putParams(Map<String, Object> parameters) {
+
+        try {
+            parameters.put("nextprot entries count to analyse", getNextprotEntries());
+        } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            System.exit(2);
+        }
+
+        parameters.put("expected input peff file", expectedPeffFilename);
+        parameters.put("output file", outputDirectory + "/peff-diffs.txt");
+    }
+
+    @Override
     protected void execute() throws IOException {
 
         String output = analysingDifferences(readExpectedIsoformPeffHeaders(), getIsoformPeffHeadersFromAPI());

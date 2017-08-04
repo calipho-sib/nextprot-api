@@ -27,8 +27,6 @@ public class SpringConfig {
     public SpringConfig(String profiles) {
 
         this.profiles = profiles;
-
-        LOGGER.info("Spring config profiles: "+profiles);
     }
 
     /**
@@ -46,8 +44,6 @@ public class SpringConfig {
         System.setProperty("spring.profiles.active", profiles);
         ctx = new ClassPathXmlApplicationContext(getXmlConfigResourceLocations());
 
-        LOGGER.info("starting application context");
-
         if (profiles.contains("cache")) {
             cacheManager = ctx.getBean(CacheManager.class);
             LOGGER.info("cache manager startup");
@@ -60,12 +56,14 @@ public class SpringConfig {
             ((EhCacheCacheManager) cacheManager).getCacheManager().shutdown();
             LOGGER.info("cache manager shutdown");
         }
-
-        LOGGER.info("stopping application context");
     }
 
     public <T> T getBean(Class<T> requiredType) {
         return ctx.getBean(requiredType);
+    }
+
+    public String getProfiles() {
+        return profiles;
     }
 
     @Override
