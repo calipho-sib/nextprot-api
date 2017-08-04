@@ -159,7 +159,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : ".";
 
             if (commandLine.hasOption("f")) {
                 entriesFilename = commandLine.getOptionValue("f");
