@@ -9,7 +9,7 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.TerminologyService;
@@ -18,7 +18,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,13 +37,13 @@ import java.util.stream.Collectors;
  *
  * Created by fnikitin on 09/08/16.
  */
-public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.ArgumentParser> {
+public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(DbXrefAnalyserApp.class);
+    private static final Logger LOGGER = Logger.getLogger(DbXrefAnalyserTask.class);
 
     private final String outputDirectory;
 
-    private DbXrefAnalyserApp(String[] args) throws ParseException {
+    private DbXrefAnalyserTask(String[] args) throws ParseException {
 
         super(args);
         outputDirectory = getCommandLineParser().getOutputDirectory();
@@ -50,7 +52,27 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser(DbXrefAnalyserApp.class.getSimpleName());
+        return new ArgumentParser(DbXrefAnalyserTask.class.getSimpleName());
+    }
+
+    @Override
+    protected void putParams(Map<String, Object> parameters) {
+
+        try {
+            parameters.put("entries to analyse", getNextprotEntries().size());
+        } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
+            System.exit(2);
+        }
+
+        parameters.put("output files", Arrays.asList(
+                outputDirectory + "/allentries-xrefs-url.tsv",
+                outputDirectory + "/allterminologies-xrefs-url.tsv"
+        ));
+        parameters.put("log files", Arrays.asList(
+                outputDirectory + "/allentries-xrefs-url.log",
+                outputDirectory + "/allterminologies-xrefs-url.log"
+        ));
     }
 
     @Override
@@ -62,7 +84,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
     private void analyseNextprotEntriesDbXrefs() throws IOException {
 
-        LOGGER.info("**** Finding dbxrefs from entry accession...");
+        LOGGER.info("**** Analysing dbxrefs from entry accession...");
 
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
                 outputDirectory + "/allentries-xrefs-url.log");
@@ -71,7 +93,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
         Set<String> allEntryAcs = getNextprotEntries();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting nextprot entries", allEntryAcs.size());
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt entries)", allEntryAcs.size());
         pb.start();
 
         for (String entryAc : allEntryAcs) {
@@ -110,7 +132,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
     private void analyseCvTermsDbXrefs() throws IOException {
 
-        LOGGER.info("**** Finding dbxrefs from terminology...");
+        LOGGER.info("**** Analysing dbxrefs from terminology...");
 
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allterminologies-xrefs-url.tsv",
                 outputDirectory + "/allterminologies-xrefs-url.log");
@@ -119,7 +141,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
 
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated("visiting all cv terms", allCvTerms.size());
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt cv terms)", allCvTerms.size());
 
         pb.start();
 
@@ -168,7 +190,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : ".";
 
             if (commandLine.hasOption("f")) {
                 entriesFilename = commandLine.getOptionValue("f");
@@ -195,7 +217,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     public static void main(String[] args) {
 
         try {
-            new DbXrefAnalyserApp(args).run();
+            new DbXrefAnalyserTask(args).run();
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");

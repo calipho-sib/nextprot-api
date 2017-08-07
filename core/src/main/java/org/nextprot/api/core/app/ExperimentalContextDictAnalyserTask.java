@@ -6,7 +6,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 
@@ -20,15 +20,15 @@ import java.util.Map;
  * guess using predefined specifications
  * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
  */
-public class ExperimentalContextDictAnalyserApp extends SpringBasedApp<ExperimentalContextDictAnalyserApp.CommandLineParser> {
+public class ExperimentalContextDictAnalyserTask extends SpringBasedTask<ExperimentalContextDictAnalyserTask.CommandLineParser> {
 
-    private ExperimentalContextDictAnalyserApp(String[] args) throws ParseException {
+    private ExperimentalContextDictAnalyserTask(String[] args) throws ParseException {
 
         super(args);
     }
 
     @Override
-    protected ExperimentalContextDictAnalyserApp.CommandLineParser newCommandLineParser() {
+    protected ExperimentalContextDictAnalyserTask.CommandLineParser newCommandLineParser() {
 
         return new CommandLineParser();
     }
@@ -71,7 +71,7 @@ public class ExperimentalContextDictAnalyserApp extends SpringBasedApp<Experimen
     public static void main(String[] args) {
 
         try {
-            new ExperimentalContextDictAnalyserApp(args).run();
+            new ExperimentalContextDictAnalyserTask(args).run();
         } catch(Exception e) {
 
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class ExperimentalContextDictAnalyserApp extends SpringBasedApp<Experimen
         private boolean debugMode;
 
         public CommandLineParser() {
-            super(ExperimentalContextDictAnalyserApp.class.getSimpleName());
+            super(ExperimentalContextDictAnalyserTask.class.getSimpleName());
         }
 
         @Override

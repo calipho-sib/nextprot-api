@@ -2,9 +2,11 @@ package org.nextprot.api.commons.utils.app;
 
 
 import org.apache.commons.cli.ParseException;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Base class for command line applications needing neXtProt spring services
@@ -15,21 +17,26 @@ import java.io.IOException;
  *
  * @param <P> the command line parser class type
  */
-public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
+public abstract class SpringBasedTask<P extends CommandLineSpringParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(SpringBasedApp.class);
+    private static final Logger LOGGER = Logger.getLogger(SpringBasedTask.class.getName());
 
     private final P argumentParser;
     private final SpringConfig config;
+    private final Map<String, Object> parameters;
 
-    public SpringBasedApp(String[] args) throws ParseException {
+    public SpringBasedTask(String[] args) throws ParseException {
 
         argumentParser = newCommandLineParser();
         config = argumentParser.parseSpringConfig(args);
+
+        parameters = new HashMap<>();
     }
 
     /** Create new instance of command line parser */
     protected abstract P newCommandLineParser();
+
+    protected void putParams(Map<String, Object> parameters) { }
 
     protected final P getCommandLineParser() {
 
@@ -44,7 +51,15 @@ public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
     public void run() throws IOException {
 
         startApplicationContext();
+
+        parameters.put("spring profiles", config.getProfiles());
+        putParams(parameters);
+        LOGGER.info("Parameters: " + parameters);
+
+        LOGGER.info("task started...");
         execute();
+        LOGGER.info("task completed");
+
         stopApplicationContext();
     }
 
