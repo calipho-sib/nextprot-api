@@ -34,6 +34,7 @@ public enum CvDatabasePreferredLink {
 	RULEBASE( "http://www.uniprot.org/unirule/%s"),
 	SIGNOR( "http://signor.uniroma2.it/relation_result.php?id=%u&organism=human"),
 	UCSC( "https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u"),
+	EXPRESSION_ATLAS( "http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s"),
 	CHITARS("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&human=1"),
 	;
 
