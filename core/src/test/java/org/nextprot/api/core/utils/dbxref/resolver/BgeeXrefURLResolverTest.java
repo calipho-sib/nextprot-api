@@ -32,6 +32,6 @@ public class BgeeXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
+        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
     }
 }

@@ -289,7 +289,7 @@ public class DbXrefURLResolverDelegateTest {
 
     // entry/P51610/xref.json
     @Test
-    public void testResolveBgeeENSG() throws Exception {
+    public void testResolveBgeeENSGAndOther() throws Exception {
 
     	String dbURL = "http://bgee.org/?page=gene&gene_id=%s";
     	String evidenceURL = "http://bgee.org/bgee/bgee?page=expression&action=data&";
@@ -307,9 +307,20 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
+        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
+        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
     }
+
+ 
+    @Test
+    public void testResolveBgeeSingleENSG() throws Exception {
+
+        DbXref xref = createDbXref("ENSG000012345", "Bgee", "http://bgee.unil.ch/whatever");
+
+        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&gene_id=ENSG000012345", resolver.resolve(xref));
+    }
+
+    
 
     // entry/NX_P01308/xref.json
     @Test
