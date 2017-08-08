@@ -37,6 +37,7 @@ public enum XRefDatabase {
     PIR("PIR",                         new PirXrefURLResolver()),
     PROSITE("PROSITE",                 new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE)),
     PROSITE_PRORULE("PROSITE-ProRule", new ConstantXrefDatabasebURLResolver("http://prosite.expasy.org/")),
+    EXPRESSION_ATLAS("ExpressionAtlas", new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.EXPRESSION_ATLAS)),
     PROTEOPEDIA("PROTEOPEDIA",         new DefaultDbXrefURLResolver()),
     REF_SEQ("RefSeq",                  new DefaultDbXrefURLResolver()),
     RULEBASE("RuleBase",               new RuleBaseXrefURLResolver()),
@@ -47,6 +48,7 @@ public enum XRefDatabase {
     UCSC("UCSC",                       new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.UCSC)),
     UNI_GENE("UniGene",                new UnigeneXrefURLResolver()),
     WEBINFO("WEBINFO",                 new WebInfoXrefURLResolver()),
+    CHITARS("ChiTaRS",                 new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),  
     ;
 
     private final String name;
