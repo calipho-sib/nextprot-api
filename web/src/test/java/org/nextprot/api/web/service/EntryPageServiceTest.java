@@ -2,6 +2,7 @@ package org.nextprot.api.web.service;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,5 +33,13 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 		Assert.assertTrue(report.get("Gene Identifiers"));
 		Assert.assertTrue(report.get("Function"));
 		Assert.assertTrue(report.get("Sequence"));
+	}
+
+	@Test
+	public void testFilterEntryContentInPageView() {
+
+		Entry filteredEntry = entryPageService.filterEntryContentInPageView("NX_P52701", "sequence");
+
+		Assert.fail("PAM, implement me please :)");
 	}
 }
