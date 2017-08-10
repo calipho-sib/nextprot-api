@@ -1,12 +1,11 @@
 package org.nextprot.api.web.ui.page;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Provides useful methods to retrieve entry data for a given entry page view
@@ -16,17 +15,16 @@ import javax.annotation.Nonnull;
  */
 public interface PageView {
 
+	String getLabel();
+
+	String getLink();
+
     /**
      * Check entry content for current page display
      * @param entry the entry to check content
      * @return true if page should be display
      */
     boolean doDisplayPage(@Nonnull Entry entry);
-
-    /**
-     * @return page
-     */
-    EntryPage getPage();
 
     /**
      * Build a list of annotations suitable for the generic annotation viewer

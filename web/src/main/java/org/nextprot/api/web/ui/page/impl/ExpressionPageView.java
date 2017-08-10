@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -14,10 +13,6 @@ import java.util.List;
  *
  */
 public class ExpressionPageView extends PageViewBase {
-
-	ExpressionPageView() {
-		super(EntryPage.EXPRESSION);
-	}
 
 	@Nonnull
 	@Override
@@ -42,5 +37,15 @@ public class ExpressionPageView extends PageViewBase {
 		return Arrays.asList(
 				"Antibodypedia", "Bgee", "CleanEx", "GermOnline",
 				"HPA","ExpressionAtlas","Genevisible");
+	}
+
+	@Override
+	public String getLabel() {
+		return "Expression";
+	}
+
+	@Override
+	public String getLink() {
+		return "expression";
 	}
 }

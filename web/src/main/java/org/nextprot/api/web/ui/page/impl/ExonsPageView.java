@@ -1,17 +1,12 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExonsPageView extends PageViewBase {
-
-	ExonsPageView() {
-		super(EntryPage.EXONS);
-	}
 
 	@Nonnull
 	@Override
@@ -29,5 +24,15 @@ public class ExonsPageView extends PageViewBase {
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
 		return new ArrayList<>();
+	}
+
+	@Override
+	public String getLabel() {
+		return "Exons";
+	}
+
+	@Override
+	public String getLink() {
+		return "exons";
 	}
 }

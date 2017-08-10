@@ -2,7 +2,6 @@ package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -10,10 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StructuresPageView extends PageViewBase {
-
-	StructuresPageView() {
-		super(EntryPage.STRUCTURES);
-	}
 
 	@Override
 	public boolean doDisplayPage(@Nonnull Entry entry) {
@@ -70,5 +65,15 @@ public class StructuresPageView extends PageViewBase {
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("PDB","PDBsum", "ProteinModelPortal","HSSP", "SMR", "ModBase", "DisProt");
+	}
+
+	@Override
+	public String getLabel() {
+		return "Structures";
+	}
+
+	@Override
+	public String getLink() {
+		return "structures";
 	}
 }

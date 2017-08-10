@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -14,10 +13,6 @@ import java.util.List;
  *
  */
 public class LocalisationPageView extends PageViewBase {
-
-	LocalisationPageView() {
-		super(EntryPage.LOCALISATION);
-	}
 
 	@Nonnull
 	@Override
@@ -45,4 +40,13 @@ public class LocalisationPageView extends PageViewBase {
 		return new ArrayList<>();
 	}
 
+	@Override
+	public String getLabel() {
+		return "Localization";
+	}
+
+	@Override
+	public String getLink() {
+		return "localization";
+	}
 }

@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -13,10 +12,6 @@ import java.util.List;
  *
  */
 public class MedicalPageView extends PageViewBase {
-
-	MedicalPageView() {
-		super(EntryPage.MEDICAL);
-	}
 
 	@Nonnull
 	@Override
@@ -45,5 +40,15 @@ public class MedicalPageView extends PageViewBase {
 				"Allergome", "DMDM", "BioMuta", "MalaCards",
 				"DisGeNET","OpenTargets" 
 			);
+	}
+
+	@Override
+	public String getLabel() {
+		return "Medical";
+	}
+
+	@Override
+	public String getLink() {
+		return "medical";
 	}
 }

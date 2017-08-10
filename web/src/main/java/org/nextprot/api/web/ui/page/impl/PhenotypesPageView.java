@@ -1,17 +1,12 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
 public class PhenotypesPageView extends PageViewBase {
-
-	PhenotypesPageView() {
-		super(EntryPage.PHENOTYPES);
-	}
 
 	@Nonnull
 	@Override
@@ -30,5 +25,15 @@ public class PhenotypesPageView extends PageViewBase {
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList();
+	}
+
+	@Override
+	public String getLabel() {
+		return "Phenotypes";
+	}
+
+	@Override
+	public String getLink() {
+		return "phenotypes";
 	}
 }

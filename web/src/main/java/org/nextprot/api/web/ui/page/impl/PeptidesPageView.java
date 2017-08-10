@@ -1,17 +1,12 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
 public class PeptidesPageView extends PageViewBase {
-
-	PeptidesPageView() {
-		super(EntryPage.PEPTIDES);
-	}
 
 	@Nonnull
 	@Override
@@ -38,5 +33,15 @@ public class PeptidesPageView extends PageViewBase {
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList();
+	}
+
+	@Override
+	public String getLabel() {
+		return "Peptides";
+	}
+
+	@Override
+	public String getLink() {
+		return "peptides";
 	}
 }

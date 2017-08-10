@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -9,10 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ProteomicsPageView extends PageViewBase {
-
-	ProteomicsPageView() {
-		super(EntryPage.PROTEOMICS);
-	}
 
 	@Nonnull
 	@Override
@@ -48,5 +43,15 @@ public class ProteomicsPageView extends PageViewBase {
 				"PRIDE", "PeptideAtlas",
 				"GlycoSuiteDB", "PhosphoSite",
 				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD");
+	}
+
+	@Override
+	public String getLabel() {
+		return "Proteomics";
+	}
+
+	@Override
+	public String getLink() {
+		return "proteomics";
 	}
 }

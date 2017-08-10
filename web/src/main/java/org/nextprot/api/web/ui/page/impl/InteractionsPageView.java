@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -13,10 +12,6 @@ import java.util.List;
  *
  */
 public class InteractionsPageView extends PageViewBase {
-
-	InteractionsPageView() {
-		super(EntryPage.INTERACTIONS);
-	}
 
 	@Nonnull
 	@Override
@@ -55,5 +50,15 @@ public class InteractionsPageView extends PageViewBase {
 				"BindingDB","DIP","IntAct","MINT",
 				"STRING", "SignaLink", "BioGrid","SIGNOR"
 			);
+	}
+
+	@Override
+	public String getLabel() {
+		return "Interactions";
+	}
+
+	@Override
+	public String getLink() {
+		return "interactions";
 	}
 }

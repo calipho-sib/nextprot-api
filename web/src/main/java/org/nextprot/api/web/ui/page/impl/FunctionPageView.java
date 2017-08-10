@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -14,10 +13,6 @@ import java.util.List;
  *
  */
 public class FunctionPageView extends PageViewBase {
-
-	FunctionPageView() {
-		super(EntryPage.FUNCTION);
-	}
 
 	@Nonnull
 	@Override
@@ -65,11 +60,15 @@ public class FunctionPageView extends PageViewBase {
 				"SFLD",
 				"GeneWiki", "GenomeRNAi", "PRO"
 			);
-		
-		/*
+	}
 
+	@Override
+	public String getLabel() {
+		return "Function";
+	}
 
-		 
-		 */
+	@Override
+	public String getLink() {
+		return "function";
 	}
 }

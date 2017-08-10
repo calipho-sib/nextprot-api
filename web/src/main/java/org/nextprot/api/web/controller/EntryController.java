@@ -175,6 +175,15 @@ public class EntryController {
 		return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
 	}
 
+	@RequestMapping("/page-view/{view}/{entry}/xref")
+	public String getEntryPageViewXref(@PathVariable("view") String viewName,
+									   @PathVariable("entry") String entryName, Model model) {
+
+		model.addAttribute("entry", entryPageService.filterEntryContentInPageView(entryName, viewName));
+
+		return "entry";
+	}
+
 	/**
 	 * Filter entry annotations
 	 * @param entry the entry to update

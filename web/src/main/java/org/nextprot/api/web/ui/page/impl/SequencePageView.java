@@ -1,7 +1,6 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 
@@ -10,11 +9,6 @@ import java.util.List;
 
 public class SequencePageView extends PageViewBase {
 
-	public SequencePageView() {
-		super(EntryPage.SEQUENCE);
-	}
-
-	
 	@Override
 	public boolean keepUniprotEntryXref() {
 		return true;
@@ -127,6 +121,16 @@ public class SequencePageView extends PageViewBase {
 				// PROTOCOLS AND MATERIALS DATABASES
 				"DNASU"
 			);
+	}
+
+	@Override
+	public String getLabel() {
+		return "Sequence";
+	}
+
+	@Override
+	public String getLink() {
+		return "sequence";
 	}
 }
 
