@@ -7,8 +7,7 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 
 public class EntryConfig implements KeyValueRepresentation{
 	
-	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
-	private boolean entryModifiedAnnotations;
+	private boolean overview, publications, genomicMappings, xrefs, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
 	private boolean enzymes;
 	private boolean goldOnly = false;
 	private boolean bed = true;
@@ -53,10 +52,6 @@ public class EntryConfig implements KeyValueRepresentation{
 		return xrefs;
 	}
 
-	public boolean hasKeywords() {
-		return keywords;
-	}
-
 	public boolean hasIdentifiers() {
 		return identifiers;
 	}
@@ -99,10 +94,6 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public boolean hasEnzymes() {
 		return this.enzymes;
-	}
-
-	public boolean hasAnnotationsForModifiedEntry() {
-		return this.entryModifiedAnnotations;
 	}
 
 	public AnnotationCategory getSubpart() {
@@ -226,11 +217,6 @@ public class EntryConfig implements KeyValueRepresentation{
 		return this;
 	}
 
-
-	public boolean hasSubPart(AnnotationCategory subpart) {
-		return subpart.equals(this.subpart);
-	}
-
 	@Override
 	public String toKeyValueString() {
 		StringBuilder sb = new StringBuilder();
@@ -249,11 +235,4 @@ public class EntryConfig implements KeyValueRepresentation{
 
 		return sb.toString();
 	}
-
-	public EntryConfig withModifiedEntryAnnotations() {
-		this.entryModifiedAnnotations = true;
-		return this;
-	}
-
-
 }
