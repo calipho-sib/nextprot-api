@@ -59,7 +59,6 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      */
     public void write(Collection<String> entries, Map<String, Object> headerParams) throws IOException {
 
-        init();
         writeHeader(headerParams);
 
         if (entries != null) {
@@ -73,9 +72,6 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
         writeFooter();
         flush();
     }
-
-    /** Writing initiated */
-    private void init() {}
 
     /** Write header to the output stream (to be overridden by if needed) */
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
