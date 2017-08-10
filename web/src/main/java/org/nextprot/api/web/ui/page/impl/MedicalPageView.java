@@ -7,6 +7,11 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Please keep this class in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Medical+view+specs
+ * @author pmichel
+ *
+ */
 public class MedicalPageView extends PageViewBase {
 
 	MedicalPageView() {
@@ -18,9 +23,10 @@ public class MedicalPageView extends PageViewBase {
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.DISEASE,
-				AnnotationCategory.VARIANT_INFO,  // = POLYMORPHISM NP1
-				//AnnotationCategory.BIOTECHNOLOGY, // now included in MISCELLANEOUS in NP2
+				AnnotationCategory.VARIANT_INFO,  
 				AnnotationCategory.PHARMACEUTICAL,
+				AnnotationCategory.SMALL_MOLECULE_INTERACTION,
+				AnnotationCategory.ALLERGEN,
 				AnnotationCategory.MISCELLANEOUS
 		);
 	}
@@ -28,13 +34,16 @@ public class MedicalPageView extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return Arrays.asList(AnnotationCategory.VARIANT); // = SEQ_VARIANT NP1
+		return Arrays.asList(AnnotationCategory.VARIANT); 
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("GeneReviews", "CTD", "MIM", "DrugBank", "PharmGKB", "Orphanet",
-				"Allergome", "DMDM", "BioMuta", "MalaCards" );
+		return Arrays.asList(
+				"GeneReviews", "CTD", "PharmGKB",
+				"Allergome", "DMDM", "BioMuta", "MalaCards",
+				"DisGeNET","OpenTargets" 
+			);
 	}
 }
