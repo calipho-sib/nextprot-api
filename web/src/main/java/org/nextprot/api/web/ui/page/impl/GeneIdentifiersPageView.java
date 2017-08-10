@@ -10,10 +10,6 @@ import java.util.List;
 
 public class GeneIdentifiersPageView extends PageViewBase {
 
-	GeneIdentifiersPageView() {
-		super(EntryPage.GENE_IDENTIFIERS);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

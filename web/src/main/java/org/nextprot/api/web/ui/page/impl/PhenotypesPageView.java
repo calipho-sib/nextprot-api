@@ -9,10 +9,6 @@ import java.util.List;
 
 public class PhenotypesPageView extends PageViewBase {
 
-	PhenotypesPageView() {
-		super(EntryPage.PHENOTYPES);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

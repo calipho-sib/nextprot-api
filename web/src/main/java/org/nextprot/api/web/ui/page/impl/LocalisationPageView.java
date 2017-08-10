@@ -15,10 +15,6 @@ import java.util.List;
  */
 public class LocalisationPageView extends PageViewBase {
 
-	LocalisationPageView() {
-		super(EntryPage.LOCALISATION);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

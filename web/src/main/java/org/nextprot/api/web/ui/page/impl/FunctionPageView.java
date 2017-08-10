@@ -15,10 +15,6 @@ import java.util.List;
  */
 public class FunctionPageView extends PageViewBase {
 
-	FunctionPageView() {
-		super(EntryPage.FUNCTION);
-	}
-
 	@Nonnull
 	@Override
 	public List<AnnotationCategory> getAnnotationCategoryWhiteList() {

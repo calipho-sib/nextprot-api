@@ -15,10 +15,6 @@ import java.util.List;
  */
 public class ExpressionPageView extends PageViewBase {
 
-	ExpressionPageView() {
-		super(EntryPage.EXPRESSION);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

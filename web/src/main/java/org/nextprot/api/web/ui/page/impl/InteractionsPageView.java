@@ -14,10 +14,6 @@ import java.util.List;
  */
 public class InteractionsPageView extends PageViewBase {
 
-	InteractionsPageView() {
-		super(EntryPage.INTERACTIONS);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

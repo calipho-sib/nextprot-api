@@ -10,11 +10,6 @@ import java.util.List;
 
 public class SequencePageView extends PageViewBase {
 
-	public SequencePageView() {
-		super(EntryPage.SEQUENCE);
-	}
-
-	
 	@Override
 	public boolean keepUniprotEntryXref() {
 		return true;

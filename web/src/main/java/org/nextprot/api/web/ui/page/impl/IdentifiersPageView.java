@@ -10,10 +10,6 @@ import java.util.List;
 
 public class IdentifiersPageView extends PageViewBase {
 
-	IdentifiersPageView() {
-		super(EntryPage.PROTEIN_IDENTIFIERS);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

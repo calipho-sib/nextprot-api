@@ -14,10 +14,6 @@ import java.util.List;
  */
 public class MedicalPageView extends PageViewBase {
 
-	MedicalPageView() {
-		super(EntryPage.MEDICAL);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

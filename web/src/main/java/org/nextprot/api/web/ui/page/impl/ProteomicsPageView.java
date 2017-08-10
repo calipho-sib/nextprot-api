@@ -10,10 +10,6 @@ import java.util.List;
 
 public class ProteomicsPageView extends PageViewBase {
 
-	ProteomicsPageView() {
-		super(EntryPage.PROTEOMICS);
-	}
-
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {

@@ -11,10 +11,6 @@ import java.util.List;
 
 public class StructuresPageView extends PageViewBase {
 
-	StructuresPageView() {
-		super(EntryPage.STRUCTURES);
-	}
-
 	@Override
 	public boolean doDisplayPage(@Nonnull Entry entry) {
 

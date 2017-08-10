@@ -6,14 +6,13 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.web.ui.page.EntryPage;
 import org.nextprot.api.web.ui.page.PageView;
 
 import javax.annotation.Nonnull;
-
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Represents an entry view model
@@ -36,16 +35,11 @@ import java.util.stream.Stream;
  */
 public abstract class PageViewBase implements PageView {
 
-	private final EntryPage entryPage;
+	PageViewBase() {
 
-	PageViewBase(EntryPage entryPage) {
-
-		Objects.requireNonNull(entryPage, "page should have a defined name");
 		Objects.requireNonNull(getAnnotationCategoryWhiteList(), "selected annotation category list should not be null");
 		Objects.requireNonNull(getXrefDbNameWhiteList(), "selected xref db name list should not be null");
 		Objects.requireNonNull(getFeatureCategoryWhiteList(), "selected feature list should not be null");
-
-		this.entryPage = entryPage;
 	}
 
 	/**
@@ -113,17 +107,6 @@ public abstract class PageViewBase implements PageView {
 
 	}
 
-	
-	/**
-	 * @return page
-	 */
-	@Override
-	public EntryPage getPage() {
-
-		return entryPage;
-	}
-	
-	
 	/**
 	 * (Not used yet)
 	 * Default implementation 
@@ -203,41 +186,4 @@ public abstract class PageViewBase implements PageView {
 	 * @return a non null white list of xref database name
 	 */
 	@Nonnull protected abstract List<String> getXrefDbNameWhiteList();
-
-	/**
-	 * This class contains all different entry page predicates
-	 */
-	public static class Predicates {
-
-		private static final Predicates INSTANCE = new Predicates();
-
-		private final Set<PageView> predicates;
-
-		private Predicates() {
-
-			predicates = new HashSet<>();
-			predicates.add(new ExonsPageView());
-			predicates.add(new ExpressionPageView());
-			predicates.add(new FunctionPageView());
-			predicates.add(new GeneIdentifiersPageView());
-			predicates.add(new IdentifiersPageView());
-			predicates.add(new InteractionsPageView());
-			predicates.add(new LocalisationPageView());
-			predicates.add(new MedicalPageView());
-			predicates.add(new PeptidesPageView());
-			predicates.add(new PhenotypesPageView());
-			predicates.add(new ProteomicsPageView());
-			predicates.add(new SequencePageView());
-			predicates.add(new StructuresPageView());
-		}
-
-		public static Predicates getInstance() {
-			return INSTANCE;
-		}
-
-		public Stream<PageView> getPagePredicates() {
-
-			return predicates.stream();
-		}
-	}
 }
