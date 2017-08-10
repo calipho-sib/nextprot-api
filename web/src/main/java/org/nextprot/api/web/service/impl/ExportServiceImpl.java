@@ -240,10 +240,6 @@ public class ExportServiceImpl implements ExportService {
 	@Override
 	public void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException {
 
-		Map<String, Object> map = new HashMap<>();
-		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
-		map.put("release", releaseInfoService.findReleaseInfo());
-
-		writer.write(accessions, map);
+		writer.write(accessions, releaseInfoService.findReleaseInfo());
 	}
 }

@@ -1,13 +1,13 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.velocity.Template;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.web.NXVelocityContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Map;
 
 /**
  * Created by dteixeira
@@ -28,8 +28,8 @@ public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(Map<String, Object> params) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("turtle/prefix.ttl.vm");
-        headerTemplate.merge(new NXVelocityContext(params), getStream());
+        headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
     }
 }

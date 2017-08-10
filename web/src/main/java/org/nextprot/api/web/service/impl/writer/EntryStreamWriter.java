@@ -2,11 +2,11 @@ package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 
 import java.io.*;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * A base class for writing entry list into a flushable and closeable stream
@@ -55,11 +55,11 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      * outside this class).
      *
      * @param entries the entries to be flush
-     * @param headerParams an optionally parameters map for header
+     * @param releaseInfo information about current neXtProt release
      */
-    public void write(Collection<String> entries, Map<String, Object> headerParams) throws IOException {
+    public void write(Collection<String> entries, ReleaseInfo releaseInfo) throws IOException {
 
-        writeHeader(headerParams);
+        writeHeader((entries != null) ? entries.size():0, releaseInfo);
 
         if (entries != null) {
 
@@ -74,7 +74,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
     }
 
     /** Write header to the output stream (to be overridden by if needed) */
-    protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {}
 
     /** Write a single entry to the output stream */
     protected abstract void writeEntry(String entryName) throws IOException;
