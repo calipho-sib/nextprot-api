@@ -4,7 +4,7 @@ import org.nextprot.api.web.ui.page.impl.*;
 
 import java.util.function.Supplier;
 
-public enum EntryPage {
+public enum EntryView {
 
 	FUNCTION("Function", FunctionPageView::new, ""),
 	MEDICAL("Medical", MedicalPageView::new),
@@ -25,12 +25,12 @@ public enum EntryPage {
 	private final Supplier<PageView> pageViewBuilder;
 	private final String label;
 
-	EntryPage(String label, Supplier<PageView> pageView) {
+	EntryView(String label, Supplier<PageView> pageView) {
 
 		this(label, pageView, label.toLowerCase());
 	}
 
-	EntryPage(String label, Supplier<PageView> pageView, String link) {
+	EntryView(String label, Supplier<PageView> pageView, String link) {
 
 		this.label = label;
 		this.pageViewBuilder = pageView;

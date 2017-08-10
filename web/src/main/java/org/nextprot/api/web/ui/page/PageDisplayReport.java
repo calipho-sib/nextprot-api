@@ -30,7 +30,7 @@ public class PageDisplayReport {
 
         Map<String, Boolean> map = new HashMap<>();
 
-        for (EntryPage page : EntryPage.values()) {
+        for (EntryView page : EntryView.values()) {
 
             map.put(page.getLabel(), page.buildPageView().doDisplayPage(entry));
         }
