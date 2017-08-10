@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Please keep in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Function+view+specs
+ * @author pmichel
+ *
+ */
 public class FunctionPageView extends PageViewBase {
 
 	FunctionPageView() {
@@ -19,15 +24,25 @@ public class FunctionPageView extends PageViewBase {
 	public List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 
 		return Arrays.asList(
-				AnnotationCategory.ALLERGEN,
 				AnnotationCategory.FUNCTION_INFO,
+				AnnotationCategory.CATALYTIC_ACTIVITY,
+				AnnotationCategory.TRANSPORT_ACTIVITY,
+				AnnotationCategory.ENZYME_REGULATION,
+				AnnotationCategory.COFACTOR,
+				AnnotationCategory.COFACTOR_INFO,
+				AnnotationCategory.ABSORPTION_MAX,
+				AnnotationCategory.ABSORPTION_NOTE,
+				AnnotationCategory.ABSORPTION_MAX,
+				AnnotationCategory.KINETIC_NOTE,
+				AnnotationCategory.KINETIC_KM,
+				AnnotationCategory.KINETIC_VMAX,
+				AnnotationCategory.PH_DEPENDENCE,
+				AnnotationCategory.TEMPERATURE_DEPENDENCE,
+				AnnotationCategory.REDOX_POTENTIAL,
 				AnnotationCategory.GO_MOLECULAR_FUNCTION,
 				AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-				AnnotationCategory.ENZYME_REGULATION,
-				AnnotationCategory.CATALYTIC_ACTIVITY,
-				AnnotationCategory.COFACTOR,
 				AnnotationCategory.PATHWAY,
-				//AnnotationCategory.DISRUPTIVE_PHENOTYPE, no data in NP1
+				AnnotationCategory.ALLERGEN,
 				AnnotationCategory.CAUTION,
 				AnnotationCategory.MISCELLANEOUS
 		);
@@ -43,8 +58,18 @@ public class FunctionPageView extends PageViewBase {
 	@Override
 	public List<String> getXrefDbNameWhiteList() {
 
-		return Arrays.asList("BRENDA", "CAZy", "KEGGPathway", "MEROPS", "PeroxiBase",
-				"BioCyc", "Reactome","Pathway_Interaction_DB", "REBASE", "TCDB",
-				"GeneWiki", "SABIO-RK", "GenomeRNAi", "GuidetoPHARMACOLOGY", "PRO","MoonProt","ESTHER", "SwissLipids");
+		return Arrays.asList(
+				"GuidetoPHARMACOLOGY","SwissLipids",
+				"BioCyc", "BRENDA", "SABIO-RK",
+				"CAZy", "ESTHER", "MEROPS", "MoonProt", "PeroxiBase", "REBASE",
+				"SFLD",
+				"GeneWiki", "GenomeRNAi", "PRO"
+			);
+		
+		/*
+
+
+		 
+		 */
 	}
 }
