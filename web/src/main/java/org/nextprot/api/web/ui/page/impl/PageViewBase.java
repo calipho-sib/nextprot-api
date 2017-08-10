@@ -216,19 +216,19 @@ public abstract class PageViewBase implements PageView {
 		private Predicates() {
 
 			predicates = new HashSet<>();
-			predicates.add(new ExonsPageDisplayPredicate());
-			predicates.add(new ExpressionPageDisplayPredicate());
-			predicates.add(new FunctionPageDisplayPredicate());
-			predicates.add(new GeneIdentifiersPageDisplayPredicate());
-			predicates.add(new IdentifiersPageDisplayPredicate());
-			predicates.add(new InteractionsPageDisplayPredicate());
-			predicates.add(new LocalisationPageDisplayPredicate());
-			predicates.add(new MedicalPageDisplayPredicate());
-			predicates.add(new PeptidesPageDisplayPredicate());
-			predicates.add(new PhenotypesPageDisplayPredicate());
-			predicates.add(new ProteomicsPageDisplayPredicate());
-			predicates.add(new SequencePageDisplayPredicate());
-			predicates.add(new StructuresPageDisplayPredicate());
+			predicates.add(new ExonsPageView());
+			predicates.add(new ExpressionPageView());
+			predicates.add(new FunctionPageView());
+			predicates.add(new GeneIdentifiersPageView());
+			predicates.add(new IdentifiersPageView());
+			predicates.add(new InteractionsPageView());
+			predicates.add(new LocalisationPageView());
+			predicates.add(new MedicalPageView());
+			predicates.add(new PeptidesPageView());
+			predicates.add(new PhenotypesPageView());
+			predicates.add(new ProteomicsPageView());
+			predicates.add(new SequencePageView());
+			predicates.add(new StructuresPageView());
 		}
 
 		public static Predicates getInstance() {

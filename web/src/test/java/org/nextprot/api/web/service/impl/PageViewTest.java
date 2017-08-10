@@ -11,10 +11,10 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.ui.page.PageView;
-import org.nextprot.api.web.ui.page.impl.SequencePageDisplayPredicate;
+import org.nextprot.api.web.ui.page.impl.SequencePageView;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class DisplayPageTest extends WebIntegrationBaseTest {
+public class PageViewTest extends WebIntegrationBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -35,7 +35,7 @@ public class DisplayPageTest extends WebIntegrationBaseTest {
     	System.out.println("xrefs       : " + entry.getXrefs().size());
     	showXref(entry, "UniProt");
     	
-    	PageView pageDef = new SequencePageDisplayPredicate();
+    	PageView pageDef = new SequencePageView();
     	long t0 = System.currentTimeMillis();
     	List<DbXref> xrefs = pageDef.getFurtherExternalLinksXrefs(entry);
     	t0 = System.currentTimeMillis()-t0;

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProteomicsPageDisplayPredicate extends PageViewBase {
+public class ProteomicsPageView extends PageViewBase {
 
-	ProteomicsPageDisplayPredicate() {
+	ProteomicsPageView() {
 		super(EntryPage.PROTEOMICS);
 	}
 

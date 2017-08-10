@@ -8,9 +8,9 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class SequencePageDisplayPredicate extends PageViewBase {
+public class SequencePageView extends PageViewBase {
 
-	public SequencePageDisplayPredicate() {
+	public SequencePageView() {
 		super(EntryPage.SEQUENCE);
 	}
 

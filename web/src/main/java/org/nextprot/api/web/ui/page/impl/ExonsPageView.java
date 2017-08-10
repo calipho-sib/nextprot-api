@@ -5,13 +5,12 @@ import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class IdentifiersPageDisplayPredicate extends PageViewBase {
+public class ExonsPageView extends PageViewBase {
 
-	IdentifiersPageDisplayPredicate() {
-		super(EntryPage.PROTEIN_IDENTIFIERS);
+	ExonsPageView() {
+		super(EntryPage.EXONS);
 	}
 
 	@Nonnull
@@ -29,8 +28,6 @@ public class IdentifiersPageDisplayPredicate extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("CCDS", "GeneCards", "GeneID",  "HGNC", "H-InvDB", "HPA", "HPRD","KEGG","LOC",
-				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
-				"ChEMBL");
+		return new ArrayList<>();
 	}
 }

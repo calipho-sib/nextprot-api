@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LocalisationPageDisplayPredicate extends PageViewBase {
+public class LocalisationPageView extends PageViewBase {
 
-	LocalisationPageDisplayPredicate() {
+	LocalisationPageView() {
 		super(EntryPage.LOCALISATION);
 	}
 

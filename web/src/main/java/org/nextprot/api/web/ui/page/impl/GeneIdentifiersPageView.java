@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GeneIdentifiersPageDisplayPredicate extends PageViewBase {
+public class GeneIdentifiersPageView extends PageViewBase {
 
-	GeneIdentifiersPageDisplayPredicate() {
+	GeneIdentifiersPageView() {
 		super(EntryPage.GENE_IDENTIFIERS);
 	}
 

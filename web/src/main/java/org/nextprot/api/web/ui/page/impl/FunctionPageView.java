@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FunctionPageDisplayPredicate extends PageViewBase {
+public class FunctionPageView extends PageViewBase {
 
-	FunctionPageDisplayPredicate() {
+	FunctionPageView() {
 		super(EntryPage.FUNCTION);
 	}
 

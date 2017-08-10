@@ -4,30 +4,31 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ExonsPageDisplayPredicate extends PageViewBase {
+public class PhenotypesPageView extends PageViewBase {
 
-	ExonsPageDisplayPredicate() {
-		super(EntryPage.EXONS);
+	PhenotypesPageView() {
+		super(EntryPage.PHENOTYPES);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList(
+				AnnotationCategory.PHENOTYPIC_VARIATION);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList();
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList();
 	}
 }

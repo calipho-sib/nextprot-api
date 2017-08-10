@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StructuresPageDisplayPredicate extends PageViewBase {
+public class StructuresPageView extends PageViewBase {
 
-	StructuresPageDisplayPredicate() {
+	StructuresPageView() {
 		super(EntryPage.STRUCTURES);
 	}
 

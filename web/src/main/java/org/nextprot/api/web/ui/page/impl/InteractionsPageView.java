@@ -7,20 +7,17 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class MedicalPageDisplayPredicate extends PageViewBase {
+public class InteractionsPageView extends PageViewBase {
 
-	MedicalPageDisplayPredicate() {
-		super(EntryPage.MEDICAL);
+	InteractionsPageView() {
+		super(EntryPage.INTERACTIONS);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
-				AnnotationCategory.DISEASE,
-				AnnotationCategory.VARIANT_INFO,  // = POLYMORPHISM NP1
-				//AnnotationCategory.BIOTECHNOLOGY, // now included in MISCELLANEOUS in NP2
-				AnnotationCategory.PHARMACEUTICAL,
+				AnnotationCategory.INTERACTION_INFO, // = NP1 SUBUNIT,
 				AnnotationCategory.MISCELLANEOUS
 		);
 	}
@@ -28,13 +25,14 @@ public class MedicalPageDisplayPredicate extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return Arrays.asList(AnnotationCategory.VARIANT); // = SEQ_VARIANT NP1
+		return Arrays.asList(AnnotationCategory.INTERACTING_REGION);
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("GeneReviews", "CTD", "MIM", "DrugBank", "PharmGKB", "Orphanet",
-				"Allergome", "DMDM", "BioMuta", "MalaCards" );
+		return Arrays.asList(
+				"BindingDB","DIP","IntAct","MINT","STRING",
+				"SignaLink", "BioGrid","SIGNOR");
 	}
 }
