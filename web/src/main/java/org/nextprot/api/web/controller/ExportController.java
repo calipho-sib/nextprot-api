@@ -60,9 +60,8 @@ public class ExportController {
     private EntryBuilderService entryBuilderService;
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
-    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
-        NextprotMediaType format = NextprotMediaType.valueOf(request);
-        streamAllEntries(format, response, "entry");
+    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
+        streamAllEntries(NextprotMediaType.valueOf(request), response);
     }
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
@@ -182,7 +181,9 @@ public class ExportController {
         }
     }
 
-    private void streamAllEntries(NextprotMediaType format, HttpServletResponse response, String viewName) {
+    private void streamAllEntries(NextprotMediaType format, HttpServletResponse response) {
+
+        String viewName = "entry";
 
         setResponseHeader(format, response);
         List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
