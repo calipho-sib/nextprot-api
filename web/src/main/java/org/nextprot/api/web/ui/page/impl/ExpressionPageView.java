@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Please keep in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Expression+view+specs
+ * @author pmichel
+ *
+ */
 public class ExpressionPageView extends PageViewBase {
 
 	ExpressionPageView() {
@@ -19,6 +24,7 @@ public class ExpressionPageView extends PageViewBase {
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.EXPRESSION_INFO, /*HPA, Uniprot*/
+				AnnotationCategory.EXPRESSION_PROFILE,
 				AnnotationCategory.INDUCTION,
 				AnnotationCategory.DEVELOPMENTAL_STAGE
 		);
@@ -34,7 +40,7 @@ public class ExpressionPageView extends PageViewBase {
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList(
-				"ArrayExpress", "Bgee", "CleanEx", "Genevestigator", "GermOnline",
-				"HPA", "Antibodypedia","ExpressionAtlas","Genevisible");
+				"Antibodypedia", "Bgee", "CleanEx", "GermOnline",
+				"HPA","ExpressionAtlas","Genevisible");
 	}
 }
