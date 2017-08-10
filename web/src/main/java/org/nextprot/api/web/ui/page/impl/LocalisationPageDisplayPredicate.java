@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LocalisationPageDisplayPredicate extends PageDisplayBasePredicate {
+public class LocalisationPageDisplayPredicate extends PageViewBase {
 
 	LocalisationPageDisplayPredicate() {
 		super(EntryPage.LOCALISATION);

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExpressionPageDisplayPredicate extends PageDisplayBasePredicate {
+public class ExpressionPageDisplayPredicate extends PageViewBase {
 
 	ExpressionPageDisplayPredicate() {
 		super(EntryPage.EXPRESSION);

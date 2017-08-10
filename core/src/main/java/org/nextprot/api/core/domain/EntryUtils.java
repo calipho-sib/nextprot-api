@@ -85,11 +85,8 @@ public class EntryUtils implements Serializable{
 			
 			if(!config.hasNoAdditionalReferences()){ //In case we don't care about xrefs, publications and experimental contexts (will be faster)
 
-				Set<Long> xrefIds = AnnotationUtils.getXrefIdsForAnnotations(annotations);
-
-				xrefIds.addAll(AnnotationUtils.getXrefIdsForInteractionsInteractants(annotations));
-				xrefIds.addAll(AnnotationUtils.getXrefIdsFromAnnotations(annotations));
-				xrefs = XrefUtils.filterXrefsByIds(entry.getXrefs(), xrefIds);
+				// keep only xrefs, publications, exp. contexts related to loaded annotations 
+				xrefs = XrefUtils.filterXrefsByIds(entry.getXrefs(), AnnotationUtils.getXrefIdsForAnnotations(annotations));
 				publications = PublicationUtils.filterPublicationsByIds(entry.getPublications(), AnnotationUtils.getPublicationIdsForAnnotations(annotations));
 				experimentalContexts = ExperimentalContextUtil.filterExperimentalContextsByIds(entry.getExperimentalContexts(), AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations));
 				entry.setXrefs(xrefs);

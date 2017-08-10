@@ -4,28 +4,41 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.XrefUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.web.ui.page.EntryPage;
-import org.nextprot.api.web.ui.page.PageDisplayPredicate;
+import org.nextprot.api.web.ui.page.PageView;
 
 import javax.annotation.Nonnull;
+
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Represents an entry predicate (boolean-valued function) to test displayability of a specific page.
- *
+ * Represents an entry view model
+ * 
+ * 1/ used to test displayability (boolean-valued function) of a specific page.
  * Predicate should be based on the following entry data:
  * <ul>
  * <li>annotation categories</li>
  * <li>feature categories</li>
  * <li>cross references</li>
  * </ul>
+ * 
+ * 2/ used to get the list of xrefs that should be seen in the further external link section
+ * The function based on the full content of an entry
+ * 
+ * 3/ used to get a list of general annotations suitable for the generic annotation viewer
+ * 
+ * 4/ used to get a list of positional annotations suitable for the triple viewer
+ * 
  */
-public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
+public abstract class PageViewBase implements PageView {
 
 	private final EntryPage entryPage;
 
-	PageDisplayBasePredicate(EntryPage entryPage) {
+	PageViewBase(EntryPage entryPage) {
 
 		Objects.requireNonNull(entryPage, "page should have a defined name");
 		Objects.requireNonNull(getAnnotationCategoryWhiteList(), "selected annotation category list should not be null");
@@ -46,24 +59,61 @@ public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 
 		// test xrefs
 		if (entry.getXrefs().stream()
-				.filter(xref -> !filterOutXrefDbName(xref))
+				.filter(xref -> !filterOutXref(xref))
 				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName())))
 			return true;
 
 		// then annotations
 		if (entry.getAnnotations().stream()
-				.map(Annotation::getAPICategory)
-				.filter(ac -> !filterOutAnnotationCategory(ac))
-				.anyMatch(getAnnotationCategoryWhiteList()::contains))
+				.filter(getAnnotationCategoryWhiteList()::contains)
+				.anyMatch(a -> ! filterOutAnnotation(a)))
 			return true;
 
 		// then features
 		return entry.getAnnotations().stream()
-				.map(Annotation::getAPICategory)
-				.filter(ac -> !filterOutFeatureCategory(ac))
-				.anyMatch(getFeatureCategoryWhiteList()::contains);
+				.filter(getFeatureCategoryWhiteList()::contains)
+				.anyMatch(a -> ! filterOutFeature(a));
 	}
 
+	@Override
+	public boolean keepUniprotEntryXref() {
+		return false;
+	}
+		
+	/**
+	 * Default implementation
+	 * Subclasses should only override getXrefDbNameWhiteList() and optionally override keepUniprotEntryXref()
+	 * 
+	 * Computes the list of xrefs that should be displayed in an page view
+	 * @param entry an entry build with everything !!!
+	 * @return the list of xrefs to display in the page view
+	 */
+	@Override
+	public List<DbXref> getFurtherExternalLinksXrefs(Entry entry) {
+		
+		// get a list of xrefs according to config
+		List<DbXref> xrefs = 
+				entry.getXrefs().stream()
+				.filter(x -> getXrefDbNameWhiteList().contains(x.getDatabaseName()))
+				.filter(x -> ! filterOutXref(x))
+				.collect(Collectors.toList());
+		
+		// remove xrefs already mentioned in annotations 
+		Set<Long> idsToRemove = AnnotationUtils.getXrefIdsForAnnotations(entry.getAnnotations());
+		
+		if (keepUniprotEntryXref()) {
+			xrefs.stream()
+				.filter(x -> x.getAccession().equals(entry.getUniprotName()) && x.getDatabaseName().equals("UniProt"))
+				.findFirst()
+				.ifPresent(x -> idsToRemove.remove(x.getDbXrefId()));
+		
+		}
+		xrefs = XrefUtils.filterOutXrefsByIds(xrefs, idsToRemove);
+		return xrefs;
+
+	}
+
+	
 	/**
 	 * @return page
 	 */
@@ -72,25 +122,59 @@ public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 
 		return entryPage;
 	}
+	
+	
+	/**
+	 * (Not used yet)
+	 * Default implementation 
+	 * Subclasses should only override getAnnotationCategoryWhiteList() and optionally override filterOutAnnotation()
+	 */
+	@Override
+	public List<Annotation> getAnnotationsForGenericAnnotationViewer(Entry entry) {
+		List<Annotation> annotations = 
+				entry.getAnnotations().stream()
+				.filter(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory()))
+				.filter(a -> ! filterOutAnnotation(a))
+				.collect(Collectors.toList());
+		return annotations;
+	}
+
+	/**
+	 * (Not used yet)
+	 * Default implementation 
+	 * Subclasses should only override getFeatureCategoryWhiteList() and optionally override filterOutFeature()
+	 */
+	@Override
+	public List<Annotation> getAnnotationsForTripleAnnotationViewer(Entry entry) {
+		List<Annotation> features = 
+				entry.getAnnotations().stream()
+				.filter(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()))
+				.filter(a -> ! filterOutFeature(a))
+				.collect(Collectors.toList());
+		return features;
+	}
+	
+	
+	
 	/**
 	 * Default implementation (subclasses should override this method if needed)
 	 *
-	 * Filter entry annotations based on category criteria
-	 * @param annotationCategory annotation category to test
+	 * Filter entry annotations based on any criteria
+	 * @param annotation annotation category to test
 	 * @return true if annotation category passes the filter
 	 */
-	protected boolean filterOutAnnotationCategory(AnnotationCategory annotationCategory) {
+	protected boolean filterOutAnnotation(Annotation annotation) {
 		return false;
 	}
 
 	/**
 	 * Default implementation (subclasses should override this method if needed)
 	 *
-	 * Filter entry features based on category criteria
-	 * @param featureCategory feature category to test
+	 * Filter entry features based on any criteria
+	 * @param feature feature category to test
 	 * @return true if feature category passes the filter
 	 */
-	protected boolean filterOutFeatureCategory(AnnotationCategory featureCategory) {
+	protected boolean filterOutFeature(Annotation feature) {
 		return false;
 	}
 
@@ -101,7 +185,7 @@ public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 	 * @param xref cross ref to test
 	 * @return true if xref passes the filter
 	 */
-	protected boolean filterOutXrefDbName(DbXref xref) {
+	protected boolean filterOutXref(DbXref xref) {
 		return false;
 	}
 
@@ -127,7 +211,7 @@ public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 
 		private static final Predicates INSTANCE = new Predicates();
 
-		private final Set<PageDisplayPredicate> predicates;
+		private final Set<PageView> predicates;
 
 		private Predicates() {
 
@@ -151,7 +235,7 @@ public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 			return INSTANCE;
 		}
 
-		public Stream<PageDisplayPredicate> getPagePredicates() {
+		public Stream<PageView> getPagePredicates() {
 
 			return predicates.stream();
 		}

@@ -4,20 +4,27 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 import java.util.List;
 
-public class SequencePageDisplayPredicate extends PageDisplayBasePredicate {
+public class SequencePageDisplayPredicate extends PageViewBase {
 
-	SequencePageDisplayPredicate() {
+	public SequencePageDisplayPredicate() {
 		super(EntryPage.SEQUENCE);
+	}
+
+	
+	@Override
+	public boolean keepUniprotEntryXref() {
+		return true;
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
-				AnnotationCategory.DOMAIN_INFO, // to check: war PTM in NP1
+				AnnotationCategory.DOMAIN_INFO, 
 				AnnotationCategory.PTM_INFO,
 				AnnotationCategory.SEQUENCE_CAUTION,
 				AnnotationCategory.CAUTION
@@ -30,17 +37,17 @@ public class SequencePageDisplayPredicate extends PageDisplayBasePredicate {
 
 		return Arrays.asList(
 
-				AnnotationCategory.PROCESSING_PRODUCT, // check: was MOLECULE_PROCESSING in NP1
+				// Processing group
 				AnnotationCategory.SIGNAL_PEPTIDE,
 				AnnotationCategory.MATURATION_PEPTIDE,
 				AnnotationCategory.MATURE_PROTEIN,
 				AnnotationCategory.INITIATOR_METHIONINE,
-				AnnotationCategory.TRANSIT_PEPTIDE,
-				AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE,    // added by Pam (sub of transit)
-				AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, // added by Pam (sub of transit)
+				AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE,    
+				AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, 
 
-				AnnotationCategory.MISCELLANEOUS_REGION,
+				// Region group
 				AnnotationCategory.DOMAIN,
+				AnnotationCategory.MISCELLANEOUS_REGION,
 				AnnotationCategory.REPEAT,
 				AnnotationCategory.CALCIUM_BINDING_REGION,
 				AnnotationCategory.ZINC_FINGER_REGION,
@@ -50,13 +57,13 @@ public class SequencePageDisplayPredicate extends PageDisplayBasePredicate {
 				AnnotationCategory.SHORT_SEQUENCE_MOTIF,
 				AnnotationCategory.COMPOSITIONALLY_BIASED_REGION,
 				AnnotationCategory.INTERACTING_REGION,
-				AnnotationCategory.TOPOLOGY,
+				
+				// Topology group
 				AnnotationCategory.TOPOLOGICAL_DOMAIN,
 				AnnotationCategory.TRANSMEMBRANE_REGION,
-				AnnotationCategory.INTRAMEMBRANE_REGION, 	// added by pam
-				AnnotationCategory.MISCELLANEOUS_SITE, 		// added by Mathieu, correct ?
-				//AnnotationCategory.CODING_SEQUENCE, 		// what is NP2 ?
-
+				AnnotationCategory.INTRAMEMBRANE_REGION, 	
+				
+				// Modified residue
 				AnnotationCategory.DISULFIDE_BOND,
 				AnnotationCategory.MODIFIED_RESIDUE,
 				AnnotationCategory.CROSS_LINK,
@@ -64,33 +71,62 @@ public class SequencePageDisplayPredicate extends PageDisplayBasePredicate {
 				AnnotationCategory.LIPIDATION_SITE,
 				AnnotationCategory.SELENOCYSTEINE,
 
-				//AnnotationCategory.GENERIC_SITE, 			// generic cat added by pam, needed here
+				// Site group
+				AnnotationCategory.MISCELLANEOUS_SITE,
 				AnnotationCategory.ACTIVE_SITE,
 				AnnotationCategory.BINDING_SITE,
 				AnnotationCategory.CLEAVAGE_SITE,
 				AnnotationCategory.METAL_BINDING_SITE,
 
+				// Variation group
 				AnnotationCategory.VARIANT,
-				//AnnotationCategory.SEQ_VARIANT, 			// what in NP2 ?
 				AnnotationCategory.MUTAGENESIS,
+
+				// Conflict group
 				AnnotationCategory.SEQUENCE_CONFLICT
 
-				//AnnotationCategory.MISDEFINED_REGION, 		// what in NP2 ?
-				//AnnotationCategory.NON_CONSECUTIVE_RESID, 	// what in NP2 ?
-				//AnnotationCategory.NON_TERM_RESID, 		// what in NP2 ?
-				//AnnotationCategory.UNSURE_RESID			// what in NP2 ?
 		);
 	}
+
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("CCDS", "eggNOG", "EMBL","Ensembl", "Gene3D", "GlycoSuiteDB", "HOGENOM", "HOVERGEN",
-				"InParanoid", "InterPro", "KEGG", "MGI",
-				"OMA", "OrthoDB", "PANTHER", "Pfam", "PhosphoSite", "PhylomeDB",
-				"PIR", "PIRSF", "PMAP-CutDB", "PRINTS", "ProDom", "ProtClustDB", "PROSITE",
-				"RefSeq", "SMART", "SUPFAM", "TIGRFAMS","UCSC", "Uniprot",
-				"DNASU", "EvolutionaryTrace", "KO", "UniCarbKB", "ChiTaRS", "HAMAP", "TIGRFAMs",
-				"TreeFam","DEPOD","GeneTree","BioMuta","PIRNR","SIGNOR","iPTMnet","SwissPalm");
+		return Arrays.asList(
+				
+				// ENZYME AND PATHWAY DATABASES
+				"SIGNOR",
+				
+				// FAMILY AND DOMAIN DATABASES
+				"CDD", "Gene3D", "HAMAP", "InterPro", "PANTHER", "Pfam", "PIRSF", "PRINTS", "ProDom", "PROSITE", "SFLD", "SMART", "SUPFAM", "TIGRFAMs",
+				
+				// GENOME ANNOTATION DATABASES
+				"Ensembl", "KEGG", "UCSC",
+				
+				// ORGANISM-SPECIFIC DATABASES
+				"MGI",
+				
+				// OTHER
+				"ChiTaRS", "EvolutionaryTrace", "PIRNR", "PMAP-CutDB",
+				
+				// PTM DATABASES
+				"DEPOD", "iPTMnet", "PhosphoSitePlus", "SwissPalm", "UniCarbKB",
+				
+				// PHYLOGENOMIC DATABASES
+				"eggNOG", "GeneTree", "HOGENOM", "HOVERGEN", "InParanoid", "KO", "OMA", "OrthoDB", "PhylomeDB", "TreeFam",
+				
+				// POLYMORPHISM AND MUTATION DATABASES
+				"BioMuta",
+				
+				// PROTEIN FAMILY/GROUP DATABASES
+				"IMGT_GENE-DB",
+				
+				// SEQUENCE DATABASES
+				"CCDS", "EMBL", "PIR", "RefSeq", "UniProt",
+				
+				// PROTOCOLS AND MATERIALS DATABASES
+				"DNASU"
+			);
 	}
 }
+

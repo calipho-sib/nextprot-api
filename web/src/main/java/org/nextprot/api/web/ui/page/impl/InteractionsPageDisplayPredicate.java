@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class InteractionsPageDisplayPredicate extends PageDisplayBasePredicate {
+public class InteractionsPageDisplayPredicate extends PageViewBase {
 
 	InteractionsPageDisplayPredicate() {
 		super(EntryPage.INTERACTIONS);

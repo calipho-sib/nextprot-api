@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GeneIdentifiersPageDisplayPredicate extends PageDisplayBasePredicate {
+public class GeneIdentifiersPageDisplayPredicate extends PageViewBase {
 
 	GeneIdentifiersPageDisplayPredicate() {
 		super(EntryPage.GENE_IDENTIFIERS);

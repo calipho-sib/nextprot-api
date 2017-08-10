@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FunctionPageDisplayPredicate extends PageDisplayBasePredicate {
+public class FunctionPageDisplayPredicate extends PageViewBase {
 
 	FunctionPageDisplayPredicate() {
 		super(EntryPage.FUNCTION);

@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class PageDisplayReport {
 
-    private final Map<EntryPage, PageDisplayPredicate> registeredPredicates;
+    private final Map<EntryPage, PageView> registeredPredicates;
 
     PageDisplayReport() {
         registeredPredicates = new EnumMap<>(EntryPage.class);
@@ -27,7 +27,7 @@ public class PageDisplayReport {
 
         PageDisplayReport pageDisplayReport = new PageDisplayReport();
 
-        PageDisplayBasePredicate.Predicates.getInstance().getPagePredicates()
+        PageViewBase.Predicates.getInstance().getPagePredicates()
                 .forEach(pageDisplayReport::addPredicate);
 
         return pageDisplayReport;
@@ -37,7 +37,7 @@ public class PageDisplayReport {
      * Add a page display requirement
      * @param pageDisplayPredicate a requirement to test page display
      */
-    void addPredicate(PageDisplayPredicate pageDisplayPredicate) {
+    void addPredicate(PageView pageDisplayPredicate) {
 
         Objects.requireNonNull(pageDisplayPredicate);
 
@@ -58,7 +58,7 @@ public class PageDisplayReport {
 
         Map<String, Boolean> map = new HashMap<>(registeredPredicates.size());
 
-        for (PageDisplayPredicate page : registeredPredicates.values()) {
+        for (PageView page : registeredPredicates.values()) {
 
             map.put(page.getPage().getLabel(), page.doDisplayPage(entry));
         }

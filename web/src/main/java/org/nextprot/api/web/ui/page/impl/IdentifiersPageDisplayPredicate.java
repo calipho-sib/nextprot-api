@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class IdentifiersPageDisplayPredicate extends PageDisplayBasePredicate {
+public class IdentifiersPageDisplayPredicate extends PageViewBase {
 
 	IdentifiersPageDisplayPredicate() {
 		super(EntryPage.PROTEIN_IDENTIFIERS);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StructuresPageDisplayPredicate extends PageDisplayBasePredicate {
+public class StructuresPageDisplayPredicate extends PageViewBase {
 
 	StructuresPageDisplayPredicate() {
 		super(EntryPage.STRUCTURES);
@@ -19,7 +19,7 @@ public class StructuresPageDisplayPredicate extends PageDisplayBasePredicate {
 	public boolean doDisplayPage(@Nonnull Entry entry) {
 
 		return entry.getXrefs().stream()
-				.filter(xref -> !filterOutXrefDbName(xref))
+				.filter(xref -> !filterOutXref(xref))
 				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName()));
 	}
 

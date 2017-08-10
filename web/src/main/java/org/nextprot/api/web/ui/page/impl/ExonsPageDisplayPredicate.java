@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExonsPageDisplayPredicate extends PageDisplayBasePredicate {
+public class ExonsPageDisplayPredicate extends PageViewBase {
 
 	ExonsPageDisplayPredicate() {
 		super(EntryPage.EXONS);

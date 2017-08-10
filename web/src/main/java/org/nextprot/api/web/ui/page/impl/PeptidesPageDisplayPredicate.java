@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PeptidesPageDisplayPredicate extends PageDisplayBasePredicate {
+public class PeptidesPageDisplayPredicate extends PageViewBase {
 
 	PeptidesPageDisplayPredicate() {
 		super(EntryPage.PEPTIDES);

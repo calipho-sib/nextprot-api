@@ -171,7 +171,20 @@ public class AnnotationUtils {
 		return finalAnnotations;
 	}
 	
-	public static Set<Long> getXrefIdsForAnnotations(List<Annotation> annotations){
+	/**
+	 * Retrieve the identifiers of any xref found in the annotation list
+	 * @param annotations a list of annotations
+	 * @return a list of xref ids
+	 */
+	public static Set<Long> getXrefIdsForAnnotations(List<Annotation> annotations) {
+		Set<Long> xrefIds = AnnotationUtils.getXrefIdsFromAnnotationEvidences(annotations);
+		xrefIds.addAll(AnnotationUtils.getXrefIdsFromAnnotationInteractants(annotations));
+		xrefIds.addAll(AnnotationUtils.getXrefIdsFromAnnotationProperties(annotations));
+		return xrefIds;
+	}
+		
+	
+	private static Set<Long> getXrefIdsFromAnnotationEvidences(List<Annotation> annotations){
 		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
@@ -189,7 +202,7 @@ public class AnnotationUtils {
 	 * - "sequence caution" annotation type => xrefs found in "differing sequence" property
 	 * - "cofactor" annotation type => xrefs found in "cofactor" property
 	 */
-	public static Set<Long> getXrefIdsFromAnnotations(List<Annotation> annotations){
+	private static Set<Long> getXrefIdsFromAnnotationProperties(List<Annotation> annotations){
 		Set<Long> xrefIds = new HashSet<>();
 
 		for(Annotation a : annotations){
@@ -218,7 +231,7 @@ public class AnnotationUtils {
 	 * Returns a set of xref identifiers corresponding to the interactants which are involved 
 	 * in binary interaction annotations and which are not human proteins (xeno interactions)
 	 */
-	public static Set<Long> getXrefIdsForInteractionsInteractants(List<Annotation> annotations){
+	private static Set<Long> getXrefIdsFromAnnotationInteractants(List<Annotation> annotations){
 		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){

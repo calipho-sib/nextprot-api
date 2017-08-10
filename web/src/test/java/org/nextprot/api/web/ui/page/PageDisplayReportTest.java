@@ -4,12 +4,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
 
 public class PageDisplayReportTest {
+	
+	
 
     @Test
     public void shouldDisplayPage() throws Exception {
@@ -31,13 +34,17 @@ public class PageDisplayReportTest {
         pageDisplayReport.addPredicate(mockPageConfig(EntryPage.FUNCTION, true));
     }
 
-    private static PageDisplayPredicate mockPageConfig(EntryPage entryPage, boolean bool) {
+    private static PageView mockPageConfig(EntryPage entryPage, boolean bool) {
 
-        PageDisplayPredicate page = Mockito.mock(PageDisplayPredicate.class);
+        PageView page = Mockito.mock(PageView.class);
 
         Mockito.when(page.doDisplayPage(any(Entry.class))).thenReturn(bool);
         Mockito.when(page.getPage()).thenReturn(entryPage);
 
         return page;
     }
+
+    
+
+    
 }

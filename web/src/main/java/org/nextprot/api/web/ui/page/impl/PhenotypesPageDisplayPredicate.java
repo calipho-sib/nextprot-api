@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PhenotypesPageDisplayPredicate extends PageDisplayBasePredicate {
+public class PhenotypesPageDisplayPredicate extends PageViewBase {
 
 	PhenotypesPageDisplayPredicate() {
 		super(EntryPage.PHENOTYPES);
