@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Please keep this class in sync with https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Localization+view+specs
+ * @author pmichel
+ *
+ */
 public class LocalisationPageView extends PageViewBase {
 
 	LocalisationPageView() {
