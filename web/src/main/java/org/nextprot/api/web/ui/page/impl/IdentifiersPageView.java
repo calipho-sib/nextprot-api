@@ -28,4 +28,14 @@ public class IdentifiersPageView extends PageViewBase {
 				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
 				"ChEMBL");
 	}
+
+	@Override
+	public String getLabel() {
+		return "Identifiers";
+	}
+
+	@Override
+	public String getLink() {
+		return "identifiers";
+	}
 }

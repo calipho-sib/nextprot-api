@@ -26,4 +26,14 @@ public class GeneIdentifiersPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("CCDS","GeneCards","GeneID","HGNC", "H-InvDB","KEGG", "LOC","MIM","RefSeq", "UniGene","UCSC");
 	}
+
+	@Override
+	public String getLabel() {
+		return "Gene Identifiers";
+	}
+
+	@Override
+	public String getLink() {
+		return "gene_identifiers";
+	}
 }

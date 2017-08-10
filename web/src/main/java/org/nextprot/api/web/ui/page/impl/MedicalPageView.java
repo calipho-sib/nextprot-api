@@ -41,4 +41,14 @@ public class MedicalPageView extends PageViewBase {
 				"DisGeNET","OpenTargets" 
 			);
 	}
+
+	@Override
+	public String getLabel() {
+		return "Medical";
+	}
+
+	@Override
+	public String getLink() {
+		return "medical";
+	}
 }

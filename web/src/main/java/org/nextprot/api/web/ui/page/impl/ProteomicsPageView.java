@@ -44,4 +44,14 @@ public class ProteomicsPageView extends PageViewBase {
 				"GlycoSuiteDB", "PhosphoSite",
 				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD");
 	}
+
+	@Override
+	public String getLabel() {
+		return "Proteomics";
+	}
+
+	@Override
+	public String getLink() {
+		return "proteomics";
+	}
 }

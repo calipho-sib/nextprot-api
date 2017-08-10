@@ -15,6 +15,10 @@ import java.util.List;
  */
 public interface PageView {
 
+	String getLabel();
+
+	String getLink();
+
     /**
      * Check entry content for current page display
      * @param entry the entry to check content

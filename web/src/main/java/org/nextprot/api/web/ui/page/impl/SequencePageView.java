@@ -122,5 +122,15 @@ public class SequencePageView extends PageViewBase {
 				"DNASU"
 			);
 	}
+
+	@Override
+	public String getLabel() {
+		return "Sequence";
+	}
+
+	@Override
+	public String getLink() {
+		return "sequence";
+	}
 }
 

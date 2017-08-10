@@ -61,4 +61,14 @@ public class FunctionPageView extends PageViewBase {
 				"GeneWiki", "GenomeRNAi", "PRO"
 			);
 	}
+
+	@Override
+	public String getLabel() {
+		return "Function";
+	}
+
+	@Override
+	public String getLink() {
+		return "function";
+	}
 }

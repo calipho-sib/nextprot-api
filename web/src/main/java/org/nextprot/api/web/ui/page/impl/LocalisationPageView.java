@@ -40,4 +40,13 @@ public class LocalisationPageView extends PageViewBase {
 		return new ArrayList<>();
 	}
 
+	@Override
+	public String getLabel() {
+		return "Localization";
+	}
+
+	@Override
+	public String getLink() {
+		return "localization";
+	}
 }

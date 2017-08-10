@@ -25,4 +25,14 @@ public class ExonsPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return new ArrayList<>();
 	}
+
+	@Override
+	public String getLabel() {
+		return "Exons";
+	}
+
+	@Override
+	public String getLink() {
+		return "exons";
+	}
 }

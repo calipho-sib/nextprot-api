@@ -38,4 +38,14 @@ public class ExpressionPageView extends PageViewBase {
 				"Antibodypedia", "Bgee", "CleanEx", "GermOnline",
 				"HPA","ExpressionAtlas","Genevisible");
 	}
+
+	@Override
+	public String getLabel() {
+		return "Expression";
+	}
+
+	@Override
+	public String getLink() {
+		return "expression";
+	}
 }

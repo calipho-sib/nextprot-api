@@ -51,4 +51,14 @@ public class InteractionsPageView extends PageViewBase {
 				"STRING", "SignaLink", "BioGrid","SIGNOR"
 			);
 	}
+
+	@Override
+	public String getLabel() {
+		return "Interactions";
+	}
+
+	@Override
+	public String getLink() {
+		return "interactions";
+	}
 }

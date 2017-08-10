@@ -34,4 +34,14 @@ public class PeptidesPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList();
 	}
+
+	@Override
+	public String getLabel() {
+		return "Peptides";
+	}
+
+	@Override
+	public String getLink() {
+		return "peptides";
+	}
 }

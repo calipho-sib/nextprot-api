@@ -26,4 +26,14 @@ public class PhenotypesPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList();
 	}
+
+	@Override
+	public String getLabel() {
+		return "Phenotypes";
+	}
+
+	@Override
+	public String getLink() {
+		return "phenotypes";
+	}
 }

@@ -66,4 +66,14 @@ public class StructuresPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("PDB","PDBsum", "ProteinModelPortal","HSSP", "SMR", "ModBase", "DisProt");
 	}
+
+	@Override
+	public String getLabel() {
+		return "Structures";
+	}
+
+	@Override
+	public String getLink() {
+		return "structures";
+	}
 }
