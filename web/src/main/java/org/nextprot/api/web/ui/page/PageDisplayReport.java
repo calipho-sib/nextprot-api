@@ -1,9 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.web.ui.page.impl.*;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -13,39 +11,13 @@ import java.util.Objects;
  */
 public class PageDisplayReport {
 
-    private final Map<EntryPage, PageView> registeredPredicates;
-
-    PageDisplayReport() {
-        registeredPredicates = new EnumMap<>(EntryPage.class);
-    }
-
     /**
      * Unique entry point to build instance of this class
      * @return an instance of tester
      */
     public static PageDisplayReport allPages() {
 
-        PageDisplayReport pageDisplayReport = new PageDisplayReport();
-
-        PageViewBase.Predicates.getInstance().getPagePredicates()
-                .forEach(pageDisplayReport::addPredicate);
-
-        return pageDisplayReport;
-    }
-
-    /**
-     * Add a page display requirement
-     * @param pageDisplayPredicate a requirement to test page display
-     */
-    void addPredicate(PageView pageDisplayPredicate) {
-
-        Objects.requireNonNull(pageDisplayPredicate);
-
-        if (registeredPredicates.containsKey(pageDisplayPredicate.getPage())) {
-            throw new IllegalStateException("page requirement "+ pageDisplayPredicate.getPage().getLabel()+" already exists");
-        }
-
-        registeredPredicates.put(pageDisplayPredicate.getPage(), pageDisplayPredicate);
+        return new PageDisplayReport();
     }
 
     /**
@@ -56,11 +28,11 @@ public class PageDisplayReport {
 
         Objects.requireNonNull(entry);
 
-        Map<String, Boolean> map = new HashMap<>(registeredPredicates.size());
+        Map<String, Boolean> map = new HashMap<>();
 
-        for (PageView page : registeredPredicates.values()) {
+        for (EntryPage page : EntryPage.values()) {
 
-            map.put(page.getPage().getLabel(), page.doDisplayPage(entry));
+            map.put(page.getLabel(), page.buildPageView().doDisplayPage(entry));
         }
 
         return map;

@@ -61,11 +61,5 @@ public class FunctionPageView extends PageViewBase {
 				"SFLD",
 				"GeneWiki", "GenomeRNAi", "PRO"
 			);
-		
-		/*
-
-
-		 
-		 */
 	}
 }
