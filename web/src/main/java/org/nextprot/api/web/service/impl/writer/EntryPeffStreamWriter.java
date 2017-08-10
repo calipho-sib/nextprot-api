@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.web.NXVelocityContext;
 
 import java.io.IOException;
@@ -23,6 +24,25 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
     public EntryPeffStreamWriter(Writer writer) {
 
         super(writer, "peff/entry.peff.vm", "entry");
+    }
+
+    @Override
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb
+                .append("# PEFF 1.0\n")
+                .append("# DbName=neXtProt\n")
+                .append("# DbSource=https://www.nextprot.org\n")
+                .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append("\n")
+                .append("# DbDescription=neXtProt is a comprehensive human-centric discovery platform, offering its users a seamless integration of and navigation through protein-related data\n")
+                .append("# Prefix=nxp\n")
+                .append("# NumberOfEntries=").append(entryNum).append("\n")
+                .append("# SequenceType=AA\n\n")
+        ;
+
+        getStream().write(sb.toString());
     }
 
     @Override

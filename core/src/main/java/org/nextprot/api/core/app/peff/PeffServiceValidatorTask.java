@@ -63,7 +63,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
     protected void putParams(Map<String, Object> parameters) {
 
         try {
-            parameters.put("nextprot entries count to analyse", getNextprotEntries());
+            parameters.put("nextprot entries count to analyse", getNextprotEntries().size());
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
             System.exit(2);

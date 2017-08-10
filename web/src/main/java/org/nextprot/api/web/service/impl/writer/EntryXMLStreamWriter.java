@@ -6,12 +6,12 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.web.NXVelocityContext;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.*;
-import java.util.Map;
 
 /**
  * Streams entries in XML format
@@ -82,12 +82,12 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(Map<String, Object> params) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
-        headerTemplate.merge(new NXVelocityContext(params), getStream());
+        headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
-        writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), 2);
+        writePrettyXml(releaseContentTemplate, new NXVelocityContext(entryNum, releaseInfo), 2);
         getStream().write("    </header>\n");
         getStream().write("    <entry-list>\n");
     }
