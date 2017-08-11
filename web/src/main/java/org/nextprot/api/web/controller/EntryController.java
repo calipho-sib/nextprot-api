@@ -151,6 +151,18 @@ public class EntryController {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 
+    /**
+     * Hidden service reporting the number of annotations contained for the specific entry
+     * @param entryName the nextprot accession number
+     * @return the annotation count
+     */
+    @RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public Integer countAnnotation(@PathVariable("entry") String entryName) {
+
+        return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
+    }
+
 	/**
 	 * Hidden service reporting page displayability used by nextprot ui
 	 * @param entryName the nextprot accession number
@@ -160,26 +172,14 @@ public class EntryController {
 	@ResponseBody
 	public Map<String, Boolean> testPageDisplay(@PathVariable("entry") String entryName) {
 
-		return entryPageService.testEntryContentForPageDisplay(entryName);
-	}
-
-	/**
-	 * Hidden service reporting the number of annotations contained for the specific entry
-	 * @param entryName the nextprot accession number
-	 * @return the annotation count
-	 */
-	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public Integer countAnnotation(@PathVariable("entry") String entryName) {
-
-		return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
+		return entryPageService.hasContentForPageDisplay(entryName);
 	}
 
 	@RequestMapping("/page-view/{view}/{entry}/xref")
 	public String getEntryPageViewXref(@PathVariable("view") String viewName,
 									   @PathVariable("entry") String entryName, Model model) {
 
-		model.addAttribute("entry", entryPageService.filterEntryContentInPageView(entryName, viewName));
+		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
 
 		return "entry";
 	}

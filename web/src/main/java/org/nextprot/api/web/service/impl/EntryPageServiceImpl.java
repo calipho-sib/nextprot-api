@@ -24,7 +24,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
 	@Cacheable(value="page-display", key="#entryName")
 	@Override
-	public Map<String, Boolean> testEntryContentForPageDisplay(@ValidEntry String entryName) {
+	public Map<String, Boolean> hasContentForPageDisplay(@ValidEntry String entryName) {
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
@@ -40,7 +40,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 	}
 
     @Override
-    public Entry filterEntryContentInPageView(String entryName, String pageViewName) {
+    public Entry filterXrefInPageView(String entryName, String pageViewName) {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 

@@ -17,7 +17,7 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 	@Test
 	public void testPageViewDisplay() {
 
-		Map<String, Boolean> report = entryPageService.testEntryContentForPageDisplay("NX_P52701");
+		Map<String, Boolean> report = entryPageService.hasContentForPageDisplay("NX_P52701");
 
 		Assert.assertTrue(!report.get("Phenotypes"));
 		Assert.assertTrue(!report.get("Peptides"));
@@ -38,7 +38,7 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 	@Test
 	public void testFilterEntryContentInPageView() {
 
-		Entry filteredEntry = entryPageService.filterEntryContentInPageView("NX_P52701", "sequence");
+		Entry filteredEntry = entryPageService.filterXrefInPageView("NX_P52701", "sequence");
 
 		Assert.fail("PAM, implement me please :)");
 	}

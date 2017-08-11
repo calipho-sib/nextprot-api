@@ -12,7 +12,7 @@ public interface EntryPageService {
      * @param entryName the nextprot accession number
      * @return for each true if entry provide data needed by the page else false
      */
-    Map<String, Boolean> testEntryContentForPageDisplay(@ValidEntry String entryName);
+    Map<String, Boolean> hasContentForPageDisplay(@ValidEntry String entryName);
 
     /**
      * Keep data from Entry specific to the page view
@@ -20,5 +20,5 @@ public interface EntryPageService {
      * @param pageViewName the page view name (ex: "sequence", "function", ...)
      * @return a slimmer Entry
      */
-    Entry filterEntryContentInPageView(String entryName, String pageViewName);
+    Entry filterXrefInPageView(String entryName, String pageViewName);
 }
