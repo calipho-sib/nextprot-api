@@ -3,6 +3,8 @@ package org.nextprot.api.web.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +15,8 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 
 	@Autowired
 	private EntryPageService entryPageService;
+	@Autowired 
+	EntryBuilderService entryBuilderService;
 
 	@Test
 	public void testPageViewDisplay() {
@@ -37,8 +41,27 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 	@Test
 	public void testFilterEntryContentInPageView() {
 
-		Entry filteredEntry = entryPageService.filterXrefInPageView("NX_P52701", "sequence");
+		String entryAC = "NX_P02649";
+		Entry originalEntry = entryBuilderService.build(EntryConfig.newConfig(entryAC).withEverything());
 
-		Assert.fail("PAM, implement me please :)");
+		Entry filteredEntry;
+		
+		filteredEntry = entryPageService.filterXrefInPageView(entryAC, "sequence");
+		Assert.assertTrue(originalEntry.getXrefs().size() > filteredEntry.getXrefs().size());
+		// uniprot xref should be present
+		Assert.assertTrue(
+				filteredEntry.getXrefs().stream().anyMatch(x -> 
+					x.getDatabaseName().equals("UniProt") && 
+					x.getAccession().equals(originalEntry.getUniprotName()))
+		);
+
+		filteredEntry = entryPageService.filterXrefInPageView(entryAC, "expression");
+		Assert.assertTrue(originalEntry.getXrefs().size() > filteredEntry.getXrefs().size());
+		// uniprot xref should NOT be present
+		Assert.assertFalse(
+				filteredEntry.getXrefs().stream().anyMatch(x -> 
+					x.getDatabaseName().equals("UniProt") && 
+					x.getAccession().equals(originalEntry.getUniprotName()))
+		);
 	}
 }
