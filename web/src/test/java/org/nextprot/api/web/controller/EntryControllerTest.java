@@ -2,7 +2,6 @@ package org.nextprot.api.web.controller;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -10,9 +9,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 @ActiveProfiles({ "dev" })
 public class EntryControllerTest extends MVCDBUnitBaseTest {
@@ -156,7 +152,7 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         Arrays.asList(
                 "\"Function\" : true",
                 "\"Phenotypes\" : false",
-                "\"Localisation\" : true",
+                "\"Localization\" : true",
                 "\"Peptides\" : true",
                 "\"Expression\" : true",
                 "\"Exons\" : false",
@@ -165,8 +161,9 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
                 "\"Structures\" : true",
                 "\"Interactions\" : true",
                 "\"Sequence\" : true",
-                "\"Identifiers\" : true"
-        ).forEach(expectedContent -> Assert.assertTrue(content.contains(expectedContent)));
+                "\"Identifiers\" : true",
+                "\"Gene Identifiers\" : true"
+        ).forEach(expectedContent -> Assert.assertTrue(content+": content not as expected:"+expectedContent, content.contains(expectedContent)));
     }
 
     @Test

@@ -17,19 +17,18 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 	@Test
 	public void testPageViewDisplay() {
 
-		Map<String, Boolean> report = entryPageService.hasContentForPageDisplay("NX_P52701");
+		Map<String, Boolean> report = entryPageService.hasContentForPageDisplay("NX_P01308");
 
 		Assert.assertTrue(!report.get("Phenotypes"));
-		Assert.assertTrue(!report.get("Peptides"));
+		Assert.assertTrue(report.get("Peptides"));
 		Assert.assertTrue(!report.get("Exons"));
-		Assert.assertTrue(!report.get("Localization"));
+		Assert.assertTrue(report.get("Localization"));
 		Assert.assertTrue(report.get("Identifiers"));
 		Assert.assertTrue(report.get("Interactions"));
 		Assert.assertTrue(report.get("Structures"));
 		Assert.assertTrue(report.get("Medical"));
 		Assert.assertTrue(report.get("Proteomics"));
 		Assert.assertTrue(report.get("Expression"));
-		Assert.assertTrue(report.get("Proteomics"));
 		Assert.assertTrue(report.get("Gene Identifiers"));
 		Assert.assertTrue(report.get("Function"));
 		Assert.assertTrue(report.get("Sequence"));

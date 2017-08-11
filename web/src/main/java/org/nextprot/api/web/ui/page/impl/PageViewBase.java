@@ -59,13 +59,13 @@ public abstract class PageViewBase implements PageView {
 
 		// then annotations
 		if (entry.getAnnotations().stream()
-				.filter(getAnnotationCategoryWhiteList()::contains)
+				.filter(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory()))
 				.anyMatch(a -> ! filterOutAnnotation(a)))
 			return true;
 
 		// then features
 		return entry.getAnnotations().stream()
-				.filter(getFeatureCategoryWhiteList()::contains)
+				.filter(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()))
 				.anyMatch(a -> ! filterOutFeature(a));
 	}
 
@@ -114,12 +114,10 @@ public abstract class PageViewBase implements PageView {
 	 */
 	@Override
 	public List<Annotation> getAnnotationsForGenericAnnotationViewer(Entry entry) {
-		List<Annotation> annotations = 
-				entry.getAnnotations().stream()
+		return entry.getAnnotations().stream()
 				.filter(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory()))
 				.filter(a -> ! filterOutAnnotation(a))
 				.collect(Collectors.toList());
-		return annotations;
 	}
 
 	/**
@@ -129,12 +127,10 @@ public abstract class PageViewBase implements PageView {
 	 */
 	@Override
 	public List<Annotation> getAnnotationsForTripleAnnotationViewer(Entry entry) {
-		List<Annotation> features = 
-				entry.getAnnotations().stream()
+		return entry.getAnnotations().stream()
 				.filter(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()))
 				.filter(a -> ! filterOutFeature(a))
 				.collect(Collectors.toList());
-		return features;
 	}
 	
 	
