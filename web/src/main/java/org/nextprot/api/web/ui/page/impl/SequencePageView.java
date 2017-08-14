@@ -115,6 +115,9 @@ public class SequencePageView extends PageViewBase {
 				// PROTEIN FAMILY/GROUP DATABASES
 				"IMGT_GENE-DB",
 				
+				// PROTEIN-PROTEIN INTERACTION DATABASES
+				"ELM",
+				
 				// SEQUENCE DATABASES
 				"CCDS", "EMBL", "PIR", "RefSeq", "UniProt",
 				
