@@ -149,15 +149,15 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
     }
 
     @Override
-    public void write(Collection<String> entries, ReleaseInfo releaseInfo) throws IOException {
+    public void write(Collection<String> entries, ReleaseInfo releaseInfo, String description) throws IOException {
 
-        super.write(entries, releaseInfo);
+        super.write(entries, releaseInfo, description);
 
         workbook.write(getStream());
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
 
         String[] headers = entryDataProvider.getFieldNames();
 

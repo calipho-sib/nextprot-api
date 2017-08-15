@@ -27,7 +27,7 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
 
         StringBuilder sb = new StringBuilder();
 
@@ -36,7 +36,7 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
                 .append("# DbName=neXtProt\n")
                 .append("# DbSource=https://www.nextprot.org\n")
                 .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append("\n")
-                .append("# DbDescription=neXtProt is a comprehensive human-centric discovery platform, offering its users a seamless integration of and navigation through protein-related data\n")
+                .append("# DbDescription=").append(description).append("\n")
                 .append("# Prefix=nxp\n")
                 .append("# NumberOfEntries=").append(entryNum).append("\n")
                 .append("# SequenceType=AA\n\n")

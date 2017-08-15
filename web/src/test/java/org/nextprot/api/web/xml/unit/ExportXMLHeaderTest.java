@@ -28,7 +28,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         rc.setApiRelease("api-test-version");
         rc.setDatabaseRelease("database-test-version");
 
-        exporter.write(Collections.emptyList(), rc);
+        exporter.write(Collections.emptyList(), rc, "");
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='database-release']");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");

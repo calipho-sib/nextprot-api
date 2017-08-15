@@ -47,7 +47,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      */
     public void write(Collection<String> entries) throws IOException {
 
-        write(entries, null);
+        write(entries, new ReleaseInfo(), "");
     }
 
     /**
@@ -57,9 +57,9 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      * @param entries the entries to be flush
      * @param releaseInfo information about current neXtProt release
      */
-    public void write(Collection<String> entries, ReleaseInfo releaseInfo) throws IOException {
+    public void write(Collection<String> entries, ReleaseInfo releaseInfo, String description) throws IOException {
 
-        writeHeader((entries != null) ? entries.size():0, releaseInfo);
+        writeHeader((entries != null) ? entries.size():0, releaseInfo, description);
 
         if (entries != null) {
 
@@ -74,7 +74,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
     }
 
     /** Write header to the output stream (to be overridden by if needed) */
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {}
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {}
 
     /** Write a single entry to the output stream */
     protected abstract void writeEntry(String entryName) throws IOException;

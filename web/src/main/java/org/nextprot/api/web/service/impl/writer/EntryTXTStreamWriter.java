@@ -3,13 +3,11 @@ package org.nextprot.api.web.service.impl.writer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.release.ReleaseInfo;
-import org.nextprot.api.web.service.ExportService;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Map;
 
 import static org.nextprot.api.commons.utils.StringUtils.CR_LF;
 
@@ -34,7 +32,7 @@ public class EntryTXTStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
 
         if (entryNum > 0)
             getStream().write("#nb entries=" + entryNum + CR_LF);

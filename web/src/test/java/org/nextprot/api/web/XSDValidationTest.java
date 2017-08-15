@@ -57,7 +57,7 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 			StreamSource xmlFile = new StreamSource(f);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
-			streamEntryService.streamEntries(Collections.singletonList("NX_Q15858"), NextprotMediaType.XML, "entry", baos);
+			streamEntryService.streamEntries(Collections.singletonList("NX_Q15858"), NextprotMediaType.XML, "entry", baos, "");
 
 			XMLPrettyPrinter prettyPrinter = new XMLPrettyPrinter();
 

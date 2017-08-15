@@ -28,7 +28,7 @@ public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo) throws IOException {
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("turtle/prefix.ttl.vm");
         headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
     }

@@ -51,7 +51,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
 
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
 
-        exporter.write(Arrays.asList("NX_1", "NX_2"), Mockito.mock(ReleaseInfo.class));
+        exporter.write(Arrays.asList("NX_1", "NX_2"), Mockito.mock(ReleaseInfo.class), "");
        
         String[] rows = out.toString().split(StringUtils.CR_LF);
         assertEquals(rows[0], "#nb entries=2");

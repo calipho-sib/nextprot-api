@@ -31,11 +31,11 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	private SearchService searchService;
 
     @Override
-    public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os) throws IOException {
+    public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
 
-        writer.write(accessions, releaseInfoService.findReleaseInfo());
+        writer.write(accessions, releaseInfoService.findReleaseInfo(), description);
     }
 
     @Override
@@ -43,9 +43,20 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         try {
             setResponseHeader(response, format, "nextprot-entries-all"  + "." + format.getExtension());
-            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream());
+            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "global export");
         } catch (IOException e) {
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries", e);
+        }
+    }
+
+    @Override
+    public void streamAllChromosomeEntries(String chromosome, NextprotMediaType format, HttpServletResponse response) {
+
+        try {
+            setResponseHeader(response, format, "nextprot_chromosome_"  + chromosome + "." + format.getExtension());
+            streamEntries(masterIdentifierService.findUniqueNamesOfChromosome(chromosome), format, "entry", response.getOutputStream(), "chromosome "+chromosome);
+        } catch (IOException e) {
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries from chromosome "+ chromosome, e);
         }
     }
 
@@ -56,7 +67,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         try {
             setResponseHeader(response, format, getFilename(queryRequest, viewName, format));
-            streamEntries(entries, format, viewName, response.getOutputStream());
+            streamEntries(entries, format, viewName, response.getOutputStream(), queryRequest.toPrettyString());
         }
         catch (IOException e) {
         	throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
