@@ -89,8 +89,8 @@ public class PublicationServiceImpl implements PublicationService {
 		Comparator<Publication> comparator = PublicationComparator.StringComparator(Publication::getPublicationYear).reversed()
 				.thenComparing(Comparator.comparing(Publication::getPublicationType))
 				.thenComparing(PublicationComparator.StringComparator(Publication::getPublicationLocatorName))
-				.thenComparing(PublicationComparator.NumberComparator(Publication::getVolume))
-				.thenComparing(PublicationComparator.NumberComparator(Publication::getFirstPage));
+				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getVolume))
+				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getFirstPage));
 
 		// sort according to order with criteria defined in publication-sorted-for-master.sql
 		publications.sort(comparator);

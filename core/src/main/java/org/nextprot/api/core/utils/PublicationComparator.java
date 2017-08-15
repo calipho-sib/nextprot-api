@@ -14,9 +14,6 @@ public abstract class PublicationComparator implements Comparator<Publication> {
 
     private final Function<Publication, String> toFieldStringFunc;
 
-    /**
-     * @param toFieldStringFunc accept a Publication and produce a String to be compare
-     */
     private PublicationComparator(Function<Publication, String> toFieldStringFunc) {
 
         Preconditions.checkNotNull(toFieldStringFunc);
@@ -28,7 +25,7 @@ public abstract class PublicationComparator implements Comparator<Publication> {
         return new StringComparator(toFieldStringFunc);
     }
 
-    public static PublicationComparator NumberComparator(Function<Publication, String> toFieldStringFunc) {
+    public static PublicationComparator FormattedNumberComparator(Function<Publication, String> toFieldStringFunc) {
 
         return new IntComparator(toFieldStringFunc);
     }
@@ -80,10 +77,12 @@ public abstract class PublicationComparator implements Comparator<Publication> {
         @Override
         protected int compareType(String str1, String str2) {
 
-            boolean isInt1 = str1.matches("\\d+");
-            boolean isInt2 = str2.matches("\\d+");
+            // TODO: Data to fix - some publications have a huge number as the first page and last page empty
+            // Here is an example of a publication with this problem: pub id=48965432, start_page="1010428317698354", end_page=""
+            boolean isInt1 = str1.matches("\\d+") && str1.length()<7;
+            boolean isInt2 = str2.matches("\\d+") && str2.length()<7;
 
-            // compare ints
+            // compare ints if both string are formatted numbers
             if (isInt1 && isInt2) {
 
                 return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
