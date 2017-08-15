@@ -90,7 +90,6 @@ public class ExportController {
         return EntryBlock.getFormatViews();
     }
 
-    //@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
     @RequestMapping("/export/lists/{listId}")
     public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
@@ -136,6 +135,15 @@ public class ExportController {
         } catch (IOException e) {
             throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in "+NextprotMediaType.valueOf(request)+ " format", e);
         }
+    }
+
+    //@ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE })
+    public void exportEntriesAsPeffOnChromosome(
+            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @PathVariable("chromosome")  String chromosome, HttpServletResponse response) {
+
+        streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
     }
 
     private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
