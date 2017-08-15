@@ -1,8 +1,8 @@
 package org.nextprot.api.web.service;
 
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -44,6 +44,4 @@ public interface ExportService {
 	Future<File> exportEntry(String entryName, NextprotMediaType format);
 
 	void clearRepository();
-
-	void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException;
 }

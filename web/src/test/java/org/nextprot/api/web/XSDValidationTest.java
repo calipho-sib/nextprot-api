@@ -6,10 +6,10 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
-import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
+import org.nextprot.api.web.service.StreamEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.fail;
@@ -36,6 +36,9 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 	@Autowired
 	private ExportService exportService;
 
+	@Autowired
+	private StreamEntryService streamEntryService;
+
 	@Before
 	public void clearRepository() {
 		exportService.clearRepository();
@@ -44,7 +47,6 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 	@Test
 	public void shouldValidateXMLFilewithXSD() {
 
-		
 		Schema schema;
 		try {
 
@@ -55,13 +57,10 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 			StreamSource xmlFile = new StreamSource(f);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
-            EntryStreamWriter<?> writer = new EntryXMLStreamWriter(baos, "entry");
-			exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q15858" }));
-			//exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q6PIU2" })); 
+			streamEntryService.streamEntries(Collections.singletonList("NX_Q15858"), NextprotMediaType.XML, "entry", baos);
 
 			XMLPrettyPrinter prettyPrinter = new XMLPrettyPrinter();
-			//System.err.println(baos.toString());
-			
+
 			String prettyXml = prettyPrinter.prettify(baos.toString());
 			PrintWriter out = new PrintWriter(f);
 			out.print(prettyXml);
