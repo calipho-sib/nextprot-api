@@ -260,8 +260,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 		private int doIntComparison(String string1, String string2) {
 
-			boolean isInt1 = string1.matches("\\d+");
-			boolean isInt2 = string2.matches("\\d+");
+			boolean isInt1 = string1.matches("\\d+") && string1.length()<7;
+			boolean isInt2 = string2.matches("\\d+") && string2.length()<7;
 
 			// compare ints
 			if (isInt1 && isInt2) {
