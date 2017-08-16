@@ -1,6 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -9,6 +10,7 @@ import org.nextprot.api.tasks.solr.indexer.entry.impl.FilterAndPropertiesFieldsB
 
 public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 
+	@Ignore
 	@Test
 	public void testFilterAndProperties() {
 

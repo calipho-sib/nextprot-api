@@ -1,10 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
@@ -13,10 +10,15 @@ import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;
 
+	@Ignore
 	@Test
 	public void testCVs() {
 		String[] test_list = {"NX_Q6H8Q1", "NX_O00116","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
@@ -31,7 +33,6 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 	
 	}
 
-	
 	public void testCVs(Entry entry) {
 		
 		String entryName = entry.getUniqueName();

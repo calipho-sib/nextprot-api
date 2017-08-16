@@ -1,9 +1,5 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,9 +8,14 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsFieldBuilder;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 
 	// This is the test for the Publication field of the entries core index (npentries1), not the publication index
+	@Ignore
 	@Test
 	public void testPublications() {
 
