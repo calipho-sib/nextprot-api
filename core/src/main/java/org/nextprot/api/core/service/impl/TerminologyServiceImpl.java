@@ -16,10 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
@@ -132,10 +129,15 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	// http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mod/data/PSI-MOD.obo
 	@Override
-	//@Cacheable("")
-	public String findPsiModName(String cvTermAccession) {
+	public Optional<String> findPsiModName(String cvTermAccession) {
 
-		String psiModAccession = findPsiModAccession(cvTermAccession);
+		Optional<String> psiModAccessionOpt = findPsiModAccession(cvTermAccession);
+
+		if (!psiModAccessionOpt.isPresent()) {
+			return Optional.empty();
+		}
+
+		String psiModAccession = psiModAccessionOpt.get();
 
 		InputStream is = getClass().getResourceAsStream("peff/PSI-MOD.obo");
 
@@ -146,10 +148,10 @@ class TerminologyServiceImpl implements TerminologyService {
 			while ((line = br.readLine()) != null) {
 
 				if (line.startsWith("id: " + psiModAccession)) {
-					return br.readLine().split(" ")[1];
+					return Optional.of(br.readLine().split(" ")[1]);
 				}
 			}
-			return null;
+			return Optional.empty();
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot find PSI-MOD name for cv term "+cvTermAccession);
 		}

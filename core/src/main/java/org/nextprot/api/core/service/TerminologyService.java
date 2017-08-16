@@ -10,6 +10,7 @@ import org.nextprot.api.core.utils.graph.CvTermGraph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,14 +86,14 @@ public interface TerminologyService {
 	}
 
 	/**
-	 * @return the PSI-MOD name of the given cv term or null if not find
+	 * @return the PSI-MOD name of the given cv term or empty if not find
 	 */
-	String findPsiModName(String cvTermAccession);
+	Optional<String> findPsiModName(String cvTermAccession);
 
 	/**
 	 * @return the PSI-MOD accession of the given cv term or null if not find
 	 */
-	default String findPsiModAccession(String cvTermAccession) {
+	default Optional<String> findPsiModAccession(String cvTermAccession) {
 
 		List<String> accessions = findCvTermXrefAccessionList(cvTermAccession, "PSI-MOD");
 
@@ -102,9 +103,9 @@ public interface TerminologyService {
 				throw new IllegalStateException("accession mapped to ids " +accessions+ ": should not have more than one mapping to PSI-MOD");
 			}
 
-			return "MOD:" + accessions.get(0);
+			return Optional.of((!accessions.get(0).startsWith("MOD:")) ? "MOD:" + accessions.get(0) : accessions.get(0));
 		}
 
-		return null;
+		return Optional.empty();
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -153,8 +154,10 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldFindXrefPsiMod2()  {
 
-		String accession = terminologyService.findPsiModAccession("PTM-0135");
-		Assert.assertEquals("MOD:00134", accession);
+		Optional<String> accession = terminologyService.findPsiModAccession("PTM-0135");
+
+		Assert.assertTrue(accession.isPresent());
+		Assert.assertEquals("MOD:00134", accession.get());
 	}
 
 	@Test
