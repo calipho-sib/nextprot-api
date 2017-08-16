@@ -1,15 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import com.google.common.base.Supplier;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -30,7 +21,8 @@ import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
-import com.google.common.base.Supplier;
+import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
@@ -323,7 +315,8 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 						bioObject = BioObject.internal(BioType.PROTEIN);
 						bioObject.setAccession(bioObjectAccession);						
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
-						String proteinName = (String)mainNamesService.findIsoformOrEntryMainName().get(bioObjectAccession).getName();
+
+						String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession).getName();
 						bioObject.putPropertyNameValue("proteinName", proteinName);
 						bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
 						

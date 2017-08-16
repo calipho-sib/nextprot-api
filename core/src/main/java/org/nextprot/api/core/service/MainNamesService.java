@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
 
 import java.util.Map;
@@ -17,8 +18,16 @@ public interface MainNamesService {
 	 * Extract main names of a given protein or isoform
 	 * @param accession isoform or entry accession
 	 * @return a MainNames object
+	 * @throws NextProtException if accession does not exist
 	 */
 	default MainNames findIsoformOrEntryMainName(String accession) {
-		return findIsoformOrEntryMainName().get(accession);
+
+		Map<String, MainNames> mainNames = findIsoformOrEntryMainName();
+
+		if (!mainNames.containsKey(accession)) {
+			throw new NextProtException("neXtProt accession "+accession+ " was not found");
+		}
+
+		return mainNames.get(accession);
 	}
 }
