@@ -55,7 +55,7 @@ public class EntryPartExporterImplTest extends CoreUnitBaseTest {
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").with(subpart));
 
         List<Row> rows = exporter.exportRows(entry);
-        Assert.assertEquals(533, rows.size());
+        Assert.assertTrue(rows.size() > 533);
         Assert.assertEquals(13, rows.get(0).size());
     }
 }

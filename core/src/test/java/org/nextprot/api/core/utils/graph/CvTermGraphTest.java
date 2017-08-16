@@ -35,7 +35,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
                 graph.countNodes());
-        Assert.assertEquals(13100, graph.countEdges());
+        Assert.assertEquals(13391, graph.countEdges());
     }
 
     @Test

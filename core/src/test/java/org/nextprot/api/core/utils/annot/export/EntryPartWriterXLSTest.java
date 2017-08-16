@@ -43,7 +43,7 @@ public class EntryPartWriterXLSTest extends CoreUnitBaseTest {
 
         fos.close();
 
-        assertCountsEquals(534, 13, tempFile);
+        assertCountsEquals(571, 13, tempFile);
     }
 
     private static void assertCountsEquals(int expectedRowCount, int expectedColumnCount, File file) throws IOException {

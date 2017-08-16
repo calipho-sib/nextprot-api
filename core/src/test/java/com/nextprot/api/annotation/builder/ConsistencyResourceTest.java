@@ -1,8 +1,7 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.List;
-import java.util.Map;
-
+import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
@@ -14,8 +13,8 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.List;
+import java.util.Map;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 

@@ -61,7 +61,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		CvTerm term = this.terminologyService.findCvTermByAccession("CVCL_J530");
 		//System.out.println(term.toString());
 		assertEquals("NextprotCellosaurusCv", term.getOntology());
-		assertEquals(1, term.getXrefs().size());
+		assertEquals(2, term.getXrefs().size());
 	}
 	
 	@Test
@@ -90,7 +90,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shoudGetAllAncestors() { 
 		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
-		assertEquals(67,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
+		assertEquals(70,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	
@@ -148,7 +148,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("PTM-0135", "PSI-MOD");
 		Assert.assertEquals(1, accessionList.size());
-		Assert.assertEquals("00134", accessionList.get(0));
+		Assert.assertEquals("MOD:00134", accessionList.get(0));
 	}
 
 	@Test

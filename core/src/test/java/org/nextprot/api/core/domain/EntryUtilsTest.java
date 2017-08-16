@@ -22,7 +22,7 @@ public class EntryUtilsTest extends CoreUnitBaseTest{
     	
         Entry testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P46778").withAnnotations());
         FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
-        Assert.assertEquals(3, FunctionInfoWithCanonicalFirst.size());
+        Assert.assertEquals(1, FunctionInfoWithCanonicalFirst.size());
 
         testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P19367").withAnnotations());
         FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
