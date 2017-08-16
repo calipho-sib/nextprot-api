@@ -311,11 +311,33 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 						// note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
 						// add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
 						bioObject = BioObject.internal(BioType.PROTEIN);
+
+                        //// TODO: REMOVE THIS HACK WHEN ISSUE https://issues.isb-sib.ch/browse/NEXTPROT-1513 will be fixed
+                        //// NX_P62158 was split in 3 accessions: NX_P0DP23/CALM1, NX_P0DP24/CALM2 and NX_P0DP25/CALM3
+                        //// BEGIN DIRTY HACK
+                        if (bioObjectAccession.equals("NX_P62158")) {
+                            switch (isoformName) {
+                                case "NX_P35499":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q99250":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q9UQD0":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q9Y5Y9":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                            }
+                        }
+                        ///// END OF HACK
+
 						bioObject.setAccession(bioObjectAccession);						
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
 
 						String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with "+firstStatement.getValue(StatementField.ENTRY_ACCESSION) +": unknown protein accession " + bioObjectAccession))
+                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with "+ isoformName +": unknown protein accession " + bioObject.getAccession()))
                                 .getName();
 
 						bioObject.putPropertyNameValue("proteinName", proteinName);
