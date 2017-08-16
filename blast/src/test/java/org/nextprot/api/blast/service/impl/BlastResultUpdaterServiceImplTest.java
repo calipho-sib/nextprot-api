@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.Matchers.any;
 
@@ -259,6 +260,6 @@ public class BlastResultUpdaterServiceImplTest {
         mainNames.setGeneNameList(Collections.singletonList("a gene name"));
         mainNames.setName("a name");
 
-        Mockito.when(mock.findIsoformOrEntryMainName(any(String.class))).thenReturn(mainNames);
+        Mockito.when(mock.findIsoformOrEntryMainName(any(String.class))).thenReturn(Optional.of(mainNames));
     }
 }
