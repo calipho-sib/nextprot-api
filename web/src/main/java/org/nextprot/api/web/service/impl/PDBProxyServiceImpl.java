@@ -16,7 +16,7 @@ import org.springframework.web.client.HttpServerErrorException;
 @Service
 public class PDBProxyServiceImpl implements PDBProxyService {
 
-	private static final String PDB_URL = "https://www.rcsb.org/pdb/files/";
+	private static final String PDB_URL = "https://files.rcsb.org/download/";
 
 	@Override
 	@Cacheable("pdb-proxy")
