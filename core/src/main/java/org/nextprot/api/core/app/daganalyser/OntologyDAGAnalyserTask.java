@@ -7,11 +7,21 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
+import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This app analyses the graph of all ontologies referenced by neXtProt
@@ -35,7 +45,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
         super(args);
         terminologyCvs = TerminologyCv.values();
-        //terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
+        terminologyCvs = new TerminologyCv[] {TerminologyCv.NextprotCellosaurusCv};
     }
 
     @Override
@@ -47,22 +57,22 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
     @Override
     protected void execute() throws IOException {
 
-        /*terminologyService = getBean(TerminologyService.class);
+        terminologyService = getBean(TerminologyService.class);
 
         System.out.println("*** write to cache timings...");
         readWriteCache(false);
         System.out.println("*** access to cache timings...");
         readWriteCache(true);
         System.out.println("*** calculate statistics...");
-        calcStatisticsForAllOntologies();*/
+        calcStatisticsForAllOntologies();
     }
 
-    /*private void calcStatisticsForAllOntologies() throws FileNotFoundException {
+    private void calcStatisticsForAllOntologies() throws FileNotFoundException {
 
         Set<TerminologyCv> excludedOntology = EnumSet.of(
                 TerminologyCv.NextprotCellosaurusCv, TerminologyCv.MeshAnatomyCv, TerminologyCv.MeshCv);
 
-        PrintWriter pw = new PrintWriter(getCommandLineParser().getOutputDirectory()+"/dag-ontology.csv");
+        PrintWriter pw = new PrintWriter(getCommandLineParser().getOutputDirectory() + "/dag-ontology.csv");
 
         pw.write(getStatisticsHeaders().stream().collect(Collectors.joining(",")));
         pw.write(",building time (ms),TerminologyUtils.getAllAncestors() time (ms),OntologyDAG.getAncestors() time (ms)\n");
@@ -71,26 +81,20 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
             Instant t1 = Instant.now();
             // no cache here: create a new instance to access graph advanced methods
-            OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
+            CvTermGraph graph = new CvTermGraph(terminologyCv, terminologyService);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
-            try {
-                List<String> statistics = calcStatistics(graph, terminologyCv);
-                statistics.add(new DecimalFormat("######.##").format(buildingTime));
-                if (!excludedOntology.contains(terminologyCv)) {
-                    statistics.addAll(benchmarkingGetAncestorsMethods(terminologyCv, terminologyService).stream().map(l -> Long.toString(l)).collect(Collectors.toList()));
-                } else {
-                    statistics.addAll(Arrays.asList("NA", "NA"));
-                }
-                pw.write(statistics.stream().collect(Collectors.joining(",")));
-
-                pw.write("\n");
-                pw.flush();
-
-            } catch (OntologyDAG.NotFoundInternalGraphException e) {
-
-                throw new IllegalStateException(e);
+            List<String> statistics = calcStatistics(graph);
+            statistics.add(new DecimalFormat("######.##").format(buildingTime));
+            if (!excludedOntology.contains(terminologyCv)) {
+                statistics.addAll(benchmarkingGetAncestorsMethods(terminologyCv, terminologyService).stream().map(l -> Long.toString(l)).collect(Collectors.toList()));
+            } else {
+                statistics.addAll(Arrays.asList("NA", "NA"));
             }
+            pw.write(statistics.stream().collect(Collectors.joining(",")));
+
+            pw.write("\n");
+            pw.flush();
         }
 
         pw.close();
@@ -104,8 +108,9 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
                 "precomputing time (ms)");
     }
 
-    private List<String> calcStatistics(OntologyDAG graph, TerminologyCv ontology) throws OntologyDAG.NotFoundInternalGraphException {
+    private List<String> calcStatistics(CvTermGraph graph) {
 
+        /*
         // 1. git clone https://github.com/jbellis/jamm.git <path to>/ ; cd <path to>/jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
         MemoryMeter memMeter = new MemoryMeter().withGuessing(MemoryMeter.Guess.FALLBACK_BEST);
@@ -140,19 +145,29 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
                     .collect(Collectors.joining(", ")));
         }
 
-        List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdgesFromTransientGraph(), graph.getConnectedComponentsFromTransientGraph().count(), cycles.size(),
-                graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
-                (int)Math.ceil(wholeGraphMemory/1024.), (int)Math.ceil(ancestorsMemory/1024.), (int)Math.ceil(cvTermIdAccessionMemory/1024.), ms);
+        List<Number> stats = Arrays.asList(
+                graph.countNodes(),
+                graph.countEdgesFromTransientGraph(),
+                graph.getConnectedComponentsFromTransientGraph().count(),
+                cycles.size(),
+                graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in),
+                graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out),
+                allPaths.size(),
+                (int)Math.ceil(wholeGraphMemory/1024.),
+                (int)Math.ceil(ancestorsMemory/1024.),
+                (int)Math.ceil(cvTermIdAccessionMemory/1024.),
+                ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
+    */
+        return new ArrayList<>();
     }
 
     private void readWriteCache(boolean readCacheForSure) {
 
         Set<String> allCvTerms = new HashSet<>();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(terminologyCvs.length);
-        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" terminology-by-ontology cache");
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated(((readCacheForSure) ? "read":"read/write")+" terminology-by-ontology cache", terminologyCvs.length);
         pb.start();
         Instant t = Instant.now();
         for (TerminologyCv ontology : terminologyCvs) {
@@ -165,8 +180,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
         pb.stop();
         System.out.println("\ttiming 'terminology-by-ontology': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
 
-        pb = ConsoleProgressBar.determinated(terminologyCvs.length);
-        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" 'ontology-dag' cache");
+        pb = ConsoleProgressBar.determinated(((readCacheForSure) ? "read":"read/write")+" 'ontology-dag' cache", terminologyCvs.length);
         pb.start();
         t = Instant.now();
         for (TerminologyCv ontology : terminologyCvs) {
@@ -177,8 +191,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
         pb.stop();
         System.out.println("\ttiming 'ontology-dag': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
 
-        pb = ConsoleProgressBar.determinated(allCvTerms.size());
-        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" 'terminology-by-accession' cache");
+        pb = ConsoleProgressBar.determinated(((readCacheForSure) ? "read":"read/write")+" 'terminology-by-accession' cache", allCvTerms.size());
         pb.start();
         t = Instant.now();
         for (String cvTerm : allCvTerms) {
@@ -194,7 +207,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
         List<Long> timings = new ArrayList<>();
 
-        OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
+        CvTermGraph graph = new CvTermGraph(terminologyCv, terminologyService);
 
         Map<Long, List<String>> ancestors = new HashMap<>();
         Map<Long, List<String>> ancestorsQuick = new HashMap<>();
@@ -212,7 +225,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
         for (CvTerm cvTerm : cvTerms) {
 
-            ancestorsQuick.put(cvTerm.getId(), Arrays.stream(graph.getAncestors(cvTerm.getId())).boxed()
+            ancestorsQuick.put(cvTerm.getId(), Arrays.stream(graph.getAncestors(Math.toIntExact(cvTerm.getId()))).boxed()
                     .map(graph::getCvTermAccessionById)
                     .collect(Collectors.toList()));
         }
@@ -230,14 +243,14 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
             if (!equals) {
 
-                System.err.println("WARNING: INCONSISTENCY: found different ancestors for cv term "+graph.getCvTermAccessionById(id)
+                System.err.println("WARNING: INCONSISTENCY: found different ancestors for cv term "+graph.getCvTermAccessionById((int) id)
                         + "\n\t: old="+ ancestors.get(id) + "\n"
                         + "\t: new="+ ancestorsNew);
             }
         }
 
         return timings;
-    }*/
+    }
 
     /**
      * Parse arguments and provides MainConfig object
