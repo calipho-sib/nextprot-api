@@ -315,6 +315,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
                         //// TODO: REMOVE THIS HACK WHEN ISSUE https://issues.isb-sib.ch/browse/NEXTPROT-1513 will be fixed
                         //// NX_P62158 was split in 3 accessions: NX_P0DP23/CALM1, NX_P0DP24/CALM2 and NX_P0DP25/CALM3
                         //// BEGIN DIRTY HACK
+						/*
                         if (bioObjectAccession.equals("NX_P62158")) {
                             switch (isoformName) {
                                 case "NX_P35499":
@@ -331,6 +332,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
                                     break;
                             }
                         }
+                        */
                         ///// END OF HACK
 
 						bioObject.setAccession(bioObjectAccession);						
