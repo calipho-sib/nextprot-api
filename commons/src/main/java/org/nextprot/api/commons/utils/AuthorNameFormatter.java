@@ -18,6 +18,8 @@ public class AuthorNameFormatter {
 
         Preconditions.checkNotNull(forename);
 
+        if (forename.equals("-")) return "-";
+        
         StringBuilder sb = new StringBuilder();
 
         // split names
@@ -38,7 +40,7 @@ public class AuthorNameFormatter {
 
                     sb.append("-");
                 }
-                sb.delete(sb.length()-1, sb.length());
+            	sb.delete(sb.length()-1, sb.length());
             }
             // standard name
             else if (name.length()>0) {
