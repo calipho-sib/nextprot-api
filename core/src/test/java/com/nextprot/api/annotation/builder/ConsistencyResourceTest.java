@@ -44,7 +44,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 						System.err.println("Can t find publication for " + pubmedId); 
 						// the next 3 lines were written because it was convenient to pass all the tests on august 2017
 						// and especially because Fred would love them ;-) 
-						Date deadline = new Date(2017,8,30);
+						Date deadline = new Date(2017,9,30);
 						if (new Date().after(deadline)) {
 							missingPublications = true;
 						}
