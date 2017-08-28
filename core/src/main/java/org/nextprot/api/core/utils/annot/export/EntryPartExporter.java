@@ -13,6 +13,7 @@ interface EntryPartExporter {
 
     List<Header> exportHeaders();
     List<Row> exportRows(Entry entry);
+    int getColumnIndex(Header header);
 
     enum Header {
 

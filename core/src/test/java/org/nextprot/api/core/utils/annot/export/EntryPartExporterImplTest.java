@@ -58,4 +58,31 @@ public class EntryPartExporterImplTest extends CoreUnitBaseTest {
         Assert.assertTrue(rows.size() > 533);
         Assert.assertEquals(13, rows.get(0).size());
     }
+    
+
+    @Test
+    public void testPartialSortOrderForExpressionProfile() throws Exception {
+
+        // the sort order defined fro expression-profile is :
+        // alpha(term name), alpha(eco_name), alpha(expression level), temporal(stage accession) 
+        // here we test that the 3 first criteria are correct
+
+    	String subpart = "expression-profile";
+        EntryPartExporter exporter = EntryPartExporterImpl.fromSubPart(subpart);
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").with(subpart));
+        List<Row> rows = exporter.exportRows(entry);
+        String lastSortKey="";
+        for (Row r : rows) {
+        	String termName = r.getValue(exporter.getColumnIndex(Header.TERM_NAME));
+        	String ecoName = r.getValue(exporter.getColumnIndex(Header.ECO_NAME));
+        	String exprLevel = r.getValue(exporter.getColumnIndex(Header.EXPRESSION_LEVEL));
+        	String sortKey = termName + "\t" + ecoName + "\t" + exprLevel; 
+        	int result = lastSortKey.compareTo(sortKey);
+        	//System.out.println("result:"+ result + "for: " + sortKey); //  + " " +  stage + " -" + stageAc);
+        	Assert.assertTrue(result <= 0);
+        	lastSortKey = sortKey;
+        }
+    }
+    
+
 }
