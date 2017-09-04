@@ -1,5 +1,6 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 
+	@Ignore
 	@Test
 	public void testEntryWith3LocationsOn3differentChromosomes() {
 		testEntryGivesSameIndexAsSolrIndex("NX_P62158"); // locations: 2p21, 19q13.32, 14q32.11

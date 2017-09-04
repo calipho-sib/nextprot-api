@@ -151,10 +151,14 @@ public class AnnotationDAOImpl implements AnnotationDAO {
             evidence.setQualifierType(resultSet.getString("qualifier_type"));
             evidence.setResourceAssociationType(resultSet.getString("resource_assoc_type"));
             evidence.setResourceType(resultSet.getString("resource_type"));
-            evidence.setResourceAccession(resultSet.getString("resource_accession"));
+            String resourceDb = resultSet.getString("resource_db");
+            String resourceAc =resultSet.getString("resource_accession");
+            // quick fix to unescape bgee xref accession
+            if ("Bgee".equals(resourceDb)) resourceAc=resourceAc.replaceAll("&amp;", "&");
+            evidence.setResourceDb(resourceDb);
+            evidence.setResourceAccession(resourceAc);
             evidence.setGoAssignedBy(GoDatasource.getGoAssignedBy(resultSet.getString("resource_accession"))); // for display only: use it if not null otherwise use assignedBy
             evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
-            evidence.setResourceDb(resultSet.getString("resource_db"));
             evidence.setResourceDescription(resultSet.getString("resource_desc"));
             evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
             evidence.setEvidenceId(resultSet.getLong("evidence_id"));

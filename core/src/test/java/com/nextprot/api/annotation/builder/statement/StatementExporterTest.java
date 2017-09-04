@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class StatementExporterTest extends CoreUnitBaseTest {
 
     @Autowired

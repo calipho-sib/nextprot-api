@@ -8,22 +8,23 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,13 +43,7 @@ public class ExportServiceImpl implements ExportService {
 	private MasterIdentifierService masterIdentifierService;
 	@Autowired
 	private VelocityConfig velocityConfig;
-	@Autowired
-	private ReleaseInfoService releaseInfoService;
-	@Autowired
-	private ChromosomeReportService chromosomeReportService;
-	@Autowired
-	private OverviewService overviewService;
-	
+
 	private int numberOfWorkers = 8;
 	private ExecutorService executor = null;
 
@@ -235,15 +230,5 @@ public class ExportServiceImpl implements ExportService {
 	@Value("${export.workers.count}")
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
-	}
-
-	@Override
-	public void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException {
-
-		Map<String, Object> map = new HashMap<>();
-		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
-		map.put("release", releaseInfoService.findReleaseInfo());
-
-		writer.write(accessions, map);
 	}
 }

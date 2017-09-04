@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
@@ -16,13 +15,13 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -73,28 +72,28 @@ public class PublicationServiceImpl implements PublicationService {
 
 		// Getting publications from nx flat database
 		List<Publication> nxflatPublications = new ArrayList<>();
-		Arrays.asList("PubMed", "DOI").stream().forEach(db -> {
+		Arrays.asList("PubMed", "DOI").forEach(db -> {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
-					StatementField.REFERENCE_ACCESSION, 
+					StatementField.REFERENCE_ACCESSION,
 					new SimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
 					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
 				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
 
 		});
-		
+
 
 		updateMissingPublicationFields(nxflatPublications);
 		publications.addAll(nxflatPublications);
 
-		final Comparator<Publication> comparator = new PublicationComparatorAsc(Publication::getPublicationYear).reversed()
-				.thenComparing((pub1, pub2) -> pub1.getPublicationType().compareTo(pub2.getPublicationType()))
-				.thenComparing(new PublicationComparatorAsc(Publication::getPublicationLocatorName))
-				.thenComparing(new PublicationComparatorAsc(Publication::getVolume, PublicationComparatorAsc.FieldType.NUMBER_TYPE))
-				.thenComparing(new PublicationComparatorAsc(Publication::getFirstPage, PublicationComparatorAsc.FieldType.NUMBER_TYPE));
+		Comparator<Publication> comparator = PublicationComparator.StringComparator(Publication::getPublicationYear).reversed()
+				.thenComparing(Comparator.comparing(Publication::getPublicationType))
+				.thenComparing(PublicationComparator.StringComparator(Publication::getPublicationLocatorName))
+				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getVolume))
+				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getFirstPage));
 
 		// sort according to order with criteria defined in publication-sorted-for-master.sql
-		Collections.sort(publications, comparator);
+		publications.sort(comparator);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
@@ -121,7 +120,6 @@ public class PublicationServiceImpl implements PublicationService {
 
 	/**
 	 * Get all publications not found in npPublication from pubmedids
-	 * @param nxflatPubmedIds entry name
 	 * @param npPublicationXrefs needed to avoid loading pubmed id publication multiple times
 	 * @return
 	 */
@@ -135,7 +133,7 @@ public class PublicationServiceImpl implements PublicationService {
 				.collect(Collectors.toList());
 
 		nxflatReferenceIds.stream()
-				.filter(pubmed -> pubmed != null)
+				.filter(Objects::nonNull)
 				.forEach(pubmed -> {
 					Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession(referenceDatabase, pubmed);
 						if (pub == null) {
@@ -200,87 +198,5 @@ public class PublicationServiceImpl implements PublicationService {
 	@Cacheable("publications-by-id-and-accession")
 	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
-	}
-
-	/**
-	 * Base class for comparing Publications in ascending order of String field
-	 */
-	private static class PublicationComparatorAsc implements Comparator<Publication> {
-
-		private enum FieldType {
-
-			STRING_TYPE, NUMBER_TYPE
-		}
-
-		private final Function<Publication, String> toFieldStringFunc;
-		private final FieldType fieldType;
-
-		PublicationComparatorAsc(Function<Publication, String> toFieldStringFunc) {
-
-			this(toFieldStringFunc, FieldType.STRING_TYPE);
-		}
-
-		/**
-		 * @param toFieldStringFunc accept a Publication and produce a String to be compare
-		 * @param fieldType the field type
-		 */
-		PublicationComparatorAsc(Function<Publication, String> toFieldStringFunc, FieldType fieldType) {
-
-			Preconditions.checkNotNull(toFieldStringFunc);
-			Preconditions.checkNotNull(fieldType);
-			this.toFieldStringFunc = toFieldStringFunc;
-			this.fieldType = fieldType;
-		}
-
-		@Override
-		public int compare(Publication p1, Publication p2) {
-
-			String stringField1 = toFieldStringFunc.apply(p1);
-			String stringField2 = toFieldStringFunc.apply(p2);
-
-			if (Objects.equals(stringField1, stringField2) ) {
-				return 0;
-			}
-
-			if (stringField1 == null || stringField1.isEmpty()) {
-				return 1;
-			}
-
-			if (stringField2 == null || stringField2.isEmpty()) {
-				return -1;
-			}
-
-			return  (fieldType == FieldType.STRING_TYPE) ? doStringComparison(stringField1, stringField2) : doIntComparison(stringField1, stringField2);
-		}
-
-		private int doStringComparison(String string1, String string2) {
-
-			return string1.compareTo(string2);
-		}
-
-		private int doIntComparison(String string1, String string2) {
-
-			boolean isInt1 = string1.matches("\\d+");
-			boolean isInt2 = string2.matches("\\d+");
-
-			// compare ints
-			if (isInt1 && isInt2) {
-
-				return Integer.compare(Integer.parseInt(string1), Integer.parseInt(string2));
-			}
-
-			else if (isInt1) {
-
-				return -1;
-			}
-
-			else if (isInt2) {
-
-				return 1;
-			}
-
-			// compare strings
-			return doStringComparison(string1, string2);
-		}
 	}
 }

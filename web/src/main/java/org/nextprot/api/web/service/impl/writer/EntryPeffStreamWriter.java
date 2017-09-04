@@ -1,6 +1,8 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.web.NXVelocityContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,14 +27,37 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
+    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb
+                .append("# PEFF 1.0\n")
+                .append("# DbName=neXtProt\n")
+                .append("# DbSource=https://www.nextprot.org\n")
+                .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append("\n")
+                .append("# DbDescription=").append(description).append("\n")
+                .append("# Prefix=nxp\n")
+                .append("# NumberOfEntries=").append(entryNum).append("\n")
+                .append("# SequenceType=AA\n\n")
+        ;
+
+        getStream().write(sb.toString());
+    }
+
+    @Override
     protected void writeEntry(String entryName) throws IOException {
 
         streamWithVelocityTemplate(entryName, "isoform");
     }
 
     @Override
-    protected void handleEntry(Entry entry) {
+    protected NXVelocityContext newNXVelocityContext(Entry entry) {
 
-        //IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, terminologyMapper);
+        NXVelocityContext velocityContext = super.newNXVelocityContext(entry);
+
+        velocityContext.add("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entry.getUniqueName()));
+
+        return velocityContext;
     }
 }

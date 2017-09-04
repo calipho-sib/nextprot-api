@@ -3,8 +3,10 @@ package org.nextprot.api.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -44,6 +46,13 @@ public class Entry implements KeyValueRepresentation {
 
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
+	}
+
+	public Optional<ExperimentalContext> getExperimentalContext(long id) {
+
+		return experimentalContexts.stream()
+				.filter(ec -> ec.getContextId() == id)
+				.findAny();
 	}
 
 	public void setExperimentalContexts(List<ExperimentalContext> experimentalContexts) {
@@ -107,6 +116,15 @@ public class Entry implements KeyValueRepresentation {
 		return xrefs;
 	}
 
+	/**
+	 * @return the dbxref with given id
+	 */
+	public Optional<DbXref> getXref(long id) {
+		return xrefs.stream()
+				.filter(xr -> xr.getDbXrefId() == id)
+				.findFirst();
+	}
+
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
 	}
@@ -149,6 +167,14 @@ public class Entry implements KeyValueRepresentation {
 		return annotations.stream().collect(Collectors.groupingBy(a -> {
 			return StringUtils.camelToKebabCase(a.getApiTypeName());
 		}));
+	}
+
+	public List<Annotation> getAnnotationsByCategory(AnnotationCategory category) {
+		if(annotations == null) return new ArrayList<>();
+
+		return annotations.stream()
+				.filter(a -> a.getAPICategory() == category)
+				.collect(Collectors.toList());
 	}
 
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {

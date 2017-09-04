@@ -7,7 +7,6 @@ gs.display_name as displayName,
 (select cv_name from nextprot.cv_quality_qualifiers q where q.cv_id=map.cv_quality_qualifier_id) as quality
 from nextprot.gene_identifiers gi
 inner join nextprot.sequence_identifiers gs on (gi.identifier_id=gs.identifier_id and gs.cv_type_id=3 and gs.cv_status_id=1)
-inner join nextprot.mapping_annotations map on (gi.identifier_id=map.reference_identifier_id and map.cv_type_id=3 )
--- and (map.cv_quality_qualifier_id is null or map.cv_quality_qualifier_id !=50)) // SILVER mapping = 50
+inner join nextprot.mapping_annotations map on (gi.identifier_id=map.reference_identifier_id and map.cv_type_id=3 and map.cv_quality_qualifier_id !=100)
 inner join nextprot.sequence_identifiers ms on (map.mapped_identifier_id=ms.identifier_id and ms.cv_status_id=1 and ms.cv_type_id=1 )
 where ms.unique_name = :unique_name

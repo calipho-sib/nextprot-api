@@ -1,15 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import com.google.common.base.Supplier;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -30,7 +21,8 @@ import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
-import com.google.common.base.Supplier;
+import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
@@ -209,11 +201,8 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 		else {
 			evidence.setResourceId(publication.getPublicationId());
 		}
-			
-			
 	}
 
-	
 	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
 		List<T> annotations = buildAnnotationList(isoformName, flatStatements);
 		if(annotations.isEmpty() || annotations.size() > 1){
@@ -299,7 +288,6 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 					annotation.setCvTermName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_NAME));
 					annotation.setCvApiName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
 				}
-							
 			}
 
 			annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
@@ -314,27 +302,58 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 			if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
 
-				BioObject bioObject = null;
+				BioObject bioObject;
 
 				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
-					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
+
+					if (bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)) {
+
 						// note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
 						// add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
 						bioObject = BioObject.internal(BioType.PROTEIN);
+
+                        //// TODO: REMOVE THIS HACK WHEN ISSUE https://issues.isb-sib.ch/browse/NEXTPROT-1513 will be fixed
+                        //// NX_P62158 was split in 3 accessions: NX_P0DP23/CALM1, NX_P0DP24/CALM2 and NX_P0DP25/CALM3
+                        //// BEGIN DIRTY HACK
+						/*
+                        if (bioObjectAccession.equals("NX_P62158")) {
+                            switch (isoformName) {
+                                case "NX_P35499":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q99250":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q9UQD0":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                                case "NX_Q9Y5Y9":
+                                    bioObjectAccession = "NX_P0DP23";
+                                    break;
+                            }
+                        }
+                        */
+                        ///// END OF HACK
+
 						bioObject.setAccession(bioObjectAccession);						
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
-						String proteinName = (String)mainNamesService.findIsoformOrEntryMainName().get(bioObjectAccession).getName();
+
+						String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with "+ isoformName +": unknown protein accession " + bioObject.getAccession()))
+                                .getName();
+
 						bioObject.putPropertyNameValue("proteinName", proteinName);
 						bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
-						
-					}else {
+					}
+					else {
 						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
 					}
-					
-				}else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
+				}
+				else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
 						bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
 						bioObject.setAnnotationHash(bioObjectAnnotationHash);
-				}else {
+				}
+				else {
 					throw new NextProtException("Category not expected for bioobject " + annotation.getAPICategory());
 				}
 
@@ -342,16 +361,11 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 			}
 
 			annotations.add(annotation);
-			
-			
-
 		});
+
 		return annotations;
 	}
-	
-	
-	
-	
+
 	private Object throwErrorOrReturn(String message, Object returnObject){
 
 		LOGGER.error(message);
@@ -360,5 +374,4 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 		}else return returnObject;
 
 	}
-
 }

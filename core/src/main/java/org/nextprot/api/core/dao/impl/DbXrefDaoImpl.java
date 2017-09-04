@@ -145,13 +145,18 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			DbXref dbXRef = new DbXref();
 			dbXRef.setProteinAccessionReferer(entryAccessionReferer);
 			dbXRef.setDbXrefId(resultSet.getLong("resource_id"));
+			String dbName = resultSet.getString("database_name");
+			dbXRef.setDatabaseName(dbName);
+
 			String acc = resultSet.getString("accession");
-			// quick fix for single error on loading with fuseki:
+			// quick fix for single error on loading with fuseki: 
 			// see publication ce5476453bf570846e2baf8a893e33fd with DOI:10.1074/jbc.M414549200... and PubMed:16040616
 			if (acc.endsWith("\\|[sect ]\\|")) acc = acc.substring(0,acc.length()-11); 
+			// quick fix fo Bgee accessions
+			if (dbName.equals("Bgee")) acc = acc.replaceAll("&amp;", "&");
 			dbXRef.setAccession(acc);
+			
 			dbXRef.setDatabaseCategory(resultSet.getString("database_category"));
-			dbXRef.setDatabaseName(resultSet.getString("database_name"));
 			dbXRef.setUrl(resultSet.getString("database_url"));
 			dbXRef.setLinkUrl(resultSet.getString("database_link"));
 			return dbXRef;

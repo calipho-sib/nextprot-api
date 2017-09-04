@@ -8,7 +8,7 @@
 	<cv_databases cv_id="32" cv_name="Ensembl" url="http://www.ensembl.org/" link_url="http://www.ensembl.org/id/%s" />
 	
 	<sequence_identifiers unique_name="NX_P41134" identifier_id="615979" cv_type_id="1" db_xref_id="1579939" />
-	<mapping_annotations annotation_id="625541" reference_identifier_id="270075" mapped_identifier_id="615979" cv_type_id="3" />
+	<mapping_annotations annotation_id="625541" reference_identifier_id="270075" mapped_identifier_id="615979" cv_type_id="3" cv_quality_qualifier_id="10" />
 	
 	<sequence_identifiers unique_name="NX_P41134-1" identifier_id="615980" cv_type_id="2" db_xref_id="1579940" />
 	<sequence_identifiers unique_name="NX_P41134-2" identifier_id="615981" cv_type_id="2" db_xref_id="1579941" />

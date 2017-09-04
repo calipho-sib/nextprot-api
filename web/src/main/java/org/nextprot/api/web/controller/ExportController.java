@@ -3,28 +3,28 @@ package org.nextprot.api.web.controller;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
+import org.nextprot.api.core.utils.annot.export.EntryPartWriter;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
-import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.SearchService;
-import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
+import org.nextprot.api.web.service.StreamEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
-
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Controller class responsible to extract in streaming
@@ -37,21 +37,18 @@ import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAuto
 public class ExportController {
 
     @Autowired
-    private ExportService exportService;
-
-    @Autowired
-    private SearchService searchService;
+    private StreamEntryService streamEntryService;
 
     @Autowired
     private UserProteinListService proteinListService;
 
     @Autowired
-    private MasterIdentifierService masterIdentifierService;
+    private EntryBuilderService entryBuilderService;
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
-    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
-        NextprotMediaType format = NextprotMediaType.valueOf(request);
-        streamAllEntries(format, response, "entry");
+    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
+
+        streamEntryService.streamAllEntries(NextprotMediaType.valueOf(request), response);
     }
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
@@ -64,11 +61,10 @@ public class ExportController {
                                      @RequestParam(value = "filter", required = false) String filter,
                                      @RequestParam(value = "sort", required = false) String sort,
                                      @RequestParam(value = "order", required = false) String order,
-                                     @RequestParam(value = "quality", required = false) String quality, Model model) {
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+                                     @RequestParam(value = "quality", required = false) String quality) {
 
-        NextprotMediaType format = NextprotMediaType.valueOf(request);
-        streamEntries(format, response, view, qr);
+        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), view, response);
     }
 
     @RequestMapping(value = "/export/entries", method = {RequestMethod.GET})
@@ -81,11 +77,11 @@ public class ExportController {
                               @RequestParam(value = "filter", required = false) String filter,
                               @RequestParam(value = "sort", required = false) String sort,
                               @RequestParam(value = "order", required = false) String order,
-                              @RequestParam(value = "quality", required = false) String quality, Model model) {
+                              @RequestParam(value = "quality", required = false) String quality) {
+
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
-        NextprotMediaType format = NextprotMediaType.valueOf(request);
-        streamEntries(format, response, "entry", qr);
+        streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), "entry", response);
     }
 
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
@@ -94,7 +90,6 @@ public class ExportController {
         return EntryBlock.getFormatViews();
     }
 
-    //@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
     @RequestMapping("/export/lists/{listId}")
     public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
@@ -124,80 +119,31 @@ public class ExportController {
         }
     }
 
-    private List<String> getAccessions(QueryRequest queryRequest) {
+    @RequestMapping(value = "/export/entry/{entry}/{blockOrSubpart}", method = {RequestMethod.GET})
+    public void streamEntrySubPart(HttpServletRequest request, HttpServletResponse response,
+                                  @PathVariable("entry") String entryName,
+                                  @PathVariable("blockOrSubpart") String blockOrSubpart) {
 
-        Set<String> accessionsSet = searchService.getAccessions(queryRequest);
-        List<String> accessions;
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withBed(true));
 
-        if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
-            //TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
-            accessions = searchService.sortAccessions(queryRequest, accessionsSet);
-        } else {
-            accessions = new ArrayList<>(accessionsSet);
-            Collections.sort(accessions);
-        }
+        try {
+            EntryPartWriter writer = EntryPartWriter.valueOf(NextprotMediaType.valueOf(request),
+                    EntryPartExporterImpl.fromSubPart(blockOrSubpart),
+                    response.getOutputStream());
 
-        return accessions;
-    }
-
-    private void streamEntries(NextprotMediaType format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
-
-        setResponseHeader(format, viewName, queryRequest, response);
-        List<String> entries = getAccessions(queryRequest);
-
-        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
-            exportService.streamResults(writer, viewName, entries);
-        }
-        catch (IOException e) {
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
+            writer.write(entry);
+        } catch (IOException e) {
+            throw new NextProtException("cannot export "+entryName+" "+blockOrSubpart+" in "+NextprotMediaType.valueOf(request)+ " format", e);
         }
     }
 
-    private void streamAllEntries(NextprotMediaType format, HttpServletResponse response, String viewName) {
+    //@ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE })
+    public void exportEntriesAsPeffOnChromosome(
+            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @PathVariable("chromosome")  String chromosome, HttpServletResponse response) {
 
-        setResponseHeader(format, response);
-        List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
-
-        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
-            exportService.streamResults(writer, viewName, entries);
-        }
-        catch (IOException e) {
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)", e);
-        }
-    }
-
-    private void setResponseHeader(NextprotMediaType format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
-
-        String filename = getFilename(queryRequest, viewName, format);
-
-        if (!format.equals(NextprotMediaType.JSON)) {
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-        }
-    }
-
-    private void setResponseHeader(NextprotMediaType format, HttpServletResponse response) {
-
-        String filename = "nextprot-entries-all"  + "." + format.getExtension();
-
-        if (!format.equals(NextprotMediaType.JSON)) {
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-        }
-    }
-
-    private String getFilename(QueryRequest queryRequest, String viewName, NextprotMediaType format) {
-        if (queryRequest.hasNextProtQuery()) {
-            return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
-        } else if (queryRequest.hasList()) {
-            return "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
-        } else if (queryRequest.getQuery() != null) { // search and add filters
-            return "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
-        } else if (queryRequest.getSparql() != null) { // search and add filters
-            return "nextprot-sparql-" + queryRequest.getSparql() + "-" + viewName + "." + format.getExtension();
-        } else if (queryRequest.getChromosome() != null) { // search and add filters
-            return "nextprot-chromosome-" + queryRequest.getChromosome() + "-" + viewName + "." + format.getExtension();
-        } else {
-            throw new NextProtException("Not implemented yet.");
-        }
+        streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
     }
 
     private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {

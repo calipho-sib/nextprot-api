@@ -1,13 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -22,6 +16,10 @@ import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
 	@Autowired
@@ -31,6 +29,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 	@Autowired
 	TerminologyService terminologyService;
 
+	@Ignore
 	@Test
 	public void testGoldAnnotations() {
 		// Since the functional tests are already done in the various fieldbuilder diff tests we will only test

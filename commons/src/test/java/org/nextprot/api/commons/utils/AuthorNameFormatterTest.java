@@ -96,6 +96,19 @@ public class AuthorNameFormatterTest {
     }
 
     @Test
+    public void testFormatPublicationForenameEmpty2() {
+
+        Assert.assertEquals("", formatter.formatForenameInitials(""));
+    }
+
+    // example publication with resource_id = 48939226, related to NX_P41159
+    @Test 
+    public void testFormatPublicationForenameIsDash() {
+
+        Assert.assertEquals("-", formatter.formatForenameInitials("-"));
+    }
+
+    @Test
     public void testFormatPublicationWithForenameContainingMultipleSpaces() {
 
         Assert.assertEquals("J.P.", formatter.formatForenameInitials("Jean   Paul"));

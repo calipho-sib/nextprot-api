@@ -57,13 +57,10 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
     @Override
     public void updateDescription(Description description, String isoAccession, String entryAccession) {
 
-        MainNames entryNames = mainNamesService.findIsoformOrEntryMainName(entryAccession);
-        MainNames isoNames = mainNamesService.findIsoformOrEntryMainName(isoAccession);
-
-        if (entryNames == null)
-            throw new NextProtException("could not find informations for entry "+entryAccession);
-        if (isoNames == null)
-            throw new NextProtException("could not find informations for isoform "+isoAccession);
+        MainNames entryNames = mainNamesService.findIsoformOrEntryMainName(entryAccession)
+                .orElseThrow(() -> new NextProtException("could not find informations for entry "+entryAccession));
+        MainNames isoNames = mainNamesService.findIsoformOrEntryMainName(isoAccession)
+                .orElseThrow(() -> new NextProtException("could not find informations for isoform "+isoAccession));
 
         String geneName = (!entryNames.getGeneNameList().isEmpty()) ? entryNames.getGeneNameList().get(0) : null;
         String proteinName = entryNames.getName();

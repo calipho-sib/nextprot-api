@@ -1,9 +1,5 @@
 package org.nextprot.api.core.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -14,6 +10,10 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 @ActiveProfiles({ "dev" })
 public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
@@ -57,7 +57,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 		List<EntryReport> reports = entryReportService.reportEntry("NX_A6NER0");
 
-		Assert.assertEquals(2, reports.size());
+		Assert.assertEquals(1, reports.size());
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9H239");
 
-		Assert.assertEquals(2, reports.size());
+		Assert.assertEquals(1, reports.size());
 	}
 	
 	@Ignore 

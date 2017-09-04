@@ -18,7 +18,7 @@ public class UnigeneXrefURLResolverTest {
     @Test
     public void testResolveUniGene() throws Exception {
 
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%d&CID=%s");
 
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
     }

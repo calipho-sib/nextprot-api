@@ -5,7 +5,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
@@ -20,7 +19,8 @@ import java.util.TreeSet;
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 	
 	@Autowired EntryBuilderService entryBuilderService;
-	
+
+	@Ignore
 	@Test
 	public void testXrefs() {
 		String[] test_list = {"NX_Q8N7I0", "NX_O00115","NX_O00116","NX_E5RQL4","NX_P32418","NX_Q7Z6P3",
@@ -33,7 +33,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		 //for(int i=4500; i < 5000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 	}
 
-	
 	public void testXrefs(Entry entry) {
 		
 		String entryName = entry.getUniqueName();

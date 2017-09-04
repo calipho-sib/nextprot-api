@@ -1,9 +1,8 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -16,23 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
-
-	private static final Log LOGGER = LogFactory.getLog(TerminologyServiceImpl.class);
 
 	@Autowired
 	private TerminologyDao terminologyDao;
 
 	@Override
 	@Cacheable("terminology-by-accession")
-	public CvTerm findCvTermByAccession(String accession) {
-		return terminologyDao.findTerminologyByAccession(accession);
+	public CvTerm findCvTermByAccession(String cvTermAccession) {
+		return terminologyDao.findTerminologyByAccession(cvTermAccession);
 	}
 
 	private static void appendAncestor(Node<CvTerm> node, Set<String> result) {
@@ -130,5 +125,35 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Cacheable("terminology-names")
 	public List<String> findTerminologyNamesList() {
 		return new ImmutableList.Builder<String>().addAll(terminologyDao.findTerminologyNamesList()).build();
+	}
+
+	// http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mod/data/PSI-MOD.obo
+	@Override
+	public Optional<String> findPsiModName(String cvTermAccession) {
+
+		Optional<String> psiModAccessionOpt = findPsiModAccession(cvTermAccession);
+
+		if (!psiModAccessionOpt.isPresent()) {
+			return Optional.empty();
+		}
+
+		String psiModAccession = psiModAccessionOpt.get();
+
+		InputStream is = getClass().getResourceAsStream("peff/PSI-MOD.obo");
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+
+				if (line.startsWith("id: " + psiModAccession)) {
+					return Optional.of(br.readLine().split(" ")[1]);
+				}
+			}
+			return Optional.empty();
+		} catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot find PSI-MOD name for cv term "+cvTermAccession);
+		}
 	}
 }

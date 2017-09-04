@@ -1,13 +1,18 @@
 package org.nextprot.api.core.service;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface TerminologyService {
 
@@ -34,14 +39,14 @@ public interface TerminologyService {
 
 	/**
 	 * Retrieves terms sorted by ontology
-	 * 
+	 *
 	 * @return
 	 */
 	List<CvTerm> findAllCVTerms();
 
 	/**
 	 * Gets enzyme terminologies
-	 * 
+	 *
 	 * @param entryName
 	 * @return
 	 */
@@ -53,4 +58,54 @@ public interface TerminologyService {
 
 	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
 	Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession);
+
+	/**
+	 * Get the list of xref(s) accession found for the specific database
+	 *
+	 * @param cvTermAccession the cvterm accession
+	 * @param databaseName the database name of the
+	 * @return a xref accessions list
+	 */
+	default List<String> findCvTermXrefAccessionList(String cvTermAccession, String databaseName) {
+
+		Preconditions.checkNotNull(cvTermAccession);
+
+		CvTerm term = findCvTermByAccession(cvTermAccession);
+
+		List<String> accessions = new ArrayList<>();
+
+		if (term != null) {
+
+			return term.getXrefs().stream()
+					.filter(xref -> xref.getDatabaseName().equals(databaseName))
+					.map(DbXref::getAccession)
+					.collect(Collectors.toList());
+		}
+
+		return accessions;
+	}
+
+	/**
+	 * @return the PSI-MOD name of the given cv term or empty if not find
+	 */
+	Optional<String> findPsiModName(String cvTermAccession);
+
+	/**
+	 * @return the PSI-MOD accession of the given cv term or null if not find
+	 */
+	default Optional<String> findPsiModAccession(String cvTermAccession) {
+
+		List<String> accessions = findCvTermXrefAccessionList(cvTermAccession, "PSI-MOD");
+
+		if (!accessions.isEmpty()) {
+
+			if (accessions.size() > 1) {
+				throw new IllegalStateException("accession mapped to ids " +accessions+ ": should not have more than one mapping to PSI-MOD");
+			}
+
+			return Optional.of((!accessions.get(0).startsWith("MOD:")) ? "MOD:" + accessions.get(0) : accessions.get(0));
+		}
+
+		return Optional.empty();
+	}
 }

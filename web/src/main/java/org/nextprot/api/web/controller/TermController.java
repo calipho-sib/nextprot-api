@@ -83,4 +83,13 @@ public class TermController {
 
 		return Collections.singletonMap("ancestor-graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
 	}
+
+	@ApiMethod(path = "/term/{term}", verb = ApiVerb.GET, description = "Get information for the given term", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/term/{term}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public CvTerm getTermInfo(
+			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+			@PathVariable("term") String term) {
+
+		return terminologyService.findCvTermByAccession(term);
+	}
 }

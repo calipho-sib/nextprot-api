@@ -23,7 +23,7 @@ import java.util.*;
 @ActiveProfiles({ "dev" })
 public class IsoformSequencePositionMapperIntegrationTest extends CoreUnitBaseTest {
 
-	private boolean sout = false;
+	private boolean sout = true;
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -149,8 +149,8 @@ NX_Q9UJW3 has 1 ERROR(s)
 		
 		String entry_ac = "NX_P01308";
 		String iso_ac = "NX_P01308-1";
-		String variant_ac = "AN_P01308_001839";
-		int expectedBeginPosOnMaster = 430;
+		String variant_ac = "AN_P01308_001747";
+		int expectedBeginPosOnMaster = 502;
 		
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
 		for (Annotation a: entry.getAnnotations()) {

@@ -1,8 +1,8 @@
 package org.nextprot.api.web.service;
 
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -11,11 +11,6 @@ import java.util.concurrent.Future;
 
 public interface ExportService {
 
-	/**
-	 * Params name to show the number of entries (used on velocity templates)
-	 */
-	String ENTRIES_COUNT_PARAM = "entriesCount";
-	
 	/**
 	 * Export all entries in the format specified with UTF-8 encoding
 	 * 
@@ -49,6 +44,4 @@ public interface ExportService {
 	Future<File> exportEntry(String entryName, NextprotMediaType format);
 
 	void clearRepository();
-
-	void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException;
 }

@@ -136,9 +136,14 @@ public class GeneDaoIntegrationTest extends CoreUnitBaseTest {
 		// Note that SILVER mapping should be filtered out in chromosome reports
 		
 		// We just check that we have one SILVER chr location in these examples (should hopefully remain true a long time)
-		// Examples of entries with a SILVER mapping to gene: NX_Q08AF8 NX_O75038 NX_Q9NVE7 NX_Q5TA89 NX_Q8TBF2 (np_20170208)
+
+		// Find more examples with query "Query for case 1" in
+		// See https://docs.google.com/document/d/1SkyXg82DgvbRD6Xq5tye1Ay87KCYF1D7VQBDB1A94iQ/edit#
+		// just replace with condition for case 5:
+		// where 
+		// gi_src = 'Ensembl' and haplotype = 'haplotype' and map_mastbool is true and map_qid = 50 
 		
-		String[] entryNames = {"NX_Q08AF8", "NX_O75038", "NX_Q9NVE7", "NX_Q5TA89", "NX_Q8TBF2" };
+		String[] entryNames = {"NX_P30450", "NX_P30453", "NX_Q16473", "NX_P30462", "NX_P30456" };
 		
 		boolean haveSilverMapping = false;
 		for (String entryName: entryNames) {

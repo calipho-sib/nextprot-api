@@ -1,24 +1,27 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-//import org.nextprot.api.core.utils.TerminologyUtils;
-//import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+//import org.nextprot.api.core.utils.TerminologyUtils;
+//import org.nextprot.api.core.domain.Identifier;
+
 public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;
 
+	@Ignore
 	@Test
 	public void testExpression() {
 
@@ -34,7 +37,6 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 	
 	}
 
-	
 	public void testExpression(Entry entry) {
 		
 		String entryName = entry.getUniqueName();

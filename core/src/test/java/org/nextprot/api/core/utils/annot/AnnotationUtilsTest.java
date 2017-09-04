@@ -452,7 +452,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
 				.with("subcellular-location")).getAnnotations();
 
-		Assert.assertEquals(23, annotations.size());
+		Assert.assertEquals(22, annotations.size());
 
 		List<Annotation> filtered = annotations.stream()
 				.filter(annotationService.buildPropertyPredicate("topology", null))

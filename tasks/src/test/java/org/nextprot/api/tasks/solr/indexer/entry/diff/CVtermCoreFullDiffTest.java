@@ -2,6 +2,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
@@ -17,6 +18,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 	
 	SolrIndexer<CvTerm> cvindexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
 
+	@Ignore
 	@Test
 	public void testCVs() {
 		//List<Terminology> allterms = terminologyService.findTerminologyByOntology("UniprotFamilyCv"); //.findAllTerminology();

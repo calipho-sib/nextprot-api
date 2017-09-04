@@ -2,6 +2,9 @@ package org.nextprot.api.commons.utils.app;
 
 import org.apache.commons.cli.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Base command line parser for Spring application
  */
@@ -10,6 +13,7 @@ public class CommandLineSpringParser {
     private final String appName;
     private final HelpFormatter formatter;
     private final Options options;
+    private final List<String> remainingArguments = new ArrayList<>();
 
     public CommandLineSpringParser(String appName) {
 
@@ -41,6 +45,8 @@ public class CommandLineSpringParser {
 
         parseOtherParams(commandLine);
 
+        remainingArguments.addAll(commandLine.getArgList());
+
         return springConfig;
     }
 
@@ -57,4 +63,14 @@ public class CommandLineSpringParser {
     }
 
     protected void parseOtherParams(CommandLine commandLine) throws ParseException { }
+
+    public List<String> getRemainingArguments() {
+
+        return remainingArguments;
+    }
+
+    public boolean hasRemainingArguments() {
+
+        return !remainingArguments.isEmpty();
+    }
 }

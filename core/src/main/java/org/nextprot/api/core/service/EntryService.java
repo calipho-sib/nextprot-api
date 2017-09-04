@@ -29,5 +29,13 @@ public interface EntryService {
 	List<Entry> findEntriesByChromosome(String chromosome);
 	
 	List<String> findEntryNamesByChromosome(String chromosome);
-	
+
+	default Entry findEntryFromIsoformAccession(String isoformAccession) {
+
+		if (!isoformAccession.contains("-")) {
+			return null;
+		}
+
+		return findEntry(isoformAccession.split("-")[0]);
+	}
 }

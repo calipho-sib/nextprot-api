@@ -19,7 +19,6 @@ public enum TerminologyCv {
 	NciThesaurusCv,
 	NextprotAnatomyCv,
 	NextprotAnnotationCv,
-	NextprotCarbohydrateCv,
 	NextprotCellosaurusCv,
 	NextprotDomainCv,
 	NextprotFamilyCv,

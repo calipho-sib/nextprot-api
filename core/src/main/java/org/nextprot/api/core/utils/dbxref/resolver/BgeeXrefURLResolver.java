@@ -8,12 +8,13 @@ class BgeeXrefURLResolver extends DefaultDbXrefURLResolver {
     public String getTemplateURL(DbXref xref) {
 
         String accession = xref.getAccession();
-        String templateURL = super.getTemplateURL(xref);
 
-        if (accession.contains("ENSG"))
-            //templateURL = templateURL.replaceFirst("uniprot_id=", "page=expression&action=data&");
-            templateURL = "http://bgee.org/?page=gene&gene_id=%s";
-
-        return templateURL;
+        if (accession.startsWith("ENSG") && ! accession.contains("&")) {  // ENSG id only
+            return "http://bgee.org/bgee/bgee?page=expression&action=data&gene_id=%s";
+        } else if (accession.contains("ENSG")) {  // several parameters: stage, ...
+            return "http://bgee.org/bgee/bgee?page=expression&action=data&%s";
+        } else {
+        	return "http://bgee.org/bgee/bgee?uniprot_id=%s";
+        }
     }
 }

@@ -36,6 +36,15 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     @Test
+    public void testResolveExpressionAtlas() throws Exception {
+
+        DbXref xref = createDbXref("AF009225", "ExpressionAtlas", "http://www.ebi.ac.uk/whatever");
+
+        Assert.assertEquals("http://www.ebi.ac.uk/gxa/search?geneQuery=%09AF009225", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s", xref.getLinkUrl());
+    }
+
+    @Test
     public void testResolveEmbl() throws Exception {
 
         DbXref xref = createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
@@ -233,21 +242,23 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveUniGene() throws Exception {
 
-        DbXref xref = createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2");
+        DbXref xref = createDbXref("Hs.83634", "UniGene", "https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%d&CID=%s");
 
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%d&CID=%s", xref.getLinkUrl());
     }
 
     @Test
     public void testResolveUCSC() throws Exception {
 
-        DbXref xref = createDbXref("uc004fjp.3", "UCSC", "http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=%s1&org=%s2");
-
-        Assert.assertEquals("http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc004fjp.3&org=human", resolver.resolve(xref));
-        Assert.assertEquals("http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=%s1&org=%s2", xref.getLinkUrl());
+        DbXref xref = createDbXrefWithEntry("NX_Q9UPW6", "uc002uuy.2", "UCSC", "http://www.some.org/this/template/should/be/overriden/%s");
+        Assert.assertEquals("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=Q9UPW6", resolver.resolve(xref));
+        Assert.assertEquals("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u", xref.getLinkUrl());
     }
 
+    
+    
+    
     @Test
     public void testResolveIntAct() throws Exception {
 
@@ -287,12 +298,16 @@ public class DbXrefURLResolverDelegateTest {
 
     // entry/P51610/xref.json
     @Test
-    public void testResolveBgeeENSG() throws Exception {
+    public void testResolveBgeeENSGAndOther() throws Exception {
 
-        DbXref xref = createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+    	String dbURL = "http://bgee.org/?page=gene&gene_id=%s";
+    	String evidenceURL = "http://bgee.org/bgee/bgee?page=expression&action=data&";
+    	String ac = "stage_id=HsapDO:0000044&organ_id=EV:0100146&gene_id=ENSG00000124532";
+    	
+        DbXref xref = createDbXref(ac, "Bgee", dbURL);
 
-        Assert.assertEquals("http://bgee.org/?page=gene&gene_id=ENSG00000172534", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.org/?page=gene&gene_id=%s", xref.getLinkUrl());
+        Assert.assertEquals(evidenceURL + ac, resolver.resolve(xref));
+        Assert.assertEquals(evidenceURL + "%s", xref.getLinkUrl());
     }
 
     // entry/P51610/xref.json
@@ -301,9 +316,20 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
+        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
+        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
     }
+
+ 
+    @Test
+    public void testResolveBgeeSingleENSG() throws Exception {
+
+        DbXref xref = createDbXref("ENSG000012345", "Bgee", "http://bgee.unil.ch/whatever");
+
+        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&gene_id=ENSG000012345", resolver.resolve(xref));
+    }
+
+    
 
     // entry/NX_P01308/xref.json
     @Test
@@ -500,10 +526,13 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveChitars() throws Exception {
 
-        DbXref xref = createDbXref("ESR1", "ChiTaRS", "http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1");
-        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
+        DbXref xref = createDbXref("HIST1H3B", "ChiTaRS", "http://ww.example.com/should/be/replaced/by/preferred/%s");
+        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=HIST1H3B&human=1", resolver.resolve(xref));
     }
 
+    
+    
+    
     public static DbXref createDbXrefWithEntry(String entryAccession, String accession, String dbName, String linkURL) {
 
         DbXref xref = createDbXref(accession, dbName, linkURL);
