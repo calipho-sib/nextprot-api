@@ -64,4 +64,14 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 					x.getAccession().equals(originalEntry.getUniprotName()))
 		);
 	}
+
+	@Test
+	public void proteomicPageShouldFilterPhosphoSitePlusDb() {
+
+		String entryAC = "NX_P52701";
+		Entry filteredEntry = entryPageService.filterXrefInPageView(entryAC, "proteomics");
+		Assert.assertTrue(filteredEntry.getXrefs().stream()
+                .anyMatch(x -> x.getDatabaseName().equals("PhosphoSitePlus"))
+        );
+	}
 }
