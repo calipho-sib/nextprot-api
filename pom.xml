@@ -337,6 +337,16 @@
 			<version>2.4.9</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-spring-boot-starter</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-java-tools</artifactId>
+			<version>3.2.0</version>
+		</dependency>
 
 		<!-- manage git info -->
 		<dependency>
