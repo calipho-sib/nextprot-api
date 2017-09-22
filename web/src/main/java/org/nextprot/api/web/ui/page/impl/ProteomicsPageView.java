@@ -41,7 +41,7 @@ public class ProteomicsPageView extends PageViewBase {
 				"Aarhus/Ghent-2DPAGE","Cornea-2DPAGE","DOSAC-COBS-2DPAGE","OGP","PHCI-2DPAGE",
 				"PMMA-2DPAGE", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "Siena-2DPAGE", "UCD-2DPAGE",
 				"PRIDE", "PeptideAtlas",
-				"GlycoSuiteDB", "PhosphoSite",
+				"GlycoSuiteDB", "PhosphoSitePlus",
 				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD");
 	}
 
