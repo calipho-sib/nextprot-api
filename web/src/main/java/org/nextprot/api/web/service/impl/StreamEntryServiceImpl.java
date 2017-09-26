@@ -1,5 +1,8 @@
 package org.nextprot.api.web.service.impl;
 
+import org.apache.http.HttpStatus;
+import org.nextprot.api.commons.bio.Chromosome;
+import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
@@ -52,12 +55,24 @@ public class StreamEntryServiceImpl implements StreamEntryService {
     @Override
     public void streamAllChromosomeEntries(String chromosome, NextprotMediaType format, HttpServletResponse response) {
 
-        try {
-            setResponseHeader(response, format, "nextprot_chromosome_"  + chromosome + "." + format.getExtension());
-            streamEntries(masterIdentifierService.findUniqueNamesOfChromosome(chromosome), format, "entry", response.getOutputStream(), "chromosome "+chromosome);
-        } catch (IOException e) {
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries from chromosome "+ chromosome, e);
-        }
+		if (!Chromosome.exists(chromosome)) {
+
+			ChromosomeNotFoundException ex = new ChromosomeNotFoundException(chromosome);
+			response.setStatus(HttpStatus.SC_NOT_FOUND);
+			try {
+				response.getWriter().print(ex.getMessage());
+			} catch (IOException e) {
+				throw new NextProtException(format.getExtension() + " streaming failed: "+ex.getMessage(), e);
+			}
+		}
+		else {
+			try {
+				setResponseHeader(response, format, "nextprot_chromosome_" + chromosome + "." + format.getExtension());
+				streamEntries(masterIdentifierService.findUniqueNamesOfChromosome(chromosome), format, "entry", response.getOutputStream(), "chromosome " + chromosome);
+			} catch (IOException e) {
+				throw new NextProtException(format.getExtension() + " streaming failed: cannot export all " + masterIdentifierService.findUniqueNames().size() + " entries from chromosome " + chromosome, e);
+			}
+		}
     }
 
     @Override
