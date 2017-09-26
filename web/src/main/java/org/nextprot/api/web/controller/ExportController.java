@@ -1,7 +1,10 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -137,10 +140,10 @@ public class ExportController {
         }
     }
 
-    //@ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
+    @ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
     @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE })
     public void exportEntriesAsPeffOnChromosome(
-            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
             @PathVariable("chromosome")  String chromosome, HttpServletResponse response) {
 
         streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
