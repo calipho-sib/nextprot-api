@@ -44,6 +44,7 @@ public class EntryController {
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private PeffService peffService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private ReleaseInfoService releaseInfoService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -70,6 +71,7 @@ public class EntryController {
 
 			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
 			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+			model.addAttribute("releaseInfo", releaseInfoService.findReleaseInfo());
 		}
 		else {
 			boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
