@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.core.domain.ChromosomeReport;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ public interface ChromosomeReportSummaryService {
 
 	default Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
-		return ChromosomeReportService.getChromosomeNames().stream()
+		return Chromosome.getNames().stream()
 				.collect(Collectors.toMap(
 						k -> k,
 						this::reportChromosomeSummary,
