@@ -8,6 +8,8 @@ import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.*;
 
+import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
+
 /**
  * Annotation located on isoform formattable in PEFF specified by the HUPO PSI (PubMed:19132688)
  *
@@ -43,7 +45,15 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
     protected Comparator<Annotation> createAnnotationComparator(String isoformAccession) {
 
-        return Comparator.comparingInt(a -> a.getStartPositionForIsoform(isoformAccession));
+        return (a1, a2) -> {
+
+            int cmp = compareNullableComparableObject(a1.getStartPositionForIsoform(isoformAccession), a2.getStartPositionForIsoform(isoformAccession));
+
+            if (cmp == 0) {
+                return compareNullableComparableObject(a1.getEndPositionForIsoform(isoformAccession), a2.getEndPositionForIsoform(isoformAccession));
+            }
+            return cmp;
+        };
     }
 
     @Override

@@ -30,11 +30,14 @@ public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoForma
     @Override
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
+        Integer start = annotation.getStartPositionForIsoform(isoformAccession);
+        Integer end = annotation.getEndPositionForIsoform(isoformAccession);
+
         sb
                 .append("(")
-                .append(annotation.getStartPositionForIsoform(isoformAccession))
+                .append((start != null) ? start : "?")
                 .append("|")
-                .append(annotation.getEndPositionForIsoform(isoformAccession))
+                .append((end != null) ? end : "?")
                 .append("|")
                 .append(ANNOTATION_CATEGORY_TO_NAME.get(annotation.getAPICategory()))
                 .append(")")
