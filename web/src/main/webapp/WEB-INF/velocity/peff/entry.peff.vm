@@ -1,4 +1,5 @@
 #foreach($isoform in $entry.isoforms)
->${peffByIsoform.get($isoform.getIsoformAccession())}$StringUtils.getCR()
+    #set($UNESCAPED_CDATA = ${peffByIsoform.get($isoform.getIsoformAccession())})
+>$UNESCAPED_CDATA$StringUtils.getCR()
 $StringUtils.wrapText($isoform.getSequence(), 60)$StringUtils.getCR()
 #end
