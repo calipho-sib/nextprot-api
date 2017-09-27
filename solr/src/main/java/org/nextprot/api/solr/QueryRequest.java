@@ -52,9 +52,12 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.query = query;
 	}
 
+	public boolean hasQuery() {
+		return this.query  != null && !this.query.isEmpty();
+	}
 
 	public boolean hasList() {
-		return this.listId  != null;
+		return this.listId  != null && !this.listId.isEmpty();
 	}
 
 
@@ -193,11 +196,11 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	}
 
 	public boolean hasSparql() {
-		return sparql != null;
+		return sparql != null && !this.sparql.isEmpty();
 	}
 
 	public boolean hasNextProtQuery() {
-		return queryId != null;
+		return queryId != null && !this.queryId.isEmpty();
 	}
 
 	public String getSparqlTitle() {

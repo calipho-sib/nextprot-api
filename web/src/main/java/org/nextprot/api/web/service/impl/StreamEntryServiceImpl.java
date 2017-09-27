@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
+import arq.query;
 import org.apache.http.HttpStatus;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
@@ -8,6 +9,10 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.domain.UserQuery;
+import org.nextprot.api.user.service.UserProteinListService;
+import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.StreamEntryService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
@@ -33,6 +38,12 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	@Autowired
 	private SearchService searchService;
 
+	@Autowired
+	private UserQueryService userQueryService;
+
+	@Autowired
+	private UserProteinListService proteinListService;
+
     @Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
@@ -46,7 +57,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         try {
             setResponseHeader(response, format, "nextprot-entries-all"  + "." + format.getExtension());
-            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "global export");
+            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "");
         } catch (IOException e) {
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries", e);
         }
@@ -82,7 +93,8 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         try {
             setResponseHeader(response, format, getFilename(queryRequest, viewName, format));
-            streamEntries(entries, format, viewName, response.getOutputStream(), queryRequest.toPrettyString());
+
+            streamEntries(entries, format, viewName, response.getOutputStream(), getDescription(queryRequest));
         }
         catch (IOException e) {
         	throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
@@ -103,6 +115,62 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 		}
 
 		return accessions;
+	}
+
+	private String getDescription(QueryRequest queryRequest) {
+
+		// /export/entries.peff?query=krypton
+		if (queryRequest.hasQuery()) {
+
+			return "query: " + queryRequest.getQuery();
+		}
+		// /export/entries.peff?queryId=6EMJ1WEJ
+		else if (queryRequest.hasNextProtQuery()) {
+
+			UserQuery query = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
+			String desc = query.getDescription();
+
+			StringBuilder sb = new StringBuilder("query: title=")
+					.append(query.getTitle());
+
+			if (desc != null && !desc.isEmpty()) {
+				sb.append(", description=").append(desc);
+			}
+
+			return sb.toString();
+		}
+		// /export/entries.peff?listId=X03S67T2
+		else if (queryRequest.hasList()) {
+
+			UserProteinList proteinList = proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
+			String desc = proteinList.getDescription();
+
+			StringBuilder sb = new StringBuilder("list: name=")
+					.append(proteinList.getName());
+
+			if (desc != null && !desc.isEmpty()) {
+				sb.append(", description=").append(desc);
+			}
+
+			return sb.toString();
+		}
+
+		else if (queryRequest.hasSparql()) {
+
+			String title = queryRequest.getSparqlTitle();
+			String sparql = queryRequest.getSparql();
+
+			StringBuilder sb = new StringBuilder("sparql: title=")
+					.append(title);
+
+			if (sparql != null && !sparql.isEmpty()) {
+				sb.append(", query=").append(sparql);
+			}
+
+			return sb.toString();
+		}
+
+    	return "";
 	}
 
 	private void setResponseHeader(HttpServletResponse response, NextprotMediaType format, String filename) {
