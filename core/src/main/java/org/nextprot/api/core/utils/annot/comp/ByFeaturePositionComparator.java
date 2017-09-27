@@ -110,7 +110,7 @@ class ByFeaturePositionComparator implements Comparator<Annotation> {
         if (cmp == 0) {
 
             // UNKNOWN END COMES LAST
-            cmp = NULLABLE_COMPARABLE.compareNullables(end1, end2, false);
+            cmp = -NULLABLE_COMPARABLE.compareNullables(end1, end2, false);
         }
 
         return cmp;
