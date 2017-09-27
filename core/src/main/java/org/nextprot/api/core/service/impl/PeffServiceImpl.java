@@ -152,7 +152,6 @@ public class PeffServiceImpl implements PeffService {
 
     private String getGeneName(String isoformAccession) {
 
-        Isoform isoform = isoformService.findIsoformByAccession(isoformAccession);
         Overview overview = overviewService.findOverviewByEntry(getEntryAccession(isoformAccession));
 
         return (overview.hasMainGeneName()) ? overview.getMainGeneName() : "";
