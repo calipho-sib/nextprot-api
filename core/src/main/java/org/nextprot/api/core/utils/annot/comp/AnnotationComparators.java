@@ -27,25 +27,4 @@ public class AnnotationComparators {
                 .thenComparing(new ByAnnotationBioObjectComparator(annotationByHash))
                 .thenComparing(Annotation::getCvTermName);
     }
-
-    public static int compareNullableComparableObject(Comparable o1, Comparable o2) {
-
-        return compareNullableComparableObject(o1, o2, true);
-    }
-
-    public static int compareNullableComparableObject(Comparable o1, Comparable o2, boolean asc) {
-
-        int cmp;
-
-        if (Objects.equals(o1, o2)) return 0;
-
-        if (o1 == null)
-            cmp = -1;
-        else if (o2 == null)
-            cmp = 1;
-        else
-            cmp = o1.compareTo(o2);
-
-        return (asc) ? cmp : -cmp;
-    }
 }

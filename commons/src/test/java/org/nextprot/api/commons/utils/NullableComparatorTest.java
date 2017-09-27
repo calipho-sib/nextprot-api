@@ -10,23 +10,15 @@ public class NullableComparatorTest {
     private final NullableComparator<StringInteger> nullableComparator = new NullableComparator<>(Comparator.comparingInt(StringInteger::getInteger));
 
     @Test
-    public void testComparePositionAsc() throws Exception {
+    public void testComparePosition() throws Exception {
 
-        int cmp = nullableComparator.compareNullables(new StringInteger("2"), new StringInteger("25"), true);
+        int cmp = nullableComparator.compareNullables(new StringInteger("2"), new StringInteger("25"));
 
         Assert.assertTrue(cmp < 0);
     }
 
     @Test
-    public void testComparePositionDesc() throws Exception {
-
-        int cmp = nullableComparator.compareNullables(new StringInteger("2"), new StringInteger("25"), false);
-
-        Assert.assertTrue(cmp > 0);
-    }
-
-    @Test
-    public void testComparePositionWithBeginNull() throws Exception {
+    public void testComparePositionNullComesFirst() throws Exception {
 
         int cmp = nullableComparator.compareNullables(null, new StringInteger("25"));
 
@@ -34,7 +26,15 @@ public class NullableComparatorTest {
     }
 
     @Test
-    public void testComparePositionWithBeginNull2() throws Exception {
+    public void testComparePositionNullComesLast() throws Exception {
+
+        int cmp = nullableComparator.compareNullables(null, new StringInteger("25"), false);
+
+        Assert.assertTrue(cmp > 0);
+    }
+
+    @Test
+    public void testComparePositionNullComesFirst2() throws Exception {
 
         int cmp = nullableComparator.compareNullables(new StringInteger("19"), null);
 
@@ -53,7 +53,7 @@ public class NullableComparatorTest {
 
         private final int i;
 
-        public StringInteger(String str) {
+        StringInteger(String str) {
 
             this.i = Integer.parseInt(str);
         }

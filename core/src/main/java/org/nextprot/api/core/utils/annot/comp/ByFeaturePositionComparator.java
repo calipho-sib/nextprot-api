@@ -1,12 +1,12 @@
 package org.nextprot.api.core.utils.annot.comp;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.utils.NullableComparable;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.util.*;
 
-import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
 
 /**
  * Comparison function that sort Annotations based on feature positions.
@@ -33,6 +33,8 @@ import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compa
  * </ol>
  */
 class ByFeaturePositionComparator implements Comparator<Annotation> {
+
+    private static final NullableComparable<Integer> NULLABLE_COMPARABLE = new NullableComparable<>();
 
     @Override
     public int compare(Annotation a1, Annotation a2) {
@@ -102,13 +104,13 @@ class ByFeaturePositionComparator implements Comparator<Annotation> {
 
         // 1. begin positions in ascending order
         // UNKNOWN BEGIN COMES FIRST
-        cmp = compareNullableComparableObject(begin1, begin2, true);
+        cmp = NULLABLE_COMPARABLE.compareNullables(begin1, begin2, true);
 
         // 2. end positions in descending order (most inclusive comes first)
         if (cmp == 0) {
 
             // UNKNOWN END COMES LAST
-            cmp = compareNullableComparableObject(end1, end2, false);
+            cmp = NULLABLE_COMPARABLE.compareNullables(end1, end2, false);
         }
 
         return cmp;
