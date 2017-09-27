@@ -10,23 +10,7 @@ public class NullableComparableTest {
     private final NullableComparable<Integer> nullableComparable = new NullableComparable<>();
 
     @Test
-    public void testComparePositionAsc() throws Exception {
-
-        int cmp = nullableComparable.compareNullables(2, 25, true);
-
-        Assert.assertTrue(cmp < 0);
-    }
-
-    @Test
-    public void testComparePositionDesc() throws Exception {
-
-        int cmp = nullableComparable.compareNullables(2, 25, false);
-
-        Assert.assertTrue(cmp > 0);
-    }
-
-    @Test
-    public void testComparePositionWithBeginNull() throws Exception {
+    public void testComparePositionNullComesFirst() throws Exception {
 
         int cmp = nullableComparable.compareNullables(null, 25);
 
@@ -34,7 +18,15 @@ public class NullableComparableTest {
     }
 
     @Test
-    public void testComparePositionWithBeginNull2() throws Exception {
+    public void testComparePositionNullComesLast() throws Exception {
+
+        int cmp = nullableComparable.compareNullables(null, 25, false);
+
+        Assert.assertTrue(cmp > 0);
+    }
+
+    @Test
+    public void testComparePositionNullComesFirst2() throws Exception {
 
         int cmp = nullableComparable.compareNullables(19, null);
 
