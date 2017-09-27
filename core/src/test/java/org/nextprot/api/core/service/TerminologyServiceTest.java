@@ -161,6 +161,15 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
+	public void shouldFindXrefPsiModName()  {
+
+		Optional<String> name = terminologyService.findPsiModName("PTM-0135");
+
+		Assert.assertTrue(name.isPresent());
+		Assert.assertEquals("N6-glycyl-L-lysine", name.get());
+	}
+
+	@Test
 	public void shouldNotFindXrefPsiMod()  {
 
 		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("TS-0001", "PSI-MOD");
@@ -185,6 +194,19 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, accessionList.size());
 		Assert.assertTrue(accessionList.contains("BTO:0000553"));
 		Assert.assertTrue(accessionList.contains("BTO:0000089"));
+	}
+
+	@Test
+	public void shouldFindMOD00077CorrectName()  {
+
+		Optional<String> psiModAccession = terminologyService.findPsiModAccession("PTM-0066");
+		Assert.assertTrue(psiModAccession.isPresent());
+		Assert.assertEquals("MOD:00077", psiModAccession.get());
+
+		Optional<String> name = terminologyService.findPsiModName("PTM-0066");
+
+		Assert.assertTrue(name.isPresent());
+		Assert.assertEquals("asymmetric dimethyl-L-arginine", name.get());
 	}
 }
 
