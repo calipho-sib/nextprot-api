@@ -49,10 +49,10 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
         return (a1, a2) -> {
 
-            int cmp = nullableComparable.compareNullables(a1.getStartPositionForIsoform(isoformAccession), a2.getStartPositionForIsoform(isoformAccession));
+            int cmp = nullableComparable.compareNullables(a1.getStartPositionForIsoform(isoformAccession), a2.getStartPositionForIsoform(isoformAccession), false);
 
             if (cmp == 0) {
-                return nullableComparable.compareNullables(a1.getEndPositionForIsoform(isoformAccession), a2.getEndPositionForIsoform(isoformAccession));
+                return nullableComparable.compareNullables(a1.getEndPositionForIsoform(isoformAccession), a2.getEndPositionForIsoform(isoformAccession), false);
             }
             return cmp;
         };
