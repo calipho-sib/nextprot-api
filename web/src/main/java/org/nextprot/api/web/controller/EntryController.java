@@ -54,7 +54,7 @@ public class EntryController {
     }
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts",
-			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", "text/peff", "text/fasta"})
+			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", "text/fasta"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -65,24 +65,13 @@ public class EntryController {
 			HttpServletRequest request,
 			Model model) {
 
-    	Entry entry;
+		boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
 
-		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
 
-			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
-			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
-			model.addAttribute("releaseInfo", releaseInfoService.findReleaseInfo());
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
 		}
-		else {
-			boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
-
-			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
-
-			if (ancestorTerm != null || propertyName != null) {
-				filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
-			}
-		}
-
 		model.addAttribute("entry", entry);
 
 		return "entry";
