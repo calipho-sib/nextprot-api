@@ -10,6 +10,9 @@ import java.util.Collection;
 
 public interface StreamEntryService {
 
+	/** Stream a view of the entry into output stream in a specific format */
+	void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException;
+
 	/** Stream a view of the entries into output stream in a specific format */
 	void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException;
 

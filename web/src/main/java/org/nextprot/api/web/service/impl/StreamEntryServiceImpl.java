@@ -44,7 +44,14 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	@Autowired
 	private UserProteinListService proteinListService;
 
-    @Override
+	@Override
+	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
+
+		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
+		writer.write(Collections.singletonList(accession), releaseInfoService.findReleaseInfo(), description);
+	}
+
+	@Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);

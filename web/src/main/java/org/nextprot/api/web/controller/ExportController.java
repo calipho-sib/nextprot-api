@@ -149,6 +149,20 @@ public class ExportController {
         streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
     }
 
+    @ApiMethod(path = "/export/entry/{entry}", verb = ApiVerb.GET, description = "Export isoforms of a given neXtProt entry",
+            produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/entry/{entry}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
+    public void exportEntry(HttpServletRequest request,
+            @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+            @PathVariable("entry") String entryName, HttpServletResponse response) {
+
+        try {
+            streamEntryService.streamEntry(entryName, NextprotMediaType.valueOf(request), response.getOutputStream(), entryName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
 
         QueryRequest qr = new QueryRequest();

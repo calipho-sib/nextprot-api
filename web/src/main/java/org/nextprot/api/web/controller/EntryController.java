@@ -44,7 +44,6 @@ public class EntryController {
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private PeffService peffService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
-	@Autowired private ReleaseInfoService releaseInfoService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
