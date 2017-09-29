@@ -208,5 +208,24 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		Assert.assertTrue(name.isPresent());
 		Assert.assertEquals("asymmetric dimethyl-L-arginine", name.get());
 	}
+
+	//@Test
+	public void searchCvtermWithUndefinedXrefs()  {
+
+		//for (CvTerm cvTerm : terminologyService.findAllCVTerms()) {
+		for (CvTerm cvTerm : terminologyService.findCvTermsByOntology("UniprotPtmCv")) {
+
+			if (cvTerm.getXrefs() == null || cvTerm.getXrefs().isEmpty()) {
+
+				System.err.println("no xrefs: "+cvTerm.getAccession()+"\t"+cvTerm.getOntology());
+			}
+			else {
+				List<String> psiModAccessions = terminologyService.findCvTermXrefAccessionList(cvTerm.getAccession(), "PSI-MOD");
+				if (psiModAccessions.isEmpty()) {
+					System.err.println("no ptm to psi-mod: "+cvTerm.getAccession()+"\t"+cvTerm.getOntology());
+				}
+			}
+		}
+	}
 }
 

@@ -74,7 +74,7 @@ public interface TerminologyService {
 
 		List<String> accessions = new ArrayList<>();
 
-		if (term != null) {
+		if (term != null && term.getXrefs() != null) {
 
 			return term.getXrefs().stream()
 					.filter(xref -> xref.getDatabaseName().equals(databaseName))

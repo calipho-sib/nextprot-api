@@ -125,7 +125,7 @@ public class PeffServiceImpl implements PeffService {
     public String formatModResPsi(String isoformAccession) {
 
         return new ModResPsiFormatter(
-                (cvTerm) -> terminologyService.findPsiModAccession(cvTerm).orElse(cvTerm),
+                (cvTerm) -> terminologyService.findPsiModAccession(cvTerm).orElse("MOD:XXXXX"),
                 (cvTerm) -> terminologyService.findPsiModName(cvTerm).orElse(cvTerm)
         ).format(entryService.findEntryFromIsoformAccession(isoformAccession), isoformAccession);
     }
