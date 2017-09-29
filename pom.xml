@@ -340,14 +340,18 @@
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
-			<version>3.6.0</version>
+			<version>3.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphiql-spring-boot-starter</artifactId>
+			<version>3.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-java-tools</artifactId>
-			<version>3.2.0</version>
+			<version>4.1.2</version>
 		</dependency>
-
 		<!-- manage git info -->
 		<dependency>
 			<groupId>com.lukegb.mojo</groupId>

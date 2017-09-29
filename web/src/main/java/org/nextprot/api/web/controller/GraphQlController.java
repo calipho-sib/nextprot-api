@@ -1,22 +1,18 @@
 package org.nextprot.api.web.controller;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiPathParam;
-import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.nextprot.api.web.service.GraphQlExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Api(name = "GraphQlController", description = "Method to retrieve data using graphql syntax")
@@ -24,17 +20,17 @@ public class GraphQlController {
 
 	@Autowired  private GraphQlExecutor graphQlExecutor;
 
+	@RequestMapping(value="/graphql", method={RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public Object executeOperation(@RequestBody Map body) {
-		long startTime = System.currentTimeMillis();
-		String uuid = UUID.randomUUID().toString();
+	public Object executeOperation(@RequestBody(required = false) Map body) throws IOException {
 
-		//log.debug("Start processing graphQL request {}", uuid);
-		Object requestResult = graphQlExecutor.executeRequest(body);
+		String json = "{\"query\":\"{entry(accession: \\\"P01308\\\"){isoforms}}\"}";
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = new HashMap<>();
+		body = mapper.readValue(json, map.getClass());
 
-		//log.debug("Finished processing graphQL request {} in {} ms", uuid, System.currentTimeMillis() - startTime);
-
-		return requestResult;
+		return graphQlExecutor.executeRequest(body);
 	}
+
 
 }

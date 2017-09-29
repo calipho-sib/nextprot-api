@@ -1,0 +1,16 @@
+type Query {
+    # Find entry  by accession
+    entry(accession: String!): Entry
+}
+
+type Isoform {
+    # The id of the human
+    sequence: String!
+}
+
+type Entry {
+    # The unique id
+    accession: String!
+    # isoform
+    isoforms: [Isoform]
+}
