@@ -12,6 +12,7 @@ import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
@@ -53,7 +54,7 @@ public class EntryController {
     }
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts",
-			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", "text/fasta"})
+			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
