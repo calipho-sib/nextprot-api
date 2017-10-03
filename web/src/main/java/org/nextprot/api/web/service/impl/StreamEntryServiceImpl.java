@@ -117,10 +117,10 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
 		if (queryRequest.getReferer() != null && !queryRequest.getReferer().isEmpty()) {
 
-			return ": " + queryRequest.getReferer();
+			return queryRequest.getReferer();
 		}
 
-		return ": " + queryRequest.getUrl();
+		return queryRequest.getUrl();
 	}
 
 	private void setResponseHeader(HttpServletResponse response, NextprotMediaType format, String filename) {
