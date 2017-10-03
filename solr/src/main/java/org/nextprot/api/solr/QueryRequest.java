@@ -14,6 +14,8 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private String chromosome = null; //chromosome
 	private String listId = null; //list id
 	private String queryId = null; //nextprot query id
+	private String referer;
+	private String url;
 
 	public String getListId() {
 		return listId;
@@ -173,9 +175,9 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		builder.append("sparql       : "+this.sparql+"\n");
 		builder.append("chromosome   : "+this.chromosome+"\n");
 		builder.append("listId       : "+this.listId+"\n");
-		builder.append("queryId       : "+this.queryId+"\n");
+		builder.append("queryId      : "+this.queryId+"\n");
 		builder.append("listId       : "+this.listId+"\n");
-
+		builder.append("referer      : "+this.referer+"\n");
 		
 		return builder.toString();
 	}
@@ -254,4 +256,19 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		return chromosome != null;
 	}
 
+	public String getReferer() {
+		return referer;
+	}
+
+	public void setReferer(String referer) {
+		this.referer = referer;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }
