@@ -34,7 +34,7 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
 
         sb
                 .append("# PEFF 1.0").append(StringUtils.CR_LF)
-                .append("# DbName=neXtProt ").append(description).append(StringUtils.CR_LF)
+                .append("# DbName=neXtProt").append(description).append(StringUtils.CR_LF)
                 .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF)
                 .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append(StringUtils.CR_LF)
                 .append("# Prefix=nxp").append(StringUtils.CR_LF)
