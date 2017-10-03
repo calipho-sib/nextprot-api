@@ -11,8 +11,7 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -212,20 +211,24 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	//@Test
 	public void searchCvtermWithUndefinedXrefs()  {
 
+		Map<String, List<String>> map = new HashMap<>();
+
 		//for (CvTerm cvTerm : terminologyService.findAllCVTerms()) {
 		for (CvTerm cvTerm : terminologyService.findCvTermsByOntology("UniprotPtmCv")) {
 
 			if (cvTerm.getXrefs() == null || cvTerm.getXrefs().isEmpty()) {
 
-				System.err.println("no xrefs: "+cvTerm.getAccession()+"\t"+cvTerm.getOntology());
-			}
-			else {
-				List<String> psiModAccessions = terminologyService.findCvTermXrefAccessionList(cvTerm.getAccession(), "PSI-MOD");
-				if (psiModAccessions.isEmpty()) {
-					System.err.println("no ptm to psi-mod: "+cvTerm.getAccession()+"\t"+cvTerm.getOntology());
+				if (!map.containsKey(cvTerm.getOntology())) {
+					map.put(cvTerm.getOntology(), new ArrayList<>());
 				}
+				map.get(cvTerm.getOntology()).add(cvTerm.getAccession());
+				//System.err.println(cvTerm.getAccession()+"\t"+cvTerm.getOntology());
 			}
 		}
+
+		Collections.sort(map.get("UniprotPtmCv"));
+
+		System.out.println(map.get("UniprotPtmCv"));
 	}
 }
 

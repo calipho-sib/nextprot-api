@@ -83,6 +83,8 @@ public class ExportController {
                               @RequestParam(value = "quality", required = false) String quality) {
 
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        qr.setReferer(request.getHeader("referer"));
+        qr.setUrl(request.getRequestURL().toString() + "?" + request.getQueryString());
 
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), "entry", response);
     }
