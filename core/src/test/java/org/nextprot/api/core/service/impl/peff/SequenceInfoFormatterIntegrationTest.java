@@ -2,12 +2,14 @@ package org.nextprot.api.core.service.impl.peff;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.PeffService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @ActiveProfiles({ "dev" })
@@ -97,7 +99,7 @@ public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
     public void testModResFormat() throws Exception {
 
         Assert.assertEquals("\\ModRes=(28||O-linked (GalNAc...) serine)(49||Disulfide)(85||Disulfide)(74||Disulfide)(339||Disulfide)(84||Disulfide)(97||Disulfide)(214||Disulfide)(317||Disulfide)(473||Disulfide)(478||Disulfide)",
-                peffService.formatModRes("NX_Q15582-1"));
+                peffService.formatModRes("NX_Q15582-1", Collections.emptyList()));
     }
 
     @Test
@@ -141,17 +143,18 @@ public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
     @Test
     public void testUndefinedPsiPTM() throws Exception {
 
-        List<ModResPsiFormatter.ModResInfos> unmapped = new ArrayList<>();
+        List<Annotation> unmapped = new ArrayList<>();
 
         String modResPSI = peffService.formatModResPsi("NX_Q02880-1", unmapped);
 
         Assert.assertTrue(!modResPSI.contains("(969|"));
         Assert.assertEquals(1, unmapped.size());
 
-        Assert.assertEquals(969, unmapped.get(0).getStart().intValue());
-        Assert.assertEquals("PTM-0494", unmapped.get(0).getAccession());
-        Assert.assertEquals("PolyADP-ribosyl aspartic acid", unmapped.get(0).getName());
+        Assert.assertEquals(969, unmapped.get(0).getStartPositionForIsoform("NX_Q02880-1").intValue());
+        Assert.assertEquals("PTM-0494", unmapped.get(0).getCvTermAccessionCode());
+        Assert.assertEquals("PolyADP-ribosyl aspartic acid", unmapped.get(0).getCvTermName());
 
-        //Assert.assertEquals("\\ModRes=(969||PolyADP-ribosyl aspartic acid)", modRes);
+        String modRes = peffService.formatModRes("NX_Q02880-1", unmapped);
+        Assert.assertEquals("\\ModRes=(969||PolyADP-ribosyl aspartic acid)", modRes);
     }
 }

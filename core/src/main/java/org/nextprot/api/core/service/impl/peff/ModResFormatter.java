@@ -2,13 +2,11 @@ package org.nextprot.api.core.service.impl.peff;
 
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A controlled vocabulary neither Unimod nor PSI-MOD or custom
@@ -18,8 +16,9 @@ import java.util.Set;
 public class ModResFormatter extends PTMInfoFormatter {
 
     private final Map<AnnotationCategory, PTMInfoFormatter> formatterMap;
+    private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public ModResFormatter() {
+    public ModResFormatter(List<Annotation> unmappedUniprotModAnnotations) {
 
         super(Sets.union(GlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, DisulfideBond.ANNOTATION_CATEGORIES),
                 SequenceDescriptorKey.MOD_RES);
@@ -29,6 +28,9 @@ public class ModResFormatter extends PTMInfoFormatter {
         formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new GlycosylationOrSelenoCysteine());
         formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new GlycosylationOrSelenoCysteine());
         formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new DisulfideBond());
+        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new ModResNonPSIFormatter());
+
+        this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
 
     private PTMInfoFormatter getFormatter(Annotation annotation) {
@@ -55,6 +57,16 @@ public class ModResFormatter extends PTMInfoFormatter {
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
         getFormatter(annotation).formatAnnotation(isoformAccession, annotation, sb);
+    }
+
+    @Override
+    protected List<Annotation> selectAnnotation(Entry entry, String isoformAccession) {
+
+        List<Annotation> selectedAnnotations = super.selectAnnotation(entry, isoformAccession);
+
+        selectedAnnotations.addAll(unmappedUniprotModAnnotations);
+
+        return selectedAnnotations;
     }
 
     private static class GlycosylationOrSelenoCysteine extends PTMInfoFormatter {
@@ -115,6 +127,35 @@ public class ModResFormatter extends PTMInfoFormatter {
                     .append(disulfideBondAnnotation.getEndPositionForIsoform(isoformAccession))
                     .append("||")
                     .append("Disulfide")
+                    .append(")")
+            ;
+        }
+    }
+
+    private static class ModResNonPSIFormatter extends PTMInfoFormatter {
+
+        ModResNonPSIFormatter() {
+            super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), SequenceDescriptorKey.MOD_RES);
+        }
+
+        @Override
+        protected String getModAccession(Annotation annotation) {
+            return "";
+        }
+
+        @Override
+        protected String getModName(Annotation annotation) {
+            return annotation.getCvTermName();
+        }
+
+        @Override
+        protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+
+            sb
+                    .append("(")
+                    .append(annotation.getStartPositionForIsoform(isoformAccession))
+                    .append("||")
+                    .append(getModName(annotation))
                     .append(")")
             ;
         }

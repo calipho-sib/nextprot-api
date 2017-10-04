@@ -2,7 +2,7 @@ package org.nextprot.api.core.service;
 
 
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
-import org.nextprot.api.core.service.impl.peff.ModResPsiFormatter;
+import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.List;
 
@@ -32,9 +32,9 @@ public interface PeffService {
 
     String formatVariantComplex(String isoformAccession);
 
-    String formatModResPsi(String isoformAccession, List<ModResPsiFormatter.ModResInfos> unmappedUniprotMods);
+    String formatModResPsi(String isoformAccession, List<Annotation> unmappedUniprotModAnnotations);
 
-    String formatModRes(String isoformAccession);
+    String formatModRes(String isoformAccession, List<Annotation> unmappedUniprotModAnnotations);
 
     String formatProcessedMolecule(String isoformAccession);
 }

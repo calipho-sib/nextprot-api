@@ -63,7 +63,10 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
 
         StringBuilder sb = new StringBuilder("");
 
-        for (Annotation annotation : extractAnnotation(entry, isoformAccession)) {
+        List<Annotation> annots = selectAnnotation(entry, isoformAccession);
+        annots.sort(createAnnotationComparator(isoformAccession));
+
+        for (Annotation annotation : annots) {
 
             formatAnnotation(isoformAccession, annotation, sb);
         }
@@ -71,7 +74,7 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
         return sb.toString();
     }
 
-    private List<Annotation> extractAnnotation(Entry entry, String isoformAccession) {
+    protected List<Annotation> selectAnnotation(Entry entry, String isoformAccession) {
 
         List<Annotation> annots = new ArrayList<>();
 
@@ -82,8 +85,6 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
                 annots.add(annotation);
             }
         }
-
-        annots.sort(createAnnotationComparator(isoformAccession));
 
         return annots;
     }

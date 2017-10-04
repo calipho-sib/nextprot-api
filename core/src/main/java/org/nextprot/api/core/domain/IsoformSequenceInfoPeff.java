@@ -322,4 +322,29 @@ public class IsoformSequenceInfoPeff implements Serializable {
             map.get(pos).add((field != null) ? field : "");
         }
     }
+
+    public static class Builder {
+
+        private final Entry entry;
+        private final String isoformAccession;
+        private final IsoformSequenceInfoPeff isoformSequenceInfoPeff = new IsoformSequenceInfoPeff();
+
+        Builder(Entry entry, String isoformAccession) {
+
+            this.entry = entry;
+            this.isoformAccession = isoformAccession;
+        }
+
+        public Builder withIsoformAccession() {
+
+            //isoformSequenceInfoPeff.setIsoformAccession(new SimpleSequenceInfoFormatter(entry,
+            //        SequenceDescriptorKey.DB_UNIQUE_ID, isoformAccession).format(isoformAccession));
+            return this;
+        }
+
+        public IsoformSequenceInfoPeff build() {
+
+            return isoformSequenceInfoPeff;
+        }
+    }
 }

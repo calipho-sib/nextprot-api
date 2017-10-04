@@ -13,7 +13,7 @@ import java.util.function.Function;
  * A Modified residue with PSI-MOD identifier
  *
  * <p>
- *     if a ptm is not mapped to PSI-MOD
+ *     if a ptm is not mapped to PSI-MOD it is collected in a list of ModResInfos
  * </p>
  *
  * Created by fnikitin on 05/05/15.
@@ -22,17 +22,17 @@ public class ModResPsiFormatter extends PTMInfoFormatter {
 
     private final Function<String, Optional<String>> uniprotModToPsi;
     private final Function<String, Optional<String>> uniprotModToPsiName;
-    private final List<ModResInfos> unmappedUniprotMods;
+    private final List<Annotation> unmappedUniprotModAnnotations;
 
     public ModResPsiFormatter(Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
-                              List<ModResInfos> unmappedUniprotMods) {
+                              List<Annotation> unmappedUniprotModAnnotations) {
 
         super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
                 SequenceDescriptorKey.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
         this.uniprotModToPsiName = uniprotModToPsiName;
-        this.unmappedUniprotMods = unmappedUniprotMods;
+        this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
 
     @Override
@@ -51,14 +51,10 @@ public class ModResPsiFormatter extends PTMInfoFormatter {
     protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
 
         String modAccession = getModAccession(annotation);
-        Integer start = annotation.getStartPositionForIsoform(isoformAccession);
 
         if (modAccession.isEmpty()) {
 
-            unmappedUniprotMods.add(new ModResInfos(start,
-                    annotation.getCvTermAccessionCode(),
-                    annotation.getCvTermName())
-            );
+            unmappedUniprotModAnnotations.add(annotation);
         } else {
             sb
                     .append("(")
@@ -69,31 +65,6 @@ public class ModResPsiFormatter extends PTMInfoFormatter {
                     .append(getModName(annotation))
                     .append(")")
             ;
-        }
-    }
-
-    public static class ModResInfos {
-
-        private final Integer start;
-        private final String accession;
-        private final String name;
-
-        public ModResInfos(Integer start, String accession, String name) {
-            this.start = start;
-            this.accession = accession;
-            this.name = name;
-        }
-
-        public Integer getStart() {
-            return start;
-        }
-
-        public String getAccession() {
-            return accession;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 }

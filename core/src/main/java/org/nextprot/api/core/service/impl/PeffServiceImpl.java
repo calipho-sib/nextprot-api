@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
 import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.impl.peff.*;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
@@ -42,8 +43,11 @@ public class PeffServiceImpl implements PeffService {
         peff.setSequenceVersionFormat(formatSequenceVersion(isoformAccession));
         peff.setEntryVersionFormat(formatEntryVersion(isoformAccession));
         peff.setProteinEvidenceFormat(formatProteinEvidence(isoformAccession));
-        peff.setModResPsiFormat(formatModResPsi(isoformAccession, new ArrayList<>()));
-        peff.setModResFormat(formatModRes(isoformAccession));
+
+        List<Annotation> unmappedUniprotModAnnotations = new ArrayList<>();
+        peff.setModResPsiFormat(formatModResPsi(isoformAccession, unmappedUniprotModAnnotations));
+        peff.setModResFormat(formatModRes(isoformAccession, unmappedUniprotModAnnotations));
+
         peff.setVariantSimpleFormat(formatVariantSimple(isoformAccession));
         peff.setVariantComplexFormat(formatVariantComplex(isoformAccession));
         peff.setProcessedMoleculeFormat(formatProcessedMolecule(isoformAccession));
@@ -125,19 +129,19 @@ public class PeffServiceImpl implements PeffService {
     }
 
     @Override
-    public String formatModResPsi(String isoformAccession, List<ModResPsiFormatter.ModResInfos> unmappedUniprotMods) {
+    public String formatModResPsi(String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
 
         return new ModResPsiFormatter(
                 (cvTerm) -> terminologyService.findPsiModAccession(cvTerm),
                 (cvTerm) -> terminologyService.findPsiModName(cvTerm),
-                unmappedUniprotMods
+                unmappedUniprotModAnnotations
         ).format(entryService.findEntryFromIsoformAccession(isoformAccession), isoformAccession);
     }
 
     @Override
-    public String formatModRes(String isoformAccession) {
+    public String formatModRes(String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
 
-        return new ModResFormatter().format(entryService.findEntryFromIsoformAccession(isoformAccession), isoformAccession);
+        return new ModResFormatter(unmappedUniprotModAnnotations).format(entryService.findEntryFromIsoformAccession(isoformAccession), isoformAccession);
     }
 
     @Override
