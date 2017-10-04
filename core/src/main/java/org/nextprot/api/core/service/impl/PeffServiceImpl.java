@@ -9,6 +9,9 @@ import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class PeffServiceImpl implements PeffService {
 
@@ -39,7 +42,7 @@ public class PeffServiceImpl implements PeffService {
         peff.setSequenceVersionFormat(formatSequenceVersion(isoformAccession));
         peff.setEntryVersionFormat(formatEntryVersion(isoformAccession));
         peff.setProteinEvidenceFormat(formatProteinEvidence(isoformAccession));
-        peff.setModResPsiFormat(formatModResPsi(isoformAccession));
+        peff.setModResPsiFormat(formatModResPsi(isoformAccession, new ArrayList<>()));
         peff.setModResFormat(formatModRes(isoformAccession));
         peff.setVariantSimpleFormat(formatVariantSimple(isoformAccession));
         peff.setVariantComplexFormat(formatVariantComplex(isoformAccession));
@@ -122,11 +125,12 @@ public class PeffServiceImpl implements PeffService {
     }
 
     @Override
-    public String formatModResPsi(String isoformAccession) {
+    public String formatModResPsi(String isoformAccession, List<ModResPsiFormatter.ModResInfos> unmappedUniprotMods) {
 
         return new ModResPsiFormatter(
-                (cvTerm) -> terminologyService.findPsiModAccession(cvTerm).orElse("MOD:XXXXX"),
-                (cvTerm) -> terminologyService.findPsiModName(cvTerm).orElse(cvTerm)
+                (cvTerm) -> terminologyService.findPsiModAccession(cvTerm),
+                (cvTerm) -> terminologyService.findPsiModName(cvTerm),
+                unmappedUniprotMods
         ).format(entryService.findEntryFromIsoformAccession(isoformAccession), isoformAccession);
     }
 

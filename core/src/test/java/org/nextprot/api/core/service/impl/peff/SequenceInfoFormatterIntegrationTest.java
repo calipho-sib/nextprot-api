@@ -7,6 +7,9 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ActiveProfiles({ "dev" })
 public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
 
@@ -87,13 +90,12 @@ public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
     public void testModResPsiFormat() throws Exception {
 
         Assert.assertEquals("\\ModResPsi=(8|MOD:00048|O4'-phospho-L-tyrosine)(14|MOD:00046|O-phospho-L-serine)(41|MOD:00046|O-phospho-L-serine)(43|MOD:00046|O-phospho-L-serine)(51|MOD:00046|O-phospho-L-serine)(65|MOD:00046|O-phospho-L-serine)(70|MOD:00064|N6-acetyl-L-lysine)(79|MOD:00046|O-phospho-L-serine)(86|MOD:00047|O-phospho-L-threonine)(87|MOD:00046|O-phospho-L-serine)(91|MOD:00046|O-phospho-L-serine)(137|MOD:00046|O-phospho-L-serine)(139|MOD:00047|O-phospho-L-threonine)(144|MOD:00046|O-phospho-L-serine)(200|MOD:00046|O-phospho-L-serine)(212|MOD:00047|O-phospho-L-threonine)(213|MOD:00047|O-phospho-L-threonine)(214|MOD:00048|O4'-phospho-L-tyrosine)(216|MOD:00047|O-phospho-L-threonine)(219|MOD:00046|O-phospho-L-serine)(227|MOD:00046|O-phospho-L-serine)(252|MOD:00046|O-phospho-L-serine)(254|MOD:00046|O-phospho-L-serine)(256|MOD:00046|O-phospho-L-serine)(261|MOD:00046|O-phospho-L-serine)(269|MOD:00047|O-phospho-L-threonine)(274|MOD:00046|O-phospho-L-serine)(275|MOD:00046|O-phospho-L-serine)(279|MOD:00046|O-phospho-L-serine)(280|MOD:00046|O-phospho-L-serine)(285|MOD:00046|O-phospho-L-serine)(292|MOD:00046|O-phospho-L-serine)(305|MOD:00047|O-phospho-L-threonine)(309|MOD:00046|O-phospho-L-serine)(328|MOD:00046|O-phospho-L-serine)(330|MOD:00046|O-phospho-L-serine)(331|MOD:00046|O-phospho-L-serine)(334|MOD:00134|N6-glycyl-L-lysine)(486|MOD:00047|O-phospho-L-threonine)(488|MOD:00047|O-phospho-L-threonine)(504|MOD:00064|N6-acetyl-L-lysine)(519|MOD:00134|N6-glycyl-L-lysine)(610|MOD:00134|N6-glycyl-L-lysine)(632|MOD:00134|N6-glycyl-L-lysine)(728|MOD:00134|N6-glycyl-L-lysine)(771|MOD:00134|N6-glycyl-L-lysine)(824|MOD:00134|N6-glycyl-L-lysine)(830|MOD:00046|O-phospho-L-serine)(840|MOD:00046|O-phospho-L-serine)(935|MOD:00046|O-phospho-L-serine)(1010|MOD:00047|O-phospho-L-threonine)(1296|MOD:00134|N6-glycyl-L-lysine)(1315|MOD:00134|N6-glycyl-L-lysine)(1325|MOD:00134|N6-glycyl-L-lysine)(1352|MOD:00134|N6-glycyl-L-lysine)(1358|MOD:00134|N6-glycyl-L-lysine)",
-                peffService.formatModResPsi("NX_P52701-1"));
+                peffService.formatModResPsi("NX_P52701-1", new ArrayList<>()));
     }
 
     @Test
     public void testModResFormat() throws Exception {
 
-        // NOTE: THIS FORMAT \ModRes=(28||O-linked (GalNAc...))(49||Disulfide)(85||Disulfide)(84||Disulfide)(97||Disulfide)(473||Disulfide)(478||Disulfide)(74||Disulfide)(339||Disulfide)(214||Disulfide)(317||Disulfide)
         Assert.assertEquals("\\ModRes=(28||O-linked (GalNAc...) serine)(49||Disulfide)(85||Disulfide)(74||Disulfide)(339||Disulfide)(84||Disulfide)(97||Disulfide)(214||Disulfide)(317||Disulfide)(473||Disulfide)(478||Disulfide)",
                 peffService.formatModRes("NX_Q15582-1"));
     }
@@ -134,5 +136,22 @@ public class SequenceInfoFormatterIntegrationTest extends CoreUnitBaseTest {
     public void testProcessedInsulinMoleculeFormat() throws Exception {
 
         Assert.assertEquals("\\Processed=(1|24|signal peptide)(25|54|mature protein)(57|87|maturation peptide)(90|110|mature protein)", peffService.formatProcessedMolecule("NX_P01308-1"));
+    }
+
+    @Test
+    public void testUndefinedPsiPTM() throws Exception {
+
+        List<ModResPsiFormatter.ModResInfos> unmapped = new ArrayList<>();
+
+        String modResPSI = peffService.formatModResPsi("NX_Q02880-1", unmapped);
+
+        Assert.assertTrue(!modResPSI.contains("(969|"));
+        Assert.assertEquals(1, unmapped.size());
+
+        Assert.assertEquals(969, unmapped.get(0).getStart().intValue());
+        Assert.assertEquals("PTM-0494", unmapped.get(0).getAccession());
+        Assert.assertEquals("PolyADP-ribosyl aspartic acid", unmapped.get(0).getName());
+
+        //Assert.assertEquals("\\ModRes=(969||PolyADP-ribosyl aspartic acid)", modRes);
     }
 }

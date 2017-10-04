@@ -2,6 +2,9 @@ package org.nextprot.api.core.service;
 
 
 import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.service.impl.peff.ModResPsiFormatter;
+
+import java.util.List;
 
 public interface PeffService {
 
@@ -29,7 +32,7 @@ public interface PeffService {
 
     String formatVariantComplex(String isoformAccession);
 
-    String formatModResPsi(String isoformAccession);
+    String formatModResPsi(String isoformAccession, List<ModResPsiFormatter.ModResInfos> unmappedUniprotMods);
 
     String formatModRes(String isoformAccession);
 
