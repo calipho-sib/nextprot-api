@@ -3,12 +3,11 @@ package org.nextprot.api.core.service.impl.peff;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoFormatter {
+public class PEFFProcessedMolecule extends AnnotationBasedPEFFInformation {
 
     private static final Map<AnnotationCategory, String> ANNOTATION_CATEGORY_TO_NAME;
 
@@ -23,9 +22,9 @@ public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoForma
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "transit peptide"); // was "TRANSIT"
     }
 
-    public ProcessedMoleculeFormatter(Entry entry, String isoformAccession) {
+    public PEFFProcessedMolecule(Entry entry, String isoformAccession) {
 
-        super(entry, isoformAccession, ANNOTATION_CATEGORY_TO_NAME.keySet(), SequenceDescriptorKey.PROCESSED);
+        super(entry, isoformAccession, ANNOTATION_CATEGORY_TO_NAME.keySet(), Key.PROCESSED);
     }
 
     @Override

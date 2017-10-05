@@ -1,12 +1,10 @@
 package org.nextprot.api.core.service.impl.peff;
 
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
-
-public class SimpleSequenceInfoFormatter extends SequenceInfoFormat {
+public class SimplePEFFInformation extends PEFFInformation {
 
     private final String value;
 
-    public SimpleSequenceInfoFormatter(SequenceDescriptorKey key, String value) {
+    public SimplePEFFInformation(Key key, String value) {
 
         super(key);
         this.value = value;

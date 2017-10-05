@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class IsoformSequenceInfoPeff implements Serializable {
+public class IsoformPEFFHeader implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -219,7 +219,7 @@ public class IsoformSequenceInfoPeff implements Serializable {
         }
     }
 
-    private static List<String> toKeyValueStringList(IsoformSequenceInfoPeff pojo) {
+    private static List<String> toKeyValueStringList(IsoformPEFFHeader pojo) {
 
         return Arrays.asList(
                 pojo.getIsoformAccessionFormat(),       // \DbUniqueId
@@ -239,7 +239,7 @@ public class IsoformSequenceInfoPeff implements Serializable {
         );
     }
 
-    public static String toPeffHeader(IsoformSequenceInfoPeff pojo) {
+    public static String toPeffHeader(IsoformPEFFHeader pojo) {
 
         List<String> keyValuePairsList = new ArrayList<>();
 
@@ -251,7 +251,7 @@ public class IsoformSequenceInfoPeff implements Serializable {
                 .collect(Collectors.joining(" "));
     }
 
-    public static Map<String, Object> toMap(IsoformSequenceInfoPeff pojo) {
+    public static Map<String, Object> toMap(IsoformPEFFHeader pojo) {
 
         Map<String, Object> map = new HashMap<>();
 
@@ -320,31 +320,6 @@ public class IsoformSequenceInfoPeff implements Serializable {
                 map.put(Integer.valueOf(matcher.group(1)), new HashSet<>());
             }
             map.get(pos).add((field != null) ? field : "");
-        }
-    }
-
-    public static class Builder {
-
-        private final Entry entry;
-        private final String isoformAccession;
-        private final IsoformSequenceInfoPeff isoformSequenceInfoPeff = new IsoformSequenceInfoPeff();
-
-        Builder(Entry entry, String isoformAccession) {
-
-            this.entry = entry;
-            this.isoformAccession = isoformAccession;
-        }
-
-        public Builder withIsoformAccession() {
-
-            //isoformSequenceInfoPeff.setIsoformAccession(new SimpleSequenceInfoFormatter(entry,
-            //        SequenceDescriptorKey.DB_UNIQUE_ID, isoformAccession).format(isoformAccession));
-            return this;
-        }
-
-        public IsoformSequenceInfoPeff build() {
-
-            return isoformSequenceInfoPeff;
         }
     }
 }

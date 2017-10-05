@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.impl.peff;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -19,17 +18,17 @@ import java.util.function.Function;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class ModResPsiFormatter extends PTMInfoFormatter {
+public class PEFFModResPsi extends PEFFPTMInformation {
 
     private final Function<String, Optional<String>> uniprotModToPsi;
     private final Function<String, Optional<String>> uniprotModToPsiName;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public ModResPsiFormatter(Entry entry, String isoformAccession, Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
-                              List<Annotation> unmappedUniprotModAnnotations) {
+    public PEFFModResPsi(Entry entry, String isoformAccession, Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
+                         List<Annotation> unmappedUniprotModAnnotations) {
 
         super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
-                SequenceDescriptorKey.MOD_RES_PSI);
+                Key.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
         this.uniprotModToPsiName = uniprotModToPsiName;

@@ -11,9 +11,9 @@ import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PeffService;
+import org.nextprot.api.core.service.PEFFService;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -112,7 +112,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
         Set<String> allEntryAcs = getNextprotEntries();
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated("querying peff headers from api", allEntryAcs.size());
-        ObservedPeffCollector collector = new ObservedPeffCollector(getBean(PeffService.class), getBean(IsoformService.class));
+        ObservedPeffCollector collector = new ObservedPeffCollector(getBean(PEFFService.class), getBean(IsoformService.class));
         pb.run(allEntryAcs.stream(), collector);
 
         return collector.map;
@@ -207,10 +207,10 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
 
             sb
                     .append("\n### Analysing isoform ")
-                    .append(expected.get(IsoformSequenceInfoPeff.PEFF_KEY.DbUniqueId.getName()))
+                    .append(expected.get(IsoformPEFFHeader.PEFF_KEY.DbUniqueId.getName()))
                     .append(" ###\n");
 
-            for (IsoformSequenceInfoPeff.PEFF_KEY peffKey : IsoformSequenceInfoPeff.PEFF_KEY.values()) {
+            for (IsoformPEFFHeader.PEFF_KEY peffKey : IsoformPEFFHeader.PEFF_KEY.values()) {
 
                 String key = peffKey.getName();
 
@@ -260,7 +260,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
                         String[] kv = kvStr.trim().split("=");
 
                         if (kv.length == 2) {
-                            kvm.put("\\" + kv[0], IsoformSequenceInfoPeff.valueToObject(IsoformSequenceInfoPeff.PEFF_KEY.valueOf(kv[0]), kv[1]));
+                            kvm.put("\\" + kv[0], IsoformPEFFHeader.valueToObject(IsoformPEFFHeader.PEFF_KEY.valueOf(kv[0]), kv[1]));
                         }
                     });
 
@@ -272,11 +272,11 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
     static class ObservedPeffCollector implements Consumer<String> {
 
         private final Map<String, Map<String, Object>> map = new HashMap<>();
-        private final PeffService peffService;
+        private final PEFFService PEFFService;
         private final IsoformService isoformService;
 
-        ObservedPeffCollector(PeffService peffService, IsoformService isoformService) {
-            this.peffService = peffService;
+        ObservedPeffCollector(PEFFService PEFFService, IsoformService isoformService) {
+            this.PEFFService = PEFFService;
             this.isoformService = isoformService;
         }
 
@@ -287,7 +287,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
                 isoformService.findIsoformsByEntryName(entryAccession).stream()
                         .map(Isoform::getIsoformAccession)
                         .forEach(isoformAccession -> map.put(isoformAccession,
-                                IsoformSequenceInfoPeff.toMap(peffService.formatSequenceInfo(isoformAccession)))
+                                IsoformPEFFHeader.toMap(PEFFService.formatPEFFHeader(isoformAccession)))
                         )
                 ;
             } catch (EntryNotFoundException e) {

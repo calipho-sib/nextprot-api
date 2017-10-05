@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.*;
 
@@ -13,27 +12,27 @@ import java.util.*;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class ModResFormatter extends PTMInfoFormatter {
+public class PEFFModRes extends PEFFPTMInformation {
 
-    private final Map<AnnotationCategory, PTMInfoFormatter> formatterMap;
+    private final Map<AnnotationCategory, PEFFPTMInformation> formatterMap;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public ModResFormatter(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
+    public PEFFModRes(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(entry, isoformAccession, Sets.union(GlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, DisulfideBond.ANNOTATION_CATEGORIES),
-                SequenceDescriptorKey.MOD_RES);
+        super(entry, isoformAccession, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
+                Key.MOD_RES);
 
         formatterMap = new HashMap<>();
 
-        formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new GlycosylationOrSelenoCysteine(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new GlycosylationOrSelenoCysteine(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new DisulfideBond(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new ModResNonMappingPSIFormatter(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new PEFFDisulfideBond(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new PEFFNonMappingModResPsi(entry, isoformAccession));
 
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
 
-    private PTMInfoFormatter getFormatter(Annotation annotation) {
+    private PEFFPTMInformation getFormatter(Annotation annotation) {
 
         if (!formatterMap.containsKey(annotation.getAPICategory()))
             throw new IllegalStateException("ModResFormatter does not format "+annotation.getAPICategory());
@@ -69,13 +68,13 @@ public class ModResFormatter extends PTMInfoFormatter {
         return selectedAnnotations;
     }
 
-    private static class GlycosylationOrSelenoCysteine extends PTMInfoFormatter {
+    private static class PEFFGlycosylationOrSelenoCysteine extends PEFFPTMInformation {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.GLYCOSYLATION_SITE, AnnotationCategory.SELENOCYSTEINE);
 
-        private GlycosylationOrSelenoCysteine(Entry entry, String isoformAccession) {
+        private PEFFGlycosylationOrSelenoCysteine(Entry entry, String isoformAccession) {
 
-            super(entry, isoformAccession, ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
+            super(entry, isoformAccession, ANNOTATION_CATEGORIES, Key.MOD_RES);
         }
 
         @Override
@@ -91,13 +90,13 @@ public class ModResFormatter extends PTMInfoFormatter {
         }
     }
 
-    private static class DisulfideBond extends PTMInfoFormatter {
+    private static class PEFFDisulfideBond extends PEFFPTMInformation {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.DISULFIDE_BOND);
 
-        private DisulfideBond(Entry entry, String isoformAccession) {
+        private PEFFDisulfideBond(Entry entry, String isoformAccession) {
 
-            super(entry, isoformAccession, ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
+            super(entry, isoformAccession, ANNOTATION_CATEGORIES, Key.MOD_RES);
         }
 
         @Override
@@ -132,11 +131,11 @@ public class ModResFormatter extends PTMInfoFormatter {
         }
     }
 
-    private static class ModResNonMappingPSIFormatter extends PTMInfoFormatter {
+    private static class PEFFNonMappingModResPsi extends PEFFPTMInformation {
 
-        ModResNonMappingPSIFormatter(Entry entry, String isoformAccession) {
+        PEFFNonMappingModResPsi(Entry entry, String isoformAccession) {
 
-            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), SequenceDescriptorKey.MOD_RES);
+            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), Key.MOD_RES);
         }
 
         @Override

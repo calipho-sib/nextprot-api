@@ -5,7 +5,6 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.NullableComparable;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.*;
 
@@ -15,22 +14,22 @@ import java.util.*;
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormat {
+abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
 
-    private static final Map<AnnotationCategory, SequenceInfoFormat> map = new HashMap<>();
+    private static final Map<AnnotationCategory, PEFFInformation> map = new HashMap<>();
 
     private final Set<AnnotationCategory> supportedApiModels;
     protected final Entry entry;
     protected final String isoformAccession;
 
-    AnnotationBasedSequenceInfoFormatter(Entry entry, String isoformAccession,
-                                         Set<AnnotationCategory> supportedApiModels,
-                                         SequenceDescriptorKey SequenceDescriptorKey) {
+    AnnotationBasedPEFFInformation(Entry entry, String isoformAccession,
+                                   Set<AnnotationCategory> supportedApiModels,
+                                   Key Key) {
 
-        super(SequenceDescriptorKey);
+        super(Key);
 
         Preconditions.checkNotNull(supportedApiModels);
-        Preconditions.checkNotNull(SequenceDescriptorKey);
+        Preconditions.checkNotNull(Key);
 
         this.entry = entry;
         this.isoformAccession = isoformAccession;

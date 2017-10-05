@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.impl.peff;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -13,11 +12,11 @@ import java.util.EnumSet;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatter {
+public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
 
-    public VariantComplexFormatter(Entry entry, String isoformAccession) {
+    public PEFFVariantComplex(Entry entry, String isoformAccession) {
 
-        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_COMPLEX);
+        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.VARIANT), Key.VARIANT_COMPLEX);
     }
 
     @Override

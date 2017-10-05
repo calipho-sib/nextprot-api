@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.core.service.impl.peff;
 
 import org.junit.Assert;
 import org.junit.Before;
