@@ -72,7 +72,7 @@ public class EntryReportServiceImpl implements EntryReportService {
 
         return isoformService.findIsoformsByEntryName(entryAccession).stream()
                 .collect(Collectors.toMap(Isoform::getIsoformAccession,
-                        isoform -> isoformService.formatPeffHeader(isoform.getIsoformAccession())));
+                        isoform -> IsoformPEFFHeader.toString(isoformService.formatPEFFHeader(isoform.getIsoformAccession()))));
     }
 
     private void setEntryDescription(Entry entry, EntryReport report) {

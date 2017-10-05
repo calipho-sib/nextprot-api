@@ -13,7 +13,6 @@ import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PEFFService;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -112,7 +111,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
         Set<String> allEntryAcs = getNextprotEntries();
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated("querying peff headers from api", allEntryAcs.size());
-        ObservedPeffCollector collector = new ObservedPeffCollector(getBean(PEFFService.class), getBean(IsoformService.class));
+        ObservedPeffCollector collector = new ObservedPeffCollector(getBean(IsoformService.class));
         pb.run(allEntryAcs.stream(), collector);
 
         return collector.map;
@@ -272,11 +271,9 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
     static class ObservedPeffCollector implements Consumer<String> {
 
         private final Map<String, Map<String, Object>> map = new HashMap<>();
-        private final PEFFService PEFFService;
         private final IsoformService isoformService;
 
-        ObservedPeffCollector(PEFFService PEFFService, IsoformService isoformService) {
-            this.PEFFService = PEFFService;
+        ObservedPeffCollector(IsoformService isoformService) {
             this.isoformService = isoformService;
         }
 
@@ -287,7 +284,7 @@ public class PeffServiceValidatorTask extends SpringBasedTask<PeffServiceValidat
                 isoformService.findIsoformsByEntryName(entryAccession).stream()
                         .map(Isoform::getIsoformAccession)
                         .forEach(isoformAccession -> map.put(isoformAccession,
-                                IsoformPEFFHeader.toMap(PEFFService.formatPEFFHeader(isoformAccession)))
+                                IsoformPEFFHeader.toMap(isoformService.formatPEFFHeader(isoformAccession)))
                         )
                 ;
             } catch (EntryNotFoundException e) {

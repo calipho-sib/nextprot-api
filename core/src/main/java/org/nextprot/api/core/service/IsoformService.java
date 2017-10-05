@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
@@ -27,7 +28,14 @@ public interface IsoformService {
 	 * @param isoformAccession the isoform accession
 	 * @return the PEFF format header
 	 */
-	String formatPeffHeader(String isoformAccession);
+	//String formatPEFFHeader(String isoformAccession);
+
+	/**
+	 * Extract and format in PEFF header all isoform required information
+	 * @param isoformAccession the isoform accession to format as PEFF
+	 * @return a PEFF header pojo
+	 */
+	IsoformPEFFHeader formatPEFFHeader(String isoformAccession);
 
 	/**
 	 * Find the isoform of the given entry matching the given accession

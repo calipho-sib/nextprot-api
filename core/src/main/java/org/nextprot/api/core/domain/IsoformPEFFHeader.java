@@ -239,7 +239,7 @@ public class IsoformPEFFHeader implements Serializable {
         );
     }
 
-    public static String toPeffHeader(IsoformPEFFHeader pojo) {
+    public static String toString(IsoformPEFFHeader pojo) {
 
         List<String> keyValuePairsList = new ArrayList<>();
 

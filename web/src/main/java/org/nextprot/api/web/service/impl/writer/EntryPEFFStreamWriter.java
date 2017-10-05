@@ -15,14 +15,14 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
+public class EntryPEFFStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public EntryPeffStreamWriter(OutputStream os) throws IOException {
+    public EntryPEFFStreamWriter(OutputStream os) throws IOException {
 
         this(new OutputStreamWriter(os, UTF_8));
     }
 
-    public EntryPeffStreamWriter(Writer writer) {
+    public EntryPEFFStreamWriter(Writer writer) {
 
         super(writer, "peff/entry-no-header.peff.vm", "entry");
     }

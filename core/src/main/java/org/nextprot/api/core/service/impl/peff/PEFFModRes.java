@@ -17,7 +17,7 @@ public class PEFFModRes extends PEFFPTMInformation {
     private final Map<AnnotationCategory, PEFFPTMInformation> formatterMap;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public PEFFModRes(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
+    PEFFModRes(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
 
         super(entry, isoformAccession, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
                 Key.MOD_RES);
@@ -32,7 +32,7 @@ public class PEFFModRes extends PEFFPTMInformation {
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
 
-    private PEFFPTMInformation getFormatter(Annotation annotation) {
+    private PEFFPTMInformation getPEFFPTMInformation(Annotation annotation) {
 
         if (!formatterMap.containsKey(annotation.getAPICategory()))
             throw new IllegalStateException("ModResFormatter does not format "+annotation.getAPICategory());
@@ -43,19 +43,19 @@ public class PEFFModRes extends PEFFPTMInformation {
     @Override
     protected String getModAccession(Annotation annotation) {
 
-        return getFormatter(annotation).getModAccession(annotation);
+        return getPEFFPTMInformation(annotation).getModAccession(annotation);
     }
 
     @Override
     protected String getModName(Annotation annotation) {
 
-        return getFormatter(annotation).getModName(annotation);
+        return getPEFFPTMInformation(annotation).getModName(annotation);
     }
 
     @Override
     protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
-        getFormatter(annotation).formatAnnotation(annotation, sb);
+        getPEFFPTMInformation(annotation).formatAnnotation(annotation, sb);
     }
 
     @Override

@@ -43,7 +43,7 @@ public class EntryController {
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
-	@Autowired private PEFFService PEFFService;
+	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 
     @ModelAttribute
@@ -133,7 +133,7 @@ public class EntryController {
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
 			@PathVariable("accession") String isoformAccession) {
 
-		return PEFFService.formatPEFFHeader(isoformAccession);
+		return isoformService.formatPEFFHeader(isoformAccession);
 	}
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
