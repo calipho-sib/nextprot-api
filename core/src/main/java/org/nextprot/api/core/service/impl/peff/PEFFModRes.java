@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class PEFFModRes extends PEFFPTMInformation {
 
-    private final Map<AnnotationCategory, PEFFPTMInformation> formatterMap;
+    private final List<PEFFPTMInformation> formatterList;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
     PEFFModRes(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
@@ -22,22 +22,25 @@ public class PEFFModRes extends PEFFPTMInformation {
         super(entry, isoformAccession, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
                 Key.MOD_RES);
 
-        formatterMap = new HashMap<>();
+        formatterList = new ArrayList<>();
 
-        formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new PEFFDisulfideBond(entry, isoformAccession));
-        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new PEFFNonMappingModResPsi(entry, isoformAccession));
+        formatterList.add(new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
+        formatterList.add(new PEFFDisulfideBond(entry, isoformAccession));
+        formatterList.add(new PEFFNonMappingModResPsi(entry, isoformAccession));
 
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
 
     private PEFFPTMInformation getPEFFPTMInformation(Annotation annotation) {
 
-        if (!formatterMap.containsKey(annotation.getAPICategory()))
-            throw new IllegalStateException("ModResFormatter does not format "+annotation.getAPICategory());
+        for (PEFFPTMInformation information : formatterList) {
 
-        return formatterMap.get(annotation.getAPICategory());
+            if (information.doHandleAnnotation(annotation)) {
+                return information;
+            }
+        }
+
+        throw new IllegalStateException("Could not handle format in PEFF "+annotation.getAPICategory());
     }
 
     @Override
@@ -135,7 +138,8 @@ public class PEFFModRes extends PEFFPTMInformation {
 
         PEFFNonMappingModResPsi(Entry entry, String isoformAccession) {
 
-            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), Key.MOD_RES);
+            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE,
+                    AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE), Key.MOD_RES);
         }
 
         @Override

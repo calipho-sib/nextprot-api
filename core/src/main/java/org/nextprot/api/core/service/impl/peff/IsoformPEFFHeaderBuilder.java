@@ -5,8 +5,8 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.IsoformUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +19,10 @@ public class IsoformPEFFHeaderBuilder {
     private final IsoformPEFFHeader peff = new IsoformPEFFHeader();
     private final TerminologyService terminologyService;
 
-    public IsoformPEFFHeaderBuilder(String isoformAccession, Entry entry, TerminologyService terminologyService) {
+    public IsoformPEFFHeaderBuilder(String isoformAccession, Entry entry, IsoformService isoformService, TerminologyService terminologyService) {
 
         this.entry = entry;
-        isoform = IsoformUtils.getIsoformByName(entry, isoformAccession);
+        isoform = isoformService.findIsoformByName(entry.getUniqueName(), isoformAccession);
         overview = entry.getOverview();
 
         this.terminologyService = terminologyService;

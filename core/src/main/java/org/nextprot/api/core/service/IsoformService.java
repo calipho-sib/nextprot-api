@@ -24,30 +24,9 @@ public interface IsoformService {
 	Isoform findIsoformByName(String entryAccession, String name);
 
 	/**
-	 * Format sequence informations as header in peff format
-	 * @param isoformAccession the isoform accession
-	 * @return the PEFF format header
-	 */
-	//String formatPEFFHeader(String isoformAccession);
-
-	/**
 	 * Extract and format in PEFF header all isoform required information
 	 * @param isoformAccession the isoform accession to format as PEFF
 	 * @return a PEFF header pojo
 	 */
 	IsoformPEFFHeader formatPEFFHeader(String isoformAccession);
-
-	/**
-	 * Find the isoform of the given entry matching the given accession
-	 * @param isoformAccession the isoform accession
-	 * @return the found isoform or null if not found
-	 */
-	default Isoform findIsoformByAccession(String isoformAccession) {
-
-		if (!isoformAccession.contains("-")) {
-			return null;
-		}
-
-		return findIsoformByName(isoformAccession.split("-")[0], isoformAccession);
-	}
 }

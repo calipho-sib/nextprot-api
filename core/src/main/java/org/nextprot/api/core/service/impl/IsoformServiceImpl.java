@@ -90,7 +90,7 @@ class IsoformServiceImpl implements IsoformService {
 	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 
 		return new IsoformPEFFHeaderBuilder(isoformAccession,
-				entryService.findEntryFromIsoformAccession(isoformAccession), terminologyService).withEverything()
+				entryService.findEntryFromIsoformAccession(isoformAccession), this, terminologyService).withEverything()
 				.build();
 	}
 
