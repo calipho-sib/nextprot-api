@@ -18,17 +18,17 @@ public class ModResFormatter extends PTMInfoFormatter {
     private final Map<AnnotationCategory, PTMInfoFormatter> formatterMap;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public ModResFormatter(List<Annotation> unmappedUniprotModAnnotations) {
+    public ModResFormatter(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(Sets.union(GlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, DisulfideBond.ANNOTATION_CATEGORIES),
+        super(entry, isoformAccession, Sets.union(GlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, DisulfideBond.ANNOTATION_CATEGORIES),
                 SequenceDescriptorKey.MOD_RES);
 
         formatterMap = new HashMap<>();
 
-        formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new GlycosylationOrSelenoCysteine());
-        formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new GlycosylationOrSelenoCysteine());
-        formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new DisulfideBond());
-        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new ModResNonPSIFormatter());
+        formatterMap.put(AnnotationCategory.GLYCOSYLATION_SITE, new GlycosylationOrSelenoCysteine(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.SELENOCYSTEINE, new GlycosylationOrSelenoCysteine(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.DISULFIDE_BOND, new DisulfideBond(entry, isoformAccession));
+        formatterMap.put(AnnotationCategory.MODIFIED_RESIDUE, new ModResNonMappingPSIFormatter(entry, isoformAccession));
 
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
@@ -54,15 +54,15 @@ public class ModResFormatter extends PTMInfoFormatter {
     }
 
     @Override
-    protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+    protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
-        getFormatter(annotation).formatAnnotation(isoformAccession, annotation, sb);
+        getFormatter(annotation).formatAnnotation(annotation, sb);
     }
 
     @Override
-    protected List<Annotation> selectAnnotation(Entry entry, String isoformAccession) {
+    protected List<Annotation> selectAnnotation() {
 
-        List<Annotation> selectedAnnotations = super.selectAnnotation(entry, isoformAccession);
+        List<Annotation> selectedAnnotations = super.selectAnnotation();
 
         selectedAnnotations.addAll(unmappedUniprotModAnnotations);
 
@@ -73,9 +73,9 @@ public class ModResFormatter extends PTMInfoFormatter {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.GLYCOSYLATION_SITE, AnnotationCategory.SELENOCYSTEINE);
 
-        private GlycosylationOrSelenoCysteine() {
+        private GlycosylationOrSelenoCysteine(Entry entry, String isoformAccession) {
 
-            super(ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
+            super(entry, isoformAccession, ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
         }
 
         @Override
@@ -95,9 +95,9 @@ public class ModResFormatter extends PTMInfoFormatter {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.DISULFIDE_BOND);
 
-        private DisulfideBond() {
+        private DisulfideBond(Entry entry, String isoformAccession) {
 
-            super(ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
+            super(entry, isoformAccession, ANNOTATION_CATEGORIES, SequenceDescriptorKey.MOD_RES);
         }
 
         @Override
@@ -115,7 +115,7 @@ public class ModResFormatter extends PTMInfoFormatter {
 
         // \ModRes=(28||O-linked (GalNAc...))(49||Disulfide)(85||Disulfide)(84||Disulfide)(97||Disulfide)(473||Disulfide)(478||Disulfide)(74||Disulfide)(339||Disulfide)(214||Disulfide)(317||Disulfide)
         @Override
-        protected void formatAnnotation(String isoformAccession, Annotation disulfideBondAnnotation, StringBuilder sb) {
+        protected void formatAnnotation(Annotation disulfideBondAnnotation, StringBuilder sb) {
 
             sb
                     .append("(")
@@ -132,10 +132,11 @@ public class ModResFormatter extends PTMInfoFormatter {
         }
     }
 
-    private static class ModResNonPSIFormatter extends PTMInfoFormatter {
+    private static class ModResNonMappingPSIFormatter extends PTMInfoFormatter {
 
-        ModResNonPSIFormatter() {
-            super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), SequenceDescriptorKey.MOD_RES);
+        ModResNonMappingPSIFormatter(Entry entry, String isoformAccession) {
+
+            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE), SequenceDescriptorKey.MOD_RES);
         }
 
         @Override
@@ -149,7 +150,7 @@ public class ModResFormatter extends PTMInfoFormatter {
         }
 
         @Override
-        protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+        protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
             sb
                     .append("(")

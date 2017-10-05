@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
@@ -22,13 +23,13 @@ public class ProcessedMoleculeFormatter extends AnnotationBasedSequenceInfoForma
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "transit peptide"); // was "TRANSIT"
     }
 
-    public ProcessedMoleculeFormatter() {
+    public ProcessedMoleculeFormatter(Entry entry, String isoformAccession) {
 
-        super(ANNOTATION_CATEGORY_TO_NAME.keySet(), SequenceDescriptorKey.PROCESSED);
+        super(entry, isoformAccession, ANNOTATION_CATEGORY_TO_NAME.keySet(), SequenceDescriptorKey.PROCESSED);
     }
 
     @Override
-    protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+    protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
         Integer start = annotation.getStartPositionForIsoform(isoformAccession);
         Integer end = annotation.getEndPositionForIsoform(isoformAccession);

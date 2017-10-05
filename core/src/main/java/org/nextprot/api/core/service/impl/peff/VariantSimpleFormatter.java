@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
@@ -14,9 +15,9 @@ import java.util.EnumSet;
  */
 public class VariantSimpleFormatter extends AnnotationBasedSequenceInfoFormatter {
 
-    public VariantSimpleFormatter() {
+    public VariantSimpleFormatter(Entry entry, String isoformAccession) {
 
-        super(EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_SIMPLE);
+        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_SIMPLE);
     }
 
     @Override
@@ -27,15 +28,15 @@ public class VariantSimpleFormatter extends AnnotationBasedSequenceInfoFormatter
     }
 
     @Override
-    protected boolean doHandleAnnotation(Annotation annotation, String isoformAccession) {
+    protected boolean doHandleAnnotation(Annotation annotation) {
 
-        return super.doHandleAnnotation(annotation, isoformAccession) &&
+        return super.doHandleAnnotation(annotation) &&
                 annotation.getStartPositionForIsoform(isoformAccession).intValue() == annotation.getEndPositionForIsoform(isoformAccession).intValue() &&
                 annotation.getVariant().getVariant().length() == 1;
     }
 
     @Override
-    protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+    protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
         sb
                 .append("(")

@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
@@ -24,10 +25,10 @@ public class ModResPsiFormatter extends PTMInfoFormatter {
     private final Function<String, Optional<String>> uniprotModToPsiName;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public ModResPsiFormatter(Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
+    public ModResPsiFormatter(Entry entry, String isoformAccession, Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
                               List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
+        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
                 SequenceDescriptorKey.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
@@ -48,7 +49,7 @@ public class ModResPsiFormatter extends PTMInfoFormatter {
     }
 
     @Override
-    protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+    protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
         String modAccession = getModAccession(annotation);
 

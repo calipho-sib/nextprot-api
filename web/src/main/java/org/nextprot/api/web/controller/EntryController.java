@@ -8,7 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
@@ -43,7 +43,7 @@ public class EntryController {
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
-	@Autowired private PeffService peffService;
+	@Autowired private PEFFService PEFFService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 
     @ModelAttribute
@@ -129,11 +129,11 @@ public class EntryController {
 	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public IsoformSequenceInfoPeff getIsoformSequenceInfos(
+	public IsoformPEFFHeader getIsoformPEFFHeader(
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
 			@PathVariable("accession") String isoformAccession) {
 
-		return peffService.formatSequenceInfo(isoformAccession);
+		return PEFFService.formatPEFFHeader(isoformAccession);
 	}
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})

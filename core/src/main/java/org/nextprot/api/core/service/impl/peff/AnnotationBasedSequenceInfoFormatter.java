@@ -15,19 +15,25 @@ import java.util.*;
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatter {
+abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormat {
 
-    private static final Map<AnnotationCategory, SequenceInfoFormatter> map = new HashMap<>();
+    private static final Map<AnnotationCategory, SequenceInfoFormat> map = new HashMap<>();
 
     private final Set<AnnotationCategory> supportedApiModels;
+    protected final Entry entry;
+    protected final String isoformAccession;
 
-    AnnotationBasedSequenceInfoFormatter(Set<AnnotationCategory> supportedApiModels, SequenceDescriptorKey SequenceDescriptorKey) {
+    AnnotationBasedSequenceInfoFormatter(Entry entry, String isoformAccession,
+                                         Set<AnnotationCategory> supportedApiModels,
+                                         SequenceDescriptorKey SequenceDescriptorKey) {
 
         super(SequenceDescriptorKey);
 
         Preconditions.checkNotNull(supportedApiModels);
         Preconditions.checkNotNull(SequenceDescriptorKey);
 
+        this.entry = entry;
+        this.isoformAccession = isoformAccession;
         this.supportedApiModels = supportedApiModels;
 
         for (AnnotationCategory model : supportedApiModels) {
@@ -36,12 +42,12 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
         }
     }
 
-    protected boolean doHandleAnnotation(Annotation annotation, String isoformAccession) {
+    protected boolean doHandleAnnotation(Annotation annotation) {
 
         return supportedApiModels.contains(annotation.getAPICategory());
     }
 
-    protected abstract void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb);
+    protected abstract void formatAnnotation(Annotation annotation, StringBuilder sb);
 
     protected Comparator<Annotation> createAnnotationComparator(String isoformAccession) {
 
@@ -59,28 +65,28 @@ abstract class AnnotationBasedSequenceInfoFormatter extends SequenceInfoFormatte
     }
 
     @Override
-    protected String formatValue(Entry entry, String isoformAccession) {
+    protected String formatValue() {
 
         StringBuilder sb = new StringBuilder("");
 
-        List<Annotation> annots = selectAnnotation(entry, isoformAccession);
+        List<Annotation> annots = selectAnnotation();
         annots.sort(createAnnotationComparator(isoformAccession));
 
         for (Annotation annotation : annots) {
 
-            formatAnnotation(isoformAccession, annotation, sb);
+            formatAnnotation(annotation, sb);
         }
 
         return sb.toString();
     }
 
-    protected List<Annotation> selectAnnotation(Entry entry, String isoformAccession) {
+    protected List<Annotation> selectAnnotation() {
 
         List<Annotation> annots = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoformAccession)) {
 
-            if (doHandleAnnotation(annotation, isoformAccession)) {
+            if (doHandleAnnotation(annotation)) {
 
                 annots.add(annotation);
             }

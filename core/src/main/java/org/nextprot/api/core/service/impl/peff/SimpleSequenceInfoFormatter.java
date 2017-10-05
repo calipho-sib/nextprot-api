@@ -1,9 +1,8 @@
 package org.nextprot.api.core.service.impl.peff;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
-public class SimpleSequenceInfoFormatter extends SequenceInfoFormatter {
+public class SimpleSequenceInfoFormatter extends SequenceInfoFormat {
 
     private final String value;
 
@@ -14,7 +13,7 @@ public class SimpleSequenceInfoFormatter extends SequenceInfoFormatter {
     }
 
     @Override
-    protected String formatValue(Entry entry, String isoformAccession) {
+    protected String formatValue() {
         return value;
     }
 }
