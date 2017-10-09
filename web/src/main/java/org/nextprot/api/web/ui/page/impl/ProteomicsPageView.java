@@ -44,12 +44,11 @@ public class ProteomicsPageView extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
+		
 		return Arrays.asList(
-				"Aarhus/Ghent-2DPAGE","Cornea-2DPAGE","DOSAC-COBS-2DPAGE","OGP","PHCI-2DPAGE",
-				"PMMA-2DPAGE", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "Siena-2DPAGE", "UCD-2DPAGE",
-				"PRIDE", "PeptideAtlas",
-				"GlycoSuiteDB", "PhosphoSite", // no data for these two
-				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD","PhosphoSitePlus");
+				"DOSAC-COBS-2DPAGE","OGP", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "UCD-2DPAGE",
+				"PhosphoSitePlus",
+				"EPD", "MaxQB", "PaxDb", "PeptideAtlas","PRIDE","TopDownProteomics");
 	}
 
 	@Override

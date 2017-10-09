@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.bio.Chromosome;
+import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
@@ -51,8 +53,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
-		if (!ChromosomeReportService.getChromosomeNames().contains(chromosome)) {
-			throw new ChromosomeNotFoundException(chromosome, ChromosomeReportService.getChromosomeNames().toString());
+		// TODO: if chromosome is not found throw an http error 404
+		if (!Chromosome.exists(chromosome)) {
+			throw new ChromosomeNotFoundException(chromosome);
 		}
 
 		ChromosomeReport report = new ChromosomeReport();

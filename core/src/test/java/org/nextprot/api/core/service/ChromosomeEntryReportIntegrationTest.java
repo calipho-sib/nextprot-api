@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.apache.lucene.util.Counter;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.service.export.io.ChromosomeReportTXTReader;
@@ -277,7 +278,7 @@ public class ChromosomeEntryReportIntegrationTest {
 			StringBuilder sb = new StringBuilder();
 
 			sb.append(Differences.getHeaders().stream().collect(Collectors.joining("\t"))).append("\n");
-			for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
+			for (String chromosome : Chromosome.getNames()) {
 
 				DifferenceAnalyser analyser = new DifferenceAnalyser(chromosome);
 				sb.append(analyser.getDifferences().getValues().stream().collect(Collectors.joining("\t"))).append("\n");

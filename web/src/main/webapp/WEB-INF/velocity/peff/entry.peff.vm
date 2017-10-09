@@ -1,4 +1,9 @@
-#foreach($isoform in $entry.isoforms)
->${peffByIsoform.get($isoform.getIsoformAccession())}$StringUtils.getCR()
-$StringUtils.wrapText($isoform.getSequence(), 60)$StringUtils.getCR()
-#end
+# PEFF 1.0$StringUtils.getCR()
+# DbName=neXtProt $entry.getUniqueName()$StringUtils.getCR()
+# DbSource=https://www.nextprot.org$StringUtils.getCR()
+# DbVersion=$releaseInfo.getDatabaseRelease()$StringUtils.getCR()
+# Prefix=nxp$StringUtils.getCR()
+# NumberOfEntries=$entry.isoforms.size()$StringUtils.getCR()
+# SequenceType=AA$StringUtils.getCR()
+# //$StringUtils.getCR()
+#parse('peff/entry-no-header.peff.vm')

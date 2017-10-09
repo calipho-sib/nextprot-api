@@ -1,8 +1,8 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.SequenceDescriptorKey;
 
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -12,11 +12,11 @@ import java.util.EnumSet;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatter {
+public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
 
-    public VariantComplexFormatter() {
+    public PEFFVariantComplex(Entry entry, String isoformAccession) {
 
-        super(EnumSet.of(AnnotationCategory.VARIANT), SequenceDescriptorKey.VARIANT_COMPLEX);
+        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.VARIANT), Key.VARIANT_COMPLEX);
     }
 
     @Override
@@ -28,9 +28,9 @@ public class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatte
     }
 
     @Override
-    protected boolean doHandleAnnotation(Annotation annotation, String isoformAccession) {
+    protected boolean doHandleAnnotation(Annotation annotation) {
 
-        return super.doHandleAnnotation(annotation, isoformAccession) &&
+        return super.doHandleAnnotation(annotation) &&
                 (
                     annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
                     annotation.getVariant().getVariant().length() == 0 || // deletion
@@ -39,7 +39,7 @@ public class VariantComplexFormatter extends AnnotationBasedSequenceInfoFormatte
     }
 
     @Override
-    protected void formatAnnotation(String isoformAccession, Annotation annotation, StringBuilder sb) {
+    protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
         sb
                 .append("(")

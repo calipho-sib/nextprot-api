@@ -30,7 +30,7 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
     public void shouldExportPeffEntry() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/entry/NX_P01308.peff"))
+                .get("/export/entry/NX_P01308.peff"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
@@ -44,7 +44,7 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
     public void shouldExportFastaEntry() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/entry/NX_P01308.fasta"))
+                .get("/export/entry/NX_P01308.fasta"))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();

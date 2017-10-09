@@ -1,7 +1,10 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -80,6 +83,8 @@ public class ExportController {
                               @RequestParam(value = "quality", required = false) String quality) {
 
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        qr.setReferer(request.getHeader("referer"));
+        qr.setUrl(request.getRequestURL().toString() + "?" + request.getQueryString());
 
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), "entry", response);
     }
@@ -137,13 +142,27 @@ public class ExportController {
         }
     }
 
-    //@ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
+    @ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
     @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE })
     public void exportEntriesAsPeffOnChromosome(
-            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
             @PathVariable("chromosome")  String chromosome, HttpServletResponse response) {
 
         streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
+    }
+
+    @ApiMethod(path = "/export/entry/{entry}", verb = ApiVerb.GET, description = "Export isoforms of a given neXtProt entry",
+            produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/entry/{entry}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
+    public void exportEntry(HttpServletRequest request,
+            @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+            @PathVariable("entry") String entryName, HttpServletResponse response) {
+
+        try {
+            streamEntryService.streamEntry(entryName, NextprotMediaType.valueOf(request), response.getOutputStream(), entryName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {

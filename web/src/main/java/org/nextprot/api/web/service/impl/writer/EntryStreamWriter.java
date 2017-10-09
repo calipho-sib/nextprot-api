@@ -119,7 +119,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
             case FASTA:
                 return new EntryFastaStreamWriter(os);
             case PEFF:
-                return new EntryPeffStreamWriter(os);
+                return new EntryPEFFStreamWriter(os);
             case TURTLE:
                 return new EntryTTLStreamWriter(os, view);
             default:

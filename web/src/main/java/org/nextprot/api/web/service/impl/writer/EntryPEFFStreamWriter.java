@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.web.NXVelocityContext;
@@ -14,16 +15,16 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
+public class EntryPEFFStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public EntryPeffStreamWriter(OutputStream os) throws IOException {
+    public EntryPEFFStreamWriter(OutputStream os) throws IOException {
 
         this(new OutputStreamWriter(os, UTF_8));
     }
 
-    public EntryPeffStreamWriter(Writer writer) {
+    public EntryPEFFStreamWriter(Writer writer) {
 
-        super(writer, "peff/entry.peff.vm", "entry");
+        super(writer, "peff/entry-no-header.peff.vm", "entry");
     }
 
     @Override
@@ -32,14 +33,14 @@ public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
         StringBuilder sb = new StringBuilder();
 
         sb
-                .append("# PEFF 1.0\n")
-                .append("# DbName=neXtProt\n")
-                .append("# DbSource=https://www.nextprot.org\n")
-                .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append("\n")
-                .append("# DbDescription=").append(description).append("\n")
-                .append("# Prefix=nxp\n")
-                .append("# NumberOfEntries=").append(entryNum).append("\n")
-                .append("# SequenceType=AA\n\n")
+                .append("# PEFF 1.0").append(StringUtils.CR_LF)
+                .append("# DbName=neXtProt: ").append(description).append(StringUtils.CR_LF)
+                .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF)
+                .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append(StringUtils.CR_LF)
+                .append("# Prefix=nxp").append(StringUtils.CR_LF)
+                .append("# NumberOfEntries=").append(entryNum).append(StringUtils.CR_LF)
+                .append("# SequenceType=AA").append(StringUtils.CR_LF)
+                .append("# //").append(StringUtils.CR_LF)
         ;
 
         getStream().write(sb.toString());

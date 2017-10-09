@@ -11,8 +11,7 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -161,6 +160,15 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
+	public void shouldFindXrefPsiModName()  {
+
+		Optional<String> name = terminologyService.findPsiModName("PTM-0135");
+
+		Assert.assertTrue(name.isPresent());
+		Assert.assertEquals("N6-glycyl-L-lysine", name.get());
+	}
+
+	@Test
 	public void shouldNotFindXrefPsiMod()  {
 
 		List<String> accessionList = terminologyService.findCvTermXrefAccessionList("TS-0001", "PSI-MOD");
@@ -185,6 +193,42 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, accessionList.size());
 		Assert.assertTrue(accessionList.contains("BTO:0000553"));
 		Assert.assertTrue(accessionList.contains("BTO:0000089"));
+	}
+
+	@Test
+	public void shouldFindMOD00077CorrectName()  {
+
+		Optional<String> psiModAccession = terminologyService.findPsiModAccession("PTM-0066");
+		Assert.assertTrue(psiModAccession.isPresent());
+		Assert.assertEquals("MOD:00077", psiModAccession.get());
+
+		Optional<String> name = terminologyService.findPsiModName("PTM-0066");
+
+		Assert.assertTrue(name.isPresent());
+		Assert.assertEquals("asymmetric dimethyl-L-arginine", name.get());
+	}
+
+	//@Test
+	public void searchCvtermWithUndefinedXrefs()  {
+
+		Map<String, List<String>> map = new HashMap<>();
+
+		//for (CvTerm cvTerm : terminologyService.findAllCVTerms()) {
+		for (CvTerm cvTerm : terminologyService.findCvTermsByOntology("UniprotPtmCv")) {
+
+			if (cvTerm.getXrefs() == null || cvTerm.getXrefs().isEmpty()) {
+
+				if (!map.containsKey(cvTerm.getOntology())) {
+					map.put(cvTerm.getOntology(), new ArrayList<>());
+				}
+				map.get(cvTerm.getOntology()).add(cvTerm.getAccession());
+				//System.err.println(cvTerm.getAccession()+"\t"+cvTerm.getOntology());
+			}
+		}
+
+		Collections.sort(map.get("UniprotPtmCv"));
+
+		System.out.println(map.get("UniprotPtmCv"));
 	}
 }
 
