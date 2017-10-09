@@ -23,14 +23,21 @@ public class ProteomicsPageView extends PageViewBase {
 				AnnotationCategory.MATURE_PROTEIN,
 				AnnotationCategory.INITIATOR_METHIONINE,
 				AnnotationCategory.SIGNAL_PEPTIDE,
-				AnnotationCategory.TRANSIT_PEPTIDE,
+				AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE,
+				AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE,
 
-				AnnotationCategory.DISULFIDE_BOND,
 				AnnotationCategory.MODIFIED_RESIDUE,
-				AnnotationCategory.CROSS_LINK,
+				AnnotationCategory.DISULFIDE_BOND,
 				AnnotationCategory.GLYCOSYLATION_SITE,
 				AnnotationCategory.LIPIDATION_SITE,
-				AnnotationCategory.SELENOCYSTEINE
+				AnnotationCategory.CROSS_LINK,
+				AnnotationCategory.SELENOCYSTEINE,
+				
+				AnnotationCategory.ANTIBODY_MAPPING,
+				
+				AnnotationCategory.PEPTIDE_MAPPING,
+				AnnotationCategory.SRM_PEPTIDE_MAPPING
+				
 		);
 	}
 
@@ -41,8 +48,8 @@ public class ProteomicsPageView extends PageViewBase {
 				"Aarhus/Ghent-2DPAGE","Cornea-2DPAGE","DOSAC-COBS-2DPAGE","OGP","PHCI-2DPAGE",
 				"PMMA-2DPAGE", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "Siena-2DPAGE", "UCD-2DPAGE",
 				"PRIDE", "PeptideAtlas",
-				"GlycoSuiteDB", "PhosphoSite",
-				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD");
+				"GlycoSuiteDB", "PhosphoSite", // no data for these two
+				"PaxDb", "ProMEX", "MaxQB", "Proteomes","TopDownProteomics","EPD","PhosphoSitePlus");
 	}
 
 	@Override
