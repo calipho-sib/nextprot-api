@@ -162,7 +162,7 @@ public class StringUtils {
 
 	static String wrapTextRec(String text, int maxLineLen, StringBuilder sb) {
 
-		if (text.length()<maxLineLen) {
+		if (text.length()<=maxLineLen) {
 
 			sb.append(text);
 
