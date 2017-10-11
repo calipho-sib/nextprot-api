@@ -23,12 +23,6 @@ public class GraphQlController {
 	@RequestMapping(value="/graphql", method={RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
 	public Object executeOperation(@RequestBody(required = false) Map body) throws IOException {
-
-		String json = "{\"query\":\"{entry(accession: \\\"P01308\\\"){isoforms}}\"}";
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> map = new HashMap<>();
-		body = mapper.readValue(json, map.getClass());
-
 		return graphQlExecutor.executeRequest(body);
 	}
 

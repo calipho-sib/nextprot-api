@@ -1,16 +1,31 @@
 type Query {
-    # Find entry  by accession
-    entry(accession: String!): Entry
-}
-
-type Isoform {
-    # The id of the human
-    sequence: String!
+    # Find entry by accession
+    entry(accession: String): Entry
 }
 
 type Entry {
-    # The unique id
-    accession: String!
-    # isoform
+    uniqueName: String
+    properties: EntryProperties
     isoforms: [Isoform]
+    publications(limit: Int): [Publication]
+    annotations(category: String): [Annotation]
+}
+
+type EntryProperties {
+    proteinExistence: String
+    isoformCount: Int
+}
+
+type Annotation {
+    cvTermName: String
+    cvTermAccessionCode: String
+    qualityQualifier: String
+}
+
+type Isoform {
+    sequence: String
+}
+
+type Publication {
+    title: String
 }

@@ -5,17 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLException;
-import graphql.execution.ExecutionStrategy;
-import graphql.execution.ExecutorServiceExecutionStrategy;
+import graphql.schema.DataFetcher;
 import graphql.schema.GraphQLSchema;
-import graphql.schema.StaticDataFetcher;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 import org.nextprot.api.web.service.GraphQlExecutor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -26,24 +23,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
-@ConditionalOnMissingBean(GraphQlExecutor.class)
 @Component
 public class GraphQlExecutorImpl implements GraphQlExecutor {
 
-    /*@Autowired
-    private GraphQlExecutorProperties processorProperties;
-
     @Autowired
-    private ObjectMapper jacksonObjectMapper;*/
-
-/*    @Autowired
-    private GraphQlSchemaBuilder schemaBuilder;*/
+    private DataFetcher entryDataFetcher;
 
     private TypeReference<HashMap<String, Object>> typeRefReadJsonString = new TypeReference<HashMap<String, Object>>() {
     };
@@ -62,73 +49,21 @@ public class GraphQlExecutorImpl implements GraphQlExecutor {
         TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(file);
 
         RuntimeWiring runtimeWiring = newRuntimeWiring()
-                .type("Query", builder -> builder.dataFetcher("hello", new StaticDataFetcher("world")))
+                .type("Query", builder -> builder.dataFetcher("entry", entryDataFetcher))
                 .build();
 
         SchemaGenerator schemaGenerator = new SchemaGenerator();
         GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
 
         graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-        /*ExecutionResult executionResult = build.execute("{hello}");
-
-        System.out.println(executionResult.getData().toString());*/
-
 
     }
 
-
-    /*
-    protected ExecutionStrategy createQueryExecutionStrategy() {
-        return createExecutionStrategy(
-                processorProperties.getMinimumThreadPoolSizeQuery(),
-                processorProperties.getMaximumThreadPoolSizeQuery(),
-                processorProperties.getKeepAliveTimeInSecondsQuery(),
-                "graphql-query-thread-"
-        );
-    }
-
-    protected ExecutionStrategy createMutationExecutionStrategy() {
-        return createExecutionStrategy(
-                processorProperties.getMinimumThreadPoolSizeMutation(),
-                processorProperties.getMaximumThreadPoolSizeMutation(),
-                processorProperties.getKeepAliveTimeInSecondsMutation(),
-                "graphql-mutation-thread-"
-        );
-    }
-
-    protected ExecutionStrategy createSubscriptionExecutionStrategy() {
-        return createExecutionStrategy(
-                processorProperties.getMinimumThreadPoolSizeSubscription(),
-                processorProperties.getMaximumThreadPoolSizeSubscription(),
-                processorProperties.getKeepAliveTimeInSecondsSubscription(),
-                "graphql-subscription-thread-"
-        );
-    }
-*/
-    private ExecutionStrategy createExecutionStrategy(Integer minimumThreadPoolSize, Integer maximumThreadPoolSize, Integer keepAliveTimeInSeconds, String threadNamePrefix) {
-        return new ExecutorServiceExecutionStrategy(new ThreadPoolExecutor(
-                minimumThreadPoolSize,
-                maximumThreadPoolSize,
-                keepAliveTimeInSeconds,
-                TimeUnit.SECONDS,
-                new SynchronousQueue<>(),
-                new CustomizableThreadFactory(threadNamePrefix),
-                new ThreadPoolExecutor.CallerRunsPolicy())
-        );
-    }
-
-    protected void beforeExecuteRequest(String query, String operationName, Map<String, Object> context, Map<String, Object> variables) {
-    }
 
     @Override
     public Object executeRequest(Map requestBody) {
-        String query = (String) requestBody.get("query");
-        String operationName = (String) requestBody.get("operationName");
-        Map<String, Object> variables = getVariablesFromRequest(requestBody);
-        Map<String, Object> context = new HashMap<>();
 
-        beforeExecuteRequest(query, operationName, context, variables);
-        ExecutionResult executionResult = graphQL.execute(query, operationName, context, variables);
+        ExecutionResult executionResult = graphQL.execute((String) requestBody.get("query"));
 
         HashMap result = new LinkedHashMap<String, Object>();
 
@@ -169,4 +104,7 @@ public class GraphQlExecutorImpl implements GraphQlExecutor {
             throw new GraphQLException("Cannot parse variables", exception);
         }
     }
+
+
+
 }
