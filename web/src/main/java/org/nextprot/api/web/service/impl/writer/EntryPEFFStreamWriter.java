@@ -40,6 +40,7 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
         StringBuilder sb = new StringBuilder();
 
         sb.append("# PEFF 1.0").append(StringUtils.CR_LF)
+                .append("# //").append(StringUtils.CR_LF)
                 .append("# DbName=neXtProt: ").append(description).append(StringUtils.CR_LF)
                 .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF);
 
