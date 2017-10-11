@@ -2,29 +2,29 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.release.ReleaseInfo;
-import org.nextprot.api.web.NXVelocityContext;
+import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.Map;
 
 /**
  * Streams entries sequence in PEFF (extended FASTA) format
  *
  * Created by fnikitin on 28/04/15.
  */
-public class EntryPEFFStreamWriter extends EntryVelocityBasedStreamWriter {
+public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
+
+    private final EntryReportService entryReportService;
 
     public EntryPEFFStreamWriter(OutputStream os) throws IOException {
 
-        this(new OutputStreamWriter(os, UTF_8));
-    }
+        super(os);
 
-    public EntryPEFFStreamWriter(Writer writer) {
-
-        super(writer, "peff/entry-no-header.peff.vm", "entry");
+        this.entryReportService = applicationContext.getBean(EntryReportService.class);
     }
 
     @Override
@@ -43,22 +43,34 @@ public class EntryPEFFStreamWriter extends EntryVelocityBasedStreamWriter {
                 .append("# //").append(StringUtils.CR_LF)
         ;
 
-        getStream().write(sb.toString());
+        getStream().write(sb.toString().getBytes());
     }
 
     @Override
     protected void writeEntry(String entryName) throws IOException {
 
-        streamWithVelocityTemplate(entryName, "isoform");
+        Map<String, String> isoformToPEFF = entryReportService.reportIsoformPeffHeaders(entryName);
+
+        EntryConfig entryConfig = EntryConfig.newConfig(entryName);
+        entryConfig.withTargetIsoforms();
+
+        Entry entry = entryBuilderService.build(entryConfig);
+
+        StringBuilder sb = new StringBuilder();
+
+        for (Isoform isoform : entry.getIsoforms()) {
+
+            sb.append(">")
+                    .append(isoformToPEFF.get(isoform.getIsoformAccession())).append(StringUtils.CR_LF)
+                    .append(StringUtils.wrapText(isoform.getSequence(), 60)).append(StringUtils.CR_LF);
+        }
+        getStream().write(sb.toString().getBytes());
     }
 
-    @Override
-    protected NXVelocityContext newNXVelocityContext(Entry entry) {
+    /*public static int countIsoforms(List<Entry> entries) {
 
-        NXVelocityContext velocityContext = super.newNXVelocityContext(entry);
-
-        velocityContext.add("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entry.getUniqueName()));
-
-        return velocityContext;
-    }
+        return entries.stream()
+                .mapToInt(e -> e.getIsoforms().size())
+                .sum();
+    }*/
 }
