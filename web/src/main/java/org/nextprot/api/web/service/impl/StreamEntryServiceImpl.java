@@ -120,7 +120,13 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 			return queryRequest.getReferer();
 		}
 
-		return queryRequest.getUrl();
+        String url = queryRequest.getUrl();
+
+		if (url.contains("nextprot-api-web")) {
+		    url = url.replace("/nextprot-api-web", "");
+        }
+
+        return url;
 	}
 
 	private void setResponseHeader(HttpServletResponse response, NextprotMediaType format, String filename) {
