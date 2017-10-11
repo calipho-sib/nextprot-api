@@ -52,8 +52,8 @@ public class StreamEntryServiceImpl implements StreamEntryService {
     public void streamAllEntries(NextprotMediaType format, HttpServletResponse response) {
 
         try {
-            setResponseHeader(response, format, "nextprot-entries-all"  + "." + format.getExtension());
-            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "");
+            setResponseHeader(response, format, "nextprot_all"  + "." + format.getExtension());
+            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "complete release");
         } catch (IOException e) {
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries", e);
         }
