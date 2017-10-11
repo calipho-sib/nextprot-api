@@ -134,7 +134,14 @@
 			<artifactId>smiley-http-proxy-servlet</artifactId>
 			<version>1.7</version>
 		</dependency>
-		
+
+		<!-- GraphQL (may need to check at Spring projects too) -->
+		<dependency>
+			<groupId>com.graphql-java</groupId>
+			<artifactId>graphql-java-tools</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+
 	</dependencies>
 
 

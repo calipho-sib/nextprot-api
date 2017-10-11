@@ -337,11 +337,6 @@
 			<version>2.4.9</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.graphql-java</groupId>
-			<artifactId>graphql-java-tools</artifactId>
-			<version>4.1.2</version>
-		</dependency>
 		<!-- manage git info -->
 		<dependency>
 			<groupId>com.lukegb.mojo</groupId>
