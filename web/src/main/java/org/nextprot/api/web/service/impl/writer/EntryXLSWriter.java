@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
@@ -149,15 +148,15 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
     }
 
     @Override
-    public void write(Collection<String> entries, ReleaseInfo releaseInfo, String description) throws IOException {
+    public void write(Collection<String> entries, Map<String, Object> infos) throws IOException {
 
-        super.write(entries, releaseInfo, description);
+        super.write(entries, infos);
 
         workbook.write(getStream());
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
 
         String[] headers = entryDataProvider.getFieldNames();
 

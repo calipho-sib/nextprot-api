@@ -9,6 +9,8 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,29 +21,35 @@ import java.util.Map;
 public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
 
     private final EntryReportService entryReportService;
+    private final Map<String, Entry> cachedEntries;
 
     public EntryPEFFStreamWriter(OutputStream os) throws IOException {
 
         super(os);
 
         this.entryReportService = applicationContext.getBean(EntryReportService.class);
+        cachedEntries = new HashMap<>();
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
+
+        int isoformNumber = (int)infos.get(ISOFORM_COUNT);
+        String description = (String) infos.getOrDefault(DESCRIPTION, "");
 
         StringBuilder sb = new StringBuilder();
 
-        sb
-                .append("# PEFF 1.0").append(StringUtils.CR_LF)
+        sb.append("# PEFF 1.0").append(StringUtils.CR_LF)
                 .append("# DbName=neXtProt: ").append(description).append(StringUtils.CR_LF)
-                .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF)
-                .append("# DbVersion=").append(releaseInfo.getDatabaseRelease()).append(StringUtils.CR_LF)
-                .append("# Prefix=nxp").append(StringUtils.CR_LF)
-                .append("# NumberOfEntries=").append(entryNum).append(StringUtils.CR_LF)
+                .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF);
+
+        if (infos.containsKey(RELEASE_INFO))
+                sb.append("# DbVersion=").append(((ReleaseInfo)infos.get(RELEASE_INFO)).getDatabaseRelease()).append(StringUtils.CR_LF);
+
+        sb.append("# Prefix=nxp").append(StringUtils.CR_LF)
+                .append("# NumberOfEntries=").append(isoformNumber).append(StringUtils.CR_LF)
                 .append("# SequenceType=AA").append(StringUtils.CR_LF)
-                .append("# //").append(StringUtils.CR_LF)
-        ;
+                .append("# //").append(StringUtils.CR_LF);
 
         getStream().write(sb.toString().getBytes());
     }
@@ -51,14 +59,9 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
 
         Map<String, String> isoformToPEFF = entryReportService.reportIsoformPeffHeaders(entryName);
 
-        EntryConfig entryConfig = EntryConfig.newConfig(entryName);
-        entryConfig.withTargetIsoforms();
-
-        Entry entry = entryBuilderService.build(entryConfig);
-
         StringBuilder sb = new StringBuilder();
 
-        for (Isoform isoform : entry.getIsoforms()) {
+        for (Isoform isoform : cachedEntries.get(entryName).getIsoforms()) {
 
             sb.append(">")
                     .append(isoformToPEFF.get(isoform.getIsoformAccession())).append(StringUtils.CR_LF)
@@ -67,10 +70,33 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
         getStream().write(sb.toString().getBytes());
     }
 
-    /*public static int countIsoforms(List<Entry> entries) {
+    @Override
+    public void write(Collection<String> entryAccessions, Map<String, Object> infos) throws IOException {
 
-        return entries.stream()
+        cacheBuiltEntries(entryAccessions);
+
+        // isoform count information has to be computed before streaming all entries
+        infos.put(ISOFORM_COUNT, cachedEntries.values().stream()
                 .mapToInt(e -> e.getIsoforms().size())
-                .sum();
-    }*/
+                .sum());
+
+        // do the streaming
+        super.write(entryAccessions, infos);
+
+        removeBuildEntriesFromCache();
+    }
+
+    private void cacheBuiltEntries(Collection<String> entryAccessions) {
+
+        for (String entryAccession : entryAccessions) {
+
+            Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms());
+            cachedEntries.put(entryAccession, entry);
+        }
+    }
+
+    private void removeBuildEntriesFromCache() {
+
+        cachedEntries.clear();
+    }
 }

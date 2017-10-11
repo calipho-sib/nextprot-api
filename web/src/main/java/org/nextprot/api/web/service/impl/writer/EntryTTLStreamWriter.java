@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Map;
 
 /**
  * Created by dteixeira
@@ -28,7 +29,11 @@ public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+    protected void writeHeader(Map<String, Object>infos) throws IOException {
+
+        int entryNum = (int) infos.get(ENTRY_COUNT);
+        ReleaseInfo releaseInfo = (ReleaseInfo) infos.get(RELEASE_INFO);
+
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("turtle/prefix.ttl.vm");
         headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
     }

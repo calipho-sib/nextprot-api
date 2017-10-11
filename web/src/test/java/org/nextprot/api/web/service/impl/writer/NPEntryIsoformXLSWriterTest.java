@@ -10,9 +10,6 @@ import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import java.io.*;
 import java.util.Arrays;
 
-/**
- * Created by fnikitin on 12/08/15.
- */
 public class NPEntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
     @Test
