@@ -66,7 +66,8 @@ public class ExportController {
                                      @RequestParam(value = "order", required = false) String order,
                                      @RequestParam(value = "quality", required = false) String quality) {
 
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), view, response);
     }
 
@@ -82,9 +83,7 @@ public class ExportController {
                               @RequestParam(value = "order", required = false) String order,
                               @RequestParam(value = "quality", required = false) String quality) {
 
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
-        qr.setReferer(request.getHeader("referer"));
-        qr.setUrl(request.getRequestURL().toString() + "?" + request.getQueryString());
+        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), "entry", response);
     }
@@ -165,7 +164,7 @@ public class ExportController {
         }
     }
 
-    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
+    private static QueryRequest buildQueryRequest(HttpServletRequest request, String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuery(query);
@@ -187,6 +186,10 @@ public class ExportController {
         qr.setSort(sort);
         qr.setOrder(order);
         qr.setQuality(quality);
+
+        qr.setReferer(request.getHeader("referer"));
+        qr.setUrl(request.getRequestURL().toString() + "?" + request.getQueryString());
+
         return qr;
     }
 }
