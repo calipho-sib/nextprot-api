@@ -111,7 +111,7 @@ public class PublicationServiceTest {
 
 		when(publicationDao.findSortedPublicationsByMasterId(100L)).thenReturn(Arrays.asList(publication));
 
-		publicationService.findPublicationsByMasterUniqueName("NX_P12345");
+		publicationService.findPublicationsByEntryName("NX_P12345");
 
 		verify(masterIdentifierDao).findIdByUniqueName("NX_P12345");
 		verify(publicationDao).findSortedPublicationsByMasterId(100L);
@@ -123,7 +123,7 @@ public class PublicationServiceTest {
 	@Ignore
 	@Test
 	public void testFindPublicationsByMasterUniqueName() {
-		List<Publication> publications = this.publicationService.findPublicationsByMasterUniqueName("NX_P12345");
+		List<Publication> publications = this.publicationService.findPublicationsByEntryName("NX_P12345");
 		
 		assertEquals(2, publications.size());
 		

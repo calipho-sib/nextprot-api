@@ -1,31 +1,19 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryPropertiesService;
-import org.nextprot.api.core.service.ExperimentalContextService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.GenomicMappingService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
@@ -64,7 +52,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
 			}
 			if(entryConfig.hasPublications()){
-				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entryName));
+				entry.setPublications(this.publicationService.findPublicationsByEntryName(entryName));
 			}
 			if(entryConfig.hasXrefs()){
 				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
@@ -153,7 +141,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entry.getUniqueName()));
 			}
 			if(entry.getPublications() == null || entry.getPublications().isEmpty()){
-				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entry.getUniqueName()));
+				entry.setPublications(this.publicationService.findPublicationsByEntryName(entry.getUniqueName()));
 			}
 			if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
 				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));

@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
@@ -35,7 +36,16 @@ public interface PublicationService {
 	 * @param uniqueName
 	 * @return
 	 */
-	List<Publication> findPublicationsByMasterUniqueName(@ValidEntry String uniqueName);
+	List<Publication> findPublicationsByEntryName(@ValidEntry String uniqueName);
+
+	/**
+	 * Retrieves publications by master's unique name filtered by a view
+	 *
+	 * @param entryAccession the entry accession
+	 * @param publicationView the publication view
+	 * @return a list of Publication
+	 */
+	List<Publication> findPublicationsByEntryName(String entryAccession, PublicationView publicationView);
 
 	/**
 	 * Retrieves publication by MD5
@@ -70,13 +80,13 @@ public interface PublicationService {
 
 	boolean isCuratedPublication(long publicationId);
 
-	int countCuratedPublications(String entryAccession);
+	/**
+	 * Count the number of publication linked to this entry for the given view
+	 * @param entryAccession the entry accession
+	 * @param publicationView the publication view
+	 */
+	default int countPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
 
-	int countAdditionalPublications(String entryAccession);
-
-	int countPatents(String entryAccession);
-
-	int countSubmissions(String entryAccession);
-
-	int countWebResources(String entryAccession);
+		return findPublicationsByEntryName(entryAccession, publicationView).size();
+	}
 }

@@ -11,6 +11,7 @@ import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.PublicationComparator;
@@ -62,7 +63,7 @@ public class PublicationServiceImpl implements PublicationService {
 
 	@Override
 	@Cacheable("publications")
-	public List<Publication> findPublicationsByMasterUniqueName(String uniqueName) {
+	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 
 		Long masterId = masterIdentifierDao.findIdByUniqueName(uniqueName);
 		List<Publication> publications = publicationDao.findSortedPublicationsByMasterId(masterId);
@@ -233,35 +234,7 @@ public class PublicationServiceImpl implements PublicationService {
 
 	// TODO: pam should give an implementation here
 	@Override
-	public int countCuratedPublications(String entryAccession) {
-
-		throw new IllegalStateException("pam should give an implementation here");
-	}
-
-	// TODO: pam should give an implementation here
-	@Override
-	public int countAdditionalPublications(String entryAccession) {
-
-		throw new IllegalStateException("pam should give an implementation here");
-	}
-
-	// TODO: pam should give an implementation here
-	@Override
-	public int countPatents(String entryAccession) {
-
-		throw new IllegalStateException("pam should give an implementation here");
-	}
-
-	// TODO: pam should give an implementation here
-	@Override
-	public int countSubmissions(String entryAccession) {
-
-		throw new IllegalStateException("pam should give an implementation here");
-	}
-
-	// TODO: pam should give an implementation here
-	@Override
-	public int countWebResources(String entryAccession) {
+	public List<Publication> findPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
 
 		throw new IllegalStateException("pam should give an implementation here");
 	}
