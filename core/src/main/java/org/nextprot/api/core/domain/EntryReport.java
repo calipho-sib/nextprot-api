@@ -32,11 +32,16 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 	ISOFORM_COUNT,
 	VARIANT_COUNT,
 	PTM_COUNT,
+	CURATED_PUBLICATION_COUNT,
+	ADDITIONAL_PUBLICATION_COUNT,
+	PATENT_COUNT,
+	SUBMISSION_COUNT,
+	WEB_RESOURCE_COUNT,
 	ENTRY_DESCRIPTION
 })
 public class EntryReport implements Serializable {
 
-	private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6L;
 
 	private static final String SENSE_CODING_STRAND = "forward";
 	private static final String ANTISENSE_CODING_STRAND = "reverse";
@@ -56,6 +61,11 @@ public class EntryReport implements Serializable {
 	public static final String ISOFORM_COUNT = "isoforms";
 	public static final String VARIANT_COUNT = "variants";
 	public static final String PTM_COUNT = "ptms";
+	public static final String CURATED_PUBLICATION_COUNT = "curatedPublicationCount";
+	public static final String ADDITIONAL_PUBLICATION_COUNT = "additionalPublicationCount";
+	public static final String PATENT_COUNT = "patentCount";
+	public static final String SUBMISSION_COUNT = "submissionCount";
+	public static final String WEB_RESOURCE_COUNT = "webResourceCount";
 
 	private String accession;
 	private String description;
@@ -174,6 +184,36 @@ public class EntryReport implements Serializable {
 	public int countPTMs() {
 
 		return propertyCounts.get(PTM_COUNT);
+	}
+
+	@JsonProperty(CURATED_PUBLICATION_COUNT)
+	public int countCuratedPublications() {
+
+		return propertyCounts.get(CURATED_PUBLICATION_COUNT);
+	}
+
+	@JsonProperty(ADDITIONAL_PUBLICATION_COUNT)
+	public int countAdditionalPublications() {
+
+		return propertyCounts.get(ADDITIONAL_PUBLICATION_COUNT);
+	}
+
+	@JsonProperty(PATENT_COUNT)
+	public int countPatents() {
+
+		return propertyCounts.get(PATENT_COUNT);
+	}
+
+	@JsonProperty(SUBMISSION_COUNT)
+	public int countSubmissions() {
+
+		return propertyCounts.get(SUBMISSION_COUNT);
+	}
+
+	@JsonProperty(WEB_RESOURCE_COUNT)
+	public int countWebResources() {
+
+		return propertyCounts.get(WEB_RESOURCE_COUNT);
 	}
 
 	@JsonProperty(CHROMOSOMAL_LOCATION)
