@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class EntryReportServiceImpl implements EntryReportService {
     @Autowired
     private IsoformService isoformService;
 
+    @Autowired
+    private PublicationService publicationService;
+
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
 
@@ -53,6 +57,11 @@ public class EntryReportServiceImpl implements EntryReportService {
         setIsoformCount(entry, report);
         setVariantCount(entry, report);
         setPTMCount(entry, report);
+        setCuratedPublicationCount(entry, report);
+        setAdditionalPublicationCount(entry, report);
+        setPatentCount(entry, report);
+        setSubmissionCount(entry, report);
+        setWebResourceCount(entry, report);
 
         return duplicateReportForEachGene(entry, report);
     }
@@ -248,7 +257,32 @@ public class EntryReportServiceImpl implements EntryReportService {
                 .map(report::duplicateThenSetChromosomalLocation)
                 .collect(Collectors.toList());
     }
-    
+
+    private void setCuratedPublicationCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT, publicationService.countCuratedPublications(entry.getUniqueName()));
+    }
+
+    private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT, publicationService.countAdditionalPublications(entry.getUniqueName()));
+    }
+
+    private void setPatentCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.PATENT_COUNT, publicationService.countPatents(entry.getUniqueName()));
+    }
+
+    private void setSubmissionCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.SUBMISSION_COUNT, publicationService.countSubmissions(entry.getUniqueName()));
+    }
+
+    private void setWebResourceCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT, publicationService.countWebResources(entry.getUniqueName()));
+    }
+
     boolean isGoldAnnotation(Annotation annot) {
     	boolean result = annot.getQualityQualifier().equals(QualityQualifier.GOLD.name());
     	//System.out.println("annot " + annot.getAnnotationId() + " quality: " + annot.getQualityQualifier());
