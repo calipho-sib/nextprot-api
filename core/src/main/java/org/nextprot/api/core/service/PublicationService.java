@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
@@ -48,8 +49,8 @@ public interface PublicationService {
 	 * @return
 	 */	
 	List<Long> findAllPublicationIds();
-	
-	
+
+
 	/**
 	 * Find publication ids by database and accession.
 	 * For example to get a publication from PubMed given its id
@@ -59,4 +60,23 @@ public interface PublicationService {
 	 */
 	Publication findPublicationByDatabaseAndAccession(String database, String accession);
 
+	GlobalPublicationStatistics countGlobalStatistics();
+
+	boolean isCitedPublication(long publicationId);
+
+	boolean isComputationallyMappedPublication(long publicationId);
+
+	boolean isLargeScalePublication(long publicationId);
+
+	boolean isCuratedPublication(long publicationId);
+
+	int countCuratedPublications(String entryAccession);
+
+	int countAdditionalPublications(String entryAccession);
+
+	int countPatents(String entryAccession);
+
+	int countSubmissions(String entryAccession);
+
+	int countWebResources(String entryAccession);
 }

@@ -9,10 +9,8 @@ import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.PublicationAuthor;
-import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.PublicationComparator;
@@ -198,5 +196,73 @@ public class PublicationServiceImpl implements PublicationService {
 	@Cacheable("publications-by-id-and-accession")
 	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
+	}
+
+	@Override
+	public GlobalPublicationStatistics countGlobalStatistics() {
+		return null;
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public boolean isCitedPublication(long publicationId) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public boolean isComputationallyMappedPublication(long publicationId) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public boolean isLargeScalePublication(long publicationId) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public boolean isCuratedPublication(long publicationId) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public int countCuratedPublications(String entryAccession) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public int countAdditionalPublications(String entryAccession) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public int countPatents(String entryAccession) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public int countSubmissions(String entryAccession) {
+
+		throw new IllegalStateException("pam should give an implementation here");
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public int countWebResources(String entryAccession) {
+
+		throw new IllegalStateException("pam should give an implementation here");
 	}
 }
