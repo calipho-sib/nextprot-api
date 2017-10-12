@@ -46,15 +46,15 @@ public class Publication implements Serializable{
 	private String submission;
 
 	@ApiObjectField(description = "Publications related to 15 entries or more")
-	private Boolean isLargeScale;
+	private boolean isLargeScale;
 
 	@ApiObjectField(description = "Curated Publications")
-	private Boolean isCurated;
+	private boolean isCurated;
 
 	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
 	// Refs cited in UniProt should be 'curated' even if not (yet) attached to a specific annotation
 	@ApiObjectField(description = "Computed Publications")
-	private Boolean isComputed;
+	private boolean isComputed;
 	
 	private Map<String,List<String>> properties;
 	
@@ -103,27 +103,27 @@ public class Publication implements Serializable{
 		return isLocalizable() && publicationResourceLocator instanceof BookResourceLocator;
 	}
 
-	public Boolean getIsLargeScale() {
+	public boolean isLargeScale() {
 		return isLargeScale;
 	}
 
-	public void setIsLargeScale(Boolean isLargeScale) {
+	public void setIsLargeScale(boolean isLargeScale) {
 		this.isLargeScale = isLargeScale;
 	}
 
-	public Boolean getIsCurated() {
+	public boolean isCurated() {
 		return isCurated;
 	}
 
-	public void setIsCurated(Boolean isCurated) {
+	public void setIsCurated(boolean isCurated) {
 		this.isCurated = isCurated;
 	}
 
-	public Boolean getIsComputed() {
+	public boolean isComputed() {
 		return isComputed;
 	}
 
-	public void setIsComputed(Boolean isComputed) {
+	public void setIsComputed(boolean isComputed) {
 		this.isComputed = isComputed;
 	}
 

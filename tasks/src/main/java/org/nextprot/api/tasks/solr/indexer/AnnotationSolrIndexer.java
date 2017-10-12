@@ -277,9 +277,9 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		int publi_curated_count = 0;
 		int publi_large_scale_count = 0;
 		for (Publication currpubli : publications) {
-			if(currpubli.getIsComputed() == true) publi_computed_count++;
-			if(currpubli.getIsCurated() == true) publi_curated_count++;
-			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
+			if(currpubli.isComputed()) publi_computed_count++;
+			if(currpubli.isCurated()) publi_curated_count++;
+			if(currpubli.isLargeScale()) publi_large_scale_count++;
 			String title = currpubli.getTitle();
 			if(title.length() > 0) doc.addField("publications",title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();

@@ -29,9 +29,9 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 
 		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
-			if(currpubli.getIsComputed() == true) publi_computed_count++;
-			if(currpubli.getIsCurated() == true) publi_curated_count++;
-			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
+			if(currpubli.isComputed()) publi_computed_count++;
+			if(currpubli.isCurated()) publi_curated_count++;
+			if(currpubli.isLargeScale()) publi_large_scale_count++;
 
 			if(currpubli.isLocatedInScientificJournal()) {
 

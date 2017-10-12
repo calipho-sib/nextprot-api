@@ -31,9 +31,9 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		   // if yes create an adhoc Publication.convertXrefsToSolrString method
 		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs))); }
 		String filters="";
-		filters+=((publi.getIsComputed())?" computed":"");
-		filters+=((publi.getIsCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
-		filters+=((publi.getIsLargeScale())?" largescale":"");
+		filters+=((publi.isComputed())?" computed":"");
+		filters+=((publi.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
+		filters+=((publi.isLargeScale())?" largescale":"");
 		doc.addField("filters", filters);
 		doc.addField("title", publi.getTitle());
 		doc.addField("title_s", publi.getTitle());
