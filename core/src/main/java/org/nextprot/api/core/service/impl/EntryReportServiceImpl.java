@@ -13,6 +13,7 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     @Autowired
     private PublicationService publicationService;
 
+    @Cacheable("entry-reports")
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
 
