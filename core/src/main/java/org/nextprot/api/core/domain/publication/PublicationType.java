@@ -1,5 +1,8 @@
 package org.nextprot.api.core.domain.publication;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Publication types as defined in nextprot database
  *
@@ -9,30 +12,36 @@ public enum PublicationType {
 
     ARTICLE, PATENT, BOOK, THESIS, SUBMISSION, ONLINE_PUBLICATION, UNPUBLISHED_OBSERVATION, DOCUMENT;
 
+    private static Map<String, PublicationType> publicationTypeMap = null;
+
+    /**
+     * @return a lazily built map of publication types
+     */
+    private static Map<String, PublicationType> getPublicationTypeMap() {
+
+        if (publicationTypeMap == null) {
+
+            Map<String, PublicationType> m = new HashMap<>(PublicationType.values().length);
+            for (PublicationType constant : values()) {
+                m.put(constant.name(), constant);
+            }
+            m.put("UNPUBLISHED OBSERVATION", UNPUBLISHED_OBSERVATION);
+            m.put("ONLINE PUBLICATION", ONLINE_PUBLICATION);
+
+            publicationTypeMap = m;
+        }
+        return publicationTypeMap;
+    }
+
     public static PublicationType valueOfName(String name) {
 
-        switch(name) {
+        PublicationType result = getPublicationTypeMap().get(name);
 
-            case "ARTICLE":
-                return ARTICLE;
-            case "PATENT":
-                return PATENT;
-            case "BOOK":
-                return BOOK;
-            case "THESIS":
-                return THESIS;
-            case "SUBMISSION":
-                return SUBMISSION;
-            case "ONLINE_PUBLICATION":
-            case "ONLINE PUBLICATION":
-                return ONLINE_PUBLICATION;
-            case "UNPUBLISHED_OBSERVATION":
-            case "UNPUBLISHED OBSERVATION":
-                return UNPUBLISHED_OBSERVATION;
-            case "DOCUMENT":
-                return DOCUMENT;
-            default:
-                throw new IllegalArgumentException("No enum constant PublicationType." + name);
+        if (result != null) {
+
+            return result;
         }
+
+        throw new IllegalArgumentException("No enum constant PublicationType." + name);
     }
 }
