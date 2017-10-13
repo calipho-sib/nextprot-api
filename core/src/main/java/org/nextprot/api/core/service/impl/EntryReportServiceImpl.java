@@ -6,6 +6,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.IsoformService;
@@ -262,27 +263,32 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     private void setCuratedPublicationCount(Entry entry, EntryReport report) {
 
-        report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT, publicationService.countCuratedPublications(entry.getUniqueName()));
+        report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
+                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.CURATED));
     }
 
     private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
 
-        report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT, publicationService.countAdditionalPublications(entry.getUniqueName()));
+        report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
+                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.ADDITIONAL));
     }
 
     private void setPatentCount(Entry entry, EntryReport report) {
 
-        report.setPropertyCount(EntryReport.PATENT_COUNT, publicationService.countPatents(entry.getUniqueName()));
+        report.setPropertyCount(EntryReport.PATENT_COUNT,
+                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.PATENT));
     }
 
     private void setSubmissionCount(Entry entry, EntryReport report) {
 
-        report.setPropertyCount(EntryReport.SUBMISSION_COUNT, publicationService.countSubmissions(entry.getUniqueName()));
+        report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
+                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.SUBMISSION));
     }
 
     private void setWebResourceCount(Entry entry, EntryReport report) {
 
-        report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT, publicationService.countWebResources(entry.getUniqueName()));
+        report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
+                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.WEB_RESOURCE));
     }
 
     boolean isGoldAnnotation(Annotation annot) {

@@ -9,7 +9,10 @@ import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.DbXrefService;
@@ -96,6 +99,13 @@ public class PublicationServiceImpl implements PublicationService {
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
+	}
+
+	// TODO: pam should give an implementation here
+	@Override
+	public List<Publication> findPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
+
+		throw new IllegalStateException("pam should give an implementation here");
 	}
 
 	private Map<Long, List<PublicationDbXref>> updateMissingPublicationFields(List<Publication> publications) {
@@ -228,13 +238,6 @@ public class PublicationServiceImpl implements PublicationService {
 	// TODO: pam should give an implementation here
 	@Override
 	public boolean isCuratedPublication(long publicationId) {
-
-		throw new IllegalStateException("pam should give an implementation here");
-	}
-
-	// TODO: pam should give an implementation here
-	@Override
-	public List<Publication> findPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
 
 		throw new IllegalStateException("pam should give an implementation here");
 	}
