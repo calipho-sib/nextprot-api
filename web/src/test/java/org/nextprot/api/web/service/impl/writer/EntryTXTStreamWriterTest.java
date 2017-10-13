@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
-public class NPEntryTXTStreamWriterTest extends WebIntegrationBaseTest {
+public class EntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testTXTExportStream() throws Exception {

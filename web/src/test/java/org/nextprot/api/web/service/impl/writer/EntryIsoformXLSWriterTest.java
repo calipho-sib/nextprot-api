@@ -10,7 +10,7 @@ import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import java.io.*;
 import java.util.Arrays;
 
-public class NPEntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
+public class EntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testXLSIsoformWriterStream() throws Exception {
