@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.publication.PublicationType;
@@ -16,13 +17,15 @@ import org.nextprot.api.core.utils.EntryPublicationUtils.EntryPublicationReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev","cache" })
+//@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev" })
 public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
         
     @Autowired
 	private EntryBuilderService entryBuilderService = null;
     
     
+    @Ignore
     @Test
     public void testPerformance() {
     	
@@ -59,18 +62,30 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
 			=> time for building report is fast enough, max = 36ms , don't know time for loading with cache enabled
 			=> 0.036 * 20000 = 720 sec = 12 minutes (if they are all as big as NX_Q5VST9 which is not the case)
 
+			Results with cache:
+			
+			NX_Q5VST9 load=66ms build=6ms annot=6107 publi=155 
+			NX_Q8IVF2 load=285ms build=7ms annot=6702 publi=130 
+			NX_Q8NF91 load=368ms build=5ms annot=6135 publi=218 
+			NX_P20930 load=100ms build=4ms annot=5524 publi=351 
+			NX_P20929 load=130ms build=4ms annot=5293 publi=146 
+			NX_Q03001 load=149ms build=3ms annot=5373 publi=189 
+			NX_O75445 load=103ms build=4ms annot=4194 publi=220 
+			NX_Q685J3 load=78ms build=3ms annot=4111 publi=113 
+			NX_P51587 load=118ms build=7ms annot=4872 publi=1041 
+			NX_Q9HC84 load=73ms build=3ms annot=4573 publi=189 
+			
+			=> load time is still more than 10 times slower than building report
+
     	 */
     	
     	List<String> entryAcList = new ArrayList<>(Arrays.asList(
-    			"NX_Q5VST9","NX_Q8IVF2","NX_Q8NF91","NX_P20930","NX_P20929","NX_Q03001","NX_O75445","NX_Q685J3","NX_P51587","NX_Q9HC84",
     			"NX_Q5VST9","NX_Q8IVF2","NX_Q8NF91","NX_P20930","NX_P20929","NX_Q03001","NX_O75445","NX_Q685J3","NX_P51587","NX_Q9HC84"
+    			// ,"NX_Q5VST9","NX_Q8IVF2","NX_Q8NF91","NX_P20930","NX_P20929","NX_Q03001","NX_O75445","NX_Q685J3","NX_P51587","NX_Q9HC84" // for testing with cache the first time
     			));
-    	
-    	/* interesting ones */
-    	// List<String> entryAcList = new ArrayList<>(Arrays.asList("NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
 
     	List<Long> t0=new ArrayList<>(), tLoad=new ArrayList<>(), tBuild=new ArrayList<>();
-    	List<Integer>annCnt=new ArrayList<>(), pubCnt=new ArrayList<>();
+    	List<Integer>annCnt=new ArrayList<>(), pubCnt=new ArrayList<>(), curCnt=new ArrayList<>(), addCnt=new ArrayList<>();
     	int idx=-1;
     	for (String ac: entryAcList) {
     		idx++;
@@ -81,24 +96,17 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
+    		curCnt.add(report.getEntryPublicationCuratedList().size());
+    		addCnt.add(report.getEntryPublicationAdditionalList().size());
     		System.out.println(
     				entry.getUniqueName() + " " +
     				"load="+(tLoad.get(idx)) + "ms " +
     	    		"build="+(tBuild.get(idx)) + "ms " +
     				"annot="+annCnt.get(idx) + " " +
-    				"publi="+pubCnt.get(idx) + " "
+    				"publi="+pubCnt.get(idx) + " " +
+    				"curated="+curCnt.get(idx) + " " +
+    				"additonal="+addCnt.get(idx) + " " 
     				);
-    		/*
-	        entry.getPublications().forEach(p -> {
-	        	EntryPublication ep = report.getEntryPublication(p.getPublicationId());
-	        	// for debugging
-	        	String pro = entry.getUniqueName();
-	        	String ttl = p.getTitle();
-	        	String typ = p.getPublicationType();
-	        	String dat = p.getPublicationYear();
-	        	System.out.println(pro + " publi " + ep + " " + dat +" " +  typ + " " + ttl);
-	        });
-	        */
     	}
     	System.out.println("END");
     	
