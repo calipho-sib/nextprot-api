@@ -134,7 +134,12 @@ public abstract class PageViewBase implements PageView {
 				.collect(Collectors.toList());
 	}
 	
-	
+	@Override
+	public boolean doesDisplayAnnotationCategory(AnnotationCategory cat) {
+		if (getFeatureCategoryWhiteList().contains(cat)) return true;
+		if (getAnnotationCategoryWhiteList().contains(cat)) return true;
+		return false;
+	}
 	
 	/**
 	 * Default implementation (subclasses should override this method if needed)
