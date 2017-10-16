@@ -18,6 +18,15 @@ import org.nextprot.api.core.ui.page.PageViewFactory;
 
 public class EntryPublicationUtils {
 	
+	
+	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
+		List<PublicationDirectLink> result = new ArrayList<PublicationDirectLink>();
+		return result;
+	}
+	
+	static public class PublicationDirectLink {		}
+	
+	
 	// values should be equal to cv_databases.cv_name
 	private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";  
 
@@ -166,10 +175,30 @@ public class EntryPublicationUtils {
 			return reportData.get(pubId);
 		}
 		
+		/* useful ?
 		public List<EntryPublication> getEntryPublicationCitedList() {
 			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCited()).collect(Collectors.toList());
-			//return reportData.entrySet().stream().filter(e -> e.getValue().isCited()).map(e -> e.getValue()).collect(Collectors.toList());
 		}
+		public List<EntryPublication> getEntryPublicationUncitedList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isUncited()).collect(Collectors.toList());
+		}
+		*/ 
+		public List<EntryPublication> getEntryPublicationCuratedList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCurated()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationAdditionalList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isAdditional()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationPatentList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isPatent()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationSubmissionList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isSubmission()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationOnlineList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isOnline()).collect(Collectors.toList());
+		}
+
 	}
 	
 	public static class EntryPublication {
