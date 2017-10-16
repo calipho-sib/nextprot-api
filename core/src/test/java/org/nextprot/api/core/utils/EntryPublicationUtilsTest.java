@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -22,6 +22,20 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
         
     @Autowired
 	private EntryBuilderService entryBuilderService = null;
+    
+    
+    @Test
+    public void test1() {
+    	List<String> entryAcList = new ArrayList<>(Arrays.asList(
+    			"NX_Q8TE04")); //,"NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
+    	for (String ac: entryAcList) {
+	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
+	        for (Annotation a: entry.getAnnotations()) {
+	        	//ProteomicsPageView p
+	        }
+    	}
+    	
+    }
     
     @Test
 	public void testEntryPublicationFlagsConsistency() {
