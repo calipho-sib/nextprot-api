@@ -1,8 +1,8 @@
-package org.nextprot.api.web.ui.page;
-
-import org.nextprot.api.web.ui.page.impl.*;
+package org.nextprot.api.core.ui.page;
 
 import java.util.function.Supplier;
+
+import org.nextprot.api.core.ui.page.impl.*;
 
 public enum PageViewFactory {
 

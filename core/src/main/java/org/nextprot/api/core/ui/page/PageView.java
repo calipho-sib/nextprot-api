@@ -1,10 +1,12 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.core.ui.page;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import javax.annotation.Nonnull;
+
 import java.util.List;
 
 /**
@@ -52,5 +54,12 @@ public interface PageView {
 	 * @return false in default implementation, only Sequence page should override it and set to true
 	 */
 	boolean keepUniprotEntryXref();
+
+	/**
+	 * Used by EntryPublicationUtils to build the "Cited for" field content
+	 * @param AnnotationCategory
+	 * @return true it the view displays the annotation category either in the generic annotation viewer or in the feature triple viewer
+	 */
+	boolean doesDisplayAnnotationCategory(AnnotationCategory cat);
 
 }

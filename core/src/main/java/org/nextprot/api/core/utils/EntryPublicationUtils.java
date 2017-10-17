@@ -1,10 +1,10 @@
 package org.nextprot.api.core.utils;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.core.domain.DbXref;
@@ -13,12 +13,19 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.PublicationType;
-
-import sun.net.www.content.audio.x_aiff;
-
-import com.sun.xml.internal.ws.api.addressing.AddressingVersion.EPR;
+import org.nextprot.api.core.ui.page.PageView;
+import org.nextprot.api.core.ui.page.PageViewFactory;
 
 public class EntryPublicationUtils {
+	
+	
+	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
+		List<PublicationDirectLink> result = new ArrayList<PublicationDirectLink>();
+		return result;
+	}
+	
+
+	
 	
 	// values should be equal to cv_databases.cv_name
 	private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";  
@@ -26,7 +33,7 @@ public class EntryPublicationUtils {
 	public static EntryPublicationReport buildReport(Entry entry) {
 
 		List<Long> orderedPubIdList = entry.getPublications().stream().map(p -> p.getPublicationId()).collect(Collectors.toList());
-		
+		List<PageView> pageViewList = getPageViews();
 		Map<String,Long> pmid2id = getPmid2IdMap(entry.getPublications());
 		
 		Map<Long,EntryPublication> reportData = new HashMap<Long,EntryPublication>();
@@ -34,7 +41,7 @@ public class EntryPublicationUtils {
 		// handle publications cited in annotation evidences (link A)
 		entry.getAnnotations().stream()
 			.forEach(annot -> annot.getEvidences().stream()
-					.forEach(evi -> handlePublicationAnnotationEvidence(annot, evi, pmid2id ,reportData)));
+					.forEach(evi -> handlePublicationAnnotationEvidence(entry.getUniqueName(), annot, evi, pmid2id ,pageViewList,reportData)));
 		
 		// handle direct links (B and C) but publications with A link are further processed also  
 		entry.getPublications().stream().forEach(p -> handlePublicationDirectLinks(p, reportData));
@@ -65,7 +72,7 @@ public class EntryPublicationUtils {
 		if (! reportData.containsKey(pubId)) reportData.put(pubId, new EntryPublication(pubId));
 	}
 	
-	private static void handlePublicationAnnotationEvidence(Annotation annot, AnnotationEvidence evi, Map<String,Long> ac2idMap, Map<Long,EntryPublication> reportData) {
+	private static void handlePublicationAnnotationEvidence(String entryAc, Annotation annot, AnnotationEvidence evi, Map<String,Long> ac2idMap, List<PageView> pageViewList, Map<Long,EntryPublication> reportData) {
 		// normal case
 		Long pubId = null;
 		if (evi.isResourceAPublication()) {
@@ -79,10 +86,27 @@ public class EntryPublicationUtils {
 			addEntryPublicationToReportDataIfNecessary(pubId, reportData);
 			EntryPublication ep = reportData.get(pubId);
 			ep.setCited(true);
-			// TODO add stuff for citedInVews
+			
+			// add stuff for citedInViews
+			for (PageView pv: pageViewList) {
+				if (pv.doesDisplayAnnotationCategory(annot.getAPICategory())) {
+					String link = "/entry/" + entryAc + "/" + pv.getLink();
+					ep.addCitedInViews(pv.getLabel(), link);
+				}
+			}
+			
+			
 		};
 	}
 
+	private static List<PageView> getPageViews() {
+		List<PageView> result = new ArrayList<>();
+		for (PageViewFactory page : PageViewFactory.values()) {
+			result.add(page.build());
+		}
+		return result;
+	}
+	
 	private static void handlePublicationDirectLinks(Publication p, Map<Long,EntryPublication> reportData) {
 		long pubId = p.getPublicationId();
 		addEntryPublicationToReportDataIfNecessary(pubId, reportData);
@@ -151,17 +175,37 @@ public class EntryPublicationUtils {
 			return reportData.get(pubId);
 		}
 		
+		/* useful ?
 		public List<EntryPublication> getEntryPublicationCitedList() {
 			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCited()).collect(Collectors.toList());
-			//return reportData.entrySet().stream().filter(e -> e.getValue().isCited()).map(e -> e.getValue()).collect(Collectors.toList());
 		}
+		public List<EntryPublication> getEntryPublicationUncitedList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isUncited()).collect(Collectors.toList());
+		}
+		*/ 
+		public List<EntryPublication> getEntryPublicationCuratedList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCurated()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationAdditionalList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isAdditional()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationPatentList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isPatent()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationSubmissionList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isSubmission()).collect(Collectors.toList());
+		}
+		public List<EntryPublication> getEntryPublicationOnlineList() {
+			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isOnline()).collect(Collectors.toList());
+		}
+
 	}
 	
 	public static class EntryPublication {
 		
 		private long id;
 		private boolean cited, uncited, patent, submission, online, curated, additional;
-		private List<String> citedInViews = new ArrayList<String>();
+		private Map<String,String> citedInViews = new TreeMap<>();
 		
 		public EntryPublication(long id) {
 			this.id=id;
@@ -211,11 +255,16 @@ public class EntryPublicationUtils {
 		public void setOnline(boolean online) {
 			this.online = online;
 		}
-		public List<String> getCitedInViews() {
-			return citedInViews;
+		/**
+		 * A map describing the list of entry views in which we find the publication as the reference of an annotation evidence
+		 * The keys are sorted alphabetically
+		 * @return a map with where the key is the label of the page view, and the value the path of the corresponding nextprot page URL
+		 */
+		public Map<String,String> getCitedInViews() {
+			return  citedInViews;
 		}
-		public void setCitedInViews(List<String> citedInViews) {
-			this.citedInViews = citedInViews;
+		public void addCitedInViews(String label, String link) {
+			this.citedInViews.put(label,link);
 		}
 		
 		public String toString() {
@@ -229,7 +278,7 @@ public class EntryPublicationUtils {
 			sb.append("curated:").append(curated).append(" ");
 			sb.append("additional:").append(additional).append(" ");
 			sb.append("in views:");
-			for (String v : citedInViews) sb.append(v).append(",");
+			for (Map.Entry<String,String>  v : citedInViews.entrySet()) sb.append(v.getKey()+"["+ v.getValue() +"]").append(", ");
 			sb.append(" ");
 			return sb.toString();
 		}

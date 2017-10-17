@@ -1,14 +1,15 @@
-package org.nextprot.api.web.ui.page.impl;
+package org.nextprot.api.core.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.ui.page.PageView;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.web.ui.page.PageView;
 
 import javax.annotation.Nonnull;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -133,7 +134,12 @@ public abstract class PageViewBase implements PageView {
 				.collect(Collectors.toList());
 	}
 	
-	
+	@Override
+	public boolean doesDisplayAnnotationCategory(AnnotationCategory cat) {
+		if (getFeatureCategoryWhiteList().contains(cat)) return true;
+		if (getAnnotationCategoryWhiteList().contains(cat)) return true;
+		return false;
+	}
 	
 	/**
 	 * Default implementation (subclasses should override this method if needed)
