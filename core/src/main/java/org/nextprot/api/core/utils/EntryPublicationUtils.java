@@ -1,54 +1,53 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublicationReport;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.ui.page.PageView;
 import org.nextprot.api.core.ui.page.PageViewFactory;
 
-public class EntryPublicationUtils {
-	
-	
-	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
-		List<PublicationDirectLink> result = new ArrayList<PublicationDirectLink>();
-		return result;
-	}
-	
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-	
-	
+public class EntryPublicationUtils {
+
 	// values should be equal to cv_databases.cv_name
-	private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";  
+	private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";
 
 	public static EntryPublicationReport buildReport(Entry entry) {
 
-		List<Long> orderedPubIdList = entry.getPublications().stream().map(p -> p.getPublicationId()).collect(Collectors.toList());
 		List<PageView> pageViewList = getPageViews();
 		Map<String,Long> pmid2id = getPmid2IdMap(entry.getPublications());
 		
-		Map<Long,EntryPublication> reportData = new HashMap<Long,EntryPublication>();
+		Map<Long,EntryPublication> reportData = new HashMap<>();
 		
 		// handle publications cited in annotation evidences (link A)
-		entry.getAnnotations().stream()
-			.forEach(annot -> annot.getEvidences().stream()
-					.forEach(evi -> handlePublicationAnnotationEvidence(entry.getUniqueName(), annot, evi, pmid2id ,pageViewList,reportData)));
+		entry.getAnnotations()
+				.forEach(annot -> annot.getEvidences()
+						.forEach(evi -> handlePublicationAnnotationEvidence(entry.getUniqueName(), annot, evi, pmid2id, pageViewList, reportData)));
 		
 		// handle direct links (B and C) but publications with A link are further processed also  
-		entry.getPublications().stream().forEach(p -> handlePublicationDirectLinks(p, reportData));
-		
-		return new EntryPublicationReport(reportData, orderedPubIdList);
+		entry.getPublications()
+				.forEach(p -> handlePublicationDirectLinks(p, reportData));
+
+		EntryPublicationReport report = new EntryPublicationReport();
+
+		report.setEntryAccession(entry.getUniqueName());
+		report.setReportData(reportData);
+
+		return report;
 	}
-	
+
+	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
+		return new ArrayList<>();
+	}
 
 	private static String getPubMedOrNextProtSubmissionAc(Publication p) {
 		if (! p.hasDbXrefs()) return null;
@@ -117,7 +116,7 @@ public class EntryPublicationUtils {
 		}
 		List<String> comments = p.getProperty("comment");
 		if (comments.size()>0) {
-			if (! ep.cited) ep.setUncited(true);
+			if (! ep.isCited()) ep.setUncited(true);
 		}
 		handlePublicationFlagsByType(p,ep);
 	}
@@ -157,133 +156,4 @@ public class EntryPublicationUtils {
 			// don't need to deal with them: not found in data
 		} 
 	}
-	
-	
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 	
-	
-	public static class EntryPublicationReport {
-
-		private Map<Long,EntryPublication> reportData;
-		private List<Long> orderedPubIdList;
-		
-		public EntryPublicationReport(Map<Long,EntryPublication> reportData, List<Long> orderedPubIdList) {
-			this.reportData = reportData;
-			this.orderedPubIdList = orderedPubIdList;
-		}
-		
-		public EntryPublication getEntryPublication(long pubId) {
-			return reportData.get(pubId);
-		}
-		
-		/* useful ?
-		public List<EntryPublication> getEntryPublicationCitedList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCited()).collect(Collectors.toList());
-		}
-		public List<EntryPublication> getEntryPublicationUncitedList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isUncited()).collect(Collectors.toList());
-		}
-		*/ 
-		public List<EntryPublication> getEntryPublicationCuratedList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCurated()).collect(Collectors.toList());
-		}
-		public List<EntryPublication> getEntryPublicationAdditionalList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isAdditional()).collect(Collectors.toList());
-		}
-		public List<EntryPublication> getEntryPublicationPatentList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isPatent()).collect(Collectors.toList());
-		}
-		public List<EntryPublication> getEntryPublicationSubmissionList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isSubmission()).collect(Collectors.toList());
-		}
-		public List<EntryPublication> getEntryPublicationOnlineList() {
-			return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isOnline()).collect(Collectors.toList());
-		}
-
-	}
-	
-	public static class EntryPublication {
-		
-		private long id;
-		private boolean cited, uncited, patent, submission, online, curated, additional;
-		private Map<String,String> citedInViews = new TreeMap<>();
-		
-		public EntryPublication(long id) {
-			this.id=id;
-		}
-		public long getId() {
-			return id;
-		}
-		public boolean isCited() {
-			return cited;
-		}
-		public void setCited(boolean cited) {
-			this.cited = cited;
-		}
-		public boolean isCurated() {
-			return curated;
-		}
-		public void setCurated(boolean curated) {
-			this.curated = curated;
-		}
-		public boolean isUncited() {
-			return uncited;
-		}
-		public void setUncited(boolean uncited) {
-			this.uncited = uncited;
-		}
-		public boolean isAdditional() {
-			return additional;
-		}
-		public void setAdditional(boolean additional) {
-			this.additional = additional;
-		}
-		public boolean isPatent() {
-			return patent;
-		}
-		public void setPatent(boolean patent) {
-			this.patent = patent;
-		}
-		public boolean isSubmission() {
-			return submission;
-		}
-		public void setSubmission(boolean submission) {
-			this.submission = submission;
-		}
-		public boolean isOnline() {
-			return online;
-		}
-		public void setOnline(boolean online) {
-			this.online = online;
-		}
-		/**
-		 * A map describing the list of entry views in which we find the publication as the reference of an annotation evidence
-		 * The keys are sorted alphabetically
-		 * @return a map with where the key is the label of the page view, and the value the path of the corresponding nextprot page URL
-		 */
-		public Map<String,String> getCitedInViews() {
-			return  citedInViews;
-		}
-		public void addCitedInViews(String label, String link) {
-			this.citedInViews.put(label,link);
-		}
-		
-		public String toString() {
-			StringBuffer sb = new StringBuffer();
-			sb.append("id:").append(id).append(" ");
-			sb.append("cited:").append(cited).append(" ");
-			sb.append("uncited:").append(uncited).append(" ");
-			sb.append("patent:").append(patent).append(" ");
-			sb.append("submission:").append(submission).append(" ");
-			sb.append("online:").append(online).append(" ");
-			sb.append("curated:").append(curated).append(" ");
-			sb.append("additional:").append(additional).append(" ");
-			sb.append("in views:");
-			for (Map.Entry<String,String>  v : citedInViews.entrySet()) sb.append(v.getKey()+"["+ v.getValue() +"]").append(", ");
-			sb.append(" ");
-			return sb.toString();
-		}
-	}
-
-	
-	
 }

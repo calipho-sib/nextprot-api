@@ -1,21 +1,22 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublicationReport;
 import org.nextprot.api.core.domain.publication.PublicationType;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.core.utils.EntryPublicationUtils.EntryPublication;
-import org.nextprot.api.core.utils.EntryPublicationUtils.EntryPublicationReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //@ActiveProfiles({ "dev","cache" })
 @ActiveProfiles({ "dev" })
@@ -96,8 +97,8 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
-    		curCnt.add(report.getEntryPublicationCuratedList().size());
-    		addCnt.add(report.getEntryPublicationAdditionalList().size());
+    		curCnt.add(report.getEntryPublicationList(PublicationView.CURATED).size());
+    		addCnt.add(report.getEntryPublicationList(PublicationView.ADDITIONAL).size());
     		System.out.println(
     				entry.getUniqueName() + " " +
     				"load="+(tLoad.get(idx)) + "ms " +
