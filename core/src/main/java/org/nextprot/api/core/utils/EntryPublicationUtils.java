@@ -24,7 +24,7 @@ public class EntryPublicationUtils {
 		return result;
 	}
 	
-	static public class PublicationDirectLink {		}
+
 	
 	
 	// values should be equal to cv_databases.cv_name
