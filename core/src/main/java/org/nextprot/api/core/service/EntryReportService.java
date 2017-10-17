@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
@@ -17,9 +16,9 @@ public interface EntryReportService {
 	 */
 	List<EntryReport> reportEntry(String entryAccession);
 
-	boolean entryIsNAcetyled(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate);
+	boolean isEntryNAcetyled(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate);
 
-	boolean entryIsPhosphorylated(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate);
+	boolean isEntryPhosphorylated(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate);
 
 	Map<String, String> reportIsoformPeffHeaders(String entryAccession);
 }

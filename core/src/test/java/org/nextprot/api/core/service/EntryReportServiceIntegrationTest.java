@@ -3,10 +3,8 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -172,8 +170,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
-			boolean result = entryReportService.entryIsNAcetyled(entry, isExperimentalPredicate);
+			boolean result = entryReportService.isEntryNAcetyled(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " NAcetyl should be false");
@@ -198,8 +195,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
-			boolean result = entryReportService.entryIsPhosphorylated(entry, isExperimentalPredicate);
+			boolean result = entryReportService.isEntryPhosphorylated(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " Phosphorylated should be false");

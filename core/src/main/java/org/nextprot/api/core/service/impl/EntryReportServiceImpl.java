@@ -70,13 +70,15 @@ public class EntryReportServiceImpl implements EntryReportService {
     }
 
     @Override
-    public boolean entryIsNAcetyled(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
-    	return containsPtmAnnotation(entry, NACETYLATION_REG_EXP, isExperimentalPredicate);
+    public boolean isEntryNAcetyled(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        return containsPtmAnnotation(entryAccession, NACETYLATION_REG_EXP, isExperimentalPredicate);
     }
     
     @Override
-    public boolean entryIsPhosphorylated(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
-    	return containsPtmAnnotation(entry, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
+    public boolean isEntryPhosphorylated(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        return containsPtmAnnotation(entryAccession, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
     }
 
     @Override
@@ -317,7 +319,9 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     
     
-	boolean containsPtmAnnotation(Entry entry, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+	boolean containsPtmAnnotation(String entryAccession, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		List<Annotation> ptms = entry.getAnnotationsByCategory()
 				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
