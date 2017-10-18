@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain.publication;
 
-import java.util.HashMap;
+import org.nextprot.api.commons.utils.EnumDictionary;
+
 import java.util.Map;
 
 /**
@@ -12,36 +13,16 @@ public enum PublicationType {
 
     ARTICLE, PATENT, BOOK, THESIS, SUBMISSION, ONLINE_PUBLICATION, UNPUBLISHED_OBSERVATION, DOCUMENT;
 
-    private static Map<String, PublicationType> publicationTypeMap = null;
-
-    /**
-     * @return a lazily built map of publication types
-     */
-    private static Map<String, PublicationType> getPublicationTypeMap() {
-
-        if (publicationTypeMap == null) {
-
-            Map<String, PublicationType> m = new HashMap<>(PublicationType.values().length);
-            for (PublicationType constant : values()) {
-                m.put(constant.name(), constant);
-            }
-            m.put("UNPUBLISHED OBSERVATION", UNPUBLISHED_OBSERVATION);
-            m.put("ONLINE PUBLICATION", ONLINE_PUBLICATION);
-
-            publicationTypeMap = m;
+    private static EnumDictionary<PublicationType> decorator = new EnumDictionary<PublicationType>(PublicationType.class, values()) {
+        @Override
+        protected void updateDictionary(Map<String, PublicationType> dictionary) {
+            dictionary.put("UNPUBLISHED OBSERVATION", UNPUBLISHED_OBSERVATION);
+            dictionary.put("ONLINE PUBLICATION", ONLINE_PUBLICATION);
         }
-        return publicationTypeMap;
-    }
+    };
 
     public static PublicationType valueOfName(String name) {
 
-        PublicationType result = getPublicationTypeMap().get(name);
-
-        if (result != null) {
-
-            return result;
-        }
-
-        throw new IllegalArgumentException("No enum constant PublicationType." + name);
+        return decorator.valueOfKey(name);
     }
 }
