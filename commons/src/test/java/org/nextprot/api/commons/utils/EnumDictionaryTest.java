@@ -7,16 +7,28 @@ import java.util.Map;
 
 public class EnumDictionaryTest {
 
+    @Test (expected = IllegalArgumentException.class)
+    public void testNativeValueOf() throws Exception {
+
+        Pair.valueOf("last");
+    }
+
+    @Test
+    public void testHasName() throws Exception {
+
+        Assert.assertTrue(Pair.hasName("last"));
+    }
+
     @Test
     public void testValueOfName() throws Exception {
 
         Assert.assertEquals(Pair.SECOND, Pair.valueOfName("last"));
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testNativeValueOf() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testValueOfNameMissing() throws Exception {
 
-        Pair.valueOf("last");
+        Pair.valueOf("lasts");
     }
 
     private enum Pair {
@@ -25,19 +37,19 @@ public class EnumDictionaryTest {
 
         private static EnumDictionary<Pair> decorator = new EnumDictionary<Pair>(Pair.class, values()) {
             @Override
-            protected void updateEnumMap(Map<String, Pair> map) {
-                map.put("last", SECOND);
+            protected void updateDictionary(Map<String, Pair> dict) {
+                dict.put("last", SECOND);
             }
         };
 
         public static boolean hasName(String name) {
 
-            return decorator.hasName(name);
+            return decorator.haskey(name);
         }
 
         public static Pair valueOfName(String name) {
 
-            return decorator.valueOfName(name);
+            return decorator.valueOfKey(name);
         }
     }
 }
