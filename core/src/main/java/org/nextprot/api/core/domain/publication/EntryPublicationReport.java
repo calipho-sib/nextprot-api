@@ -1,8 +1,11 @@
 package org.nextprot.api.core.domain.publication;
 
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class EntryPublicationReport implements Serializable {
@@ -12,40 +15,51 @@ public class EntryPublicationReport implements Serializable {
     private String entryAccession;
 
     private Map<Long, EntryPublication> reportData;
-    private Map<PublicationView, List<EntryPublication>> reportByView;
+    private List<EntryPublication> publications;
+    private Map<PublicationView, List<EntryPublication>> publicationsByView;
 
     public void setReportData(Map<Long, EntryPublication> reportData) {
 
         this.reportData = reportData;
-        reportByView = new HashMap<>();
+        publicationsByView = new HashMap<>();
 
         for (EntryPublication entryPublication : reportData.values()) {
             if (entryPublication.isCurated()) {
-                reportByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isAdditional()) {
-                reportByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isOnline()) {
-                reportByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isSubmission()) {
-                reportByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isPatent()) {
-                reportByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
             }
         }
 
-        for (PublicationView view : reportByView.keySet()) {
+        for (PublicationView view : publicationsByView.keySet()) {
 
-            reportByView.get(view).sort(Comparator.comparingLong(EntryPublication::getId));
+            publicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getId));
         }
+
+        publications = reportData.values().stream()
+                .sorted(Comparator.comparingLong(EntryPublication::getId))
+                .collect(Collectors.toList());
     }
 
-    public Map<PublicationView, List<EntryPublication>> getReportDataView() {
+    @JsonIgnore
+    public List<EntryPublication> getPublications() {
 
-        return reportByView;
+        return publications;
+    }
+
+    public Map<PublicationView, List<EntryPublication>> getPublicationsByView() {
+
+        return publicationsByView;
     }
 
     public EntryPublication getEntryPublication(long pubId) {
@@ -62,7 +76,7 @@ public class EntryPublicationReport implements Serializable {
 
     public List<EntryPublication> getEntryPublicationList(PublicationView view) {
 
-        return reportByView.get(view);
+        return publicationsByView.get(view);
     }
 
     /* useful ?
