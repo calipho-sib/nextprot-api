@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-public class EnumDictionaryTest {
+public class EnumConstantDictionaryTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void testNativeValueOf() throws Exception {
@@ -35,21 +35,21 @@ public class EnumDictionaryTest {
 
         FIRST, SECOND;
 
-        private static EnumDictionary<Pair> decorator = new EnumDictionary<Pair>(Pair.class, values()) {
+        private static EnumConstantDictionary<Pair> dictionaryOfConstants = new EnumConstantDictionary<Pair>(Pair.class, values()) {
             @Override
-            protected void updateDictionary(Map<String, Pair> dict) {
+            protected void updateDictionaryOfConstants(Map<String, Pair> dict) {
                 dict.put("last", SECOND);
             }
         };
 
         public static boolean hasName(String name) {
 
-            return decorator.haskey(name);
+            return dictionaryOfConstants.haskey(name);
         }
 
         public static Pair valueOfName(String name) {
 
-            return decorator.valueOfKey(name);
+            return dictionaryOfConstants.valueOfKey(name);
         }
     }
 }

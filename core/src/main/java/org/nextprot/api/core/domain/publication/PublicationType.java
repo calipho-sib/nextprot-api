@@ -1,6 +1,6 @@
 package org.nextprot.api.core.domain.publication;
 
-import org.nextprot.api.commons.utils.EnumDictionary;
+import org.nextprot.api.commons.utils.EnumConstantDictionary;
 
 import java.util.Map;
 
@@ -13,9 +13,9 @@ public enum PublicationType {
 
     ARTICLE, PATENT, BOOK, THESIS, SUBMISSION, ONLINE_PUBLICATION, UNPUBLISHED_OBSERVATION, DOCUMENT;
 
-    private static EnumDictionary<PublicationType> decorator = new EnumDictionary<PublicationType>(PublicationType.class, values()) {
+    private static EnumConstantDictionary<PublicationType> dictionaryOfConstants = new EnumConstantDictionary<PublicationType>(PublicationType.class, values()) {
         @Override
-        protected void updateDictionary(Map<String, PublicationType> dictionary) {
+        protected void updateDictionaryOfConstants(Map<String, PublicationType> dictionary) {
             dictionary.put("UNPUBLISHED OBSERVATION", UNPUBLISHED_OBSERVATION);
             dictionary.put("ONLINE PUBLICATION", ONLINE_PUBLICATION);
         }
@@ -23,6 +23,6 @@ public enum PublicationType {
 
     public static PublicationType valueOfName(String name) {
 
-        return decorator.valueOfKey(name);
+        return dictionaryOfConstants.valueOfKey(name);
     }
 }

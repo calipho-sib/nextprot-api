@@ -8,46 +8,45 @@ import java.util.Map;
  *
  * @param <T> an Enum class
  */
-public abstract class EnumDictionary<T extends Enum<T>> {
+public abstract class EnumConstantDictionary<T extends Enum<T>> {
 
     private final Class<T> clazz;
-    private final Map<String, T> dictionary;
+    private final Map<String, T> constantDictionary;
 
-    public EnumDictionary(Class<T> clazz, T[] values) {
+    public EnumConstantDictionary(Class<T> clazz, T[] values) {
 
         this.clazz = clazz;
-        this.dictionary = buildDictionary(values);
+        this.constantDictionary = buildDictionaryOfConstants(values);
     }
 
-    private Map<String, T> buildDictionary(T[] values) {
+    private Map<String, T> buildDictionaryOfConstants(T[] values) {
 
         Map<String, T> m = new HashMap<>(values.length);
 
         for (T constant : values) {
             m.put(constant.name(), constant);
         }
-        updateDictionary(m);
+        updateDictionaryOfConstants(m);
 
         return m;
     }
-
 
     /**
      * @return true if key is associated with a constant
      */
     public boolean haskey(String key) {
 
-        return dictionary.containsKey(key);
+        return constantDictionary.containsKey(key);
     }
 
     /**
-     * Return the Enum constant associated with the given key
-     * @param key
-     * @return
+     * Return the constant associated with the given key
+     * @param key a string key
+     * @return a T-type enum constant or throw IllegalArgumentException if not found
      */
     public T valueOfKey(String key) {
 
-        T result = dictionary.get(key);
+        T result = constantDictionary.get(key);
 
         if (result != null) {
 
@@ -58,7 +57,7 @@ public abstract class EnumDictionary<T extends Enum<T>> {
     }
 
     /**
-     * @param dictionary update the dictionary for more flexibility
+     * @param dictionary update the dictionary of constants for more flexibility
      */
-    protected abstract void updateDictionary(Map<String, T> dictionary);
+    protected abstract void updateDictionaryOfConstants(Map<String, T> dictionary);
 }
