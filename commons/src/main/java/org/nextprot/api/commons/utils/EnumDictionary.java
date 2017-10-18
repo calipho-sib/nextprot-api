@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides a more flexible control of the string mapping to any Enum (by extending the native method Enum.valueOf(name))
+ * Should be used internally by any Enum class that need to provide a more flexible access to their constant via valueOfKey(key).
  *
- * @param <T> the Enum class
+ * @param <T> an Enum class
  */
 public abstract class EnumDictionary<T extends Enum<T>> {
 
