@@ -7,14 +7,12 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.ui.page.PageView;
 import org.nextprot.api.core.ui.page.PageViewFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EntryPublicationUtils {
 
@@ -46,7 +44,16 @@ public class EntryPublicationUtils {
 	}
 
 	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
-		return new ArrayList<>();
+
+		List<PublicationDirectLink> result = new ArrayList<>();
+		List<String> names = Arrays.asList("scope","comment"); // UniProt and PIR direct links are in there
+		for (String name: names) {
+			for (String value: p.getProperty(name)) {
+				result.add(new PublicationDirectLink(p.getPublicationId(), name,  value));
+			}
+		}
+		result.sort(null); // see comparator in PublicationDirectLink
+		return result;
 	}
 
 	private static String getPubMedOrNextProtSubmissionAc(Publication p) {
