@@ -39,6 +39,28 @@
       favored resource bundler.
      -->
 	<link rel="stylesheet" href="graphiql-libs/graphiql.css" />
+	<script>
+
+		window.nextprotQuery = "{ \n\
+		entry (accession:\"P06213\") {\n \
+			 uniqueName,\n \
+				properties {\n \
+				isoformCount\n \
+			},\n \
+			isoforms {\n \
+				sequence\n \
+			}\n \
+			annotations(category: \"go-cellular-component\", limit: 5) {\n \
+				cvTermName\n \
+				cvTermAccessionCode\n \
+			}\n \
+			publications (limit: 3) {\n \
+				title\n \
+			}\n \
+		}\n \
+	}\n";
+
+	</script>
 	<script src="graphiql-libs/graphiql.js"></script>
 
 </head>

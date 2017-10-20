@@ -2720,26 +2720,7 @@ GraphiQL.Footer = function GraphiQLFooter(props) {
   );
 };
 
-var nextprotQuery = "{ \n\
-    entry (accession:\"P06213\") {\n \
-         uniqueName,\n \
-            properties {\n \
-            isoformCount\n \
-        },\n \
-        isoforms {\n \
-            sequence\n \
-        }\n \
-        annotations(category: \"go-cellular-component\") {\n \
-            cvTermName\n \
-            cvTermAccessionCode\n \
-        }\n \
-        publications (limit: 3) {\n \
-            title\n \
-        }\n \
-    }\n \
-}\n";
-
-var defaultQuery = '# Welcome to GraphiQL\n#\n# GraphiQL is an in-browser tool for writing, validating, and\n# testing GraphQL queries.\n#\n# Type queries into this side of the screen, and you will see intelligent\n# typeaheads aware of the current GraphQL type schema and live syntax and\n# validation errors highlighted within the text.\n#\n# GraphQL queries typically start with a "{" character. Lines that starts\n# with a # are ignored.\n#\n# An example GraphQL query might look like\n' + nextprotQuery + '#Keyboard shortcuts:\n#\n#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)\n#\n#       Run Query:  Ctrl-Enter (or press the play button above)\n#\n#   Auto Complete:  Ctrl-Space (or just start typing)\n#\n\n';
+var defaultQuery = '# An example GraphQL query might look like\n' + window.nextprotQuery + '#Keyboard shortcuts:\n#\n#  Prettify Query:  Shift-Ctrl-P (or press the prettify button above)\n#\n#       Run Query:  Ctrl-Enter (or press the play button above)\n#\n#   Auto Complete:  Ctrl-Space (or just start typing)\n#\n\n';
 
 // Duck-type promise detection.
 function isPromise(value) {

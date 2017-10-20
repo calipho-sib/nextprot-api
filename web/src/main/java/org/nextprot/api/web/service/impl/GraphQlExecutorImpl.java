@@ -32,9 +32,6 @@ public class GraphQlExecutorImpl implements GraphQlExecutor {
     @Autowired
     private DataFetcher entryDataFetcher;
 
-    private TypeReference<HashMap<String, Object>> typeRefReadJsonString = new TypeReference<HashMap<String, Object>>() {
-    };
-
     private GraphQL graphQL;
 
     @PostConstruct
@@ -74,35 +71,6 @@ public class GraphQlExecutorImpl implements GraphQlExecutor {
         result.put("data", executionResult.getData());
 
         return result;
-    }
-
-    private Map<String, Object> getVariablesFromRequest(Map requestBody) {
-        Object variablesFromRequest = requestBody.get("variables");
-
-        if (variablesFromRequest == null) {
-            return Collections.emptyMap();
-        }
-
-        if (variablesFromRequest instanceof String) {
-            if (StringUtils.hasText((String) variablesFromRequest)) {
-                return getVariablesMapFromString((String) variablesFromRequest);
-            }
-        } else if (variablesFromRequest instanceof Map) {
-            return (Map<String, Object>) variablesFromRequest;
-        } else {
-            throw new GraphQLException("Incorrect variables");
-        }
-
-        return Collections.emptyMap();
-    }
-
-
-    private Map<String, Object> getVariablesMapFromString(String variablesFromRequest) {
-        try {
-            return new ObjectMapper().readValue(variablesFromRequest, typeRefReadJsonString);
-        } catch (IOException exception) {
-            throw new GraphQLException("Cannot parse variables", exception);
-        }
     }
 
 
