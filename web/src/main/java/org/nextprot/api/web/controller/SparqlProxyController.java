@@ -4,6 +4,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.LockTimeoutException;
 import net.sf.ehcache.constructs.web.*;
+import org.apache.commons.io.IOUtils;
+import org.nextprot.api.web.utils.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.ServletWrappingController;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +31,8 @@ public class SparqlProxyController extends ServletWrappingController implements 
 	@Autowired(required = false)
 	private EhCacheCacheManager ehCacheManager;
 
+	@Autowired
+	private ServletContext servletContext;
 
 	@Override
 	public void afterPropertiesSet() throws Exception{
@@ -47,7 +52,7 @@ public class SparqlProxyController extends ServletWrappingController implements 
 
 		PageInfo pageInfo = buildPageInfo(request, response);
 		if(pageInfo == null){ // If it is the sparql welcome page
-			return new ModelAndView("welcome-sparql-page.html");
+			WebUtils.writeHtmlContent("welcome-sparql-page.html", response, servletContext);
 		}else {
 
 			boolean requestAcceptsGzipEncoding = acceptsGzipEncoding(request);

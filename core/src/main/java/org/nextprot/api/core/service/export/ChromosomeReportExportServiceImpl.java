@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.export;
 
+import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportExportService;
@@ -77,7 +78,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 		writer.write("\n");
 
-		for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
+		for (String chromosome : Chromosome.getNames()) {
 
 			ChromosomeReport.Summary summary = summaries.get(chromosome);
 
@@ -115,7 +116,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 		PrintWriter writer = new PrintWriter(os);
 
-		ChromosomeReportService.getChromosomeNames().stream()
+		Chromosome.getNames().stream()
 				.map(chr -> chromosomeReportService.findUnconfirmedMsDataEntries(chr))
 				.flatMap(Collection::stream)
 				.sorted()
@@ -132,7 +133,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 				.collect(Collectors.joining("\t")));
 		writer.write("\n");
 
-		for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
+		for (String chromosome : Chromosome.getNames()) {
 			for (String accession : func.apply(chromosome)) {
 
 				writer.write(chromosome);

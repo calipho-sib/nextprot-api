@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Map;
 
 import static org.nextprot.api.commons.utils.StringUtils.CR_LF;
 
@@ -32,7 +33,9 @@ public class EntryTXTStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
+
+        int entryNum = (int) infos.get(ENTRY_COUNT);
 
         if (entryNum > 0)
             getStream().write("#nb entries=" + entryNum + CR_LF);

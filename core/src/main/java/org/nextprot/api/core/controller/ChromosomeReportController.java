@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportExportService;
@@ -44,7 +45,7 @@ public class ChromosomeReportController {
 	@ResponseBody
 	public List<String> getChromosomeNames() {
 
-		return ChromosomeReportService.getChromosomeNames();
+		return Chromosome.getNames();
 	}
 
 	@ApiMethod(path = "/chromosome-reports/summary", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",

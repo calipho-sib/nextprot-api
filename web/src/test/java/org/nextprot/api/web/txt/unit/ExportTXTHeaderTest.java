@@ -18,10 +18,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
 
 /**
  * Adding test for txt export (including header)
@@ -51,7 +54,10 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
 
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
 
-        exporter.write(Arrays.asList("NX_1", "NX_2"), Mockito.mock(ReleaseInfo.class), "");
+        Map<String, Object> infos = new HashMap<>();
+        infos.put(RELEASE_INFO, Mockito.mock(ReleaseInfo.class));
+
+        exporter.write(Arrays.asList("NX_1", "NX_2"), infos);
        
         String[] rows = out.toString().split(StringUtils.CR_LF);
         assertEquals(rows[0], "#nb entries=2");

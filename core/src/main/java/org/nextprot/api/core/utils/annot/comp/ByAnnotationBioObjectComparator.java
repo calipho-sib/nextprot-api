@@ -1,11 +1,11 @@
 package org.nextprot.api.core.utils.annot.comp;
 
-import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
 
 import java.util.Comparator;
 import java.util.Map;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.NullableComparable;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
@@ -39,6 +39,8 @@ class ByAnnotationBioObjectComparator extends HashableAnnotationComparator {
 
     private static class BioObjectComparator implements Comparator<Annotation> {
 
+        private final NullableComparable<String> nullableComparable = new NullableComparable<>();
+
         @Override
         public int compare(final Annotation a1, final Annotation a2) {
 
@@ -52,7 +54,7 @@ class ByAnnotationBioObjectComparator extends HashableAnnotationComparator {
 
             if (cmp == 0) {
 
-                return compareNullableComparableObject(a1.getCvTermName(), a2.getCvTermName());
+                return nullableComparable.compareNullables(a1.getCvTermName(), a2.getCvTermName());
             }
 
             return cmp;

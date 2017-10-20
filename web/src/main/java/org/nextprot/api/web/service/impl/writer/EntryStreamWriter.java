@@ -2,11 +2,13 @@ package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A base class for writing entry list into a flushable and closeable stream
@@ -16,6 +18,11 @@ import java.util.Collection;
  * Created by fnikitin on 11/08/15.
  */
 public abstract class EntryStreamWriter<S extends Flushable & Closeable> implements AutoCloseable {
+
+    public static String ENTRY_COUNT = "entryCount";
+    public static String ISOFORM_COUNT = "isoformCount";
+    public static String RELEASE_INFO = "releaseInfo";
+    public static String DESCRIPTION = "description";
 
     static final String UTF_8 = "UTF-8";
 
@@ -47,7 +54,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      */
     public void write(Collection<String> entries) throws IOException {
 
-        write(entries, new ReleaseInfo(), "");
+        write(entries, new HashMap<>());
     }
 
     /**
@@ -55,18 +62,19 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      * outside this class).
      *
      * @param entries the entries to be flush
-     * @param releaseInfo information about current neXtProt release
+     * @param infos informations about entries
      */
-    public void write(Collection<String> entries, ReleaseInfo releaseInfo, String description) throws IOException {
+    public void write(Collection<String> entries, Map<String, Object> infos) throws IOException {
 
-        writeHeader((entries != null) ? entries.size():0, releaseInfo, description);
+        if (entries == null) { entries = new ArrayList<>(); }
 
-        if (entries != null) {
+        infos.put(ENTRY_COUNT, entries.size());
 
-            for (String acc : entries) {
-                writeEntry(acc);
-                flush();
-            }
+        writeHeader(infos);
+
+        for (String acc : entries) {
+            writeEntry(acc);
+            flush();
         }
 
         writeFooter();
@@ -74,7 +82,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
     }
 
     /** Write header to the output stream (to be overridden by if needed) */
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {}
+    protected void writeHeader(Map<String, Object> infos) throws IOException {}
 
     /** Write a single entry to the output stream */
     protected abstract void writeEntry(String entryName) throws IOException;
@@ -119,7 +127,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
             case FASTA:
                 return new EntryFastaStreamWriter(os);
             case PEFF:
-                return new EntryPeffStreamWriter(os);
+                return new EntryPEFFStreamWriter(os);
             case TURTLE:
                 return new EntryTTLStreamWriter(os, view);
             default:

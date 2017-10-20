@@ -9,8 +9,9 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,7 +34,10 @@ class IsoformServiceImpl implements IsoformService {
 	private EntityNameService entityNameService;
 
 	@Autowired
-	private PeffService peffService;
+	private EntryService entryService;
+
+	@Autowired
+	private TerminologyService terminologyService;
 
 	@Override
 	@Cacheable("isoforms")
@@ -83,9 +87,11 @@ class IsoformServiceImpl implements IsoformService {
 
 	@Override
 	@Cacheable("peff-by-isoform")
-	public String formatPeffHeader(String isoformAccession) {
+	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 
-		return IsoformSequenceInfoPeff.toPeffHeader(peffService.formatSequenceInfo(isoformAccession));
+		return new IsoformPEFFHeaderBuilder(isoformAccession,
+				entryService.findEntryFromIsoformAccession(isoformAccession), this, terminologyService).withEverything()
+				.build();
 	}
 
 	private class SynonymFunction implements Function<EntityName, String> {
