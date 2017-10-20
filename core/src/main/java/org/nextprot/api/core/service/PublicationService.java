@@ -25,13 +25,6 @@ public interface PublicationService {
 	List<Publication> findPublicationByTitle(String title);
 	
 	/**
-	 * Retrieves publications by master identifier
-	 * @param masterId
-	 * @return
-	 */
-	List<Publication> findPublicationsByMasterId(Long masterId);
-	
-	/**
 	 * Retrieves publications by master's unique name
 	 * @param uniqueName
 	 * @return

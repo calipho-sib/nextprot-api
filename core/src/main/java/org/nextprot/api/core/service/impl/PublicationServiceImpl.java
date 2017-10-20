@@ -51,19 +51,6 @@ public class PublicationServiceImpl implements PublicationService {
 		return publicationDao.findPublicationByTitle(title);
 	}
 
-	/**
-	 * TO REMOVE
-	 */
-	@Override
-	public List<Publication> findPublicationsByMasterId(Long masterId) {
-		
-		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
-
-		publications.forEach(this::loadAuthorsAndXrefs);
-		
-		return publications;
-	}
-
 	@Override
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByEntryName(String uniqueName) {
