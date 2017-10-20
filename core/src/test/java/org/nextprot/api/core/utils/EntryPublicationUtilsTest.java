@@ -188,19 +188,30 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
 		map.put("scope", scopes);
 		p.setProperties(map);
 
+		// TODO: should be moved to PublicationDao test as it now replaces properties
 		List<PublicationDirectLink> links = EntryPublicationUtils.getEntryPublicationDirectLinks(p);
 		Assert.assertEquals(8, links.size());
 		// should be datasource UniProt first, then order by database alpha insensitive, then by label alpha
 		Assert.assertEquals(links.get(0).getLabel(), "CLEAVAGE OF INITIATOR METHIONINE [LARGE SCALE ANALYSIS]");
 		Assert.assertEquals(links.get(1).getLabel(), "INVOLVEMENT IN SCA34");
-		Assert.assertEquals(links.get(2).getLabel(), "VARIANT SCA34 PHE-168");
+        Assert.assertEquals(links.get(2).getLabel(), "VARIANT SCA34 PHE-168");
 		Assert.assertEquals(links.get(3).getLabel(), "[Pathology & Biotech]Associated with CARDIOVASCULAR: pulmonary hypertension; thrombosis, deep vein; pulmonary thromboembolism; HLA-B");
 		Assert.assertEquals(links.get(4).getLabel(), "S100A4 has opposite roles in Tag7 and Hsp70- mediated tumoricidal mechanisms");
 		Assert.assertEquals(links.get(5).getLabel(), "[PTM/processing]Phosphorylation");
 		Assert.assertEquals(links.get(6).getLabel(), "[Structure]");
 		Assert.assertEquals(links.get(7).getLabel(), "[PTM/processing]P18848-1");
 
-		//links.forEach(l -> System.out.println(l));
+        Assert.assertEquals(links.get(0).getDatasource(), "Uniprot");
+        Assert.assertEquals(links.get(1).getDatasource(), "Uniprot");
+        Assert.assertEquals(links.get(2).getDatasource(), "Uniprot");
+        Assert.assertEquals(links.get(3).getDatasource(), "PIR");
+        Assert.assertEquals(links.get(4).getDatasource(), "PIR");
+        Assert.assertEquals(links.get(5).getDatasource(), "PIR");
+        Assert.assertEquals(links.get(6).getDatasource(), "PIR");
+        Assert.assertEquals(links.get(7).getDatasource(), "PIR");
+
+
+        //links.forEach(l -> System.out.println(l));
 
 	}
 }
