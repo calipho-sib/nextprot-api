@@ -4,14 +4,18 @@ import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GraphQLIntegrationTest extends WebIntegrationBaseTest {
 	
   @Test
   public void shouldRunAGraphqlQuery() throws Exception {
 
-      ResultActions result = this.mockMvc.perform(get("/graphql").accept(MediaType.APPLICATION_JSON));
+      String query = "{entry (accession:\"P06213\") { isoforms { sequence }";
+
+      ResultActions result = this.mockMvc.perform(post("/graphql").accept(MediaType.APPLICATION_JSON).content(query));
+      result.andExpect(status().isOk());
       System.err.println(result.andReturn().getResponse().getContentAsString());
 
   }
