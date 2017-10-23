@@ -15,7 +15,7 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 
 @Ignore
-public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
+public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testXMLExportStream() throws Exception {

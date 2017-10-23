@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.DESCRIPTION;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
 import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 
 @Service
@@ -37,7 +39,12 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
 
 		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
-		writer.write(Collections.singletonList(accession), releaseInfoService.findReleaseInfo(), description);
+
+		Map<String, Object> infos = new HashMap<>();
+		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
+		infos.put(DESCRIPTION, description);
+
+		writer.write(Collections.singletonList(accession), infos);
 	}
 
 	@Override
@@ -45,15 +52,19 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
 
-        writer.write(accessions, releaseInfoService.findReleaseInfo(), description);
+		Map<String, Object> infos = new HashMap<>();
+		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
+		infos.put(DESCRIPTION, description);
+
+        writer.write(accessions, infos);
     }
 
     @Override
     public void streamAllEntries(NextprotMediaType format, HttpServletResponse response) {
 
         try {
-            setResponseHeader(response, format, "nextprot-entries-all"  + "." + format.getExtension());
-            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "");
+            setResponseHeader(response, format, "nextprot_all"  + "." + format.getExtension());
+            streamEntries(masterIdentifierService.findUniqueNames(), format, "entry", response.getOutputStream(), "complete release");
         } catch (IOException e) {
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export all "+masterIdentifierService.findUniqueNames().size()+" entries", e);
         }
@@ -120,7 +131,13 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 			return queryRequest.getReferer();
 		}
 
-		return queryRequest.getUrl();
+        String url = queryRequest.getUrl();
+
+		if (url.contains("nextprot-api-web")) {
+		    url = url.replace("/nextprot-api-web", "");
+        }
+
+        return url;
 	}
 
 	private void setResponseHeader(HttpServletResponse response, NextprotMediaType format, String filename) {
