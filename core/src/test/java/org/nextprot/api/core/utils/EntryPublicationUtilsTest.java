@@ -4,19 +4,15 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublicationReport;
-import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.domain.publication.PublicationView;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 //@ActiveProfiles({ "dev","cache" })
 @ActiveProfiles({ "dev" })
@@ -173,8 +169,6 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     }
 
 
-    // TODO: should test the sorting of List<PublicationDirectLink>
-    /*
 	@Test
 	public void testPublicationDirectLinkListOrder() {
 		Publication p = new Publication();
@@ -190,13 +184,15 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
 				"[PRO:PR:000028557] [PTM/processing]P18848-1",
 				"[GAD:125207] [Pathology & Biotech]Associated with CARDIOVASCULAR: pulmonary hypertension; thrombosis, deep vein; pulmonary thromboembolism; HLA-B");
 
-		Map<String,List<String>> map = new HashMap<>();
-		map.put("comment", comments);
-		map.put("scope", scopes);
-		p.setProperties(map);
+        Map<PublicationProperty, List<PublicationDirectLink>> m = new HashMap<>();
+        m.put(PublicationProperty.SCOPE, new ArrayList<>());
+        m.put(PublicationProperty.COMMENT, new ArrayList<>());
+		scopes.forEach(scope -> m.get(PublicationProperty.SCOPE).add(new PublicationDirectLink(188, PublicationProperty.SCOPE, scope)));
+        comments.forEach(comment -> m.get(PublicationProperty.COMMENT).add(new PublicationDirectLink(188, PublicationProperty.COMMENT, comment)));
 
-		// TODO: should be moved to PublicationDao test as it now replaces properties
-		List<PublicationDirectLink> links = EntryPublicationUtils.getEntryPublicationDirectLinks(p);
+		p.setDirectLinks(m);
+
+		List<PublicationDirectLink> links = p.getDirectLinks();
 		Assert.assertEquals(8, links.size());
 		// should be datasource UniProt first, then order by database alpha insensitive, then by label alpha
 		Assert.assertEquals(links.get(0).getLabel(), "CLEAVAGE OF INITIATOR METHIONINE [LARGE SCALE ANALYSIS]");
@@ -216,10 +212,5 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
         Assert.assertEquals(links.get(5).getDatasource(), "PIR");
         Assert.assertEquals(links.get(6).getDatasource(), "PIR");
         Assert.assertEquals(links.get(7).getDatasource(), "PIR");
-
-
-        //links.forEach(l -> System.out.println(l));
-
 	}
-	*/
 }
