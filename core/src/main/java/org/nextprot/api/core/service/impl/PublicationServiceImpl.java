@@ -39,6 +39,8 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
 
+
+	///TODO: WTF the publication here is incomplete and different with findPublicationsByEntryName !!!!
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
 		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields

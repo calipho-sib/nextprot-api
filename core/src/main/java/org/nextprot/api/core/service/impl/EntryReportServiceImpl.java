@@ -117,7 +117,8 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     
     private boolean hasMassSpecScope(Publication pub) {
-    	return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
+    	//return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
+    	return pub.getScopes().stream().anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
