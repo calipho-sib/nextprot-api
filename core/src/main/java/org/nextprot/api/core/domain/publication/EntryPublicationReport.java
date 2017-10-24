@@ -25,19 +25,19 @@ public class EntryPublicationReport implements Serializable {
 
         for (EntryPublication entryPublication : reportData.values()) {
             if (entryPublication.isCurated()) {
-                publicationsByView.putIfAbsent(PublicationView.CURATED, new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isAdditional()) {
-                publicationsByView.putIfAbsent(PublicationView.ADDITIONAL, new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isOnline()) {
-                publicationsByView.putIfAbsent(PublicationView.WEB_RESOURCE, new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isSubmission()) {
-                publicationsByView.putIfAbsent(PublicationView.SUBMISSION, new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isPatent()) {
-                publicationsByView.putIfAbsent(PublicationView.PATENT, new ArrayList<>()).add(entryPublication);
+                publicationsByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
             }
         }
 
