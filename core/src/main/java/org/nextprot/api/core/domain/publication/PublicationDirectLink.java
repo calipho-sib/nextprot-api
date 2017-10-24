@@ -3,29 +3,37 @@ package org.nextprot.api.core.domain.publication;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PublicationDirectLink implements Comparable<PublicationDirectLink> {
+public class PublicationDirectLink implements Comparable<PublicationDirectLink>, Serializable {
 
-	private long publicationId;
+    private static final long serialVersionUID = 0L;
+
+    private long publicationId;
 	private String datasource;  // PIR or UniProt
 	private String database;    // PDB,IntAct, GeneRif,...
 	private String accession;   // null when database = UniProtKB
 	private String link;        // null when database = UniProtKB
 	private String label;
 
-	public PublicationDirectLink(long publicationId, String propertyName, String propertyValue) {
+    PublicationDirectLink(long publicationId, String propertyName, String propertyValue) {
+
+        this(publicationId, PublicationProperty.valueOf(propertyName.toUpperCase()), propertyValue);
+    }
+
+	public PublicationDirectLink(long publicationId, PublicationProperty propertyName, String propertyValue) {
 
 		this.publicationId = publicationId;
 
-		if (propertyName.equalsIgnoreCase("scope")) {
+		if (propertyName == PublicationProperty.SCOPE) {
 
 			this.datasource = "Uniprot";
 			this.database = "UniProtKB";
 			this.label = propertyValue;
-
-		} else if (propertyName.equalsIgnoreCase("comment")) {
+		}
+		else if (propertyName == PublicationProperty.COMMENT) {
 
 			this.datasource = "PIR";
 			// parse things like "[database:accession] label";
@@ -37,7 +45,6 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink> 
 			this.database = head.substring(1, pos);
 			this.accession = head.substring(pos + 1);
 			this.link = getLinkFor(this.database, this.accession);
-
 		}
 	}
 
