@@ -4,15 +4,19 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.PublicationType;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //@ActiveProfiles({ "dev","cache" })
 @ActiveProfiles({ "dev" })
@@ -168,6 +172,9 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     	}
     }
 
+
+    // TODO: should test the sorting of List<PublicationDirectLink>
+    /*
 	@Test
 	public void testPublicationDirectLinkListOrder() {
 		Publication p = new Publication();
@@ -214,4 +221,5 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
         //links.forEach(l -> System.out.println(l));
 
 	}
+	*/
 }

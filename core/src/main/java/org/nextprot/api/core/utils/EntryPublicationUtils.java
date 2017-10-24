@@ -7,12 +7,14 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublicationReport;
-import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.ui.page.PageView;
 import org.nextprot.api.core.ui.page.PageViewFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EntryPublicationUtils {
 
@@ -41,19 +43,6 @@ public class EntryPublicationUtils {
 		report.setReportData(reportData);
 
 		return report;
-	}
-
-	public static List<PublicationDirectLink> getEntryPublicationDirectLinks(Publication p) {
-
-		List<PublicationDirectLink> result = new ArrayList<>();
-		List<String> names = Arrays.asList("scope","comment"); // UniProt and PIR direct links are in there
-		for (String name: names) {
-			for (String value: p.getProperty(name)) {
-				result.add(new PublicationDirectLink(p.getPublicationId(), name,  value));
-			}
-		}
-		result.sort(null); // see comparator in PublicationDirectLink
-		return result;
 	}
 
 	private static String getPubMedOrNextProtSubmissionAc(Publication p) {
@@ -117,13 +106,13 @@ public class EntryPublicationUtils {
 		long pubId = p.getPublicationId();
 		addEntryPublicationToReportDataIfNecessary(pubId, reportData);
 		EntryPublication ep = reportData.get(pubId);
-		List<String> scopes = p.getProperty("scope");
-		if (scopes.size()>0) {
+        //List<String> scopes = p.getProperty("scopes");
+		if (!p.getScopes().isEmpty()) {
 			ep.setCited(true);
 		}
-		List<String> comments = p.getProperty("comment");
-		if (comments.size()>0) {
-			if (! ep.isCited()) ep.setUncited(true);
+		//List<String> comments = p.getProperty("comment");
+		if (!p.getComments().isEmpty() && !ep.isCited()) {
+			ep.setUncited(true);
 		}
 		handlePublicationFlagsByType(p,ep);
 	}

@@ -1,7 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
 import com.google.common.collect.Maps;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -12,6 +11,8 @@ import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
+import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,13 +62,16 @@ public class PublicationDaoImpl implements PublicationDao {
 		List<Publication> publications = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 
 		 // get all entry publication properties     
-		Map<Long,Map<String,List<String>>> publiPropMap = findEntryPublicationPropertiesByMasterId(masterId);
-		
-		// attach properties to each publication
+        Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> publiPropMap =
+                findEntryPublicationPropertiesByMasterId(masterId);
+
+        // attach properties to each publication
 		for (Publication pub: publications) {
-			long pubId = pub.getPublicationId();
+		    long pubId = pub.getPublicationId();
+
 			if (publiPropMap.containsKey(pubId)) {
-				pub.setProperties(publiPropMap.get(pubId));
+
+				pub.setLinks(publiPropMap.get(pubId));
 			}
 		}
 		
@@ -159,35 +163,39 @@ public class PublicationDaoImpl implements PublicationDao {
 	}
 
 	@Override
-	public Map<Long,Map<String,List<String>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
+	public Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("masterId", masterId);
 		EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper();		
-		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-properties-for-master"), params, mapper);		
+		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-properties-comment-or-scope-for-master"), params, mapper);
 		return mapper.getResult();
 		
 	}
 	
 	private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<Object> {
-		
-		private Map<Long,Map<String,List<String>>> result = new HashMap<>();
+
+        private Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> result = new HashMap<>();
 				
-		public Map<Long,Map<String,List<String>>> getResult() { return result; }
+		public Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> getResult() { return result; }
 		
 		@Override
 		public Object mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Long pubId = resultSet.getLong("pub_id");
-			String propertyName = resultSet.getString("property_name");
+			PublicationProperty propertyName =
+                    PublicationProperty.valueOf(resultSet.getString("property_name").toUpperCase());
 			String propertyValue = resultSet.getString("property_value");
-			if (! result.containsKey(pubId)) result.put(pubId, new HashMap<String,List<String>>()) ;
-			Map<String,List<String>> props = result.get(pubId);
-			if (! props.containsKey(propertyName)) props.put(propertyName, new ArrayList<String>());
-			props.get(propertyName).add(propertyValue);
-			return null;
+
+			PublicationDirectLink publicationDirectLink = new PublicationDirectLink(pubId, propertyName, propertyValue);
+
+            result
+                    .computeIfAbsent(pubId, k -> new HashMap<>())
+                    .computeIfAbsent(propertyName, k -> new TreeSet<>())
+                    .add(publicationDirectLink);
+
+            return null;
 		}
-		
 	}
 	
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
