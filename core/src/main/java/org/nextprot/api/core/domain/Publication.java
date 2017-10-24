@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import com.google.common.base.Preconditions;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -8,6 +9,7 @@ import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
@@ -49,31 +51,50 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "Computed Publications")
 	private boolean isComputed;
 	
-	private Map<PublicationProperty, TreeSet<PublicationDirectLink>> links;
+	private Map<PublicationProperty, List<PublicationDirectLink>> directLinksMap;
 
-	@ApiObjectField(description = "The list of authors")
+    private List<PublicationDirectLink> directLinks;
+
+    @ApiObjectField(description = "The list of authors")
 	private SortedSet<PublicationAuthor> authors;
 
 	@ApiObjectField(description = "The associated cross references")
 	private Set<DbXref> dbXrefs;
 
 	private PublicationResourceLocator publicationResourceLocator;
-	
-    public TreeSet<PublicationDirectLink> getComments() {
-	    return getLinks(PublicationProperty.COMMENT);
+
+	@JsonIgnore
+    public List<PublicationDirectLink> getComments() {
+	    return getDirectLinks(PublicationProperty.COMMENT);
     }
 
-    public TreeSet<PublicationDirectLink> getScopes() {
-	    return getLinks(PublicationProperty.SCOPE);
+    @JsonIgnore
+    public List<PublicationDirectLink> getScopes() {
+	    return getDirectLinks(PublicationProperty.SCOPE);
     }
 
-    private TreeSet<PublicationDirectLink> getLinks(PublicationProperty propertyName) {
-        if (links==null) return new TreeSet<>();
-        return links.getOrDefault(propertyName, new TreeSet<>());
+    public List<PublicationDirectLink> getDirectLinks() {
+        return directLinks;
     }
 
-    public void setLinks(Map<PublicationProperty, TreeSet<PublicationDirectLink>> links) {
-        this.links = links;
+    private List<PublicationDirectLink> getDirectLinks(PublicationProperty propertyName) {
+        if (directLinksMap ==null) return new ArrayList<>();
+        return directLinksMap.getOrDefault(propertyName, new ArrayList<>());
+    }
+
+    public void setDirectLinks(Map<PublicationProperty, List<PublicationDirectLink>> map) {
+
+        if (map == null) {
+            this.directLinksMap = new HashMap<>();
+            this.directLinks = new ArrayList<>();
+        }
+        else {
+            this.directLinksMap = map;
+            directLinks = map.values().stream()
+                    .flatMap(l -> l.stream())
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
     }
 
     public boolean isLocalizable() {

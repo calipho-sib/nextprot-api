@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.publication.PublicationProperty;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 public interface PublicationDao {
 
@@ -32,7 +31,7 @@ public interface PublicationDao {
 	 * @param masterId
 	 * @return
 	 */
-	Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId);
+	Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId);
 	
 	/**
 	 * Find publication id by database and accession.

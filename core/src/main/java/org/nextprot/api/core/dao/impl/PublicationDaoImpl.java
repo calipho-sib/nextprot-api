@@ -62,7 +62,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		List<Publication> publications = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 
 		 // get all entry publication properties     
-        Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> publiPropMap =
+        Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> publiPropMap =
                 findEntryPublicationPropertiesByMasterId(masterId);
 
         // attach properties to each publication
@@ -71,7 +71,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			if (publiPropMap.containsKey(pubId)) {
 
-				pub.setLinks(publiPropMap.get(pubId));
+				pub.setDirectLinks(publiPropMap.get(pubId));
 			}
 		}
 		
@@ -163,7 +163,7 @@ public class PublicationDaoImpl implements PublicationDao {
 	}
 
 	@Override
-	public Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
+	public Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("masterId", masterId);
@@ -175,9 +175,9 @@ public class PublicationDaoImpl implements PublicationDao {
 	
 	private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<Object> {
 
-        private Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> result = new HashMap<>();
+        private Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> result = new HashMap<>();
 				
-		public Map<Long, Map<PublicationProperty, TreeSet<PublicationDirectLink>>> getResult() { return result; }
+		public Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> getResult() { return result; }
 		
 		@Override
 		public Object mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -191,7 +191,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
             result
                     .computeIfAbsent(pubId, k -> new HashMap<>())
-                    .computeIfAbsent(propertyName, k -> new TreeSet<>())
+                    .computeIfAbsent(propertyName, k -> new ArrayList<>())
                     .add(publicationDirectLink);
 
             return null;
