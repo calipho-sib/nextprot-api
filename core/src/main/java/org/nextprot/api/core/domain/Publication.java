@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain;
 
 import com.google.common.base.Preconditions;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -63,22 +62,12 @@ public class Publication implements Serializable{
 
 	private PublicationResourceLocator publicationResourceLocator;
 
-	@JsonIgnore
-    public List<PublicationDirectLink> getComments() {
-	    return getDirectLinks(PublicationProperty.COMMENT);
-    }
-
-    @JsonIgnore
-    public List<PublicationDirectLink> getScopes() {
-	    return getDirectLinks(PublicationProperty.SCOPE);
-    }
-
     public List<PublicationDirectLink> getDirectLinks() {
-        return directLinks;
+        return (directLinks != null) ? directLinks : new ArrayList<>();
     }
 
-    private List<PublicationDirectLink> getDirectLinks(PublicationProperty propertyName) {
-        if (directLinksMap ==null) return new ArrayList<>();
+    public List<PublicationDirectLink> getDirectLinks(PublicationProperty propertyName) {
+        if (directLinksMap == null) return new ArrayList<>();
         return directLinksMap.getOrDefault(propertyName, new ArrayList<>());
     }
 

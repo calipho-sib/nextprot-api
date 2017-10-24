@@ -6,6 +6,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
@@ -118,7 +119,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     private boolean hasMassSpecScope(Publication pub) {
     	//return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
-    	return pub.getScopes().stream().anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
+    	return pub.getDirectLinks(PublicationProperty.SCOPE).stream().anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {

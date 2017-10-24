@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.ui.page.PageView;
 import org.nextprot.api.core.ui.page.PageViewFactory;
@@ -107,11 +108,11 @@ public class EntryPublicationUtils {
 		addEntryPublicationToReportDataIfNecessary(pubId, reportData);
 		EntryPublication ep = reportData.get(pubId);
         //List<String> scopes = p.getProperty("scopes");
-		if (!p.getScopes().isEmpty()) {
+		if (!p.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
 			ep.setCited(true);
 		}
 		//List<String> comments = p.getProperty("comment");
-		if (!p.getComments().isEmpty() && !ep.isCited()) {
+		if (!p.getDirectLinks(PublicationProperty.COMMENT).isEmpty() && !ep.isCited()) {
 			ep.setUncited(true);
 		}
 		handlePublicationFlagsByType(p,ep);
