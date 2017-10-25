@@ -43,11 +43,11 @@ public class EntryPublicationReport implements Serializable {
 
         for (PublicationView view : publicationsByView.keySet()) {
 
-            publicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getId));
+            publicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
         }
 
         publications = reportData.values().stream()
-                .sorted(Comparator.comparingLong(EntryPublication::getId))
+                .sorted(Comparator.comparingLong(EntryPublication::getPubId))
                 .collect(Collectors.toList());
     }
 

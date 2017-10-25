@@ -9,21 +9,21 @@ public class EntryPublication implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String entryAccession;
-    private long id;
+    private long pubId;
     private boolean cited, uncited, patent, submission, online, curated, additional;
     private Map<String,String> citedInViews = new TreeMap<>();
 
-    public EntryPublication(String entryAccession, long id) {
+    public EntryPublication(String entryAccession, long pubId) {
         this.entryAccession = entryAccession;
-        this.id=id;
+        this.pubId = pubId;
     }
 
     public String getEntryAccession() {
         return entryAccession;
     }
 
-    public long getId() {
-        return id;
+    public long getPubId() {
+        return pubId;
     }
     public boolean isCited() {
         return cited;
@@ -81,7 +81,7 @@ public class EntryPublication implements Serializable {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("id:").append(id).append(" ");
+        sb.append("id:").append(pubId).append(" ");
         sb.append("cited:").append(cited).append(" ");
         sb.append("uncited:").append(uncited).append(" ");
         sb.append("patent:").append(patent).append(" ");
