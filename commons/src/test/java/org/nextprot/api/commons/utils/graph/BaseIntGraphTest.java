@@ -208,6 +208,15 @@ abstract class BaseIntGraphTest {
         Assert.assertEquals(null, graph.getEdgeLabel(2));
     }
 
+    @Test
+    public void getDescendants() throws Exception {
+
+        populateExampleGraph(graph);
+
+        Assert.assertTrue(new TIntHashSet(graph.getDescendants(5))
+                .containsAll(new int[]{2, 3, 4}));
+    }
+
     /*
                 1 ---2--3
             6__ 5 __/  /

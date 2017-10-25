@@ -308,6 +308,16 @@ public class IntGraph implements DirectedGraph, Externalizable {
         return ancestors.toArray();
     }
 
+    @Override
+    public int[] getDescendants(int node) {
+
+        TIntSet descendants = new TIntHashSet();
+
+        getDescendants(node, descendants);
+
+        return descendants.toArray();
+    }
+
     private void getAncestors(int node, TIntSet ancestors) {
 
         if (!predecessorLists.containsKey(node)) {
@@ -318,6 +328,21 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
             ancestors.add(predecessor);
             getAncestors(predecessor, ancestors);
+
+            return true;
+        });
+    }
+
+    private void getDescendants(int node, TIntSet descendants) {
+
+        if (!successorLists.containsKey(node)) {
+            return;
+        }
+
+        successorLists.get(node).forEach(successor -> {
+
+            descendants.add(successor);
+            getDescendants(successor, descendants);
 
             return true;
         });
