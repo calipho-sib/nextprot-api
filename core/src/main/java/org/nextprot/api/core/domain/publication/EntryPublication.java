@@ -6,15 +6,22 @@ import java.util.TreeMap;
 
 public class EntryPublication implements Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
+    private String entryAccession;
     private long id;
     private boolean cited, uncited, patent, submission, online, curated, additional;
     private Map<String,String> citedInViews = new TreeMap<>();
 
-    public EntryPublication(long id) {
+    public EntryPublication(String entryAccession, long id) {
+        this.entryAccession = entryAccession;
         this.id=id;
     }
+
+    public String getEntryAccession() {
+        return entryAccession;
+    }
+
     public long getId() {
         return id;
     }

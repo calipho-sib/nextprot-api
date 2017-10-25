@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationDirectLink;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -75,6 +76,7 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 		 Assert.assertEquals("High levels of DJ-1 protein in nipple fluid of patients with breast cancer.", publication.getTitle());
 	}
 
+    // TODO: Should be in EntryPublication instead
     @Test
     public void testPublicationDirectLinksFromAnEntry() {
 
@@ -99,5 +101,16 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
             Assert.assertEquals("UniProtKB", directLinks.get(i).getDatabase());
             Assert.assertEquals(expectedLabels[i], directLinks.get(i).getLabel());
         }
+    }
+
+    // TODO: Should be in EntryPublication instead
+    @Ignore
+    @Test
+    public void testPublicationDirectLinksFromAnEntryForSubmissionView() {
+
+        List<Publication> publications = publicationService.findPublicationsByEntryName("NX_Q14587", PublicationView.SUBMISSION);
+
+        Assert.assertEquals(1, publications.size());
+        System.out.println(publications);
     }
 }

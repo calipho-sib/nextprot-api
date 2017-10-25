@@ -36,7 +36,7 @@ public class EntryPublicationUtils {
 		
 		// handle direct links (B and C) but publications with A link are further processed also  
 		entry.getPublications()
-				.forEach(p -> handlePublicationDirectLinks(p, reportData));
+				.forEach(p -> handlePublicationDirectLinks(entry.getUniqueName(), p, reportData));
 
 		EntryPublicationReport report = new EntryPublicationReport();
 
@@ -64,8 +64,8 @@ public class EntryPublicationUtils {
 		return map;
 	}
 	
-	private static void addEntryPublicationToReportDataIfNecessary(long pubId, Map<Long,EntryPublication> reportData) {
-		if (! reportData.containsKey(pubId)) reportData.put(pubId, new EntryPublication(pubId));
+	private static void addEntryPublicationToReportDataIfNecessary(String entryAccession, long pubId, Map<Long,EntryPublication> reportData) {
+		if (! reportData.containsKey(pubId)) reportData.put(pubId, new EntryPublication(entryAccession, pubId));
 	}
 	
 	private static void handlePublicationAnnotationEvidence(String entryAc, Annotation annot, AnnotationEvidence evi, Map<String,Long> ac2idMap, List<PageView> pageViewList, Map<Long,EntryPublication> reportData) {
@@ -79,7 +79,7 @@ public class EntryPublicationUtils {
 			pubId = ac2idMap.get(ac);
 		}
 		if (pubId != null) {
-			addEntryPublicationToReportDataIfNecessary(pubId, reportData);
+			addEntryPublicationToReportDataIfNecessary(entryAc, pubId, reportData);
 			EntryPublication ep = reportData.get(pubId);
 			ep.setCited(true);
 			
@@ -103,9 +103,9 @@ public class EntryPublicationUtils {
 		return result;
 	}
 	
-	private static void handlePublicationDirectLinks(Publication p, Map<Long,EntryPublication> reportData) {
+	private static void handlePublicationDirectLinks(String entryAc, Publication p, Map<Long,EntryPublication> reportData) {
 		long pubId = p.getPublicationId();
-		addEntryPublicationToReportDataIfNecessary(pubId, reportData);
+		addEntryPublicationToReportDataIfNecessary(entryAc, pubId, reportData);
 		EntryPublication ep = reportData.get(pubId);
         //List<String> scopes = p.getProperty("scopes");
 		if (!p.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
