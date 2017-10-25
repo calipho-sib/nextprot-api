@@ -181,7 +181,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 		String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
 		String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
-		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
+		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
 		annotation.setVariant(annotationVariant);
 
 	}

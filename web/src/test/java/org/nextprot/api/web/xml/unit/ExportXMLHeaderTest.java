@@ -12,8 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
 
 public class ExportXMLHeaderTest extends WebUnitBaseTest {
 	
@@ -28,7 +31,10 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         rc.setApiRelease("api-test-version");
         rc.setDatabaseRelease("database-test-version");
 
-        exporter.write(Collections.emptyList(), rc, "");
+        Map<String, Object> infos = new HashMap<>();
+        infos.put(RELEASE_INFO, rc);
+
+        exporter.write(Collections.emptyList(), infos);
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='database-release']");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");

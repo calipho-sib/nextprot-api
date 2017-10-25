@@ -45,11 +45,19 @@ public class IdentifierDaoImpl implements IdentifierDao {
 
 		List<Identifier> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
 
-		// See CALIPHOMISC-489
 		return ids.stream()
 				.filter(Objects::nonNull)
-				.filter(i -> !("Ensembl".equals(i.getDatabase()) && !i.getName().startsWith("ENSG")))
+				.filter(i -> isValidIdentifier(i))
 				.collect(Collectors.toList());
+	}
+	
+	private boolean isValidIdentifier(Identifier identifier) {
+		// See CALIPHOMISC-489
+		if (! "Ensembl".equals(identifier.getDatabase())) return true;
+		if (identifier.getName().startsWith("ENSG")) return true;
+		if (identifier.getName().startsWith("ENSP")) return true;
+		if (identifier.getName().startsWith("ENST")) return true;
+		return false;
 	}
 	
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {

@@ -147,13 +147,33 @@ class TerminologyServiceImpl implements TerminologyService {
 
 			while ((line = br.readLine()) != null) {
 
+				// if the psi term is found...
 				if (line.startsWith("id: " + psiModAccession)) {
-					return Optional.of(br.readLine().split(" ")[1]);
+					return findTermName(br);
 				}
 			}
+			// no psi term found
 			return Optional.empty();
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot find PSI-MOD name for cv term "+cvTermAccession);
 		}
+	}
+
+	private Optional<String> findTermName(BufferedReader br) throws IOException {
+
+		String line;
+
+		while ((line = br.readLine()) != null) {
+
+			// if found the term name
+			if (line.startsWith("name: ")) {
+				return Optional.of(line.split(": ")[1]);
+			}
+			// if end of the [term] definition block
+			else if (line.matches("\\\\s*")) {
+				return Optional.empty();
+			}
+		}
+		return Optional.empty();
 	}
 }

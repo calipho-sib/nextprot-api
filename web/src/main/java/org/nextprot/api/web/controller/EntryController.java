@@ -8,10 +8,11 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformSequenceInfoPeff;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
@@ -42,7 +43,7 @@ public class EntryController {
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
 	@Autowired private EntryReportService entryReportService;
-	@Autowired private PeffService peffService;
+	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 
     @ModelAttribute
@@ -53,7 +54,7 @@ public class EntryController {
     }
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts",
-			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", "text/peff", "text/fasta"})
+			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -64,23 +65,13 @@ public class EntryController {
 			HttpServletRequest request,
 			Model model) {
 
-    	Entry entry;
+		boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
 
-		if (request.getRequestURI().toLowerCase().endsWith(".peff")) {
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
 
-			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
-			model.addAttribute("peffByIsoform", entryReportService.reportIsoformPeffHeaders(entryName));
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
 		}
-		else {
-			boolean bed = (request.getParameter("bed") == null) ? true : Boolean.valueOf(request.getParameter("bed"));
-
-			entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
-
-			if (ancestorTerm != null || propertyName != null) {
-				filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
-			}
-		}
-
 		model.addAttribute("entry", entry);
 
 		return "entry";
@@ -138,11 +129,11 @@ public class EntryController {
 	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public IsoformSequenceInfoPeff getIsoformSequenceInfos(
+	public IsoformPEFFHeader getIsoformPEFFHeader(
 			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
 			@PathVariable("accession") String isoformAccession) {
 
-		return peffService.formatSequenceInfo(isoformAccession);
+		return isoformService.formatPEFFHeader(isoformAccession);
 	}
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})

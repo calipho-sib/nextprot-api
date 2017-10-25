@@ -12,6 +12,7 @@ import org.nextprot.api.web.NXVelocityContext;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.*;
+import java.util.Map;
 
 /**
  * Streams entries in XML format
@@ -82,7 +83,11 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(int entryNum, ReleaseInfo releaseInfo, String description) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
+
+        int entryNum = (int) infos.get(ENTRY_COUNT);
+        ReleaseInfo releaseInfo = (ReleaseInfo) infos.get(RELEASE_INFO);
+
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
         headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
 

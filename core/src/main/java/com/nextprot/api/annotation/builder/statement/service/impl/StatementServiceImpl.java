@@ -1,9 +1,8 @@
 package com.nextprot.api.annotation.builder.statement.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.MainNamesService;
@@ -16,9 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementServiceImpl implements StatementService {
@@ -43,9 +43,9 @@ public class StatementServiceImpl implements StatementService {
 		List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ENTRY, entryAccession);
 
 		//Collect all subjects
-		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s -> {
-			return Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","));
-		}).flatMap(l -> l.stream()).collect(Collectors.toList());
+		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s ->
+			Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","))
+		).flatMap(Collection::stream).collect(Collectors.toList());
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
@@ -56,9 +56,7 @@ public class StatementServiceImpl implements StatementService {
 
 	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
-		return annotations;
-		
+		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
 	}
 
 
