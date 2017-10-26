@@ -93,7 +93,7 @@ public class TermController {
 		return terminologyService.findCvTermByAccession(term);
 	}
 
-    @ApiMethod(path = "/term/{term}/descendant-graph", verb = ApiVerb.GET, description = "Get the children graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiMethod(path = "/term/{term}/descendant-graph", verb = ApiVerb.GET, description = "Get the descendant graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/term/{term}/descendant-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, CvTermGraph.View> getDescendantGraph(
             @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
