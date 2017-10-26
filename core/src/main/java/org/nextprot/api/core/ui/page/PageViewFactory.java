@@ -1,8 +1,10 @@
 package org.nextprot.api.core.ui.page;
 
-import java.util.function.Supplier;
-
 import org.nextprot.api.core.ui.page.impl.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public enum PageViewFactory {
 
@@ -21,13 +23,27 @@ public enum PageViewFactory {
 	GENE_IDENTIFIERS(GeneIdentifiersPageView::new)
 	;
 
-	private final Supplier<PageView> pageViewBuilder;
+	private final PageView pageView;
+	private static final List<PageView> pageViews = new ArrayList<>();
 
-	PageViewFactory(Supplier<PageView> pageView) {
-		this.pageViewBuilder = pageView;
+	static {
+        for (PageViewFactory page : PageViewFactory.values()) {
+
+            pageViews.add(page.getPageView());
+        }
+    }
+
+	PageViewFactory(Supplier<PageView> supplier) {
+
+	    pageView = supplier.get();
 	}
 
-	public PageView build() {
-		return pageViewBuilder.get();
+	public PageView getPageView() {
+		return pageView;
 	}
+
+    public static List<PageView> getPageViews() {
+
+        return pageViews;
+    }
 }
