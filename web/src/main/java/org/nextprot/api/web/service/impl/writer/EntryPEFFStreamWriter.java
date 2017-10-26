@@ -50,6 +50,8 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
         sb.append("# Prefix=nxp").append(StringUtils.CR_LF)
                 .append("# NumberOfEntries=").append(isoformNumber).append(StringUtils.CR_LF)
                 .append("# SequenceType=AA").append(StringUtils.CR_LF)
+                .append("# GeneralComment=Copyrighted by the SIB Swiss Institute of Bioinformatics").append(StringUtils.CR_LF)
+                .append("# GeneralComment=Distributed under the Creative Commons Attribution-NoDerivs License").append(StringUtils.CR_LF)
                 .append("# //").append(StringUtils.CR_LF);
 
         getStream().write(sb.toString().getBytes());

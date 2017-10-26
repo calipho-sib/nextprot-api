@@ -48,7 +48,7 @@ public interface DirectedGraph {
     int getNodeFromMetadata(String metadata);
 
     /**
-     * Add an edge in graph from tail to head
+     * Add an edge in graph from tail to head and return its index
      * @param tail predecessor node
      * @param head successor node
      * @return the edge id or -1 if already exists
@@ -82,8 +82,25 @@ public interface DirectedGraph {
      */
     int getEdge(int tail, int head);
 
+    /**
+     * Get the incoming and outcoming edges for the given nodes
+     * @param nodes the nodes
+     * @return edge indices
+     */
     int[] getEdgesIncidentTo(int... nodes);
+
+    /**
+     * Get the incoming edges to the given nodes
+     * @param nodes the nodes
+     * @return edge indices
+     */
     int[] getInEdges(int... nodes);
+
+    /**
+     * Get the outcoming edges from the given nodes
+     * @param nodes the nodes
+     * @return edge indices
+     */
     int[] getOutEdges(int... nodes);
 
     /**
@@ -115,6 +132,11 @@ public interface DirectedGraph {
      * @return ancestors of the given node
      */
     int[] getAncestors(int node);
+
+    /**
+     * @return descendants of the given node
+     */
+    int[] getDescendants(int node);
 
     /**
      * @return true if queryDescendant is a descendant of queryAncestor

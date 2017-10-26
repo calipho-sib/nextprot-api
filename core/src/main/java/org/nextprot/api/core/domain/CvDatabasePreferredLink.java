@@ -36,6 +36,7 @@ public enum CvDatabasePreferredLink {
 	UCSC("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u"),
 	EXPRESSION_ATLAS("http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s"),
 	CHITARS("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&human=1"),
+	LOC("https://www.ncbi.nlm.nih.gov/gene?term=%s[All Fields]&cmd=DetailsSearch"),
 	;
 
 	private final String link;

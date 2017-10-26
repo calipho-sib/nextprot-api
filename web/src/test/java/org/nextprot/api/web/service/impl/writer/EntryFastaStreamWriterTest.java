@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class NPEntryFastaStreamWriterTest extends WebIntegrationBaseTest {
+public class EntryFastaStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testFastaExportStream() throws Exception {

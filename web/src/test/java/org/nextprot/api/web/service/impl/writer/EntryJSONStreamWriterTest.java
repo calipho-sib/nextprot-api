@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 @Ignore
-public class NPEntryJSONStreamWriterTest extends WebIntegrationBaseTest {
+public class EntryJSONStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testJSONExportStream() throws Exception {

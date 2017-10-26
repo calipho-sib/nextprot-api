@@ -49,6 +49,7 @@ public enum XRefDatabase {
     UNI_GENE("UniGene",                new UnigeneXrefURLResolver()),
     WEBINFO("WEBINFO",                 new WebInfoXrefURLResolver()),
     CHITARS("ChiTaRS",                 new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),  
+    LOC("LOC",                 			new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC))	
     ;
 
     private final String name;

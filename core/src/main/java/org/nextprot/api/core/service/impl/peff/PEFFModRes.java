@@ -5,7 +5,10 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A controlled vocabulary neither Unimod nor PSI-MOD or custom
@@ -119,14 +122,17 @@ public class PEFFModRes extends PEFFPTMInformation {
         @Override
         protected void formatAnnotation(Annotation disulfideBondAnnotation, StringBuilder sb) {
 
+            Integer startPos = disulfideBondAnnotation.getStartPositionForIsoform(isoformAccession);
+            Integer endPos = disulfideBondAnnotation.getEndPositionForIsoform(isoformAccession);
+
             sb
                     .append("(")
-                    .append(disulfideBondAnnotation.getStartPositionForIsoform(isoformAccession))
+                    .append((startPos != null) ? startPos : "?")
                     .append("||")
                     .append("Disulfide")
                     .append(")")
                     .append("(")
-                    .append(disulfideBondAnnotation.getEndPositionForIsoform(isoformAccession))
+                    .append((endPos != null) ? endPos : "?")
                     .append("||")
                     .append("Disulfide")
                     .append(")")

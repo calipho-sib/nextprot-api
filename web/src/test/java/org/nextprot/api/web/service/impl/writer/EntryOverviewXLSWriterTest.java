@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.Arrays;
 
 @Ignore
-public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
+public class EntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testXLSOverviewWriterStream() throws Exception {

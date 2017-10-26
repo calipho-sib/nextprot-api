@@ -308,6 +308,16 @@ public class IntGraph implements DirectedGraph, Externalizable {
         return ancestors.toArray();
     }
 
+    @Override
+    public int[] getDescendants(int node) {
+
+        TIntSet descendants = new TIntHashSet();
+
+        getDescendants(node, descendants);
+
+        return descendants.toArray();
+    }
+
     private void getAncestors(int node, TIntSet ancestors) {
 
         if (!predecessorLists.containsKey(node)) {
@@ -318,6 +328,21 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
             ancestors.add(predecessor);
             getAncestors(predecessor, ancestors);
+
+            return true;
+        });
+    }
+
+    private void getDescendants(int node, TIntSet descendants) {
+
+        if (!successorLists.containsKey(node)) {
+            return;
+        }
+
+        successorLists.get(node).forEach(successor -> {
+
+            descendants.add(successor);
+            getDescendants(successor, descendants);
 
             return true;
         });
@@ -403,10 +428,18 @@ public class IntGraph implements DirectedGraph, Externalizable {
              }
         }
 
-        int[] edges = getInEdges(sg.getNodes());
+        // get all incident edges
+        int[] edges = getEdgesIncidentTo(sg.getNodes());
 
+        // then add only the ones where heads and tails are contained in nodes
         for (int i=0; i < edges.length ; i++) {
-            sg.addEdge(getTailNode(edges[i]), getHeadNode(edges[i]));
+
+            int tail = getTailNode(edges[i]);
+            int head = getHeadNode(edges[i]);
+
+            if (sg.containsNode(tail) && sg.containsNode(head)) {
+                sg.addEdge(tail, head);
+            }
         }
 
         return sg;

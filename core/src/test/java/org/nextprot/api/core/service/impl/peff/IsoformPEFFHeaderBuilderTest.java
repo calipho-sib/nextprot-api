@@ -213,4 +213,23 @@ public class IsoformPEFFHeaderBuilderTest extends CoreUnitBaseTest {
         String modRes = peff.getModResFormat();
         Assert.assertEquals("\\ModRes=(1||Peptide (Met-Gly) (interchain with G-...))", modRes);
     }
+
+    @Test
+    public void testDisulfidePosIsNotNull() throws Exception {
+
+        IsoformPEFFHeader peff = new IsoformPEFFHeaderBuilder("NX_A2VEC9-1",
+                entryBuilderService.buildWithEverything("NX_A2VEC9"), isoformService, terminologyService)
+                .withModResFormats().build();
+        Assert.assertTrue(!peff.getModResFormat().contains("null"));
+
+        peff = new IsoformPEFFHeaderBuilder("NX_O43240-1",
+                entryBuilderService.buildWithEverything("NX_O43240"), isoformService, terminologyService)
+                .withModResFormats().build();
+        Assert.assertTrue(!peff.getModResFormat().contains("null"));
+
+        peff = new IsoformPEFFHeaderBuilder("NX_P04275-1",
+                entryBuilderService.buildWithEverything("NX_P04275"), isoformService, terminologyService)
+                .withModResFormats().build();
+        Assert.assertTrue(!peff.getModResFormat().contains("null"));
+    }
 }

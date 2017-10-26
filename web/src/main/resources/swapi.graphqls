@@ -1,0 +1,75 @@
+type Query {
+    # Find entry by accession
+    entry(accession: String): Entry
+}
+
+# A protein entry
+type Entry {
+    # The accession name
+    uniqueName: String
+    properties: EntryProperties
+    isoforms: [Isoform]
+    publications(limit: Int): [Publication]
+    # The annotations. You can specify a categiry
+    annotations(category: String, limit: Int): [Annotation]
+}
+
+# The properties of an entry such as its existence or the number of isoforms
+type EntryProperties {
+    proteinExistence: String
+    isoformCount: Int
+}
+
+type Annotation {
+    cvTermName: String
+    cvTermAccessionCode: String
+    qualityQualifier: String
+    description: String
+    evidences: [Evidence]
+    variant: Variant
+#   targetIsoformMapping: map { TargetIsoformMapping } https://github.com/facebook/graphql/issues/101 or should we add parameters
+}
+
+type TargetIsoformMapping {
+    firstPosition: Int
+    lastPosition: Int
+    isoformAccession: String
+    specificity: String
+    name: String
+    isoformName: String
+    positional: Boolean
+}
+
+type Evidence {
+    resourceType: String
+    evidenceCodeName: String
+    evidenceCodeOntology: String
+    qualityQualifier: String
+}
+
+type Isoform {
+    sequence: String
+}
+
+type Variant {
+    original: String
+    variant: String
+    description: String
+    diseaseTerms: String
+}
+
+type Publication {
+    title: String
+    abstractText: String
+    publicationType: String
+    publicationDate: String
+    isCurated: Boolean
+    isComputed: Boolean
+    authors: [Author]
+}
+
+
+type Author {
+    lastName: String
+    foreName: String
+}
