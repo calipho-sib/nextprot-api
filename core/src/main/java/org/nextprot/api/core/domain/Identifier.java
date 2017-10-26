@@ -18,6 +18,7 @@ public class Identifier implements Serializable{
 	private String database;
 	@ApiObjectField(description = "The database category")
 	private String category;
+	private String link;
 	
 /*
 	private String id;
@@ -44,10 +45,20 @@ public class Identifier implements Serializable{
 	}
 */
 	
+	
+	
 	public String getName() {
 		return name;
 	}
 	
+	public String getLink() {
+		return link;
+	}
+
+	public void setLink(String link) {
+		this.link = link;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
