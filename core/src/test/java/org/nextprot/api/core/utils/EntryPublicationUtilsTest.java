@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.EntryPublications;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -93,7 +93,7 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     		t0.add(System.currentTimeMillis());
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
     		tLoad.add(System.currentTimeMillis()-t0.get(idx));
-	        EntryPublicationReport report = EntryPublicationUtils.buildReport(entry);
+	        EntryPublications report = EntryPublicationUtils.fetchEntryPublications(entry);
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
@@ -129,7 +129,7 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     			"NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
     	for (String ac: entryAcList) {
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
-	        EntryPublicationReport report = EntryPublicationUtils.buildReport(entry);
+	        EntryPublications report = EntryPublicationUtils.fetchEntryPublications(entry);
 	        entry.getPublications().forEach(p -> {
 	        	EntryPublication ep = report.getEntryPublication(p.getPublicationId());
 	        	

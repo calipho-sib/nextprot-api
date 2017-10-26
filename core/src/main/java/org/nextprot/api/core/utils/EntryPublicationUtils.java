@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.EntryPublications;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.ui.page.PageView;
@@ -22,7 +22,7 @@ public class EntryPublicationUtils {
 	// values should be equal to cv_databases.cv_name
 	private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";
 
-	public static EntryPublicationReport buildReport(Entry entry) {
+	public static EntryPublications fetchEntryPublications(Entry entry) {
 
 		List<PageView> pageViewList = getPageViews();
 		Map<String,Long> pmid2id = getPmid2IdMap(entry.getPublications());
@@ -38,7 +38,7 @@ public class EntryPublicationUtils {
 		entry.getPublications()
 				.forEach(p -> handlePublicationDirectLinks(entry.getUniqueName(), p, reportData));
 
-		EntryPublicationReport report = new EntryPublicationReport();
+		EntryPublications report = new EntryPublications();
 
 		report.setEntryAccession(entry.getUniqueName());
 		report.setReportData(reportData);

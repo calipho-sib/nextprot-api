@@ -8,12 +8,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class EntryPublicationReport implements Serializable {
+/**
+ * Collection of Publications associated with a neXtProt entry
+ */
+public class EntryPublications implements Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     private String entryAccession;
-
     private Map<Long, EntryPublication> reportData;
     private List<EntryPublication> publications;
     private Map<PublicationView, List<EntryPublication>> publicationsByView;

@@ -1,8 +1,8 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.publication.EntryPublicationReport;
+import org.nextprot.api.core.domain.publication.EntryPublications;
 
 public interface EntryPublicationService {
 
-	EntryPublicationReport reportEntryPublication(String entryAccession);
+    EntryPublications getEntryPublications(String entryAccession);
 }
