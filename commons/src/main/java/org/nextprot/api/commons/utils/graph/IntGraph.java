@@ -428,10 +428,18 @@ public class IntGraph implements DirectedGraph, Externalizable {
              }
         }
 
-        int[] edges = getInEdges(sg.getNodes());
+        // get all incident edges
+        int[] edges = getEdgesIncidentTo(sg.getNodes());
 
+        // then add only the ones where heads and tails are contained in nodes
         for (int i=0; i < edges.length ; i++) {
-            sg.addEdge(getTailNode(edges[i]), getHeadNode(edges[i]));
+
+            int tail = getTailNode(edges[i]);
+            int head = getHeadNode(edges[i]);
+
+            if (sg.containsNode(tail) && sg.containsNode(head)) {
+                sg.addEdge(tail, head);
+            }
         }
 
         return sg;
