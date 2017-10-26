@@ -84,15 +84,7 @@ public class IdentifierDaoImpl implements IdentifierDao {
 			String linkTemplate = resultSet.getString("link_template");
 			identifier.setName(name);
 			identifier.setDatabase(db);
-			
-			try {
-				identifier.setLink(resolveLink(this.masterUniqueName, name, db, linkTemplate));
-			} catch (Exception e) {
-				identifier.setLink("ERROR");
-				System.out.println(name + " " + db + " " + linkTemplate);
-				e.printStackTrace();
-			}
-			
+			identifier.setLink(resolveLink(this.masterUniqueName, name, db, linkTemplate));
 			identifier.setType(resultSet.getString("type"));
 			String typeClass = resultSet.getString("type_class");
 			identifier.setDatabaseCategory(DB_TYPE_NP1_NAMES.containsKey(typeClass) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
