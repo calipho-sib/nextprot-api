@@ -53,17 +53,6 @@ public class EntryPublications implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    @JsonIgnore
-    public List<EntryPublication> getPublications() {
-
-        return publications;
-    }
-
-    public Map<PublicationView, List<EntryPublication>> getPublicationsByView() {
-
-        return publicationsByView;
-    }
-
     public EntryPublication getEntryPublication(long pubId) {
         return reportData.get(pubId);
     }
@@ -74,6 +63,17 @@ public class EntryPublications implements Serializable {
 
     public void setEntryAccession(String entryAccession) {
         this.entryAccession = entryAccession;
+    }
+
+    @JsonIgnore
+    public List<EntryPublication> getEntryPublicationList() {
+
+        return publications;
+    }
+
+    public Map<PublicationView, List<EntryPublication>> getEntryPublicationsMap() {
+
+        return publicationsByView;
     }
 
     public List<EntryPublication> getEntryPublicationList(PublicationView view) {

@@ -45,7 +45,7 @@ public class EntryPublicationController {
 			@RequestParam(value = "publication-view", required = false) String publicationView) {
 
 		if (publicationView == null) {
-			return entryPublicationService.getEntryPublications(entryName).getPublications();
+			return entryPublicationService.getEntryPublications(entryName).getEntryPublicationList();
 		}
 		else if (PublicationView.hasName(publicationView.toUpperCase())) {
 

@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.core.service;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -8,7 +8,6 @@ import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublications;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.domain.publication.PublicationView;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,14 @@ import java.util.List;
 
 //@ActiveProfiles({ "dev","cache" })
 @ActiveProfiles({ "dev" })
-public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
+public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
-	private EntryBuilderService entryBuilderService = null;
-    
-    
+	private EntryPublicationService entryPublicationService;
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
     @Ignore
     @Test
     public void testPerformance() {
@@ -93,7 +94,7 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     		t0.add(System.currentTimeMillis());
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
     		tLoad.add(System.currentTimeMillis()-t0.get(idx));
-	        EntryPublications report = EntryPublicationUtils.fetchEntryPublications(entry);
+	        EntryPublications report = entryPublicationService.getEntryPublications(ac);
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
@@ -129,7 +130,7 @@ public class EntryPublicationUtilsTest extends CoreUnitBaseTest{
     			"NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
     	for (String ac: entryAcList) {
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
-	        EntryPublications report = EntryPublicationUtils.fetchEntryPublications(entry);
+	        EntryPublications report = entryPublicationService.getEntryPublications(ac);
 	        entry.getPublications().forEach(p -> {
 	        	EntryPublication ep = report.getEntryPublication(p.getPublicationId());
 	        	
