@@ -92,4 +92,17 @@ public class TermController {
 
 		return terminologyService.findCvTermByAccession(term);
 	}
+
+    @ApiMethod(path = "/term/{term}/descendant-graph", verb = ApiVerb.GET, description = "Get the children graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/term/{term}/descendant-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, CvTermGraph.View> getDescendantGraph(
+            @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+            @PathVariable("term") String term) {
+
+        CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+
+        CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
+
+        return Collections.singletonMap("descendant-graph", graph.calcDescendantSubgraph(cvTerm.getId().intValue()).toView());
+    }
 }

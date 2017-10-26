@@ -225,4 +225,29 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(9793, graph.countNodes());
         Assert.assertEquals(2091, graph.countEdges());
     }
+
+    @Test
+    public void testBloodTermDescendantSubgraphView() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.GoBiologicalProcessCv, terminologyService);
+
+        CvTermGraph descendantSubgraph = graph.calcDescendantSubgraph(graph.getCvTermIdByAccession("GO:0043491"));
+
+        CvTermGraph.View view = descendantSubgraph.toView();
+
+        Assert.assertEquals("GO:0043491 descendant graph", view.getLabel());
+        Assert.assertEquals(4, view.getNodes().size());
+        Assert.assertEquals(5, view.getEdges().size());
+        Assert.assertEquals(26584, view.getEdges().get(0).getTail());
+        Assert.assertEquals(26586, view.getEdges().get(0).getHead());
+        Assert.assertEquals(20191, view.getEdges().get(1).getTail());
+        Assert.assertEquals(26586, view.getEdges().get(1).getHead());
+        Assert.assertEquals(26584, view.getEdges().get(2).getTail());
+        Assert.assertEquals(26585, view.getEdges().get(2).getHead());
+        Assert.assertEquals(20191, view.getEdges().get(3).getTail());
+        Assert.assertEquals(26585, view.getEdges().get(3).getHead());
+        Assert.assertEquals(20191, view.getEdges().get(4).getTail());
+        Assert.assertEquals(26584, view.getEdges().get(4).getHead());
+    }
+
 }
