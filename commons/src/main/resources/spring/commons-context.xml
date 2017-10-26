@@ -53,7 +53,6 @@
 		</bean>
 
 		<!-- Use a connection pooling datasource -->
-		<!-- 
 		<bean id="dataSource"
 			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 			<property name="driverClassName" value="${db.driver}" />
@@ -61,7 +60,7 @@
 			<property name="username" value="${db.username}" />
 			<property name="password" value="${db.password}" />
 		</bean>
- -->
+<!-- 
 		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
 			<property name="driverClass" value="${db.data.driver}" />
 			<property name="jdbcUrl" value="${db.data.url}" />
@@ -80,6 +79,7 @@
 			<property name="preferredTestQuery" value="SELECT 1" />
 			-->
 		</bean>
+ -->
 		
 		<!-- 
 		<jdbc:embedded-database id="statementsDataSource" type="H2">
