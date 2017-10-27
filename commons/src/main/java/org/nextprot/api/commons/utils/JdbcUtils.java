@@ -3,15 +3,19 @@ package org.nextprot.api.commons.utils;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Utilitary methods for jdbcTemplate
  *
  * @author fnikitin
  */
-public class JdbcTemplateUtils {
+public class JdbcUtils {
 
     /**
      * Insert a row and returns a key number generated for the given column name
@@ -43,5 +47,19 @@ public class JdbcTemplateUtils {
         NPreconditions.checkNotNull(keyHolder.getKey(), "no key was generated for column '" + columnName + "'");
 
         return keyHolder.getKey();
+    }
+
+    public static class LongRowMapper implements ParameterizedRowMapper<Long> {
+
+        private final String columnName;
+
+        public LongRowMapper(String columnName) {
+            this.columnName = columnName;
+        }
+
+        @Override
+        public Long mapRow(ResultSet resultSet, int row) throws SQLException {
+            return resultSet.getLong(columnName);
+        }
     }
 }

@@ -12,12 +12,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class JdbcTemplateUtilsTest {
+public class JdbcUtilsTest {
 
     @Test
     public void test() throws Exception {
 
-        Number generatedKey = JdbcTemplateUtils.insertAndGetKey("insert whatever", "column name", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
+        Number generatedKey = JdbcUtils.insertAndGetKey("insert whatever", "column name", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
 
         Assert.assertEquals(123, generatedKey);
     }
@@ -26,13 +26,13 @@ public class JdbcTemplateUtilsTest {
     @Test(expected = NextProtException.class)
     public void testNonExpectedEmptySql() throws Exception {
 
-        JdbcTemplateUtils.insertAndGetKey("", "column name", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
+        JdbcUtils.insertAndGetKey("", "column name", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
     }
 
     @Test(expected = NextProtException.class)
     public void testNonExpectedEmptyColumnName() throws Exception {
 
-        JdbcTemplateUtils.insertAndGetKey("bla", "", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
+        JdbcUtils.insertAndGetKey("bla", "", mockKeyHolder(123), Mockito.mock(MapSqlParameterSource.class), mockOperation());
     }
 
     private NamedParameterJdbcOperations mockOperation() {
