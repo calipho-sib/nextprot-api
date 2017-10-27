@@ -3,6 +3,7 @@ package org.nextprot.api.core.domain.publication;
 import org.nextprot.api.core.ui.page.PageView;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -78,8 +79,11 @@ public class EntryPublication implements Serializable {
         return  citedInViews;
     }
 
-    public void addCitedInViews(PageView pageView) {
-        this.citedInViews.put(pageView.getLabel(), "/entry/" + entryAccession + "/" + pageView.getLink());
+    public void addCitedInViews(Collection<PageView> pageViews) {
+
+        pageViews.forEach(pageView ->
+                citedInViews.putIfAbsent(pageView.getLabel(),
+                        "/entry/" + entryAccession + "/" + pageView.getLink()));
     }
 
     public String toString() {

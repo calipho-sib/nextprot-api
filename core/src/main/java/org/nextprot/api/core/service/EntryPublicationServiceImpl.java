@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
@@ -11,7 +10,6 @@ import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.ui.page.PageView;
-import org.nextprot.api.core.ui.page.PageViewFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class EntryPublicationServiceImpl implements EntryPublicationService {
@@ -51,21 +50,31 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
         public EntryPublications build() {
 
-            Map<Long, EntryPublication> reportData = new HashMap<>();
+            Map<Long, EntryPublication> entryPublicationMap = new HashMap<>();
 
-            // handle publications cited in annotation evidences (link A)
+            // extract publications cited in annotation evidences (link A) and update references to PageViews
             entry.getAnnotations()
-                    .forEach(annot -> annot.getEvidences()
-                            .forEach(evi -> handlePublicationAnnotationEvidence(annot.getAPICategory(), evi, reportData)));
+                    .forEach(annotation -> annotation.getEvidences().stream()
+                        .map(evidence -> extractPubIdFromEvidence(evidence))
+                        .filter(Objects::nonNull)
+                        .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> new EntryPublication(entry.getUniqueName(), pubId)))
+                        .forEach(entryPublication -> {
+                            entryPublication.setCited(true);
+                            entryPublication.addCitedInViews(PageView.getDisplayablePageViews(annotation));
+                        }));
 
             // handle direct links (B and C) but publications with A link are further processed also
             entry.getPublications()
-                    .forEach(p -> handlePublicationDirectLinks(p, reportData));
+                    .forEach(publication -> {
+                        long pubId = publication.getPublicationId();
+                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> new EntryPublication(entry.getUniqueName(), pubId));
+                        handlePublicationDirectLinks(publication, entryPublication);
+                    });
 
             EntryPublications entryPublications = new EntryPublications();
 
             entryPublications.setEntryAccession(entry.getUniqueName());
-            entryPublications.setReportData(reportData);
+            entryPublications.setReportData(entryPublicationMap);
 
             return entryPublications;
         }
@@ -88,53 +97,33 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             return null;
         }
 
-        private void addEntryPublicationToReportDataIfNecessary(long pubId, Map<Long,EntryPublication> reportData) {
-            if (! reportData.containsKey(pubId)) reportData.put(pubId, new EntryPublication(entry.getUniqueName(), pubId));
-        }
+        private Long extractPubIdFromEvidence(AnnotationEvidence evi) {
 
-        private void handlePublicationAnnotationEvidence(AnnotationCategory annotationCategory, AnnotationEvidence evi, Map<Long,EntryPublication> reportData) {
-
-            // normal case
-            Long pubId = null;
             if (evi.isResourceAPublication()) {
-                pubId = evi.getResourceId();
+                return evi.getResourceId();
                 // special cases with indirect link to publication via an evidence xref
             } else if (PUBMED_DB.equals(evi.getResourceDb()) || NEXTPROT_SUBMISSION_DB.equals(evi.getResourceDb())) {
                 String ac = evi.getResourceAccession();
-                pubId = accession2id.get(ac);
+                return accession2id.get(ac);
             }
-            if (pubId != null) {
-                addEntryPublicationToReportDataIfNecessary(pubId, reportData);
-                EntryPublication ep = reportData.get(pubId);
-                ep.setCited(true);
 
-                // add stuff for citedInViews
-                for (PageView pv: PageViewFactory.getPageViews()) {
-                    if (pv.doesDisplayAnnotationCategory(annotationCategory)) {
-                        ep.addCitedInViews(pv);
-                    }
-                }
-            }
+            return null;
         }
 
-        private void handlePublicationDirectLinks(Publication p, Map<Long,EntryPublication> reportData) {
-            long pubId = p.getPublicationId();
-            addEntryPublicationToReportDataIfNecessary(pubId, reportData);
-            EntryPublication ep = reportData.get(pubId);
+        private void handlePublicationDirectLinks(Publication p, EntryPublication ep) {
+
             if (!p.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
                 ep.setCited(true);
             }
             if (!p.getDirectLinks(PublicationProperty.COMMENT).isEmpty() && !ep.isCited()) {
                 ep.setUncited(true);
             }
-            handlePublicationFlagsByType(p,ep);
+            handlePublicationFlagsByType(ep, PublicationType.valueOfName(p.getPublicationType()));
         }
 
-        private void handlePublicationFlagsByType(Publication p, EntryPublication ep) {
+        private void handlePublicationFlagsByType(EntryPublication ep, PublicationType publicationType) {
 
             // by order of frequency to minimize comparisons
-            PublicationType publicationType = PublicationType.valueOfName(p.getPublicationType());
-
             if (publicationType==PublicationType.ARTICLE) {
                 if (ep.isCited()) ep.setCurated(true);
                 if (ep.isUncited()) ep.setAdditional(true);

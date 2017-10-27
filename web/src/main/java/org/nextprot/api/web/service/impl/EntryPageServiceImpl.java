@@ -32,7 +32,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
 		for (PageViewFactory page : PageViewFactory.values()) {
 
-			PageView pv = page.build();
+			PageView pv = page.getPageView();
 			map.put(pv.getLabel(), pv.doDisplayPage(entry));
 		}
 
@@ -44,7 +44,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
-        PageView pageView = PageViewFactory.valueOf(pageViewName.toUpperCase()).build();
+        PageView pageView = PageViewFactory.valueOf(pageViewName.toUpperCase()).getPageView();
 
         List<DbXref> xrefs = pageView.getFurtherExternalLinksXrefs(entry);
 
