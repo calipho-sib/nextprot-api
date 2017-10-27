@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain.publication;
 
+import org.nextprot.api.core.ui.page.PageView;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
@@ -75,12 +77,14 @@ public class EntryPublication implements Serializable {
     public Map<String,String> getCitedInViews() {
         return  citedInViews;
     }
-    public void addCitedInViews(String label, String link) {
-        this.citedInViews.put(label,link);
+
+    public void addCitedInViews(PageView pageView) {
+        this.citedInViews.put(pageView.getLabel(), "/entry/" + entryAccession + "/" + pageView.getLink());
     }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
+        sb.append("entry:").append(entryAccession).append(" ");
         sb.append("id:").append(pubId).append(" ");
         sb.append("cited:").append(cited).append(" ");
         sb.append("uncited:").append(uncited).append(" ");

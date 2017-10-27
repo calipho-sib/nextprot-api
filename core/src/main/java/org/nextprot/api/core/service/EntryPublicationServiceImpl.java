@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublications;
@@ -56,7 +56,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             // handle publications cited in annotation evidences (link A)
             entry.getAnnotations()
                     .forEach(annot -> annot.getEvidences()
-                            .forEach(evi -> handlePublicationAnnotationEvidence(annot, evi, reportData)));
+                            .forEach(evi -> handlePublicationAnnotationEvidence(annot.getAPICategory(), evi, reportData)));
 
             // handle direct links (B and C) but publications with A link are further processed also
             entry.getPublications()
@@ -92,7 +92,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             if (! reportData.containsKey(pubId)) reportData.put(pubId, new EntryPublication(entry.getUniqueName(), pubId));
         }
 
-        private void handlePublicationAnnotationEvidence(Annotation annot, AnnotationEvidence evi, Map<Long,EntryPublication> reportData) {
+        private void handlePublicationAnnotationEvidence(AnnotationCategory annotationCategory, AnnotationEvidence evi, Map<Long,EntryPublication> reportData) {
 
             // normal case
             Long pubId = null;
@@ -110,9 +110,8 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
                 // add stuff for citedInViews
                 for (PageView pv: PageViewFactory.getPageViews()) {
-                    if (pv.doesDisplayAnnotationCategory(annot.getAPICategory())) {
-                        String link = "/entry/" + entry.getUniqueName() + "/" + pv.getLink();
-                        ep.addCitedInViews(pv.getLabel(), link);
+                    if (pv.doesDisplayAnnotationCategory(annotationCategory)) {
+                        ep.addCitedInViews(pv);
                     }
                 }
             }
@@ -122,11 +121,9 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             long pubId = p.getPublicationId();
             addEntryPublicationToReportDataIfNecessary(pubId, reportData);
             EntryPublication ep = reportData.get(pubId);
-            //List<String> scopes = p.getProperty("scopes");
             if (!p.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
                 ep.setCited(true);
             }
-            //List<String> comments = p.getProperty("comment");
             if (!p.getDirectLinks(PublicationProperty.COMMENT).isEmpty() && !ep.isCited()) {
                 ep.setUncited(true);
             }
