@@ -94,7 +94,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     		t0.add(System.currentTimeMillis());
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
     		tLoad.add(System.currentTimeMillis()-t0.get(idx));
-	        EntryPublications report = entryPublicationService.getEntryPublications(ac);
+	        EntryPublications report = entryPublicationService.findEntryPublications(ac);
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
@@ -130,7 +130,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     			"NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
     	for (String ac: entryAcList) {
 	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
-	        EntryPublications report = entryPublicationService.getEntryPublications(ac);
+	        EntryPublications report = entryPublicationService.findEntryPublications(ac);
 	        entry.getPublications().forEach(p -> {
 	        	EntryPublication ep = report.getEntryPublication(p.getPublicationId());
 	        	

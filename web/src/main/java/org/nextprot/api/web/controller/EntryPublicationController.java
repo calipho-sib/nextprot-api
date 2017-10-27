@@ -31,7 +31,7 @@ public class EntryPublicationController {
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName) {
 
-		return entryPublicationService.getEntryPublications(entryName);
+		return entryPublicationService.findEntryPublications(entryName);
 	}
 
 	@ApiMethod(path = "/entry-publications/{entry}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry",
@@ -45,11 +45,11 @@ public class EntryPublicationController {
 			@RequestParam(value = "publication-view", required = false) String publicationView) {
 
 		if (publicationView == null) {
-			return entryPublicationService.getEntryPublications(entryName).getEntryPublicationList();
+			return entryPublicationService.findEntryPublications(entryName).getEntryPublicationList();
 		}
 		else if (PublicationView.hasName(publicationView.toUpperCase())) {
 
-			return entryPublicationService.getEntryPublications(entryName)
+			return entryPublicationService.findEntryPublications(entryName)
 					.getEntryPublicationList(PublicationView.valueOf(publicationView.toUpperCase()));
 		}
 
@@ -66,6 +66,6 @@ public class EntryPublicationController {
 			@ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
 			@PathVariable("pubid") long publicationId) {
 
-		return entryPublicationService.getEntryPublications(entryName).getEntryPublication(publicationId);
+		return entryPublicationService.findEntryPublications(entryName).getEntryPublication(publicationId);
 	}
 }

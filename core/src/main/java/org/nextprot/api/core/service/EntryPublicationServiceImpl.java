@@ -28,7 +28,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
     @Cacheable("entry-publications")
     @Override
-    public EntryPublications getEntryPublications(String entryAccession) {
+    public EntryPublications findEntryPublications(String entryAccession) {
 
         EntryPublicationsBuilder builder = new EntryPublicationsBuilder(entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything()));
 

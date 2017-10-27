@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.PublicationDao;
@@ -45,7 +46,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new LongRowMapper("resource_id"));
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new JdbcUtils.LongRowMapper("resource_id"));
 	}
 
 	@Override
@@ -145,21 +146,7 @@ public class PublicationDaoImpl implements PublicationDao {
 	@Override
 	public List<Long> findAllPublicationsIds() {
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper("pub_id"));
-	}
-
-	private static class LongRowMapper implements ParameterizedRowMapper<Long> {
-
-		private final String columnName;
-
-		LongRowMapper(String columnName) {
-			this.columnName = columnName;
-		}
-
-		@Override
-		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
-			return resultSet.getLong(columnName);
-		}
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new JdbcUtils.LongRowMapper("pub_id"));
 	}
 
 	@Override
