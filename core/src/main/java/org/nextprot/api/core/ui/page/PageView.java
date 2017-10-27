@@ -6,8 +6,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Provides useful methods to retrieve entry data for a given entry page view
@@ -57,9 +58,18 @@ public interface PageView {
 
 	/**
 	 * Used by EntryPublicationUtils to build the "Cited for" field content
-	 * @param AnnotationCategory
+	 * @param annotationCategory
 	 * @return true it the view displays the annotation category either in the generic annotation viewer or in the feature triple viewer
 	 */
-	boolean doesDisplayAnnotationCategory(AnnotationCategory cat);
+	boolean doesDisplayAnnotationCategory(AnnotationCategory annotationCategory);
 
+    /**
+     * @return the set of page views able to display this annotation
+     */
+	static Set<PageView> getDisplayablePageViews(Annotation annotation) {
+
+	    return PageViewFactory.getPageViews().stream()
+                .filter(pageView -> pageView.doesDisplayAnnotationCategory(annotation.getAPICategory()))
+                .collect(Collectors.toSet());
+    }
 }
