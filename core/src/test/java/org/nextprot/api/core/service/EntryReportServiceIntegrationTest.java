@@ -65,7 +65,18 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(1, reports.size());
 	}
-	
+
+    @Test
+    public void NX_P01308ShouldHaveAlsoPubInfos() {
+
+        List<EntryReport> reports = entryReportService.reportEntry("NX_P01308");
+        Assert.assertEquals(3, reports.get(0).countWebResources());
+        Assert.assertEquals(4, reports.get(0).countSubmissions());
+        Assert.assertEquals(0, reports.get(0).countPatents());
+        Assert.assertEquals(639, reports.get(0).countAdditionalPublications());
+        Assert.assertEquals(84, reports.get(0).countCuratedPublications());
+    }
+
 	@Ignore 
 	@Test // ok on np_20170413
 	public void TheseShouldHaveProteomicsFalse() {

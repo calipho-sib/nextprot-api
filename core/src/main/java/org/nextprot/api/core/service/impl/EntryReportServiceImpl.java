@@ -6,12 +6,13 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     private IsoformService isoformService;
 
     @Autowired
-    private PublicationService publicationService;
+    private EntryPublicationService entryPublicationService;
 
     @Cacheable("entry-reports")
     @Override
@@ -104,10 +105,9 @@ public class EntryReportServiceImpl implements EntryReportService {
     		result = true;
     	}
     	
-    	else if (entry.getPublications().stream().anyMatch(this::hasMassSpecScope)) {
+    	else if (entry.getPublications().stream().anyMatch(pub -> hasMassSpecScope(entry.getUniqueName(), pub.getPublicationId()))) {
     		result = true;
- 
-    	
+
     	} else if (entry.getAnnotations().stream()
     			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
     		result = true;
@@ -117,9 +117,11 @@ public class EntryReportServiceImpl implements EntryReportService {
     }
 
     
-    private boolean hasMassSpecScope(Publication pub) {
+    private boolean hasMassSpecScope(String entryAccession, long pubId) {
+
     	//return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
-    	return pub.getDirectLinks(PublicationProperty.SCOPE).stream().anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
+    	return entryPublicationService.findEntryPublications(entryAccession).getEntryPublication(pubId).getDirectLinks(PublicationProperty.SCOPE).stream()
+                .anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
@@ -268,31 +270,31 @@ public class EntryReportServiceImpl implements EntryReportService {
     private void setCuratedPublicationCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
-                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.CURATED));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.CURATED));
     }
 
     private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
-                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.ADDITIONAL));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.ADDITIONAL));
     }
 
     private void setPatentCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.PATENT_COUNT,
-                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.PATENT));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.PATENT));
     }
 
     private void setSubmissionCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
-                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.SUBMISSION));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.SUBMISSION));
     }
 
     private void setWebResourceCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
-                publicationService.countPublicationsByEntryName(entry.getUniqueName(), PublicationView.WEB_RESOURCE));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.WEB_RESOURCE));
     }
 
     boolean isGoldAnnotation(Annotation annot) {
@@ -328,7 +330,6 @@ public class EntryReportServiceImpl implements EntryReportService {
 		List<Annotation> ptms = entry.getAnnotationsByCategory()
 				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
 
-		//System.out.println(null==ptms ? "ptms:null" : "ptms:" + ptms.size());
 		return nullableListToStream(ptms)
 				.anyMatch(annot -> isGoldAnnotation(annot) &&
 				 		annotationTermMatchesPattern(annot, ptmRegExp) &&
@@ -337,4 +338,26 @@ public class EntryReportServiceImpl implements EntryReportService {
 						)
 				);
 	}
+
+    /**
+     * Retrieves publications by master's unique name filtered by a view
+     *
+     * @param entryAccession the entry accession
+     * @param publicationView the publication view
+     * @return a list of Publication
+     */
+    private List<EntryPublication> reportPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
+
+        return entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(publicationView);
+    }
+
+    /**
+     * Count the number of publication linked to this entry for the given view
+     * @param entryAccession the entry accession
+     * @param publicationView the publication view
+     */
+    private int countPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
+
+        return reportPublicationsByEntryName(entryAccession, publicationView).size();
+    }
 }
