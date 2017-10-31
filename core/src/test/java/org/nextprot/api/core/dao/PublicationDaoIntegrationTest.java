@@ -25,7 +25,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Publication publication = publicationDao.findPublicationById(681448L);
 
-		Assert.assertEquals(PublicationType.ARTICLE, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.ARTICLE, publication.getPublicationType());
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
 		Assert.assertTrue(publication.isLocatedInScientificJournal());
 		Assert.assertTrue(!publication.isLocatedInEditedVolumeBook());
@@ -51,7 +51,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 		
 		Publication publication = publicationDao.findPublicationById(15642147L);
 
-		Assert.assertEquals(PublicationType.BOOK, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.BOOK, publication.getPublicationType());
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
 		Assert.assertTrue(!publication.isLocatedInScientificJournal());
 		Assert.assertTrue(publication.isLocatedInEditedVolumeBook());
@@ -69,7 +69,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Publication publication = publicationDao.findPublicationById(3183821L);
 
-		Assert.assertEquals(PublicationType.ONLINE_PUBLICATION, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.ONLINE_PUBLICATION, publication.getPublicationType());
 		Assert.assertTrue(!publication.isLocalizableInBookMedium());
 		Assert.assertEquals("SHMPD", publication.getPublicationResourceLocator().getName());
 		Assert.assertEquals("http://shmpd.bii.a-star.edu.sg/gene.php?genestart=A&genename=BRCA1", ((WebPublicationPage)publication.getPublicationResourceLocator()).getUrl());

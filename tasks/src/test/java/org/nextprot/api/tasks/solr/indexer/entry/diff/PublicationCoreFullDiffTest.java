@@ -1,16 +1,11 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Arrays;
-
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.PublicationIndex.PubField;
@@ -18,6 +13,8 @@ import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.*;
 
 public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
@@ -34,8 +31,8 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		for(int i=0; i < 0; i++)
 		  {
 		  Long pubid = allpubids.get(i);
-		  String pubtype = publicationService.findPublicationById(pubid).getPublicationType();
-		  if(pubtype.equals("ARTICLE"))
+		  PublicationType pubtype = publicationService.findPublicationById(pubid).getPublicationType();
+		  if(pubtype.equals(PublicationType.ARTICLE))
 		    testPublicationData(pubid);
 		  } 
 		

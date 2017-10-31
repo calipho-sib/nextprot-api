@@ -15,7 +15,7 @@ import java.util.SortedSet;
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
 
-	private static final long serialVersionUID = 4404147147281845675L;
+	private static final long serialVersionUID = 2L;
 
 	@ApiObjectField(description = "The neXtProt identifier of the publication")
 	private Long id;
@@ -30,7 +30,7 @@ public class Publication implements Serializable{
 	private String abstractText;
 
 	@ApiObjectField(description = "The type")
-	private String publicationType;
+	private PublicationType publicationType;
 
 	@ApiObjectField(description = "The publication date")
 	private Date publicationDate;
@@ -214,11 +214,11 @@ public class Publication implements Serializable{
 		return "";
 	}
 
-	public String getPublicationType() {
+	public PublicationType getPublicationType() {
 		return publicationType;
 	}
 
-	public void setPublicationType(String publicationType) {
+	public void setPublicationType(PublicationType publicationType) {
 		this.publicationType = publicationType;
 	}
 
