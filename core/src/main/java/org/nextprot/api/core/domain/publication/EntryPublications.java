@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Collection of Publications associated with a neXtProt entry
+ * Collection of Publications informations associated with a neXtProt entry
  */
 public class EntryPublications implements Serializable {
 
@@ -78,7 +78,7 @@ public class EntryPublications implements Serializable {
 
     public List<EntryPublication> getEntryPublicationList(PublicationView view) {
 
-        return publicationsByView.get(view);
+        return publicationsByView.getOrDefault(view, new ArrayList<>());
     }
 
     /* useful ?

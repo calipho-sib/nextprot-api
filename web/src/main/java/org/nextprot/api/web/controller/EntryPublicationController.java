@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
@@ -68,4 +70,22 @@ public class EntryPublicationController {
 
 		return entryPublicationService.findEntryPublications(entryName).getEntryPublication(publicationId);
 	}
+
+    @ApiMethod(path = "/entry-publications/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by category",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry-publications/{entry}/count", method = { RequestMethod.GET })
+    @ResponseBody
+    public Map<PublicationView, Integer> countEntryPublication(
+            @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+            @PathVariable("entry") String entryAccession) {
+
+	    Map<PublicationView, Integer> count = new HashMap<>();
+
+	    for (PublicationView view : PublicationView.values()) {
+
+            count.put(view, entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(view).size());
+        }
+
+        return count;
+    }
 }
