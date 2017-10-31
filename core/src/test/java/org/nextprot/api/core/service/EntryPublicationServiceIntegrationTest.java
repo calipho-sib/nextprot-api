@@ -159,15 +159,15 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 	        	if (ep.isUncited()) otherFlagsOn++;
 	        	Assert.assertEquals(1,otherFlagsOn);  
 	        	// ONLINE publications should flags: online=ON and cited=ON
-	        	if (PublicationType.valueOfName(p.getPublicationType())==PublicationType.ONLINE_PUBLICATION) {	
+	        	if (p.getPublicationType()==PublicationType.ONLINE_PUBLICATION) {
 	        		Assert.assertEquals(true,ep.isOnline());
 	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
 	        	}
-	        	if (PublicationType.valueOfName(p.getPublicationType())==PublicationType.SUBMISSION) {	
+	        	if (p.getPublicationType()==PublicationType.SUBMISSION) {
 	        		Assert.assertEquals(true,ep.isSubmission());
 	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
 	        	}
-	        	if (PublicationType.valueOfName(p.getPublicationType())==PublicationType.UNPUBLISHED_OBSERVATION) {	
+	        	if (p.getPublicationType()==PublicationType.UNPUBLISHED_OBSERVATION) {
 	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
 	        		Assert.assertEquals(true,ep.isCurated()); // always link B and opt. link A, both from UniProt  
 	        	}

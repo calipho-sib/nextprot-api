@@ -23,7 +23,8 @@ import java.util.Map;
 @Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
 public class EntryPublicationController {
 
-	@Autowired private EntryPublicationService entryPublicationService;
+	@Autowired
+    private EntryPublicationService entryPublicationService;
 
 	@ApiMethod(path = "/entry-publications/report/{entry}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry",
 			produces = { MediaType.APPLICATION_JSON_VALUE })

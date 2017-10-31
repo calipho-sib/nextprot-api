@@ -80,7 +80,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                         long pubId = publication.getPublicationId();
                         EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> entryPublicationDao.buildEntryPublication(entry.getUniqueName(), pubId));
                         handlePublicationDirectLinks(entryPublication);
-                        handlePublicationFlagsByType(entryPublication, PublicationType.valueOfName(publication.getPublicationType()));
+                        handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
                     });
 
             return entryPublicationMap;
