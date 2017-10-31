@@ -4,10 +4,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublications;
-import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.domain.publication.PublicationView;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +14,16 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-//@ActiveProfiles({ "dev","cache" })
 @ActiveProfiles({ "dev" })
 public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
 	private EntryPublicationService entryPublicationService;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @Autowired
     private EntryBuilderService entryBuilderService;
@@ -129,11 +130,12 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     	List<String> entryAcList = new ArrayList<>(Arrays.asList(
     			"NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
     	for (String ac: entryAcList) {
-	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
-	        EntryPublications report = entryPublicationService.findEntryPublications(ac);
-	        entry.getPublications().forEach(p -> {
-	        	EntryPublication ep = report.getEntryPublication(p.getPublicationId());
-	        	
+
+            List<Publication> publications = publicationService.findPublicationsByEntryName(ac);
+	        EntryPublications entryPublications = entryPublicationService.findEntryPublications(ac);
+            publications.forEach(p -> {
+	        	EntryPublication ep = entryPublications.getEntryPublication(p.getPublicationId());
+
 	        	// for debugging
 	        	/*
 	        	String pro = entry.getUniqueName();
@@ -171,5 +173,40 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 	        	}
 	        });
     	}
+    }
+
+    @Test
+    public void testPublicationDirectLinksFromAnEntry() {
+
+        EntryPublications entryPublications = entryPublicationService.findEntryPublications("NX_Q14587");
+
+        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList().stream()
+                .filter(ep -> ep.getPubId() == 29230867)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(1, filteredSingleton.size());
+
+        List<PublicationDirectLink> directLinks = filteredSingleton.get(0).getDirectLinks();
+
+        Assert.assertEquals(3, directLinks.size());
+
+        String[] expectedLabels = new String[] {"INTERACTION WITH TRIM28", "MUTAGENESIS OF ASP-85; VAL-86; VAL-88; PHE-90; GLU-93; GLU-94 AND TRP-95", "SUBCELLULAR LOCATION (ISOFORMS 1 AND 2)"};
+
+        for (int i=0 ; i<3 ;i++) {
+
+            Assert.assertEquals(29230867, directLinks.get(i).getPublicationId());
+            Assert.assertEquals("Uniprot", directLinks.get(i).getDatasource());
+            Assert.assertEquals("UniProtKB", directLinks.get(i).getDatabase());
+            Assert.assertEquals(expectedLabels[i], directLinks.get(i).getLabel());
+        }
+    }
+
+    @Test
+    public void testPublicationDirectLinksFromAnEntryForSubmissionView() {
+
+        List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_Q14587")
+                .getEntryPublicationList(PublicationView.SUBMISSION);
+
+        Assert.assertEquals(1, publications.size());
     }
 }

@@ -2,17 +2,20 @@ package org.nextprot.api.core.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class PublicationTest {
+public class EntryPublicationTest {
 
     @Test
     public void testPublicationDirectLinkListOrder() {
 
-        Publication p = new Publication();
+        EntryPublication p = new EntryPublication("", 12);
         List<String> scopes = Arrays.asList(
                 "VARIANT SCA34 PHE-168",
                 "CLEAVAGE OF INITIATOR METHIONINE [LARGE SCALE ANALYSIS]",
@@ -24,13 +27,11 @@ public class PublicationTest {
                 "[PRO:PR:000028557] [PTM/processing]P18848-1",
                 "[GAD:125207] [Pathology & Biotech]Associated with CARDIOVASCULAR: pulmonary hypertension; thrombosis, deep vein; pulmonary thromboembolism; HLA-B");
 
-        Map<PublicationProperty, List<PublicationDirectLink>> m = new HashMap<>();
-        m.put(PublicationProperty.SCOPE, new ArrayList<>());
-        m.put(PublicationProperty.COMMENT, new ArrayList<>());
-        scopes.forEach(scope -> m.get(PublicationProperty.SCOPE).add(new PublicationDirectLink(188, PublicationProperty.SCOPE, scope)));
-        comments.forEach(comment -> m.get(PublicationProperty.COMMENT).add(new PublicationDirectLink(188, PublicationProperty.COMMENT, comment)));
+        List<PublicationDirectLink> list = new ArrayList<>();
+        scopes.forEach(scope -> list.add(new PublicationDirectLink(188, PublicationProperty.SCOPE, scope)));
+        comments.forEach(comment -> list.add(new PublicationDirectLink(188, PublicationProperty.COMMENT, comment)));
 
-        p.setDirectLinks(m);
+        p.setDirectLinks(list);
 
         Assert.assertEquals(3, p.getDirectLinks(PublicationProperty.SCOPE).size());
         Assert.assertEquals(5, p.getDirectLinks(PublicationProperty.COMMENT).size());
@@ -60,21 +61,21 @@ public class PublicationTest {
     @Test
     public void testPublicationDirectLinkListEmpty() {
 
-        Publication p = new Publication();
+        EntryPublication p = new EntryPublication("", 12);
         Assert.assertTrue(p.getDirectLinks().isEmpty());
     }
 
     @Test
     public void testPublicationDirectLinkListScopeEmpty() {
 
-        Publication p = new Publication();
+        EntryPublication p = new EntryPublication("", 12);
         Assert.assertTrue(p.getDirectLinks(PublicationProperty.SCOPE).isEmpty());
     }
 
     @Test
     public void testPublicationDirectLinkListCommentEmpty() {
 
-        Publication p = new Publication();
+        EntryPublication p = new EntryPublication("", 12);
         Assert.assertTrue(p.getDirectLinks(PublicationProperty.SCOPE).isEmpty());
     }
 }

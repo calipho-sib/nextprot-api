@@ -17,6 +17,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 	private String accession;   // null when database = UniProtKB
 	private String link;        // null when database = UniProtKB
 	private String label;
+	private PublicationProperty publicationProperty;
 
     PublicationDirectLink(long publicationId, String propertyName, String propertyValue) {
 
@@ -26,6 +27,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 	public PublicationDirectLink(long publicationId, PublicationProperty propertyName, String propertyValue) {
 
 		this.publicationId = publicationId;
+		this.publicationProperty = propertyName;
 
 		if (propertyName == PublicationProperty.SCOPE) {
 
@@ -96,8 +98,11 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		this.label = label;
 	}
 
+    public PublicationProperty getPublicationProperty() {
+        return publicationProperty;
+    }
 
-	@Override
+    @Override
 	public int compareTo(PublicationDirectLink o) {
 		int res;
 		res = -this.datasource.compareTo(o.datasource);  // UniProt first, then PIR stuff

@@ -1,5 +1,6 @@
-package org.nextprot.api.core.service;
+package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.core.dao.EntryPublicationDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
@@ -8,6 +9,8 @@ import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublications;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.ui.page.PageView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,60 +26,64 @@ import java.util.Objects;
 public class EntryPublicationServiceImpl implements EntryPublicationService {
 
     @Autowired
+    private EntryPublicationDao entryPublicationDao;
+
+    @Autowired
     private EntryBuilderService entryBuilderService;
 
     @Cacheable("entry-publications")
     @Override
     public EntryPublications findEntryPublications(String entryAccession) {
 
-        EntryPublicationsBuilder builder = new EntryPublicationsBuilder(entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything()));
+        Map<Long, EntryPublication> map = new EntryPublicationMapBuilder(entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything())).build();
 
-        return builder.build();
+        EntryPublications entryPublications = new EntryPublications();
+        entryPublications.setEntryAccession(entryAccession);
+        entryPublications.setReportData(map);
+
+        return entryPublications;
     }
 
-    private static class EntryPublicationsBuilder {
+    private class EntryPublicationMapBuilder {
 
         // values should be equal to cv_databases.cv_name
-        private static final String PUBMED_DB="PubMed", NEXTPROT_SUBMISSION_DB="neXtProtSubmission";
+        private static final String PUBMED_DB = "PubMed";
+        private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
 
         private final Entry entry;
-        private final Map<String,Long> accession2id;
+        private final Map<String, Long> accession2id;
 
-        EntryPublicationsBuilder(Entry entry) {
+        EntryPublicationMapBuilder(Entry entry) {
 
             this.entry = entry;
             accession2id = buildAccessionToIdMap(entry.getPublications());
         }
 
-        public EntryPublications build() {
+        public Map<Long, EntryPublication> build() {
 
             Map<Long, EntryPublication> entryPublicationMap = new HashMap<>();
 
             // extract publications cited in annotation evidences (link A) and update references to PageViews
             entry.getAnnotations()
                     .forEach(annotation -> annotation.getEvidences().stream()
-                        .map(evidence -> extractPubIdFromEvidence(evidence))
-                        .filter(Objects::nonNull)
-                        .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> new EntryPublication(entry.getUniqueName(), pubId)))
-                        .forEach(entryPublication -> {
-                            entryPublication.setCited(true);
-                            entryPublication.addCitedInViews(PageView.getDisplayablePageViews(annotation));
-                        }));
+                            .map(evidence -> extractPubIdFromEvidence(evidence))
+                            .filter(Objects::nonNull)
+                            .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> entryPublicationDao.buildEntryPublication(entry.getUniqueName(), pubId)))
+                            .forEach(entryPublication -> {
+                                entryPublication.setCited(true);
+                                entryPublication.addCitedInViews(PageView.getDisplayablePageViews(annotation));
+                            }));
 
             // handle direct links (B and C) but publications with A link are further processed also
             entry.getPublications()
                     .forEach(publication -> {
                         long pubId = publication.getPublicationId();
-                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> new EntryPublication(entry.getUniqueName(), pubId));
-                        handlePublicationDirectLinks(publication, entryPublication);
+                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> entryPublicationDao.buildEntryPublication(entry.getUniqueName(), pubId));
+                        handlePublicationDirectLinks(entryPublication);
+                        handlePublicationFlagsByType(entryPublication, PublicationType.valueOfName(publication.getPublicationType()));
                     });
 
-            EntryPublications entryPublications = new EntryPublications();
-
-            entryPublications.setEntryAccession(entry.getUniqueName());
-            entryPublications.setReportData(entryPublicationMap);
-
-            return entryPublications;
+            return entryPublicationMap;
         }
 
         private Map<String,Long> buildAccessionToIdMap(List<Publication> pubs) {
@@ -110,15 +117,14 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             return null;
         }
 
-        private void handlePublicationDirectLinks(Publication p, EntryPublication ep) {
+        private void handlePublicationDirectLinks(EntryPublication ep) {
 
-            if (!p.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
+            if (!ep.getDirectLinks(PublicationProperty.SCOPE).isEmpty()) {
                 ep.setCited(true);
             }
-            if (!p.getDirectLinks(PublicationProperty.COMMENT).isEmpty() && !ep.isCited()) {
+            if (!ep.getDirectLinks(PublicationProperty.COMMENT).isEmpty() && !ep.isCited()) {
                 ep.setUncited(true);
             }
-            handlePublicationFlagsByType(ep, PublicationType.valueOfName(p.getPublicationType()));
         }
 
         private void handlePublicationFlagsByType(EntryPublication ep, PublicationType publicationType) {

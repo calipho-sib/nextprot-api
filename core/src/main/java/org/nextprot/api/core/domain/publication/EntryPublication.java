@@ -3,9 +3,8 @@ package org.nextprot.api.core.domain.publication;
 import org.nextprot.api.core.ui.page.PageView;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntryPublication implements Serializable {
 
@@ -15,10 +14,14 @@ public class EntryPublication implements Serializable {
     private long pubId;
     private boolean cited, uncited, patent, submission, online, curated, additional;
     private Map<String,String> citedInViews = new TreeMap<>();
+    private Map<PublicationProperty, List<PublicationDirectLink>> directLinksMap;
+    private List<PublicationDirectLink> directLinks;
 
     public EntryPublication(String entryAccession, long pubId) {
         this.entryAccession = entryAccession;
         this.pubId = pubId;
+        this.directLinksMap = new HashMap<>();
+        this.directLinks = new ArrayList<>();
     }
 
     public String getEntryAccession() {
@@ -77,6 +80,24 @@ public class EntryPublication implements Serializable {
      */
     public Map<String,String> getCitedInViews() {
         return  citedInViews;
+    }
+
+    public List<PublicationDirectLink> getDirectLinks() {
+        return (directLinks != null) ? directLinks : new ArrayList<>();
+    }
+
+    public List<PublicationDirectLink> getDirectLinks(PublicationProperty propertyName) {
+        if (directLinksMap == null) return new ArrayList<>();
+        return directLinksMap.getOrDefault(propertyName, new ArrayList<>());
+    }
+
+    public void setDirectLinks(List<PublicationDirectLink> directLinks) {
+
+        this.directLinksMap = directLinks.stream()
+                .collect(Collectors.groupingBy(PublicationDirectLink::getPublicationProperty));
+        this.directLinks = directLinks.stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public void addCitedInViews(Collection<PageView> pageViews) {

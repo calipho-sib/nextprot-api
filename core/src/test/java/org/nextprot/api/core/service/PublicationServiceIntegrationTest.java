@@ -1,20 +1,18 @@
 package org.nextprot.api.core.service;
 
 //import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.PublicationDirectLink;
-import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 //import org.nextprot.api.core.utils.TerminologyUtils;
 
@@ -75,42 +73,4 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 		 Publication publication = publicationService.findPublicationByDatabaseAndAccession("DOI", "10.1111/j.1349-7006.2012.02267.x");
 		 Assert.assertEquals("High levels of DJ-1 protein in nipple fluid of patients with breast cancer.", publication.getTitle());
 	}
-
-    // TODO: Should be in EntryPublication instead
-    @Test
-    public void testPublicationDirectLinksFromAnEntry() {
-
-        List<Publication> publications = publicationService.findPublicationsByEntryName("NX_Q14587");
-
-        List<Publication> filteredSingleton = publications.stream()
-                .filter(publication -> publication.getPublicationId() == 29230867)
-                .collect(Collectors.toList());
-
-        Assert.assertEquals(1, filteredSingleton.size());
-
-        List<PublicationDirectLink> directLinks = filteredSingleton.get(0).getDirectLinks();
-
-        Assert.assertEquals(3, directLinks.size());
-
-        String[] expectedLabels = new String[] {"INTERACTION WITH TRIM28", "MUTAGENESIS OF ASP-85; VAL-86; VAL-88; PHE-90; GLU-93; GLU-94 AND TRP-95", "SUBCELLULAR LOCATION (ISOFORMS 1 AND 2)"};
-
-        for (int i=0 ; i<3 ;i++) {
-
-            Assert.assertEquals(29230867, directLinks.get(i).getPublicationId());
-            Assert.assertEquals("Uniprot", directLinks.get(i).getDatasource());
-            Assert.assertEquals("UniProtKB", directLinks.get(i).getDatabase());
-            Assert.assertEquals(expectedLabels[i], directLinks.get(i).getLabel());
-        }
-    }
-
-    // TODO: Should be in EntryPublication instead
-    @Ignore
-    @Test
-    public void testPublicationDirectLinksFromAnEntryForSubmissionView() {
-
-        List<Publication> publications = publicationService.findPublicationsByEntryName("NX_Q14587", PublicationView.SUBMISSION);
-
-        Assert.assertEquals(1, publications.size());
-        System.out.println(publications);
-    }
 }

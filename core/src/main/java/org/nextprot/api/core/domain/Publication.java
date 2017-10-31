@@ -7,8 +7,10 @@ import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
+import java.util.SortedSet;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
@@ -49,10 +51,6 @@ public class Publication implements Serializable{
 	// Refs cited in UniProt should be 'curated' even if not (yet) attached to a specific annotation
 	@ApiObjectField(description = "Computed Publications")
 	private boolean isComputed;
-	
-	private Map<PublicationProperty, List<PublicationDirectLink>> directLinksMap;
-
-    private List<PublicationDirectLink> directLinks;
 
     @ApiObjectField(description = "The list of authors")
 	private SortedSet<PublicationAuthor> authors;
@@ -61,30 +59,6 @@ public class Publication implements Serializable{
 	private Set<DbXref> dbXrefs;
 
 	private PublicationResourceLocator publicationResourceLocator;
-
-    public List<PublicationDirectLink> getDirectLinks() {
-        return (directLinks != null) ? directLinks : new ArrayList<>();
-    }
-
-    public List<PublicationDirectLink> getDirectLinks(PublicationProperty propertyName) {
-        if (directLinksMap == null) return new ArrayList<>();
-        return directLinksMap.getOrDefault(propertyName, new ArrayList<>());
-    }
-
-    public void setDirectLinks(Map<PublicationProperty, List<PublicationDirectLink>> map) {
-
-        if (map == null) {
-            this.directLinksMap = new HashMap<>();
-            this.directLinks = new ArrayList<>();
-        }
-        else {
-            this.directLinksMap = map;
-            directLinks = map.values().stream()
-                    .flatMap(l -> l.stream())
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
-    }
 
     public boolean isLocalizable() {
 		return publicationResourceLocator != null;

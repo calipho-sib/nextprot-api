@@ -12,8 +12,6 @@ import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
-import org.nextprot.api.core.domain.publication.PublicationDirectLink;
-import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,23 +58,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		// get all journals found for all publication ids
 		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(publicationIds);
 		
-		List<Publication> publications = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
-
-		 // get all entry publication properties     
-        Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> publiPropMap =
-                findEntryPublicationPropertiesByMasterId(masterId);
-
-        // attach properties to each publication
-		for (Publication pub: publications) {
-		    long pubId = pub.getPublicationId();
-
-			if (publiPropMap.containsKey(pubId)) {
-
-				pub.setDirectLinks(publiPropMap.get(pubId));
-			}
-		}
-		
-		return publications;
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 	}
 
 	@Override
@@ -147,42 +129,6 @@ public class PublicationDaoImpl implements PublicationDao {
 	public List<Long> findAllPublicationsIds() {
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new JdbcUtils.LongRowMapper("pub_id"));
-	}
-
-	@Override
-	public Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
-
-		Map<String, Object> params = new HashMap<>();
-		params.put("masterId", masterId);
-		EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper();		
-		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-properties-comment-or-scope-for-master"), params, mapper);
-		return mapper.getResult();
-		
-	}
-	
-	private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<Object> {
-
-        private Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> result = new HashMap<>();
-				
-		public Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> getResult() { return result; }
-		
-		@Override
-		public Object mapRow(ResultSet resultSet, int row) throws SQLException {
-
-			Long pubId = resultSet.getLong("pub_id");
-			PublicationProperty propertyName =
-                    PublicationProperty.valueOf(resultSet.getString("property_name").toUpperCase());
-			String propertyValue = resultSet.getString("property_value");
-
-			PublicationDirectLink publicationDirectLink = new PublicationDirectLink(pubId, propertyName, propertyValue);
-
-            result
-                    .computeIfAbsent(pubId, k -> new HashMap<>())
-                    .computeIfAbsent(propertyName, k -> new ArrayList<>())
-                    .add(publicationDirectLink);
-
-            return null;
-		}
 	}
 	
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {

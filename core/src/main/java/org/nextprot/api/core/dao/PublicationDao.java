@@ -1,11 +1,8 @@
 package org.nextprot.api.core.dao;
 
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.PublicationDirectLink;
-import org.nextprot.api.core.domain.publication.PublicationProperty;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PublicationDao {
 
@@ -24,15 +21,7 @@ public interface PublicationDao {
 	 * @return
 	 */
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
-	
-	/**
-	 * Returns a map with publication id as the key
-	 * The value is a Map where the key is a property name, and value a list of string 
-	 * @param masterId
-	 * @return
-	 */
-	Map<Long, Map<PublicationProperty, List<PublicationDirectLink>>> findEntryPublicationPropertiesByMasterId(Long masterId);
-	
+
 	/**
 	 * Find publication id by database and accession.
 	 * For example to get a publication from PubMed given its id
