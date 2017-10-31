@@ -180,7 +180,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
         EntryPublications entryPublications = entryPublicationService.findEntryPublications("NX_Q14587");
 
-        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList().stream()
+        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList(PublicationView.CURATED).stream()
                 .filter(ep -> ep.getPubId() == 29230867)
                 .collect(Collectors.toList());
 

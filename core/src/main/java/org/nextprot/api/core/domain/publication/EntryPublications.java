@@ -1,11 +1,8 @@
 package org.nextprot.api.core.domain.publication;
 
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -13,11 +10,10 @@ import java.util.stream.Collectors;
  */
 public class EntryPublications implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private String entryAccession;
     private Map<Long, EntryPublication> reportData;
-    private List<EntryPublication> publications;
     private Map<PublicationView, List<EntryPublication>> publicationsByView;
 
     public void setReportData(Map<Long, EntryPublication> reportData) {
@@ -47,10 +43,6 @@ public class EntryPublications implements Serializable {
 
             publicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
         }
-
-        publications = reportData.values().stream()
-                .sorted(Comparator.comparingLong(EntryPublication::getPubId))
-                .collect(Collectors.toList());
     }
 
     public EntryPublication getEntryPublication(long pubId) {
@@ -63,12 +55,6 @@ public class EntryPublications implements Serializable {
 
     public void setEntryAccession(String entryAccession) {
         this.entryAccession = entryAccession;
-    }
-
-    @JsonIgnore
-    public List<EntryPublication> getEntryPublicationList() {
-
-        return publications;
     }
 
     public Map<PublicationView, List<EntryPublication>> getEntryPublicationsMap() {
