@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class EntryPublicationServiceImpl implements EntryPublicationService {
@@ -87,7 +84,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         private EntryPublication buildEntryPublication(String entryAccession, long publicationId) {
 
             EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
-            entryPublication.setDirectLinks(directLinksByPubid.get(publicationId));
+            entryPublication.setDirectLinks(directLinksByPubid.getOrDefault(publicationId, new ArrayList<>()));
 
             return entryPublication;
         }
