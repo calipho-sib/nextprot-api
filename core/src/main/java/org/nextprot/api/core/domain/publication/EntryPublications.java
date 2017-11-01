@@ -26,7 +26,7 @@ public class EntryPublications implements Serializable {
         this.entryAccession = entryAccession;
     }
 
-    public void setEntryPublications(Map<Long, EntryPublication> entryPublicationsById) {
+    public void setData(Map<Long, EntryPublication> entryPublicationsById) {
 
         this.entryPublicationsById = entryPublicationsById;
         entryPublicationsByView = new HashMap<>();

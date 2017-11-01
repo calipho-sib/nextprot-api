@@ -31,15 +31,14 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
     @Autowired
     private EntryBuilderService entryBuilderService;
 
-    @Cacheable("entry-publications")
+    @Cacheable("entry-publications-by-entry")
     @Override
     public EntryPublications findEntryPublications(String entryAccession) {
 
-        Map<Long, EntryPublication> map = new EntryPublicationMapBuilder(entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything())).build();
-
         EntryPublications entryPublications = new EntryPublications();
         entryPublications.setEntryAccession(entryAccession);
-        entryPublications.setReportData(map);
+        entryPublications.setData(new EntryPublicationMapBuilder(entryBuilderService
+                .build(EntryConfig.newConfig(entryAccession).withEverything())).build());
 
         return entryPublications;
     }
@@ -68,7 +67,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                     .forEach(annotation -> annotation.getEvidences().stream()
                             .map(evidence -> extractPubIdFromEvidence(evidence))
                             .filter(Objects::nonNull)
-                            .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> entryPublicationDao.buildEntryPublication(entry.getUniqueName(), pubId)))
+                            .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(entry.getUniqueName(), pubId)))
                             .forEach(entryPublication -> {
                                 entryPublication.setCited(true);
                                 entryPublication.addCitedInViews(PageView.getDisplayablePageViews(annotation));
@@ -78,12 +77,20 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             entry.getPublications()
                     .forEach(publication -> {
                         long pubId = publication.getPublicationId();
-                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> entryPublicationDao.buildEntryPublication(entry.getUniqueName(), pubId));
+                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(entry.getUniqueName(), pubId));
                         handlePublicationDirectLinks(entryPublication);
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
                     });
 
             return entryPublicationMap;
+        }
+
+        private EntryPublication buildEntryPublication(String entryAccession, long publicationId) {
+
+            EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
+            entryPublication.setDirectLinks(entryPublicationDao.findPublicationDirectLinks(entryAccession, publicationId));
+
+            return entryPublication;
         }
 
         private Map<String,Long> buildAccessionToIdMap(List<Publication> pubs) {
