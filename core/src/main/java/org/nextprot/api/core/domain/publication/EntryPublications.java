@@ -1,6 +1,8 @@
 package org.nextprot.api.core.domain.publication;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -10,44 +12,11 @@ import java.util.*;
  */
 public class EntryPublications implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private String entryAccession;
-    private Map<Long, EntryPublication> reportData;
-    private Map<PublicationView, List<EntryPublication>> publicationsByView;
-
-    public void setReportData(Map<Long, EntryPublication> reportData) {
-
-        this.reportData = reportData;
-        publicationsByView = new HashMap<>();
-
-        for (EntryPublication entryPublication : reportData.values()) {
-            if (entryPublication.isCurated()) {
-                publicationsByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
-            }
-            if (entryPublication.isAdditional()) {
-                publicationsByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
-            }
-            if (entryPublication.isOnline()) {
-                publicationsByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
-            }
-            if (entryPublication.isSubmission()) {
-                publicationsByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
-            }
-            if (entryPublication.isPatent()) {
-                publicationsByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
-            }
-        }
-
-        for (PublicationView view : publicationsByView.keySet()) {
-
-            publicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
-        }
-    }
-
-    public EntryPublication getEntryPublication(long pubId) {
-        return reportData.get(pubId);
-    }
+    private Map<Long, EntryPublication> entryPublicationsById;
+    private Map<PublicationView, List<EntryPublication>> entryPublicationsByView;
 
     public String getEntryAccession() {
         return entryAccession;
@@ -57,14 +26,52 @@ public class EntryPublications implements Serializable {
         this.entryAccession = entryAccession;
     }
 
-    public Map<PublicationView, List<EntryPublication>> getEntryPublicationsMap() {
+    public void setEntryPublications(Map<Long, EntryPublication> entryPublicationsById) {
 
-        return publicationsByView;
+        this.entryPublicationsById = entryPublicationsById;
+        entryPublicationsByView = new HashMap<>();
+
+        for (EntryPublication entryPublication : entryPublicationsById.values()) {
+            if (entryPublication.isCurated()) {
+                entryPublicationsByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
+            }
+            if (entryPublication.isAdditional()) {
+                entryPublicationsByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
+            }
+            if (entryPublication.isOnline()) {
+                entryPublicationsByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
+            }
+            if (entryPublication.isSubmission()) {
+                entryPublicationsByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
+            }
+            if (entryPublication.isPatent()) {
+                entryPublicationsByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
+            }
+        }
+
+        for (PublicationView view : entryPublicationsByView.keySet()) {
+
+            entryPublicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
+        }
+    }
+
+    @JsonIgnore
+    public Map<Long, EntryPublication> getEntryPublicationsById() {
+        return entryPublicationsById;
+    }
+
+    public EntryPublication getEntryPublication(long pubId) {
+        return entryPublicationsById.get(pubId);
+    }
+
+    public Map<PublicationView, List<EntryPublication>> getEntryPublicationsByView() {
+
+        return entryPublicationsByView;
     }
 
     public List<EntryPublication> getEntryPublicationList(PublicationView view) {
 
-        return publicationsByView.getOrDefault(view, new ArrayList<>());
+        return entryPublicationsByView.getOrDefault(view, new ArrayList<>());
     }
 
     /* useful ?
