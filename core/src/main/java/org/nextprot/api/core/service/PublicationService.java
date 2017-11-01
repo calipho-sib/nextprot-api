@@ -57,12 +57,4 @@ public interface PublicationService {
     PublicationStatistics calculatePublicationStatistics(long publicationId);
 
 	GlobalPublicationStatistics calculateGlobalStatistics();
-
-	boolean isCitedPublication(long publicationId);
-
-	boolean isComputationallyMappedPublication(long publicationId);
-
-	boolean isLargeScalePublication(long publicationId);
-
-	boolean isCuratedPublication(long publicationId);
 }

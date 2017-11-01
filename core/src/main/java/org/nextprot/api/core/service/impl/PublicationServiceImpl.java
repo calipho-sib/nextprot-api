@@ -13,9 +13,11 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.PublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.OverallEntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
@@ -38,6 +40,7 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private AuthorDao authorDao;
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
+	@Autowired private OverallEntryPublicationService overallEntryPublicationService;
 
 
 	@Cacheable("publications-get-by-id")
@@ -190,48 +193,91 @@ public class PublicationServiceImpl implements PublicationService {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}
 
-	// TODO: to implement
     @Override
     public PublicationStatistics calculatePublicationStatistics(long publicationId) {
 
-        PublicationStatistics publicationStatistics = new PublicationStatistics();
-
-        publicationStatistics.setPublicationId(publicationId);
-
-	    return publicationStatistics;
+	    return new PublicationStatisticsAnalyser(publicationId, overallEntryPublicationService.findAllEntryPublications()
+                .getOrDefault(publicationId, new ArrayList<>())).analyse();
     }
 
     @Override
 	public GlobalPublicationStatistics calculateGlobalStatistics() {
-		return null;
+
+        GlobalPublicationStatistics globalPublicationStatistics = new GlobalPublicationStatistics();
+
+        overallEntryPublicationService.findAllEntryPublications().forEach((key, value) -> {
+
+            PublicationStatistics stats = calculatePublicationStatistics(key);
+
+            if (stats.isCited()) {
+                globalPublicationStatistics.incrementNumberOfCitedPublications();
+            }
+            if (stats.isComputed()) {
+                globalPublicationStatistics.incrementNumberOfComputationallyMappedPublications();
+            }
+            if (stats.isLargeScale()) {
+                globalPublicationStatistics.incrementNumberOfLargeScalePublications();
+            }
+            if (stats.isCurated()) {
+                globalPublicationStatistics.incrementNumberOfCuratedPublications();
+            }
+        });
+
+        return globalPublicationStatistics;
 	}
 
-	// TODO: pam should give an implementation here
-	@Override
-	public boolean isCitedPublication(long publicationId) {
+	private static class PublicationStatisticsAnalyser {
 
-		throw new IllegalStateException("pam should give an implementation here");
-	}
+        private final long publicationId;
+        private final List<EntryPublication> entryPublications;
 
-	// TODO: pam should give an implementation here
-	@Override
-	public boolean isComputationallyMappedPublication(long publicationId) {
+        private PublicationStatisticsAnalyser(long publicationId, List<EntryPublication> entryPublications) {
 
-		throw new IllegalStateException("pam should give an implementation here");
-	}
+            this.publicationId = publicationId;
+            this.entryPublications = entryPublications;
+        }
 
-	// TODO: pam should give an implementation here
-	@Override
-	public boolean isLargeScalePublication(long publicationId) {
+        private PublicationStatistics analyse() {
 
-		throw new IllegalStateException("pam should give an implementation here");
-	}
+            PublicationStatistics publicationStatistics = new PublicationStatistics();
+            publicationStatistics.setPublicationId(publicationId);
 
-	// TODO: pam should give an implementation here
-	@Override
-	public boolean isCuratedPublication(long publicationId) {
+            publicationStatistics.setCited(isCited());
+            publicationStatistics.setComputed(isComputationallyMappedPublication());
+            publicationStatistics.setCurated(isManuallyCuratedPublication());
+            publicationStatistics.setLargeScale(isLargeScalePublication());
 
-		throw new IllegalStateException("pam should give an implementation here");
-	}
+            return publicationStatistics;
+        }
 
+        private boolean isCited() {
+            return entryPublications.stream()
+                    .anyMatch(ep -> ep.isCited());
+        }
+
+        /**
+         * Rule: Any kind of publication which is never referred in an entry annotation evidence but directly mapped to the entry by and only by PIR
+         */
+        private boolean isComputationallyMappedPublication() {
+            return entryPublications.stream()
+                    .allMatch(ep -> ep.isUncited());
+        }
+
+        /**
+         * Rule: A large scale publication (pf_largescale)
+         * Any kind of publication which Is linked to 15 entries or more by directly or by annotation evidences
+         */
+        private boolean isLargeScalePublication() {
+            return entryPublications.size() > 14;
+        }
+
+        /**
+         * Rule: An article, book, thesis or unpublished observation* that is referred in 1 or more entry annotation
+         * evidence(s) or directly mapped to the entry by a NON PIR source
+         */
+        private boolean isManuallyCuratedPublication() {
+            return entryPublications.stream()
+                    .allMatch(ep -> ep.isCurated());
+        }
+    }
 }
