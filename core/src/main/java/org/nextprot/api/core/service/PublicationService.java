@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationStatistics;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
@@ -53,7 +54,9 @@ public interface PublicationService {
 	 */
 	Publication findPublicationByDatabaseAndAccession(String database, String accession);
 
-	GlobalPublicationStatistics countGlobalStatistics();
+    PublicationStatistics calculatePublicationStatistics(long publicationId);
+
+	GlobalPublicationStatistics calculateGlobalStatistics();
 
 	boolean isCitedPublication(long publicationId);
 

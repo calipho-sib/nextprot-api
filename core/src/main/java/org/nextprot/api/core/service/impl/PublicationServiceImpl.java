@@ -14,6 +14,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.PublicationComparator;
@@ -189,8 +190,19 @@ public class PublicationServiceImpl implements PublicationService {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}
 
-	@Override
-	public GlobalPublicationStatistics countGlobalStatistics() {
+	// TODO: to implement
+    @Override
+    public PublicationStatistics calculatePublicationStatistics(long publicationId) {
+
+        PublicationStatistics publicationStatistics = new PublicationStatistics();
+
+        publicationStatistics.setPublicationId(publicationId);
+
+	    return publicationStatistics;
+    }
+
+    @Override
+	public GlobalPublicationStatistics calculateGlobalStatistics() {
 		return null;
 	}
 
@@ -221,4 +233,5 @@ public class PublicationServiceImpl implements PublicationService {
 
 		throw new IllegalStateException("pam should give an implementation here");
 	}
+
 }
