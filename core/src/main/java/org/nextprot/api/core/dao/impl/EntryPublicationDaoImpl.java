@@ -4,7 +4,6 @@ import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntryPublicationDao;
-import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -30,16 +30,7 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
     private SQLDictionary sqlDictionary;
 
     @Override
-    public EntryPublication buildEntryPublication(String entryAccession, long publicationId) {
-
-        EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
-        entryPublication.setDirectLinks(findPublicationDirectLinkList(entryAccession, publicationId));
-
-        return entryPublication;
-    }
-
-    @Override
-    public List<PublicationDirectLink> findPublicationDirectLinkList(String entryAccession, long publicationId) {
+    public List<PublicationDirectLink> findPublicationDirectLinks(String entryAccession, long publicationId) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("masterId", masterIdentifierDao.findIdByUniqueName(entryAccession));
@@ -50,6 +41,18 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
         return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("scope-and-comment-for-publication-of-master"), params, mapper);
     }
 
+    @Override
+    public Map<Long, List<PublicationDirectLink>> findPublicationDirectLinks(String entryAccession) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("masterId", masterIdentifierDao.findIdByUniqueName(entryAccession));
+
+        EntryPublicationPropertyRowMapper2 mapper = new EntryPublicationPropertyRowMapper2();
+
+        return new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+                .query(sqlDictionary.getSQLQuery("publications-scopes-and-comments-of-master"), params, mapper).stream()
+                .collect(Collectors.groupingBy(PublicationDirectLink::getPublicationId));
+    }
 
     private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<PublicationDirectLink> {
 
@@ -63,6 +66,20 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
         @Override
         public PublicationDirectLink mapRow(ResultSet resultSet, int row) throws SQLException {
 
+            PublicationProperty propertyName =
+                    PublicationProperty.valueOf(resultSet.getString("property_name").toUpperCase());
+            String propertyValue = resultSet.getString("property_value");
+
+            return new PublicationDirectLink(pubId, propertyName, propertyValue);
+        }
+    }
+
+    private static class EntryPublicationPropertyRowMapper2 implements ParameterizedRowMapper<PublicationDirectLink> {
+
+        @Override
+        public PublicationDirectLink mapRow(ResultSet resultSet, int row) throws SQLException {
+
+            long pubId = resultSet.getLong("pub_id");
             PublicationProperty propertyName =
                     PublicationProperty.valueOf(resultSet.getString("property_name").toUpperCase());
             String propertyValue = resultSet.getString("property_value");
