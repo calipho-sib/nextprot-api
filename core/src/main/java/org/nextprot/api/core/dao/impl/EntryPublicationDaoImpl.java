@@ -30,24 +30,12 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
     private SQLDictionary sqlDictionary;
 
     @Override
-    public List<PublicationDirectLink> findPublicationDirectLinks(String entryAccession, long publicationId) {
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("masterId", masterIdentifierDao.findIdByUniqueName(entryAccession));
-        params.put("pubId", publicationId);
-
-        EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper(publicationId);
-
-        return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("scope-and-comment-for-publication-of-master"), params, mapper);
-    }
-
-    @Override
     public Map<Long, List<PublicationDirectLink>> findPublicationDirectLinks(String entryAccession) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("masterId", masterIdentifierDao.findIdByUniqueName(entryAccession));
 
-        EntryPublicationPropertyRowMapper2 mapper = new EntryPublicationPropertyRowMapper2();
+        EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper();
 
         return new NamedParameterJdbcTemplate(dsLocator.getDataSource())
                 .query(sqlDictionary.getSQLQuery("publications-scopes-and-comments-of-master"), params, mapper).stream()
@@ -55,26 +43,6 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
     }
 
     private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<PublicationDirectLink> {
-
-        private final long pubId;
-
-        private EntryPublicationPropertyRowMapper(long pubId) {
-
-            this.pubId = pubId;
-        }
-
-        @Override
-        public PublicationDirectLink mapRow(ResultSet resultSet, int row) throws SQLException {
-
-            PublicationProperty propertyName =
-                    PublicationProperty.valueOf(resultSet.getString("property_name").toUpperCase());
-            String propertyValue = resultSet.getString("property_value");
-
-            return new PublicationDirectLink(pubId, propertyName, propertyValue);
-        }
-    }
-
-    private static class EntryPublicationPropertyRowMapper2 implements ParameterizedRowMapper<PublicationDirectLink> {
 
         @Override
         public PublicationDirectLink mapRow(ResultSet resultSet, int row) throws SQLException {

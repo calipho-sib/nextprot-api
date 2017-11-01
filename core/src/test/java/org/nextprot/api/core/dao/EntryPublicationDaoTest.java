@@ -19,7 +19,8 @@ public class EntryPublicationDaoTest extends CoreUnitBaseTest {
     @Test
     public void findPublicationDirectLinkList() throws Exception {
 
-        List<PublicationDirectLink> links = entryPublicationDao.findPublicationDirectLinks("NX_O75478", 660681);
+        List<PublicationDirectLink> links = entryPublicationDao.findPublicationDirectLinks("NX_O75478")
+                .get(660681L);
 
         Assert.assertEquals(3, links.size());
     }

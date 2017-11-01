@@ -7,7 +7,5 @@ import java.util.Map;
 
 public interface EntryPublicationDao {
 
-    List<PublicationDirectLink> findPublicationDirectLinks(String entryAccession, long pubId);
-
     Map<Long, List<PublicationDirectLink>> findPublicationDirectLinks(String entryAccession);
 }
