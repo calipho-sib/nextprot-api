@@ -37,14 +37,14 @@ public class EntryPublicationController {
     @Autowired
     private PublicationService publicationService;
 
-	@ApiMethod(path = "/entry-publications/{entry}/view/{view}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication view",
+	@ApiMethod(path = "/entry-publications/{entry}/pubview/{view}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication view",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry-publications/{entry}/view/{view}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry-publications/{entry}/pubview/{view}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<EntryPublicationView> getEntryPublicationList(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName,
-			@ApiPathParam(name = "view", allowedvalues = { "CURATED" })
+			@ApiPathParam(name = "view", description = "publication view (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE or PATENT)", allowedvalues = { "CURATED" })
 			@PathVariable(value = "view") String publicationView) {
 
         String pubViewName = publicationView.toUpperCase();
@@ -57,9 +57,9 @@ public class EntryPublicationController {
 		throw new NextProtException(publicationView + ": Unknown publication view");
 	}
 
-	@ApiMethod(path = "/entry-publications/{entry}/pub-id/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with a neXtProt entry",
+	@ApiMethod(path = "/entry-publications/{entry}/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with a neXtProt entry",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry-publications/{entry}/pub-id/{pubid}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry-publications/{entry}/pubid/{pubid}", method = { RequestMethod.GET })
 	@ResponseBody
 	public EntryPublication getEntryPublication(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
