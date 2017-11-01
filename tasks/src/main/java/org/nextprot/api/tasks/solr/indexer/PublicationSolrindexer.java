@@ -47,7 +47,7 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("volume", publi.getVolume());
 		doc.addField("volume_s", publi.getVolume());
 		doc.addField("abstract", publi.getAbstractText());
-		doc.addField("type", publi.getPublicationType());
+		doc.addField("type", publi.getPublicationType().name());
 
 		//doc.addField("source", rs.getString("source"));
 		//This source feature is either PubMed (99.99%) or UniProt for published articles with no PMID, it is useless for the indexes since

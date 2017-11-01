@@ -1,13 +1,11 @@
 package org.nextprot.api.tasks.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.PublicationService;
@@ -19,15 +17,13 @@ import org.nextprot.api.solr.index.EntryIndex;
 import org.nextprot.api.solr.index.GoldEntryIndex;
 import org.nextprot.api.solr.index.PublicationIndex;
 import org.nextprot.api.tasks.service.SolrIndexingService;
-import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
-import org.nextprot.api.tasks.solr.indexer.EntryBaseSolrIndexer;
-import org.nextprot.api.tasks.solr.indexer.EntryGoldSolrIndexer;
-import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
-import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
-import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 @Lazy
 @Service
@@ -168,7 +164,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		int pubcnt = 0;
 		for (Long id : allpubids) {
 			Publication currpub = publicationService.findPublicationById(id);
-			if(currpub.getPublicationType().equals("ARTICLE")) {
+			if(currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
 			  indexer.add(currpub);
 			  pubcnt++;
 			  }
