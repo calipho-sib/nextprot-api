@@ -5,6 +5,7 @@ public class PublicationStatistics {
     private static final long serialVersionUID = 1L;
 
     private long publicationId;
+    private boolean isCited;
     private boolean isLargeScale;
     private boolean isCurated;
     private boolean isComputed;
@@ -15,6 +16,14 @@ public class PublicationStatistics {
 
     public void setPublicationId(long publicationId) {
         this.publicationId = publicationId;
+    }
+
+    public boolean isCited() {
+        return isCited;
+    }
+
+    public void setCited(boolean cited) {
+        isCited = cited;
     }
 
     public boolean isLargeScale() {
