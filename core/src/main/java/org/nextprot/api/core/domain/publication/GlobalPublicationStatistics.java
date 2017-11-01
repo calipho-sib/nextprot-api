@@ -7,7 +7,7 @@ import java.io.Serializable;
 @ApiObject(name = "global publication statistics", description = "Global publication statistics")
 public class GlobalPublicationStatistics implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private int numberOfCitedPublications;
 	private int numberOfComputationallyMappedPublications;
@@ -18,31 +18,31 @@ public class GlobalPublicationStatistics implements Serializable {
 		return numberOfCitedPublications;
 	}
 
-	public void setNumberOfCitedPublications(int numberOfCitedPublications) {
-		this.numberOfCitedPublications = numberOfCitedPublications;
+	public void incrementNumberOfCitedPublications() {
+		numberOfCitedPublications++;
 	}
 
 	public int getNumberOfComputationallyMappedPublications() {
 		return numberOfComputationallyMappedPublications;
 	}
 
-	public void setNumberOfComputationallyMappedPublications(int numberOfComputationallyMappedPublications) {
-		this.numberOfComputationallyMappedPublications = numberOfComputationallyMappedPublications;
+	public void incrementNumberOfComputationallyMappedPublications() {
+		numberOfComputationallyMappedPublications++;
 	}
 
 	public int getNumberOfLargeScalePublications() {
 		return numberOfLargeScalePublications;
 	}
 
-	public void setNumberOfLargeScalePublications(int numberOfLargeScalePublications) {
-		this.numberOfLargeScalePublications = numberOfLargeScalePublications;
+	public void incrementNumberOfLargeScalePublications() {
+		numberOfLargeScalePublications++;
 	}
 
 	public int getNumberOfCuratedPublications() {
 		return numberOfCuratedPublications;
 	}
 
-	public void setNumberOfCuratedPublications(int numberOfCuratedPublications) {
-		this.numberOfCuratedPublications = numberOfCuratedPublications;
+	public void incrementNumberOfCuratedPublications() {
+		numberOfCuratedPublications++;
 	}
 }
