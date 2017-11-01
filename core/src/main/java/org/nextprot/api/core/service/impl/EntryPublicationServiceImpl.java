@@ -5,10 +5,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublications;
-import org.nextprot.api.core.domain.publication.PublicationProperty;
-import org.nextprot.api.core.domain.publication.PublicationType;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -51,11 +48,13 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
         private final Entry entry;
         private final Map<String, Long> accession2id;
+        private final Map<Long, List<PublicationDirectLink>> directLinksByPubid;
 
         EntryPublicationMapBuilder(Entry entry) {
 
             this.entry = entry;
             accession2id = buildAccessionToIdMap(entry.getPublications());
+            directLinksByPubid = entryPublicationDao.findPublicationDirectLinks(entry.getUniqueName());
         }
 
         public Map<Long, EntryPublication> build() {
@@ -88,7 +87,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         private EntryPublication buildEntryPublication(String entryAccession, long publicationId) {
 
             EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
-            entryPublication.setDirectLinks(entryPublicationDao.findPublicationDirectLinks(entryAccession, publicationId));
+            entryPublication.setDirectLinks(directLinksByPubid.get(publicationId));
 
             return entryPublication;
         }
