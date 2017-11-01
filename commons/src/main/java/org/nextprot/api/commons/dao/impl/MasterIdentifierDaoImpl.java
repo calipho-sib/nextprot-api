@@ -46,10 +46,4 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 	public List<String> findUniqueNames() {
 		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names"), String.class);
 	}
-	
-	@Override
-	public List<String> findMasterSequenceUniqueNames() {
-		return new JdbcTemplate(dsLocator.getDataSource()).queryForList("select unique_name from nextprot.sequence_identifiers where cv_type_id = 1 order by unique_name", String.class);
-	}
-
 }
