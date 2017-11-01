@@ -1,10 +1,8 @@
 package org.nextprot.api.core.dao;
 
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.PublicationType;
 
 import java.util.List;
-import java.util.Set;
 
 public interface PublicationDao {
 
@@ -23,15 +21,6 @@ public interface PublicationDao {
 	 * @return
 	 */
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
-
-    /**
-     * Returns publications belonging to an entry
-     * sorted using the 'default algorithm': publication date, type, etc
-     * @param masterId the nextprot entry id
-     * @param publicationTypes the publication types
-     * @return
-     */
-    List<Publication> findSortedPublicationsByMasterId(Long masterId, Set<PublicationType> publicationTypes);
 
 	/**
 	 * Find publication id by database and accession.
