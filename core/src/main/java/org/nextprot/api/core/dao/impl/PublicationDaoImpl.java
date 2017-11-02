@@ -164,11 +164,6 @@ public class PublicationDaoImpl implements PublicationDao {
 			// set publication date
 			setPublicationDate(publication, resultSet);
 
-			// set publication details
-			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
-			publication.setIsCurated(resultSet.getLong("is_curated")>0);
-			publication.setIsComputed(resultSet.getLong("is_computed")>0);
-
 			// set infos on publication medium, volume, issue, pages, journal, book...
 			setPublicationLocator(publication, resultSet);
 
