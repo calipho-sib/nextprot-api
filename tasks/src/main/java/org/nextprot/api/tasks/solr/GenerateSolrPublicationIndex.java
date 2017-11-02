@@ -21,14 +21,14 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 	public void start(String[] args) {
 
 		PublicationService publicationService = getBean(PublicationService.class);
-		
+
 		int pubcnt = 0;
 		
 		String solrServer = System.getProperty("solr.server");
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=http://localhost:8983/solr/nppublications1");
 		logger.info("Solr server: " + solrServer); 
 
-		SolrIndexer<Publication> indexer = new PublicationSolrindexer(solrServer);
+		SolrIndexer<Publication> indexer = new PublicationSolrindexer(solrServer, publicationService);
 		
 		// Remove previous indexes
 		logger.info("removing all solr publication records");
