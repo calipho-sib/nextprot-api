@@ -25,7 +25,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
     @Autowired
     private EntryBuilderService entryBuilderService;
 
-    @Cacheable("entry-publications-by-entry")
+    @Cacheable("entry-publications")
     @Override
     public EntryPublications findEntryPublications(String entryAccession) {
 
