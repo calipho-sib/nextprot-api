@@ -48,6 +48,13 @@ public class PublicationServiceImpl implements PublicationService {
 		return publication;
 	}
 
+    @Override
+    public Publication findPublicationByMD5(String md5) {
+        Publication publication = this.publicationDao.findPublicationByMD5(md5);
+        loadAuthorsAndXrefs(publication);
+        return publication;
+    }
+
 	@Override
 	public List<Publication> findPublicationByTitle(String title) {
 		return publicationDao.findPublicationByTitle(title);
@@ -144,13 +151,6 @@ public class PublicationServiceImpl implements PublicationService {
 	}
 
 	@Override
-	public Publication findPublicationByMD5(String md5) {
-		Publication publication = this.publicationDao.findPublicationByMD5(md5);
-		loadAuthorsAndXrefs(publication);
-		return publication;
-	}
-
-	@Override
 	public List<Long> findAllPublicationIds() {		
 		return publicationDao.findAllPublicationsIds();
 	}
@@ -179,9 +179,9 @@ public class PublicationServiceImpl implements PublicationService {
 
 	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
 		if (xrefs == null) {
-			publication.setDbXrefs(new HashSet<>());						
+			publication.setDbXrefs(new HashSet<>());
 		} else {
-			publication.setDbXrefs(new HashSet<>(xrefs));			
+			publication.setDbXrefs(new HashSet<>(xrefs));
 		}
 	}
 

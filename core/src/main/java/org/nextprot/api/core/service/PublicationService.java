@@ -15,7 +15,13 @@ public interface PublicationService {
 	 * @return
 	 */
 	Publication findPublicationById(long id);
-	
+
+    /**
+     * Retrieves publication by MD5
+     * @return
+     */
+    Publication findPublicationByMD5(String md5);
+
 	/**
 	 * Gets publication by title case insensitive
 	 * @param title
@@ -30,12 +36,6 @@ public interface PublicationService {
 	 */
 	List<Publication> findPublicationsByEntryName(@ValidEntry String uniqueName);
 
-	/**
-	 * Retrieves publication by MD5
-	 * @return
-	 */
-	Publication findPublicationByMD5(String md5);
-	
 	/**
 	 * Retrieves all publications ids
 	 * @return
