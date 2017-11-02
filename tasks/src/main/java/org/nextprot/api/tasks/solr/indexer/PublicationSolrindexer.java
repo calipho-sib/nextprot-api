@@ -6,7 +6,9 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 import java.util.ArrayList;
@@ -15,13 +17,19 @@ import java.util.SortedSet;
 
 public class PublicationSolrindexer extends SolrIndexer<Publication>{
 
+    private PublicationService publicationService;
 
-	public PublicationSolrindexer(String url) {
+	public PublicationSolrindexer(String url, PublicationService publicationService) {
 		super(url);
+        this.publicationService = publicationService;
 	}
 
 	@Override
 	public SolrInputDocument convertToSolrDocument(Publication publi) {
+
+        GlobalPublicationStatistics.PublicationStatistics publicationStats =
+                publicationService.getPublicationStatistics(publi.getPublicationId());
+
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", publi.getPublicationId());
 		Set<DbXref> xrefs = publi.getDbXrefs();
@@ -31,9 +39,9 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		   // if yes create an adhoc Publication.convertXrefsToSolrString method
 		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs))); }
 		String filters="";
-		filters+=((publi.isComputed())?" computed":"");
-		filters+=((publi.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
-		filters+=((publi.isLargeScale())?" largescale":"");
+		filters+=((publicationStats.isComputed())?" computed":"");
+		filters+=((publicationStats.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
+		filters+=((publicationStats.isLargeScale())?" largescale":"");
 		doc.addField("filters", filters);
 		doc.addField("title", publi.getTitle());
 		doc.addField("title_s", publi.getTitle());
@@ -94,8 +102,4 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		
 		return doc;
 	}
-
-	/**
-	 *
-	 */
 }

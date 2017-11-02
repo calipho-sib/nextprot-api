@@ -1,13 +1,13 @@
 package org.nextprot.api.tasks.solr.indexer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NextProtException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class SolrIndexer<T> {
 
@@ -18,10 +18,10 @@ public abstract class SolrIndexer<T> {
 
 	public SolrIndexer(String url) {
 		this.solrServer = new HttpSolrServer(url);
-		this.docs = new ArrayList<SolrInputDocument>();
+		this.docs = new ArrayList<>();
 	}
 
-	public abstract SolrInputDocument convertToSolrDocument(T documentTypes);
+    public abstract SolrInputDocument convertToSolrDocument(T documentTypes);
 
 	public void add(T t) {
 
@@ -81,5 +81,4 @@ public abstract class SolrIndexer<T> {
 			throw new NextProtException(e);
 		}
 	}
-
 }

@@ -2,6 +2,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.Publication;
@@ -18,12 +19,17 @@ import java.util.*;
 
 public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
-	SolrIndexer<Publication> pubindexer = new PublicationSolrindexer("http://localhost:8983/solr/nppublications1");
+	private SolrIndexer<Publication> pubindexer;
 
 	@Autowired TerminologyService terminologyService;
 
 	@Autowired PublicationService publicationService;
-	
+
+	@Before
+    public void setup() {
+        pubindexer = new PublicationSolrindexer("http://localhost:8983/solr/nppublications1", publicationService);
+    }
+
 	@Test
 	public void testPublis() {
 		List<Long> allpubids = publicationService.findAllPublicationIds();

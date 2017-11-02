@@ -2,7 +2,7 @@
 #parse("turtle/prefix.ttl.vm")
 #end
 publication:$publication.getPublicationId() a :Publication;
-#if($publication.getIsLargeScale())
+#if($isLargeScale)
     rdf:type :LargeScalePublication;
 #end
 #if($publication.hasTitle())

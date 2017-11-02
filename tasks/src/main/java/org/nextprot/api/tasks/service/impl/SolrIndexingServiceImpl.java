@@ -35,7 +35,6 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private SolrConfiguration configuration;
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private PublicationService publicationService;
-	@Autowired private MasterIdentifierService MasterEntryService ;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private DbXrefService dbxrefService;
@@ -55,7 +54,6 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		EntryBaseSolrIndexer indexer = isGold ? new EntryGoldSolrIndexer(serverUrl) : new EntrySolrIndexer(serverUrl);
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
-		indexer.setDbxrefservice(dbxrefService);
 
 		logAndCollect(info,"getting entry list of chromosome " + chrName);
 		List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
@@ -80,7 +78,6 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		return info.toString();
 	}
 
-	
 	@Override
 	public String initIndexEntries(boolean isGold) {
 		
@@ -153,7 +150,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		logAndCollect(info,"Solr server: " + serverUrl); 		
 
 		logAndCollect(info,"clearing publication index");
-		SolrIndexer<Publication> indexer = new PublicationSolrindexer(serverUrl);
+		SolrIndexer<Publication> indexer = new PublicationSolrindexer(serverUrl, publicationService);
 		List<Long> allpubids;
 		indexer.clearDatabase("");
 
@@ -179,21 +176,16 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		logAndCollect(info,pubcnt + " publications indexed in " + seconds + " seconds ...END at " + new Date());
 		
 		return info.toString();
-
 	}
 	
 	private String getServerUrl(String indexName) {
 		String baseUrl = connFactory.getSolrBaseUrl();
 		String indexUrl = configuration.getIndexByName(indexName).getUrl();
-		String serverUrl = baseUrl + indexUrl;
-		return serverUrl;	
+		return baseUrl + indexUrl;
 	}
 
 	private void logAndCollect(StringBuilder info,String message) {
 		logger.info(message);
 		info.append(message).append("\n");
 	}
-
-
-	
 }
