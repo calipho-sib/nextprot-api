@@ -54,6 +54,7 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
         return globalPublicationStatistics;
     }
 
+    // Memoized function that returns EntryPublications by publication id
     private Map<Long, List<EntryPublication>> buildEntryPublicationsMap() {
 
         Map<Long, List<EntryPublication>> entryPublicationsById = new HashMap<>();

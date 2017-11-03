@@ -6,12 +6,10 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublications;
-import org.nextprot.api.core.domain.publication.PublicationDirectLink;
-import org.nextprot.api.core.domain.publication.PublicationView;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -36,6 +34,8 @@ public class EntryPublicationController {
     private EntryPublicationService entryPublicationService;
     @Autowired
     private PublicationService publicationService;
+    @Autowired
+    private PublicationStatisticsService publicationStatisticsService;
 
 	@ApiMethod(path = "/entry-publications/{entry}/pubview/{view}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication view",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -86,6 +86,15 @@ public class EntryPublicationController {
         }
 
         return count;
+    }
+
+    @ApiMethod(path = "/entry-publications/stats", verb = ApiVerb.GET, description = "Get overall statistics over publications (highly expensive without cache !)",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry-publications/stats", method = { RequestMethod.GET })
+    @ResponseBody
+    public GlobalPublicationStatistics calcStatsEntryPublication() {
+
+        return publicationStatisticsService.getGlobalPublicationStatistics();
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationView publicationView) {
