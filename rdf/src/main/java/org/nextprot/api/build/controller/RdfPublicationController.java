@@ -17,13 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Lazy
 @Controller
 @Api(name = "Publication", description = "Method to retrieve publications", group="Build rdf")
-public class PublicationController {
+public class RdfPublicationController {
 
 	@Autowired private PublicationService publicationService;
-
-	//TODO remove comment below
-	//@Autowired
-	//private ViewResolver viewResolver;
 
 	@ApiMethod(path = "/rdf/publication/{md5}", verb = ApiVerb.GET, description = "Exports one neXtProt publication.", produces = {  "text/turtle"})
 	@RequestMapping("/rdf/publication/{md5}")
@@ -40,21 +36,5 @@ public class PublicationController {
 
         return "publication";
 	}
-
-	/*@ApiMethod(path = "/rdf/publication", verb = ApiVerb.GET, description = "Exports the whole neXtProt publication ordered by year and title.", produces = { "text/turtle"})
-	@RequestMapping("/rdf/publication")
-	public void findAllPublication(Map<String,Object> model, HttpServletResponse response, HttpServletRequest request) throws Exception {
-		Boolean withPrefix=true;
-		View v = viewResolver.resolveViewName("publication", Locale.ENGLISH);
-		List<Long> publicationIds = this.publicationService.findAllPublicationIds();
-		for(Long pubId :publicationIds){
-			model.put("prefix", withPrefix);
-			model.put("StringUtils", StringUtils.class);
-			model.put("publication", this.publicationService.findPublicationById(pubId));
-			model.put("StringUtils", StringUtils.class);
-			v.render(model, request, response);
-			withPrefix=false;
-		}
-	}*/
 }
 
