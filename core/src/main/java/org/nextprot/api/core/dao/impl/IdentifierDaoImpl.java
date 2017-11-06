@@ -81,13 +81,16 @@ public class IdentifierDaoImpl implements IdentifierDao {
 			Identifier identifier = new Identifier();
 			String name = resultSet.getString("identifier_name");
 			String db = resultSet.getString("db_name");
-			String linkTemplate = resultSet.getString("link_template");
+			String typ = resultSet.getString("type");
 			identifier.setName(name);
 			identifier.setDatabase(db);
-			identifier.setLink(resolveLink(this.masterUniqueName, name, db, linkTemplate));
-			identifier.setType(resultSet.getString("type"));
+			identifier.setType(typ);
+			String linkTemplate = resultSet.getString("link_template");
+			String link = resolveLink(this.masterUniqueName, typ, name, db, linkTemplate);
+			identifier.setLink(link);
 			String typeClass = resultSet.getString("type_class");
 			identifier.setDatabaseCategory(DB_TYPE_NP1_NAMES.containsKey(typeClass) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
+			//System.out.println(name + " " + db  + " " + typ  + " " + typeClass  + " " + link);
 
 			return identifier;
 		}
@@ -98,34 +101,37 @@ public class IdentifierDaoImpl implements IdentifierDao {
 		/**
 		 * The method received the parameters needed to resolve the link of the identifier if necessary
 		 * It uses the general mechanism provided by DbXrefURLResolverDelegate
-		 * The Xref is built based on the parameters passed to the method. The xref needs to be tuned in 2 cases:
-		 * PIR: requires the property "entry name" to be set for its specific resolver to work properly
-		 * UniProtKB: is NOT a declared database, it is replaced with the right db name (UniProt) and default template so that uses the normal pipeline
+		 * The Xref is built based on the parameters passed to the method. The xref needs to be tuned in 1 case:
+		 * UniProtKB: is NOT a declared database, it is replaced with the right db name (UniProt) 
+		 * and default template so that uses the normal pipeline
 		 * @param masterUniqueName
 		 * @param ac
 		 * @param db
 		 * @param linkTemplate
 		 * @return a resolved link for the identifier as a String
 		 */
-		private static String resolveLink(String masterUniqueName, String ac, String db, String linkTemplate) {
+		private static String resolveLink(String masterUniqueName, String typ, String ac, String db, String linkTemplate) {
+			
 			if (resolver==null) resolver = new DbXrefURLResolverDelegate();
-			if (db == null) return null;
+
+			// case of identifiers known to have no link
+			if (db == null) return null; 
+			// case of PIR identifiers, the link is irrelevant (Amos dixit: specs NP2 page validation) 
+			if ("PIR".equals(db)) return null;
+			// case of uniprot secondary acs & entry name identifiers, link useless (Amos dixit: specs NP2 page validation) 
+			if ("UniProtKB".equals(db) && ! "Primary AC".equals(typ) ) return null;
+
+			// normal cases
 			DbXref xref = new DbXref();
 			xref.setProteinAccessionReferer(masterUniqueName);
 			xref.setAccession(ac);
 			xref.setDatabaseName(db);
 			xref.setLinkUrl(linkTemplate);
+			// special case for uniprot primary ac
 			if ("UniProtKB".equals(db) ) {
 				xref.setDatabaseName("UniProt");
 				xref.setLinkUrl("http://www.uniprot.org/uniprot/%u");
-			} else if ("PIR".equals(db)) {
-				List<DbXrefProperty> props = new ArrayList<>();
-				DbXrefProperty prop = new DbXrefProperty();
-				prop.setName("entry name");
-				prop.setValue(ac);
-				props.add(prop);
-				xref.setProperties(props);
-			}
+			} 
 			return resolver.resolve(xref);
 		}
 		
