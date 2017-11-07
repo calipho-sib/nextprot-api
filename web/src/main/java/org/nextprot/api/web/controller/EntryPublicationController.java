@@ -88,13 +88,24 @@ public class EntryPublicationController {
         return count;
     }
 
-    @ApiMethod(path = "/entry-publications/stats", verb = ApiVerb.GET, description = "Get overall statistics over publications (highly expensive without cache !)",
+    @ApiMethod(path = "/entry-publications/stats", verb = ApiVerb.GET, description = "Get overall statistics over publications",
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @RequestMapping(value = "/entry-publications/stats", method = { RequestMethod.GET })
     @ResponseBody
-    public GlobalPublicationStatistics calcStatsEntryPublication() {
+    public GlobalPublicationStatistics calcGlobalPublicationStats() {
 
         return publicationStatisticsService.getGlobalPublicationStatistics();
+    }
+
+    @ApiMethod(path = "/entry-publications/stats/pubid/{pubid}", verb = ApiVerb.GET, description = "Get publication statistics over all entry publications",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry-publications/stats/pubid/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public GlobalPublicationStatistics.PublicationStatistics calcPublicationStats(
+            @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
+            @PathVariable("pubid") long publicationId) {
+
+        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationView publicationView) {
