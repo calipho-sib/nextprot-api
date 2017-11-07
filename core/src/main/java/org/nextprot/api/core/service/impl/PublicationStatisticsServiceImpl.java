@@ -34,7 +34,8 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
 
         entryPublicationsByPublicationId.forEach((pubId, entryPublications) -> {
 
-            GlobalPublicationStatistics.PublicationStatistics stats = new PublicationStatisticsAnalyser(pubId, entryPublications).analyse();
+            GlobalPublicationStatistics.PublicationStatistics stats =
+                    new PublicationStatisticsAnalyser(pubId, entryPublications).analyse();
             globalPublicationStatistics.putPublicationStatisticsById(pubId, stats);
 
             if (stats.isCited()) {
@@ -126,7 +127,7 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
          */
         private boolean isManuallyCuratedPublication() {
             return entryPublications.stream()
-                    .allMatch(ep -> ep.isCurated());
+                    .anyMatch(ep -> ep.isCurated());
         }
     }
 }
