@@ -49,6 +49,8 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
             if (stats.isCurated()) {
                 globalPublicationStatistics.incrementNumberOfCuratedPublications();
             }
+
+            globalPublicationStatistics.incrementTotalNumberOfPublications();
         });
 
         return globalPublicationStatistics;

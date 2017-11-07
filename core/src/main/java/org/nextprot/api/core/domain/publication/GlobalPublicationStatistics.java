@@ -9,12 +9,13 @@ import java.util.Map;
 @ApiObject(name = "global publication statistics", description = "Global publication statistics")
 public class GlobalPublicationStatistics implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 	private int numberOfCitedPublications;
 	private int numberOfComputationallyMappedPublications;
 	private int numberOfLargeScalePublications;
 	private int numberOfCuratedPublications;
+	private int numberTotalOfPublications;
     private Map<Long, PublicationStatistics> publicationStatisticsById = new HashMap<>();
 
     public PublicationStatistics getPublicationStatistics(long pubId) {
@@ -56,6 +57,14 @@ public class GlobalPublicationStatistics implements Serializable {
 	public void incrementNumberOfCuratedPublications() {
 		numberOfCuratedPublications++;
 	}
+
+    public int getTotalNumberOfPublications() {
+        return numberTotalOfPublications;
+    }
+
+    public void incrementTotalNumberOfPublications() {
+        numberTotalOfPublications++;
+    }
 
     public static class PublicationStatistics implements Serializable {
 
