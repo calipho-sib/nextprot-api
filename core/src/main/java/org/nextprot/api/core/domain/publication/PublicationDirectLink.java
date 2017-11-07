@@ -4,12 +4,14 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PublicationDirectLink implements Comparable<PublicationDirectLink>, Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     private long publicationId;
 	private String datasource;  // PIR or UniProt
@@ -24,7 +26,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
         this(publicationId, PublicationProperty.valueOf(propertyName.toUpperCase()), propertyValue);
     }
 
-	public PublicationDirectLink(long publicationId, PublicationProperty propertyName, String propertyValue) {
+    public PublicationDirectLink(long publicationId, PublicationProperty propertyName, String propertyValue) {
 
 		this.publicationId = publicationId;
 		this.publicationProperty = propertyName;
@@ -38,17 +40,44 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		else if (propertyName == PublicationProperty.COMMENT) {
 
 			this.datasource = "PIR";
-			// parse things like "[database:accession] label";
-			int pos = propertyValue.indexOf("]");
-			String tail = propertyValue.substring(pos + 1);
-			this.label = tail.trim();
-			String head = propertyValue.substring(0, pos);
-			pos = head.indexOf(":");
-			this.database = head.substring(1, pos);
-			this.accession = head.substring(pos + 1);
-			this.link = getLinkFor(this.database, this.accession);
+
+			int labelIndex = 0;
+
+            // parse things like "[database:accession] label";
+			if (propertyValue.contains("]")) {
+
+			    List<String> databaseAndAccession = new ArrayList<>();
+
+                int lastParsedIndex = parseDatabaseAndAccession(propertyValue, databaseAndAccession);
+
+                this.database = databaseAndAccession.get(0);
+                this.accession = databaseAndAccession.get(1);
+                this.link = getLinkFor(this.database, this.accession);
+
+                labelIndex = lastParsedIndex + 1;
+            }
+
+			this.label = (labelIndex < propertyValue.length()) ? propertyValue.substring(labelIndex).trim() : "";
 		}
 	}
+
+	private int parseDatabaseAndAccession(String propertyValue, List<String> stringCollector) {
+
+        int closedBracketIndex = propertyValue.indexOf("]");
+
+        String head = propertyValue.substring(0, closedBracketIndex);
+        int colonDelimitorIndex = head.indexOf(":");
+
+        if (colonDelimitorIndex != -1) {
+            stringCollector.add(head.substring(1, colonDelimitorIndex));
+            stringCollector.add(head.substring(colonDelimitorIndex + 1));
+        }
+        else {
+            throw new IllegalArgumentException(propertyValue+": missing colon delimitor in comment value of publication id "+publicationId);
+        }
+
+        return closedBracketIndex;
+    }
 
 	public long getPublicationId() {
 		return publicationId;

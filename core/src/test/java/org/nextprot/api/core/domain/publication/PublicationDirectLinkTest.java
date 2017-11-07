@@ -236,4 +236,34 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals(null, l.getLink());
     }
+
+    @Test
+    public void directLinkWithoutLabelShouldBeEmpty() {
+
+        String propertyValue = "[PDB:3DXD]";
+
+        PublicationDirectLink l = new PublicationDirectLink(1, "comment", propertyValue);
+        Assert.assertTrue(l.getLabel().isEmpty());
+        Assert.assertEquals("PDB", l.getDatabase());
+        Assert.assertEquals("3DXD", l.getAccession());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void colonShouldExistAsDelimitorInNextprotDatabase() {
+
+        new PublicationDirectLink(1, "comment", "[PDB 3DXD]");
+    }
+
+    @Test
+    public void directLinkWithoutDatabaseNorAccession() {
+
+        PublicationDirectLink l = new PublicationDirectLink(1, "comment",
+                "CFC1 mutations in patients with transposition of the great arteries and double-outlet right ventricle");
+
+        Assert.assertEquals(1,  l.getPublicationId());
+        Assert.assertEquals("PIR", l.getDatasource());
+        Assert.assertNull(l.getDatabase());
+        Assert.assertNull(l.getAccession());
+        Assert.assertEquals("CFC1 mutations in patients with transposition of the great arteries and double-outlet right ventricle", l.getLabel());
+    }
 }
