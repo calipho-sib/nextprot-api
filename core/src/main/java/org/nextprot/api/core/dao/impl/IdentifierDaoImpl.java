@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Repository
 public class IdentifierDaoImpl implements IdentifierDao {
@@ -47,26 +45,10 @@ public class IdentifierDaoImpl implements IdentifierDao {
 		Map<String, Object> params = new HashMap<>();
 		params.put("uniqueName", uniqueName);
 
-		List<Identifier> ids = new NamedParameterJdbcTemplate(
-				dsLocator.getDataSource()).query(
-						sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper(uniqueName));
-
-		return ids.stream()
-				.filter(Objects::nonNull)
-				.filter(i -> isValidIdentifier(i))
-				.collect(Collectors.toList());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+                .query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"),
+                        params, new IdentifierRowMapper(uniqueName));
 	}
-	
-	private boolean isValidIdentifier(Identifier identifier) {
-		// See CALIPHOMISC-489
-		if (! "Ensembl".equals(identifier.getDatabase())) return true;
-		if (identifier.getName().startsWith("ENSG")) return true;
-		if (identifier.getName().startsWith("ENSP")) return true;
-		if (identifier.getName().startsWith("ENST")) return true;
-		return false;
-	}
-	
-	
 	
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {
 
