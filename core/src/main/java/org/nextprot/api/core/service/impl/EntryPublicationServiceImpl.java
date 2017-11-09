@@ -141,9 +141,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                 ep.setSubmission(true);
 
             } else if (publicationType==PublicationType.ONLINE_PUBLICATION) {
-                ep.setCited(true); // always direct link B provided by UniProt
                 ep.setOnline(true);
-
             } else if (publicationType==PublicationType.BOOK) {
                 if (ep.isCited()) ep.setCurated(true);
                 if (ep.isUncited()) ep.setAdditional(true);
@@ -156,8 +154,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                 ep.setPatent(true);
 
             } else if (publicationType==PublicationType.UNPUBLISHED_OBSERVATION) {
-                ep.setCited(true);
-                ep.setCurated(true);
+                ep.setSubmission(true);
 
             } else if (publicationType==PublicationType.DOCUMENT) {
                 // don't need to deal with them: not found in data
