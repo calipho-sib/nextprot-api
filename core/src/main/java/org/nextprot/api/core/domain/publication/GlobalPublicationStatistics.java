@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.publication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jsondoc.core.annotation.ApiObject;
 
 import java.io.Serializable;
@@ -66,6 +67,7 @@ public class GlobalPublicationStatistics implements Serializable {
         numberTotalOfPublications++;
     }
 
+    @JsonIgnore
     public Map<Long, PublicationStatistics> getPublicationStatisticsById() {
         return publicationStatisticsById;
     }
