@@ -19,11 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,15 +35,15 @@ public class EntryPublicationController {
     @Autowired
     private PublicationStatisticsService publicationStatisticsService;
 
-	@ApiMethod(path = "/entry-publications/{entry}/pubview/{view}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication view",
+	@ApiMethod(path = "/entry-publications/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry-publications/{entry}/pubview/{view}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry-publications/{entry}/category/{category}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<EntryPublicationView> getEntryPublicationList(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName,
-			@ApiPathParam(name = "view", description = "publication view (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE or PATENT)", allowedvalues = { "CURATED" })
-			@PathVariable(value = "view") String publicationView) {
+			@ApiPathParam(name = "category", description = "publication category (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE or PATENT)", allowedvalues = { "CURATED" })
+			@PathVariable(value = "category") String publicationView) {
 
         String pubViewName = publicationView.toUpperCase();
 
@@ -70,7 +68,7 @@ public class EntryPublicationController {
 		return entryPublicationService.findEntryPublications(entryName).getEntryPublication(publicationId);
 	}
 
-    @ApiMethod(path = "/entry-publications/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by publication view",
+    @ApiMethod(path = "/entry-publications/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by publication category",
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @RequestMapping(value = "/entry-publications/{entry}/count", method = { RequestMethod.GET })
     @ResponseBody
@@ -88,24 +86,45 @@ public class EntryPublicationController {
         return count;
     }
 
-    @ApiMethod(path = "/entry-publications/stats", verb = ApiVerb.GET, description = "Get overall statistics over publications",
+    @ApiMethod(path = "/publications/stats", verb = ApiVerb.GET, description = "Get overall statistics over publications",
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/entry-publications/stats", method = { RequestMethod.GET })
+    @RequestMapping(value = "/publications/stats", method = { RequestMethod.GET })
     @ResponseBody
     public GlobalPublicationStatistics calcGlobalPublicationStats() {
 
         return publicationStatisticsService.getGlobalPublicationStatistics();
     }
 
-    @ApiMethod(path = "/entry-publications/stats/pubid/{pubid}", verb = ApiVerb.GET, description = "Get publication statistics over all entry publications",
+    @ApiMethod(path = "/publications/stats/pubid/{pubid}", verb = ApiVerb.GET, description = "Get statistics over all publications linked with a neXtProt entry",
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/entry-publications/stats/pubid/{pubid}", method = { RequestMethod.GET })
+    @RequestMapping(value = "/publications/stats/pubid/{pubid}", method = { RequestMethod.GET })
     @ResponseBody
     public GlobalPublicationStatistics.PublicationStatistics calcPublicationStats(
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId) {
 
         return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+    }
+
+    @ApiMethod(path = "/publications/pubids/{statstype}", verb = ApiVerb.GET, description = "Get all publication ids by statistics type",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publications/pubids/{statstype}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Set<Long> getPublicationIds(
+            @ApiPathParam(name = "statstype", description = "a publication statistics type (ALL, CITED, COMPUTED, CURATED, LARGE_SCALE)", allowedvalues = { "ALL" })
+            @PathVariable(value = "statstype") String statisticsType) {
+
+        StatisticsType type = StatisticsType.valueOf(statisticsType.toUpperCase());
+        Map<Long, GlobalPublicationStatistics.PublicationStatistics> map = publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatisticsById();
+
+        if (type == StatisticsType.ALL) {
+            return map.keySet();
+        }
+
+        return map.values().stream()
+                .filter(type.getPredicate())
+                .map(ps -> ps.getPublicationId())
+                .collect(Collectors.toSet());
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationView publicationView) {
@@ -170,6 +189,26 @@ public class EntryPublicationController {
 
         public void setDirectLinks(List<PublicationDirectLink> directLinks) {
             this.directLinks = directLinks;
+        }
+    }
+
+    private enum StatisticsType {
+
+        ALL(publicationStatistics -> true),
+        CITED(publicationStatistics -> publicationStatistics.isCited()),
+        COMPUTED(publicationStatistics -> publicationStatistics.isComputed()),
+        CURATED(publicationStatistics -> publicationStatistics.isCurated()),
+        LARGE_SCALE(publicationStatistics -> publicationStatistics.isLargeScale())
+        ;
+
+        private final Predicate<GlobalPublicationStatistics.PublicationStatistics> predicate;
+
+        StatisticsType(Predicate<GlobalPublicationStatistics.PublicationStatistics> predicate) {
+            this.predicate = predicate;
+        }
+
+        public Predicate<GlobalPublicationStatistics.PublicationStatistics> getPredicate() {
+            return predicate;
         }
     }
 }
