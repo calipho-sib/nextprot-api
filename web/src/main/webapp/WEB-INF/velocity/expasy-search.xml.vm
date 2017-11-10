@@ -1,0 +1,7 @@
+<ExpasyResult>
+    <count>$count</count>
+    <url>$url</url>
+    #if ($description)
+    <description>$description</description>
+    #end
+</ExpasyResult>
