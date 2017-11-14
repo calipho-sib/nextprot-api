@@ -1,15 +1,14 @@
 package com.nextprot.api.annotation.builder.statement.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 
@@ -33,6 +32,18 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 
 		//System.out.println(list.get(0));
 	}
+
+    @Test
+    public void NX_P43246ShouldNotContainUndefinedPublicationEvidences() {
+
+        List<Annotation> annotations = statementService.getAnnotations("NX_P43246");
+        Assert.assertEquals(0, annotations.stream()
+                .map(a -> a.getEvidences())
+                .flatMap(l -> l.stream())
+                .filter(e -> e.getResourceType().equals("publication"))
+                .filter(e -> e.getResourceId() < 0)
+                .count());
+    }
 
 	/*
 	@Test
