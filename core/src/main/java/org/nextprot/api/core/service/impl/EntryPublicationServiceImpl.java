@@ -122,6 +122,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                 l = accession2id.get(ac);
             }
 
+            // TODO: should be removed while AnnotationBuilder continue to set id to -1 publications missing in neXtProt DB !!!
             if (l != null && l < 0) {
                 LOGGER.severe(evi.getResourceType()+ " evidence of entry accession "+evi.getResourceAccession()
                         + " has a incorrect resource id of "+l);
