@@ -121,7 +121,10 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
                         evidence.setResourceId(publication.getPublicationId());
                     }
                     else {
-                        return Stream.empty();
+                        // TODO: (SEE WITH DANIEL) : could not return empty annotation evidence because of Exception thrown by
+                        //     : AnnotationUtils.computeAnnotationQualityBasedOnEvidences when evidence list is empty
+                        evidence.setResourceId(-1);
+                        //return Stream.empty();
                     }
 
                     AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
