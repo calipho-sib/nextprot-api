@@ -15,9 +15,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class EntryPublicationServiceImpl implements EntryPublicationService {
+
+    private static Logger LOGGER = Logger.getLogger(EntryPublicationServiceImpl.class.getSimpleName());
 
     @Autowired
     private EntryPublicationDao entryPublicationDao;
@@ -109,15 +112,23 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
         private Long extractPubIdFromEvidence(AnnotationEvidence evi) {
 
+            Long l = null;
+
             if (evi.isResourceAPublication()) {
-                return evi.getResourceId();
+                l = evi.getResourceId();
                 // special cases with indirect link to publication via an evidence xref
-            } else if (PUBMED_DB.equals(evi.getResourceDb()) || NEXTPROT_SUBMISSION_DB.equals(evi.getResourceDb())) {
+            } else if ("PubMed".equals(evi.getResourceDb()) || "neXtProtSubmission".equals(evi.getResourceDb())) {
                 String ac = evi.getResourceAccession();
-                return accession2id.get(ac);
+                l = accession2id.get(ac);
             }
 
-            return null;
+            if (l != null && l < 0) {
+                LOGGER.severe(evi.getResourceType()+ " evidence of entry accession "+evi.getResourceAccession()
+                        + " has a incorrect resource id of "+l);
+                return null;
+            }
+
+            return l;
         }
 
         private void handlePublicationDirectLinks(EntryPublication ep) {
