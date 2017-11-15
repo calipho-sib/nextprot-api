@@ -168,7 +168,6 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
             } else if (publicationType==PublicationType.UNPUBLISHED_OBSERVATION) {
                 ep.setSubmission(true);
-                ep.setCited(true);
 
             } else if (publicationType==PublicationType.DOCUMENT) {
                 // don't need to deal with them: not found in data
