@@ -31,10 +31,11 @@ mvn test
 
 ## Docker for preprod
 
+```shell
 mvn package -DskipTests 
 docker build -t nextprot-preprod .
 docker run -p 8080:8080 nextprot-preprod
-
+```
 
 ## Powered by 
 <ul>
