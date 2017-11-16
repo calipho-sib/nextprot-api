@@ -29,6 +29,14 @@ mvn test
 [Contact us](http://www.nextprot.org/contact/us)
 
 
+## Docker for preprod
+
+```shell
+mvn package -DskipTests 
+docker build -t nextprot-preprod .
+docker run -p 8080:8080 nextprot-preprod
+```
+
 ## Powered by 
 <ul>
 	<li>
@@ -49,10 +57,4 @@ mvn test
 * Git
 * Maven
 
-
-## Docker for preprod
-
-mvn package -DskipTests 
-docker build -t nextprot-preprod .
-docker run -p 8080:8080 nextprot-preprod
 
