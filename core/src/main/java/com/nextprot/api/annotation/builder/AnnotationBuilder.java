@@ -23,7 +23,6 @@ import org.nextprot.commons.statements.StatementField;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
@@ -33,12 +32,6 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 	protected PublicationService publicationService = null;
 	protected MainNamesService mainNamesService = null;
 
-	/**
-	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
-	 */
-	static boolean STRICT = false;
-
-	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
 	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
@@ -108,24 +101,14 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 		//Ensures there is no repeated evidence!
 		Set<AnnotationEvidence> evidencesSet = Statements.stream()
-                .flatMap(s -> {
+                .map(s -> {
                     AnnotationEvidence evidence = new AnnotationEvidence();
 
                     evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
 
                     evidence.setResourceAssociationType("evidence");
                     evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
-
-                    Publication publication = findPublication(s);
-                    if (publication != null) {
-                        evidence.setResourceId(publication.getPublicationId());
-                    }
-                    else {
-                        // TODO: (SEE WITH DANIEL) : could not return empty annotation evidence because of Exception thrown by
-                        //     : AnnotationUtils.computeAnnotationQualityBasedOnEvidences when evidence list is empty
-                        evidence.setResourceId(-1);
-                        //return Stream.empty();
-                    }
+                    evidence.setResourceId(findPublicationId(s));
 
                     AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
                     AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
@@ -161,7 +144,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
                     //TODO create experimental contexts!
 
-                    return Stream.of(evidence);
+                    return evidence;
                 })
                 .collect(Collectors.toSet());
 		
@@ -197,7 +180,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 	}
 
-    Publication findPublication(Statement statement) {
+    long findPublicationId(Statement statement) {
 
 		String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
 		String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
@@ -208,14 +191,10 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
             LOGGER.error(message);
 
-            if (STRICT){
-                throw new NextProtException(message);
-            }
-			//Set -1 if not exists. Should never be the case
-			//evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication db:" + referenceDB + " id:" + referenceAC, -1L));
-		    return null;
+            throw new NextProtException(message);
 		}
-        return publication;
+
+        return publication.getPublicationId();
 	}
 
 	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
@@ -373,14 +352,5 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
         });
 
 		return annotations;
-	}
-
-	private Object throwErrorOrReturn(String message, Object returnObject){
-
-		LOGGER.error(message);
-		if(STRICT){
-			throw new NextProtException(message);
-		}else return returnObject;
-
 	}
 }

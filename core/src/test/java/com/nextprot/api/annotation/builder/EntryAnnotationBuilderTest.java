@@ -1,6 +1,5 @@
 package com.nextprot.api.annotation.builder;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -18,11 +17,6 @@ import java.util.List;
 
 public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 
-	@AfterClass
-	public static void tearDown() {
-		AnnotationBuilder.STRICT = false;
-	}
-
 	@Test
 	public void shouldFindCorrectPublicationId() {
 
@@ -31,18 +25,17 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				.addField(StatementField.REFERENCE_ACCESSION, "123").build();
 
 		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
-		ab.findPublication(sb1);
+		ab.findPublicationId(sb1);
 	}
 
 	@Test(expected = NextProtException.class)
 	public void shouldThrowAnExceptionIfInModeStrictAndPublicationIsNotFound() {
 
-		AnnotationBuilder.STRICT = true;
 		Statement sb1 = StatementBuilder.createNew()
 				.addField(StatementField.REFERENCE_DATABASE, "PubMed")
 				.addField(StatementField.REFERENCE_ACCESSION, "000").build();
 		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
-		ab.findPublication(sb1);
+		ab.findPublicationId(sb1);
 	}
 	
 	@Override
