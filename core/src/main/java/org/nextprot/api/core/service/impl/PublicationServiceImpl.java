@@ -195,7 +195,7 @@ public class PublicationServiceImpl implements PublicationService {
 	}
 
 	@Override
-	@Cacheable("publications-by-id-and-accession")
+	@Cacheable(value = "publications-by-id-and-accession")
 	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}

@@ -1,11 +1,7 @@
 <ExpasyResult>
     <count>$count</count>
     <url>$url</url>
-<<<<<<< HEAD
-    <description>$description</description>
-=======
     #if ($description)
     <description>$description</description>
     #end
->>>>>>> hotfix-2.10.2
 </ExpasyResult>
