@@ -1,7 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
 import com.google.common.collect.Maps;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -94,19 +93,29 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		return Collections.emptyList();
 	}
-	
-	
-	@Override
-	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 
-		List<Long> ids = findPublicationIdsByDatabaseAndAccession(database, accession);
 
-		if (!ids.isEmpty()) {
-			return findPublicationById(ids.get(0));
-		}
+    @Override
+    public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 
-		return null;
-	}
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("database", database);
+        namedParameters.addValue("accession", accession);
+
+        // TODO: test if this query could return multiple ids else replace queryForList() with query()
+        List<Long> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(
+                sqlDictionary.getSQLQuery("publication-id-by-database-and-accession"), namedParameters, Long.class);
+
+        if (!ids.isEmpty()) {
+
+            if (ids.size() > 1) {
+                LOGGER.error(database+" id "+ accession + " should not return multiple publications ids "+ ids);
+            }
+            return findPublicationById(ids.get(0));
+        }
+
+        return null;
+    }
 
 	@Override
 	public Publication findPublicationByMD5(String md5) {
@@ -117,15 +126,6 @@ public class PublicationDaoImpl implements PublicationDao {
 		}
 
 		return null;
-	}
-
-	private List<Long> findPublicationIdsByDatabaseAndAccession(String database, String accession) {
-		
-	  MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-	  namedParameters.addValue("database", database);
-	  namedParameters.addValue("accession", accession);
-	  
-  	  return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-database-and-accession"), namedParameters, Long.class);
 	}
 	
 	private List<Long> findPublicationIdsByTitle(String title) {
