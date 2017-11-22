@@ -122,44 +122,6 @@ public class AdminController {
 
 		return result;
 	}
-
-	
-	@ResponseBody
-	@RequestMapping(value = "/admin/cache/{cacheName}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ApiMethod(path = "/admin/cache/{cacheName}/clear", verb = ApiVerb.GET, description = "Clears the cache")
-	public List<String> clearCache(HttpServletRequest request, 
-			@ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
-			@PathVariable("cacheName") String cacheName) {
-
-		LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
-		List<String> result = new ArrayList<String>();
-		try {
-
-			if (cacheManager != null) {
-
-				if (cacheManager.getCache(cacheName) == null){
-					result.add("cache " + cacheName + " not found");
-					return result;
-				}
-
-
-				cacheManager.getCache(cacheName).clear();
-				result.add(cacheName + " cleared");
-
-			} else {
-				result.add("no cache manager found");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.error(e.getMessage());
-			result.add(e.getLocalizedMessage());
-			return result;
-		}
-
-		return result;
-	}
-	
 	
 	@ResponseBody
 	@RequestMapping(value = "ip")
