@@ -46,13 +46,13 @@ public class AdminController {
                                    @RequestParam(value = "key", required = false) String key) {
 
         LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         try {
 
             if (cacheManager != null) {
 
                 if (cacheManager.getCache(cacheName) == null){
-                    result.add("cache " + cacheName + " not found");
+                    result.add("cache " + cacheName + " not found (existing caches="+cacheManager.getCacheNames()+")");
                     return result;
                 }
 
@@ -72,6 +72,38 @@ public class AdminController {
                 result.add("no cache manager found");
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            result.add(e.getLocalizedMessage());
+            return result;
+        }
+
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/admin/caches/key/{key}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/caches/key/{key}/clear", verb = ApiVerb.GET, description = "Clears all data from caches associated with the key")
+    public List<String> clearEntriesFromCaches(HttpServletRequest request,
+                                   @ApiPathParam(name = "key", description = "The name of the key",  allowedvalues = { "NX_P01308"})
+                                   @PathVariable("key") String key) {
+
+        LOGGER.debug("Request to clear caches from " + request.getRemoteAddr() + " for key "+ key);
+        List<String> result = new ArrayList<>();
+
+        try {
+            if (cacheManager != null) {
+                for (String cacheName : cacheManager.getCacheNames()) {
+
+                    if (cacheManager.getCache(cacheName).get(key) != null) {
+                        cacheManager.getCache(cacheName).evict(key);
+                        result.add("data mapping key " + key + " evicted from cache " + cacheName);
+                    }
+                }
+            } else {
+                result.add("no cache manager found");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
