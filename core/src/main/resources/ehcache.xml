@@ -218,32 +218,10 @@
 		statistics="true" >
 	</cache>
 
-	<cache name="statement-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
-	</cache>
-
 	<cache name="statement-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="220000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
-
-	<cache name="modified-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
-	</cache>
-
-	<cache name="normal-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
-	</cache>
-	
-	<cache name="proteoform-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
-	</cache>
-	
-
 
 	<!-- All queries in  NXQ_*.rq files having a tag "tutorial" (only in memory) -->
 	<cache name="nxq-tutorial-queries" overflowToOffHeap="false"
