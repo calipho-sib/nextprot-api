@@ -28,43 +28,38 @@ public class ExpasySearchController {
 	@Autowired private SolrService queryService;
 	@Autowired private QueryBuilderService queryBuilderService;
 
-	
+
 	@RequestMapping(value = "/expasy-search", method = { RequestMethod.POST, RequestMethod.GET })
 	public String expasySearch(@RequestParam String query, @RequestParam (required = false) String type, Model model, HttpServletResponse response) {
 
-			try {
+        try {
+            QueryRequest qr = new QueryRequest();
+            qr.setQuality("gold-and-silver");
+            qr.setQuery(query);
+            Query bq = queryBuilderService.buildQueryForSearch(qr, "entry");
+            SearchResult result = queryService.executeQuery(bq);
+            model.addAttribute("count", result.getFound());
+            model.addAttribute("url", "https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=" + query);
+            model.addAttribute("description", "Entries matching the query " + query + " in neXtProt");
 
-				QueryRequest qr = new QueryRequest();
-				qr.setQuality("gold-and-silver");
-				qr.setQuery(query);
-				Query bq = queryBuilderService.buildQueryForSearch(qr, "entry");
-				SearchResult result = queryService.executeQuery(bq);
-				model.addAttribute("count", result.getFound());
-				model.addAttribute("url", "https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=" + query);
-				model.addAttribute("description", "Entries matching the query " + query + " in neXtProt");
+        } catch (NextProtException e){
 
-			}catch (NextProtException e){
+            LOGGER.error(e.getLocalizedMessage());
+            e.printStackTrace();
+            response.setStatus(500);
+            model.addAttribute("count", -1);
+            model.addAttribute("url", "error message " + e.getMessage());
 
-				LOGGER.error(e.getLocalizedMessage());
-				e.printStackTrace();
-				response.setStatus(500);
-				model.addAttribute("count", -1);
-				model.addAttribute("url", "error message " + e.getMessage());
+        } catch (Exception e){
 
-			}
-			catch (Exception e){
+            LOGGER.error(e.getLocalizedMessage());
+            e.printStackTrace();
+            response.setStatus(500);
+            model.addAttribute("count", -1);
 
-				LOGGER.error(e.getLocalizedMessage());
-				e.printStackTrace();
-				response.setStatus(500);
-				model.addAttribute("count", -1);
+        }
 
-			}
-
-
-			return "expasy-search";
-
+        return "expasy-search";
 	}
-
-
 }
+

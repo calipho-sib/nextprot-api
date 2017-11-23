@@ -5,3 +5,4 @@ inner join nextprot.db_xrefs x on assoc.db_xref_id = x.resource_id
 inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id 
 where x.accession = :accession
 and dbs.cv_name = :database
+and pubs.cv_publication_type_id != 80 --removing publications of type document
