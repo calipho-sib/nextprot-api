@@ -13,8 +13,10 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.nextprot.api.core.utils.PublicationComparator;
@@ -39,7 +41,9 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
 	@Autowired private PublicationStatisticsService publicationStatisticsService;
+    @Autowired private EntryPublicationService entryPublicationService;
 
+    private Map<Long, List<EntryPublication>> entryPublicationsById;
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
@@ -195,5 +199,35 @@ public class PublicationServiceImpl implements PublicationService {
     public GlobalPublicationStatistics.PublicationStatistics getPublicationStatistics(long publicationId) {
 
         return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+    }
+
+    @Cacheable("entry-publications-by-id")
+    @Override
+    public List<EntryPublication> getEntryPublications(long pubId) {
+
+        if (entryPublicationsById == null) {
+            entryPublicationsById = buildEntryPublicationsMap();
+        }
+
+        return entryPublicationsById.getOrDefault(pubId, new ArrayList<>());
+    }
+
+    // Memoized function that returns EntryPublications by publication id
+    private Map<Long, List<EntryPublication>> buildEntryPublicationsMap() {
+
+        Map<Long, List<EntryPublication>> map = new HashMap<>();
+
+        for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
+
+            Map<Long, EntryPublication> publicationsById = entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationsById();
+
+            for (Map.Entry<Long, EntryPublication> kv : publicationsById.entrySet()) {
+
+                map.computeIfAbsent(kv.getKey(), k -> new ArrayList<>())
+                        .add(kv.getValue());
+            }
+        }
+
+        return map;
     }
 }
