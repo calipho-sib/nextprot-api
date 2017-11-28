@@ -7,7 +7,6 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
-import org.nextprot.api.core.service.EntryPublicationListService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
@@ -35,12 +34,10 @@ public class EntryPublicationController {
     private PublicationService publicationService;
     @Autowired
     private PublicationStatisticsService publicationStatisticsService;
-    @Autowired
-    private EntryPublicationListService entryPublicationListService;
 
-	@ApiMethod(path = "/entry-publications/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
+	@ApiMethod(path = "/entry-publications/entry/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry-publications/{entry}/category/{category}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry-publications/entry/{entry}/category/{category}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<EntryPublicationView> getEntryPublicationList(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -58,9 +55,9 @@ public class EntryPublicationController {
 		throw new NextProtException(publicationView + ": Unknown publication view");
 	}
 
-	@ApiMethod(path = "/entry-publications/{entry}/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with a neXtProt entry",
+	@ApiMethod(path = "/entry-publications/entry/{entry}/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with a neXtProt entry",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry-publications/{entry}/pubid/{pubid}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/entry-publications/entry/{entry}/pubid/{pubid}", method = { RequestMethod.GET })
 	@ResponseBody
 	public EntryPublication getEntryPublication(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -71,20 +68,9 @@ public class EntryPublicationController {
 		return entryPublicationService.findEntryPublications(entryName).getEntryPublication(publicationId);
 	}
 
-    @ApiMethod(path = "/entry-publications/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with neXtProt entries",
+    @ApiMethod(path = "/entry-publications/entry/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by publication category",
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/entry-publications/pubid/{pubid}", method = { RequestMethod.GET })
-    @ResponseBody
-    public List<EntryPublication> getEntryPublicationsByPubId(
-            @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
-            @PathVariable("pubid") long publicationId) {
-
-        return entryPublicationListService.getEntryPublicationListByPubId(publicationId);
-    }
-
-    @ApiMethod(path = "/entry-publications/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by publication category",
-            produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/entry-publications/{entry}/count", method = { RequestMethod.GET })
+    @RequestMapping(value = "/entry-publications/entry/{entry}/count", method = { RequestMethod.GET })
     @ResponseBody
     public Map<PublicationView, Integer> countEntryPublication(
             @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -109,7 +95,7 @@ public class EntryPublicationController {
         return publicationStatisticsService.getGlobalPublicationStatistics();
     }
 
-    @ApiMethod(path = "/publications/stats/pubid/{pubid}", verb = ApiVerb.GET, description = "Get statistics over all publications linked with a neXtProt entry",
+    @ApiMethod(path = "/publications/pubid/{pubid}/stats", verb = ApiVerb.GET, description = "Get statistics over all publications linked with a neXtProt entry",
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @RequestMapping(value = "/publications/stats/pubid/{pubid}", method = { RequestMethod.GET })
     @ResponseBody
@@ -139,6 +125,17 @@ public class EntryPublicationController {
                 .filter(type.getPredicate())
                 .map(ps -> ps.getPublicationId())
                 .collect(Collectors.toSet());
+    }
+
+    @ApiMethod(path = "/entry-publications/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with neXtProt entries",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry-publications/pubid/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public List<EntryPublication> getEntryPublicationsByPubId(
+            @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
+            @PathVariable("pubid") long publicationId) {
+
+        return publicationService.getEntryPublications(publicationId);
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationView publicationView) {

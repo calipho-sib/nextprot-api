@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
@@ -55,4 +56,9 @@ public interface PublicationService {
      * @param publicationId the publication id
      */
     GlobalPublicationStatistics.PublicationStatistics getPublicationStatistics(long publicationId);
+
+    /**
+     * @return the list of associated EntryPublications
+     */
+    List<EntryPublication> getEntryPublications(long publicationId);
 }

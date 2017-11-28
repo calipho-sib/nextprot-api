@@ -2,7 +2,6 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.service.EntryPublicationListService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,6 @@ import java.util.List;
 public class PublicationStatisticsServiceImpl implements PublicationStatisticsService {
 
     @Autowired
-    private EntryPublicationListService entryPublicationListService;
-
-    @Autowired
     private PublicationService publicationService;
 
     @Cacheable("global-publication-statistics")
@@ -28,7 +24,7 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
 
         publicationService.findAllPublicationIds().forEach(pubId -> {
 
-            List<EntryPublication> entryPublications = entryPublicationListService.getEntryPublicationListByPubId(pubId);
+            List<EntryPublication> entryPublications = publicationService.getEntryPublications(pubId);
 
             GlobalPublicationStatistics.PublicationStatistics stats =
                     new PublicationStatisticsAnalyser(pubId, entryPublications).analyse();
