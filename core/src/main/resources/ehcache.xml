@@ -355,6 +355,11 @@
 		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 
+    <cache name="entry-publication-list-by-pubid" overflowToOffHeap="false" overflowToDisk="true"
+           diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="600000"
+           eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
     <cache name="global-publication-statistics" overflowToOffHeap="false" overflowToDisk="true"
            diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">

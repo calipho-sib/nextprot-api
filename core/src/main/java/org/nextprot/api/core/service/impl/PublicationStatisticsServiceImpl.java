@@ -1,27 +1,24 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.service.EntryPublicationService;
+import org.nextprot.api.core.service.EntryPublicationListService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class PublicationStatisticsServiceImpl implements PublicationStatisticsService {
 
     @Autowired
-    private MasterIdentifierDao masterIdentifierDao;
+    private EntryPublicationListService entryPublicationListService;
 
     @Autowired
-    private EntryPublicationService entryPublicationService;
+    private PublicationService publicationService;
 
     @Cacheable("global-publication-statistics")
     @Override
@@ -29,10 +26,9 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
 
         GlobalPublicationStatistics globalPublicationStatistics = new GlobalPublicationStatistics();
 
-        Map<Long, List<EntryPublication>> entryPublicationsByPublicationId =
-                buildEntryPublicationsMap();
+        publicationService.findAllPublicationIds().forEach(pubId -> {
 
-        entryPublicationsByPublicationId.forEach((pubId, entryPublications) -> {
+            List<EntryPublication> entryPublications = entryPublicationListService.getEntryPublicationListByPubId(pubId);
 
             GlobalPublicationStatistics.PublicationStatistics stats =
                     new PublicationStatisticsAnalyser(pubId, entryPublications).analyse();
@@ -55,25 +51,6 @@ public class PublicationStatisticsServiceImpl implements PublicationStatisticsSe
         });
 
         return globalPublicationStatistics;
-    }
-
-    // Memoized function that returns EntryPublications by publication id
-    private Map<Long, List<EntryPublication>> buildEntryPublicationsMap() {
-
-        Map<Long, List<EntryPublication>> entryPublicationsById = new HashMap<>();
-
-        for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
-
-            Map<Long, EntryPublication> publicationsById = entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationsById();
-
-            for (Map.Entry<Long, EntryPublication> kv : publicationsById.entrySet()) {
-
-                entryPublicationsById.computeIfAbsent(kv.getKey(), k -> new ArrayList<>())
-                        .add(kv.getValue());
-            }
-        }
-
-        return entryPublicationsById;
     }
 
     private static class PublicationStatisticsAnalyser {

@@ -7,6 +7,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.service.EntryPublicationListService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
@@ -34,6 +35,8 @@ public class EntryPublicationController {
     private PublicationService publicationService;
     @Autowired
     private PublicationStatisticsService publicationStatisticsService;
+    @Autowired
+    private EntryPublicationListService entryPublicationListService;
 
 	@ApiMethod(path = "/entry-publications/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -67,6 +70,17 @@ public class EntryPublicationController {
 
 		return entryPublicationService.findEntryPublications(entryName).getEntryPublication(publicationId);
 	}
+
+    @ApiMethod(path = "/entry-publications/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with neXtProt entries",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry-publications/pubid/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public List<EntryPublication> getEntryPublicationsByPubId(
+            @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
+            @PathVariable("pubid") long publicationId) {
+
+        return entryPublicationListService.getEntryPublicationListByPubId(publicationId);
+    }
 
     @ApiMethod(path = "/entry-publications/{entry}/count", verb = ApiVerb.GET, description = "Count entry publications associated with a neXtProt entry by publication category",
             produces = { MediaType.APPLICATION_JSON_VALUE })
