@@ -74,6 +74,8 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 		 Assert.assertEquals("High levels of DJ-1 protein in nipple fluid of patients with breast cancer.", publication.getTitle());
 	}
 
+    // TODO: do not ignore the following test after next release data jan 2018
+    @Ignore
     @Test
     public void testPublicationPubmed23248292() {
         Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", "23248292");
