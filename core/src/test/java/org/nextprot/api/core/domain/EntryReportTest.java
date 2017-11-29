@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.nextprot.api.core.domain.EntryReport.*;
+
 public class EntryReportTest {
 
     @Test
@@ -104,6 +106,27 @@ public class EntryReportTest {
         Assert.assertEquals("1p1.2-p1.4", list.get(2).getChromosomalLocation());
         Assert.assertEquals("1q13.4", list.get(3).getChromosomalLocation());
         Assert.assertEquals("1q32", list.get(4).getChromosomalLocation());
+    }
+
+    @Test
+    public void testPublicationCounts() throws Exception {
+
+        EntryReport er = newEntryReport("HNRNPCL1", "NX_O60812", "1q32",
+                "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                true, false, false, false, 1, 322, 5,
+                "Heterogeneous nuclear ribonucleoprotein C-like 1");
+
+        er.setPropertyCount(CURATED_PUBLICATION_COUNT, 44);
+        er.setPropertyCount(ADDITIONAL_PUBLICATION_COUNT, 13);
+        er.setPropertyCount(PATENT_COUNT, 0);
+        er.setPropertyCount(SUBMISSION_COUNT, 3);
+        er.setPropertyCount(WEB_RESOURCE_COUNT, 0);
+
+        Assert.assertEquals(44, er.countCuratedPublications());
+        Assert.assertEquals(13, er.countAdditionalPublications());
+        Assert.assertEquals(0, er.countPatents());
+        Assert.assertEquals(3, er.countSubmissions());
+        Assert.assertEquals(0, er.countWebResources());
     }
 
     public static EntryReport newEntryReport(String geneName, String ac, String chromosalPosition,

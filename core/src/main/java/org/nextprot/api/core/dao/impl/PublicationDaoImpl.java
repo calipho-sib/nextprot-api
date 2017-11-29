@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.PublicationDao;
@@ -39,39 +40,30 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	@Override
 	public List<Long> findSortedPublicationIdsByMasterId(Long masterId) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("identifierId", masterId);
-		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new LongRowMapper("resource_id"));
-	}
+	    Map<String, Object> params = new HashMap<>();
 
-	@Override
+        params.put("identifierId", masterId);
+        params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
+
+        return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+                sqlDictionary.getSQLQuery("publication-sorted-for-master"),
+                params,
+                new JdbcUtils.LongRowMapper("resource_id"));
+    }
+
+    @Override
 	public List<Publication> findSortedPublicationsByMasterId(Long masterId) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("identifierId", masterId);
-		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		List<Long> publicationIds = findSortedPublicationIdsByMasterId(masterId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("identifierId", masterId);
+        params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		// get all journals found for all publication ids
-		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(publicationIds);
-		
-		List<Publication> publications = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
+        // get all journals found for all publication ids
+        List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(findSortedPublicationIdsByMasterId(masterId));
 
-		 // get all entry publication properties     
-		Map<Long,Map<String,List<String>>> publiPropMap = findEntryPublicationPropertiesByMasterId(masterId);
-		
-		// attach properties to each publication
-		for (Publication pub: publications) {
-			long pubId = pub.getPublicationId();
-			if (publiPropMap.containsKey(pubId)) {
-				pub.setProperties(publiPropMap.get(pubId));
-			}
-		}
-		
-		return publications;
-	}
+        return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
+    }
 
 	@Override
 	public Publication findPublicationById(long publicationId) {
@@ -141,53 +133,7 @@ public class PublicationDaoImpl implements PublicationDao {
 	@Override
 	public List<Long> findAllPublicationsIds() {
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper("pub_id"));
-	}
-
-	private static class LongRowMapper implements ParameterizedRowMapper<Long> {
-
-		private final String columnName;
-
-		LongRowMapper(String columnName) {
-			this.columnName = columnName;
-		}
-
-		@Override
-		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
-			return resultSet.getLong(columnName);
-		}
-	}
-
-	@Override
-	public Map<Long,Map<String,List<String>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
-
-		Map<String, Object> params = new HashMap<>();
-		params.put("masterId", masterId);
-		EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper();		
-		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-properties-for-master"), params, mapper);		
-		return mapper.getResult();
-		
-	}
-	
-	private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<Object> {
-		
-		private Map<Long,Map<String,List<String>>> result = new HashMap<>();
-				
-		public Map<Long,Map<String,List<String>>> getResult() { return result; }
-		
-		@Override
-		public Object mapRow(ResultSet resultSet, int row) throws SQLException {
-
-			Long pubId = resultSet.getLong("pub_id");
-			String propertyName = resultSet.getString("property_name");
-			String propertyValue = resultSet.getString("property_value");
-			if (! result.containsKey(pubId)) result.put(pubId, new HashMap<String,List<String>>()) ;
-			Map<String,List<String>> props = result.get(pubId);
-			if (! props.containsKey(propertyName)) props.put(propertyName, new ArrayList<String>());
-			props.get(propertyName).add(propertyValue);
-			return null;
-		}
-		
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new JdbcUtils.LongRowMapper("pub_id"));
 	}
 	
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
@@ -214,15 +160,10 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setAbstractText(resultSet.getString("abstract_text"));
 
 			// set publication type
-			publication.setPublicationType(PublicationType.valueOfName(resultSet.getString("pub_type")).toString());
+			publication.setPublicationType(PublicationType.valueOfName(resultSet.getString("pub_type")));
 
 			// set publication date
 			setPublicationDate(publication, resultSet);
-
-			// set publication details
-			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
-			publication.setIsCurated(resultSet.getLong("is_curated")>0);
-			publication.setIsComputed(resultSet.getLong("is_computed")>0);
 
 			// set infos on publication medium, volume, issue, pages, journal, book...
 			setPublicationLocator(publication, resultSet);
@@ -249,7 +190,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		private void setPublicationTitle(Publication publication, ResultSet resultSet) throws SQLException {
 
-			PublicationType publicationType = PublicationType.valueOfName(publication.getPublicationType());
+			PublicationType publicationType = publication.getPublicationType();
 			String title;
 
 			if (publicationType == PublicationType.ONLINE_PUBLICATION) {
@@ -285,7 +226,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		private void setPublicationLocator(Publication publication, ResultSet resultSet) throws SQLException {
 
-			PublicationType pubType = PublicationType.valueOfName(publication.getPublicationType());
+			PublicationType pubType = publication.getPublicationType();
 
 			if (pubType == PublicationType.BOOK) {
 				publication.setEditedVolumeBookLocation(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),

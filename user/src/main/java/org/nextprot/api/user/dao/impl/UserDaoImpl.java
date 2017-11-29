@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserDao;
@@ -44,7 +44,8 @@ public class UserDaoImpl implements UserDao {
         namedParameters.addValue("first_name", user.getFirstName());
         namedParameters.addValue("last_name", user.getLastName());
 
-        long key = JdbcTemplateUtils.insertAndGetKey(INSERT_USER_SQL, "user_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
+        long key = JdbcUtils.insertAndGetKey(INSERT_USER_SQL, "user_id", namedParameters,
+                new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 
         if (user.getAuthorities() != null && !user.getAuthorities().isEmpty()) {
 

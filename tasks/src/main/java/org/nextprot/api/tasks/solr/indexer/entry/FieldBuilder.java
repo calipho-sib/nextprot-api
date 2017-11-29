@@ -1,34 +1,22 @@
 package org.nextprot.api.tasks.solr.indexer.entry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
+
+import java.util.*;
 
 public abstract class FieldBuilder {
 
 	boolean isGold = false;
 	protected TerminologyService terminologyservice = null;
 	protected EntryBuilderService entryBuilderService = null;
-	
+	protected PublicationService publicationService;
 
-	public EntryBuilderService getEntryBuilderService() {
-		return entryBuilderService;
-	}
-
-	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
-		this.entryBuilderService = entryBuilderService;
-	}
-
-	public boolean isGold() {
+    public boolean isGold() {
 		return isGold;
 	}
 
@@ -39,6 +27,14 @@ public abstract class FieldBuilder {
 	public void setTerminologyService(TerminologyService terminologyservice) {
 		this.terminologyservice = terminologyservice;
 	}
+
+    public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
+        this.entryBuilderService = entryBuilderService;
+    }
+
+    public void setPublicationService(PublicationService publicationService) {
+        this.publicationService = publicationService;
+    }
 
 	boolean initialized = false;
 	private Map<Fields, Object> fields = new HashMap<>();

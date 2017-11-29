@@ -2,14 +2,14 @@
 #parse("turtle/prefix.ttl.vm")
 #end
 publication:$publication.getPublicationId() a :Publication;
-#if($publication.getIsLargeScale())
+#if($isLargeScale)
     rdf:type :LargeScalePublication;
 #end
 #if($publication.hasTitle())
 #set($UNESCAPED_CDATA = $publication.title)
     :title """$StringUtils.clean($UNESCAPED_CDATA)"""^^xsd:string;
 #end
-    :pubType "$publication.getPublicationType()"^^xsd:string;
+    :pubType "$publication.getPublicationType().name()"^^xsd:string;
 #if($publication.isLocalizable())
     :journal "$publication.getPublicationLocatorName()"^^xsd:string;
 #if($publication.getPublicationYear())

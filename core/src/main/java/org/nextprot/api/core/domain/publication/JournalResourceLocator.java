@@ -22,15 +22,6 @@ public class JournalResourceLocator extends BookResourceLocator implements Seria
         return journal.hasJournalId();
     }
 
-    /**
-     * @return journal id or -1 if not exist
-     */
-    public long getJournalId() {
-        if (journal.hasJournalId())
-            return journal.getJournalId();
-        return -1;
-    }
-
     public String getAbbrev() {
         return journal.getAbbrev();
     }
@@ -41,10 +32,6 @@ public class JournalResourceLocator extends BookResourceLocator implements Seria
 
     public String getNLMid() {
         return journal.getNLMid();
-    }
-
-    public boolean hasPublicationId() {
-        return journal instanceof PublicationCvJournal;
     }
 
     /**

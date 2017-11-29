@@ -32,12 +32,6 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 	protected PublicationService publicationService = null;
 	protected MainNamesService mainNamesService = null;
 
-	/**
-	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
-	 */
-	static boolean STRICT = false;
-
-	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
 	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
@@ -106,53 +100,53 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 	protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
 
 		//Ensures there is no repeated evidence!
-		Set<AnnotationEvidence> evidencesSet = Statements.stream().map(s -> {
-			AnnotationEvidence evidence = new AnnotationEvidence();
-			
-			evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
-			
-			evidence.setResourceAssociationType("evidence");
-			evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
-			
-			
-			setEvidenceResourceId(evidence, s);
+		Set<AnnotationEvidence> evidencesSet = Statements.stream()
+                .map(s -> {
+                    AnnotationEvidence evidence = new AnnotationEvidence();
 
-			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
-			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+                    evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
 
-			//Set properties which are not null
-			evidence.setProperties(
-					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
-						.stream().filter(p -> p != null)
-						.collect(Collectors.toList())
-						);
-			
-			
-			 
-			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
-			 evidence.setEvidenceCodeAC(statementEvidenceCode);
-			 evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
-			 evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
-			 evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
-			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
-			 evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
-			 
-			 if(statementEvidenceCode != null){
-				 CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
-				 if(term != null){
-					 evidence.setEvidenceCodeName(term.getName());
-				 }else {
-					 throw new NextProtException("Not found " + statementEvidenceCode + " in the database");
-				 }
-			 }
-			 
-			 evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
-			
-			//TODO create experimental contexts!
-			 
-			return evidence;
-		}).collect(Collectors.toSet());
+                    evidence.setResourceAssociationType("evidence");
+                    evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
+                    evidence.setResourceId(findPublicationId(s));
+
+                    AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
+                    AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+                    AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+
+                    //Set properties which are not null
+                    evidence.setProperties(
+                            Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
+                                .stream().filter(p -> p != null)
+                                .collect(Collectors.toList())
+                                );
+
+
+
+                     String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+                     evidence.setEvidenceCodeAC(statementEvidenceCode);
+                     evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
+                     evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
+                     evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
+                     evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+                     evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
+
+                     if(statementEvidenceCode != null){
+                         CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
+                         if(term != null){
+                             evidence.setEvidenceCodeName(term.getName());
+                         }else {
+                             throw new NextProtException("Not found " + statementEvidenceCode + " in the database");
+                         }
+                     }
+
+                     evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
+
+                    //TODO create experimental contexts!
+
+                    return evidence;
+                })
+                .collect(Collectors.toSet());
 		
 
 		//Ensures there is no repeated evidence!
@@ -185,22 +179,22 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 		annotation.setVariant(annotationVariant);
 
 	}
-	
 
-
-	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
+    long findPublicationId(Statement statement) {
 
 		String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
 		String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
 		
 		Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
 		if (publication == null) {
-			//Set -1 if not exists. Should never be the case 
-			evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication db:" + referenceDB + " id:" + referenceAC, -1L));
+            String message = "can 't find publication db:" + referenceDB + " id:" + referenceAC;
+
+            LOGGER.error(message);
+
+            throw new NextProtException(message);
 		}
-		else {
-			evidence.setResourceId(publication.getPublicationId());
-		}
+
+        return publication.getPublicationId();
 	}
 
 	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
@@ -216,101 +210,98 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 		List<T> annotations = new ArrayList<>();
 		Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
-		flatStatementsByAnnotationHash.entrySet().forEach(entry -> {
+		flatStatementsByAnnotationHash.forEach((key, statements) -> {
 
-			T annotation = get();
-			
-			List<Statement> statements = entry.getValue();
-			
+            T annotation = get();
 
-			Statement firstStatement = statements.get(0);
+            Statement firstStatement = statements.get(0);
 
-			annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
-			//annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
+            annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
+            //annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
 
-			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
-			annotation.setAnnotationCategory(category);
+            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
+            annotation.setAnnotationCategory(category);
 
-			if(category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)){
-				setVariantAttributes(annotation, firstStatement);
-			}
-			setIsoformTargeting(annotation, firstStatement);
+            if (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)) {
+                setVariantAttributes(annotation, firstStatement);
+            }
+            setIsoformTargeting(annotation, firstStatement);
 
-			setIsoformName(annotation, isoformName);
+            setIsoformName(annotation, isoformName);
 
-			annotation.setDescription(firstStatement.getValue(StatementField.ANNOT_DESCRIPTION));
+            annotation.setDescription(firstStatement.getValue(StatementField.ANNOT_DESCRIPTION));
 
-			String cvTermAccession = firstStatement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+            String cvTermAccession = firstStatement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 
-			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
-			if(!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
-				annotation.setEvidences(buildAnnotationEvidences(statements));
-				
-				//TODO Remove this when you are able to do XREFs
-				if(((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS))){
-					annotation.setQualityQualifier("GOLD");//All variants from BED are GOLD, and this is a special case when we don't have evidences for VDs.
-				}else {
-					annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
-				}
-				
-			}else {
-				
-				//Case of Protein propert and mammalian phenotypes
-				annotation.setEvidences(new ArrayList<AnnotationEvidence>());
-				
-				boolean foundGold = statements.stream().anyMatch(s -> s.getValue(StatementField.EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
-				if(foundGold){
-					annotation.setQualityQualifier("GOLD");
-				}else {
-					annotation.setQualityQualifier("SILVER");
-				}
-			}
+            //Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
+            if (!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)) {
+                annotation.setEvidences(buildAnnotationEvidences(statements));
 
-			if(cvTermAccession != null && !cvTermAccession.isEmpty()){
+                //TODO Remove this when you are able to do XREFs
+                if (((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS))) {
+                    annotation.setQualityQualifier("GOLD");//All variants from BED are GOLD, and this is a special case when we don't have evidences for VDs.
+                } else {
+                    annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
+                }
 
-				annotation.setCvTermAccessionCode(cvTermAccession);
+            } else {
 
-				CvTerm cvTerm = terminologyService.findCvTermByAccession(cvTermAccession);
-				if(cvTerm != null){
-					annotation.setCvTermName(cvTerm.getName());
-					annotation.setCvApiName(cvTerm.getOntology());
-					annotation.setCvTermDescription(cvTerm.getDescription());
+                //Case of Protein propert and mammalian phenotypes
+                annotation.setEvidences(new ArrayList<AnnotationEvidence>());
 
-					if(category.equals(AnnotationCategory.PROTEIN_PROPERTY)){
-						//according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
-						annotation.setDescription(cvTerm.getDescription());
-					}else if(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)){
-						annotation.setDescription("Relative to modification-effect annotations");
-					}
-					
-				}else {
-					LOGGER.error("cv term was expected to be found " + cvTermAccession);
-					annotation.setCvTermName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_NAME));
-					annotation.setCvApiName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
-				}
-			}
+                boolean foundGold = statements.stream().anyMatch(s -> s.getValue(StatementField.EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
+                if (foundGold) {
+                    annotation.setQualityQualifier("GOLD");
+                } else {
+                    annotation.setQualityQualifier("SILVER");
+                }
+            }
 
-			annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
-			annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
-	
-			//Check this with PAM (does it need to be a human readable stuff)
-			annotation.setUniqueName(firstStatement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
-			
-			String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
-			String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
-			String bot = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
+            if (cvTermAccession != null && !cvTermAccession.isEmpty()) {
 
-			if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
+                annotation.setCvTermAccessionCode(cvTermAccession);
 
-				BioObject bioObject;
+                CvTerm cvTerm = terminologyService.findCvTermByAccession(cvTermAccession);
+                if (cvTerm != null) {
+                    annotation.setCvTermName(cvTerm.getName());
+                    annotation.setCvApiName(cvTerm.getOntology());
+                    annotation.setCvTermDescription(cvTerm.getDescription());
 
-				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
+                    if (category.equals(AnnotationCategory.PROTEIN_PROPERTY)) {
+                        //according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
+                        annotation.setDescription(cvTerm.getDescription());
+                    } else if (category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)) {
+                        annotation.setDescription("Relative to modification-effect annotations");
+                    }
 
-					if (bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)) {
+                } else {
+                    LOGGER.error("cv term was expected to be found " + cvTermAccession);
+                    annotation.setCvTermName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+                    annotation.setCvApiName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+                }
+            }
 
-						// note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
-						// add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
-						bioObject = BioObject.internal(BioType.PROTEIN);
+            annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
+            annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
+
+            //Check this with PAM (does it need to be a human readable stuff)
+            annotation.setUniqueName(firstStatement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
+
+            String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
+            String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+            String bot = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
+
+            if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
+
+                BioObject bioObject;
+
+                if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
+
+                    if (bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)) {
+
+                        // note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
+                        // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
+                        bioObject = BioObject.internal(BioType.PROTEIN);
 
                         //// TODO: REMOVE THIS HACK WHEN ISSUE https://issues.isb-sib.ch/browse/NEXTPROT-1513 will be fixed
                         //// NX_P62158 was split in 3 accessions: NX_P0DP23/CALM1, NX_P0DP24/CALM2 and NX_P0DP25/CALM3
@@ -335,43 +326,31 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
                         */
                         ///// END OF HACK
 
-						bioObject.setAccession(bioObjectAccession);						
-						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
+                        bioObject.setAccession(bioObjectAccession);
+                        bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
 
-						String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with "+ isoformName +": unknown protein accession " + bioObject.getAccession()))
+                        String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with " + isoformName + ": unknown protein accession " + bioObject.getAccession()))
                                 .getName();
 
-						bioObject.putPropertyNameValue("proteinName", proteinName);
-						bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
-					}
-					else {
-						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
-					}
-				}
-				else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
-						bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
-						bioObject.setAnnotationHash(bioObjectAnnotationHash);
-				}
-				else {
-					throw new NextProtException("Category not expected for bioobject " + annotation.getAPICategory());
-				}
+                        bioObject.putPropertyNameValue("proteinName", proteinName);
+                        bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
+                    } else {
+                        throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
+                    }
+                } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
+                    bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
+                    bioObject.setAnnotationHash(bioObjectAnnotationHash);
+                } else {
+                    throw new NextProtException("Category not expected for bioobject " + annotation.getAPICategory());
+                }
 
-				annotation.setBioObject(bioObject);
-			}
+                annotation.setBioObject(bioObject);
+            }
 
-			annotations.add(annotation);
-		});
+            annotations.add(annotation);
+        });
 
 		return annotations;
-	}
-
-	private Object throwErrorOrReturn(String message, Object returnObject){
-
-		LOGGER.error(message);
-		if(STRICT){
-			throw new NextProtException(message);
-		}else return returnObject;
-
 	}
 }

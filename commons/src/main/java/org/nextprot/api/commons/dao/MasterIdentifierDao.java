@@ -8,10 +8,7 @@ public interface MasterIdentifierDao {
 	
 	List<String> findUniqueNamesOfChromosome(String chromosome);
 
-	List<String> findMasterSequenceUniqueNames();
-
 	List<String> findUniqueNames();
 	
 	List<String> findUniqueNamesByGeneName(String geneName, boolean withSynonyms);
-
 }

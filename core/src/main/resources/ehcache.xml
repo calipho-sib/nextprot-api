@@ -322,4 +322,24 @@
 		   diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="2200000"
 		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
+
+	<cache name="entry-reports" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="2200000"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+
+	<cache name="entry-publications" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="30000"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+
+    <cache name="entry-publications-by-pubid" overflowToOffHeap="false" overflowToDisk="true"
+           diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="600000"
+           eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <cache name="global-publication-statistics" overflowToOffHeap="false" overflowToDisk="true"
+           diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
+           eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
 </ehcache>

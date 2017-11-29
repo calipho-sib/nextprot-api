@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserQueryDao;
@@ -160,7 +160,8 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("owner_id", userQuery.getOwnerId());
         namedParameters.addValue("public_id", userQuery.getPublicId());
 
-		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "query_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
+		return JdbcUtils.insertAndGetKey(INSERT_SQL, "query_id", namedParameters,
+                new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 	}
 
 	@Override

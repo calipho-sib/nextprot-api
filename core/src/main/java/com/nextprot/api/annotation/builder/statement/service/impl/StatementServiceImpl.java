@@ -3,7 +3,6 @@ package com.nextprot.api.annotation.builder.statement.service.impl;
 import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
-import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class StatementServiceImpl implements StatementService {
-
-	private static final Logger LOGGER = Logger.getLogger(StatementServiceImpl.class);
 
 	@Autowired
 	public StatementDao statementDao;
