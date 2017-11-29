@@ -2,7 +2,10 @@ package org.nextprot.api.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.annotation.*;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
@@ -13,7 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,46 +40,27 @@ public class AdminController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/admin/cache/{cacheName}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiMethod(path = "/admin/cache/{cacheName}/clear", verb = ApiVerb.GET, description = "Clears the cache")
-    public List<String> clearCache(HttpServletRequest request,
-                                   @ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
-                                   @PathVariable("cacheName") String cacheName,
-                                   @ApiQueryParam(name = "key", description = "The key whose mapping is to be removed from the cache")
-                                   @RequestParam(value = "key", required = false) String key) {
+    @RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/cache/clear", verb = ApiVerb.GET, description = "Clears the cache")
+    public List<String> clearCache(HttpServletRequest request) {
 
-        LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
+        LOGGER.warn("Request to clear cache from " + request.getRemoteAddr());
         List<String> result = new ArrayList<>();
+
         try {
-
             if (cacheManager != null) {
-
-                if (cacheManager.getCache(cacheName) == null){
-                    result.add("cache " + cacheName + " not found (existing caches="+cacheManager.getCacheNames()+")");
-                    return result;
-                }
-
-                if (key == null) {
+                for (String cacheName : cacheManager.getCacheNames()) {
                     cacheManager.getCache(cacheName).clear();
-                    result.add(cacheName + " cleared");
-                    return result;
+                    result.add("cache " + cacheName + " cleared");
                 }
-                if (cacheManager.getCache(cacheName).get(key) == null) {
-                    result.add("key " + key + " not found in cache "+cacheName);
-                    return result;
-                }
-                cacheManager.getCache(cacheName).evict(key);
-                result.add("data mapping key " + key + " evicted from cache "+ cacheName);
-
             } else {
                 result.add("no cache manager found");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
-            result.add(e.getLocalizedMessage());
-            return result;
+            result.add( e.getLocalizedMessage());
+
         }
 
         return result;
