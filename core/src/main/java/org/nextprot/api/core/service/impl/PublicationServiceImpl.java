@@ -201,7 +201,7 @@ public class PublicationServiceImpl implements PublicationService {
         return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
-    @Cacheable("entry-publications-by-id")
+    @Cacheable("entry-publications-by-pubid")
     @Override
     public List<EntryPublication> getEntryPublications(long pubId) {
 
