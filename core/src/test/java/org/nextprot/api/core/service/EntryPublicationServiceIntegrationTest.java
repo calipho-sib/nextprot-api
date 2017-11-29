@@ -169,7 +169,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 	        	}
 	        	if (p.getPublicationType()==PublicationType.UNPUBLISHED_OBSERVATION) {
 	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
-	        		Assert.assertEquals(true,ep.isCurated()); // always link B and opt. link A, both from UniProt  
+	        		Assert.assertEquals(true,ep.isSubmission()); // always link B and opt. link A, both from UniProt
 	        	}
 	        });
     	}

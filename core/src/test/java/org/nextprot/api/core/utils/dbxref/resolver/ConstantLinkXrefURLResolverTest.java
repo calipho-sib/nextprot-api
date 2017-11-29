@@ -46,7 +46,7 @@ public class ConstantLinkXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("1A7F", "PDB", "whatever");
 
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
+        Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
     }
     
     @Test

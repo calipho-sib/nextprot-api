@@ -204,8 +204,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("1A7F", "PDB", "whatever");
 
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
+        Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=%s", xref.getLinkUrl());
     }
 
     // entry/NX_Q9BXA6/xref.json

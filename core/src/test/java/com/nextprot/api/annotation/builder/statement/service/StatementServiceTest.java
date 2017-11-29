@@ -33,18 +33,6 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		//System.out.println(list.get(0));
 	}
 
-    @Test
-    public void NX_P43246ShouldNotContainUndefinedPublicationEvidences() {
-
-        List<Annotation> annotations = statementService.getAnnotations("NX_P43246");
-        Assert.assertEquals(0, annotations.stream()
-                .map(a -> a.getEvidences())
-                .flatMap(l -> l.stream())
-                .filter(e -> e.getResourceType().equals("publication"))
-                .filter(e -> e.getResourceId() < 0)
-                .count());
-    }
-
 	/*
 	@Test
 	public void findModifiedAnnotationsByIsoform() {
