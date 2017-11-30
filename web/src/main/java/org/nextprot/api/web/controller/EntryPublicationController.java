@@ -43,16 +43,16 @@ public class EntryPublicationController {
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName,
 			@ApiPathParam(name = "category", description = "publication category (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE or PATENT)", allowedvalues = { "CURATED" })
-			@PathVariable(value = "category") String publicationView) {
+			@PathVariable(value = "category") String publicationCategory) {
 
-        String pubViewName = publicationView.toUpperCase();
+        String pubCategoryName = publicationCategory.toUpperCase();
 
-		if (PublicationView.hasName(pubViewName)) {
+		if (PublicationCategory.hasName(pubCategoryName)) {
 
-            return buildView(entryPublicationService.findEntryPublications(entryName), PublicationView.valueOfName(pubViewName));
+            return buildView(entryPublicationService.findEntryPublications(entryName), PublicationCategory.valueOfName(pubCategoryName));
 		}
 
-		throw new NextProtException(publicationView + ": Unknown publication view");
+		throw new NextProtException(publicationCategory + ": Unknown publication view");
 	}
 
 	@ApiMethod(path = "/entry-publications/entry/{entry}/pubid/{pubid}", verb = ApiVerb.GET, description = "Exports identified publication associated with a neXtProt entry",
@@ -72,13 +72,13 @@ public class EntryPublicationController {
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @RequestMapping(value = "/entry-publications/entry/{entry}/count", method = { RequestMethod.GET })
     @ResponseBody
-    public Map<PublicationView, Integer> countEntryPublication(
+    public Map<PublicationCategory, Integer> countEntryPublication(
             @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
             @PathVariable("entry") String entryAccession) {
 
-	    Map<PublicationView, Integer> count = new HashMap<>();
+	    Map<PublicationCategory, Integer> count = new HashMap<>();
 
-	    for (PublicationView view : PublicationView.values()) {
+	    for (PublicationCategory view : PublicationCategory.values()) {
 
             count.put(view, entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(view).size());
         }
@@ -138,12 +138,12 @@ public class EntryPublicationController {
         return publicationService.getEntryPublications(publicationId);
     }
 
-    private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationView publicationView) {
+    private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {
 
         List<EntryPublicationView> list = new ArrayList<>();
 
         Map<Long, EntryPublication> entryPublicationMap = entryPublications
-                .getEntryPublicationList(publicationView).stream()
+                .getEntryPublicationList(publicationCategory).stream()
                 .collect(Collectors.toMap(
                         EntryPublication::getPubId,
                         Function.identity(),

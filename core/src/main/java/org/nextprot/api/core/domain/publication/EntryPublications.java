@@ -12,11 +12,11 @@ import java.util.*;
  */
 public class EntryPublications implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
     private String entryAccession;
     private Map<Long, EntryPublication> entryPublicationsById;
-    private Map<PublicationView, List<EntryPublication>> entryPublicationsByView;
+    private Map<PublicationCategory, List<EntryPublication>> entryPublicationsByCategory;
 
     public String getEntryAccession() {
         return entryAccession;
@@ -29,29 +29,29 @@ public class EntryPublications implements Serializable {
     public void setData(Map<Long, EntryPublication> entryPublicationsById) {
 
         this.entryPublicationsById = entryPublicationsById;
-        entryPublicationsByView = new HashMap<>();
+        entryPublicationsByCategory = new HashMap<>();
 
         for (EntryPublication entryPublication : entryPublicationsById.values()) {
             if (entryPublication.isCurated()) {
-                entryPublicationsByView.computeIfAbsent(PublicationView.CURATED, k -> new ArrayList<>()).add(entryPublication);
+                entryPublicationsByCategory.computeIfAbsent(PublicationCategory.CURATED, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isAdditional()) {
-                entryPublicationsByView.computeIfAbsent(PublicationView.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
+                entryPublicationsByCategory.computeIfAbsent(PublicationCategory.ADDITIONAL, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isOnline()) {
-                entryPublicationsByView.computeIfAbsent(PublicationView.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
+                entryPublicationsByCategory.computeIfAbsent(PublicationCategory.WEB_RESOURCE, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isSubmission()) {
-                entryPublicationsByView.computeIfAbsent(PublicationView.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
+                entryPublicationsByCategory.computeIfAbsent(PublicationCategory.SUBMISSION, k -> new ArrayList<>()).add(entryPublication);
             }
             if (entryPublication.isPatent()) {
-                entryPublicationsByView.computeIfAbsent(PublicationView.PATENT, k -> new ArrayList<>()).add(entryPublication);
+                entryPublicationsByCategory.computeIfAbsent(PublicationCategory.PATENT, k -> new ArrayList<>()).add(entryPublication);
             }
         }
 
-        for (PublicationView view : entryPublicationsByView.keySet()) {
+        for (PublicationCategory view : entryPublicationsByCategory.keySet()) {
 
-            entryPublicationsByView.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
+            entryPublicationsByCategory.get(view).sort(Comparator.comparingLong(EntryPublication::getPubId));
         }
     }
 
@@ -64,14 +64,14 @@ public class EntryPublications implements Serializable {
         return entryPublicationsById.get(pubId);
     }
 
-    public Map<PublicationView, List<EntryPublication>> getEntryPublicationsByView() {
+    public Map<PublicationCategory, List<EntryPublication>> getEntryPublicationsByCategory() {
 
-        return entryPublicationsByView;
+        return entryPublicationsByCategory;
     }
 
-    public List<EntryPublication> getEntryPublicationList(PublicationView view) {
+    public List<EntryPublication> getEntryPublicationList(PublicationCategory category) {
 
-        return entryPublicationsByView.getOrDefault(view, new ArrayList<>());
+        return entryPublicationsByCategory.getOrDefault(category, new ArrayList<>());
     }
 
     /* useful ?

@@ -99,8 +99,8 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
     		annCnt.add(entry.getAnnotations().size());
     		pubCnt.add(entry.getPublications().size());
-    		curCnt.add(report.getEntryPublicationList(PublicationView.CURATED).size());
-    		addCnt.add(report.getEntryPublicationList(PublicationView.ADDITIONAL).size());
+    		curCnt.add(report.getEntryPublicationList(PublicationCategory.CURATED).size());
+    		addCnt.add(report.getEntryPublicationList(PublicationCategory.ADDITIONAL).size());
     		System.out.println(
     				entry.getUniqueName() + " " +
     				"load="+(tLoad.get(idx)) + "ms " +
@@ -180,7 +180,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
         EntryPublications entryPublications = entryPublicationService.findEntryPublications("NX_Q14587");
 
-        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList(PublicationView.CURATED).stream()
+        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList(PublicationCategory.CURATED).stream()
                 .filter(ep -> ep.getPubId() == 29230867)
                 .collect(Collectors.toList());
 
@@ -205,7 +205,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     public void testPublicationDirectLinksFromAnEntryForSubmissionView() {
 
         List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_Q14587")
-                .getEntryPublicationList(PublicationView.SUBMISSION);
+                .getEntryPublicationList(PublicationCategory.SUBMISSION);
 
         Assert.assertEquals(1, publications.size());
     }

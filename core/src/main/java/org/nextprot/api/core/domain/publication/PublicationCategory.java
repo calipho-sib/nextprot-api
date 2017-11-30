@@ -8,14 +8,14 @@ import java.util.Map;
 /**
  * Publication criteria as defined in nextprot database
  */
-public enum PublicationView {
+public enum PublicationCategory {
 
     CURATED, ADDITIONAL, PATENT, SUBMISSION, WEB_RESOURCE
     ;
 
-    private static EnumConstantDictionary<PublicationView> dictionaryOfConstants = new EnumConstantDictionary<PublicationView>(PublicationView.class, values()) {
+    private static EnumConstantDictionary<PublicationCategory> dictionaryOfConstants = new EnumConstantDictionary<PublicationCategory>(PublicationCategory.class, values()) {
         @Override
-        protected void updateDictionaryOfConstants(Map<String, PublicationView> dictionary) {
+        protected void updateDictionaryOfConstants(Map<String, PublicationCategory> dictionary) {
             dictionary.put("WEB-RESOURCE", WEB_RESOURCE);
         }
     };
@@ -25,7 +25,7 @@ public enum PublicationView {
         return dictionaryOfConstants.haskey(name);
     }
 
-    public static PublicationView valueOfName(String name) {
+    public static PublicationCategory valueOfName(String name) {
 
         return dictionaryOfConstants.valueOfKey(name);
     }

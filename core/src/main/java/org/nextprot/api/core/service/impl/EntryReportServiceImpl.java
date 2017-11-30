@@ -7,8 +7,8 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.PublicationCategory;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
-import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.EntryReportService;
@@ -270,31 +270,31 @@ public class EntryReportServiceImpl implements EntryReportService {
     private void setCuratedPublicationCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.CURATED));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.CURATED));
     }
 
     private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.ADDITIONAL));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.ADDITIONAL));
     }
 
     private void setPatentCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.PATENT_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.PATENT));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.PATENT));
     }
 
     private void setSubmissionCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.SUBMISSION));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.SUBMISSION));
     }
 
     private void setWebResourceCount(Entry entry, EntryReport report) {
 
         report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationView.WEB_RESOURCE));
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.WEB_RESOURCE));
     }
 
     boolean isGoldAnnotation(Annotation annot) {
@@ -343,21 +343,21 @@ public class EntryReportServiceImpl implements EntryReportService {
      * Retrieves publications by master's unique name filtered by a view
      *
      * @param entryAccession the entry accession
-     * @param publicationView the publication view
+     * @param publicationCategory the publication view
      * @return a list of Publication
      */
-    private List<EntryPublication> reportPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
+    private List<EntryPublication> reportPublicationsByEntryName(String entryAccession, PublicationCategory publicationCategory) {
 
-        return entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(publicationView);
+        return entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(publicationCategory);
     }
 
     /**
      * Count the number of publication linked to this entry for the given view
      * @param entryAccession the entry accession
-     * @param publicationView the publication view
+     * @param publicationCategory the publication view
      */
-    private int countPublicationsByEntryName(String entryAccession, PublicationView publicationView) {
+    private int countPublicationsByEntryName(String entryAccession, PublicationCategory publicationCategory) {
 
-        return reportPublicationsByEntryName(entryAccession, publicationView).size();
+        return reportPublicationsByEntryName(entryAccession, publicationCategory).size();
     }
 }
