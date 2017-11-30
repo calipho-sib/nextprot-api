@@ -131,11 +131,15 @@ public class EntryPublicationController {
             produces = { MediaType.APPLICATION_JSON_VALUE })
     @RequestMapping(value = "/entry-publications/pubid/{pubid}", method = { RequestMethod.GET })
     @ResponseBody
-    public List<EntryPublication> getEntryPublicationsByPubId(
+    public PublicationView getEntryPublicationsByPubId(
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId) {
 
-        return publicationService.getEntryPublications(publicationId);
+        PublicationView view = new PublicationView();
+        view.setPublication(publicationService.findPublicationById(publicationId));
+        view.setEntryPublicationList(publicationService.getEntryPublications(publicationId));
+
+        return view;
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {
@@ -200,6 +204,30 @@ public class EntryPublicationController {
 
         public void setDirectLinks(List<PublicationDirectLink> directLinks) {
             this.directLinks = directLinks;
+        }
+    }
+
+    public static class PublicationView implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private Publication publication;
+        private List<EntryPublication> entryPublicationList;
+
+        public Publication getPublication() {
+            return publication;
+        }
+
+        public void setPublication(Publication publication) {
+            this.publication = publication;
+        }
+
+        public List<EntryPublication> getEntryPublicationList() {
+            return entryPublicationList;
+        }
+
+        public void setEntryPublicationList(List<EntryPublication> entryPublicationList) {
+            this.entryPublicationList = entryPublicationList;
         }
     }
 
