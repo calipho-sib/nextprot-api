@@ -2,10 +2,7 @@ package org.nextprot.api.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiAuthBasic;
-import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
@@ -14,10 +11,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -67,8 +61,55 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/admin/caches/key/{key}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiMethod(path = "/admin/caches/key/{key}/clear", verb = ApiVerb.GET, description = "Clears all data from caches associated with the key")
+    @RequestMapping(value = "/admin/cache/{cacheName}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/cache/{cacheName}/clear", verb = ApiVerb.GET, description = "Clears the cache")
+    public List<String> clearCacheName(HttpServletRequest request,
+                                   @ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
+                                   @PathVariable("cacheName") String cacheName,
+                                   @ApiQueryParam(name = "key", description = "The key whose mapping is to be removed from the cache")
+                                   @RequestParam(value = "key", required = false) String key) {
+
+        LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
+        List<String> result = new ArrayList<>();
+        try {
+
+            if (cacheManager != null) {
+
+                if (cacheManager.getCache(cacheName) == null){
+                    result.add("cache " + cacheName + " not found");
+                    return result;
+                }
+
+                if (key == null) {
+                    cacheManager.getCache(cacheName).clear();
+                    result.add(cacheName + " cleared");
+                    return result;
+                }
+                if (cacheManager.getCache(cacheName).get(key) == null) {
+                    result.add("key " + key + " not found in cache "+cacheName);
+                    return result;
+                }
+                cacheManager.getCache(cacheName).evict(key);
+                result.add("data mapping key " + key + " evicted from cache "+ cacheName);
+
+            } else {
+                result.add("no cache manager found");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            result.add(e.getLocalizedMessage());
+            return result;
+        }
+
+        return result;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/admin/cache/key/{key}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/cache/key/{key}/clear", verb = ApiVerb.GET, description = "Clears all data from cache associated with the key")
     public List<String> clearEntriesFromCaches(HttpServletRequest request,
                                    @ApiPathParam(name = "key", description = "The name of the key",  allowedvalues = { "NX_P01308"})
                                    @PathVariable("key") String key) {
