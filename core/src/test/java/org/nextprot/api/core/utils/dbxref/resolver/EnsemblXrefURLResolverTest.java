@@ -43,12 +43,12 @@ public class EnsemblXrefURLResolverTest {
         Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=ENST00000587522", resolver.resolve(xref));
     }
 
-    // TODO: Different behavior with DbXref method that returns null instead of an exception
-    @Test(expected = UnresolvedXrefURLException.class)
+    @Test
     public void testResolveEnsemblBadPrimaryId() throws Exception {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("EST00000587522", "Ensembl", "whatever");
 
-        resolver.resolve(xref);
+        Assert.assertEquals("https://www.ensembl.org/Multi/Search/Results?q=EST00000587522;site=ensembl", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ensembl.org/Multi/Search/Results?q=%s;site=ensembl", xref.getLinkUrl());
     }
 }
