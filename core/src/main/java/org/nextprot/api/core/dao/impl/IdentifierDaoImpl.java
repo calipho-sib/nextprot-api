@@ -4,7 +4,6 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 public class IdentifierDaoImpl implements IdentifierDao {
@@ -45,11 +45,25 @@ public class IdentifierDaoImpl implements IdentifierDao {
 		Map<String, Object> params = new HashMap<>();
 		params.put("uniqueName", uniqueName);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource())
-                .query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"),
-                        params, new IdentifierRowMapper(uniqueName));
-	}
-	
+        List<Identifier> ids = new NamedParameterJdbcTemplate(
+                dsLocator.getDataSource()).query(
+                sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper(uniqueName));
+
+        return ids.stream()
+                .filter(Objects::nonNull)
+                .filter(i -> isValidIdentifier(i))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isValidIdentifier(Identifier identifier) {
+        // See CALIPHOMISC-489
+        if (! "Ensembl".equals(identifier.getDatabase())) return true;
+        if (identifier.getName().startsWith("ENSG")) return true;
+        if (identifier.getName().startsWith("ENSP")) return true;
+        if (identifier.getName().startsWith("ENST")) return true;
+        return false;
+    }
+
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {
 
 		private String masterUniqueName;

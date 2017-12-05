@@ -21,7 +21,7 @@ class EnsemblXrefURLResolver extends DefaultDbXrefURLResolver {
             return CvDatabasePreferredLink.ENSEMBL_GENE.getLink();
         }
         else {
-            throw new UnresolvedXrefURLException("unknown accession number '"+accession+"': valid identifier should have prefix ENST, ENSP or ENSG");
+            return "https://www.ensembl.org/Multi/Search/Results?q=%s;site=ensembl";
         }
     }
 }
