@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -146,7 +147,7 @@ public class AdminController {
 	public List<String> clearDocCache(HttpServletRequest request) {
 
 		LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		try {
 
 			if (cacheManager != null) {
@@ -179,7 +180,25 @@ public class AdminController {
 
 		return result;
 	}
-	
+
+    @ResponseBody
+    @RequestMapping(value = "/admin/cache/list", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/cache/list", verb = ApiVerb.GET, description = "List all cache names")
+    public Collection<String> listCaches(HttpServletRequest request) {
+
+        try {
+            if (cacheManager != null) {
+                return cacheManager.getCacheNames();
+            }
+            LOGGER.error("no cache manager found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
 	@ResponseBody
 	@RequestMapping(value = "ip")
 	public String ip(HttpServletRequest request) {
