@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public enum PublicationCategory {
 
-    CURATED, ADDITIONAL, PATENT, SUBMISSION, WEB_RESOURCE
+    CURATED, ADDITIONAL, PATENT, SUBMISSION, WEB_RESOURCE, ALL
     ;
 
     private static EnumConstantDictionary<PublicationCategory> dictionaryOfConstants = new EnumConstantDictionary<PublicationCategory>(PublicationCategory.class, values()) {
