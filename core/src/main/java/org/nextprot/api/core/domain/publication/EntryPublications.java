@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,6 +72,10 @@ public class EntryPublications implements Serializable {
 
     public List<EntryPublication> getEntryPublicationList(PublicationCategory category) {
 
+        if (category == PublicationCategory.ALL) {
+            return entryPublicationsByCategory.values().stream()
+                    .flatMap(l -> l.stream()).collect(Collectors.toList());
+        }
         return entryPublicationsByCategory.getOrDefault(category, new ArrayList<>());
     }
 

@@ -209,4 +209,13 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
         Assert.assertEquals(1, publications.size());
     }
+
+    @Test
+    public void testPublicationDirectLinksFromAnEntryForAllView() {
+
+        List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_Q14587")
+                .getEntryPublicationList(PublicationCategory.ALL);
+
+        Assert.assertEquals(46, publications.size());
+    }
 }
