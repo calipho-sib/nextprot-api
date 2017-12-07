@@ -42,7 +42,7 @@ public class EntryPublicationController {
 	public List<EntryPublicationView> getEntryPublicationList(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName,
-			@ApiPathParam(name = "category", description = "publication category (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE or PATENT)", allowedvalues = { "CURATED" })
+			@ApiPathParam(name = "category", description = "publication category (CURATED, SUBMISSION, ADDITIONAL, WEB_RESOURCE, PATENT or ALL)", allowedvalues = { "CURATED" })
 			@PathVariable(value = "category") String publicationCategory) {
 
         String pubCategoryName = publicationCategory.toUpperCase();
