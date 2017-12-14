@@ -144,4 +144,55 @@ public class SolrServiceTest extends WebUnitBaseTest {
 
         assertEquals(0, result.getFound());
     }
+
+    @Test
+    public void shouldReturnResultsFromSimpleEntryQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuery("MSH6");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(101, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromSimpleGoldEntryQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("GOLD");
+        qr.setQuery("MSH6");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(73, result.getFound());
+    }
+
+    // indexes: gold-entry, entry, term, publication
+
+    @Test
+    public void shouldReturnResultsFromSimplePublicationQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuery("author:Doolittle");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "publication");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(28, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromSimpleTermQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuery("liver");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "term");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(1356, result.getFound());
+    }
 }
