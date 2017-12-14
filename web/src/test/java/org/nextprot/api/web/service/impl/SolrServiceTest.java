@@ -131,4 +131,15 @@ public class SolrServiceTest extends WebUnitBaseTest {
 
         assertEquals(0, result.getFound());
     }
+
+    @Test
+    public void shouldReturnEmptyResultsFromEmptyQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(0, result.getFound());
+    }
 }

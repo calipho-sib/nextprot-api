@@ -51,7 +51,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		if (queryRequest.isEntryAccessionSetDefined()) {
             Logger.debug("queryRequest.hasEntryAccessionList()");
-            return buildQueryForSearchIndexes(updateQuery(queryRequest, queryRequest.getEntryAccessionSet()), indexName);
+            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest, queryRequest.getEntryAccessionSet()), indexName);
         }
         else if (queryRequest.hasList()) {
 			Logger.debug("queryRequest.hasList()");
@@ -62,7 +62,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			}
 
-			return buildQueryForSearchIndexes(updateQuery(queryRequest, proteinList.getAccessionNumbers()), indexName);
+			return buildQueryForSearchIndexes(updateQueryRequest(queryRequest, proteinList.getAccessionNumbers()), indexName);
 		}
 		else if (queryRequest.hasNextProtQuery()) {
 			Logger.debug("queryRequest.hasNextProtQuery()");
@@ -76,13 +76,13 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			}
 
-            return buildQueryForSearchIndexes(updateQuery(queryRequest,
+            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest,
                     new HashSet<>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))),
                     indexName);
 		} else if (queryRequest.hasSparql()) {
 			Logger.debug("queryRequest.hasSparql()");
 
-            return buildQueryForSearchIndexes(updateQuery(queryRequest,
+            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest,
                     new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))),
                     indexName);
 		} else {
@@ -107,7 +107,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		return queryService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, rows, filter);
 	}
 
-    private QueryRequest updateQuery(QueryRequest queryRequest, Set<String> accessions) {
+    private QueryRequest updateQueryRequest(QueryRequest queryRequest, Set<String> accessions) {
 
         // In case there is no result
         if (accessions.isEmpty()) {
