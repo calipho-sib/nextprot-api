@@ -335,7 +335,7 @@ public class SolrServiceImpl implements SolrService {
 
 	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
-		String actualIndexName = indexName.equals("entry") && quality != null && quality.equals("gold") ? "gold-entry" : indexName;
+		String actualIndexName = indexName.equals("entry") && quality != null && quality.equalsIgnoreCase("gold") ? "gold-entry" : indexName;
 
 		SolrIndex index = this.configuration.getIndexByName(actualIndexName);
 
