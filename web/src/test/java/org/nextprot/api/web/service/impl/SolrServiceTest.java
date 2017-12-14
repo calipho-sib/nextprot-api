@@ -6,6 +6,12 @@ import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SolrServiceTest extends WebUnitBaseTest {
@@ -93,5 +99,36 @@ public class SolrServiceTest extends WebUnitBaseTest {
 		assertTrue(numFound>0); 
     }
 
+    @Test
+    public void shouldReturnSomeResultsFromAccessionSet() throws Exception {
 
+	    Set<String> accessions = new HashSet<>(Arrays.asList("NX_P02671", "NX_P02675", "NX_P02679"));
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("GOLD");
+        qr.setEntryAccessionSet(accessions);
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(3, result.getFound());
+
+        for (Map<String, Object> resultMap : result.getResults()) {
+
+            assertTrue(accessions.contains(resultMap.get("id")));
+        }
+    }
+
+    @Test
+    public void shouldReturnEmptyResultsFromEmptyAccessionSet() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("GOLD");
+        qr.setEntryAccessionSet(new HashSet<>());
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(0, result.getFound());
+    }
 }
