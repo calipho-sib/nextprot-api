@@ -5,11 +5,16 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -34,6 +39,10 @@ public class EntryPublicationController {
     private PublicationService publicationService;
     @Autowired
     private PublicationStatisticsService publicationStatisticsService;
+    @Autowired
+    private SolrService solrService;
+    @Autowired
+    private QueryBuilderService queryBuilderService;
 
 	@ApiMethod(path = "/entry-publications/entry/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -137,7 +146,18 @@ public class EntryPublicationController {
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
-        view.setEntryPublicationList(publicationService.getEntryPublications(publicationId));
+        view.addEntryPublicationList(publicationService.getEntryPublications(publicationId));
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("gold");
+        qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        try {
+            solrService.executeQuery(q).getResults().forEach(result -> view.putEntrySolrResult(result));
+        } catch (SearchQueryException e) {
+            throw new NextProtException(e.getMessage());
+        }
 
         return view;
     }
@@ -213,6 +233,7 @@ public class EntryPublicationController {
 
         private Publication publication;
         private Map<String, EntryPublication> entryPublicationMap = new HashMap<>();
+        private Map<String, Map<String, Object>> entrySolrResultMap = new HashMap<>();
 
         public Publication getPublication() {
             return publication;
@@ -226,12 +247,26 @@ public class EntryPublicationController {
             return entryPublicationMap;
         }
 
-        public void setEntryPublicationList(List<EntryPublication> entryPublicationList) {
+        public Map<String, Map<String, Object>> getEntrySolrResultMap() {
+            return entrySolrResultMap;
+        }
+
+        public void addEntryPublicationList(List<EntryPublication> entryPublicationList) {
 
             for (EntryPublication ep : entryPublicationList) {
 
                 entryPublicationMap.put(ep.getEntryAccession(), ep);
             }
+        }
+
+        public void putEntrySolrResult(Map<String, Object> result) {
+
+            String accession = (String)result.get("id");
+
+            if (entrySolrResultMap.containsKey(accession)) {
+                throw new NextProtException("accession "+accession+" already exists");
+            }
+            entrySolrResultMap.put(accession, result);
         }
     }
 
