@@ -1,7 +1,10 @@
 package org.nextprot.api.web.service.impl;
 
 import org.junit.Test;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 public class SolrServiceTest extends WebUnitBaseTest {
 
     @Autowired private SolrService service;
-	@Autowired private SolrConfiguration configuration;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Test

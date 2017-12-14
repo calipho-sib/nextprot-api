@@ -66,17 +66,13 @@ public class IndexConfiguration implements QueryBuilder {
 	public String buildQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
 
-		String queryString = query.getQueryString(true);
+        String[] tokens = query.getQueryString(true).split(WHITESPACE);
 
-		if (queryString != null) {
-            String[] tokens = queryString.split(WHITESPACE);
+        for (int i = 0; i < tokens.length; i++) {
+            queryBuilder.append(PLUS + tokens[i]);
 
-            for (int i = 0; i < tokens.length; i++) {
-                queryBuilder.append(PLUS + tokens[i]);
-
-                if (i != tokens.length - 1)
-                    queryBuilder.append(WHITESPACE);
-            }
+            if (i != tokens.length - 1)
+                queryBuilder.append(WHITESPACE);
         }
 
 		//this.otherParameters.put("spellcheck.q", query.getQueryString());

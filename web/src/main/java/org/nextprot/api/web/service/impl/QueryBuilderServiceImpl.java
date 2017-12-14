@@ -87,7 +87,12 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                     new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
 
 		} else {
-			Logger.debug("queryRequest.default for simple search");			
+			Logger.debug("queryRequest.default for simple search");
+
+			if (queryRequest.getQuery() == null) {
+			    queryRequest.setQuery("");
+            }
+
 			return queryService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
 		}
 
