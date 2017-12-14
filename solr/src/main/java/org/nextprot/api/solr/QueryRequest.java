@@ -3,13 +3,14 @@ package org.nextprot.api.solr;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
-//TODO ? @JsonIgnoreProperties({ "sparqlTitle", "sparqlEngine" })
 public class QueryRequest implements Serializable, KeyValueRepresentation {
-	private static final long serialVersionUID = 1173041326534229259L;
+
+	private static final long serialVersionUID = 2L;
 
 	private String query;
+    private Set<String> entryAccessionSet;
 	private String listOwner;
 	private String chromosome = null; //chromosome
 	private String listId = null; //list id
@@ -271,4 +272,16 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
+    public Set<String> getEntryAccessionSet() {
+        return entryAccessionSet;
+    }
+
+    public void setEntryAccessionSet(Set<String> entryAccessionSet) {
+        this.entryAccessionSet = entryAccessionSet;
+    }
+
+    public boolean isEntryAccessionSetDefined() {
+        return entryAccessionSet != null;
+    }
 }
