@@ -209,10 +209,10 @@ public class EntryPublicationController {
 
     public static class PublicationView implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 2L;
 
         private Publication publication;
-        private List<EntryPublication> entryPublicationList;
+        private Map<String, EntryPublication> entryPublicationMap = new HashMap<>();
 
         public Publication getPublication() {
             return publication;
@@ -222,12 +222,16 @@ public class EntryPublicationController {
             this.publication = publication;
         }
 
-        public List<EntryPublication> getEntryPublicationList() {
-            return entryPublicationList;
+        public Map<String, EntryPublication> getEntryPublicationMap() {
+            return entryPublicationMap;
         }
 
         public void setEntryPublicationList(List<EntryPublication> entryPublicationList) {
-            this.entryPublicationList = entryPublicationList;
+
+            for (EntryPublication ep : entryPublicationList) {
+
+                entryPublicationMap.put(ep.getEntryAccession(), ep);
+            }
         }
     }
 
