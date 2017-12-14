@@ -51,7 +51,8 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		if (queryRequest.isEntryAccessionSetDefined()) {
             Logger.debug("queryRequest.hasEntryAccessionList()");
-            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest, queryRequest.getEntryAccessionSet()), indexName);
+
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(queryRequest.getEntryAccessionSet()));
         }
         else if (queryRequest.hasList()) {
 			Logger.debug("queryRequest.hasList()");
@@ -61,8 +62,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			} else { //public id is used
 				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			}
-
-			return buildQueryForSearchIndexes(updateQueryRequest(queryRequest, proteinList.getAccessionNumbers()), indexName);
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(proteinList.getAccessionNumbers()));
 		}
 		else if (queryRequest.hasNextProtQuery()) {
 			Logger.debug("queryRequest.hasNextProtQuery()");
@@ -76,15 +76,16 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			}
 
-            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest,
-                    new HashSet<>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))),
-                    indexName);
-		} else if (queryRequest.hasSparql()) {
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+                    new HashSet<>(sparqlService.findEntries(uq.getSparql(),
+                            sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
+
+        } else if (queryRequest.hasSparql()) {
 			Logger.debug("queryRequest.hasSparql()");
 
-            return buildQueryForSearchIndexes(updateQueryRequest(queryRequest,
-                    new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))),
-                    indexName);
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+                    new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
+
 		} else {
 			Logger.debug("queryRequest.default for simple search");			
 			return queryService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
@@ -107,7 +108,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		return queryService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, rows, filter);
 	}
 
-    private QueryRequest updateQueryRequest(QueryRequest queryRequest, Set<String> accessions) {
+    private String buildQueryStringFromEntryAccessions(Set<String> accessions) {
 
         // In case there is no result
         if (accessions.isEmpty()) {
@@ -118,13 +119,12 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
             accessions.add("NULL");
         }
 
-        String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-        queryRequest.setQuery(queryString);
-
-        return queryRequest;
+        return "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
     }
 
-    private Query buildQueryForSearchIndexes(QueryRequest queryRequest, String indexName) {
+    private Query buildQueryForSearchIndexes(String indexName, QueryRequest queryRequest, String queryString) {
+
+	    queryRequest.setQuery(queryString);
 
         return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
     }
