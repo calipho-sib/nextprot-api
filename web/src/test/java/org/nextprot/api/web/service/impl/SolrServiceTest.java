@@ -8,6 +8,7 @@ import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@ActiveProfiles("dev")
 public class SolrServiceTest extends WebUnitBaseTest {
 
     @Autowired private SolrService service;
@@ -194,5 +196,63 @@ public class SolrServiceTest extends WebUnitBaseTest {
         SearchResult result = service.executeQuery(q);
 
         assertEquals(1356, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromSparqlQuery() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setMode("advanced");
+        qr.setQuality("gold");
+        qr.setSparqlEngine("Jena");
+        qr.setSparql("#Proteins phosphorylated and located in the cytoplasm\nselect distinct ?entry where {\n  ?entry :isoform ?iso.\n  ?iso :keyword / :term cv:KW-0597.\n  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n}");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(5618, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromAdvancedQueryId() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setMode("advanced");
+        qr.setQuality("gold");
+        qr.setSparqlEngine("Jena");
+        qr.setQueryId("NXQ_00001");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(5618, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromSharedProteinList() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("gold");
+        qr.setListId("Y7JPIEVH");
+        qr.setListOwner("Guest");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(1, result.getFound());
+    }
+
+    @Test
+    public void shouldReturnResultsFromSharedQueryList() throws Exception {
+
+        QueryRequest qr = new QueryRequest();
+        qr.setQuality("gold");
+        qr.setMode("advanced");
+        qr.setQueryId("3K8W9PJT");
+
+        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        SearchResult result = service.executeQuery(q);
+
+        assertEquals(5618, result.getFound());
     }
 }
