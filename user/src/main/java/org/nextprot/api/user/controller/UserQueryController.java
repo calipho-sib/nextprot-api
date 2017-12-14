@@ -1,7 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.util.List;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -16,12 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for operating (CRUD) on user queries (SPARQL)
@@ -60,7 +55,7 @@ public class UserQueryController {
 	@ApiMethod(verb = ApiVerb.GET, description = "Gets a user query by its private or public id. Only if you are authenticated and authorized you can access the list with its private id.", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.GET })
 	@ResponseBody
-	public UserQuery getUserQuery(@ApiPathParam(name = "id", description = "The private or public id", allowedvalues = { "NXQ_00001" }) @PathVariable("id") Integer id) {
+	public UserQuery getUserQuery(@ApiPathParam(name = "id", description = "The private or public id") @PathVariable("id") Integer id) {
 		return userQueryService.getUserQueryById(id);
 	}
 
