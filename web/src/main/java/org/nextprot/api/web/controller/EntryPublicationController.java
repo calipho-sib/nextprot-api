@@ -150,6 +150,7 @@ public class EntryPublicationController {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
+        qr.setRows("10000000");
         qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
 
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
