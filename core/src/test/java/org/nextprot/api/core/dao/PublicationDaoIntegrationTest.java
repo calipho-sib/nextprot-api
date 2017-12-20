@@ -4,10 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EditedVolumeBookResourceLocator;
-import org.nextprot.api.core.domain.publication.JournalResourceLocator;
-import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.domain.publication.WebPublicationPage;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -99,4 +96,18 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertTrue(!publication.hasAuthors());
 	}
+
+    @Test
+    public void testThesisPublication() {
+
+        Publication publication = publicationDao.findPublicationById(15624251L);
+
+        Assert.assertEquals(PublicationType.THESIS, publication.getPublicationType());
+        Assert.assertTrue(publication.isLocalizable());
+        Assert.assertEquals("", publication.getTitle());
+        Assert.assertEquals("2001", publication.getTextDate());
+        Assert.assertTrue(publication.getPublicationResourceLocator() instanceof ThesisResourceLocator);
+        Assert.assertEquals("Germany", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getCountry());
+        Assert.assertEquals("University of Goettingen", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getInstitute());
+    }
 }

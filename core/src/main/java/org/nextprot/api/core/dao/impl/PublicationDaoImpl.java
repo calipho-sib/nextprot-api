@@ -235,6 +235,9 @@ public class PublicationDaoImpl implements PublicationDao {
 			else if (pubType == PublicationType.ONLINE_PUBLICATION) {
 				publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
 			}
+            else if (pubType == PublicationType.THESIS) {
+                publication.setThesisResourceLocation(resultSet.getString("institute"), resultSet.getString("country"));
+            }
 			else if (pubType == PublicationType.ARTICLE) {
 				JournalResourceLocator journalLocation = new JournalResourceLocator();
 				CvJournal journal;
