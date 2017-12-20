@@ -15,7 +15,7 @@ import java.util.SortedSet;
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 	@ApiObjectField(description = "The neXtProt identifier of the publication")
 	private Long id;
@@ -241,6 +241,15 @@ public class Publication implements Serializable{
 
 		this.publicationResourceLocator = webPage;
 	}
+
+    public void setThesisResourceLocation(String institute, String country) {
+
+        ThesisResourceLocator locator = new ThesisResourceLocator();
+        locator.setInstitute(institute);
+        locator.setCountry(country);
+
+        this.publicationResourceLocator = locator;
+    }
 
 	public boolean hasAuthors() {
 		return authors != null && !authors.isEmpty();
