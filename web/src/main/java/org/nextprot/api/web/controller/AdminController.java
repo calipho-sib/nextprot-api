@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
 import org.nextprot.api.core.service.PublicationService;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -36,6 +38,9 @@ public class AdminController {
 
     @Autowired
     private PublicationService publicationService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
 
     @ResponseBody
     @RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -191,7 +196,7 @@ public class AdminController {
 
         try {
             if (cacheManager != null) {
-                return cacheManager.getCacheNames();
+                return cacheManager.getCacheNames().stream().sorted().collect(Collectors.toList());
             }
             LOGGER.error("no cache manager found");
         } catch (Exception e) {
@@ -233,16 +238,23 @@ public class AdminController {
     @RequestMapping(value = "/admin/cache/rebuild/{cacheName}", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiMethod(path = "/admin/cache/rebuild/{cacheName}", verb = ApiVerb.GET, description = "Rebuild the given cache")
     public List<String> rebuildCache(HttpServletRequest request,
-                                              @ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
+                                              @ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "publications"})
                                               @PathVariable("cacheName") String cacheName) {
 
         LOGGER.warn("Request to rebuild cache from " + request.getRemoteAddr());
 
-        clearCacheName(request, cacheName, null);
-
         List<String> result = new ArrayList<>();
 
-        if ("publications".equalsIgnoreCase(cacheName)) {
+        clearCacheName(request, cacheName, null);
+
+        if ("publications".equals(cacheName)) {
+
+            masterIdentifierService.findUniqueNames().forEach(entryAccession -> {
+                publicationService.findPublicationsByEntryName(entryAccession);
+                result.add("publication " + entryAccession + " cached");
+            });
+        }
+        else if ("publications-get-by-id".equals(cacheName)) {
 
             publicationService.findAllPublicationIds().forEach(pubId -> {
                 publicationService.findPublicationById(pubId);
