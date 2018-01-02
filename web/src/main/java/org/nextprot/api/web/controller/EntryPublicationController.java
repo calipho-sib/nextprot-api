@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
@@ -13,15 +14,13 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -142,20 +141,32 @@ public class EntryPublicationController {
     @ResponseBody
     public PublicationView getEntryPublicationsByPubId(
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
-            @PathVariable("pubid") long publicationId) {
+            @PathVariable("pubid") long publicationId,
+            @ApiQueryParam(name = "limit", description = "The maximum number of returned results",  allowedvalues = { "500" })
+            @RequestParam(value = "limit", required = false) String limit) {
 
-        PublicationView view = new PublicationView();
-        view.setPublication(publicationService.findPublicationById(publicationId));
-        view.addEntryPublicationList(publicationService.getEntryPublications(publicationId));
+        List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
 
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
-        qr.setRows("10000000");
+        qr.setRows((limit != null) ? limit : "500");
+
+        PublicationView view = new PublicationView();
+        view.setPublication(publicationService.findPublicationById(publicationId));
+        // return the n first results
+        view.addEntryPublicationList(eps.stream()
+                .limit(Integer.parseInt(qr.getRows()))
+                .collect(Collectors.toList()));
+
         qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
 
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
         try {
-            solrService.executeQuery(q).getResults().forEach(result -> view.putEntrySolrResult(result));
+            SearchResult searchResult = solrService.executeQuery(q);
+
+            view.setRelatedEntryCount(eps.size());
+            searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
+
         } catch (SearchQueryException e) {
             throw new NextProtException(e.getMessage());
         }
@@ -230,9 +241,10 @@ public class EntryPublicationController {
 
     public static class PublicationView implements Serializable {
 
-        private static final long serialVersionUID = 2L;
+        private static final long serialVersionUID = 3L;
 
         private Publication publication;
+        private int relatedEntryCount;
         private Map<String, EntryPublication> entryPublicationMap = new HashMap<>();
         private Map<String, Map<String, Object>> entrySolrResultMap = new HashMap<>();
 
@@ -268,6 +280,14 @@ public class EntryPublicationController {
                 throw new NextProtException("accession "+accession+" already exists");
             }
             entrySolrResultMap.put(accession, result);
+        }
+
+        public int getRelatedEntryCount() {
+            return relatedEntryCount;
+        }
+
+        public void setRelatedEntryCount(int relatedEntryCount) {
+            this.relatedEntryCount = relatedEntryCount;
         }
     }
 
