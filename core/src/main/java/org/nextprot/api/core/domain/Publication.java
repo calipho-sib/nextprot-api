@@ -7,15 +7,12 @@ import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	@ApiObjectField(description = "The neXtProt identifier of the publication")
 	private Long id;
@@ -45,7 +42,7 @@ public class Publication implements Serializable{
 	private SortedSet<PublicationAuthor> authors;
 
 	@ApiObjectField(description = "The associated cross references")
-	private Set<DbXref> dbXrefs;
+	private List<PublicationDbXref> dbXrefs;
 
 	private PublicationResourceLocator publicationResourceLocator;
 
@@ -284,11 +281,11 @@ public class Publication implements Serializable{
 		return dbXrefs != null && !dbXrefs.isEmpty();
 	}
 
-	public Set<DbXref> getDbXrefs() {
+	public List<PublicationDbXref> getDbXrefs() {
 		return dbXrefs;
 	}
 
-	public void setDbXrefs(Set<DbXref> dbXrefs) {
+	public void setDbXrefs(List<PublicationDbXref> dbXrefs) {
 		this.dbXrefs = dbXrefs;
 	}
 
