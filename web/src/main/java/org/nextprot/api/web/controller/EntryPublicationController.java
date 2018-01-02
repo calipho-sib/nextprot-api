@@ -174,6 +174,16 @@ public class EntryPublicationController {
         return view;
     }
 
+    @ApiMethod(path = "/publication/{pubid}", verb = ApiVerb.GET, description = "Get the publication",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publication/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Publication getPublication(@ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
+                                          @PathVariable("pubid") long publicationId) {
+
+        return publicationService.findPublicationById(publicationId);
+    }
+
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {
 
         List<EntryPublicationView> list = new ArrayList<>();
