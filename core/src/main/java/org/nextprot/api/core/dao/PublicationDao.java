@@ -20,6 +20,7 @@ public interface PublicationDao {
 	 * @param masterId
 	 * @return
 	 */
+	// TODO: this method should have a list of longs as parameters
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
 
 	/**
@@ -37,13 +38,6 @@ public interface PublicationDao {
 	 * @return
 	 */
 	Publication findPublicationById(long id);
-
-	/**
-	 * Finds publications by title
-	 * @param title
-	 * @return
-	 */
-	List<Publication> findPublicationByTitle(String title);
 	
 	/**
 	 * Retrieves publication by MD5

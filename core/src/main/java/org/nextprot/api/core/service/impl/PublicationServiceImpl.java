@@ -58,7 +58,9 @@ public class PublicationServiceImpl implements PublicationService {
         return publication;
     }
 
-	@Override
+    // TODO: Publications are already cached in publications-get-by-id - even worse, some publication are linked to more than 10000 entries!!!)
+    // almost 5GB of cache here !!!
+    @Override
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 

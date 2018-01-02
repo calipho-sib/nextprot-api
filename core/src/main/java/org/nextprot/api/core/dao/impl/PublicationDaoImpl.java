@@ -75,18 +75,6 @@ public class PublicationDaoImpl implements PublicationDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(journals));
 	}
 
-	@Override
-	public List<Publication> findPublicationByTitle(String title) {
-		List<Long> ids = findPublicationIdsByTitle(title);
-
-		if (!ids.isEmpty()) {
-			return Collections.singletonList(findPublicationById(ids.get(0)));
-		}
-
-		return Collections.emptyList();
-	}
-
-
     @Override
     public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 
