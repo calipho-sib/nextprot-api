@@ -22,13 +22,6 @@ public interface PublicationService {
      * @return
      */
     Publication findPublicationByMD5(String md5);
-
-	/**
-	 * Gets publication by title case insensitive
-	 * @param title
-	 * @return
-	 */
-	List<Publication> findPublicationByTitle(String title);
 	
 	/**
 	 * Retrieves publications by master's unique name

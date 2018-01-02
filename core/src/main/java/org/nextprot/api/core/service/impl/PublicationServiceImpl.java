@@ -9,7 +9,6 @@ import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
@@ -60,11 +59,6 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
 	@Override
-	public List<Publication> findPublicationByTitle(String title) {
-		return publicationDao.findPublicationByTitle(title);
-	}
-
-	@Override
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 
@@ -74,16 +68,14 @@ public class PublicationServiceImpl implements PublicationService {
 
 		// Getting publications from nx flat database
 		List<Publication> nxflatPublications = new ArrayList<>();
-		Arrays.asList("PubMed", "DOI").forEach(db -> {
+		Arrays.asList("DOI", "PubMed").forEach(db -> {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION,
 					new SimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
 					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
 				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
-
 		});
-
 
 		updateMissingPublicationFields(nxflatPublications);
 		publications.addAll(nxflatPublications);
@@ -181,11 +173,11 @@ public class PublicationServiceImpl implements PublicationService {
 		}
 	}
 
-	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
+	private void setXrefs(Publication publication, List<PublicationDbXref> xrefs){
 		if (xrefs == null) {
-			publication.setDbXrefs(new HashSet<>());
+			publication.setDbXrefs(new ArrayList<>());
 		} else {
-			publication.setDbXrefs(new HashSet<>(xrefs));
+			publication.setDbXrefs(xrefs);
 		}
 	}
 
