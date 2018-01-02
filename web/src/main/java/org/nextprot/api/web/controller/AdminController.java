@@ -6,6 +6,7 @@ import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
+import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
@@ -33,6 +34,8 @@ public class AdminController {
 	@Autowired(required=false)
 	private CacheManager cacheManager;
 
+    @Autowired
+    private PublicationService publicationService;
 
     @ResponseBody
     @RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -225,6 +228,31 @@ public class AdminController {
 	public Map<String, RequestInfo>  lastFinished(HttpServletRequest request) {
 		return clientRequestManager.getLastFinishedRequest();
 	}
-	
 
+    @ResponseBody
+    @RequestMapping(value = "/admin/cache/rebuild/{cacheName}", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/admin/cache/rebuild/{cacheName}", verb = ApiVerb.GET, description = "Rebuild the given cache")
+    public List<String> rebuildCache(HttpServletRequest request,
+                                              @ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
+                                              @PathVariable("cacheName") String cacheName) {
+
+        LOGGER.warn("Request to rebuild cache from " + request.getRemoteAddr());
+
+        clearCacheName(request, cacheName, null);
+
+        List<String> result = new ArrayList<>();
+
+        if ("publications".equalsIgnoreCase(cacheName)) {
+
+            publicationService.findAllPublicationIds().forEach(pubId -> {
+                publicationService.findPublicationById(pubId);
+                result.add("publication " + pubId + " cached");
+            });
+        }
+        else {
+            result.add("cannot rebuild cache "+cacheName);
+        }
+
+        return result;
+    }
 }
