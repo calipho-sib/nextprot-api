@@ -1,25 +1,14 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Interactant;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @EntryFieldBuilder
 public class XrefFieldBuilder extends FieldBuilder {
@@ -161,7 +150,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 		}
 		// Xrefs to publications (PubMed, DOIs)
 		for (Publication currpubli : entry.getPublications()) {
-			Set<DbXref> pubxrefs = currpubli.getDbXrefs();
+			List<PublicationDbXref> pubxrefs = currpubli.getDbXrefs();
 			for (DbXref pubxref : pubxrefs) {
 				String acc = pubxref.getAccession().trim(); // It happens to have a trailing \t (like 10.1080/13547500802063240 in NX_P14635)
 				String db = pubxref.getDatabaseName();

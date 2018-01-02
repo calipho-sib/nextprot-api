@@ -3,16 +3,16 @@ package org.nextprot.api.tasks.solr.indexer;
 //import java.util.List;
 
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import java.util.SortedSet;
 
 public class PublicationSolrindexer extends SolrIndexer<Publication>{
@@ -32,12 +32,12 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", publi.getPublicationId());
-		Set<DbXref> xrefs = publi.getDbXrefs();
+		List<PublicationDbXref> xrefs = publi.getDbXrefs();
 		// TODO: this 'ac' field should be renamed 'xrefs'
 		if (xrefs != null)
 		   // The format is slightly different in current publication indexes vs terminology indexes, check if justified
 		   // if yes create an adhoc Publication.convertXrefsToSolrString method
-		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs))); }
+		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<>(xrefs))); }
 		String filters="";
 		filters+=((publicationStats.isComputed())?" computed":"");
 		filters+=((publicationStats.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false

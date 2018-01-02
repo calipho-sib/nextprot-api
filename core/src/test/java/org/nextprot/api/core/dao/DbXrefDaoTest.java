@@ -4,6 +4,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +19,7 @@ public class DbXrefDaoTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void findDbXRefsByPublicationId() {
-		List<DbXref> xrefs = this.xrefDao.findDbXRefsByPublicationId(100L);
+		List<PublicationDbXref> xrefs = this.xrefDao.findDbXRefsByPublicationId(100L);
 		assertEquals(1, xrefs.size());
 		assertEquals("PubMed", xrefs.get(0).getDatabaseName());
 		assertEquals("cat", xrefs.get(0).getDatabaseCategory());

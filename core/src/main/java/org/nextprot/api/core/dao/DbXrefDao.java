@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface DbXrefDao {
 
-	List<DbXref> findDbXRefsByPublicationId(Long publicationId);
+	List<PublicationDbXref> findDbXRefsByPublicationId(Long publicationId);
 	
 	List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds);
 	

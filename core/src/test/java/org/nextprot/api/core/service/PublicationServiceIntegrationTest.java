@@ -5,14 +5,13 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Set;
 
 //import org.nextprot.api.core.utils.TerminologyUtils;
 
@@ -35,7 +34,7 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	public void testPublicationXrefs() {
 		Publication publication = publicationService.findPublicationById(690405);
 		// check that publication bug NEXTPROT-989 is fixed (pmid 12631268), should have 2 xrefs
-		Set<DbXref> xrefs = publication.getDbXrefs();
+		List<PublicationDbXref> xrefs = publication.getDbXrefs();
 		//System.err.println(TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs)));
 		Assert.assertTrue(xrefs.size() > 1);
 	}
