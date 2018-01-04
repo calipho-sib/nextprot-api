@@ -48,7 +48,7 @@ public class InteractionsPageView extends PageViewBase {
 	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList(
 				"BindingDB","DIP","IntAct","MINT",
-				"STRING", "SignaLink", "BioGrid","SIGNOR"
+				"STRING", "SignaLink", "BioGrid","SIGNOR", "CORUM"
 			);
 	}
 

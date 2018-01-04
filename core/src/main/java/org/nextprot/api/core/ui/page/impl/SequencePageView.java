@@ -98,7 +98,7 @@ public class SequencePageView extends PageViewBase {
 				"Ensembl", "KEGG", "UCSC",
 				
 				// ORGANISM-SPECIFIC DATABASES
-				"MGI",
+				"MGI", "EuPathDB",
 				
 				// OTHER
 				"ChiTaRS", "EvolutionaryTrace", "PIRNR", "PMAP-CutDB",
