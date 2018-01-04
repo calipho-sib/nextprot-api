@@ -1,25 +1,18 @@
 package org.nextprot.api.core.domain;
 
 import com.google.common.base.Preconditions;
-
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
 
-	private static final long serialVersionUID = 4404147147281845675L;
+	private static final long serialVersionUID = 4L;
 
 	@ApiObjectField(description = "The neXtProt identifier of the publication")
 	private Long id;
@@ -34,7 +27,7 @@ public class Publication implements Serializable{
 	private String abstractText;
 
 	@ApiObjectField(description = "The type")
-	private String publicationType;
+	private PublicationType publicationType;
 
 	@ApiObjectField(description = "The publication date")
 	private Date publicationDate;
@@ -45,43 +38,15 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The submission to db text (EMBL, PDB, ...")
 	private String submission;
 
-	@ApiObjectField(description = "Publications related to 15 entries or more")
-	private Boolean isLargeScale;
-
-	@ApiObjectField(description = "Curated Publications")
-	private Boolean isCurated;
-
-	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
-	// Refs cited in UniProt should be 'curated' even if not (yet) attached to a specific annotation
-	@ApiObjectField(description = "Computed Publications")
-	private Boolean isComputed;
-	
-	private Map<String,List<String>> properties;
-	
-	@ApiObjectField(description = "The list of authors")
+    @ApiObjectField(description = "The list of authors")
 	private SortedSet<PublicationAuthor> authors;
 
 	@ApiObjectField(description = "The associated cross references")
-	private Set<DbXref> dbXrefs;
+	private List<PublicationDbXref> dbXrefs;
 
 	private PublicationResourceLocator publicationResourceLocator;
 
-	/**
-	 * 
-	 * @param name a property name i.e. scope, comment, ...
-	 * @return a list of values, the list may be empty but never null !
-	 */
-	public List<String> getProperty(String name) {
-		if (properties==null) return new ArrayList<>();
-		if (! properties.containsKey(name)) return new ArrayList<>();
-		return properties.get(name);
-	}
-	
-	public void setProperties(Map<String,List<String>> props) {
-		this.properties=props;
-	}
-	
-	public boolean isLocalizable() {
+    public boolean isLocalizable() {
 		return publicationResourceLocator != null;
 	}
 
@@ -101,30 +66,6 @@ public class Publication implements Serializable{
      */
 	public boolean isLocalizableInBookMedium() {
 		return isLocalizable() && publicationResourceLocator instanceof BookResourceLocator;
-	}
-
-	public Boolean getIsLargeScale() {
-		return isLargeScale;
-	}
-
-	public void setIsLargeScale(Boolean isLargeScale) {
-		this.isLargeScale = isLargeScale;
-	}
-
-	public Boolean getIsCurated() {
-		return isCurated;
-	}
-
-	public void setIsCurated(Boolean isCurated) {
-		this.isCurated = isCurated;
-	}
-
-	public Boolean getIsComputed() {
-		return isComputed;
-	}
-
-	public void setIsComputed(Boolean isComputed) {
-		this.isComputed = isComputed;
 	}
 
 	public long getPublicationId() {
@@ -235,11 +176,11 @@ public class Publication implements Serializable{
 		return "";
 	}
 
-	public String getPublicationType() {
+	public PublicationType getPublicationType() {
 		return publicationType;
 	}
 
-	public void setPublicationType(String publicationType) {
+	public void setPublicationType(PublicationType publicationType) {
 		this.publicationType = publicationType;
 	}
 
@@ -298,6 +239,15 @@ public class Publication implements Serializable{
 		this.publicationResourceLocator = webPage;
 	}
 
+    public void setThesisResourceLocation(String institute, String country) {
+
+        ThesisResourceLocator locator = new ThesisResourceLocator();
+        locator.setInstitute(institute);
+        locator.setCountry(country);
+
+        this.publicationResourceLocator = locator;
+    }
+
 	public boolean hasAuthors() {
 		return authors != null && !authors.isEmpty();
 	}
@@ -331,11 +281,11 @@ public class Publication implements Serializable{
 		return dbXrefs != null && !dbXrefs.isEmpty();
 	}
 
-	public Set<DbXref> getDbXrefs() {
+	public List<PublicationDbXref> getDbXrefs() {
 		return dbXrefs;
 	}
 
-	public void setDbXrefs(Set<DbXref> dbXrefs) {
+	public void setDbXrefs(List<PublicationDbXref> dbXrefs) {
 		this.dbXrefs = dbXrefs;
 	}
 

@@ -1,7 +1,5 @@
 package org.nextprot.api.web.seo.service.impl;
 
-import java.util.Set;
-
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.seo.domain.SeoTagsAndUrl;
@@ -12,6 +10,8 @@ import org.nextprot.api.web.seo.service.SitemapService;
 import org.nextprot.api.web.service.GitHubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 
 @Service
@@ -50,7 +50,7 @@ public class SitemapServiceImpl implements SitemapService {
 		// entry function urls
 		Set<String> acs = masterIdentifierService.findUniqueNames();
 		for (String ac: acs) {
-			urlSet.add(new SitemapUrl(base + "/entry/" + ac + "/function"));
+			urlSet.add(new SitemapUrl(base + "/entry/" + ac));
 		}
 		
 		// TODO later

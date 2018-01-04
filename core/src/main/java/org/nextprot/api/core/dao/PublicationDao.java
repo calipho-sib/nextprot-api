@@ -3,7 +3,6 @@ package org.nextprot.api.core.dao;
 import org.nextprot.api.core.domain.Publication;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PublicationDao {
 
@@ -21,16 +20,9 @@ public interface PublicationDao {
 	 * @param masterId
 	 * @return
 	 */
+	// TODO: this method should have a list of longs as parameters
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
-	
-	/**
-	 * Returns a map with publication id as the key
-	 * The value is a Map where the key is a property name, and value a list of string 
-	 * @param masterId
-	 * @return
-	 */
-	Map<Long,Map<String,List<String>>> findEntryPublicationPropertiesByMasterId(Long masterId);	
-	
+
 	/**
 	 * Find publication id by database and accession.
 	 * For example to get a publication from PubMed given its id
@@ -46,13 +38,6 @@ public interface PublicationDao {
 	 * @return
 	 */
 	Publication findPublicationById(long id);
-
-	/**
-	 * Finds publications by title
-	 * @param title
-	 * @return
-	 */
-	List<Publication> findPublicationByTitle(String title);
 	
 	/**
 	 * Retrieves publication by MD5

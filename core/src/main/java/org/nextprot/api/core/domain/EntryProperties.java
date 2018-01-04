@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
 	
-	private static final long serialVersionUID = -1331815504528958900L;
+	private static final long serialVersionUID = 2L;
 	private String proteinExistence;
 	private String proteinExistenceInfo;
 	private int ptmCount;
@@ -20,56 +20,6 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
 	
-	private int referencesCount, referencesSubmissionsCount ,referencesAdditionalPublicationsCount, referencesCuratedPublicationsCount, referencesWebResourcesCount, referencesPatentsCount;
-
-	public int getReferencesCount() {
-		return referencesCount;
-	}
-
-	public void setReferencesCount(int referencesCount) {
-		this.referencesCount = referencesCount;
-	}
-
-	public int getReferencesSubmissionsCount() {
-		return referencesSubmissionsCount;
-	}
-
-	public void setReferencesSubmissionsCount(int referencesSubmissionsCount) {
-		this.referencesSubmissionsCount = referencesSubmissionsCount;
-	}
-
-	public int getReferencesAdditionalPublicationsCount() {
-		return referencesAdditionalPublicationsCount;
-	}
-
-	public void setReferencesAdditionalPublicationsCount(int referencesAdditionalPublicationsCount) {
-		this.referencesAdditionalPublicationsCount = referencesAdditionalPublicationsCount;
-	}
-
-	public int getReferencesCuratedPublicationsCount() {
-		return referencesCuratedPublicationsCount;
-	}
-
-	public void setReferencesCuratedPublicationsCount(int referencesCuratedPublicationsCount) {
-		this.referencesCuratedPublicationsCount = referencesCuratedPublicationsCount;
-	}
-
-	public int getReferencesWebResourcesCount() {
-		return referencesWebResourcesCount;
-	}
-
-	public void setReferencesWebResourcesCount(int referencesWebResourcesCount) {
-		this.referencesWebResourcesCount = referencesWebResourcesCount;
-	}
-
-	public int getReferencesPatentsCount() {
-		return referencesPatentsCount;
-	}
-
-	public void setReferencesPatentsCount(int referencesPatentsCount) {
-		this.referencesPatentsCount = referencesPatentsCount;
-	}
-
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
 	}

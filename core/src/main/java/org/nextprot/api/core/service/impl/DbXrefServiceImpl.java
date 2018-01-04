@@ -42,7 +42,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private IsoformService isoService;
 
 	@Override
-	public List<DbXref> findDbXRefByPublicationId(Long publicationId) {
+	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
 		return this.dbXRefDao.findDbXRefsByPublicationId(publicationId);
 	}
 	

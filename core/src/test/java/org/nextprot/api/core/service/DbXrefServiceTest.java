@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 
 import java.io.FileNotFoundException;
@@ -55,7 +56,7 @@ public class DbXrefServiceTest {
 	@Ignore
 	@Test
 	public void testFindDbXrefsByPublicationIds() {
-		List<DbXref> xrefs = this.xrefService.findDbXRefByPublicationId(100L);
+		List<PublicationDbXref> xrefs = this.xrefService.findDbXRefByPublicationId(100L);
 		assertEquals(1, xrefs.size());
 		assertEquals("15923218", xrefs.get(0).getAccession());
 	}

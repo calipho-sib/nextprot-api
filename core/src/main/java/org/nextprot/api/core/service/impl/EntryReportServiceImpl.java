@@ -6,12 +6,17 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.PublicationCategory;
+import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -34,6 +39,10 @@ public class EntryReportServiceImpl implements EntryReportService {
     @Autowired
     private IsoformService isoformService;
 
+    @Autowired
+    private EntryPublicationService entryPublicationService;
+
+    @Cacheable("entry-reports")
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
 
@@ -53,18 +62,25 @@ public class EntryReportServiceImpl implements EntryReportService {
         setIsoformCount(entry, report);
         setVariantCount(entry, report);
         setPTMCount(entry, report);
+        setCuratedPublicationCount(entry, report);
+        setAdditionalPublicationCount(entry, report);
+        setPatentCount(entry, report);
+        setSubmissionCount(entry, report);
+        setWebResourceCount(entry, report);
 
         return duplicateReportForEachGene(entry, report);
     }
 
     @Override
-    public boolean entryIsNAcetyled(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
-    	return containsPtmAnnotation(entry, NACETYLATION_REG_EXP, isExperimentalPredicate);
+    public boolean isEntryNAcetyled(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        return containsPtmAnnotation(entryAccession, NACETYLATION_REG_EXP, isExperimentalPredicate);
     }
     
     @Override
-    public boolean entryIsPhosphorylated(Entry entry, Predicate<AnnotationEvidence> isExperimentalPredicate) {
-    	return containsPtmAnnotation(entry, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
+    public boolean isEntryPhosphorylated(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        return containsPtmAnnotation(entryAccession, PHOSPHORYLATION_REG_EXP, isExperimentalPredicate);
     }
 
     @Override
@@ -89,10 +105,9 @@ public class EntryReportServiceImpl implements EntryReportService {
     		result = true;
     	}
     	
-    	else if (entry.getPublications().stream().anyMatch(this::hasMassSpecScope)) {
+    	else if (entry.getPublications().stream().anyMatch(pub -> hasMassSpecScope(entry.getUniqueName(), pub.getPublicationId()))) {
     		result = true;
- 
-    	
+
     	} else if (entry.getAnnotations().stream()
     			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
     		result = true;
@@ -102,8 +117,11 @@ public class EntryReportServiceImpl implements EntryReportService {
     }
 
     
-    private boolean hasMassSpecScope(Publication pub) {
-    	return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
+    private boolean hasMassSpecScope(String entryAccession, long pubId) {
+
+    	//return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
+    	return entryPublicationService.findEntryPublications(entryAccession).getEntryPublication(pubId).getDirectLinks(PublicationProperty.SCOPE).stream()
+                .anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
@@ -248,7 +266,37 @@ public class EntryReportServiceImpl implements EntryReportService {
                 .map(report::duplicateThenSetChromosomalLocation)
                 .collect(Collectors.toList());
     }
-    
+
+    private void setCuratedPublicationCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.CURATED));
+    }
+
+    private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.ADDITIONAL));
+    }
+
+    private void setPatentCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.PATENT_COUNT,
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.PATENT));
+    }
+
+    private void setSubmissionCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.SUBMISSION));
+    }
+
+    private void setWebResourceCount(Entry entry, EntryReport report) {
+
+        report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
+                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.WEB_RESOURCE));
+    }
+
     boolean isGoldAnnotation(Annotation annot) {
     	boolean result = annot.getQualityQualifier().equals(QualityQualifier.GOLD.name());
     	//System.out.println("annot " + annot.getAnnotationId() + " quality: " + annot.getQualityQualifier());
@@ -275,12 +323,13 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     
     
-	boolean containsPtmAnnotation(Entry entry, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+	boolean containsPtmAnnotation(String entryAccession, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		List<Annotation> ptms = entry.getAnnotationsByCategory()
 				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
 
-		//System.out.println(null==ptms ? "ptms:null" : "ptms:" + ptms.size());
 		return nullableListToStream(ptms)
 				.anyMatch(annot -> isGoldAnnotation(annot) &&
 				 		annotationTermMatchesPattern(annot, ptmRegExp) &&
@@ -289,4 +338,26 @@ public class EntryReportServiceImpl implements EntryReportService {
 						)
 				);
 	}
+
+    /**
+     * Retrieves publications by master's unique name filtered by a view
+     *
+     * @param entryAccession the entry accession
+     * @param publicationCategory the publication view
+     * @return a list of Publication
+     */
+    private List<EntryPublication> reportPublicationsByEntryName(String entryAccession, PublicationCategory publicationCategory) {
+
+        return entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationList(publicationCategory);
+    }
+
+    /**
+     * Count the number of publication linked to this entry for the given view
+     * @param entryAccession the entry accession
+     * @param publicationCategory the publication view
+     */
+    private int countPublicationsByEntryName(String entryAccession, PublicationCategory publicationCategory) {
+
+        return reportPublicationsByEntryName(entryAccession, publicationCategory).size();
+    }
 }

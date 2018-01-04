@@ -1,8 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntryPropertiesDao;
@@ -13,6 +10,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Repository
 public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
@@ -26,9 +26,7 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
 		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
 		
-		EntryProperties ep = template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
-		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-references-count"), namedParameters, new EntryPropertyRowAppender(ep));
-		return ep;
+		return template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
 	}
 	
 	static class EntryPropertyRowMapper implements ParameterizedRowMapper<EntryProperties> {
@@ -56,31 +54,4 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		}
 		
 	}
-	
-	
-	static class EntryPropertyRowAppender implements ParameterizedRowMapper<Void> {
-		
-		private EntryProperties ep = null;
-		
-		EntryPropertyRowAppender(EntryProperties ep){
-			this.ep = ep;
-		}
-
-		@Override
-		public Void mapRow(ResultSet resultSet, int row) throws SQLException {
-
-			ep.setReferencesCuratedPublicationsCount(resultSet.getInt("references_curated_publications_count"));
-			ep.setReferencesAdditionalPublicationsCount(resultSet.getInt("references_additional_publications_count"));
-			ep.setReferencesPatentsCount(resultSet.getInt("references_patents_count"));
-			ep.setReferencesSubmissionsCount(resultSet.getInt("references_submissions_count"));
-			ep.setReferencesWebResourcesCount(resultSet.getInt("references_web_resources_count"));
-			ep.setReferencesCount(resultSet.getInt("references_count"));
-			ep.setProteinExistenceInfo(resultSet.getString("pe_info"));
-
-			return null;
-
-		}
-		
-	}
-
 }

@@ -5,9 +5,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.ui.page.PageView;
+import org.nextprot.api.core.ui.page.PageViewFactory;
 import org.nextprot.api.web.service.EntryPageService;
-import org.nextprot.api.web.ui.page.PageView;
-import org.nextprot.api.web.ui.page.PageViewFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
 		for (PageViewFactory page : PageViewFactory.values()) {
 
-			PageView pv = page.build();
+			PageView pv = page.getPageView();
 			map.put(pv.getLabel(), pv.doDisplayPage(entry));
 		}
 
@@ -44,7 +44,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
-        PageView pageView = PageViewFactory.valueOf(pageViewName.toUpperCase()).build();
+        PageView pageView = PageViewFactory.valueOf(pageViewName.toUpperCase()).getPageView();
 
         List<DbXref> xrefs = pageView.getFurtherExternalLinksXrefs(entry);
 

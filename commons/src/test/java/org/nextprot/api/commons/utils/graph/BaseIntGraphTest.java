@@ -120,8 +120,10 @@ abstract class BaseIntGraphTest {
 
         populateExampleGraph(graph);
 
-        Assert.assertTrue(arrayContainsElement(graph.getInEdges(2), 0));
-        Assert.assertTrue(arrayContainsElement(graph.getInEdges(2), 2));
+        int[] edges = graph.getInEdges(2);
+
+        Assert.assertTrue(arrayContainsElement(edges, 0));
+        Assert.assertTrue(arrayContainsElement(edges, 2));
     }
 
     @Test
@@ -129,12 +131,20 @@ abstract class BaseIntGraphTest {
 
         populateExampleGraph(graph);
 
-        Assert.assertTrue(arrayContainsElement(graph.getOutEdges(5), 2));
-        Assert.assertTrue(arrayContainsElement(graph.getOutEdges(5), 3));
+        int[] edges = graph.getOutEdges(5);
+
+        Assert.assertTrue(arrayContainsElement(edges, 2));
+        Assert.assertTrue(arrayContainsElement(edges, 3));
     }
 
+    /*
+           6__ 5 __
+             \     \
+              \     4
+               7 __/
+   */
     @Test
-    public void getAncestorSubgraph() throws Exception {
+    public void calcSubgraph() throws Exception {
 
         populateExampleGraph(graph);
 
@@ -142,7 +152,7 @@ abstract class BaseIntGraphTest {
 
         Assert.assertEquals(4, sg.countNodes());
         Assert.assertTrue(new TIntHashSet(sg.getNodes()).containsAll(new int[] {4, 6, 7, 5}));
-        //Assert.assertEquals(4, sg.countEdges());
+        Assert.assertEquals(4, sg.countEdges());
         Assert.assertTrue(sg.containsEdge(6, 5));
         Assert.assertTrue(sg.containsEdge(6, 7));
         Assert.assertTrue(sg.containsEdge(5, 4));
@@ -206,6 +216,15 @@ abstract class BaseIntGraphTest {
 
         Assert.assertEquals("edge 1", graph.getEdgeLabel(1));
         Assert.assertEquals(null, graph.getEdgeLabel(2));
+    }
+
+    @Test
+    public void getDescendants() throws Exception {
+
+        populateExampleGraph(graph);
+
+        Assert.assertTrue(new TIntHashSet(graph.getDescendants(5))
+                .containsAll(new int[]{2, 3, 4}));
     }
 
     /*

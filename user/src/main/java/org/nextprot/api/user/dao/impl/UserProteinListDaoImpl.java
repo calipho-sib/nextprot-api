@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserProteinListDao;
@@ -119,7 +119,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 		namedParameters.addValue("owner_id", userProteinList.getOwnerId());
         namedParameters.addValue("public_id", userProteinList.getPublicId());
 
-		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "list_id", namedParameters,
+		return JdbcUtils.insertAndGetKey(INSERT_SQL, "list_id", namedParameters,
 				new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 	}
 

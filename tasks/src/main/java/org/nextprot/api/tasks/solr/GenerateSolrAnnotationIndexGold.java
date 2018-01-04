@@ -1,14 +1,13 @@
 package org.nextprot.api.tasks.solr;
 
-import java.util.Set;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.tasks.solr.indexer.EntryGoldSolrIndexer;
+
+import java.util.Set;
 
 public class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 
@@ -33,8 +32,7 @@ public class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
-		indexer.setDbxrefservice(getBean(DbXrefService.class));
-		
+
 		// Remove previous indexes
 		logger.info("removing all solr entries records");
 		indexer.clearDatabase("");

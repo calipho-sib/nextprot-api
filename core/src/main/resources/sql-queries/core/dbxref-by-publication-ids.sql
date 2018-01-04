@@ -4,3 +4,4 @@ from nextprot.db_xrefs x
 	inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id
 	inner join nextprot.cv_database_categories cat on cat.cv_id = dbs.cv_category_id
 where assoc.publication_id in (:publicationIds)
+ORDER BY database_name

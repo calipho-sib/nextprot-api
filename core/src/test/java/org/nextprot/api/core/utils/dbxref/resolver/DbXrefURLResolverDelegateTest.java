@@ -92,12 +92,13 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=%s", xref.getLinkUrl());
     }
 
-    @Test (expected = UnresolvedXrefURLException.class)
+    @Test
     public void testResolveEnsemblBadPrimaryId() throws Exception {
 
         DbXref xref = createDbXref("EST00000587522", "Ensembl", "whatever");
 
-        Assert.assertNull(resolver.resolve(xref));
+        Assert.assertEquals("https://www.ensembl.org/Multi/Search/Results?q=EST00000587522;site=ensembl", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ensembl.org/Multi/Search/Results?q=%s;site=ensembl", xref.getLinkUrl());
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -204,8 +205,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("1A7F", "PDB", "whatever");
 
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
+        Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=%s", xref.getLinkUrl());
     }
 
     // entry/NX_Q9BXA6/xref.json

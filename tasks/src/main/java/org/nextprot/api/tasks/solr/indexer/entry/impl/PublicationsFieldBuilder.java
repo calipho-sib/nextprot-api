@@ -3,6 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -27,11 +28,16 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_large_scale_count = 0;
 		String Jinfo = "";
 
+
 		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
-			if(currpubli.getIsComputed() == true) publi_computed_count++;
-			if(currpubli.getIsCurated() == true) publi_curated_count++;
-			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
+
+            GlobalPublicationStatistics.PublicationStatistics publiStats =
+                    publicationService.getPublicationStatistics(currpubli.getPublicationId());
+
+            if(publiStats.isComputed()) publi_computed_count++;
+			if(publiStats.isCurated()) publi_curated_count++;
+			if(publiStats.isLargeScale()) publi_large_scale_count++;
 
 			if(currpubli.isLocatedInScientificJournal()) {
 

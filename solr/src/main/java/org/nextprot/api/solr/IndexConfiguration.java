@@ -1,10 +1,10 @@
 package org.nextprot.api.solr;
 
+import org.nextprot.api.commons.exception.SearchConfigException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.nextprot.api.commons.exception.SearchConfigException;
 
 public class IndexConfiguration implements QueryBuilder {
 	protected final String BOOST_SPEARATOR = "^";
@@ -65,15 +65,16 @@ public class IndexConfiguration implements QueryBuilder {
 	 */
 	public String buildQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
-		String[] tokens = query.getQueryString(true).split(WHITESPACE);
-		
-		for(int i=0; i<tokens.length; i++) {
-			queryBuilder.append(PLUS+tokens[i]);
-			
-			if(i != tokens.length - 1)
-				queryBuilder.append(WHITESPACE);
-		}
-		
+
+        String[] tokens = query.getQueryString(true).split(WHITESPACE);
+
+        for (int i = 0; i < tokens.length; i++) {
+            queryBuilder.append(PLUS + tokens[i]);
+
+            if (i != tokens.length - 1)
+                queryBuilder.append(WHITESPACE);
+        }
+
 		//this.otherParameters.put("spellcheck.q", query.getQueryString());
 		return queryBuilder.toString();
 	}

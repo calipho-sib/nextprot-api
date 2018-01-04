@@ -10,6 +10,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class CvTermGraph implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
 
@@ -160,17 +161,32 @@ public class CvTermGraph implements Serializable {
         return graph.getAncestors(cvTermId);
     }
 
+    public int[] getDescendants(int cvTermId) {
+
+        return graph.getDescendants(cvTermId);
+    }
+
     public CvTermGraph calcAncestorSubgraph(int cvTermId) {
 
-        int[] ancestors = graph.getAncestors(cvTermId);
+        return buildSubgraph(cvTermId, (id) -> graph.getAncestors(id), "ancestor");
+    }
 
-        int[] nodes = new int[ancestors.length+1];
-        nodes[0] = cvTermId;
-        System.arraycopy(ancestors, 0, nodes, 1, ancestors.length);
+    public CvTermGraph calcDescendantSubgraph(int cvTermId) {
 
-        IntGraph sg = graph.calcSubgraph(nodes);
+        return buildSubgraph(cvTermId, (id) -> graph.getDescendants(id), "descendant");
+    }
 
-        sg.setGraphLabel(sg.getNodeMetadataValue(cvTermId, ACCESSION_KEY)+" ancestor graph");
+    private CvTermGraph buildSubgraph(int cvTermId, Function<Integer, int[]> func, String type) {
+
+        int[] nodes = func.apply(cvTermId);
+        int[] subgraphNodes = new int[nodes.length+1];
+
+        subgraphNodes[0] = cvTermId;
+        System.arraycopy(nodes, 0, subgraphNodes, 1, nodes.length);
+
+        IntGraph sg = graph.calcSubgraph(subgraphNodes);
+
+        sg.setGraphLabel(sg.getNodeMetadataValue(cvTermId, ACCESSION_KEY)+" " + type + " graph");
 
         return new CvTermGraph(terminologyCv, sg);
     }

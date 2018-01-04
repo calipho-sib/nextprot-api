@@ -1,4 +1,5 @@
 package org.nextprot.api.web.xml.integration;
+
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 
@@ -14,15 +15,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class ExpasySearchIntegrationTest extends WebIntegrationBaseTest {
 
-
-    @Test
-    public void shouldReployToExpasySearchWithXML() throws Exception {
-        this.mockMvc.perform(get("/expasy-search.xml?query=insulin&type=whatever"))
-                .andExpect(status().isOk())
-                .andExpect(xpath("/ExpasyResult/count").nodeCount(1))
-                .andExpect(xpath("/ExpasyResult/url").string("https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=insulin"));
-    }
-
-
+  @Test
+  public void shouldReplyToExpasySearchWithXML() throws Exception {
+	  this.mockMvc.perform(get("/expasy-search.xml?query=insulin&type=whatever"))
+        .andExpect(status().isOk())
+	  	.andExpect(xpath("/ExpasyResult/count").nodeCount(1))
+        .andExpect(xpath("/ExpasyResult/url").string("https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=insulin"));
+  }
 }
 

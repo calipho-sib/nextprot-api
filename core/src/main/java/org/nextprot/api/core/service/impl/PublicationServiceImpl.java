@@ -9,12 +9,15 @@ import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.PublicationStatisticsService;
 import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,10 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private AuthorDao authorDao;
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
+	@Autowired private PublicationStatisticsService publicationStatisticsService;
+    @Autowired private EntryPublicationService entryPublicationService;
+
+    private Map<Long, List<EntryPublication>> entryPublicationsById;
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
@@ -44,27 +51,18 @@ public class PublicationServiceImpl implements PublicationService {
 		return publication;
 	}
 
-	@Override
-	public List<Publication> findPublicationByTitle(String title) {
-		return publicationDao.findPublicationByTitle(title);
-	}
+    @Override
+    public Publication findPublicationByMD5(String md5) {
+        Publication publication = this.publicationDao.findPublicationByMD5(md5);
+        loadAuthorsAndXrefs(publication);
+        return publication;
+    }
 
-	/**
-	 * TO REMOVE
-	 */
-	@Override
-	public List<Publication> findPublicationsByMasterId(Long masterId) {
-		
-		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
-
-		publications.forEach(this::loadAuthorsAndXrefs);
-		
-		return publications;
-	}
-
-	@Override
+    // TODO: Publications are already cached in publications-get-by-id - even worse, some publication are linked to more than 10000 entries!!!)
+    // almost 5GB of cache here !!!
+    @Override
 	@Cacheable("publications")
-	public List<Publication> findPublicationsByMasterUniqueName(String uniqueName) {
+	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 
 		Long masterId = masterIdentifierDao.findIdByUniqueName(uniqueName);
 		List<Publication> publications = publicationDao.findSortedPublicationsByMasterId(masterId);
@@ -72,16 +70,14 @@ public class PublicationServiceImpl implements PublicationService {
 
 		// Getting publications from nx flat database
 		List<Publication> nxflatPublications = new ArrayList<>();
-		Arrays.asList("PubMed", "DOI").forEach(db -> {
+		Arrays.asList("DOI", "PubMed").forEach(db -> {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION,
 					new SimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
 					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
 				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
-
 		});
-
 
 		updateMissingPublicationFields(nxflatPublications);
 		publications.addAll(nxflatPublications);
@@ -153,13 +149,6 @@ public class PublicationServiceImpl implements PublicationService {
 	}
 
 	@Override
-	public Publication findPublicationByMD5(String md5) {
-		Publication publication = this.publicationDao.findPublicationByMD5(md5);
-		loadAuthorsAndXrefs(publication);
-		return publication;
-	}
-
-	@Override
 	public List<Long> findAllPublicationIds() {		
 		return publicationDao.findAllPublicationsIds();
 	}
@@ -186,17 +175,53 @@ public class PublicationServiceImpl implements PublicationService {
 		}
 	}
 
-	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
+	private void setXrefs(Publication publication, List<PublicationDbXref> xrefs){
 		if (xrefs == null) {
-			publication.setDbXrefs(new HashSet<>());						
+			publication.setDbXrefs(new ArrayList<>());
 		} else {
-			publication.setDbXrefs(new HashSet<>(xrefs));			
+			publication.setDbXrefs(xrefs);
 		}
 	}
 
 	@Override
-	@Cacheable("publications-by-id-and-accession")
+	@Cacheable(value = "publications-by-id-and-accession")
 	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}
+
+    @Override
+    public GlobalPublicationStatistics.PublicationStatistics getPublicationStatistics(long publicationId) {
+
+        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+    }
+
+    @Cacheable("entry-publications-by-pubid")
+    @Override
+    public List<EntryPublication> getEntryPublications(long pubId) {
+
+        if (entryPublicationsById == null) {
+            entryPublicationsById = buildEntryPublicationsMap();
+        }
+
+        return entryPublicationsById.getOrDefault(pubId, new ArrayList<>());
+    }
+
+    // Memoized function that returns EntryPublications by publication id
+    private Map<Long, List<EntryPublication>> buildEntryPublicationsMap() {
+
+        Map<Long, List<EntryPublication>> map = new HashMap<>();
+
+        for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
+
+            Map<Long, EntryPublication> publicationsById = entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationsById();
+
+            for (Map.Entry<Long, EntryPublication> kv : publicationsById.entrySet()) {
+
+                map.computeIfAbsent(kv.getKey(), k -> new ArrayList<>())
+                        .add(kv.getValue());
+            }
+        }
+
+        return map;
+    }
 }

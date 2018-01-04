@@ -4,10 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EditedVolumeBookResourceLocator;
-import org.nextprot.api.core.domain.publication.JournalResourceLocator;
-import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.domain.publication.WebPublicationPage;
+import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,7 +22,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Publication publication = publicationDao.findPublicationById(681448L);
 
-		Assert.assertEquals(PublicationType.ARTICLE, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.ARTICLE, publication.getPublicationType());
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
 		Assert.assertTrue(publication.isLocatedInScientificJournal());
 		Assert.assertTrue(!publication.isLocatedInEditedVolumeBook());
@@ -51,7 +48,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 		
 		Publication publication = publicationDao.findPublicationById(15642147L);
 
-		Assert.assertEquals(PublicationType.BOOK, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.BOOK, publication.getPublicationType());
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
 		Assert.assertTrue(!publication.isLocatedInScientificJournal());
 		Assert.assertTrue(publication.isLocatedInEditedVolumeBook());
@@ -69,7 +66,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Publication publication = publicationDao.findPublicationById(3183821L);
 
-		Assert.assertEquals(PublicationType.ONLINE_PUBLICATION, PublicationType.valueOfName(publication.getPublicationType()));
+		Assert.assertEquals(PublicationType.ONLINE_PUBLICATION, publication.getPublicationType());
 		Assert.assertTrue(!publication.isLocalizableInBookMedium());
 		Assert.assertEquals("SHMPD", publication.getPublicationResourceLocator().getName());
 		Assert.assertEquals("http://shmpd.bii.a-star.edu.sg/gene.php?genestart=A&genename=BRCA1", ((WebPublicationPage)publication.getPublicationResourceLocator()).getUrl());
@@ -99,4 +96,18 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertTrue(!publication.hasAuthors());
 	}
+
+    @Test
+    public void testThesisPublication() {
+
+        Publication publication = publicationDao.findPublicationById(15624251L);
+
+        Assert.assertEquals(PublicationType.THESIS, publication.getPublicationType());
+        Assert.assertTrue(publication.isLocalizable());
+        Assert.assertEquals("", publication.getTitle());
+        Assert.assertEquals("2001", publication.getTextDate());
+        Assert.assertTrue(publication.getPublicationResourceLocator() instanceof ThesisResourceLocator);
+        Assert.assertEquals("Germany", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getCountry());
+        Assert.assertEquals("University of Goettingen", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getInstitute());
+    }
 }

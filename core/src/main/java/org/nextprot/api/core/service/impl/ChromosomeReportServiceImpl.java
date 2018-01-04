@@ -1,32 +1,19 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.ChromosomeReport;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.ChromosomeReportService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class ChromosomeReportServiceImpl implements ChromosomeReportService {
@@ -88,11 +75,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> 
-					entryReportService.entryIsNAcetyled(
-						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()), 
-						isExperimentalPredicate)
-					)
+				.filter(acc -> entryReportService.isEntryNAcetyled(acc, isExperimentalPredicate))
 				.sorted()
 				.collect(Collectors.toList());
 
@@ -105,11 +88,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> 
-					entryReportService.entryIsPhosphorylated(
-						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()), 
-						isExperimentalPredicate)
-					)
+				.filter(acc -> entryReportService.isEntryPhosphorylated(acc, isExperimentalPredicate))
 				.sorted()
 				.collect(Collectors.toList());
 	}

@@ -27,11 +27,12 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	private DataSourceServiceLocator dsLocator;
 	
 	@Override
-	public List<DbXref> findDbXRefsByPublicationId(Long publicationId) {
+	public List<PublicationDbXref> findDbXRefsByPublicationId(Long publicationId) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("publicationId", publicationId);
-			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new DbXRefRowMapper());
-	};
+
+        return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new PublicationDbXRefRowMapper());
+	}
 	
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {

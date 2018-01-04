@@ -76,33 +76,6 @@ public class PublicationServiceTest {
 	}
 
 	@Test
-	public void verifyFindPublicationsByMasterId() {
-
-		Publication publication = mock(Publication.class);
-		when(publication.getPublicationId()).thenReturn(1L);
-
-		Publication publication2 = mock(Publication.class);
-		when(publication.getPublicationId()).thenReturn(2L);
-
-		when(publicationDao.findSortedPublicationsByMasterId(100L)).thenReturn(Arrays.asList(publication, publication2));
-
-		publicationService.findPublicationsByMasterId(100L);
-
-		verify(publicationDao).findSortedPublicationsByMasterId(100L);
-		verify(authorDao, times(2)).findAuthorsByPublicationId(anyLong());
-		verify(dbXrefDao, times(2)).findDbXRefsByPublicationId(anyLong());
-	}
-
-	@Ignore
-	@Test
-	public void testFindPublicationByMasterId() {
-		List<Publication> publications = this.publicationService.findPublicationsByMasterId(100L);
-		assertEquals(2, publications.size());
-		publications = this.publicationService.findPublicationsByMasterId(99L);
-		assertEquals(0, publications.size());
-	}
-
-	@Test
 	public void verifyFindPublicationsByMasterUniqueName() {
 
 		Publication publication = mock(Publication.class);
@@ -111,7 +84,7 @@ public class PublicationServiceTest {
 
 		when(publicationDao.findSortedPublicationsByMasterId(100L)).thenReturn(Arrays.asList(publication));
 
-		publicationService.findPublicationsByMasterUniqueName("NX_P12345");
+		publicationService.findPublicationsByEntryName("NX_P12345");
 
 		verify(masterIdentifierDao).findIdByUniqueName("NX_P12345");
 		verify(publicationDao).findSortedPublicationsByMasterId(100L);
@@ -123,7 +96,7 @@ public class PublicationServiceTest {
 	@Ignore
 	@Test
 	public void testFindPublicationsByMasterUniqueName() {
-		List<Publication> publications = this.publicationService.findPublicationsByMasterUniqueName("NX_P12345");
+		List<Publication> publications = this.publicationService.findPublicationsByEntryName("NX_P12345");
 		
 		assertEquals(2, publications.size());
 		

@@ -23,17 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class ExpasySearchController {
 
-    private final Log LOGGER = LogFactory.getLog(ExpasySearchController.class);
+	private final Log LOGGER = LogFactory.getLog(ExpasySearchController.class);
 
-    @Autowired private SolrService queryService;
-    @Autowired private QueryBuilderService queryBuilderService;
+	@Autowired private SolrService queryService;
+	@Autowired private QueryBuilderService queryBuilderService;
 
 
-    @RequestMapping(value = "/expasy-search", method = { RequestMethod.POST, RequestMethod.GET })
-    public String expasySearch(@RequestParam String query, @RequestParam (required = false) String type, Model model, HttpServletResponse response) {
+	@RequestMapping(value = "/expasy-search", method = { RequestMethod.POST, RequestMethod.GET })
+	public String expasySearch(@RequestParam String query, @RequestParam (required = false) String type, Model model, HttpServletResponse response) {
 
         try {
-
             QueryRequest qr = new QueryRequest();
             qr.setQuality("gold-and-silver");
             qr.setQuery(query);
@@ -43,7 +42,7 @@ public class ExpasySearchController {
             model.addAttribute("url", "https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=" + query);
             model.addAttribute("description", "Entries matching the query " + query + " in neXtProt");
 
-        }catch (NextProtException e){
+        } catch (NextProtException e){
 
             LOGGER.error(e.getLocalizedMessage());
             e.printStackTrace();
@@ -51,8 +50,7 @@ public class ExpasySearchController {
             model.addAttribute("count", -1);
             model.addAttribute("url", "error message " + e.getMessage());
 
-        }
-        catch (Exception e){
+        } catch (Exception e){
 
             LOGGER.error(e.getLocalizedMessage());
             e.printStackTrace();
@@ -61,10 +59,7 @@ public class ExpasySearchController {
 
         }
 
-
         return "expasy-search";
-
-    }
-
-
+	}
 }
+

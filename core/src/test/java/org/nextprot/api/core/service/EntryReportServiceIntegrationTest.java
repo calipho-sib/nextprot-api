@@ -3,10 +3,8 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -67,7 +65,18 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(1, reports.size());
 	}
-	
+
+    @Test
+    public void NX_P01308ShouldHaveAlsoPubInfos() {
+
+        List<EntryReport> reports = entryReportService.reportEntry("NX_P01308");
+        Assert.assertEquals(3, reports.get(0).countWebResources());
+        Assert.assertEquals(4, reports.get(0).countSubmissions());
+        Assert.assertEquals(0, reports.get(0).countPatents());
+        Assert.assertEquals(639, reports.get(0).countAdditionalPublications());
+        Assert.assertEquals(84, reports.get(0).countCuratedPublications());
+    }
+
 	@Ignore 
 	@Test // ok on np_20170413
 	public void TheseShouldHaveProteomicsFalse() {
@@ -172,8 +181,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
-			boolean result = entryReportService.entryIsNAcetyled(entry, isExperimentalPredicate);
+			boolean result = entryReportService.isEntryNAcetyled(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " NAcetyl should be false");
@@ -198,8 +206,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withAnnotations());
-			boolean result = entryReportService.entryIsPhosphorylated(entry, isExperimentalPredicate);
+			boolean result = entryReportService.isEntryPhosphorylated(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " Phosphorylated should be false");

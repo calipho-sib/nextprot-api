@@ -49,25 +49,24 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		Logger.debug(queryRequest.toPrettyString());
 
-		if (queryRequest.hasList()) {
+		if (queryRequest.isEntryAccessionSetDefined()) {
+            Logger.debug("queryRequest.hasEntryAccessionList()");
+
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(queryRequest.getEntryAccessionSet()));
+        }
+        else if (queryRequest.hasList()) {
 			Logger.debug("queryRequest.hasList()");
-			UserProteinList proteinList = null;
+			UserProteinList proteinList;
 			if(StringUtils.isWholeNumber(queryRequest.getListId())){ //Private id is used
 				proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(queryRequest.getListId()));
 			} else { //public id is used
 				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			}
-
-			Set<String> accessions = proteinList.getAccessionNumbers();
-
-			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
-
-			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
-
-		} else if (queryRequest.hasNextProtQuery()) {
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(proteinList.getAccessionNumbers()));
+		}
+		else if (queryRequest.hasNextProtQuery()) {
 			Logger.debug("queryRequest.hasNextProtQuery()");
-			UserQuery uq = null;
+			UserQuery uq;
 
 			//TODO  i don t think this is used anymore, checkout the logs
 			if(StringUtils.isWholeNumber(queryRequest.getQueryId())){ //Private id is used
@@ -76,42 +75,24 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			}else { //public id is used
 				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			}
-			
-			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
-			// In case there is no result
-			if (accessions.isEmpty()) {
-				// There is no entry with NULL value, so the result will be
-				// empty, but the result structure will be maintaned (could be
-				// replace by SearchResult factory where you create an emptry
-				// result)
-				accessions.add("NULL");
-			}
 
-			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+                    new HashSet<>(sparqlService.findEntries(uq.getSparql(),
+                            sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
 
-			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+        } else if (queryRequest.hasSparql()) {
+			Logger.debug("queryRequest.hasSparql()");
 
-		} else if (queryRequest.hasSparql()) {
-			Logger.debug("queryRequest.hasSparql()");			
-			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
-
-			// In case there is no result
-			if (accessions.isEmpty()) {
-				// There is no entry with NULL value, so the result will be
-				// empty, but the result structure will be maintaned (could be
-				// replace by SearchResult factory where you create an emptry
-				// result)
-				accessions.add("NULL");
-			}
-
-			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
-
-			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+                    new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
 
 		} else {
-			Logger.debug("queryRequest.default for simple search");			
+			Logger.debug("queryRequest.default for simple search");
+
+			if (queryRequest.getQuery() == null) {
+			    queryRequest.setQuery("");
+            }
+
 			return queryService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
 		}
 
@@ -132,7 +113,24 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		return queryService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, rows, filter);
 	}
 
+    private String buildQueryStringFromEntryAccessions(Set<String> accessions) {
 
+        // In case there is no result
+        if (accessions.isEmpty()) {
+            // There is no entry with NULL value, so the result will be
+            // empty, but the result structure will be maintained (could be
+            // replace by SearchResult factory where you create an empty
+            // result)
+            accessions.add("NULL");
+        }
 
+        return "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+    }
 
+    private Query buildQueryForSearchIndexes(String indexName, QueryRequest queryRequest, String queryString) {
+
+	    queryRequest.setQuery(queryString);
+
+        return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+    }
 }

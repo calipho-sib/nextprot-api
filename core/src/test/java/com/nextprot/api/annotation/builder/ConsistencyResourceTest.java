@@ -2,7 +2,6 @@ package com.nextprot.api.annotation.builder;
 
 import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
@@ -14,8 +13,6 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +36,11 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 			if(p != null){ 
 				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
 				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-				if(!"".equals(pubmedId)){
+                // TODO: remove the following line after next release data jan 2018
+                if(!"23248292".equals(pubmedId)){
 					if(pub == null){
 						System.err.println("Can t find publication for " + pubmedId); 
-						// the next 3 lines were written because it was convenient to pass all the tests on august 2017
-						// and especially because Fred would love them ;-) 
-						Date deadline = new Date(2017,9,30);
-						if (new Date().after(deadline)) {
-							missingPublications = true;
-						}
+                        missingPublications = true;
 					}
 				}else {
 					System.err.println("FOUND EMPTY PUBLICATION " + pubmedId + ", FIX THIS IN NEXT RELEASE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Probably related to: https://issues.isb-sib.ch/browse/NEXTPROT-1369");
