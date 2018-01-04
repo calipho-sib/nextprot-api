@@ -1,6 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
@@ -29,7 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
-@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
+//@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
 public class EntryPublicationController {
 
 	@Autowired
