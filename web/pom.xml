@@ -201,6 +201,22 @@
 							<outputFile>target/classes/git-commit-count.txt</outputFile>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>Fetch branch name</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>git</executable>
+                            <arguments>
+                                <argument>rev-parse</argument>
+                                <argument>--abbrev-ref</argument>
+                                <argument>HEAD</argument>
+                            </arguments>
+                            <outputFile>target/classes/git-branch-name.txt</outputFile>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
 		</plugins>
