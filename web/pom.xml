@@ -202,6 +202,22 @@
 						</configuration>
 					</execution>
                     <execution>
+                        <id>Fetch git commit hash</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>git</executable>
+                            <arguments>
+                                <argument>rev-parse</argument>
+                                <argument>--short</argument>
+                                <argument>HEAD</argument>
+                            </arguments>
+                            <outputFile>target/classes/git-commit-hash.txt</outputFile>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>Fetch branch name</id>
                         <phase>package</phase>
                         <goals>

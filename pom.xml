@@ -386,6 +386,7 @@
                         </manifest>
 						<manifestEntries>
 							<gitCommitCountFile>git-commit-count.txt</gitCommitCountFile>
+                            <gitCommitHashFile>git-commit-hash.txt</gitCommitHashFile>
                             <gitBranchNameFile>git-branch-name.txt</gitBranchNameFile>
 						</manifestEntries>
                     </archive>
