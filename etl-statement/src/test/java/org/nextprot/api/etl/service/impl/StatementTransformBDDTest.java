@@ -91,7 +91,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		String phenotypicMappedStatementIsoformJson = phentypicMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
 		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size(), 3);
 		
-		String phenotypicWithoutIsoform2 = "[{\"isoformAccession\":\"NX_P52701-1\",\"specificity\":\"UNKNOWN\",\"begin\":null,\"end\":null,\"name\":\"MSH6-isoGTBP-N-p.Thr1219Asp\"},{\"isoformAccession\":\"NX_P52701-3\",\"specificity\":\"UNKNOWN\",\"begin\":null,\"end\":null,\"name\":\"MSH6-iso3-p.Thr1089Asp\"},{\"isoformAccession\":\"NX_P52701-4\",\"specificity\":\"UNKNOWN\",\"begin\":null,\"end\":null,\"name\":\"MSH6-iso4-p.Thr917Asp\"}]";
+		String phenotypicWithoutIsoform2 = "[{\"isoformAccession\":\"NX_P52701-1\",\"specificity\":\"UNKNOWN\",\"name\":\"MSH6-isoGTBP-N-p.Thr1219Asp\"},{\"isoformAccession\":\"NX_P52701-3\",\"specificity\":\"UNKNOWN\",\"name\":\"MSH6-iso3-p.Thr1089Asp\"},{\"isoformAccession\":\"NX_P52701-4\",\"specificity\":\"UNKNOWN\",\"name\":\"MSH6-iso4-p.Thr917Asp\"}]";
 		
 		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(phenotypicWithoutIsoform2).size(), 3);
 		Assert.assertEquals(phenotypicMappedStatementIsoformJson, phenotypicWithoutIsoform2);
@@ -121,7 +121,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		
 
 		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(variantMappedStatementIsoformJson).size(), 4);
-		
+	
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-1\",\"specificity\":\"UNKNOWN\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso1-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-2\",\"specificity\":\"UNKNOWN\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso2-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"UNKNOWN\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso3-p.Phe1449Val\"},{\"isoformAccession\":\"NX_Q15858-4\",\"specificity\":\"UNKNOWN\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso4-p.Phe1449Val\"}]", variantMappedStatementIsoformJson);
 
 		
@@ -130,9 +130,8 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		String phenotypicMappedStatementIsoformJson = phentypicMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
 
 		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size(), 1);
-		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"begin\":null,\"end\":null,\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
-		
-		
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
+			
 	}
 
 	
