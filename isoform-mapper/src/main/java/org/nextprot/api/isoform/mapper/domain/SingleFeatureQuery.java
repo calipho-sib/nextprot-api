@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 
 import java.util.Collections;

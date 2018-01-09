@@ -51,16 +51,27 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 			String implVersion = atts.getValue("Implementation-Version");
 			String gitCommitCount = readFile(appServerHome+"/WEB-INF/classes/", atts.getValue("gitCommitCountFile"));
+			String gitCommitHash = readFile(appServerHome+"/WEB-INF/classes/", atts.getValue("gitCommitHashFile"));
+			String gitBranchName = readFile(appServerHome+"/WEB-INF/classes/", atts.getValue("gitBranchNameFile"));
 
 			if (gitCommitCount != null) {
 
-				Attributes.Name attName = new Attributes.Name("Git-Commit-Count");
-				atts.put(attName, gitCommitCount);
+                StringBuilder sb = new StringBuilder(" (build " + gitCommitCount);
 
-				implVersion = implVersion.replace("-SNAPSHOT", " (build " + gitCommitCount+")");
-			}
+                if (gitCommitHash != null) {
 
-			atts.remove(new Attributes.Name("gitCommitCountFile"));
+                    sb.append("#").append(gitCommitHash);
+                }
+
+                if (gitBranchName != null) {
+
+                    sb.append(" [branch ").append(gitBranchName).append("]");
+	    		}
+
+	    		sb.append(")");
+
+                implVersion = implVersion.replace("-SNAPSHOT", sb.toString());
+            }
 
 			return implVersion;
 	    } catch (IOException e) {
