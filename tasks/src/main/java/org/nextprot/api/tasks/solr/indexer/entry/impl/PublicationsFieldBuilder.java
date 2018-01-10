@@ -78,7 +78,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
-		int pe_level = entry.getOverview().getProteinExistenceLevel(); 
+		int pe_level = entry.getOverview().getProteinExistence().getLevel();
 		
 		float info_score = 0;
 		if(pe_level == 1) info_score=12;

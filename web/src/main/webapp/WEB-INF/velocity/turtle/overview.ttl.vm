@@ -1,6 +1,6 @@
 entry:$entry.getUniqueName() 
 ## ----------------- PROTEIN EXISTENCE -----------------------------
-    :existence      :$entry.overview.history.proteinExistence;
+    :existence      :$entry.overview.proteinExistence.descriptionName;
 ## ----------------- FAMILIES ------------------------------------------
 #if($entry.overview.families.size() > 0)
 #foreach($family in $entry.overview.families)

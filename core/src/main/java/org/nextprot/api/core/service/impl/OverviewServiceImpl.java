@@ -52,7 +52,7 @@ class OverviewServiceImpl implements OverviewService {
 		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
 		
 		EntryProperties props = entryPropertiesDao.findEntryProperties(uniqueName);
-		overview.getHistory().setProteinExistenceInfo(props.getProteinExistenceInfo());
+		overview.setProteinExistence(props.getProteinExistence());
 		
 		return overview;
 	}

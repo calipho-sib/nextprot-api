@@ -1,13 +1,13 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 @EntryFieldBuilder
 public class OverviewFieldBuilder extends FieldBuilder {
@@ -22,7 +22,7 @@ public class OverviewFieldBuilder extends FieldBuilder {
 		addField(Fields.IDSP0, id);
 		addField(Fields.RECOMMENDED_AC, id.substring(3));
 		
-		addField(Fields.PE_LEVEL, ovv.getProteinExistenceLevel());
+		addField(Fields.PE_LEVEL, ovv.getProteinExistence().getLevel());
 		addField(Fields.PROTEIN_EXISTENCE, ovv.getProteinExistence());
 	
 		String precname = ovv.getMainProteinName();

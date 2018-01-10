@@ -215,12 +215,12 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     private void setProteinExistence(Entry entry, EntryReport report) {
 
-        Integer proteinExistenceLevel = entry.getProteinExistenceLevel();
-        if (proteinExistenceLevel == null) {
+        ProteinExistence proteinExistence = entry.getProteinExistence();
+        if (proteinExistence == null) {
             throw new NextProtException("undefined existence level for neXtProt entry "+ entry.getUniqueName());
         }
 
-        report.setProteinExistence(ProteinExistenceLevel.valueOfLevel(proteinExistenceLevel));
+        report.setProteinExistence(proteinExistence);
     }
 
     private void setIsoformCount(Entry entry, EntryReport report) {
