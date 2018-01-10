@@ -65,7 +65,7 @@ public class ChromosomeReport implements Serializable {
 		private String chromosome;
 		private int entryCount;
 		private int entryReportCount;
-		private Map<ProteinExistenceLevel, Integer> countByProteinEvidence = new HashMap<>(5);
+		private Map<ProteinExistence, Integer> countByProteinEvidence = new HashMap<>(5);
 
 		public String getChromosome() {
 			return chromosome;
@@ -92,7 +92,7 @@ public class ChromosomeReport implements Serializable {
 			this.entryReportCount = entryReportCount;
 		}
 
-		public void setEntryCount(ProteinExistenceLevel level, int count) {
+		public void setEntryCount(ProteinExistence level, int count) {
 
 			countByProteinEvidence.put(level, count);
 		}
@@ -100,34 +100,34 @@ public class ChromosomeReport implements Serializable {
 		@JsonProperty("proteinLevelEntryCount")
 		public int getProteinLevelEntryCount() {
 
-			return countProteinEvidenceEntries(ProteinExistenceLevel.PROTEIN_LEVEL);
+			return countProteinEvidenceEntries(ProteinExistence.PROTEIN_LEVEL);
 		}
 
 		@JsonProperty("transcriptLevelEntryCount")
 		public int getTranscriptLevelEntryCount() {
 
-			return countProteinEvidenceEntries(ProteinExistenceLevel.TRANSCRIPT_LEVEL);
+			return countProteinEvidenceEntries(ProteinExistence.TRANSCRIPT_LEVEL);
 		}
 
 		@JsonProperty("homologyEntryCount")
 		public int getHomologyLevelEntryCount() {
 
-			return countProteinEvidenceEntries(ProteinExistenceLevel.HOMOLOGY);
+			return countProteinEvidenceEntries(ProteinExistence.HOMOLOGY);
 		}
 
 		@JsonProperty("predictedEntryCount")
 		public int getPredictedLevelEntryCount() {
 
-			return countProteinEvidenceEntries(ProteinExistenceLevel.PREDICTED);
+			return countProteinEvidenceEntries(ProteinExistence.PREDICTED);
 		}
 
 		@JsonProperty("uncertainEntryCount")
 		public int getUncertainLevelEntryCount() {
 
-			return countProteinEvidenceEntries(ProteinExistenceLevel.UNCERTAIN);
+			return countProteinEvidenceEntries(ProteinExistence.UNCERTAIN);
 		}
 
-		private int countProteinEvidenceEntries(ProteinExistenceLevel level) {
+		private int countProteinEvidenceEntries(ProteinExistence level) {
 			return countByProteinEvidence.getOrDefault(level, 0);
 		}
 	}

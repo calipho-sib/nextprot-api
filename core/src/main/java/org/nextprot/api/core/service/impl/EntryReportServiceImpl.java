@@ -215,7 +215,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     private void setProteinExistence(Entry entry, EntryReport report) {
 
-        ProteinExistenceLevel proteinExistence = entry.getProteinExistence();
+        ProteinExistence proteinExistence = entry.getProteinExistence();
         if (proteinExistence == null) {
             throw new NextProtException("undefined existence level for neXtProt entry "+ entry.getUniqueName());
         }

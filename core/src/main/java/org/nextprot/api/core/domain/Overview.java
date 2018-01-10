@@ -13,7 +13,7 @@ public class Overview implements Serializable{
 
 	private static final long serialVersionUID = 3L;
 
-    private ProteinExistenceLevel proteinExistence;
+    private ProteinExistence proteinExistence;
 	private History history;
 	private List<Family> families;
 	private List<EntityName> proteinNames;
@@ -92,11 +92,11 @@ public class Overview implements Serializable{
 		return result;
 	}
 
-    public void setProteinExistence(ProteinExistenceLevel proteinExistence) {
+    public void setProteinExistence(ProteinExistence proteinExistence) {
         this.proteinExistence = proteinExistence;
     }
 
-    public ProteinExistenceLevel getProteinExistence() {
+    public ProteinExistence getProteinExistence() {
 		return proteinExistence;
 	}
 
@@ -117,7 +117,7 @@ public class Overview implements Serializable{
 
 		private static final long serialVersionUID = 2L;
 
-		private ProteinExistenceLevel proteinExistenceUniprot;
+		private ProteinExistence proteinExistenceUniprot;
 		private Date nextprotIntegrationDate;
 		private Date nextprotUpdateDate;
 		private Date uniprotIntegrationDate;
@@ -128,11 +128,11 @@ public class Overview implements Serializable{
 
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        public ProteinExistenceLevel getProteinExistenceUniprot() {
+        public ProteinExistence getProteinExistenceUniprot() {
             return proteinExistenceUniprot;
         }
 
-        public void setProteinExistenceUniprot(ProteinExistenceLevel proteinExistenceUniprot) {
+        public void setProteinExistenceUniprot(ProteinExistence proteinExistenceUniprot) {
             this.proteinExistenceUniprot = proteinExistenceUniprot;
         }
 

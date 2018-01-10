@@ -71,7 +71,7 @@ public class EntryReport implements Serializable {
 	private String description;
 
 	private ChromosomalLocation chromosomalLocation;
-	private ProteinExistenceLevel proteinExistence;
+	private ProteinExistence proteinExistence;
 	private Map<String, Boolean> propertyTests = new HashMap<>(4);
 	private Map<String, Integer> propertyCounts = new HashMap<>(4);
 
@@ -250,7 +250,7 @@ public class EntryReport implements Serializable {
 		this.description = description;
 	}
 
-	public void setProteinExistence(ProteinExistenceLevel proteinExistence) {
+	public void setProteinExistence(ProteinExistence proteinExistence) {
 		this.proteinExistence = proteinExistence;
 	}
 

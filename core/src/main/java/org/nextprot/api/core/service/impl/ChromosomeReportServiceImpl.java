@@ -119,13 +119,13 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	private void setByProteinEvidenceEntryCount(List<String> chromosomeEntries, ChromosomeReport.Summary summary) {
 
-		Map<ProteinExistenceLevel, List<String>> pe2entries = new HashMap<>();
+		Map<ProteinExistence, List<String>> pe2entries = new HashMap<>();
 
 		for (String entry : chromosomeEntries) {
 
 			Overview overview = overviewService.findOverviewByEntry(entry);
 
-			ProteinExistenceLevel level = overview.getProteinExistence();
+			ProteinExistence level = overview.getProteinExistence();
 
 			if (!pe2entries.containsKey(level)) {
 

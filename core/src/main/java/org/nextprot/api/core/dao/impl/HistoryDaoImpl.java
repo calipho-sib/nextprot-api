@@ -5,7 +5,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -37,7 +37,7 @@ public class HistoryDaoImpl implements HistoryDao {
 		@Override
 		public History mapRow(ResultSet resultSet, int row) throws SQLException {
 			History historyEntry = new Overview.History(); 
-			historyEntry.setProteinExistenceUniprot(ProteinExistenceLevel.valueOfKey(resultSet.getString("protein_existence")));
+			historyEntry.setProteinExistenceUniprot(ProteinExistence.valueOfKey(resultSet.getString("protein_existence")));
 			historyEntry.setNextprotIntegrationDate(new Date(resultSet.getTimestamp("nextprot_integrated").getTime()));
 			historyEntry.setNextprotUpdateDate(new Date(resultSet.getTimestamp("nextprot_updated").getTime()));
 			historyEntry.setUniprotIntegrationDate(new Date(resultSet.getTimestamp("uniprot_integrated").getTime()));

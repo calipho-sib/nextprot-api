@@ -78,7 +78,7 @@ public class Entry implements KeyValueRepresentation {
 		return overview;
 	}
 
-	public ProteinExistenceLevel getProteinExistence() {
+	public ProteinExistence getProteinExistence() {
 		if (this.overview != null) {
 			return this.overview.getProteinExistence();
 		}

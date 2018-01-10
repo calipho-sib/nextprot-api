@@ -7,7 +7,7 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	
 	private static final long serialVersionUID = 3L;
 
-	private ProteinExistenceLevel proteinExistence;
+	private ProteinExistence proteinExistence;
 	private int ptmCount;
 	private int varCount;
 	private int isoformCount;
@@ -102,11 +102,11 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 		this.ptmCount = ptmCount;
 	}
 
-	public ProteinExistenceLevel getProteinExistence() {
+	public ProteinExistence getProteinExistence() {
 		return proteinExistence;
 	}
 
-	public void setProteinExistence(ProteinExistenceLevel proteinExistence) {
+	public void setProteinExistence(ProteinExistence proteinExistence) {
 		this.proteinExistence = proteinExistence;
 	}
 }

@@ -19,23 +19,23 @@ public class EntryReportTest {
 
         List<EntryReport> list = Arrays.asList(
             newEntryReport("SASS6", "NX_Q6UVJ0", "1p21.2",
-                    "100083563", "100132955", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "100083563", "100132955", ProteinExistence.PROTEIN_LEVEL,
                     false, true, false, false, 1, 246, 6,
                     "Spindle assembly abnormal protein 6 homolog"),
             newEntryReport("ISG15", "NX_P05161", "1p36.33",
-                    "1001138", "1014541", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "1001138", "1014541", ProteinExistence.PROTEIN_LEVEL,
                     false, true, false, false, 1, 101, 6,
                     "Ubiquitin-like protein ISG15"),
             newEntryReport("KDM1A", "NX_O60341", "1p36.12",
-                    "23019448", "23083689", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "23019448", "23083689", ProteinExistence.PROTEIN_LEVEL,
                     false, true, false, false, 2, 187, 33,
                     "Lysine-specific histone demethylase 1A"),
             newEntryReport("NBPF26", "NX_B4DH59", "1q21.1",
-                    "-", "-", ProteinExistenceLevel.UNCERTAIN,
+                    "-", "-", ProteinExistence.UNCERTAIN,
                     false, true, false, false, 1, 0, 0,
                     "Neuroblastoma breakpoint family member 26"),
             newEntryReport("PGBD5", "NX_Q8N414", "1q42.13",
-                    "230314482", "230426371", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "230314482", "230426371", ProteinExistence.PROTEIN_LEVEL,
                     false, true, false, false, 1, 236, 2,
                     "PiggyBac transposable element-derived protein 5")
         );
@@ -56,11 +56,11 @@ public class EntryReportTest {
 
         List<EntryReport> list = Arrays.asList(
             newEntryReport("HNRNPCL1", "NX_O60812", "1",
-                    "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                     true, false, false, false, 1, 322, 5,
                     "Heterogeneous nuclear ribonucleoprotein C-like 1"),
             newEntryReport("HNRNPCL1", "NX_O60812", "1p36.21",
-                    "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                    "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                     true, false, false, false, 1, 322, 5,
                     "Heterogeneous nuclear ribonucleoprotein C-like 1")
         );
@@ -78,23 +78,23 @@ public class EntryReportTest {
 
         List<EntryReport> list = Arrays.asList(
                 newEntryReport("HNRNPCL1", "NX_O60812", "1q32",
-                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                         true, false, false, false, 1, 322, 5,
                         "Heterogeneous nuclear ribonucleoprotein C-like 1"),
                 newEntryReport("HNRNPCL1", "NX_O60812", "1p21.1",
-                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                         true, false, false, false, 1, 322, 5,
                         "Heterogeneous nuclear ribonucleoprotein C-like 1"),
                 newEntryReport("HNRNPCL1", "NX_O60812", "1q13.4",
-                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                         true, false, false, false, 1, 322, 5,
                         "Heterogeneous nuclear ribonucleoprotein C-like 1"),
                 newEntryReport("HNRNPCL1", "NX_O60812", "1p1.2-p1.4",
-                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                         true, false, false, false, 1, 322, 5,
                         "Heterogeneous nuclear ribonucleoprotein C-like 1"),
                 newEntryReport("HNRNPCL1", "NX_O60812", "1p36.21",
-                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                         true, false, false, false, 1, 322, 5,
                         "Heterogeneous nuclear ribonucleoprotein C-like 1")
         );
@@ -112,7 +112,7 @@ public class EntryReportTest {
     public void testPublicationCounts() throws Exception {
 
         EntryReport er = newEntryReport("HNRNPCL1", "NX_O60812", "1q32",
-                "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                "12847408", "12848725", ProteinExistence.PROTEIN_LEVEL,
                 true, false, false, false, 1, 322, 5,
                 "Heterogeneous nuclear ribonucleoprotein C-like 1");
 
@@ -130,7 +130,7 @@ public class EntryReportTest {
     }
 
     public static EntryReport newEntryReport(String geneName, String ac, String chromosalPosition,
-                                             String startPos, String stopPos, ProteinExistenceLevel protExistence,
+                                             String startPos, String stopPos, ProteinExistence protExistence,
                                              boolean isProteomics, boolean  isAntibody, boolean  is3D, boolean  isDisease,
                                              int isoformCount, int  variantCount, int  ptmCount, String  description) throws ParseException {
 
