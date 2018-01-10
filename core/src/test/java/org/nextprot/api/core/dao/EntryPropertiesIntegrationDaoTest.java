@@ -17,7 +17,7 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void testFindEntryProperties() {
 		EntryProperties props = this.entryPropertieDao.findEntryProperties("NX_P51659");
-		assertEquals("Evidence at protein level", props.getProteinExistence());
+		assertEquals("Evidence at protein level", props.getProteinExistence().getDescription());
 		assertTrue(props.getPtmCount() > 20);
 		assertTrue(props.getVarCount() > 100);
 		assertTrue(props.getIsoformCount() > 2);

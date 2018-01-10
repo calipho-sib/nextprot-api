@@ -45,7 +45,7 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
             values[9] = entry.getProperties().getPtmCount();
             values[10] = booleanToYesNoString(entry.getProperties().getFiltermutagenesis());
             values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
-            values[12] = entry.getProperties().getProteinExistence();
+            values[12] = entry.getProperties().getProteinExistence().getDescription();
 
             Record record = new Record(values);
 
