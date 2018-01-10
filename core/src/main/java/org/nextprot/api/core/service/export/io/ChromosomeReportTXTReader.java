@@ -147,7 +147,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
 
             entryReport.setAccession(matcher.group(2));
             entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? summary.getChromosome() : matcher.group(3)), matcher.group(4), matcher.group(5)));
-            entryReport.setProteinExistence(ProteinExistenceLevel.valueOfString(matcher.group(6)));
+            entryReport.setProteinExistence(ProteinExistenceLevel.valueOfKey(matcher.group(6)));
             entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
             entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, "yes".equals(matcher.group(8)));
             entryReport.setPropertyTest(EntryReport.IS_3D, "yes".equals(matcher.group(9)));

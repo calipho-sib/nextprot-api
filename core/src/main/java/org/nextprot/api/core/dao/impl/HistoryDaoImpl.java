@@ -1,21 +1,22 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
+import org.nextprot.api.core.domain.ProteinExistenceLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public class HistoryDaoImpl implements HistoryDao {
@@ -36,7 +37,7 @@ public class HistoryDaoImpl implements HistoryDao {
 		@Override
 		public History mapRow(ResultSet resultSet, int row) throws SQLException {
 			History historyEntry = new Overview.History(); 
-			historyEntry.setProteinExistence(resultSet.getString("protein_existence"));
+			historyEntry.setProteinExistenceUniprot(ProteinExistenceLevel.valueOfKey(resultSet.getString("protein_existence")));
 			historyEntry.setNextprotIntegrationDate(new Date(resultSet.getTimestamp("nextprot_integrated").getTime()));
 			historyEntry.setNextprotUpdateDate(new Date(resultSet.getTimestamp("nextprot_updated").getTime()));
 			historyEntry.setUniprotIntegrationDate(new Date(resultSet.getTimestamp("uniprot_integrated").getTime()));

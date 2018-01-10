@@ -66,7 +66,7 @@ public class HPPChromosomeReportTSVWriter implements HPPChromosomeReportWriter {
         return Arrays.asList(
                 entryReport.getAccession(),
                 getMainEntityNames(overview.getGeneNames()),
-                ProteinExistenceLevel.valueOfString(entryReport.getProteinExistence()).getDescription(),
+                ProteinExistenceLevel.valueOfKey(entryReport.getProteinExistence()).getDescription(),
                 (entryReport.isProteomics()) ? "yes" : "no",
                 (entryReport.isAntibody()) ? "yes" : "no"
         );

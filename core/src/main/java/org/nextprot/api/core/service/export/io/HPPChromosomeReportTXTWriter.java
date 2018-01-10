@@ -11,7 +11,10 @@ import org.nextprot.api.core.service.export.HPPChromosomeReportWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -67,7 +70,7 @@ public class HPPChromosomeReportTXTWriter implements HPPChromosomeReportWriter {
         return Arrays.asList(
                 entryReport.getAccession(),
                 getMainEntityNames(overview.getGeneNames()),
-                ProteinExistenceLevel.valueOfString(entryReport.getProteinExistence()).getDescription(),
+                ProteinExistenceLevel.valueOfKey(entryReport.getProteinExistence()).getDescription(),
                 (entryReport.isProteomics()) ? "yes" : "no",
                 (entryReport.isAntibody()) ? "yes" : "no"
         );

@@ -1,19 +1,18 @@
 package org.nextprot.api.core.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation {
@@ -79,23 +78,9 @@ public class Entry implements KeyValueRepresentation {
 		return overview;
 	}
 
-	public String getProteinExistenceInfo() {
-		if (this.properties != null) {
-			return this.properties.getProteinExistenceInfo();
-		}
-		return null;
-	}
-
-	public String getProteinExistence() {
+	public ProteinExistenceLevel getProteinExistence() {
 		if (this.overview != null) {
 			return this.overview.getProteinExistence();
-		}
-		return null;
-	}
-
-	public Integer getProteinExistenceLevel() {
-		if (this.overview != null) {
-			return this.overview.getProteinExistenceLevel();
 		}
 		return null;
 	}

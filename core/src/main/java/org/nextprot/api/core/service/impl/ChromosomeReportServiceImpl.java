@@ -125,7 +125,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 			Overview overview = overviewService.findOverviewByEntry(entry);
 
-			ProteinExistenceLevel level = ProteinExistenceLevel.valueOfLevel(overview.getProteinExistenceLevel());
+			ProteinExistenceLevel level = overview.getProteinExistence();
 
 			if (!pe2entries.containsKey(level)) {
 
