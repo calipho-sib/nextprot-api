@@ -5,7 +5,6 @@ import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.*;
@@ -35,10 +34,10 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Autowired
 	private AnnotationService annotationService;
 
-	@Autowired
-	private ProteinExistenceService proteinExistenceService;
+    @Autowired
+    private EntryPropertiesService entryPropertiesService;
 
-	@Cacheable("chromosome-reports")
+    @Cacheable("chromosome-reports")
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
@@ -100,7 +99,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> proteinExistenceService.upgrade(acc))
+				.filter(acc -> entryPropertiesService.proteinExistencePromoted(acc))
 				.collect(Collectors.toList());
 	}
 
@@ -125,16 +124,14 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			Overview overview = overviewService.findOverviewByEntry(entry);
+			ProteinExistence pe = entryPropertiesService.findEntryProperties(entry).getProteinExistence();
 
-			ProteinExistence level = overview.getProteinExistence();
+			if (!pe2entries.containsKey(pe)) {
 
-			if (!pe2entries.containsKey(level)) {
-
-				pe2entries.put(level, new ArrayList<>());
+				pe2entries.put(pe, new ArrayList<>());
 			}
 
-			pe2entries.get(level).add(entry);
+			pe2entries.get(pe).add(entry);
 		}
 
 		pe2entries.forEach((key, value) -> summary.setEntryCount(key, value.size()));

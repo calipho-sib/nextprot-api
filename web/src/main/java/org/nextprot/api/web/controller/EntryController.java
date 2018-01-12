@@ -6,10 +6,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
@@ -45,6 +42,7 @@ public class EntryController {
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private EntryPropertiesService entryPropertiesService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -173,6 +171,16 @@ public class EntryController {
 		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
 
 		return "entry";
+	}
+
+	@ApiMethod(path = "/entry/{entry}/protein-existence", verb = ApiVerb.GET, description = "Reports entry protein existence for different sources", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/protein-existence", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public Map<ProteinExistence.Source, ProteinExistence> getProteinExistences(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
+
+		return entryPropertiesService.findEntryProperties(entryName).getProteinExistenceMap();
 	}
 
 	/**
