@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.zookeeper.data.Stat;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
@@ -25,9 +24,9 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for a Gene. Example for msh2:
 	// http://kant.isb-sib.ch:9000/bioeditor/gene/msh2/statements
-	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource source, String release, String geneName) {
+	public Set<Statement> getStatementsForSourceForGeneNameAndEnvironment(NextProtSource source, String release, String geneNameAndEnvironment) {
 
-		String urlString = source.getStatementsUrl() + "/" + release + "/" + geneName.toUpperCase() + ".json";
+		String urlString = source.getStatementsUrl() + "/" + release + "/" + geneNameAndEnvironment + ".json";
 		return deserialize(getInputStreamFromUrl(urlString));
 	}
 
@@ -36,14 +35,14 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 	public Set<Statement> getStatementsForSource(NextProtSource source, String release) {
 
 		Set<Statement> statements = new LinkedHashSet<>();
-		getGeneNamesForRelease(source, release).forEach(geneName -> {
-			statements.addAll(getStatementsForSourceForGeneName(source, release, geneName));
+		getGeneNamesAndEnvironmentForRelease(source, release).forEach(geneNameAndEnvironment -> {
+			statements.addAll(getStatementsForSourceForGeneNameAndEnvironment(source, release, geneNameAndEnvironment));
 		});
 		return statements;
 	}
 
 
-	Set<String> getGeneNamesForRelease(NextProtSource source, String release) {
+	Set<String> getGeneNamesAndEnvironmentForRelease(NextProtSource source, String release) {
 		Set<String> genes = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
 		try {

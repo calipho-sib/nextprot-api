@@ -17,7 +17,7 @@ public class StatementRemoteServiceTest {
 	public void shouldExtractRemoteStatementsForAGene() {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Set<Statement> statements = srsi.getStatementsForSourceForGeneName(NextProtSource.BioEditor, RELEASE, "AAK1");
+		Set<Statement> statements = srsi.getStatementsForSourceForGeneNameAndEnvironment(NextProtSource.BioEditor, RELEASE, "AAK1@strauss");
 		Assert.isTrue(!statements.isEmpty());
 
 	}
@@ -34,10 +34,10 @@ public class StatementRemoteServiceTest {
 
 
 	@Test
-	public void shouldGetGeneNames() {
+	public void shouldGetGeneNamesAndEnvironment() {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Set<String> geneNames = srsi.getGeneNamesForRelease(NextProtSource.BioEditor, RELEASE);
+		Set<String> geneNames = srsi.getGeneNamesAndEnvironmentForRelease(NextProtSource.BioEditor, RELEASE);
 		Assert.isTrue(geneNames.size() > 10);
 
 	}
