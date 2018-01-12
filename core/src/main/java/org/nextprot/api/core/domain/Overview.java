@@ -13,7 +13,6 @@ public class Overview implements Serializable{
 
 	private static final long serialVersionUID = 3L;
 
-    private ProteinExistence proteinExistence;
 	private History history;
 	private List<Family> families;
 	private List<EntityName> proteinNames;
@@ -90,14 +89,6 @@ public class Overview implements Serializable{
 		
 		result.sort(EntityName.newDefaultComparator());
 		return result;
-	}
-
-    public void setProteinExistence(ProteinExistence proteinExistence) {
-        this.proteinExistence = proteinExistence;
-    }
-
-    public ProteinExistence getProteinExistence() {
-		return proteinExistence;
 	}
 
 	public void setHistory(History history) {
