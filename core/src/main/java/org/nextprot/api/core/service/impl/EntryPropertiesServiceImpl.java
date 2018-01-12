@@ -115,7 +115,7 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	@SuppressWarnings("Duplicates")
 	private boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 
-		ProteinExistence pe = e.getProperties().getProteinExistence().get(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+		ProteinExistence pe = e.getProperties().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
 		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
 		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't proteinExistencePromoted PE5

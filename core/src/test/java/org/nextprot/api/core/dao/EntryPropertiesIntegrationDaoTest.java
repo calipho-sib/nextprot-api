@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.EntryProperties;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +18,7 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void testFindEntryProperties() {
 		EntryProperties props = this.entryPropertieDao.findEntryProperties("NX_P51659");
-		assertEquals("Evidence at protein level", props.getProteinExistence().getDescription());
+		assertEquals("Evidence at protein level", props.getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT).getDescription());
 		assertTrue(props.getPtmCount() > 20);
 		assertTrue(props.getVarCount() > 100);
 		assertTrue(props.getIsoformCount() > 2);

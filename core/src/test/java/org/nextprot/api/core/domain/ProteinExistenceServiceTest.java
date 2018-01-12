@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.service.ProteinExistenceService;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,30 +16,30 @@ import java.util.*;
 public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
         
     @Autowired private MasterIdentifierService masterIdentifierService = null;
-    @Autowired private ProteinExistenceService proteinExistenceService;
+    @Autowired private EntryPropertiesService entryPropertiesService;
         
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_1() {  
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_A0AVI2").withEverything()); // YES: is in ftp file
-    	Assert.assertEquals(true, proteinExistenceService.upgrade("NX_A0AVI2"));
+    	Assert.assertEquals(true, entryPropertiesService.proteinExistencePromoted("NX_A0AVI2"));
     }
 
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_2() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_P69849").withEverything()); // NO: only 1 proteotypic peptide > 7aa
-    	Assert.assertEquals(false, proteinExistenceService.upgrade("NX_P69849"));
+    	Assert.assertEquals(false, entryPropertiesService.proteinExistencePromoted("NX_P69849"));
     }
     
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_3() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_Q9UK00").withEverything()); // YES: 2 proteotypic peptide > 7aa
-    	Assert.assertEquals(true, proteinExistenceService.upgrade("NX_Q9UK00"));
+    	Assert.assertEquals(true, entryPropertiesService.proteinExistencePromoted("NX_Q9UK00"));
     }
 
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_4() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_Q9NV72").withEverything()); // YES: 1 proteotypic peptide > 9aa
-    	Assert.assertEquals(true, proteinExistenceService.upgrade("NX_Q9NV72"));
+    	Assert.assertEquals(true, entryPropertiesService.proteinExistencePromoted("NX_Q9NV72"));
     }
     
     @Test // run successfully with np_20170413
@@ -48,10 +48,10 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	int startAtIdx=0;
     	for (int i=startAtIdx;i<msuEntries.size(); i++) {
     		String ac = msuEntries.get(i);
-    		if (proteinExistenceService.upgrade(ac)) {
-    			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + "  would upgrade as expected");
+    		if (entryPropertiesService.proteinExistencePromoted(ac)) {
+    			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + "  would proteinExistencePromoted as expected");
     		} else {
-    			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + " would NOT upgrade as expected: ERROR");    	
+    			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + " would NOT proteinExistencePromoted as expected: ERROR");
     			errCnt++;
     		}
     	}
@@ -65,10 +65,10 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	List<String> negEntries = find100EntriesWhichAreNotUnconfirmedPE1();
     	for (int i=startAtIdx;i<negEntries.size(); i++) {
     		String ac = negEntries.get(i);
-    		if (!proteinExistenceService.upgrade(ac)) {
-    			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + "  would NOT upgrade as expected");
+    		if (!entryPropertiesService.proteinExistencePromoted(ac)) {
+    			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + "  would NOT proteinExistencePromoted as expected");
     		} else {
-    			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + " would upgrade: ERROR");    	
+    			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + " would proteinExistencePromoted: ERROR");
     			errCnt++;
     		}
     	}

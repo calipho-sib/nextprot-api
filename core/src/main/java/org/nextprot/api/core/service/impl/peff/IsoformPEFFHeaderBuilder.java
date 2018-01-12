@@ -1,9 +1,6 @@
 package org.nextprot.api.core.service.impl.peff;
 
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.TerminologyService;
@@ -16,6 +13,7 @@ public class IsoformPEFFHeaderBuilder {
     private final Entry entry;
     private final Isoform isoform;
     private final Overview overview;
+    private final EntryProperties entryProperties;
     private final IsoformPEFFHeader peff = new IsoformPEFFHeader();
     private final TerminologyService terminologyService;
 
@@ -24,6 +22,7 @@ public class IsoformPEFFHeaderBuilder {
         this.entry = entry;
         isoform = isoformService.findIsoformByName(entry.getUniqueName(), isoformAccession);
         overview = entry.getOverview();
+        entryProperties = entry.getProperties();
 
         this.terminologyService = terminologyService;
     }
@@ -121,7 +120,7 @@ public class IsoformPEFFHeaderBuilder {
     IsoformPEFFHeaderBuilder withProteinEvidenceFormat() {
 
         peff.setProteinEvidenceFormat(new SimplePEFFInformation(PEFFInformation.Key.PE,
-                String.valueOf(overview.getProteinExistence().getLevel())).format());
+                String.valueOf(entryProperties.getProteinExistence().getLevel())).format());
 
         return this;
     }

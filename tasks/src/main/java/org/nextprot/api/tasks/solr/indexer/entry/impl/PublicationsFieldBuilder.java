@@ -1,6 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
@@ -78,7 +79,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
-		int pe_level = entry.getOverview().getProteinExistence().getLevel();
+		int pe_level = entry.getProperties().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2).getLevel();
 		
 		float info_score = 0;
 		if(pe_level == 1) info_score=12;
