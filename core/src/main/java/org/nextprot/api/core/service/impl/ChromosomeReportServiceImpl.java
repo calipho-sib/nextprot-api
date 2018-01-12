@@ -3,10 +3,12 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.ChromosomeReport;
+import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,10 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	private OverviewService overviewService;
 
 	@Autowired
-	private EntryBuilderService entryBuilderService;
+	private AnnotationService annotationService;
 
 	@Autowired
-	private AnnotationService annotationService;
+	private ProteinExistenceService proteinExistenceService;
 
 	@Cacheable("chromosome-reports")
 	@Override
@@ -97,8 +99,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
-		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withEverything())))
+        return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+				.filter(acc -> proteinExistenceService.upgrade(acc))
 				.collect(Collectors.toList());
 	}
 
@@ -119,9 +121,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	private void setByProteinEvidenceEntryCount(List<String> chromosomeEntries, ChromosomeReport.Summary summary) {
 
-		Map<ProteinExistence, List<String>> pe2entries = new HashMap<>();
+		Map<ProteinExistence, List<String>> pe2entries = new EnumMap<>(ProteinExistence.class);
 
-		for (String entry : chromosomeEntries) {
+        for (String entry : chromosomeEntries) {
 
 			Overview overview = overviewService.findOverviewByEntry(entry);
 
