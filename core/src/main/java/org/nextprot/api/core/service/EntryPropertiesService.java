@@ -4,5 +4,8 @@ import org.nextprot.api.core.domain.EntryProperties;
 
 public interface EntryPropertiesService {
 
-		EntryProperties findEntryProperties(String uniqueName);
+
+	EntryProperties findEntryProperties(String uniqueName);
+
+	boolean proteinExistencePromoted(String entryAccession);
 }
