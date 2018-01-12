@@ -60,6 +60,7 @@ public class StatementTransformationUtil {
 			isoformsToBeConsidered.addAll(isoformAccessions);
 		}
 
+
 		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
 		for (String isoformAccession : isoformsToBeConsidered) {
@@ -212,11 +213,6 @@ public class StatementTransformationUtil {
 		}
 
 		Statement rs = StatementBuilder.createNew().addMap(variationStatement).addField(StatementField.RAW_STATEMENT_ID, variationStatement.getStatementId()) // Keep
-																																								// a
-																																								// reference
-																																								// to
-																																								// the
-																																								// original
 																																								// statement
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
