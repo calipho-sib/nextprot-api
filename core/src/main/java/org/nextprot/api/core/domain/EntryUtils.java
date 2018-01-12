@@ -220,7 +220,11 @@ public class EntryUtils implements Serializable{
 
 		return fInfoCanonical;
 	 }
-	
+
+	/**
+	 * @deprecated use ProteinExistenceService instead
+	 */
+	@SuppressWarnings("Duplicates")
 	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 		
 		if (e.getProteinExistence()== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
