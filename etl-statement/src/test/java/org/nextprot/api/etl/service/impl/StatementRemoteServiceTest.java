@@ -11,7 +11,7 @@ import java.util.Set;
 public class StatementRemoteServiceTest {
 
 
-	private static final String RELEASE = "2018-01-11";
+	private static final String RELEASE = "2018-01-12";
 
 	@Test
 	public void shouldExtractRemoteStatementsForAGene() {
