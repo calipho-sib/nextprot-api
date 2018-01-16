@@ -4,6 +4,7 @@ import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.ProteinExistenceWithRule;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -35,8 +36,8 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 
 		EntryProperties entryProperties = entryPropertiesDao.findEntryProperties(uniqueName);
 
-		entryProperties.addProteinExistenceForSource(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2,
-				calcNextprotProteinExistence(annotationService.findAnnotations(uniqueName)));
+		// see https://issues.isb-sib.ch/browse/NEXTPROT-1512
+		entryProperties.setProteinExistenceWithRule(calcNextprotProteinExistence(annotationService.findAnnotations(uniqueName)));
 
 		return entryProperties;
 	}
@@ -73,9 +74,9 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 		return false;
 	}
 
-	private ProteinExistence calcNextprotProteinExistence(List<Annotation> annots) {
+	private ProteinExistenceWithRule calcNextprotProteinExistence(List<Annotation> annots) {
 
-		return ProteinExistence.UNCERTAIN;
+		return new ProteinExistenceWithRule(ProteinExistence.UNCERTAIN, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_01);
 	}
 
 	// Rules defined here:

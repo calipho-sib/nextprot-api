@@ -36,8 +36,10 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		public EntryProperties mapRow(ResultSet resultSet, int row) throws SQLException {
 			int res;
 			EntryProperties properties = new EntryProperties();
-			properties.addProteinExistenceForSource(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT,
+			// TODO: Check that this value is the correct one (available in NP1 table view_sp_pe_tracking_2017_11)
+			properties.addOtherProteinExistenceForSource(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT,
 					ProteinExistence.valueOfKey(resultSet.getString("pe")));
+			// TODO: Get the protein existence computed by NP1
 			res = resultSet.getInt("ptmcnt");
 			properties.setPtmCount(res == -1? 0:res);
 			properties.setIsoformCount(resultSet.getInt("isocnt"));

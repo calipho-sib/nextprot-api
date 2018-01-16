@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
 	
-	private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 5L;
 
 	private int ptmCount;
 	private int varCount;
@@ -23,7 +23,8 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
 
-	private Map<ProteinExistence.Source, ProteinExistence> proteinExistence = new EnumMap<>(ProteinExistence.Source.class);
+	private ProteinExistenceWithRule proteinExistenceWithRule;
+	private Map<ProteinExistence.Source, ProteinExistence> otherProteinExistence = new EnumMap<>(ProteinExistence.Source.class);
 
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
@@ -108,23 +109,33 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	}
 
 	@JsonIgnore
-	public Map<ProteinExistence.Source, ProteinExistence> getProteinExistenceMap() {
+	public Map<ProteinExistence.Source, ProteinExistence> getOtherProteinExistences() {
 
-		return proteinExistence;
+		return otherProteinExistence;
 	}
 
 	public ProteinExistence getProteinExistence(ProteinExistence.Source source) {
 
-		return proteinExistence.get(source);
+		return otherProteinExistence.get(source);
 	}
 
 	public ProteinExistence getProteinExistence() {
 
-		return proteinExistence.get(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2);
+		return proteinExistenceWithRule.getProteinExistence();
 	}
 
-	public void addProteinExistenceForSource(ProteinExistence.Source source, ProteinExistence pe) {
+	@JsonIgnore
+	public ProteinExistenceWithRule getProteinExistenceWithRule() {
+		return proteinExistenceWithRule;
+	}
 
-		proteinExistence.put(source, pe);
+	public void addOtherProteinExistenceForSource(ProteinExistence.Source otherSource, ProteinExistence pe) {
+
+		otherProteinExistence.put(otherSource, pe);
+	}
+
+	public void setProteinExistenceWithRule(ProteinExistenceWithRule proteinExistenceNexprot2WithRule) {
+
+		this.proteinExistenceWithRule = proteinExistenceNexprot2WithRule;
 	}
 }
