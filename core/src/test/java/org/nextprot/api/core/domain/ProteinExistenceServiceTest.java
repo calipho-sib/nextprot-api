@@ -41,7 +41,8 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_Q9NV72").withEverything()); // YES: 1 proteotypic peptide > 9aa
     	Assert.assertEquals(true, entryPropertiesService.proteinExistencePromoted("NX_Q9NV72"));
     }
-    
+
+    @Ignore
     @Test // run successfully with np_20170413
     public void testShouldBeUnconfirmedPE1() {
     	int errCnt=0;
@@ -57,7 +58,8 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	}
     	Assert.assertEquals(0, errCnt);
     }
-    
+
+	@Ignore
     @Test  // run successfully with np_20170413
     public void testShouldNotBeUnconfirmedPE1() {
     	int errCnt=0;

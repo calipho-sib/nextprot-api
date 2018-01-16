@@ -37,7 +37,7 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 		EntryProperties entryProperties = entryPropertiesDao.findEntryProperties(uniqueName);
 
 		// see https://issues.isb-sib.ch/browse/NEXTPROT-1512
-		entryProperties.setProteinExistenceWithRule(calcNextprotProteinExistence(annotationService.findAnnotations(uniqueName)));
+		entryProperties.setProteinExistenceWithRule(calcNextprotProteinExistence(uniqueName, entryProperties));
 
 		return entryProperties;
 	}
@@ -49,42 +49,47 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 		return wouldUpgradeToPE1AccordingToOldRule(entry);
 	}
 
-	public boolean proteinExistencePromotedNew(String entryAccession) {
+	private ProteinExistenceWithRule calcNextprotProteinExistence(String entryAccession, EntryProperties entryProperties) {
 
-		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations().withoutProperties());
+		List<Annotation> annots = entry.getAnnotations();
 
-		if (upgradeAccordingToRule1(annots)) {
-			return true;
+		if (cannotBePromoted(entryProperties)) {
+			return new ProteinExistenceWithRule(entryProperties.getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
+					ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_01);
 		}
 		if (upgradeAccordingToRule2(annots)) {
-			return true;
+
+			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_02);
 		}
 		if (upgradeAccordingToRule3(annots)) {
-			return true;
+
+			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_03);
 		}
 		if (upgradeAccordingToRule4(annots)) {
-			return true;
+
+			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_02);
 		}
 		if (upgradeAccordingToRule5(annots)) {
-			return true;
+
+			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_05);
 		}
 		if (upgradeAccordingToRule6(annots)) {
-			return true;
+
+			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_06);
 		}
-		return false;
-	}
 
-	private ProteinExistenceWithRule calcNextprotProteinExistence(List<Annotation> annots) {
-
-		return new ProteinExistenceWithRule(ProteinExistence.UNCERTAIN, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_01);
+		return null;
 	}
 
 	// Rules defined here:
 	//https://swissprot.isb-sib.ch/wiki/display/cal/Protein+existence+%28PE%29+upgrade+rules
 
-	private boolean upgradeAccordingToRule1(List<Annotation> annots) {
+	private boolean cannotBePromoted(EntryProperties entryProperties) {
 
-		return false;
+		ProteinExistence pe = entryProperties.getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+
+		return pe == ProteinExistence.PROTEIN_LEVEL || pe == ProteinExistence.UNCERTAIN;
 	}
 
 	private boolean upgradeAccordingToRule2(List<Annotation> annots) {

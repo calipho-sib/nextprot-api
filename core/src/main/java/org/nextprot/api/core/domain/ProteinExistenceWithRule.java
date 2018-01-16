@@ -8,7 +8,7 @@ public class ProteinExistenceWithRule implements Serializable {
 
     public enum ProteinExistenceRule {
 
-        SP_PER_01("Only entries which are PE2, PE3 or PE4 can be upgraded"),
+        SP_PER_01("Cannot be promoted"),
         SP_PER_02("Promote to PE1 based on proteomics data"),
         SP_PER_03("Promote to PE1 based on expression data"),
         SP_PER_04("Promote PE3 or PE4 to PE2 based on expression data"),
