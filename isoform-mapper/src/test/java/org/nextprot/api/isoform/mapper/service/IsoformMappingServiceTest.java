@@ -12,10 +12,10 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
@@ -300,6 +300,71 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_A2RU30-1", 1, 1, true);
         assertIsoformFeatureValid(result, "NX_A2RU30-2", null, null, false);
         assertIsoformFeatureValid(result, "NX_A2RU30-3", null, null, false);
+    }
+
+    @Test
+    public void shouldNotMapMet1_Asp94Deletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Met1_Asp94del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 94, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+    }
+
+    @Test
+    public void shouldNotMapMet1_Lys144Deletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Met1_Lys144del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 144, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+    }
+
+    @Test
+    public void shouldNotMapMet1_Lys170Deletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Met1_Lys170del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 170, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+    }
+
+    @Test
+    public void shouldNotMapMet1_Arg406Deletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Met1_Arg406del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 406, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+    }
+
+    @Test
+    public void shouldNotMapMet1_Arg424Deletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Met1_Arg424del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 424, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

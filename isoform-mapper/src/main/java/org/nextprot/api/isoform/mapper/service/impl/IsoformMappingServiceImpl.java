@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.service.impl;
 
 import com.google.common.base.Strings;
-import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
@@ -86,43 +86,67 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     private void propagate(SingleFeatureQuerySuccessImpl successResults) throws ParseException {
 
         SingleFeatureQuery query = successResults.getQuery();
-
         query.setPropagableFeature(true);
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
         Isoform featureIsoform = isoFeature.getIsoform(successResults.getEntry());
-
         SequenceVariation variation = isoFeature.getProteinVariation();
 
         OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
 
-        // propagate the feature to other isoforms
-        for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getUniqueName())) {
+        // try to propagate the feature to other isoforms
+        for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
 
-            Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform,
-                    originalAminoAcids.getFirstAAPos(), otherIsoform);
-            Integer lastIsoPos = firstIsoPos;
+            Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getFirstAAPos(), otherIsoform);
+            Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
 
-            if (firstIsoPos != null) {
-                if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())
-                    && variation.getVaryingSequence().isMultipleAminoAcids()) {
-                    lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
+            boolean propagable = false;
+
+            if (firstIsoPos != null && lastIsoPos != null) {
+
+                // Example of possible several amino-acids variation:
+                // - Deletion (ex: p.Ala3_Ser5del)
+                // - Duplication (ex: p.Ala3_Ser5dup)
+                // - Deletion-insertion (ex: p.Cys28_Lys29delinsTrp)
+                if (variation.getVaryingSequence().isMultipleAminoAcids()) {
+
+                    int originalSequenceLength = lastIsoPos - firstIsoPos + 1;
+                    int isoformSequenceLength = originalAminoAcids.getAas().length();
+
+                    if (originalSequenceLength == isoformSequenceLength) {
+
+                        String isoformSequence = otherIsoform.getSequence().substring(firstIsoPos, lastIsoPos+1);
+
+                        if (isoformSequence.equals(originalAminoAcids.getAas())) {
+
+                            propagable = true;
+                        }
+                    }
                 }
-                if (lastIsoPos != null) {
-                    if (originalAminoAcids.isExtensionTerminal())
-                        successResults.addMappedFeature(otherIsoform, firstIsoPos + 1, lastIsoPos + 1);
-                    else
-                        successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
+                // check a single amino-acid
+                else if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())) {
+
+                    propagable = true;
                 }
-                else {
-                    successResults.addUnmappedFeature(otherIsoform);
-                }
+            }
+
+            if (propagable) {
+                addPropagation(otherIsoform, firstIsoPos, lastIsoPos, originalAminoAcids.isExtensionTerminal(), successResults);
             }
             else {
                 successResults.addUnmappedFeature(otherIsoform);
             }
         }
+    }
+
+    private void addPropagation(Isoform otherIsoform, Integer firstIsoPos, Integer lastIsoPos, boolean isExtensionTerminal, SingleFeatureQuerySuccessImpl successResults) {
+
+        // success
+        if (isExtensionTerminal)
+            successResults.addMappedFeature(otherIsoform, firstIsoPos + 1, lastIsoPos + 1);
+        else
+            successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
     }
 
     private OriginalAminoAcids getOriginalAminoAcids(String sequence, SequenceVariation variation) {
