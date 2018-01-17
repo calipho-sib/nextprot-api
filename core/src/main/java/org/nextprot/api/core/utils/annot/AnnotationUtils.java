@@ -1,24 +1,9 @@
 package org.nextprot.api.core.utils.annot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.BioObject;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -27,6 +12,9 @@ import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AnnotationUtils {
@@ -517,7 +505,7 @@ public class AnnotationUtils {
 	}
 	
 	// related to new rule to PE1 upgrade 
-    public static void addToNonInclusivePeptideMappingList(Annotation a, ArrayList<Annotation> list, int minPepSize) {
+    public static void addToNonInclusivePeptideMappingList(Annotation a, List<Annotation> list, int minPepSize) {
 	   	
     	if (! isProteotypicPeptideMapping(a)) return;
     	
