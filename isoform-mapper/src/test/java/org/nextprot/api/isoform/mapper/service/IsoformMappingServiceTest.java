@@ -312,7 +312,12 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q99728-1", 1, 94, true);
         assertIsoformFeatureValid(result, "NX_Q99728-2", null, null, false);
         assertIsoformFeatureValid(result, "NX_Q99728-3", null, null, false);
-        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", 1, 94, true);
+
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-1", 1, 354);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-4", 1, 354);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-2", null, null);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-3", null, null);
     }
 
     @Test
@@ -367,6 +372,24 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
     }
 
+    @Test
+    public void shouldPropagatePro358_Ser364delDeletion() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BARD1-p.Pro358_Ser364del", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 358, 364, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", 339, 345, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", 261, 267, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-1", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-2", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-3", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-4", null, null);
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());
@@ -376,6 +399,15 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(featureIsoformName).isMapped());
         Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(featureIsoformName).getBeginIsoformPosition());
         Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(featureIsoformName).getEndIsoformPosition());
+    }
+
+    private static void assertIsoformFeatureValidOnMaster(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstMasterPos, Integer expectedLastMasterPos) {
+
+        Assert.assertTrue(result.isSuccess());
+        SingleFeatureQuerySuccessImpl successResult = (SingleFeatureQuerySuccessImpl) result;
+
+        Assert.assertEquals(expectedFirstMasterPos, successResult.getIsoformFeatureResult(featureIsoformName).getBeginMasterPosition());
+        Assert.assertEquals(expectedLastMasterPos, successResult.getIsoformFeatureResult(featureIsoformName).getEndMasterPosition());
     }
 
     private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {

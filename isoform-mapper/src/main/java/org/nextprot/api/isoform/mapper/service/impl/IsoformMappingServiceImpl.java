@@ -11,6 +11,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
@@ -95,6 +96,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
 
+        GeneMasterCodonPosition originalFirstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getFirstAAPos(), featureIsoform);
+        GeneMasterCodonPosition originalLastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getLastAAPos(), featureIsoform);
+
         // try to propagate the feature to other isoforms
         for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
 
@@ -105,10 +109,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
             if (firstIsoPos != null && lastIsoPos != null) {
 
-                // Example of possible several amino-acids variation:
-                // - Deletion (ex: p.Ala3_Ser5del)
-                // - Duplication (ex: p.Ala3_Ser5dup)
-                // - Deletion-insertion (ex: p.Cys28_Lys29delinsTrp)
                 if (variation.getVaryingSequence().isMultipleAminoAcids()) {
 
                     int originalSequenceLength = lastIsoPos - firstIsoPos + 1;
@@ -116,18 +116,22 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
                     if (originalSequenceLength == isoformSequenceLength) {
 
-                        String isoformSequence = otherIsoform.getSequence().substring(firstIsoPos, lastIsoPos+1);
+                        String isoformSequence = otherIsoform.getSequence().substring(firstIsoPos-1, lastIsoPos);
 
                         if (isoformSequence.equals(originalAminoAcids.getAas())) {
 
-                            propagable = true;
+                            GeneMasterCodonPosition firstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPos, otherIsoform);
+                            GeneMasterCodonPosition lastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(lastIsoPos, otherIsoform);
+
+                            propagable = firstMasterCodonPos.getNucleotidePosition(0).intValue() == originalFirstMasterCodonPos.getNucleotidePosition(0)
+                                && lastMasterCodonPos.getNucleotidePosition(2).intValue() == originalLastMasterCodonPos.getNucleotidePosition(2);
                         }
                     }
                 }
                 // check a single amino-acid
-                else if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())) {
+                else {
 
-                    propagable = true;
+                    propagable = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas());
                 }
             }
 
