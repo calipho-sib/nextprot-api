@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
@@ -11,10 +12,12 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,27 +57,27 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations().withoutProperties());
 		List<Annotation> annots = entry.getAnnotations();
 
-		if (cannotBePromoted(entryProperties)) {
+		if (cannotBePromotedAccordingToRule1(entryProperties)) {
 			return new ProteinExistenceWithRule(entryProperties.getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
 					ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_01);
 		}
-		if (upgradeAccordingToRule2(annots)) {
+		if (promotedAccordingToRule2(entry.getAnnotationsByCategory(AnnotationCategory.PEPTIDE_MAPPING))) {
 
 			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_02);
 		}
-		if (upgradeAccordingToRule3(annots)) {
+		if (promotedAccordingToRule3(annots)) {
 
 			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_03);
 		}
-		if (upgradeAccordingToRule4(annots)) {
+		if (promotedAccordingToRule4(annots)) {
 
 			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_02);
 		}
-		if (upgradeAccordingToRule5(annots)) {
+		if (promotedAccordingToRule5(annots)) {
 
 			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_05);
 		}
-		if (upgradeAccordingToRule6(annots)) {
+		if (promotedAccordingToRule6(annots)) {
 
 			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_06);
 		}
@@ -85,34 +88,42 @@ class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	// Rules defined here:
 	//https://swissprot.isb-sib.ch/wiki/display/cal/Protein+existence+%28PE%29+upgrade+rules
 
-	private boolean cannotBePromoted(EntryProperties entryProperties) {
+	private boolean cannotBePromotedAccordingToRule1(EntryProperties entryProperties) {
 
 		ProteinExistence pe = entryProperties.getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
 		return pe == ProteinExistence.PROTEIN_LEVEL || pe == ProteinExistence.UNCERTAIN;
 	}
 
-	private boolean upgradeAccordingToRule2(List<Annotation> annots) {
+    // Spec: Entry must have at least 2 proteotypic peptides of quality GOLD, 9 or more amino acids in length,
+    // which must differ by at least 1 amino acid and not overlap (i.e. one of the peptides must not be included in the other)
+    private boolean promotedAccordingToRule2(List<Annotation> peptideMappingAnnots) {
+
+        List<Annotation> filteredPeptideMappingList = new ArrayList<>();
+
+        peptideMappingAnnots.stream()
+                .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                .forEach(pm -> AnnotationUtils.addToNonInclusivePeptideMappingList(pm, filteredPeptideMappingList, 9));
+
+		return filteredPeptideMappingList.size() > 1;
+	}
+
+	private boolean promotedAccordingToRule3(List<Annotation> annots) {
 
 		return false;
 	}
 
-	private boolean upgradeAccordingToRule3(List<Annotation> annots) {
+	private boolean promotedAccordingToRule4(List<Annotation> annots) {
 
 		return false;
 	}
 
-	private boolean upgradeAccordingToRule4(List<Annotation> annots) {
+	private boolean promotedAccordingToRule5(List<Annotation> annots) {
 
 		return false;
 	}
 
-	private boolean upgradeAccordingToRule5(List<Annotation> annots) {
-
-		return false;
-	}
-
-	private boolean upgradeAccordingToRule6(List<Annotation> annots) {
+	private boolean promotedAccordingToRule6(List<Annotation> annots) {
 
 		return false;
 	}
