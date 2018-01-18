@@ -9,10 +9,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationCategory;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,9 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     @Autowired
     private EntryPublicationService entryPublicationService;
+
+    @Autowired
+    private ProteinExistenceService proteinExistenceService;
 
     @Cacheable("entry-reports")
     @Override
@@ -215,7 +215,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     
     private void setProteinExistence(Entry entry, EntryReport report) {
 
-        ProteinExistence proteinExistence = entry.getProperties().getProteinExistence();
+        ProteinExistence proteinExistence = proteinExistenceService.getProteinExistence(entry.getUniqueName());
         if (proteinExistence == null) {
             throw new NextProtException("undefined existence level for neXtProt entry "+ entry.getUniqueName());
         }

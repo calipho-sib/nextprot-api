@@ -29,15 +29,15 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	private ReleaseInfoService releaseInfoService;
 
 	@Autowired
-	private OverviewService overviewService;
-
-	@Autowired
 	private AnnotationService annotationService;
 
     @Autowired
-    private EntryPropertiesService entryPropertiesService;
+    private ProteinExistenceService proteinExistenceService;
 
-    @Cacheable("chromosome-reports")
+    @Autowired
+	private ProteinExistenceCalcService proteinExistenceCalcService;
+
+	@Cacheable("chromosome-reports")
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
@@ -99,7 +99,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> entryPropertiesService.proteinExistencePromoted(acc))
+				.filter(acc -> proteinExistenceCalcService.proteinExistencePromoted(acc))
 				.collect(Collectors.toList());
 	}
 
@@ -124,7 +124,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			ProteinExistence pe = entryPropertiesService.findEntryProperties(entry).getProteinExistence();
+			ProteinExistence pe = proteinExistenceService.getProteinExistence(entry);
 
 			if (!pe2entries.containsKey(pe)) {
 
