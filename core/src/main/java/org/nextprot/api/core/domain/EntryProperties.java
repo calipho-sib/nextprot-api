@@ -1,15 +1,11 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
-import java.util.EnumMap;
-import java.util.Map;
 
 
 public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
 	
-	private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6L;
 
 	private int ptmCount;
 	private int varCount;
@@ -22,9 +18,6 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private boolean filtermutagenesis;
 	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
-
-	private ProteinExistenceWithRule proteinExistenceWithRule;
-	private Map<ProteinExistence.Source, ProteinExistence> otherProteinExistence = new EnumMap<>(ProteinExistence.Source.class);
 
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
@@ -106,36 +99,5 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 
 	public void setPtmCount(int ptmCount) {
 		this.ptmCount = ptmCount;
-	}
-
-	@JsonIgnore
-	public Map<ProteinExistence.Source, ProteinExistence> getOtherProteinExistences() {
-
-		return otherProteinExistence;
-	}
-
-	public ProteinExistence getProteinExistence(ProteinExistence.Source source) {
-
-		return otherProteinExistence.get(source);
-	}
-
-	public ProteinExistence getProteinExistence() {
-
-		return proteinExistenceWithRule.getProteinExistence();
-	}
-
-	@JsonIgnore
-	public ProteinExistenceWithRule getProteinExistenceWithRule() {
-		return proteinExistenceWithRule;
-	}
-
-	public void addOtherProteinExistenceForSource(ProteinExistence.Source otherSource, ProteinExistence pe) {
-
-		otherProteinExistence.put(otherSource, pe);
-	}
-
-	public void setProteinExistenceWithRule(ProteinExistenceWithRule proteinExistenceNexprot2WithRule) {
-
-		this.proteinExistenceWithRule = proteinExistenceNexprot2WithRule;
 	}
 }
