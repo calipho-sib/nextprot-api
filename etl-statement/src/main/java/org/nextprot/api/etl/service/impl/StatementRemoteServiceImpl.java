@@ -45,6 +45,7 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 	Set<String> getGeneNamesAndEnvironmentForRelease(NextProtSource source, String release) {
 		Set<String> genes = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
+		LOGGER.info("Requesting " +  urlString );
 		try {
 
 			String content = IOUtils.toString(getInputStreamFromUrl(urlString), "UTF8");
