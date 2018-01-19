@@ -1,9 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -30,20 +27,36 @@ public class StatementTransformationUtil {
 
 	private static Logger LOGGER = Logger.getLogger(StatementTransformationUtil.class);
 
-	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(String entryAccession, IsoformService isoformService) {
+	/**
+	 *
+	 * @param entryAccession
+	 * @param isoformService
+	 * @param isoSpecific
+	 * @return
+	 */
+	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(String entryAccession, IsoformService isoformService, Optional<String> isoSpecific) {
 
-		List<String> isoformNames = getIsoformNamesForEntryAccession(entryAccession, isoformService);
+		List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(entryAccession, isoformService);
 
 		// Currently we don't create normal annotations (not associated with vvariant) in the bioeditor
 		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
-		for (String isoName : isoformNames) {
-			targetIsoforms.add(new TargetIsoformStatementPosition(isoName, IsoTargetSpecificity.UNKNOWN.name(), null));
+		for (String isoAccession : isoformAccessions) {
+
+			if(!isoSpecific.isPresent()) { //If not present add for them all
+				targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
+			}else {
+				String specificIsoformAccession = isoSpecific.get();
+				if(isoAccession.equals(specificIsoformAccession)){
+					targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
+				}
+
+			}
 		}
 		return new TargetIsoformSet(targetIsoforms);
 
 	}
 
-	private static List<String> getIsoformNamesForEntryAccession(String entryAccession, IsoformService isoformService) {
+	private static List<String> getIsoformAccessionsForEntryAccession(String entryAccession, IsoformService isoformService) {
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
 		NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
 		return isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());

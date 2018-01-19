@@ -1,12 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,6 +44,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		for (Statement originalStatement : rawStatements) {
 
+			//If statements are complex with subject
 			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
@@ -96,11 +92,18 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		return remainingRawStatements.stream().map(statement -> {
 
-			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
+			String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
+			Optional isoSpecificAccession = Optional.empty();
+			if(accession != null && accession.contains("-")){ //It is iso specific for example NX_P19544-4 means only specifc to iso 4
+				isoSpecificAccession = Optional.of(accession);
+			}
+
+			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
 			
 			return StatementBuilder.createNew().addMap(statement)
 					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
-					.removeField(StatementField.STATEMENT_ID) 
+					.removeField(StatementField.STATEMENT_ID)
+					.removeField(StatementField.NEXTPROT_ACCESSION)
 					.buildWithAnnotationHash(AnnotationType.ENTRY);
 			
 		}).collect(Collectors.toSet());
@@ -184,7 +187,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					}
 					targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
 				}else {
-					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService).serializeToJsonString();
+					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService, Optional.empty()).serializeToJsonString();
 				}
 
 				if(objectStatement != null){
