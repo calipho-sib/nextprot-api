@@ -211,7 +211,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
         SearchResult result = service.executeQuery(q);
 
-        assertEquals(5618, result.getFound());
+        assertEquals(5636, result.getFound());
     }
 
     @Ignore
@@ -257,6 +257,6 @@ public class SolrServiceTest extends WebUnitBaseTest {
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
         SearchResult result = service.executeQuery(q);
 
-        assertEquals(5618, result.getFound());
+        assertEquals(5636, result.getFound());
     }
 }
