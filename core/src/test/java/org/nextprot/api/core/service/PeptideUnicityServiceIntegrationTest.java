@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -14,208 +15,131 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
-	private EntryPublicationService entryPublicationService;
+	private PeptideUnicityService peptideUnicityService;
 
-    @Autowired
-    private PublicationService publicationService;
-
-    @Autowired
-    private EntryBuilderService entryBuilderService;
-
-    @Ignore
-    @Test
-    public void testPerformance() {
-    	
-    	/*  big ones (but not huge)
-    		
-    		AC			annot count (np1)
-    		-----------------------------------
-    	    NX_Q8WZ42	23683 // titin excluded
-			NX_Q8WXI7	10765 //  also excluded
-			NX_Q5VST9	5588
-			NX_Q8IVF2	5437
-			NX_Q8NF91	5383
-			NX_P20930	5147
-			NX_P20929	4388
-			NX_Q03001	4347
-			NX_O75445	4159
-			NX_Q685J3	4083
-			NX_P51587	4053
-			NX_Q9HC84	4043
-			
-			Results without cache:
-
-			NX_Q5VST9 load=128035ms build=36ms annot=6107 publi=155 
-			NX_Q8IVF2 load=129688ms build=16ms annot=6702 publi=130 
-			NX_Q8NF91 load=134330ms build=14ms annot=6135 publi=218 
-			NX_P20930 load=105603ms build=8ms annot=5524 publi=351 
-			NX_P20929 load=52249ms build=8ms annot=5293 publi=146 
-			NX_Q03001 load=64498ms build=8ms annot=5373 publi=189 
-			NX_O75445 load=34551ms build=6ms annot=4194 publi=220 
-			NX_Q685J3 load=31822ms build=3ms annot=4111 publi=113 
-			NX_P51587 load=66270ms build=6ms annot=4872 publi=1041 
-			NX_Q9HC84 load=44158ms build=3ms annot=4573 publi=189 
-			
-			=> time for building report is fast enough, max = 36ms , don't know time for loading with cache enabled
-			=> 0.036 * 20000 = 720 sec = 12 minutes (if they are all as big as NX_Q5VST9 which is not the case)
-
-			Results with cache:
-			
-			NX_Q5VST9 load=66ms build=6ms annot=6107 publi=155 
-			NX_Q8IVF2 load=285ms build=7ms annot=6702 publi=130 
-			NX_Q8NF91 load=368ms build=5ms annot=6135 publi=218 
-			NX_P20930 load=100ms build=4ms annot=5524 publi=351 
-			NX_P20929 load=130ms build=4ms annot=5293 publi=146 
-			NX_Q03001 load=149ms build=3ms annot=5373 publi=189 
-			NX_O75445 load=103ms build=4ms annot=4194 publi=220 
-			NX_Q685J3 load=78ms build=3ms annot=4111 publi=113 
-			NX_P51587 load=118ms build=7ms annot=4872 publi=1041 
-			NX_Q9HC84 load=73ms build=3ms annot=4573 publi=189 
-			
-			=> load time is still more than 10 times slower than building report
-
-    	 */
-    	
-    	List<String> entryAcList = new ArrayList<>(Arrays.asList(
-    			"NX_Q5VST9","NX_Q8IVF2","NX_Q8NF91","NX_P20930","NX_P20929","NX_Q03001","NX_O75445","NX_Q685J3","NX_P51587","NX_Q9HC84"
-    			// ,"NX_Q5VST9","NX_Q8IVF2","NX_Q8NF91","NX_P20930","NX_P20929","NX_Q03001","NX_O75445","NX_Q685J3","NX_P51587","NX_Q9HC84" // for testing with cache the first time
-    			));
-
-    	List<Long> t0=new ArrayList<>(), tLoad=new ArrayList<>(), tBuild=new ArrayList<>();
-    	List<Integer>annCnt=new ArrayList<>(), pubCnt=new ArrayList<>(), curCnt=new ArrayList<>(), addCnt=new ArrayList<>();
-    	int idx=-1;
-    	for (String ac: entryAcList) {
-    		idx++;
-    		t0.add(System.currentTimeMillis());
-	        Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withEverything());
-    		tLoad.add(System.currentTimeMillis()-t0.get(idx));
-	        EntryPublications report = entryPublicationService.findEntryPublications(ac);
-    		tBuild.add(System.currentTimeMillis()-tLoad.get(idx)-t0.get(idx));
-    		annCnt.add(entry.getAnnotations().size());
-    		pubCnt.add(entry.getPublications().size());
-    		curCnt.add(report.getEntryPublicationList(PublicationCategory.CURATED).size());
-    		addCnt.add(report.getEntryPublicationList(PublicationCategory.ADDITIONAL).size());
-    		System.out.println(
-    				entry.getUniqueName() + " " +
-    				"load="+(tLoad.get(idx)) + "ms " +
-    	    		"build="+(tBuild.get(idx)) + "ms " +
-    				"annot="+annCnt.get(idx) + " " +
-    				"publi="+pubCnt.get(idx) + " " +
-    				"curated="+curCnt.get(idx) + " " +
-    				"additonal="+addCnt.get(idx) + " " 
-    				);
-    	}
-    	System.out.println("END");
-    	
-    }
+    
+/* 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * 
+ * UNIQUE cases
+ * 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ */
     
     @Test
-	public void testEntryPublicationFlagsConsistency() {
-    	
-    	// NX_Q9GZK6: with article, book, online publications
-    	// NX_P46778: with article, submission
-    	// NX_Q9UGR2: with thesis having both A and B links always from UniProt
-    	// NX_Q96QD9: with thesis having only B link, always from UniProt
-    	// NX_Q9H583; with patent having both A and B always links from UniProt
-    	// NX_P40763: with patent having only B link, always from UniProt
-    	// NX_Q8TE04: with unpublished observation having only B link, always from UniProt
-    	// NX_P26367; with unpublished observation having both A and B always links from UniProt
-    	
-    	List<String> entryAcList = new ArrayList<>(Arrays.asList(
-    			"NX_Q8TE04","NX_P26367","NX_Q9H583","NX_P40763","NX_Q96QD9","NX_Q9UGR2","NX_Q9GZK6","NX_P46778"));
-    	for (String ac: entryAcList) {
+    public void testUniqueCase1() {
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1"));
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.UNIQUE, result.getValue());
+   }
 
-            List<Publication> publications = publicationService.findPublicationsByEntryName(ac);
-	        EntryPublications entryPublications = entryPublicationService.findEntryPublications(ac);
-            publications.forEach(p -> {
-	        	EntryPublication ep = entryPublications.getEntryPublication(p.getPublicationId());
+    @Test
+    public void testUniqueCase2() {
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY1-2"));
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.UNIQUE, result.getValue());
+   }
 
-	        	// for debugging
-	        	/*
-	        	String pro = entry.getUniqueName();
-	        	String ttl = p.getTitle();
-	        	String typ = p.getPublicationType();
-	        	String dat = p.getPublicationYear();
-	        	System.out.println(pro + " publi " + ep + " " + dat +" " +  typ + " " + ttl);
-	        	*/
-	        	
-	        	// entry flags are exclusive: each publi should have one and only flag ON
-	        	int entryFlagsOn = 0; 
-	        	if (ep.isCurated()) entryFlagsOn++;
-	        	if (ep.isAdditional()) entryFlagsOn++;
-	        	if (ep.isPatent()) entryFlagsOn++;
-	        	if (ep.isSubmission()) entryFlagsOn++;
-	        	if (ep.isOnline()) entryFlagsOn++;
-	        	Assert.assertEquals(1,entryFlagsOn);
-	        	// other flags are exclusive: each publi should have one and only flag ON
-	        	int otherFlagsOn = 0; 
-	        	if (ep.isCited()) otherFlagsOn++;
-	        	if (ep.isUncited()) otherFlagsOn++;
-	        	Assert.assertEquals(1,otherFlagsOn);  
-	        	// ONLINE publications should flags: online=ON and cited=ON
-	        	if (p.getPublicationType()==PublicationType.ONLINE_PUBLICATION) {
-	        		Assert.assertEquals(true,ep.isOnline());
-	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
-	        	}
-	        	if (p.getPublicationType()==PublicationType.SUBMISSION) {
-	        		Assert.assertEquals(true,ep.isSubmission());
-	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
-	        	}
-	        	if (p.getPublicationType()==PublicationType.UNPUBLISHED_OBSERVATION) {
-	        		Assert.assertEquals(true,ep.isCited()); // always link B and opt. link A, both from UniProt  
-	        		Assert.assertEquals(true,ep.isSubmission()); // always link B and opt. link A, both from UniProt
-	        	}
-	        });
+/* 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * 
+ * NON_UNIQUE cases
+ * 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ */
+    @Test
+    public void testNonUniqueCase1() {
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY2-1"));
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.NON_UNIQUE, result.getValue());
+   }
+    
+    @Test
+    public void testNonUniqueCase2() {
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY2-1","NX_ENTRY2-2"));
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.NON_UNIQUE, result.getValue());
+   }
+    
+/* 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * 
+ * PSEUDO_UNIQUE cases
+ * 
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * Each line in this comment contains a list of isoforms that are known to be identical but in different entries
+ * If a peptide matches isoforms of multiple entries known as sharing an isoform then the peptide is said PSEUDO_UNIQUE
+ * NX_A0A087WW87-1,NX_P01614-1
+ * NX_O43812-1,NX_Q96PT3-2
+ * NX_Q6S5H4-1,NX_A0JP26-1
+ * NX_P0DMU8-1,NX_P0DMV0-1,NX_P0DMU7-1
+ * NX_Q01081-1,NX_P0DN76-1
+ * NX_B7ZAQ6-1,NX_P0CG08-1
+ * NX_B0FP48-1,NX_E5RIL1-1
+ * NX_P0DN79-1,NX_P35520-1
+ */
+    
+    @Test
+    public void testPseudoUniqueCase1() {
+    	// the 2 isoform have same sequence (same md5) => PSEUDO UNIQUE
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1"));  
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.PSEUDO_UNIQUE, result.getValue());
+    	Assert.assertEquals(isoset, result.getEquivalentIsoforms());
+   }
+    
+    @Test
+    public void testPseudoUniqueCase2() {
+    	// first 2 isoforms have same sequence (same md5) and other isoforms belong to same entry => PSEUDO UNIQUE
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1","NX_P35520-2","NX_P35520-3"));  
+    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.PSEUDO_UNIQUE, result.getValue());
+    	Set<String> expEquivSet = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1")); 
+    	Assert.assertEquals(expEquivSet, result.getEquivalentIsoforms());
+   }
+    
+    /* 
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     * 
+     * multiple PSEUDO_UNIQUE cases to see if cache of isoform service is effective 
+     * 
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+     */
+    @Test
+    public void testMultiPseudoUnique() {
+    	// the 2 isoform have same sequence (same md5) => PSEUDO UNIQUE
+    	long t0;
+    	PeptideUnicity result;
+    	
+    	// first call
+    	t0 = System.currentTimeMillis();
+    	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1")); 
+    	result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+    	Assert.assertEquals(PeptideUnicity.UnicityValue.PSEUDO_UNIQUE, result.getValue());
+    	long tFirst = System.currentTimeMillis()-t0;
+    	
+    	// loop on 100 calls 
+    	t0 = System.currentTimeMillis();
+    	for (int i=0;i<100;i++) {
+    		String iso = "NX_P35520-" + (i+2);
+    		isoset.add(iso);
+        	result = peptideUnicityService.getPeptideUnicityFormMappingIsoforms(isoset);
+        	Assert.assertEquals(PeptideUnicity.UnicityValue.PSEUDO_UNIQUE, result.getValue());
     	}
+    	long tNext100 = System.currentTimeMillis()-t0;
+
+    	System.out.println("time for very first call: " + tFirst +   "[ms]");
+    	System.out.println("time for next 100  calls: " + tNext100 + "[ms]");
+    	Assert.assertTrue(tFirst > tNext100);
     }
 
-    @Test
-    public void testPublicationDirectLinksFromAnEntry() {
-
-        EntryPublications entryPublications = entryPublicationService.findEntryPublications("NX_Q14587");
-
-        List<EntryPublication> filteredSingleton = entryPublications.getEntryPublicationList(PublicationCategory.CURATED).stream()
-                .filter(ep -> ep.getPubId() == 29230867)
-                .collect(Collectors.toList());
-
-        Assert.assertEquals(1, filteredSingleton.size());
-
-        List<PublicationDirectLink> directLinks = filteredSingleton.get(0).getDirectLinks();
-
-        Assert.assertEquals(3, directLinks.size());
-
-        String[] expectedLabels = new String[] {"INTERACTION WITH TRIM28", "MUTAGENESIS OF ASP-85; VAL-86; VAL-88; PHE-90; GLU-93; GLU-94 AND TRP-95", "SUBCELLULAR LOCATION (ISOFORMS 1 AND 2)"};
-
-        for (int i=0 ; i<3 ;i++) {
-
-            Assert.assertEquals(29230867, directLinks.get(i).getPublicationId());
-            Assert.assertEquals("Uniprot", directLinks.get(i).getDatasource());
-            Assert.assertEquals("UniProtKB", directLinks.get(i).getDatabase());
-            Assert.assertEquals(expectedLabels[i], directLinks.get(i).getLabel());
-        }
-    }
-
-    @Test
-    public void testPublicationDirectLinksFromAnEntryForSubmissionView() {
-
-        List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_Q14587")
-                .getEntryPublicationList(PublicationCategory.SUBMISSION);
-
-        Assert.assertTrue(publications.size() >= 1);
-    }
-
-    @Test
-    public void testPublicationDirectLinksFromAnEntryForAllView() {
-
-        List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_Q14587")
-                .getEntryPublicationList(PublicationCategory.ALL);
-
-        Assert.assertTrue(publications.size() >= 46);
-    }
+    
 }
