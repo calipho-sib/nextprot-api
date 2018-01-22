@@ -1,11 +1,13 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.tasks.service.impl.SolrIndexingServiceImpl;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -16,6 +18,9 @@ import java.util.SortedSet;
 
 @EntryFieldBuilder
 public class PublicationsFieldBuilder extends FieldBuilder {
+	
+	protected Logger logger = Logger.getLogger(PublicationsFieldBuilder.class);
+
 
 	@Override
 	protected void init(Entry entry) {
@@ -32,8 +37,9 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
 
-            GlobalPublicationStatistics.PublicationStatistics publiStats =
-                    publicationService.getPublicationStatistics(currpubli.getPublicationId());
+			long pubId = currpubli.getPublicationId();
+			logger.debug("looking for stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
+            GlobalPublicationStatistics.PublicationStatistics publiStats = publicationService.getPublicationStatistics(pubId);
 
             if(publiStats.isComputed()) publi_computed_count++;
 			if(publiStats.isCurated()) publi_curated_count++;
