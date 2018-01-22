@@ -54,6 +54,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		EntryBaseSolrIndexer indexer = isGold ? new EntryGoldSolrIndexer(serverUrl) : new EntrySolrIndexer(serverUrl);
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
+		indexer.setPublicationService(publicationService);
 
 		logAndCollect(info,"getting entry list of chromosome " + chrName);
 		List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);

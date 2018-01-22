@@ -14,7 +14,7 @@ public abstract class FieldBuilder {
 	boolean isGold = false;
 	protected TerminologyService terminologyservice = null;
 	protected EntryBuilderService entryBuilderService = null;
-	protected PublicationService publicationService;
+	protected PublicationService publicationService = null;
 
     public boolean isGold() {
 		return isGold;
