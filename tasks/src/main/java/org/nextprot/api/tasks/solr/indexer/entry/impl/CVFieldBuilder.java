@@ -24,7 +24,7 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 @EntryFieldBuilder
 public class CVFieldBuilder extends FieldBuilder {
 
-	protected Logger logger = Logger.getLogger(GenerateSolrIndex.class);
+	protected Logger logger = Logger.getLogger(CVFieldBuilder.class);
 	
 	@Override
 	protected void init(Entry entry) {
@@ -77,6 +77,7 @@ public class CVFieldBuilder extends FieldBuilder {
 		Tree<CvTerm> tree = null;
 		//Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
+			logger.debug(entry.getUniqueName() + " - indexing term with accession:" + cvac);
 			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
 			//System.err.println(cvac + ": " + term);
 			String category = term.getOntology();
