@@ -40,7 +40,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			long pubId = currpubli.getPublicationId();
 			logger.debug("looking for stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
             GlobalPublicationStatistics.PublicationStatistics publiStats = publicationService.getPublicationStatistics(pubId);
-
+            logger.debug("increment cnt fromfor stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
             if(publiStats.isComputed()) publi_computed_count++;
 			if(publiStats.isCurated()) publi_curated_count++;
 			if(publiStats.isLargeScale()) publi_large_scale_count++;
