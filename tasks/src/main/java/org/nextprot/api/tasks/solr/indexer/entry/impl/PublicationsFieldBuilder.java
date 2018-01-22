@@ -33,14 +33,11 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_large_scale_count = 0;
 		String Jinfo = "";
 
-
-		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
 
 			long pubId = currpubli.getPublicationId();
 			logger.debug("looking for stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
             GlobalPublicationStatistics.PublicationStatistics publiStats = publicationService.getPublicationStatistics(pubId);
-            logger.debug("increment cnt fromfor stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
             if(publiStats.isComputed()) publi_computed_count++;
 			if(publiStats.isCurated()) publi_curated_count++;
 			if(publiStats.isLargeScale()) publi_large_scale_count++;
@@ -49,23 +46,19 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 
 				JournalResourceLocator journalLocator = currpubli.getJournalResourceLocator();
 
-				//System.err.println("pubid: " + currpubli.getPublicationId());
-				//System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
 				if (journalLocator.hasJournalId())
 					addField(Fields.PUBLICATIONS, journalLocator.getNLMid());
 
 				Jinfo = currpubli.getJournalResourceLocator().getName();
 				if (journalLocator.hasJournalId())
 					Jinfo += " - " + currpubli.getJournalResourceLocator().getMedAbbrev(); // Index name and abbrev in the same token
+
 				addField(Fields.PUBLICATIONS,Jinfo);
-			//System.err.println(Jinfo);			   
 			}
 			String title = currpubli.getTitle();
-			//System.err.println("LS:" + currpubli.getIsLargeScale() + " " + title);
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
-				//System.err.println("author: " + currauthor.toString());
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
 					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
@@ -73,12 +66,9 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
 				else
 					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
-				//if(currauthor.getLastName().contains("Consortium")) System.err.println(currauthor.getLastName());
-				//if(currauthor.getLastName().contains("Bergsten")) System.err.println("id: " + currpubli.getPublicationId() + " type: " + currpubli.getPublicationType() + " " + currauthor.getLastName());
 			}
 		}
 		
-		//if(publi_computed_count > 0) addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
 		addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
 		addField(Fields.PUBLI_CURATED_COUNT, publi_curated_count);
 		addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);

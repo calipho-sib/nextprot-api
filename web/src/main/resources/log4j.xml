@@ -73,7 +73,7 @@
 	</logger>
 
 	<logger name="org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsFieldBuilder">
-		<level value="DEBUG" />
+		<level value="WARN" />
 	</logger>
 
 
