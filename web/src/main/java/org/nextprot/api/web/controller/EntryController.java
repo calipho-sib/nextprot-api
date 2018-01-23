@@ -174,8 +174,8 @@ public class EntryController {
 		return "entry";
 	}
 
-	@ApiMethod(path = "/entry/{entry}/protein-existence", verb = ApiVerb.GET, description = "Reports entry protein existence for different sources", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/entry/{entry}/protein-existence", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/entry/{entry}/protein-existences", verb = ApiVerb.GET, description = "Reports entry protein existences for different sources", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/protein-existences", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public ProteinExistences getProteinExistences(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
