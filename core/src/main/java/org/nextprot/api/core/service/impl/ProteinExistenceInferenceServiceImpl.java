@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
@@ -105,12 +106,8 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
-		return entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_INFO).stream()
-                .filter(ei -> ei.getDescription().contains("(at protein level)"))
-				.flatMap(annot -> annot.getEvidences().stream())
-                .filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
-                .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-                .anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85083));
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_INFO).stream()
+				.filter(ei -> ei.getDescription().contains("(at protein level)")));
 	}
 
     // Spec: Entry having PE3 (HOMOLOGY) or PE4 (PREDICTED) must have an expression profile annotation with evidence
@@ -142,17 +139,35 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
-		return entry.getAnnotationsByCategory(AnnotationCategory.MUTAGENESIS).stream()
-				.flatMap(annot -> annot.getEvidences().stream())
-				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
-				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85083));
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.MUTAGENESIS).stream());
 	}
 
+	// Spec: Entry must have a binary interaction annotation with evidence assigned by neXtProt of quality GOLD
+	// AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule6(String entryAccession) {
 
-		return false;
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.BINARY_INTERACTION).stream());
+	}
+
+	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
+
+		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
+
+		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
+	}
+
+	private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Stream<Annotation> stream) {
+
+		return stream.flatMap(annot -> annot.getEvidences().stream())
+				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
+				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
+
+		// { "id" : 84877, "accession" : "ECO:0000006", "name" : "experimental evidence" }
 	}
 
 	// Is this code (coming from EntryUtils) is the NP1 rule ?
@@ -170,13 +185,5 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 2, 7)) return true;
 		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 1, 9)) return true;
 		return false;
-	}
-
-	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
-
-		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
-		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
-
-		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
 	}
 }
