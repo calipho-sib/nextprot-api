@@ -22,8 +22,8 @@ public class OverviewFieldBuilder extends FieldBuilder {
 		addField(Fields.IDSP0, id);
 		addField(Fields.RECOMMENDED_AC, id.substring(3));
 		
-		addField(Fields.PE_LEVEL, entry.getProperties().getProteinExistence().getLevel());
-		addField(Fields.PROTEIN_EXISTENCE, entry.getProperties().getProteinExistence().getDescriptionName());
+		addField(Fields.PE_LEVEL, entry.getProteinExistences().getInferredProteinExistence().getLevel());
+		addField(Fields.PROTEIN_EXISTENCE, entry.getProteinExistences().getInferredProteinExistence().getDescriptionName());
 	
 		String precname = ovv.getMainProteinName();
 		addField(Fields.RECOMMENDED_NAME, precname);

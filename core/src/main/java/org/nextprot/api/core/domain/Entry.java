@@ -8,6 +8,7 @@ import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
-public class Entry implements KeyValueRepresentation {
+public class Entry implements Serializable, KeyValueRepresentation {
+
+	private static final long serialVersionUID = 1L;
 
 	private EntryProperties properties;
 
@@ -42,6 +45,8 @@ public class Entry implements KeyValueRepresentation {
 	private List<CvTerm> enzymes;
 
 	private List<ExperimentalContext> experimentalContexts;
+
+	private ProteinExistences proteinExistences;
 
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
@@ -195,6 +200,14 @@ public class Entry implements KeyValueRepresentation {
 
 	public void setProperties(EntryProperties properties) {
 		this.properties = properties;
+	}
+
+	public ProteinExistences getProteinExistences() {
+		return proteinExistences;
+	}
+
+	public void setProteinExistences(ProteinExistences proteinExistences) {
+		this.proteinExistences = proteinExistences;
 	}
 
 	/**
