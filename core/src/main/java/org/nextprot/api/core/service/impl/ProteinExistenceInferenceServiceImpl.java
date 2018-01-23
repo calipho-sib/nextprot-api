@@ -1,15 +1,19 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.ProteinExistenceDao;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.ProteinExistenceInferred;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ProteinExistenceInferenceService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,9 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
+
+	@Autowired
+	private TerminologyService terminologyService;
 
 	@Override
 	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
@@ -96,7 +103,14 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule3(String entryAccession) {
 
-		return false;
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+
+		return entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_INFO).stream()
+				.filter(ei -> ei.getDescription().contains("(at protein level)"))
+				.flatMap(annot -> annot.getEvidences().stream())
+				.anyMatch(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()) &&
+						"nextprot".equalsIgnoreCase(evidence.getAssignedBy()) &&
+						calcExperimentEvidenceTermGraph().hasCvTermAccession(evidence.getEvidenceCodeAC()));
 	}
 
 	@Override
@@ -134,4 +148,12 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		return false;
 	}
 
+	private CvTermGraph calcExperimentEvidenceTermGraph() {
+
+		CvTerm experimentalEvidenceUsedInManualAssertionTerm = terminologyService.findCvTermByAccession("ECO:0000269");
+
+		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+
+		return evidenceCodeTermGraph.calcDescendantSubgraph(experimentalEvidenceUsedInManualAssertionTerm.getId().intValue());
+	}
 }

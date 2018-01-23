@@ -42,7 +42,6 @@ public class EntryController {
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
-	@Autowired private EntryPropertiesService entryPropertiesService;
 	@Autowired private ProteinExistenceService proteinExistenceService;
 
     @ModelAttribute
