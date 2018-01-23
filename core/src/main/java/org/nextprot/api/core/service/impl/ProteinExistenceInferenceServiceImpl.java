@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,15 +106,31 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		return entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_INFO).stream()
-				.filter(ei -> ei.getDescription().contains("(at protein level)"))
+                .filter(ei -> ei.getDescription().contains("(at protein level)"))
 				.flatMap(annot -> annot.getEvidences().stream())
-				.anyMatch(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()) &&
-						"nextprot".equalsIgnoreCase(evidence.getAssignedBy()) &&
-						isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC()));
+                .filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
+                .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                .anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85083));
 	}
 
+    // Spec: Entry having PE3 (HOMOLOGY) or PE4 (PREDICTED) must have an expression profile annotation with evidence
+    // assigned by HPA of quality GOLD with ECO:0000295 (RNA-seq evidence) and expression level High or Medium
 	@Override
 	public boolean promotedAccordingToRule4(String entryAccession) {
+
+        ProteinExistence pe = proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+
+        if (pe == ProteinExistence.HOMOLOGY || pe == ProteinExistence.PREDICTED) {
+
+            Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+
+            return entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_PROFILE).stream()
+                    .flatMap(annot -> annot.getEvidences().stream())
+                    .filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
+                    .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                    .filter(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
+                    .anyMatch(evidence -> evidence.isExpressionLevelDetected(Arrays.asList("high", "medium")));
+        }
 
 		return false;
 	}
@@ -147,11 +164,11 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		return false;
 	}
 
-	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC) {
+	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
 
 		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
 		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
 
-		return evidenceCodeTermGraph.isDescendantOf(termId, 85083);
+		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
 	}
 }

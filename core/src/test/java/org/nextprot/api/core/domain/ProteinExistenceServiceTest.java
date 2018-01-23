@@ -122,32 +122,38 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldNotMatchRule3BecauseEvidenceSilver() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q56UN5"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q56UN5"));
+	}
+
+	@Test
+	public void shouldMatchRule4() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
+	}
+
+	@Test
+	public void shouldNotMatchRule4BecausePE1() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q9H8Y5"));
+	}
+
+	@Test
+	public void shouldNotMatchRule4BecauseNotDetected() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q9HB31"));
 	}
 
 	/*
 	@Test
-	public void shouldMatchRule4() {
-
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q13740"));
-	}
-
-	@Test
-	public void shouldNotMatchRule4() {
-
-		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
-	}
-
-	@Test
 	public void shouldMatchRule5() {
 
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q13740"));
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q13740"));
 	}
 
 	@Test
 	public void shouldNotMatchRule5() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q13740"));
 	}
 	*/
     private List<String> find100EntriesWhichAreNotUnconfirmedPE1() {

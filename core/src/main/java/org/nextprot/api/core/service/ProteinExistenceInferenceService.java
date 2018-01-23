@@ -22,6 +22,8 @@ public interface ProteinExistenceInferenceService {
 	// with evidence assigned by neXtProt of quality GOLD AND ECO experimental evidence (or child thereof)
 	boolean promotedAccordingToRule3(String entryAccession);
 
+	// Spec: Entry having PE3 (HOMOLOGY) or PE4 (PREDICTED) must have an expression profile annotation with evidence assigned by HPA
+    // of quality GOLD with ECO:0000295 RNA-seq evidence and expression level High or Medium
 	boolean promotedAccordingToRule4(String entryAccession);
 
 	boolean promotedAccordingToRule5(String entryAccession);
