@@ -258,4 +258,17 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(26584, view.getEdges().get(4).getHead());
     }
 
+    @Test
+    public void testSubgraphMetadata() throws Exception {
+
+        CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+        Assert.assertTrue(graph.hasCvTermAccession("ECO:0000269"));
+        Assert.assertTrue(graph.hasCvTermAccession("ECO:0001186"));
+
+        CvTerm experimentalEvidenceUsedInManualAssertionTerm = terminologyService.findCvTermByAccession("ECO:0000269");
+        CvTermGraph sg = graph.calcDescendantSubgraph(experimentalEvidenceUsedInManualAssertionTerm.getId().intValue());
+
+        Assert.assertTrue(sg.hasCvTermAccession("ECO:0000269"));
+        Assert.assertTrue(sg.hasCvTermAccession("ECO:0001186"));
+    }
 }
