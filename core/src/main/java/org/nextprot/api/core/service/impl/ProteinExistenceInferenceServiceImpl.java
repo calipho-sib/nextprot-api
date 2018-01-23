@@ -135,10 +135,18 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		return false;
 	}
 
+	// Spec: Entry must have a mutagenesis annotation with evidence assigned by neXtProt of quality GOLD
+	// AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule5(String entryAccession) {
 
-		return false;
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+
+		return entry.getAnnotationsByCategory(AnnotationCategory.MUTAGENESIS).stream()
+				.flatMap(annot -> annot.getEvidences().stream())
+				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
+				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85083));
 	}
 
 	@Override

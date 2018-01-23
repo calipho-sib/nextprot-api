@@ -143,19 +143,18 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q9HB31"));
 	}
 
-	/*
 	@Test
 	public void shouldMatchRule5() {
 
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q13740"));
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule5("NX_P12830"));
 	}
 
 	@Test
-	public void shouldNotMatchRule5() {
+	public void shouldNotMatchRule5BecauseAssignedByUniprot() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q13740"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q01094"));
 	}
-	*/
+
     private List<String> find100EntriesWhichAreNotUnconfirmedPE1() {
     	Set<String> acsPos = new HashSet<>(msuEntries);
     	List<String> acsNeg = new ArrayList<>();
