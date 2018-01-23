@@ -1,13 +1,13 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.ProteinExistenceWithRule;
+import org.nextprot.api.core.domain.ProteinExistenceInferred;
 
-public interface ProteinExistenceCalcService {
+public interface ProteinExistenceInferenceService {
 
 	/**
 	 * @return the calculated protein existence based on rules
 	 */
-	ProteinExistenceWithRule calcProteinExistence(String entryAccession);
+	ProteinExistenceInferred inferProteinExistence(String entryAccession);
 
 	boolean proteinExistencePromoted(String entryAccession);
 

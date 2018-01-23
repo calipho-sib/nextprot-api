@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 
-public class ProteinExistenceWithRule implements Serializable {
+public class ProteinExistenceInferred implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,7 @@ public class ProteinExistenceWithRule implements Serializable {
     private ProteinExistence proteinExistence;
     private ProteinExistenceRule rule;
 
-    public ProteinExistenceWithRule(ProteinExistence proteinExistence, ProteinExistenceRule rule) {
+    public ProteinExistenceInferred(ProteinExistence proteinExistence, ProteinExistenceRule rule) {
         this.proteinExistence = proteinExistence;
         this.rule = rule;
     }

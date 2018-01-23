@@ -1,13 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.dao.ProteinExistenceDao;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ProteinExistence;
-import org.nextprot.api.core.domain.ProteinExistenceWithRule;
+import org.nextprot.api.core.domain.ProteinExistenceInferred;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.ProteinExistenceCalcService;
-import org.nextprot.api.core.service.ProteinExistenceService;
+import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -19,40 +19,40 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-class ProteinExistenceCalcServiceImpl implements ProteinExistenceCalcService {
+class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
 
 	@Autowired
-	private ProteinExistenceService proteinExistenceService;
+	private ProteinExistenceDao proteinExistenceDao;
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
 
 	@Override
-	public ProteinExistenceWithRule calcProteinExistence(String entryAccession) {
+	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
 
 		if (cannotBePromotedAccordingToRule1(entryAccession)) {
-			return new ProteinExistenceWithRule(proteinExistenceService.getProteinExistence(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
-					ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_01);
+			return new ProteinExistenceInferred(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
+					ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
 		}
 		if (promotedAccordingToRule2(entryAccession)) {
 
-			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_02);
+			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02);
 		}
 		if (promotedAccordingToRule3(entryAccession)) {
 
-			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_03);
+			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03);
 		}
 		if (promotedAccordingToRule4(entryAccession)) {
 
-			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_04);
+			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
 		}
 		if (promotedAccordingToRule5(entryAccession)) {
 
-			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_05);
+			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05);
 		}
 		if (promotedAccordingToRule6(entryAccession)) {
 
-			return new ProteinExistenceWithRule(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceWithRule.ProteinExistenceRule.SP_PER_06);
+			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
 
 		return null;
@@ -70,7 +70,7 @@ class ProteinExistenceCalcServiceImpl implements ProteinExistenceCalcService {
 	@Override
 	public boolean cannotBePromotedAccordingToRule1(String entryAccession) {
 
-		ProteinExistence pe = proteinExistenceService.getProteinExistence(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+		ProteinExistence pe = proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
 		return pe == ProteinExistence.PROTEIN_LEVEL || pe == ProteinExistence.UNCERTAIN;
 	}
@@ -121,7 +121,7 @@ class ProteinExistenceCalcServiceImpl implements ProteinExistenceCalcService {
 	@SuppressWarnings("Duplicates")
 	private boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 
-		ProteinExistence pe = proteinExistenceService.getProteinExistence(e.getUniqueName(), ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+		ProteinExistence pe = proteinExistenceDao.findProteinExistenceUniprot(e.getUniqueName(), ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
 		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
 		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't proteinExistencePromoted PE5

@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -44,6 +43,7 @@ public class EntryController {
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPropertiesService entryPropertiesService;
+	@Autowired private ProteinExistenceService proteinExistenceService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -177,17 +177,11 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/protein-existence", verb = ApiVerb.GET, description = "Reports entry protein existence for different sources", produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/entry/{entry}/protein-existence", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public Map<String, Object> getProteinExistences(
+	public ProteinExistences getProteinExistences(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName) {
 
-		EntryProperties properties = entryPropertiesService.findEntryProperties(entryName);
-		Map<String, Object> map = new HashMap<>();
-
-		map.put(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2.name(), properties.getProteinExistenceWithRule());
-		map.put("OTHERS", properties.getOtherProteinExistences());
-
-		return map;
+		return proteinExistenceService.getProteinExistences(entryName);
 	}
 
 	/**
