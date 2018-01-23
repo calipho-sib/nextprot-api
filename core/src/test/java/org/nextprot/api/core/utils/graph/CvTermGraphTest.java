@@ -117,6 +117,14 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     }
 
     @Test
+    public void GO0042947ShouldNotExistInOntology() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+
+        Assert.assertTrue(graph.hasCvTermAccession("GO:0042947"));
+    }
+
+    @Test
     public void ancestorSubgraph() throws Exception {
 
         CvTermGraph graph = createGraph(TerminologyCv.GoBiologicalProcessCv, terminologyService);
