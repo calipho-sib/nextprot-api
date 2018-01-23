@@ -27,7 +27,6 @@ public class ProteinExistenceDaoImpl implements ProteinExistenceDao {
 		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
 
 		if (source == ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT) {
-			// TODO: this query should be changed as view_sp_pe_tracking_2017_08 is not ideal to extract pe given a specific release data
 			return template.queryForObject(sqlDictionary.getSQLQuery("entry-pe-uniprot"), namedParameters, new ProteinExistenceRowMapper());
 		}
 		else if (source == ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT1) {
