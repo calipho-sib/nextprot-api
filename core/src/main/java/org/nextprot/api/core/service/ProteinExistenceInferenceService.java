@@ -11,6 +11,7 @@ public interface ProteinExistenceInferenceService {
 
 	boolean proteinExistencePromoted(String entryAccession);
 
+	// Spec: Only entries which are PE2, PE3 or PE4 can be promoted.
 	boolean cannotBePromotedAccordingToRule1(String entryAccession);
 
 	// Spec: Entry must have at least 2 proteotypic peptides of quality GOLD, 9 or more amino acids in length,

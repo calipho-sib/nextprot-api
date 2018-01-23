@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.ProteinExistenceDao;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.ProteinExistenceInferred;
@@ -110,7 +109,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.flatMap(annot -> annot.getEvidences().stream())
 				.anyMatch(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()) &&
 						"nextprot".equalsIgnoreCase(evidence.getAssignedBy()) &&
-						calcExperimentEvidenceTermGraph().hasCvTermAccession(evidence.getEvidenceCodeAC()));
+						isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC()));
 	}
 
 	@Override
@@ -148,12 +147,11 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		return false;
 	}
 
-	private CvTermGraph calcExperimentEvidenceTermGraph() {
-
-		CvTerm experimentalEvidenceUsedInManualAssertionTerm = terminologyService.findCvTermByAccession("ECO:0000269");
+	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC) {
 
 		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
 
-		return evidenceCodeTermGraph.calcDescendantSubgraph(experimentalEvidenceUsedInManualAssertionTerm.getId().intValue());
+		return evidenceCodeTermGraph.isDescendantOf(termId, 85083);
 	}
 }

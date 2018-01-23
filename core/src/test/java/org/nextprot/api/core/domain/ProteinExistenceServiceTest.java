@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryPropertiesService;
-import org.nextprot.api.core.service.ProteinExistenceCalcService;
+import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.ProteinExistenceService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,30 +20,30 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     @Autowired private MasterIdentifierService masterIdentifierService = null;
     @Autowired private EntryPropertiesService entryPropertiesService;
     @Autowired private ProteinExistenceService proteinExistenceService;
-    @Autowired private ProteinExistenceCalcService proteinExistenceCalcService;
+    @Autowired private ProteinExistenceInferenceService proteinExistenceInferenceService;
 
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_1() {  
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_A0AVI2").withEverything()); // YES: is in ftp file
-    	Assert.assertEquals(true, proteinExistenceCalcService.proteinExistencePromoted("NX_A0AVI2"));
+    	Assert.assertEquals(true, proteinExistenceInferenceService.proteinExistencePromoted("NX_A0AVI2"));
     }
 
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_2() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_P69849").withEverything()); // NO: only 1 proteotypic peptide > 7aa
-    	Assert.assertEquals(false, proteinExistenceCalcService.proteinExistencePromoted("NX_P69849"));
+    	Assert.assertEquals(false, proteinExistenceInferenceService.proteinExistencePromoted("NX_P69849"));
     }
     
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_3() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_Q9UK00").withEverything()); // YES: 2 proteotypic peptide > 7aa
-    	Assert.assertEquals(true, proteinExistenceCalcService.proteinExistencePromoted("NX_Q9UK00"));
+    	Assert.assertEquals(true, proteinExistenceInferenceService.proteinExistencePromoted("NX_Q9UK00"));
     }
 
     @Test // run successfully with np_20170413
     public void testWouldUpgradeToPE1_4() {
     	//Entry e = entryBuilderService.build(EntryConfig.newConfig("NX_Q9NV72").withEverything()); // YES: 1 proteotypic peptide > 9aa
-    	Assert.assertEquals(true, proteinExistenceCalcService.proteinExistencePromoted("NX_Q9NV72"));
+    	Assert.assertEquals(true, proteinExistenceInferenceService.proteinExistencePromoted("NX_Q9NV72"));
     }
 
     @Ignore
@@ -53,7 +53,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	int startAtIdx=0;
     	for (int i=startAtIdx;i<msuEntries.size(); i++) {
     		String ac = msuEntries.get(i);
-    		if (proteinExistenceCalcService.proteinExistencePromoted(ac)) {
+    		if (proteinExistenceInferenceService.proteinExistencePromoted(ac)) {
     			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + "  would proteinExistencePromoted as expected");
     		} else {
     			System.out.println("entry " + i + "/" + msuEntries.size() + ": " +  ac + " would NOT proteinExistencePromoted as expected: ERROR");
@@ -71,7 +71,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	List<String> negEntries = find100EntriesWhichAreNotUnconfirmedPE1();
     	for (int i=startAtIdx;i<negEntries.size(); i++) {
     		String ac = negEntries.get(i);
-    		if (!proteinExistenceCalcService.proteinExistencePromoted(ac)) {
+    		if (!proteinExistenceInferenceService.proteinExistencePromoted(ac)) {
     			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + "  would NOT proteinExistencePromoted as expected");
     		} else {
     			System.out.println("entry " + i + "/" + negEntries.size() + ": " +  ac + " would proteinExistencePromoted: ERROR");
@@ -81,14 +81,75 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     	Assert.assertEquals(0, errCnt);
     }
 
+	@Test
+	public void shouldMatchRule1AlreadyPE1() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
+	}
+
+	@Test
+	public void shouldMatchRule1BecausePE5() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_P0C2Y1"));
+	}
+
+	@Test
+	public void shouldNotMatchRule1BecausePE2() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_P0CK97"));
+	}
+
+	/*
+	@Test
+	public void shouldMatchRule2() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule2("NX_Q13740"));
+	}
+
+	@Test
+	public void shouldNotMatchRule2() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
+	}
+	*/
+
     @Test
-    public void test() {
+    public void shouldMatchRule3() {
 
-        boolean bool = proteinExistenceCalcService.promotedAccordingToRule3("NX_P02675");
-
-        System.out.println(bool);
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q6SJ96"));
     }
 
+	@Test
+	public void shouldNotMatchRule3BecauseEvidenceSilver() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q56UN5"));
+	}
+
+	/*
+	@Test
+	public void shouldMatchRule4() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q13740"));
+	}
+
+	@Test
+	public void shouldNotMatchRule4() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
+	}
+
+	@Test
+	public void shouldMatchRule5() {
+
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q13740"));
+	}
+
+	@Test
+	public void shouldNotMatchRule5() {
+
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q13740"));
+	}
+	*/
     private List<String> find100EntriesWhichAreNotUnconfirmedPE1() {
     	Set<String> acsPos = new HashSet<>(msuEntries);
     	List<String> acsNeg = new ArrayList<>();
