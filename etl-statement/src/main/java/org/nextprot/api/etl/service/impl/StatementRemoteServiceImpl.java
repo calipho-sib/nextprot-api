@@ -1,5 +1,13 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.constants.NextProtSource;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -8,14 +16,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.constants.NextProtSource;
-import org.springframework.stereotype.Service;
 
 @Service
 public class StatementRemoteServiceImpl extends StatementExtractorBase {

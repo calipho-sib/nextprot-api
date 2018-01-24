@@ -1,8 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.List;
-import java.util.Set;
-
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,7 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.List;
+import java.util.Set;
 
 
 @Ignore
