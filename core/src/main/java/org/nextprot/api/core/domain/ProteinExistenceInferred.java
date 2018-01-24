@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 public class ProteinExistenceInferred implements Serializable {
@@ -52,6 +54,7 @@ public class ProteinExistenceInferred implements Serializable {
         return rule;
     }
 
+    @JsonIgnore
     public boolean isInferenceFound() {
         return rule != null;
     }
