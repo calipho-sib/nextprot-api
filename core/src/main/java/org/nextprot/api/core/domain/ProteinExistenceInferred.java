@@ -6,6 +6,8 @@ public class ProteinExistenceInferred implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private final static ProteinExistenceInferred NO_INFERENCE_FOUND = new ProteinExistenceInferred();
+
     public enum ProteinExistenceRule {
 
         SP_PER_01("Cannot be promoted"),
@@ -30,9 +32,16 @@ public class ProteinExistenceInferred implements Serializable {
     private ProteinExistence proteinExistence;
     private ProteinExistenceRule rule;
 
+    private ProteinExistenceInferred() { }
+
     public ProteinExistenceInferred(ProteinExistence proteinExistence, ProteinExistenceRule rule) {
         this.proteinExistence = proteinExistence;
         this.rule = rule;
+    }
+
+    public static ProteinExistenceInferred noInferenceFound() {
+
+        return NO_INFERENCE_FOUND;
     }
 
     public ProteinExistence getProteinExistence() {
@@ -41,5 +50,9 @@ public class ProteinExistenceInferred implements Serializable {
 
     public ProteinExistenceRule getRule() {
         return rule;
+    }
+
+    public boolean isInferenceFound() {
+        return rule != null;
     }
 }

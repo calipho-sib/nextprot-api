@@ -99,7 +99,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> proteinExistenceInferenceService.proteinExistencePromoted(acc))
+				.filter(acc -> proteinExistenceInferenceService.inferProteinExistence(acc).isInferenceFound())
 				.collect(Collectors.toList());
 	}
 

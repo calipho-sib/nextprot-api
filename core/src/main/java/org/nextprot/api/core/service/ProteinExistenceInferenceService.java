@@ -4,12 +4,7 @@ import org.nextprot.api.core.domain.ProteinExistenceInferred;
 
 public interface ProteinExistenceInferenceService {
 
-	/**
-	 * @return the calculated protein existence based on rules
-	 */
 	ProteinExistenceInferred inferProteinExistence(String entryAccession);
-
-	boolean proteinExistencePromoted(String entryAccession);
 
 	boolean cannotBePromotedAccordingToRule1(String entryAccession);
 

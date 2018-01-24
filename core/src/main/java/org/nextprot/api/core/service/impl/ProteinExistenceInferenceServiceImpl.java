@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -63,14 +62,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
 
-		return null;
-	}
-
-	@Override
-	public boolean proteinExistencePromoted(String entryAccession) {
-
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
-		return wouldUpgradeToPE1AccordingToOldRule(entry);
+		return ProteinExistenceInferred.noInferenceFound();
 	}
 
 	// Rules defined here:
@@ -93,6 +85,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		entry.getAnnotationsByCategory(AnnotationCategory.PEPTIDE_MAPPING).stream()
+				.filter(AnnotationUtils::isProteotypicPeptideMapping)
                 .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
                 .forEach(pm -> AnnotationUtils.addToNonInclusivePeptideMappingList(pm, filteredPeptideMappingList, 9));
 
@@ -168,22 +161,5 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
 
 		// { "id" : 84877, "accession" : "ECO:0000006", "name" : "experimental evidence" }
-	}
-
-	// Is this code (coming from EntryUtils) is the NP1 rule ?
-	@SuppressWarnings("Duplicates")
-	private boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
-
-		ProteinExistence pe = proteinExistenceDao.findProteinExistenceUniprot(e.getUniqueName(), ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
-
-		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
-		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't proteinExistencePromoted PE5
-		if (! e.getAnnotationsByCategory().containsKey("peptide-mapping")) return false; // no peptide mapping, no chance to proteinExistencePromoted to PE1
-		List<Annotation> list = e.getAnnotationsByCategory().get("peptide-mapping").stream()
-				.filter(a -> AnnotationUtils.isProteotypicPeptideMapping(a)).collect(Collectors.toList());
-		if (list==null) return false;
-		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 2, 7)) return true;
-		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 1, 9)) return true;
-		return false;
 	}
 }

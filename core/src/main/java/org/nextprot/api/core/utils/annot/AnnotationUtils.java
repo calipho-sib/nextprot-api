@@ -507,8 +507,6 @@ public class AnnotationUtils {
 	// related to new rule to PE1 upgrade 
     public static void addToNonInclusivePeptideMappingList(Annotation a, List<Annotation> list, int minPepSize) {
 	   	
-    	if (! isProteotypicPeptideMapping(a)) return;
-    	
     	for (String aIsoAC: a.getTargetingIsoformsMap().keySet() ) {
     		AnnotationIsoformSpecificity aSpec = a.getTargetingIsoformsMap().get(aIsoAC);
     		int aP1=aSpec.getFirstPosition();
