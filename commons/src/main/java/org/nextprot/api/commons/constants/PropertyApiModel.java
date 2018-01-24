@@ -25,6 +25,8 @@ public class PropertyApiModel {
 	public static final String NAME_RESOLUTION="resolution";
 	public static final String NAME_METHOD="method";
 	public static final String NAME_SELF_INTERACTION="selfInteraction";
+	public static final String NAME_PEPTIDE_UNICITY="peptide unicity";
+	public static final String NAME_PEPTIDE_UNICITY_WITH_VARIANTS="peptide unicity with variants";
 	
 
 	public static final String VALUE_TYPE_RIF="resource-internal-ref";

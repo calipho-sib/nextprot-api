@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.Isoform;
 
@@ -19,10 +20,23 @@ public interface IsoformDAO {
 	List<Isoform> findIsoformsByEntryName(String entryName);
 
 	/**
-	 * For a given master entry, all isoforms sysnomys (non-main) are returned
+	 * For a given master entry, all isoforms synonyms (non-main) are returned
 	 * @param entryName the name of the master entry
 	 * @return the list of synoyms
 	 */
     List<EntityName> findIsoformsSynonymsByEntryName(String entryName); 
 
+    /**
+     * Retrieves a list of sets. 
+     * Each set contains at least 2 accessions identifying isoforms having the same sequence 
+     * @return a list of sets, each set contains isoform accessions
+     */
+    List<Set<String>> findSetsOfEquivalentIsoforms();
+  
+    /**
+     * Retrieves a list of sets. 
+     * Each set contains at least 2 accessions identifying entries having an identical isoform (same sequence = same md5) 
+     * @return a list of sets, each set contains entry accessions
+     */
+    List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform();
 }

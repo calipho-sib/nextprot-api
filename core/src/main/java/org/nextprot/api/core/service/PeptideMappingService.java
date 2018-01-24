@@ -9,5 +9,6 @@ public interface PeptideMappingService {
 
 	List<Annotation> findNaturalPeptideMappingAnnotationsByMasterUniqueName(@ValidEntry String uniqueName);
 	List<Annotation> findSyntheticPeptideMappingAnnotationsByMasterUniqueName(@ValidEntry String uniqueName);
+	
 		
 }

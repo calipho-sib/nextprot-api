@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 class IsoformServiceImpl implements IsoformService {
@@ -98,5 +100,17 @@ class IsoformServiceImpl implements IsoformService {
 		public String apply(EntityName isoformSynonym) {
 			return isoformSynonym.getMainEntityName();
 		}
+	}
+
+	@Override
+	@Cacheable("equivalent-isoforms")
+	public List<Set<String>> getSetsOfEquivalentIsoforms() {
+		return isoformDAO.findSetsOfEquivalentIsoforms();
+	}
+
+	@Override
+	@Cacheable("entries-having-equivalent-isoforms")
+	public List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform() {
+		return isoformDAO.findSetsOfEntriesHavingAnEquivalentIsoform();
 	}
 }
