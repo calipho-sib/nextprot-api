@@ -506,31 +506,38 @@ public class AnnotationUtils {
 	
 	// related to new rule to PE1 upgrade 
     public static void addToNonInclusivePeptideMappingList(Annotation a, List<Annotation> list, int minPepSize) {
-	   	
-    	for (String aIsoAC: a.getTargetingIsoformsMap().keySet() ) {
-    		AnnotationIsoformSpecificity aSpec = a.getTargetingIsoformsMap().get(aIsoAC);
-    		int aP1=aSpec.getFirstPosition();
-    		int aP2=aSpec.getLastPosition();
-    		int aPepSize = aP2 - aP1 + 1;   		
-    		if (aPepSize < minPepSize) return;  // if < min size => ignore
-    		
-    		ListIterator<Annotation> iter = list.listIterator();
-    		while (iter.hasNext()) {
-    		    Annotation b = iter.next();
-    			AnnotationIsoformSpecificity bSpec = b.getTargetingIsoformsMap().get(aIsoAC);
-        		int bP1 = bSpec.getFirstPosition();
-        		int bP2 = bSpec.getLastPosition();
-        		
-        		// if a has same coverage as b or a  included in b => ignore
-        		if (aP1 >= bP1 && aP2 <= bP2) return;
-        		
-        		// if a includes b => remove b
-        		if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
-    		}
-    		// add it
-    		list.add(a);
+
+		Map<String, AnnotationIsoformSpecificity> timA = a.getTargetingIsoformsMap();
+
+    	for (String aIsoAC: timA.keySet()) {
+    		if (timA.containsKey(aIsoAC)) {
+				AnnotationIsoformSpecificity aSpec = timA.get(aIsoAC);
+
+				int aP1 = aSpec.getFirstPosition();
+				int aP2 = aSpec.getLastPosition();
+				int aPepSize = aP2 - aP1 + 1;
+				if (aPepSize < minPepSize) return;  // if < min size => ignore
+
+				ListIterator<Annotation> iter = list.listIterator();
+				while (iter.hasNext()) {
+					Annotation b = iter.next();
+					Map<String, AnnotationIsoformSpecificity> timB = b.getTargetingIsoformsMap();
+
+					if (timB.containsKey(aIsoAC)) {
+						AnnotationIsoformSpecificity bSpec = timB.get(aIsoAC);
+						int bP1 = bSpec.getFirstPosition();
+						int bP2 = bSpec.getLastPosition();
+
+						// if a has same coverage as b or a  included in b => ignore
+						if (aP1 >= bP1 && aP2 <= bP2) return;
+
+						// if a includes b => remove b
+						if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
+					}
+				}
+				// add it
+				list.add(a);
+			}
     	}
     }
-
-	
 }
