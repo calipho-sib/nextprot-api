@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -20,6 +21,8 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 @EntryFieldBuilder
 public class ExpressionFieldBuilder extends FieldBuilder {
 
+	protected Logger logger = Logger.getLogger(ExpressionFieldBuilder.class);
+	
 	@Override
 	protected void init(Entry entry) {
 		//Extract the tissues where there is expression ....
@@ -45,22 +48,23 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		// Expression (without stages and expression_levels)
 		SortedSet <String> cv_tissues_final = new TreeSet<String>();
 		for (String cv : cv_tissues) {
-			//cv_tissues_final.add(cv); // No duplicate: this is a Set
+			cv_tissues_final.add(cv);
 			if(cv.startsWith("TS-")) {
 				CvTerm term = terminologyservice.findCvTermByAccession(cv);
-				cv_tissues_final.add(cv); // No duplicate: this is a Set
-				//List<String> ancestors = term.getAncestorAccession();
+				if (null==term) {
+					// there is nothing more we can add to indexed fields (ancestors, synonyms), so let's return
+					logger.error(entry.getUniqueName() + " - term with accession |" + cv + "| not found with findCvTermByAccession()");
+					continue;
+				}
 				List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
-					  //if(cv.equals("TS-0079")) System.err.println("blood ancestor: " + ancestorac);
-					  cv_tissues_final.add(ancestorac);  // No duplicate: this is a Set
-					  cv_tissues_final.add(terminologyservice.findCvTermByAccession(ancestorac).getName());  // No duplicate: this is a Set
+					  cv_tissues_final.add(ancestorac);  
+					  cv_tissues_final.add(terminologyservice.findCvTermByAccession(ancestorac).getName());  
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 
 			}
-			else cv_tissues_final.add(cv); // No duplicate: this is a Set
 		}
 		for (String cv : cv_tissues_final) {
 			addField(Fields.EXPRESSION, cv.trim());

@@ -12,10 +12,10 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 public class StatementsExtractorLocalMockImpl extends StatementExtractorBase {
 
 	@Override
-	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource notUsed, String release, String geneName) {
+	public Set<Statement> getStatementsForSourceForGeneNameAndEnvironment(NextProtSource notUsed, String release, String geneNameAndEnvironment) {
 
 		StatementDictionary sd = new StatementDictionary();
-		String content = sd.getStatements(geneName);
+		String content = sd.getStatements(geneNameAndEnvironment);
 		String removedComments = content.replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "$1");
 		
 		return deserialize(new ByteArrayInputStream(removedComments.getBytes(StandardCharsets.UTF_8)));
