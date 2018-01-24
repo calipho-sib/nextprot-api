@@ -62,7 +62,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
 
-		return ProteinExistenceInferred.noInferenceFound();
+		return ProteinExistenceInferred.noInferenceFound(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT));
 	}
 
 	// Rules defined here:
