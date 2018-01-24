@@ -220,4 +220,23 @@ public class EntryUtils implements Serializable{
 
 		return fInfoCanonical;
 	 }
+
+	/**
+	 * TODO: see with pam this method
+	 * @deprecated use ProteinExistenceService instead
+	 */
+	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
+
+		ProteinExistence pe = e.getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT1);
+
+		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
+		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't upgrade PE5
+		if (! e.getAnnotationsByCategory().containsKey("peptide-mapping")) return false; // no peptide mapping, no chance to upgrade to PE1
+		List<Annotation> list = e.getAnnotationsByCategory().get("peptide-mapping").stream()
+				.filter(a -> AnnotationUtils.isProteotypicPeptideMapping(a)).collect(Collectors.toList());
+		if (list==null) return false;
+		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 2, 7)) return true;
+		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 1, 9)) return true;
+		return false;
+	}
 }

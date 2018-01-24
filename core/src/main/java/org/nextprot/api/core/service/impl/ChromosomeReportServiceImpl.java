@@ -5,9 +5,11 @@ import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,10 +34,10 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	private AnnotationService annotationService;
 
     @Autowired
-    private ProteinExistenceService proteinExistenceService;
+    private EntryBuilderService entryBuilderService;
 
     @Autowired
-	private ProteinExistenceInferenceService proteinExistenceInferenceService;
+	private ProteinExistenceService proteinExistenceService;
 
 	@Cacheable("chromosome-reports")
 	@Override
@@ -99,7 +101,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> proteinExistenceInferenceService.inferProteinExistence(acc).isInferenceFound())
+				//.filter(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withProteinExistence()).getProteinExistences().isInferenceFound())
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
 				.collect(Collectors.toList());
 	}
 
