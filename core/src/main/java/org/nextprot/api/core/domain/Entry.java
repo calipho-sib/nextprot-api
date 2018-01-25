@@ -8,7 +8,6 @@ import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
-public class Entry implements Serializable, KeyValueRepresentation {
-
-	private static final long serialVersionUID = 1L;
+public class Entry implements KeyValueRepresentation {
 
 	private EntryProperties properties;
 
