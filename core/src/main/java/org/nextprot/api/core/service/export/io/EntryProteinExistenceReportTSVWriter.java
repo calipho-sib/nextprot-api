@@ -19,7 +19,8 @@ public class EntryProteinExistenceReportTSVWriter implements EntryProteinExisten
 
         this.writer = new PrintWriter(os);
 
-        writer.write(Stream.of("neXtProt AC", "NP1", "UniProt", "Inferred from NP2", "Inferring Rule").collect(Collectors.joining("\t")));
+        writer.write(Stream.of("neXtProt AC", "UniProt", "Inferred from NP1", "Inferred from NP2", "NP2 Inferring Rule")
+                .collect(Collectors.joining("\t")));
         writer.write("\n");
     }
 
@@ -29,8 +30,8 @@ public class EntryProteinExistenceReportTSVWriter implements EntryProteinExisten
         writer.write(
                 Stream.of(
                         entryAccession,
-                        proteinExistences.getOtherProteinExistenceNexprot1().getDescription(),
                         proteinExistences.getOtherProteinExistenceUniprot().getDescription(),
+                        proteinExistences.getOtherProteinExistenceNexprot1().getDescription(),
                         proteinExistences.getInferredProteinExistence().getDescription(),
                         (proteinExistences.getProteinExistenceInferred().isInferenceFound()) ? proteinExistences.getProteinExistenceInferred().getRule().getTitle() : "No matching rule"
                 ).collect(Collectors.joining("\t")));
