@@ -192,5 +192,26 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	
     }    
    
+    @Test
+    public void testSinglePeptideMatchingOnlyVariantIsoform() throws Exception {
+
+    	// YPVVKRTEGPAGHSKGELAP 
+    	
+    	String peptide = "YPVVKRTEGPAGHSKGELAP"; 
+    	Set<String> equivIsoSet = new TreeSet<String>();
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() == 1); // single entry 
+    	assertTrue(result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> a.getCvTermName().equals(peptide) &&
+       	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).size()==0 &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).size()==0 && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())) &&
+    			a.getSynonyms()==null
+    		)
+    	);
+    	
+    }    
+   
     
 }
