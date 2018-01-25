@@ -101,7 +101,10 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldInferFromRule1() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01, proteinExistenceInferenceService.inferProteinExistence("NX_Q13740").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q13740");
+
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01, pe.getRule());
 	}
 
 	// TODO: find an entry that make a correct inference
@@ -109,25 +112,37 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldInferFromRule2() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02, proteinExistenceInferenceService.inferProteinExistence("NX_Q3LI61").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q3LI61");
+
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02, pe.getRule());
 	}
 
 	@Test
 	public void shouldInferFromRule3() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03, proteinExistenceInferenceService.inferProteinExistence("NX_Q6SJ96").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6SJ96");
+
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03, pe.getRule());
 	}
 
 	@Test
 	public void shouldInferFromRule4() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, proteinExistenceInferenceService.inferProteinExistence("NX_P59646").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+
+		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
 	}
 
 	@Test
 	public void shouldInferFromRule5() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05, proteinExistenceInferenceService.inferProteinExistence("NX_Q6V0L0").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6V0L0");
+
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05, pe.getRule());
 	}
 
 	// Could not find an entry that match this rule:
@@ -143,7 +158,10 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldInferFromRule6() {
 
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, proteinExistenceInferenceService.inferProteinExistence("NX_Q9ULZ1").getRule());
+		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q9ULZ1");
+
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
 	}
 
 	@Test

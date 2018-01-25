@@ -1,9 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntityName;
@@ -15,6 +11,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Repository
 public class IsoformDAOImpl implements IsoformDAO {
@@ -120,6 +123,40 @@ public class IsoformDAOImpl implements IsoformDAO {
 
 			return entityName;
 		}
+	}
+
+	private static class EquivalentIsoformsRowMapper implements ParameterizedRowMapper<Set<String>> {
+		@Override
+		public Set<String> mapRow(ResultSet resultSet, int row) throws SQLException {
+			String[] isolist = resultSet.getString("isolist").split(",");
+			Set<String> isoset = new TreeSet<>(Arrays.asList(isolist));
+			return isoset;
+		}
+	}
+
+	private static class EquivalentIsoformsAsEquivalentEntriesRowMapper implements ParameterizedRowMapper<Set<String>> {
+		@Override
+		public Set<String> mapRow(ResultSet resultSet, int row) throws SQLException {
+			Set<String> entryset = new TreeSet<>();
+			String[] isolist = resultSet.getString("isolist").split(",");
+			for (int i=0;i<isolist.length;i++) {
+				String entryAc = isolist[i].split("-")[0];
+				entryset.add(entryAc);
+			}
+			return entryset;
+		}
+	}
+
+	@Override
+	public List<Set<String>> findSetsOfEquivalentIsoforms() {
+		String sql = sqlDictionary.getSQLQuery("equivalent-isoforms");
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new EquivalentIsoformsRowMapper());
+	}
+
+	@Override
+	public List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform() {
+		String sql = sqlDictionary.getSQLQuery("equivalent-isoforms");
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new EquivalentIsoformsAsEquivalentEntriesRowMapper());
 	}
 
 }

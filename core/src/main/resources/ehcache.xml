@@ -347,4 +347,14 @@
 		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
+
+  	<cache name="equivalent-isoforms" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+  	<cache name="entries-having-equivalent-isoforms" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
 </ehcache>

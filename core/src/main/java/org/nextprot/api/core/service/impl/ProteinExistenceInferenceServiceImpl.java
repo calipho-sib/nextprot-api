@@ -51,7 +51,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 		}
 		if (promotedAccordingToRule4(entryAccession)) {
 
-			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
+			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
 		}
 		if (promotedAccordingToRule5(entryAccession)) {
 

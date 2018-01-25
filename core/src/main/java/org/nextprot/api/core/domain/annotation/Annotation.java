@@ -267,7 +267,9 @@ public class Annotation implements Serializable, IsoformSpecific {
      * @param key the key to access properties
      */
     public Collection<AnnotationProperty> getPropertiesByKey(String key) {
-        return Collections.unmodifiableCollection(properties.get(key));
+    	Collection<AnnotationProperty> props = properties.get(key);
+    	if (props==null) props = new ArrayList<>();
+        return Collections.unmodifiableCollection(props);
     }
 
     /**
