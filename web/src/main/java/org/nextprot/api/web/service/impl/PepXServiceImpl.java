@@ -21,7 +21,6 @@ import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.web.domain.PepXResponse;
 import org.nextprot.api.web.domain.PepXResponse.PepXEntryMatch;
 import org.nextprot.api.web.domain.PepXResponse.PepXIsoformMatch;
-import org.nextprot.api.web.domain.PepXResponse.PepXMatch;
 import org.nextprot.api.web.domain.PepxUtils;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PepXServiceImpl implements PepXService {
@@ -62,7 +60,12 @@ public class PepXServiceImpl implements PepXService {
 		
 		Set<String> entriesNames = pepXResponse.getEntriesNames();
 		for (String entryName : entriesNames) {
-			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().with("variant").withOverview().withoutAdditionalReferences().withoutProperties(); // .with("variant")
+			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName)
+                    .withTargetIsoforms()
+                    .with("variant")
+                    .withOverview()
+                    .withoutAdditionalReferences()
+                    .withoutProperties(); // .with("variant")
 			Entry entry = entryBuilderService.build(targetIsoconf);
 
 			List<Annotation> virtualAnnotations = new ArrayList<>();
@@ -96,8 +99,8 @@ public class PepXServiceImpl implements PepXService {
 
 		Map<String,PeptideUnicity> puMap = computePeptideUnicityStatus(entries, false);    // peptide unicity over wildtype isoforms
 		Map<String,PeptideUnicity> puVarMap = computePeptideUnicityStatus(entries, true);  // peptide unicity over variant isoforms
-		entries.stream().forEach(e -> {
-			e.getAnnotations().stream().forEach(a -> {
+		entries.forEach(e -> {
+			e.getAnnotations().forEach(a -> {
 				String pep = a.getCvTermName();
 				PeptideUnicity pu = puMap.get(pep);
 				if (pu!=null) {
@@ -117,47 +120,6 @@ public class PepXServiceImpl implements PepXService {
 				}
 			});
 		});
-	}
-	
-	
-	public List<Entry> findEntriesWithPeptidesOLD(String peptides, boolean modeIsoleucine) {
-
-		List<Entry> entries = new ArrayList<>();
-
-		PepXResponse pepXResponse = getPepXResponse(peptides, modeIsoleucine);
-		
-		Map<String,String> peptideUnicityMap = computePeptideUnicityStatusOLD(pepXResponse,false);
-		Map<String,String> peptideUnicityWithVariantsMap = computePeptideUnicityStatusOLD(pepXResponse,true);
-
-		Set<String> entriesNames = pepXResponse.getEntriesNames();
-		for (String entryName : entriesNames) {
-			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().with("variant").withOverview().withoutAdditionalReferences().withoutProperties(); // .with("variant")
-			Entry entry = entryBuilderService.build(targetIsoconf);
-
-			List<Annotation> virtualAnnotations = new ArrayList<>();
-			Set<String> peptidesForEntry = pepXResponse.getPeptidesForEntry(entryName);
-			for(String peptide : peptidesForEntry){
-				String pu = peptideUnicityMap.get(peptide);
-				String puVar = peptideUnicityWithVariantsMap.get(peptide);
-				PepXEntryMatch pepxEntryMatch = pepXResponse.getPeptideMatch(peptide).getPepxMatchesForEntry(entryName);
-				if(pepxEntryMatch != null && pepxEntryMatch.getIsoforms() != null && pepxEntryMatch.getIsoforms().size() > 0){
-					virtualAnnotations.addAll(buildEntryWithVirtualAnnotationsOLD(peptide, modeIsoleucine, pepxEntryMatch.getIsoforms(), entry.getAnnotations(), entry.getIsoforms(), pu, puVar));
-				}
-			}
-
-			if((virtualAnnotations != null) && (!virtualAnnotations.isEmpty())){
-
-				Entry resultEntry = new Entry(entry.getUniqueName());
-				//Adds the overview as well
-				resultEntry.setOverview(entry.getOverview());
-				resultEntry.setAnnotations(virtualAnnotations);
-
-				entries.add(resultEntry);
-			}
-		}
-
-		return entries;
-
 	}
 
 	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
@@ -199,12 +161,13 @@ public class PepXServiceImpl implements PepXService {
 	 * Computes a unicity value for each peptide: UNIQUE, PSEUDO_UNIQUE, NON_UNIQUE
 	 * based on the response returned by pepx (a list of peptide - isoform matches)
 	 * by using the PeptideUnicityService
-	 * @param response
+	 * @param entries
+	 * @param withVariants
 	 * @return a map with key = peptide sequence, value = unicity value
 	 */
 	private Map<String,PeptideUnicity> computePeptideUnicityStatus(List<Entry> entries, boolean withVariants) {
 		Map<String,Set<String>> pepIsoSetMap = new HashMap<>();
-		entries.stream().forEach(e -> {
+		entries.forEach(e -> {
 			e.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream()
 			.filter(a -> a.getVariant() == null || withVariants)
 			.forEach(a -> {
@@ -216,7 +179,7 @@ public class PepXServiceImpl implements PepXService {
 			});
 		});
 		Map<String,PeptideUnicity> pepUnicityMap = new HashMap<>();
-		pepIsoSetMap.entrySet().stream().forEach(e ->   {
+		pepIsoSetMap.entrySet().forEach(e -> {
 			String pep = e.getKey();
 			PeptideUnicity pu = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(e.getValue());
 			pepUnicityMap.put(pep, pu);
@@ -380,127 +343,4 @@ public class PepXServiceImpl implements PepXService {
 	- LVVLATPQVSDSMR
 	- GALVLGSSL
 	 */
-	
-	
-	
-	//This method is static friendly so that it can be tested ////////////////////////////////
-	//CrossedCheckedWithEntryVariantsAndIsoforms
-	static List<Annotation> buildEntryWithVirtualAnnotationsOLD(String peptide, boolean modeIsoleucine, List<PepXIsoformMatch> pepXisoforms, List<Annotation> varAnnotations, List<Isoform> isoforms, String peptideUnicity, String peptideUnicityWithVariants) {
-
-		
-		List<Annotation> finalAnnotations = new ArrayList<>();
-		for (PepXIsoformMatch isoNameAndOptionalPosition : pepXisoforms) {
-			
-			String isoformAc = isoNameAndOptionalPosition.getIsoformAccession();
-			
-			Annotation annotation = new Annotation();
-			annotation.setAnnotationCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION);
-			annotation.setCvTermName(peptide);
-			//annotation.setCvTermType(peptideUnicity);
-			if (peptideUnicity!=null) annotation.addProperty(buildAnnotationProperty("PEPTIDE_UNICITY", peptideUnicity));
-			if (peptideUnicityWithVariants!=null) annotation.addProperty(buildAnnotationProperty("PEPTIDE_UNICITY_WITH_VARIANTS", peptideUnicityWithVariants));
-			
-			annotation.setDescription("This virtual annotation describes the peptide " + peptide + " found in " + isoformAc);
-
-			AnnotationIsoformSpecificity is = new AnnotationIsoformSpecificity();
-			is.setIsoformAccession(isoformAc);
-			if (isoNameAndOptionalPosition.getPosition() != null) {// It means there is a variant!!!
-
-				int startPeptidePosition = isoNameAndOptionalPosition.getPosition();
-				int endPeptidePosition = startPeptidePosition + peptide.length();
-				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, varAnnotations, isoformAc);
-
-				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformAc);
-				if(iso == null){
-					throw new NextProtException("The variant at " + startPeptidePosition +  " is not specific for this isoform " + isoformAc);
-				}
-				
-				List<Annotation> validAnnotations = filterValidVariantAnnotations(peptide, modeIsoleucine, variantAnnotations, isoformAc, iso.getSequence());
-
-				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
-					
-					LOGGER.warn("No valid variants found for isoform " + isoformAc + " at position " + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
-					continue;
-					
-					//We used to throw an exception, but now we just skip
-					//throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
-				
-				}
-				
-				if (validAnnotations.size() > 1) {
-
-					LOGGER.warn("There is more than 1 valid variant (" + validAnnotations.size() + ") for isoform (returning the 1st) " + isoformAc + " between position " + startPeptidePosition + " and " + endPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
-
-					//Takes only the first valid
-					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformAc);
-					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformAc);
-
-					is.setFirstPosition(startPos);
-					is.setLastPosition(endPos);
-
-					AnnotationVariant var = validAnnotations.get(0).getVariant();
-					annotation.setVariant(var);
-
-					
-				}else { //one variant on that position
-
-					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformAc);
-					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformAc);
-
-					is.setFirstPosition(startPos);
-					is.setLastPosition(endPos);
-
-					AnnotationVariant var = validAnnotations.get(0).getVariant();
-					annotation.setVariant(var);
-
-				}
-
-			}else { //No variant
-				
-				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformAc);
-				String sequence = (iso != null) ? iso.getSequence() : null;
-				
-				boolean isPeptideContained = PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine);
-				
-				if(!isPeptideContained){
-					LOGGER.warn("PepX returned a peptide (" + peptide + ") for an isoform (" + isoformAc + ") that is not in the current isoform in neXtProt");
-					continue;
-				}
-				
-				//We used to throw an exception, but this would break the program (the algorithm could be improved to detect the specific case where pepx return a peptide of length 6 and generate a real error on other cases)
-				//NPreconditions.checkTrue(isPeptideContained, "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
-				
-			}
-			
-			annotation.addTargetingIsoforms(Arrays.asList(is));
-			finalAnnotations.add(annotation);
-		}
-
-		return finalAnnotations;
-
-	}
-	
-	
-	/** 
-	 * Computes a unicity value for each peptide: UNIQUE, PSEUDO_UNIQUE, NON_UNIQUE
-	 * based on the response returned by pepx (a list of peptide - isoform matches)
-	 * by using the PeptideUnicityService
-	 * @param response
-	 * @return a map with key = peptide sequence, value = unicity value
-	 */
-	private Map<String,String> computePeptideUnicityStatusOLD(PepXResponse response, boolean withVariants) {
-		Map<String,String> pepUnicityMap = new HashMap<>();
-		for (PepXMatch pm: response.getPeptideMatches()) {
-			String pep = pm.getPeptide();
-			Set<String> isoSet = pm.getEntryMatches().stream()
-				.flatMap(em -> em.getIsoforms().stream())
-				.filter(im -> im.getPosition() == null || withVariants)
-				.map(im -> im.getIsoformAccession())
-				.collect(Collectors.toSet());
-			PeptideUnicity pu = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoSet);
-			pepUnicityMap.put(pep, pu.getValue().name());
-		}
-		return pepUnicityMap;
-	}	
-	
 }
