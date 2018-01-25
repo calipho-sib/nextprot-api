@@ -19,7 +19,7 @@ class ProteinExistenceServiceImpl implements ProteinExistenceService {
 	private ProteinExistenceInferenceService proteinExistenceInferenceService;
 
 	@Override
-	@Cacheable("protein-existence")
+	@Cacheable("protein-existences")
 	public ProteinExistences getProteinExistences(String entryAccession) {
 
 		ProteinExistences proteinExistences = new ProteinExistences();

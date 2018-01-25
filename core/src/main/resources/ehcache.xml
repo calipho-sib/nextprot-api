@@ -343,7 +343,7 @@
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
 
-	<cache name="protein-existence" overflowToOffHeap="false" overflowToDisk="true"
+	<cache name="protein-existences" overflowToOffHeap="false" overflowToDisk="true"
 		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
