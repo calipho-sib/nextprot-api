@@ -2,12 +2,15 @@ package org.nextprot.api.core.service.export.io;
 
 import org.codehaus.plexus.util.StringOutputStream;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+// TODO: test should not be ignored once db changed
+@Ignore
 @ActiveProfiles({ "dev" })
 public class EntryProteinExistenceReportTSVWriterTest extends CoreUnitBaseTest {
 
