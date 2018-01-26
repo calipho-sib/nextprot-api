@@ -19,5 +19,6 @@ public interface PeptideMappingDao {
 	List<Map<String,Object>> findPeptideMappingAnnotationsByMasterId(Long id, boolean withNatural, boolean withSynthetic);
 	Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean withNatural);
 	Map<String,List<AnnotationProperty>> findPeptideAnnotationPropertiesMap(List<String> names);
+	List<String> findPeptideIsoformMappingsList();
 	
 }

@@ -133,5 +133,16 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 		return result;
 	}
 
-	
+
+	@Override
+	public List<String> findPeptideIsoformMappingsList() {
+		
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-isoform-mappings"),new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int row) throws SQLException {
+				return rs.getString("pep_unique_name") + ":" + rs.getString("iso_names"); 
+			}
+		});
+
+	}
 }
