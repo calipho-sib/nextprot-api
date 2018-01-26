@@ -37,7 +37,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
     private EntryBuilderService entryBuilderService;
 
     @Autowired
-	private ProteinExistenceService proteinExistenceService;
+	private OverviewService overviewService;
 
 	@Cacheable("chromosome-reports")
 	@Override
@@ -127,7 +127,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			ProteinExistence pe = proteinExistenceService.getProteinExistences(entry).getInferredProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getInferredProteinExistence();
 
 			if (!pe2entries.containsKey(pe)) {
 

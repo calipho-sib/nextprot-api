@@ -3,7 +3,7 @@ package org.nextprot.api.core.service.export.io;
 import org.codehaus.plexus.util.StringOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.service.ProteinExistenceService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class EntryProteinExistenceReportTSVWriterTest extends CoreUnitBaseTest {
 
     @Autowired
-    private ProteinExistenceService proteinExistenceService;
+    private OverviewService overviewService;
 
     @Test
     public void testExport() {
@@ -20,7 +20,7 @@ public class EntryProteinExistenceReportTSVWriterTest extends CoreUnitBaseTest {
         StringOutputStream sos = new StringOutputStream();
         EntryProteinExistenceReportTSVWriter writer = new EntryProteinExistenceReportTSVWriter(sos);
 
-        writer.write("NX_Q6SJ96", proteinExistenceService.getProteinExistences("NX_Q6SJ96"));
+        writer.write("NX_Q6SJ96", overviewService.findOverviewByEntry("NX_Q6SJ96").getProteinExistences());
         writer.close();
 
         String[] observedLines = sos.toString().split("\\n");

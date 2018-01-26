@@ -10,7 +10,7 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.ProteinExistenceService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.export.EntryProteinExistenceReportWriter;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
@@ -56,7 +56,7 @@ public class ExportController {
     private MasterIdentifierService masterIdentifierService;
 
     @Autowired
-    private ProteinExistenceService proteinExistenceService;
+    private OverviewService overviewService;
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
@@ -180,7 +180,7 @@ public class ExportController {
         try {
             EntryProteinExistenceReportWriter writer = new EntryProteinExistenceReportTSVWriter(response.getOutputStream());
 
-            masterIdentifierService.findUniqueNames().forEach(entryAccession -> writer.write(entryAccession, proteinExistenceService.getProteinExistences(entryAccession)));
+            masterIdentifierService.findUniqueNames().forEach(entryAccession -> writer.write(entryAccession, overviewService.findOverviewByEntry(entryAccession).getProteinExistences()));
 
             writer.close();
         } catch (IOException e) {
