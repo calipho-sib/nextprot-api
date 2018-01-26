@@ -212,21 +212,6 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		evidences.add(buildDistinctAnnotationEvidence(3));
 		evMap.put(pep2, evidences);
 		
-		// properties as provided by DAO
-		Map<String,List<AnnotationProperty>> propMap = new HashMap<>();
-		List<AnnotationProperty> props;
-		// properties related to pep1
-		props = new ArrayList<>();
-		props.add(buildAnnotationProperty(pep1, "is proteotypic", "Y"));
-		props.add(buildAnnotationProperty(pep1, "is natural", "Y"));
-		props.add(buildAnnotationProperty(pep1, "is synthetic", "N"));
-		propMap.put(pep1, props);
-		// properties related to pep2
-		props = new ArrayList<>();
-		props.add(buildAnnotationProperty(pep2, "is proteotypic", "N"));
-		props.add(buildAnnotationProperty(pep2, "is natural", "Y"));
-		props.add(buildAnnotationProperty(pep2, "is synthetic", "N"));
-		propMap.put(pep2, props);
 
 		Map<String,PeptideUnicity> pepNameUnicityMap = new HashMap<>();
 		pepNameUnicityMap.put("NX_PEPT00113713", PeptideUnicity.createPeptideUnicityUnique());
@@ -244,8 +229,6 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 
     	Annotation annot;
     	AnnotationEvidence ev;
-    	AnnotationProperty prop;
-    	AnnotationIsoformSpecificity spec;
     	
     	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     	// checking annot 1
