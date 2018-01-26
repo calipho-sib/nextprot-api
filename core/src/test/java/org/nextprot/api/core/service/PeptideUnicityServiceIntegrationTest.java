@@ -9,13 +9,15 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({ "dev","cache" })
 public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
         
-    @Autowired
-	private PeptideUnicityService peptideUnicityService;
+    @Autowired private PeptideUnicityService peptideUnicityService;
+	@Autowired private CacheManager cacheManager;
+
 
     
 /* 
@@ -144,6 +146,9 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     @Test
     public void tesUnicityOfSomeKnownPeptides() {
 
+    	// clear related cache to make sure we have no PeptideUnicity serialization version conflict
+    	cacheManager.getCache("peptide-name-unicity-map").clear();
+    	
     	PeptideUnicity pu;
     	Set<String> expectedEquivalentIsoSet;
     	long t0;
@@ -153,8 +158,7 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01668698"); // [NX_P02771-1]
     	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.UNIQUE);
     	long tFirst = System.currentTimeMillis()-t0;
-    	
-    	
+    	    	
     	// subsequent calls should use cache
     	t0 = System.currentTimeMillis();
     	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01410369"); // maps [NX_P02679-1, NX_P02679-2] 
