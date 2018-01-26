@@ -227,7 +227,7 @@ public class EntryUtils implements Serializable{
 	 */
 	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 
-		ProteinExistence pe = e.getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT1);
+		ProteinExistence pe = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT1);
 
 		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
 		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't upgrade PE5

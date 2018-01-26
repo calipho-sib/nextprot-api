@@ -31,7 +31,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private ExperimentalContextService expCtxService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;
-	@Autowired private ProteinExistenceService proteinExistenceService;
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 		
@@ -100,10 +99,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			
 			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
-			}
-
-			if(entryConfig.hasProteinExistence()){
-				entry.setProteinExistences(proteinExistenceService.getProteinExistences(entryName));
 			}
 		}
 		//CPU Intensive

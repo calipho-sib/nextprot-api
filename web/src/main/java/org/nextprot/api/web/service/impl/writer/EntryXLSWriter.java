@@ -181,7 +181,7 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
             config.withBlock(block);
         }
 
-        Entry entry = entryBuilderService.build(config.withProteinExistence());
+        Entry entry = entryBuilderService.build(config);
 
         for (Record record : entryDataProvider.getRecords(entry)) {
 

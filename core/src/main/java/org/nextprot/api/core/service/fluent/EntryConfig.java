@@ -9,7 +9,6 @@ public class EntryConfig implements KeyValueRepresentation{
 	
 	private boolean overview, publications, genomicMappings, xrefs, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
 	private boolean enzymes;
-	private boolean proteinExistence;
 	private boolean goldOnly = false;
 	private boolean bed = true;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
@@ -87,10 +86,6 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public boolean hasBed() {
 		return this.bed;
-	}
-
-	public boolean hasProteinExistence() {
-		return proteinExistence;
 	}
 
 	public String getEntryName() {
@@ -172,15 +167,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		this.enzymes = true; return this; //TODO is this necessary? can't we write a method on top of overview names???
 	}
 
-	public EntryConfig withProteinExistence() {
-		proteinExistence = true;
-		return this;
-	}
-
 	public EntryConfig withEverything() {
 		this.withOverview().withAnnotations().withPublications().withXrefs()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-		.withTargetIsoforms().withExperimentalContexts().withEnzymes().withProteinExistence();
+		.withTargetIsoforms().withExperimentalContexts().withEnzymes();
 		return this;
 	}
 

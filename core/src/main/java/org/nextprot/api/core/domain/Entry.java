@@ -43,8 +43,6 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<ExperimentalContext> experimentalContexts;
 
-	private ProteinExistences proteinExistences;
-
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
 	}
@@ -197,14 +195,6 @@ public class Entry implements KeyValueRepresentation {
 
 	public void setProperties(EntryProperties properties) {
 		this.properties = properties;
-	}
-
-	public ProteinExistences getProteinExistences() {
-		return proteinExistences;
-	}
-
-	public void setProteinExistences(ProteinExistences proteinExistences) {
-		this.proteinExistences = proteinExistences;
 	}
 
 	/**

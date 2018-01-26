@@ -1,7 +1,7 @@
 <overview>
 ## ----------------- PROTEIN EXISTENCE -----------------------------
-#if($entry.proteinExistences)
-    <protein-existence value='$entry.proteinExistences.getInferredProteinExistence().descriptionName'/>
+#if($entry.overview.proteinExistences)
+    <protein-existence value='$entry.overview.proteinExistences.getInferredProteinExistence().descriptionName'/>
 #end
 ## ----------------- PROTEIN NAMES ---------------------------------
 #if($entry.overview.proteinNames)
