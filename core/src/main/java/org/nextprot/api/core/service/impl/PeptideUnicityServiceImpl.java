@@ -1,14 +1,21 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -16,6 +23,7 @@ import org.springframework.stereotype.Service;
 class PeptideUnicityServiceImpl implements PeptideUnicityService {
 
 	@Autowired private IsoformService isoService;
+	@Autowired private PeptideMappingDao peptideMappingDao;
 	
 	
 	@Override
@@ -56,6 +64,29 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 				return PeptideUnicity.createPeptideUnicityNonUnique(equivalentIsoSet);
 			}
 		}
+	}
+
+
+	@Override
+	@Cacheable("peptide-name-unicity-map")
+	public Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
+
+		Map<String,PeptideUnicity> result = new HashMap<>();
+		System.out.println("" + new Date() + "PeptideUnicityService building cache...");
+		List<String> list = peptideMappingDao.findPeptideIsoformMappingsList();
+		System.out.println("list size:" + list.size());
+		for (int i=0;i<list.size();i++) {
+			String row = list.get(i);
+			String[] fields = row.split(":");
+			String pep = fields[0];
+			String[] isolist = fields[1].split(",");
+			Set<String> mappedIsoSet = new HashSet<>(Arrays.asList(isolist));
+			PeptideUnicity pu = getPeptideUnicityFromMappingIsoforms(mappedIsoSet);
+			result.put(pep, pu);
+		}
+		System.out.println("size:" + result.size());
+		System.out.println("" + new Date() + "PeptideUnicityService building cache... done");
+		return result;
 	}
 	
 
