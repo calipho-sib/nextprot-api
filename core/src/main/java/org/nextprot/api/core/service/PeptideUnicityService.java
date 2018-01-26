@@ -1,7 +1,8 @@
 package org.nextprot.api.core.service;
 
-import java.util.Set;
 import org.nextprot.api.core.domain.PeptideUnicity;
+
+import java.util.Set;
 
 public interface PeptideUnicityService {
 

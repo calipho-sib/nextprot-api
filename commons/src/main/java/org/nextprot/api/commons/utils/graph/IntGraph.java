@@ -424,7 +424,10 @@ public class IntGraph implements DirectedGraph, Externalizable {
         for (int node : nodes) {
              sg.addNode(node);
              if (nodeMetadata.containsKey(node)) {
-                 sg.nodeMetadata.put(node, new HashMap<>(nodeMetadata.get(node)));
+                 Map<String, String> map = nodeMetadata.get(node);
+
+                 sg.nodeMetadata.put(node, new HashMap<>(map));
+                 map.values().forEach(v -> sg.nodesByMetadataValue.put(v, node));
              }
         }
 

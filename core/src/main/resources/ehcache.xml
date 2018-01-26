@@ -14,7 +14,7 @@
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
 	</cache>
-	
+
 	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 
 	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
@@ -342,13 +342,14 @@
            diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
+
   	<cache name="equivalent-isoforms" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
+
   	<cache name="entries-having-equivalent-isoforms" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
-    
 </ehcache>

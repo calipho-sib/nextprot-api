@@ -1,7 +1,5 @@
 package org.nextprot.api.etl.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Api(name = "ETL", description = "Extract Transform And Load Statements", group="ETL")

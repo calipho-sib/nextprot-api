@@ -1,13 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -19,6 +11,14 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 

@@ -9,13 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 class EntryPropertiesServiceImpl implements EntryPropertiesService {
-	
-	@Autowired private EntryPropertiesDao entryPropertiesDao;
+
+	@Autowired
+	private EntryPropertiesDao entryPropertiesDao;
 
 	@Override
 	@Cacheable("entry-properties")
 	public EntryProperties findEntryProperties(String uniqueName) {
-		return this.entryPropertiesDao.findEntryProperties(uniqueName);
-	}	
 
+		return entryPropertiesDao.findEntryProperties(uniqueName);
+	}
 }

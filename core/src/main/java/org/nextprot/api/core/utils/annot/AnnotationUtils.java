@@ -1,24 +1,9 @@
 package org.nextprot.api.core.utils.annot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.BioObject;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -27,6 +12,9 @@ import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AnnotationUtils {
@@ -517,34 +505,39 @@ public class AnnotationUtils {
 	}
 	
 	// related to new rule to PE1 upgrade 
-    public static void addToNonInclusivePeptideMappingList(Annotation a, ArrayList<Annotation> list, int minPepSize) {
-	   	
-    	if (! isProteotypicPeptideMapping(a)) return;
-    	
-    	for (String aIsoAC: a.getTargetingIsoformsMap().keySet() ) {
-    		AnnotationIsoformSpecificity aSpec = a.getTargetingIsoformsMap().get(aIsoAC);
-    		int aP1=aSpec.getFirstPosition();
-    		int aP2=aSpec.getLastPosition();
-    		int aPepSize = aP2 - aP1 + 1;   		
-    		if (aPepSize < minPepSize) return;  // if < min size => ignore
-    		
-    		ListIterator<Annotation> iter = list.listIterator();
-    		while (iter.hasNext()) {
-    		    Annotation b = iter.next();
-    			AnnotationIsoformSpecificity bSpec = b.getTargetingIsoformsMap().get(aIsoAC);
-        		int bP1 = bSpec.getFirstPosition();
-        		int bP2 = bSpec.getLastPosition();
-        		
-        		// if a has same coverage as b or a  included in b => ignore
-        		if (aP1 >= bP1 && aP2 <= bP2) return;
-        		
-        		// if a includes b => remove b
-        		if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
-    		}
-    		// add it
-    		list.add(a);
+    public static void addToNonInclusivePeptideMappingList(Annotation a, List<Annotation> list, int minPepSize) {
+
+		Map<String, AnnotationIsoformSpecificity> timA = a.getTargetingIsoformsMap();
+
+    	for (String aIsoAC: timA.keySet()) {
+    		if (timA.containsKey(aIsoAC)) {
+				AnnotationIsoformSpecificity aSpec = timA.get(aIsoAC);
+
+				int aP1 = aSpec.getFirstPosition();
+				int aP2 = aSpec.getLastPosition();
+				int aPepSize = aP2 - aP1 + 1;
+				if (aPepSize < minPepSize) return;  // if < min size => ignore
+
+				ListIterator<Annotation> iter = list.listIterator();
+				while (iter.hasNext()) {
+					Annotation b = iter.next();
+					Map<String, AnnotationIsoformSpecificity> timB = b.getTargetingIsoformsMap();
+
+					if (timB.containsKey(aIsoAC)) {
+						AnnotationIsoformSpecificity bSpec = timB.get(aIsoAC);
+						int bP1 = bSpec.getFirstPosition();
+						int bP2 = bSpec.getLastPosition();
+
+						// if a has same coverage as b or a  included in b => ignore
+						if (aP1 >= bP1 && aP2 <= bP2) return;
+
+						// if a includes b => remove b
+						if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
+					}
+				}
+				// add it
+				list.add(a);
+			}
     	}
     }
-
-	
 }

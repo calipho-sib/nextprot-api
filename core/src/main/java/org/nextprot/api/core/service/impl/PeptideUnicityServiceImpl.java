@@ -1,15 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 
 @Service

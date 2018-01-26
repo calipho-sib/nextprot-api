@@ -1,23 +1,15 @@
 package org.nextprot.api.core.service;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.PeptideUnicity;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.*;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @ActiveProfiles({ "dev","cache" })
 public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{

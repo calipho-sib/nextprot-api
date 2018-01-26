@@ -3,7 +3,10 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.ChromosomeReport;
+import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -28,13 +31,13 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	private ReleaseInfoService releaseInfoService;
 
 	@Autowired
-	private OverviewService overviewService;
-
-	@Autowired
-	private EntryBuilderService entryBuilderService;
-
-	@Autowired
 	private AnnotationService annotationService;
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
+    @Autowired
+	private OverviewService overviewService;
 
 	@Cacheable("chromosome-reports")
 	@Override
@@ -97,8 +100,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
-		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withEverything())))
+        return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+				//.filter(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withProteinExistence()).getProteinExistences().isInferenceFound())
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
 				.collect(Collectors.toList());
 	}
 
@@ -119,20 +123,18 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	private void setByProteinEvidenceEntryCount(List<String> chromosomeEntries, ChromosomeReport.Summary summary) {
 
-		Map<ProteinExistence, List<String>> pe2entries = new HashMap<>();
+		Map<ProteinExistence, List<String>> pe2entries = new EnumMap<>(ProteinExistence.class);
 
-		for (String entry : chromosomeEntries) {
+        for (String entry : chromosomeEntries) {
 
-			Overview overview = overviewService.findOverviewByEntry(entry);
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getInferredProteinExistence();
 
-			ProteinExistence level = overview.getProteinExistence();
+			if (!pe2entries.containsKey(pe)) {
 
-			if (!pe2entries.containsKey(level)) {
-
-				pe2entries.put(level, new ArrayList<>());
+				pe2entries.put(pe, new ArrayList<>());
 			}
 
-			pe2entries.get(level).add(entry);
+			pe2entries.get(pe).add(entry);
 		}
 
 		pe2entries.forEach((key, value) -> summary.setEntryCount(key, value.size()));

@@ -1,8 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -15,12 +12,11 @@ import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformSet;
-import org.nextprot.commons.statements.TargetIsoformStatementPosition;
+import org.nextprot.commons.statements.*;
 import org.nextprot.commons.statements.constants.AnnotationType;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class StatementTransformationUtil {
