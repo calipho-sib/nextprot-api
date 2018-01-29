@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.service.IsoformService;
@@ -17,6 +16,7 @@ import org.nextprot.api.core.service.PeptideUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
 
 
 @Service

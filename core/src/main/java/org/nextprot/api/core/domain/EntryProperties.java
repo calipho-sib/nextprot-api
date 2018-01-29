@@ -5,9 +5,8 @@ import java.io.Serializable;
 
 public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
 	
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 6L;
 
-	private ProteinExistence proteinExistence;
 	private int ptmCount;
 	private int varCount;
 	private int isoformCount;
@@ -19,7 +18,7 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private boolean filtermutagenesis;
 	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
-	
+
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
 	}
@@ -100,13 +99,5 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 
 	public void setPtmCount(int ptmCount) {
 		this.ptmCount = ptmCount;
-	}
-
-	public ProteinExistence getProteinExistence() {
-		return proteinExistence;
-	}
-
-	public void setProteinExistence(ProteinExistence proteinExistence) {
-		this.proteinExistence = proteinExistence;
 	}
 }

@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+
+import java.util.List;
 
 public interface PeptideMappingService {
 

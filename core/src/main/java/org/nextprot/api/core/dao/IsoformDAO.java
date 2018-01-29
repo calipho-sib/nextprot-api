@@ -1,9 +1,9 @@
 package org.nextprot.api.core.dao;
 
+import org.nextprot.api.core.domain.Isoform;
+
 import java.util.List;
 import java.util.Set;
-
-import org.nextprot.api.core.domain.Isoform;
 
 /**
  * Returns information about the isoforms and their synonyms

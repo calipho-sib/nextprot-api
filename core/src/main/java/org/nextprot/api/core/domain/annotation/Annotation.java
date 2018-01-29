@@ -320,12 +320,11 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void addProperty(AnnotationProperty property) {
 
-            String propertyName = property.getName();
-            if (!properties.containsKey(propertyName)) {
-                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
-            }
-            properties.get(propertyName).add(property);
-
+		String propertyName = property.getName();
+		if (!properties.containsKey(propertyName)) {
+			properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
+		}
+		properties.get(propertyName).add(property);
 	}
 	
 	

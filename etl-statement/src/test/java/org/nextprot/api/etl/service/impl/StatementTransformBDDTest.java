@@ -1,11 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import static org.junit.Assert.fail;
-import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
-
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -16,6 +10,12 @@ import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
+
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static org.junit.Assert.fail;
+import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
 
 
 public class StatementTransformBDDTest extends StatementETLBaseUnitTest {

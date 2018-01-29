@@ -4,14 +4,16 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.EntityNameService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;

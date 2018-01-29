@@ -1,9 +1,9 @@
 package org.nextprot.api.etl.service;
 
-import java.util.Set;
-
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
+
+import java.util.Set;
 
 public interface StatementExtractorService {
 

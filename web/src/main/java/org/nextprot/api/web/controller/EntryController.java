@@ -45,6 +45,7 @@ public class EntryController {
 	@Autowired private EntryReportService entryReportService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private ProteinExistenceService proteinExistenceService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {

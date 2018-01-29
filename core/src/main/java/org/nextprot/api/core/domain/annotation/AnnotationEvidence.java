@@ -461,6 +461,24 @@ public class AnnotationEvidence implements Serializable {
 		return Optional.empty();
 	}
 
+	public boolean isExpressionLevelDetected(String level) {
+
+		return isExpressionLevelDetected(Collections.singletonList(level));
+	}
+
+	public boolean isExpressionLevelDetected(List<String> possibleLevels) {
+
+		if (propertiesMap.containsKey("expressionLevel")) {
+
+			String level = extractProperty("expressionLevel");
+
+			return possibleLevels.stream()
+					.anyMatch(lvl -> lvl.equals(level));
+		}
+
+		return false;
+	}
+
 	@Deprecated
 	public String getIntegrationLevel() {
 		return extractProperty("integrationLevel");

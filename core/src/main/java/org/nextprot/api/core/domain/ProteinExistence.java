@@ -128,4 +128,9 @@ public enum ProteinExistence {
             generator.writeEndObject();
         }
     }
+
+    public enum Source {
+
+        PROTEIN_EXISTENCE_UNIPROT, PROTEIN_EXISTENCE_NEXTPROT1, PROTEIN_EXISTENCE_NEXTPROT2
+    }
 }
