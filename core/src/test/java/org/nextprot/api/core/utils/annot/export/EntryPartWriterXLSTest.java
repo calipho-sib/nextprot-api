@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.*;
 import java.util.Iterator;
 
-@ActiveProfiles({ "dev,cache" })
+@ActiveProfiles({ "dev","cache" })
 public class EntryPartWriterXLSTest extends CoreUnitBaseTest {
 
     @Autowired

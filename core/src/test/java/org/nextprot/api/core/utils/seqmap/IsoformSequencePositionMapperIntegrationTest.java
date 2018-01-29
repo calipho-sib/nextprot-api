@@ -20,7 +20,7 @@ import java.io.*;
 import java.util.*;
 
 
-@ActiveProfiles({ "dev,cache" })
+@ActiveProfiles({ "dev","cache" })
 public class IsoformSequencePositionMapperIntegrationTest extends CoreUnitBaseTest {
 
 	private boolean sout = true;

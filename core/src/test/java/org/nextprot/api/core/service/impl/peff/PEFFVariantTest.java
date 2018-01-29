@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 
-@ActiveProfiles({ "dev,cache" })
+@ActiveProfiles({ "dev","cache" })
 public class PEFFVariantTest extends CoreUnitBaseTest {
 
     @Autowired

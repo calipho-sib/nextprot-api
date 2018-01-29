@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
 
-@ActiveProfiles({ "dev,cache" })
+@ActiveProfiles({ "dev","cache" })
 public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired
