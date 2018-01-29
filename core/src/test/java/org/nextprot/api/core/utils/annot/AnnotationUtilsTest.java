@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev"})
+@ActiveProfiles({ "dev,cache"})
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
