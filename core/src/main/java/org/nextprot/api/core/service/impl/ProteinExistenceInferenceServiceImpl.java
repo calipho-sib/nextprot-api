@@ -1,5 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.ProteinExistenceDao;
@@ -17,11 +22,6 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
-
 @Service
 class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
 
@@ -36,28 +36,30 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	@Override
 	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
+		
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		if (cannotBePromotedAccordingToRule1(entryAccession)) {
 			return new ProteinExistenceInferred(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
 					ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
 		}
-		if (promotedAccordingToRule2(entryAccession)) {
+		if (promotedAccordingToRule2(entryAccession, entry)) {
 
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02);
 		}
-		if (promotedAccordingToRule3(entryAccession)) {
+		if (promotedAccordingToRule3(entryAccession, entry)) {
 
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03);
 		}
-		if (promotedAccordingToRule4(entryAccession)) {
+		if (promotedAccordingToRule4(entryAccession, entry)) {
 
 			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
 		}
-		if (promotedAccordingToRule5(entryAccession)) {
+		if (promotedAccordingToRule5(entryAccession, entry)) {
 
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05);
 		}
-		if (promotedAccordingToRule6(entryAccession)) {
+		if (promotedAccordingToRule6(entryAccession, entry)) {
 
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
@@ -79,10 +81,14 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     // which must differ by at least 1 amino acid and not overlap (i.e. one of the peptides must not be included in the other)
 	@Override
 	public boolean promotedAccordingToRule2(String entryAccession) {
+		return promotedAccordingToRule2(entryAccession,null);
+	}
+
+	public boolean promotedAccordingToRule2(String entryAccession, Entry entry) {
 
         List<Annotation> filteredPeptideMappingList = new ArrayList<>();
 
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+		if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		entry.getAnnotationsByCategory(AnnotationCategory.PEPTIDE_MAPPING).stream()
 				.filter(AnnotationUtils::isProteotypicPeptideMapping)
@@ -96,8 +102,11 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     // with evidence assigned by neXtProt of quality GOLD AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule3(String entryAccession) {
-
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+		return promotedAccordingToRule3(entryAccession,null);
+	}
+	
+	public boolean promotedAccordingToRule3(String entryAccession, Entry entry) {
+        if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_INFO).stream()
 				.filter(ei -> ei.getDescription().contains("(at protein level)")));
@@ -107,12 +116,15 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     // assigned by HPA of quality GOLD with ECO:0000295 (RNA-seq evidence) and expression level High or Medium
 	@Override
 	public boolean promotedAccordingToRule4(String entryAccession) {
-
+		return promotedAccordingToRule4(entryAccession,null);
+	}
+	
+	public boolean promotedAccordingToRule4(String entryAccession, Entry entry) {
         ProteinExistence pe = proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
         if (pe == ProteinExistence.HOMOLOGY || pe == ProteinExistence.PREDICTED) {
 
-            Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+            if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
             return entry.getAnnotationsByCategory(AnnotationCategory.EXPRESSION_PROFILE).stream()
                     .flatMap(annot -> annot.getEvidences().stream())
@@ -129,8 +141,12 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	// AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule5(String entryAccession) {
+		return promotedAccordingToRule5(entryAccession, null);
+	}
+	
+	public boolean promotedAccordingToRule5(String entryAccession, Entry entry) {
 
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+		if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.MUTAGENESIS).stream());
 	}
@@ -139,8 +155,12 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	// AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule6(String entryAccession) {
+		return promotedAccordingToRule6(entryAccession,null);
+	}
+	
+	public boolean promotedAccordingToRule6(String entryAccession, Entry entry) {
 
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
+		if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
 		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(entry.getAnnotationsByCategory(AnnotationCategory.BINARY_INTERACTION).stream());
 	}
