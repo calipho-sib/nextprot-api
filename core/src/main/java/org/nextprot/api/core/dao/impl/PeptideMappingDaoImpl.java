@@ -14,7 +14,6 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

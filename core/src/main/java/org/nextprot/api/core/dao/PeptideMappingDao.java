@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 public interface PeptideMappingDao {
 
