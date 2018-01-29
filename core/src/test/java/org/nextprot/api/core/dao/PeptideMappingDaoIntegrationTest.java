@@ -62,22 +62,7 @@ public class PeptideMappingDaoIntegrationTest extends CoreUnitBaseTest {
 		}
  	}	
 
-	@Test
-	public void shouldReturn_Some_Expected_Properties() {
-		List<String> names = new ArrayList<>();
-		names.add("NX_PEPT01967984");
-		names.add("NX_PEPT01973721");
-		Map<String,List<AnnotationProperty>> propMap = this.peptideMappingDao.findPeptideAnnotationPropertiesMap(names);
-		assertTrue(propMap.size()==2); // for each peptide, 3 properties expected: is natural, is synthetic, is proteotypic 
-		for (List<AnnotationProperty> props : propMap.values()) {
-			assertTrue(props.size()==3);
-			for (AnnotationProperty p: props) {
-				// System.out.println(p.getAccession() + " - " + p.getName() + " = " + p.getValue());
-			}
-		}
 		
-	}
-	
 	@Test
 	public void shouldReturn_Some_Expected_Evidences() {
 		List<String> names = new ArrayList<>();

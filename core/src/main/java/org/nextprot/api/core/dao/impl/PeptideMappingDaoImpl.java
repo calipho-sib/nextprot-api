@@ -64,31 +64,6 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 
 	
 	@Override
-	public Map<String,List<AnnotationProperty>> findPeptideAnnotationPropertiesMap(List<String> names) {
-		
-		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
-		List<AnnotationProperty> props = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-properties-by-peptide-names"), namedParams, new RowMapper<AnnotationProperty>() {
-			@Override
-			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
-				AnnotationProperty prop = new AnnotationProperty();				
-				prop.setAccession(resultSet.getString("peptide_name"));
-				prop.setName(resultSet.getString("prop_name"));
-				prop.setValue(resultSet.getString("prop_value"));		
-				return prop;
-			}
-		});
-		Map<String,List<AnnotationProperty>> result = new HashMap<>();
-		for (AnnotationProperty p: props) {
-			String pepKey = p.getAccession();
-			if (!result.containsKey(pepKey)) result.put(pepKey, new ArrayList<AnnotationProperty>());
-			p.setAccession(null);
-			result.get(pepKey).add(p);
-		}
-		return result;
-	}
-
-
-	@Override
 	public Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean natural) {
 
 		String datasourceClause = natural ? " ds.cv_name != 'SRMAtlas'" : " ds.cv_name  = 'SRMAtlas'";  
