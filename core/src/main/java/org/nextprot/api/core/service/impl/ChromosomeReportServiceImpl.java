@@ -102,7 +102,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 				//.filter(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withProteinExistence()).getProteinExistences().isInferenceFound())
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(
+						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations().withOverview())))
 				.collect(Collectors.toList());
 	}
 
