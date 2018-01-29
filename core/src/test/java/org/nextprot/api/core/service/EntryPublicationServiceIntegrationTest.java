@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev,cache" })
 public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired

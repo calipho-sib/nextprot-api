@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 // TODO: test should not be ignored once db changed
 @Ignore
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev,cache" })
 public class EntryProteinExistenceReportTSVWriterTest extends CoreUnitBaseTest {
 
     @Autowired

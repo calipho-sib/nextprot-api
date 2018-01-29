@@ -12,7 +12,7 @@ import org.nextprot.api.core.utils.annot.export.EntryPartExporter.*;
 
 import java.util.List;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev,cache" })
 public class EntryPartExporterImplTest extends CoreUnitBaseTest {
 
     @Autowired

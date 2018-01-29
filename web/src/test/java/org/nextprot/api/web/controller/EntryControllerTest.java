@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev,cache" })
 public class EntryControllerTest extends MVCDBUnitBaseTest {
 
     @Test
