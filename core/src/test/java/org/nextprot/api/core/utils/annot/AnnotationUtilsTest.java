@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev"})
+@ActiveProfiles({ "dev","cache"})
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
@@ -563,7 +563,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	public static void assertContainsExpectedProperties(Collection<AnnotationProperty> properties, AnnotationProperty... expectedProperties) {
 
 		for (AnnotationProperty property : expectedProperties) {
-
+			System.out.println("expectedProperty:" + property.getName() + "found:" + properties.contains(property));
 			Assert.assertTrue(properties.contains(property));
 		}
 	}

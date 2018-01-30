@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class EntryPartWriterTSVTest extends CoreUnitBaseTest {
 
     @Autowired

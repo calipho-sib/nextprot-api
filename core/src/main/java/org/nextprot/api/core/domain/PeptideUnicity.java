@@ -1,8 +1,11 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public class PeptideUnicity {
+public class PeptideUnicity implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public enum Value {UNIQUE, PSEUDO_UNIQUE, NOT_UNIQUE};
 	private Value value;

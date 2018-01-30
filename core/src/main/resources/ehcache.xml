@@ -352,4 +352,11 @@
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
+	
+  	<cache name="peptide-name-unicity-map" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+    
+    
 </ehcache>

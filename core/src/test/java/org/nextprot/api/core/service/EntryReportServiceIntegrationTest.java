@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired

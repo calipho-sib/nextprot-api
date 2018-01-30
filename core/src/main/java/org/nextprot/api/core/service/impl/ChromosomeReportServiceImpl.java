@@ -1,5 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -8,15 +16,16 @@ import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class ChromosomeReportServiceImpl implements ChromosomeReportService {
@@ -102,7 +111,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 				//.filter(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withProteinExistence()).getProteinExistences().isInferenceFound())
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(
+						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations().withOverview())))
 				.collect(Collectors.toList());
 	}
 
