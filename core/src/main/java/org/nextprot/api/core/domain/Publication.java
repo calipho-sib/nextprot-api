@@ -47,7 +47,7 @@ public class Publication implements Serializable{
 	private PublicationResourceLocator publicationResourceLocator;
 
     public boolean isLocalizable() {
-		return publicationResourceLocator != null;
+		return publicationResourceLocator != null && publicationResourceLocator.getName() != null;
 	}
 
 	public boolean isLocatedInScientificJournal() {
