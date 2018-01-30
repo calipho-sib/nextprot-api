@@ -6,7 +6,6 @@ import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.seo.domain.SeoTags;
 import org.nextprot.api.web.seo.service.SeoTagsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Testing the seo service
@@ -14,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
  * @author pmichel
  */
 
-@ActiveProfiles({ "dev","cache" })
 public class SeoServiceIntegrationTest extends WebIntegrationBaseTest {
 
 	@Autowired
