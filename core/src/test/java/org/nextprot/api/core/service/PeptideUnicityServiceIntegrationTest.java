@@ -132,7 +132,8 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
 
     	System.out.println("time for very first call: " + tFirst +   "[ms]");
     	System.out.println("time for next 100  calls: " + tNext100 + "[ms]");
-    	Assert.assertTrue(tFirst > tNext100);
+    	// line below ok only if cache is cleared before starting the test
+    	//Assert.assertTrue(tFirst > tNext100);
     }
 
 
@@ -184,10 +185,11 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	expectedEquivalentIsoSet = new TreeSet<>(Arrays.asList("NX_P0DP23-1", "NX_P0DP24-1", "NX_P0DP25-1"));
     	Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
     	long tNext = System.currentTimeMillis()-t0;
-
+    	
     	System.out.println("time for very first call: " + tFirst +   "[ms]");
     	System.out.println("time for next      calls: " + tNext + "[ms]");
-    	Assert.assertTrue(tFirst > tNext);
+    	// line below ok only if cache is cleared before starting the test
+    	//Assert.assertTrue(tFirst > tNext);
     	
     }
     
