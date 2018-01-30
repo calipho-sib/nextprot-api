@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author pmichel
  */
 
-//@ActiveProfiles({ "cache" })
+@ActiveProfiles({ "dev","cache" })
 public class SeoServiceIntegrationTest extends WebIntegrationBaseTest {
 
 	@Autowired
