@@ -100,14 +100,13 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
     @Test
     public void testThesisPublication() {
 
-        Publication publication = publicationDao.findPublicationById(15624251L);
+        Publication publication = publicationDao.findPublicationById(15637368L);
 
         Assert.assertEquals(PublicationType.THESIS, publication.getPublicationType());
-        Assert.assertTrue(publication.isLocalizable());
-        Assert.assertEquals("", publication.getTitle());
-        Assert.assertEquals("2001", publication.getTextDate());
-        Assert.assertTrue(publication.getPublicationResourceLocator() instanceof ThesisResourceLocator);
-        Assert.assertEquals("Germany", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getCountry());
-        Assert.assertEquals("University of Goettingen", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getInstitute());
+        Assert.assertFalse(publication.isLocalizable());
+        Assert.assertEquals("Identification of four genes on human chromosome 3 homologous to the known genes on other chromosomes by in silico analysis", publication.getTitle());
+        Assert.assertEquals("2002", publication.getTextDate());
+        Assert.assertEquals("Russia", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getCountry());
+        Assert.assertEquals("Novosibirsk Institute of Cytology and Genetics", ((ThesisResourceLocator)publication.getPublicationResourceLocator()).getInstitute());
     }
 }
