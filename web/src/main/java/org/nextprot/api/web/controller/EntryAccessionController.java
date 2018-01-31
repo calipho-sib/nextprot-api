@@ -62,8 +62,10 @@ public class EntryAccessionController {
 		return masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
 	}*/
 
+    @ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.TEXT_PLAIN_VALUE)
 	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = {RequestMethod.GET}, produces = MediaType.TEXT_PLAIN_VALUE)
-	public void masterIdentifierByProteinExistence(String proteinExistence, HttpServletResponse response) {
+	public void masterIdentifierByProteinExistence(@ApiPathParam(name = "proteinExistence", description = "The protein existence value type (PROTEIN_LEVEL, TRANSCRIPT_LEVEL, HOMOLOGY, PREDICTED, UNCERTAIN)",
+            allowedvalues = { "PROTEIN_LEVEL"}) @PathVariable("proteinExistence") String proteinExistence, HttpServletResponse response) {
 
 		try {
 			PrintWriter writer = new PrintWriter(response.getOutputStream());
