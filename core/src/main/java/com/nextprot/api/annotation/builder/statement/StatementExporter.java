@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;

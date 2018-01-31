@@ -11,9 +11,8 @@ import java.util.List;
 
 public class Overview implements Serializable{
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
-    private ProteinExistence proteinExistence;
 	private History history;
 	private List<Family> families;
 	private List<EntityName> proteinNames;
@@ -22,6 +21,7 @@ public class Overview implements Serializable{
 	private List<EntityName> cleavedRegionNames;
 	private List<EntityName> additionalNames;
 	private List<EntityName> isoformNames;
+	private ProteinExistences proteinExistences;
 	
 	public List<EntityName> getIsoformNames() {
 		return isoformNames;
@@ -90,14 +90,6 @@ public class Overview implements Serializable{
 		
 		result.sort(EntityName.newDefaultComparator());
 		return result;
-	}
-
-    public void setProteinExistence(ProteinExistence proteinExistence) {
-        this.proteinExistence = proteinExistence;
-    }
-
-    public ProteinExistence getProteinExistence() {
-		return proteinExistence;
 	}
 
 	public void setHistory(History history) {
@@ -300,6 +292,14 @@ public class Overview implements Serializable{
 
 	public void setAdditionalNames(List<EntityName> additionalNames) {
 		this.additionalNames = additionalNames;
+	}
+
+	public ProteinExistences getProteinExistences() {
+		return proteinExistences;
+	}
+
+	public void setProteinExistences(ProteinExistences proteinExistences) {
+		this.proteinExistences = proteinExistences;
 	}
 
 	/**

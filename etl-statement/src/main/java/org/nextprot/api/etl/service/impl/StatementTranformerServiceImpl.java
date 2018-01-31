@@ -1,10 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.text.ParseException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -17,14 +12,15 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformSet;
-import org.nextprot.commons.statements.TargetIsoformStatementPosition;
+import org.nextprot.commons.statements.*;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {

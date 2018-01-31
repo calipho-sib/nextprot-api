@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -30,7 +29,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expCtxService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
-	@Autowired private EntryPropertiesService entryPropertiesService;	
+	@Autowired private EntryPropertiesService entryPropertiesService;
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 		
@@ -99,10 +98,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			
 			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
-			} 
-			
-
-
+			}
 		}
 		//CPU Intensive
 		if(entryConfig.hasSubPart() || entryConfig.hasGoldOnly()){ //TODO should be added in annotation list

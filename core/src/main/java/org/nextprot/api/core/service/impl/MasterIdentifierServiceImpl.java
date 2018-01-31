@@ -1,20 +1,28 @@
-package org.nextprot.api.commons.service;
+package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.Sets;
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Lazy
 @Service
 public class MasterIdentifierServiceImpl implements MasterIdentifierService {
+
 	@Autowired
 	private MasterIdentifierDao masterIdentifierDao;
+
+	@Autowired
+	private OverviewService overviewService;
 
 	@Override
 	@Cacheable("master-unique-names-chromossome")
@@ -23,7 +31,6 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	}
 
 	@Override
-	@Cacheable("master-unique-names")
 	public Set<String> findUniqueNames() {
 		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNames());
 	}
@@ -38,5 +45,23 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	@Cacheable(value="entry-accession-by-gene-name",key="{  #geneName, #withSynonyms }")
 	public Set<String> findEntryAccessionByGeneName(String geneName, boolean withSynonyms) {
 		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName, withSynonyms));
+	}
+
+	@Override
+	@Cacheable(value="entry-accession-by-protein-existence")
+	public List<String> findEntryAccessionsByProteinExistence(ProteinExistence proteinExistence) {
+
+		List<String> entries = new ArrayList<>();
+
+		for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
+
+			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
+
+			if (pe == proteinExistence) {
+				entries.add(entryAccession);
+			}
+		}
+
+		return entries;
 	}
 }

@@ -1,29 +1,27 @@
 package org.nextprot.api.web.service.impl;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.PeptideUtils;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.domain.PepXResponse;
 import org.nextprot.api.web.domain.PepXResponse.PepXEntryMatch;
 import org.nextprot.api.web.domain.PepXResponse.PepXIsoformMatch;
 import org.nextprot.api.web.domain.PepXResponse.PepXMatch;
 import org.nextprot.api.web.domain.PepxUtils;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PepXServiceTest extends WebUnitBaseTest {
 

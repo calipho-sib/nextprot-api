@@ -3,7 +3,6 @@ package org.nextprot.api.core.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
-
 import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.DbXrefDao;

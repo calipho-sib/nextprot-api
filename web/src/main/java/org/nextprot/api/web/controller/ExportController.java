@@ -9,8 +9,12 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.export.EntryProteinExistenceReportWriter;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.export.io.EntryProteinExistenceReportTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
 import org.nextprot.api.core.utils.annot.export.EntryPartWriter;
@@ -47,6 +51,12 @@ public class ExportController {
 
     @Autowired
     private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+
+    @Autowired
+    private OverviewService overviewService;
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
@@ -160,7 +170,21 @@ public class ExportController {
         try {
             streamEntryService.streamEntry(entryName, NextprotMediaType.valueOf(request), response.getOutputStream(), entryName);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new NextProtException("cannot export "+entryName+" in "+NextprotMediaType.valueOf(request)+ " format", e);
+        }
+    }
+
+    @RequestMapping(value = "/export/entry/all/protein-existences", method = {RequestMethod.GET}, produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE })
+    public void exportAllEntryProteinExistencess(HttpServletResponse response) {
+
+        try {
+            EntryProteinExistenceReportWriter writer = new EntryProteinExistenceReportTSVWriter(response.getOutputStream());
+
+            masterIdentifierService.findUniqueNames().forEach(entryAccession -> writer.write(entryAccession, overviewService.findOverviewByEntry(entryAccession).getProteinExistences()));
+
+            writer.close();
+        } catch (IOException e) {
+            throw new NextProtException("cannot export all entries in TSV format", e);
         }
     }
 

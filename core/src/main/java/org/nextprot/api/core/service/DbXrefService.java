@@ -10,12 +10,7 @@ import java.util.List;
 public interface DbXrefService {
 
 	List<DbXref> findDbXrefsByMaster(@ValidEntry String uniqueName);
-	
-	/**
-	 * [FOR ANTIBODIES]
-	 * @param uniqueName
-	 * @return
-	 */
+
 	List<DbXref> findDbXrefByAccession(String accession);
 
 	List<DbXref> findAllDbXrefs();

@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 
 import java.io.FileNotFoundException;
 

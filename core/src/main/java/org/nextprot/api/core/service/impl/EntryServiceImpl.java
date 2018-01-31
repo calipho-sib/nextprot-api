@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

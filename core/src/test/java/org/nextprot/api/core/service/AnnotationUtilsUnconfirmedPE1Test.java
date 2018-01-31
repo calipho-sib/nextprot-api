@@ -1,19 +1,16 @@
 package org.nextprot.api.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ActiveProfiles({ "dev" })
 public class AnnotationUtilsUnconfirmedPE1Test extends CoreUnitBaseTest {

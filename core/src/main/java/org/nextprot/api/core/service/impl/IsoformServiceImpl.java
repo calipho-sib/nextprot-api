@@ -10,7 +10,10 @@ import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.EntityNameService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 class IsoformServiceImpl implements IsoformService {
@@ -98,5 +102,17 @@ class IsoformServiceImpl implements IsoformService {
 		public String apply(EntityName isoformSynonym) {
 			return isoformSynonym.getMainEntityName();
 		}
+	}
+
+	@Override
+	@Cacheable("equivalent-isoforms")
+	public List<Set<String>> getSetsOfEquivalentIsoforms() {
+		return isoformDAO.findSetsOfEquivalentIsoforms();
+	}
+
+	@Override
+	@Cacheable("entries-having-equivalent-isoforms")
+	public List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform() {
+		return isoformDAO.findSetsOfEntriesHavingAnEquivalentIsoform();
 	}
 }

@@ -22,4 +22,22 @@ public class ProteinExistenceTest {
 
         Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, ProteinExistence.valueOfKey("Evidence_at_protein_level"));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valueOfInvalidString() {
+
+        ProteinExistence.valueOfKey("roudoudou");
+    }
+
+    @Test
+    public void valueOfLevel() {
+
+        Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, ProteinExistence.valueOfLevel(1));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void valueOfInvalidLevel() {
+
+        ProteinExistence.valueOfLevel(10);
+    }
 }

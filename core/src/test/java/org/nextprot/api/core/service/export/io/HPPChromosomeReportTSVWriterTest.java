@@ -17,7 +17,7 @@ import java.util.Arrays;
 import static org.nextprot.api.core.domain.EntryReportTest.newEntryReport;
 
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class HPPChromosomeReportTSVWriterTest extends CoreUnitBaseTest {
 
     @Autowired

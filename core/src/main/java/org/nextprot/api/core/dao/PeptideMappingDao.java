@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 public interface PeptideMappingDao {
 
@@ -18,6 +17,6 @@ public interface PeptideMappingDao {
 	
 	List<Map<String,Object>> findPeptideMappingAnnotationsByMasterId(Long id, boolean withNatural, boolean withSynthetic);
 	Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean withNatural);
-	Map<String,List<AnnotationProperty>> findPeptideAnnotationPropertiesMap(List<String> names);
+	List<String> findPeptideIsoformMappingsList();
 	
 }

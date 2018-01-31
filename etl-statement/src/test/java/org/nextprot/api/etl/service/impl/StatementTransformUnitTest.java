@@ -1,6 +1,10 @@
 package org.nextprot.api.etl.service.impl;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
+import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementField;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,11 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
+import static org.junit.Assert.assertEquals;
 
 public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 

@@ -5,19 +5,13 @@ import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
-import org.nextprot.api.core.dao.AuthorDao;
-import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +27,12 @@ public class PublicationServiceImpl implements PublicationService {
 
 	private static final Logger LOGGER = Logger.getLogger(PublicationServiceImpl.class);
 
-	@Autowired private MasterIdentifierDao masterIdentifierDao;
+	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PublicationDao publicationDao;
 	@Autowired private StatementDao statementDao;
-	@Autowired private AuthorDao authorDao;
-	@Autowired private DbXrefDao dbXrefDao;
+	@Autowired private AuthorService authorService;
 	@Autowired private DbXrefService dbXrefService;
-	@Autowired private PublicationStatisticsService publicationStatisticsService;
+	@Autowired private StatisticsService statisticsService;
     @Autowired private EntryPublicationService entryPublicationService;
 
     private Map<Long, List<EntryPublication>> entryPublicationsById;
@@ -64,7 +57,7 @@ public class PublicationServiceImpl implements PublicationService {
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 
-		Long masterId = masterIdentifierDao.findIdByUniqueName(uniqueName);
+		Long masterId = masterIdentifierService.findIdByUniqueName(uniqueName);
 		List<Publication> publications = publicationDao.findSortedPublicationsByMasterId(masterId);
 		Map<Long, List<PublicationDbXref>> npPublicationsXrefs = updateMissingPublicationFields(publications);
 
@@ -99,7 +92,7 @@ public class PublicationServiceImpl implements PublicationService {
 
 		List<Long> publicationIds = publications.stream().map(Publication::getPublicationId).collect(Collectors.toList());
 
-		Map<Long, List<PublicationAuthor>> authorMap = authorDao.findAuthorsByPublicationIds(publicationIds).stream()
+		Map<Long, List<PublicationAuthor>> authorMap = authorService.findAuthorsByPublicationIds(publicationIds).stream()
 				.collect(Collectors.groupingBy(PublicationAuthor::getPublicationId));
 
 		Map<Long, List<PublicationDbXref>> xrefMap = dbXrefService.findDbXRefByPublicationIds(publicationIds).stream()
@@ -156,8 +149,8 @@ public class PublicationServiceImpl implements PublicationService {
 	private void loadAuthorsAndXrefs(Publication publication){
 		long publicationId = publication.getPublicationId();
 
-		setAuthorsAndEditors(publication, authorDao.findAuthorsByPublicationId(publicationId));
-		setXrefs(publication, dbXrefDao.findDbXRefsByPublicationId(publicationId));
+		setAuthorsAndEditors(publication, authorService.findAuthorsByPublicationId(publicationId));
+		setXrefs(publication, dbXrefService.findDbXRefByPublicationId(publicationId));
 	}
 
 	/**
@@ -192,7 +185,7 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public GlobalPublicationStatistics.PublicationStatistics getPublicationStatistics(long publicationId) {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+        return statisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
     @Cacheable("entry-publications-by-pubid")
@@ -211,7 +204,7 @@ public class PublicationServiceImpl implements PublicationService {
 
         Map<Long, List<EntryPublication>> map = new HashMap<>();
 
-        for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
+        for (String entryAccession : masterIdentifierService.findUniqueNames()) {
 
             Map<Long, EntryPublication> publicationsById = entryPublicationService.findEntryPublications(entryAccession).getEntryPublicationsById();
 

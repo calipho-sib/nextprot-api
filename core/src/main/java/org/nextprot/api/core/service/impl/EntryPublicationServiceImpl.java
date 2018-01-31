@@ -64,7 +64,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             // extract publications cited in annotation evidences (link A) and update references to PageViews
             entry.getAnnotations()
                     .forEach(annotation -> annotation.getEvidences().stream()
-                            .map(evidence -> extractPubIdFromEvidence(evidence))
+                            .map(evidence -> extractPubIdFromEvidence(evidence, entry))
                             .filter(Objects::nonNull)
                             .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(entry.getUniqueName(), pubId)))
                             .forEach(entryPublication -> {
@@ -110,7 +110,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             return null;
         }
 
-        private Long extractPubIdFromEvidence(AnnotationEvidence evi) {
+        private Long extractPubIdFromEvidence(AnnotationEvidence evi, Entry entry) {
 
             Long l = null;
 
@@ -124,8 +124,9 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
             // TODO: should be removed while AnnotationBuilder continue to set id to -1 publications missing in neXtProt DB !!!
             if (l != null && l < 0) {
-                LOGGER.severe(evi.getResourceType()+ " evidence of entry accession "+evi.getResourceAccession()
-                        + " has a incorrect resource id of "+l);
+                LOGGER.severe(evi.getResourceType()+ " evidence of resource accession "+evi.getResourceAccession()
+                        + " from annotation id " + evi.getAnnotationId() + " of entry " + entry.getUniqueName()
+                        + " has an incorrect resource id of "+l);
                 return null;
             }
 

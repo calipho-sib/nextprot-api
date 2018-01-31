@@ -1,16 +1,21 @@
 package org.nextprot.api.web.service.impl;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -83,5 +88,130 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     }
 
     
+    @Test
+    public void testSinglePeptideWithUnicityUnique() throws Exception {
 
+    	// NX_PEPT01668698	DJCQAQGVAJQTMK
+    	
+    	String peptide = "DICQAQGVAIQTMK"; // replaced any J in original with L otherwise pepx don't match the peptide !!!!
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	Assert.assertEquals(1, result.size());
+    	List<Annotation> annots = result.get(0).getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION);
+    	Assert.assertEquals(1, annots.size());
+    	Annotation a = annots.get(0);
+    	Assert.assertEquals("DICQAQGVAIQTMK", a.getCvTermName());
+    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")));
+    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())));
+    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())));
+    	
+    }    
+    
+    @Test
+    public void testSinglePeptideWithUnicityPseudoUnique() throws Exception {
+
+        // NX_PEPT01180319 AAQEJQEGQR is pseudo unique
+    	// equivalent isoforms are "NX_P35520-1","NX_P0DN79-1"
+    	
+    	String peptide = "AAQEIQEGQR"; // replaced any J in original with L otherwise pepx don't match the peptide !!!!
+    	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_P35520-1","NX_P0DN79-1" ));
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() > 1); // multiple entries but they're sharing an isoform having the same sequence
+    	assertTrue( result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> 
+    			a.getCvTermName().equals(peptide)  && 
+    	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.PSEUDO_UNIQUE.name())) && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.PSEUDO_UNIQUE.name())) &&
+    			new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet))
+    	);
+    }    
+
+    
+    @Test
+    public void testSinglePeptideWithUnicityNonUnique() throws Exception {
+
+    	// NX_PEPT00000100 AFVHWYVGEGMEEGEFSEAR
+    	
+    	String peptide = "AFVHWYVGEGMEEGEFSEAR"; 
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() > 1); // multiple entries 
+    	assertTrue(result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> a.getCvTermName().equals(peptide) &&
+        	    a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("N")) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name()))
+    		)
+    	);
+    	
+    }    
+
+    @Test
+    public void testSinglePeptideWithUnicityStatusDifferentWithVariants() throws Exception {
+
+    	// LSAASGYSDVTDS 
+    	// => pepx matches are unique with no variant:    Q13670-1
+    	// => pepx matches are non unique with variants:  Q13670-1, Q86UW9-1-419, Q86UW9-2-372
+    	
+    	String peptide = "LSAASGYSDVTDS"; 
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() > 1); // multiple entries 
+    	assertTrue(result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> a.getCvTermName().equals(peptide) &&
+        	    a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())) && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name()))
+    		)
+    	);
+    	
+    }    
+
+
+    @Test
+    public void testSinglePeptideWithUnicityStatusNonUniqueButIncludingEquivalentIsoforms() throws Exception {
+
+    	// AIPPSQLDSQIDDFTGFSK 
+    	// => pepx matches P0DMU7-1,P0DMU8-1,P0DMU9-1,P0DMV0-1,P0DMV1-1,P0DMV2-1,Q5DJT8-1,Q5HYN5-1,Q8NHU0-1
+    	// and among these above the following are known as equivalent: NX_P0DMV1-1, NX_P0DMV2-1, NX_Q5DJT8-1
+    	
+    	String peptide = "AIPPSQLDSQIDDFTGFSK"; 
+    	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_P0DMV1-1", "NX_P0DMV2-1", "NX_Q5DJT8-1" ));
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() > 1); // multiple entries 
+    	assertTrue(result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> a.getCvTermName().equals(peptide) &&
+       	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("N")) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) &&
+    			new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet)
+    		)
+    	);
+    	
+    }    
+   
+    @Test
+    public void testSinglePeptideMatchingOnlyVariantIsoform() throws Exception {
+
+    	// YPVVKRTEGPAGHSKGELAP 
+    	
+    	String peptide = "YPVVKRTEGPAGHSKGELAP"; 
+    	Set<String> equivIsoSet = new TreeSet<String>();
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	assertTrue( result.size() == 1); // single entry 
+    	assertTrue(result.stream()
+    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+    		.allMatch(a -> a.getCvTermName().equals(peptide) &&
+       	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).size()==0 &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).size()==0 && 
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())) &&
+    			a.getSynonyms()==null
+    		)
+    	);
+    	
+    }    
+   
+    
 }
