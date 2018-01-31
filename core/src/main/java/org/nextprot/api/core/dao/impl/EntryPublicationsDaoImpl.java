@@ -1,10 +1,10 @@
 package org.nextprot.api.core.dao.impl;
 
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.JdbcUtils;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntryPublicationsDao;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

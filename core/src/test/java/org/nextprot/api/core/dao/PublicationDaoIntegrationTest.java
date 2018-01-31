@@ -2,7 +2,6 @@ package org.nextprot.api.core.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;

@@ -1,9 +1,9 @@
 package org.nextprot.api.core.dao.impl;
 
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntryPublicationDao;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.springframework.beans.factory.annotation.Autowired;

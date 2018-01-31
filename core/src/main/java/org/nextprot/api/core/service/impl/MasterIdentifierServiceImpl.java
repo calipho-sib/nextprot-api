@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.Sets;
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
