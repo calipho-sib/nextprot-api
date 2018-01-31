@@ -30,21 +30,17 @@ public class AuthorDaoImpl implements AuthorDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper());
 	}
 
-	
 	@Override
 	public List<PublicationAuthor> findAuthorsByPublicationIds(List<Long> publicationIds) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationIds", publicationIds);
 		
 		if(publicationIds.isEmpty()) {
-			return new ArrayList<PublicationAuthor>();
+			return new ArrayList<>();
 		}
 		
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
-	};
+	}
 
-	
-	
-	
 	private static class AuthorRowMapper implements ParameterizedRowMapper<PublicationAuthor> {
 
 		public PublicationAuthor mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -84,5 +80,4 @@ public class AuthorDaoImpl implements AuthorDao {
 		}
 		
 	}
-
 }
