@@ -2,10 +2,10 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.SlimIsoform;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,6 +48,6 @@ public interface IsoformService {
 	 */
 	List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform();
 
-	List<Map<String, String>> findListOfIsoformAcMd5Sequence();
+	List<SlimIsoform> findListOfIsoformAcMd5Sequence();
 	
 }
