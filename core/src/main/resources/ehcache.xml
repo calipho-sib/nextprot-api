@@ -357,6 +357,14 @@
 		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
+	
+	<cache name="isoforms-md5" overflowToOffHeap="false" overflowToDisk="true"
+           diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
+           eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+	
 	<cache name="entry-accession-by-protein-existence" maxEntriesLocalHeap="22000"
-		   eternal="true" statistics="true"/>
+		   eternal="true" statistics="true">
+    </cache>
+
 </ehcache>

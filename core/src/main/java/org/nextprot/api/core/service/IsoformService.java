@@ -46,5 +46,7 @@ public interface IsoformService {
 	 * @return a list of sets, each set contains at least 2 entry accession numbers.
 	 */
 	List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform();
+
+	List<Isoform> findListOfIsoformAcMd5Sequence();
 	
 }

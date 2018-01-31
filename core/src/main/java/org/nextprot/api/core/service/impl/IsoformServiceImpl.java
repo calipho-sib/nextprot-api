@@ -115,4 +115,10 @@ class IsoformServiceImpl implements IsoformService {
 	public List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform() {
 		return isoformDAO.findSetsOfEntriesHavingAnEquivalentIsoform();
 	}
+
+	@Override
+	@Cacheable("isoforms-md5")
+	public List<Isoform> findListOfIsoformAcMd5Sequence() {
+		return isoformDAO.findListOfIsoformAcMd5Sequence();
+	}
 }
