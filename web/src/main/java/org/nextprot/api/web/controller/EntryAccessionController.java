@@ -44,7 +44,6 @@ public class EntryAccessionController {
 		return new ArrayList<>(masterIdentifierService.findUniqueNamesOfChromosome(chromosome));
 	}
 
-	
 	@ApiMethod(path = "/entry-accessions/gene/{geneName}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/entry-accessions/gene/{geneName}", method = { RequestMethod.GET })
 	@ResponseBody
@@ -55,16 +54,6 @@ public class EntryAccessionController {
 		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName, withSynonyms));
 	}
 
-	/*@ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = { RequestMethod.GET })
-	@ResponseBody
-	public List<String> masterIdentifierByProteinExistence(
-			@ApiPathParam(name = "proteinExistence", description = "The protein existence value type (PROTEIN_LEVEL, TRANSCRIPT_LEVEL, HOMOLOGY, PREDICTED, UNCERTAIN)",
-					allowedvalues = { "PROTEIN_LEVEL"}) @PathVariable("proteinExistence")  String proteinExistence) {
-
-		return masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
-	}*/
-
     @ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given protein existence type", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
 	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE} )
 	public void masterIdentifierByProteinExistence(HttpServletRequest request, @ApiPathParam(name = "proteinExistence", description = "The protein existence value type (PROTEIN_LEVEL, TRANSCRIPT_LEVEL, HOMOLOGY, PREDICTED, UNCERTAIN)",
@@ -73,22 +62,11 @@ public class EntryAccessionController {
 		NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
 
 		List<String> entries = masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
-
 		try {
 			if (mediaType == NextprotMediaType.JSON) {
 
 				JSONStringsWriter writer = new JSONStringsWriter(response.getOutputStream());
-
-				entries.forEach(entryAccession -> {
-					try {
-						writer.write(entryAccession);
-					}
-					catch (IOException e) {
-						throw new NextProtException("cannot write "+entryAccession + " in json");
-					}
-				});
-
-				writer.close();
+				writer.write(entries);
 			}
 			else if (mediaType == NextprotMediaType.TXT) {
 				PrintWriter writer = new PrintWriter(response.getOutputStream());
