@@ -1,6 +1,6 @@
 package org.nextprot.api.web.seo.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.seo.domain.SeoTagsAndUrl;
 import org.nextprot.api.web.seo.domain.SitemapUrl;

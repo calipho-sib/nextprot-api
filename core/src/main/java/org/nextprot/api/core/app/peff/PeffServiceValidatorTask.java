@@ -6,13 +6,13 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 
 import java.io.*;
 import java.nio.file.Files;

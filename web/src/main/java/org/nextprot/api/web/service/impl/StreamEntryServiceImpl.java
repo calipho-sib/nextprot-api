@@ -4,7 +4,7 @@ import org.apache.http.HttpStatus;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.solr.QueryRequest;
@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.DESCRIPTION;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.*;
 
 @Service
 public class StreamEntryServiceImpl implements StreamEntryService {

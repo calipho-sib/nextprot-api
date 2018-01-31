@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

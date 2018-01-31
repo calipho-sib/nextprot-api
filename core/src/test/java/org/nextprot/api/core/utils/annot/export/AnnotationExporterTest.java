@@ -5,10 +5,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.core.utils.annot.export.AnnotationExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 

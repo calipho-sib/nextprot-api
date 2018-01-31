@@ -1,13 +1,12 @@
 package org.nextprot.api.tasks.service.impl;
 
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.SolrConfiguration;
@@ -37,8 +36,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private PublicationService publicationService;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
-	@Autowired private DbXrefService dbxrefService;
-	
+
 	@Override
 	public String indexEntriesChromosome(boolean isGold, String chrName) {
 

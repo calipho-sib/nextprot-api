@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -56,17 +57,22 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
     @Override
     protected void updateDestIsoformSpecificityName(Annotation dest, Annotation source) {
 
-        checkTargetingIsoformDiscrepancies(dest, source);
-
         Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
 
-        for (Map.Entry<String, AnnotationIsoformSpecificity> keyValue : source.getTargetingIsoformsMap().entrySet()) {
+        for (Map.Entry<String, AnnotationIsoformSpecificity> sourceIsoformSpecificityEntry : source.getTargetingIsoformsMap().entrySet()) {
 
-            if (destTargetingIsoMap.containsKey(keyValue.getKey())) {
-                destTargetingIsoMap.get(keyValue.getKey()).setName(keyValue.getValue().getName());
+            String isoformName = sourceIsoformSpecificityEntry.getKey();
+
+            if (destTargetingIsoMap.containsKey(isoformName)) {
+
+                if (doAnnotationIsoformSpecificitiesMergeable(destTargetingIsoMap.get(isoformName),
+                        sourceIsoformSpecificityEntry.getValue(), dest.getAPICategory())) {
+
+                    mergeAnnotationIsoformSpecificities(destTargetingIsoMap.get(isoformName), sourceIsoformSpecificityEntry.getValue());
+                }
             }
             else {
-                LOGGER.severe("expected isoform specificity not found for isoform "+keyValue.getKey());
+                destTargetingIsoMap.put(isoformName, sourceIsoformSpecificityEntry.getValue());
             }
         }
     }
@@ -99,30 +105,29 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
         }
     }
 
-    private void checkTargetingIsoformDiscrepancies(Annotation dest, Annotation source) {
+    private boolean doAnnotationIsoformSpecificitiesMergeable(AnnotationIsoformSpecificity dest, AnnotationIsoformSpecificity source, AnnotationCategory category) {
 
-        Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
-        Map<String, AnnotationIsoformSpecificity> srcTargetingIsoMap = source.getTargetingIsoformsMap();
+        boolean ret = true;
 
-        if (!destTargetingIsoMap.keySet().equals(srcTargetingIsoMap.keySet())) {
-            LOGGER.warning("Category "+dest.getAPICategory()+": different isoform mapping dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", isoforms: src="+srcTargetingIsoMap.keySet()+", dest="+destTargetingIsoMap.keySet());
+        if (!Objects.equals(source.getFirstPosition(), dest.getFirstPosition())) {
+            LOGGER.severe("Category " + category + ": different first pos dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", pos: src=" + source.getFirstPosition() + ", dest=" + dest.getFirstPosition());
+            ret = false;
         }
-        else {
-            for (Map.Entry<String, AnnotationIsoformSpecificity> entry : destTargetingIsoMap.entrySet()) {
+        if (!Objects.equals(source.getLastPosition(), dest.getLastPosition())) {
+            LOGGER.severe("Category " + category + ": different last pos dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", pos: src=" + source.getLastPosition() + ", dest=" + dest.getLastPosition());
+            ret = false;
+        }
+        if (!Objects.equals(source.getSpecificity(), dest.getSpecificity())) {
+            LOGGER.warning("Category " + category + ": different specificity dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", spec: src=" + source.getSpecificity() + ", dest=" + dest.getSpecificity());
+        }
 
-                AnnotationIsoformSpecificity srcValue = srcTargetingIsoMap.get(entry.getKey());
-                AnnotationIsoformSpecificity destValue = destTargetingIsoMap.get(entry.getKey());
+        return ret;
+    }
 
-                if (!Objects.equals(srcValue.getFirstPosition(), destValue.getFirstPosition())) {
-                    LOGGER.warning("Category "+dest.getAPICategory()+": different first pos dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", pos: src="+srcValue.getFirstPosition()+", dest="+destValue.getFirstPosition());
-                }
-                if (!Objects.equals(srcValue.getLastPosition(), destValue.getLastPosition())) {
-                    LOGGER.warning("Category "+dest.getAPICategory()+": different last pos dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", pos: src="+srcValue.getLastPosition()+", dest="+destValue.getLastPosition());
-                }
-                if (!Objects.equals(srcValue.getSpecificity(), destValue.getSpecificity())) {
-                    LOGGER.warning("Category "+dest.getAPICategory()+": different specificity dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", spec: src="+srcValue.getSpecificity()+", dest="+destValue.getSpecificity());
-                }
-            }
+    private void mergeAnnotationIsoformSpecificities(AnnotationIsoformSpecificity dest, AnnotationIsoformSpecificity source) {
+
+        if (source.getName() != null && !source.getName().isEmpty()) {
+            dest.setName(source.getName());
         }
     }
 }

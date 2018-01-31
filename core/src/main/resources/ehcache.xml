@@ -357,6 +357,6 @@
 		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
-    
-    
+	<cache name="entry-accession-by-protein-existence" maxEntriesLocalHeap="22000"
+		   eternal="true" statistics="true"/>
 </ehcache>

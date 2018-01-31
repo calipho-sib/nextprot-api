@@ -1,18 +1,18 @@
 package org.nextprot.api.tasks.solr.indexer.entry.integration;
 
-import java.util.List;
-
-import org.junit.Test;
 import org.junit.Assert;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 
 public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationTest{

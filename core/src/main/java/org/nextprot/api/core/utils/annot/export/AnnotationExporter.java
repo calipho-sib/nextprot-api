@@ -3,10 +3,10 @@ package org.nextprot.api.core.utils.annot.export;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.statements.StatementField;
 

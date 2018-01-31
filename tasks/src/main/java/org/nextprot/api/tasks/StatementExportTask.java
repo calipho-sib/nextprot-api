@@ -5,11 +5,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
+import org.nextprot.api.core.service.MasterIdentifierService;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

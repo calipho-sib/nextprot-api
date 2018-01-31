@@ -1,9 +1,10 @@
-package org.nextprot.api.commons.dao.impl;
+package org.nextprot.api.core.dao.impl;
 
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -43,6 +44,7 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 	}
 	
 	@Override
+	@Cacheable("master-unique-names")
 	public List<String> findUniqueNames() {
 		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names"), String.class);
 	}

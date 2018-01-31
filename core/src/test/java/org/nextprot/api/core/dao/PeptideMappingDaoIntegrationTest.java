@@ -1,19 +1,19 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Test;
-import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class PeptideMappingDaoIntegrationTest extends CoreUnitBaseTest {

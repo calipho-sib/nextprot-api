@@ -1,20 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.core.dao.PeptideMappingDao;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.*;
 
 @Lazy
 @Service

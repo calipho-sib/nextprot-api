@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.dao;
+package org.nextprot.api.core.dao;
 
 import java.util.List;
 
