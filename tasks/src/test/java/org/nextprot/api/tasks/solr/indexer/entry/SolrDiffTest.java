@@ -1,22 +1,22 @@
 package org.nextprot.api.tasks.solr.indexer.entry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.CvIndex.CvField;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.solr.index.PublicationIndex.PubField;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	

@@ -17,7 +17,7 @@ import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private AuthorDao authorDao;
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
-	@Autowired private PublicationStatisticsService publicationStatisticsService;
+	@Autowired private StatisticsService statisticsService;
     @Autowired private EntryPublicationService entryPublicationService;
 
     private Map<Long, List<EntryPublication>> entryPublicationsById;
@@ -192,7 +192,7 @@ public class PublicationServiceImpl implements PublicationService {
     @Override
     public GlobalPublicationStatistics.PublicationStatistics getPublicationStatistics(long publicationId) {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+        return statisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
     @Cacheable("entry-publications-by-pubid")

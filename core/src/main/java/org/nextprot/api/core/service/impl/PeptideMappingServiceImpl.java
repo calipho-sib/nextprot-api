@@ -1,22 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.nextprot.api.core.service.PeptideUnicityService;
@@ -24,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.*;
 
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {

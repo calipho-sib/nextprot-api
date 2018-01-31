@@ -1,7 +1,7 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.ApiPathParam;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;

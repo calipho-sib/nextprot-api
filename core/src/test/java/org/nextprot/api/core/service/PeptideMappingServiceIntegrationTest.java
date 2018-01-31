@@ -1,6 +1,13 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -8,15 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev","cache" })
 public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
@@ -25,9 +24,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 	private PeptideMappingService pmService;
 	@Autowired
 	private IsoformService isoService;
-	@Autowired
-	private MasterIdentifierService miService;
-	
+
 	private static final String COLOR_NOT_COVERED = "grey";
 	private static final String COLOR_PEP_COVERED = "blue";
 	private static final String COLOR_1_TYPIC_COVERED = "lightgreen";

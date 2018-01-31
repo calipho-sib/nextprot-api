@@ -5,10 +5,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -31,8 +34,6 @@ public class SearchServiceImpl implements SearchService {
 	private SolrService solrService;
 
 	@Autowired
-	private SolrService queryService;
-	@Autowired
 	private SparqlService sparqlService;
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
@@ -40,8 +41,6 @@ public class SearchServiceImpl implements SearchService {
 	private UserQueryService userQueryService;
 	@Autowired
 	private UserProteinListService proteinListService;
-	@Autowired
-	private SolrConfiguration configuration;
 	@Autowired
 	private QueryBuilderService queryBuilderService;
 	@Autowired

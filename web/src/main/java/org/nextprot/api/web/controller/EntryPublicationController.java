@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
@@ -36,7 +36,7 @@ public class EntryPublicationController {
     @Autowired
     private PublicationService publicationService;
     @Autowired
-    private PublicationStatisticsService publicationStatisticsService;
+    private StatisticsService statisticsService;
     @Autowired
     private SolrService solrService;
     @Autowired
@@ -99,7 +99,7 @@ public class EntryPublicationController {
     @ResponseBody
     public GlobalPublicationStatistics calcGlobalPublicationStats() {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics();
+        return statisticsService.getGlobalPublicationStatistics();
     }
 
     @ApiMethod(path = "/publications/pubid/{pubid}/stats", verb = ApiVerb.GET, description = "Get statistics over all publications linked with a neXtProt entry",
@@ -110,7 +110,7 @@ public class EntryPublicationController {
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId) {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+        return statisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
     @ApiMethod(path = "/publications/pubids/{statstype}", verb = ApiVerb.GET, description = "Get all publication ids by statistics type",
@@ -122,7 +122,7 @@ public class EntryPublicationController {
             @PathVariable(value = "statstype") String statisticsType) {
 
         StatisticsType type = StatisticsType.valueOf(statisticsType.toUpperCase());
-        Map<Long, GlobalPublicationStatistics.PublicationStatistics> map = publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatisticsById();
+        Map<Long, GlobalPublicationStatistics.PublicationStatistics> map = statisticsService.getGlobalPublicationStatistics().getPublicationStatisticsById();
 
         if (type == StatisticsType.ALL) {
             return map.keySet();

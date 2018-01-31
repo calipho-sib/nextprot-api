@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
 import org.springframework.beans.factory.annotation.Autowired;

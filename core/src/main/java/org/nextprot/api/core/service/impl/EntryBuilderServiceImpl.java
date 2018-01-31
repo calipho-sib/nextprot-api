@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;

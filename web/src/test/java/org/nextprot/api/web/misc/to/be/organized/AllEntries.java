@@ -1,5 +1,11 @@
 package org.nextprot.api.web.misc.to.be.organized;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +15,6 @@ import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.Ignore;
-import org.junit.Test;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Class used to test all entries

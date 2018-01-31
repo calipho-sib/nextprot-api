@@ -1,7 +1,8 @@
-package org.nextprot.api.commons.service;
+package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Lazy
 @Service
 public class MasterIdentifierServiceImpl implements MasterIdentifierService {
+
 	@Autowired
 	private MasterIdentifierDao masterIdentifierDao;
 
@@ -39,4 +41,15 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	public Set<String> findEntryAccessionByGeneName(String geneName, boolean withSynonyms) {
 		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName, withSynonyms));
 	}
+
+	/*@Override
+	@Cacheable(value="entry-accession-by-protein-existence")
+	public List<String> findEntryAccessionsByProteinExistence(ProteinExistence proteinExistence) {
+
+		for () {
+
+		}
+
+		return proteinExistenceInferenceService.inferAllProteinExistences().get(proteinExistence);
+	}*/
 }
