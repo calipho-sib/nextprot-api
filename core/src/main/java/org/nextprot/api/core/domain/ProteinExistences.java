@@ -46,7 +46,7 @@ public class ProteinExistences implements Serializable {
     }
 
     @JsonIgnore
-    public ProteinExistence getInferredProteinExistence() {
+    public ProteinExistence getProteinExistence() {
 
         return proteinExistenceInferred.getProteinExistence();
     }

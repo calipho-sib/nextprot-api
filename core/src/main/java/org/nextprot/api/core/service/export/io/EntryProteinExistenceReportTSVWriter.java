@@ -32,7 +32,7 @@ public class EntryProteinExistenceReportTSVWriter implements EntryProteinExisten
                         entryAccession,
                         proteinExistences.getOtherProteinExistenceUniprot().getDescription(),
                         proteinExistences.getOtherProteinExistenceNexprot1().getDescription(),
-                        proteinExistences.getInferredProteinExistence().getDescription(),
+                        proteinExistences.getProteinExistence().getDescription(),
                         (proteinExistences.getProteinExistenceInferred().isInferenceFound()) ? proteinExistences.getProteinExistenceInferred().getRule().getTitle() : "No matching rule"
                 ).collect(Collectors.joining("\t")));
         writer.write("\n");
