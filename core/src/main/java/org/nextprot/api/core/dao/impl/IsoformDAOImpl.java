@@ -15,7 +15,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,6 +47,18 @@ public class IsoformDAOImpl implements IsoformDAO {
 
 	}
 
+	private static class IsoformMinimumRowMapper implements ParameterizedRowMapper<Map<String,String>> {
+		
+		@Override
+		public Map<String,String>  mapRow(ResultSet resultSet, int row) throws SQLException {
+			Map<String,String> isoform = new HashMap<>();
+			isoform.put("accession",resultSet.getString("accession"));
+			isoform.put("md5",resultSet.getString("md5"));
+			isoform.put("sequence",resultSet.getString("bio_sequence"));
+			return isoform;
+		}
+	}
+	
 	private static class IsoformRowMapper implements ParameterizedRowMapper<Isoform> {
 		
 		/*
@@ -73,7 +87,6 @@ public class IsoformDAOImpl implements IsoformDAO {
 			isoform.setSequence(resultSet.getString("bio_sequence"));
 			isoform.setMd5(resultSet.getString("md5"));
 			isoform.setSwissProtDisplayedIsoform(resultSet.getBoolean("is_swissprot_display"));
-
 			// Set the main entity
 			EntityName mainEntity = new EntityName();
 			mainEntity.setQualifier(null); // always null in data
@@ -157,6 +170,12 @@ public class IsoformDAOImpl implements IsoformDAO {
 	public List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform() {
 		String sql = sqlDictionary.getSQLQuery("equivalent-isoforms");
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new EquivalentIsoformsAsEquivalentEntriesRowMapper());
+	}
+
+	@Override
+	public List<Map<String,String>> findOrderedListOfIsoformAcMd5SequenceFieldMap() {
+		String sql = sqlDictionary.getSQLQuery("all-iso-ac-md5-sequences");
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new IsoformMinimumRowMapper());
 	}
 
 }
