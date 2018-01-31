@@ -71,7 +71,10 @@ public class EntryAccessionController {
 			PrintWriter writer = new PrintWriter(response.getOutputStream());
 
 			masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence))
-					.forEach(entryAccession -> writer.write(entryAccession));
+					.forEach(entryAccession -> {
+						writer.write(entryAccession);
+						writer.write("\n");
+					});
 
 			writer.close();
 		} catch (IOException e) {
