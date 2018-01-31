@@ -18,6 +18,19 @@
 		</layout>
 	</appender>
 
+	<!-- Check documentaiton and options in here https://github.com/mp911de/logstash-gelf/#log4j -->
+	<appender name="gelfFileAppender" class="biz.paluch.logging.gelf.log4j.GelfLogAppender">
+		<param name="Host" value="udp:kant.sib.swiss" />
+		<param name="Port" value="12201" />
+		<param name="TimestampPattern" value="yyyy-MM-dd HH:mm:ss,SSSS"/>
+		<param name="MaximumMessageSize" value="8192"/>
+		<param name="Version" value="1.1" />
+		<param name="Facility" value="java-test" />
+		<param name="ExtractStackTrace" value="true" />
+		<param name="FilterStackTrace" value="true" />
+	</appender>
+
+
 	<logger name="org.springframework">
 		<level value="WARN" />
 	</logger>
@@ -86,6 +99,7 @@
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="gelfFileAppender" />
 	</root>
 
 </log4j:configuration>
