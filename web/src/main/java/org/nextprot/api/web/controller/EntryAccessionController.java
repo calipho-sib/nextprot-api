@@ -72,30 +72,31 @@ public class EntryAccessionController {
 
 		NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
 
+		List<String> entries = masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
+
 		try {
 			if (mediaType == NextprotMediaType.JSON) {
 
 				JSONStringsWriter writer = new JSONStringsWriter(response.getOutputStream());
 
-				masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence))
-						.forEach(entryAccession -> {
-							try {
-								writer.write(entryAccession);
-							} catch (IOException e) {
-								throw new NextProtException("cannot write "+entryAccession + " in json");
-							}
-						});
+				entries.forEach(entryAccession -> {
+					try {
+						writer.write(entryAccession);
+					}
+					catch (IOException e) {
+						throw new NextProtException("cannot write "+entryAccession + " in json");
+					}
+				});
 
 				writer.close();
 			}
 			else if (mediaType == NextprotMediaType.TXT) {
 				PrintWriter writer = new PrintWriter(response.getOutputStream());
 
-				masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence))
-						.forEach(entryAccession -> {
-							writer.write(entryAccession);
-							writer.write("\n");
-						});
+				entries.forEach(entryAccession -> {
+					writer.write(entryAccession);
+					writer.write("\n");
+				});
 
 				writer.close();
 			}
