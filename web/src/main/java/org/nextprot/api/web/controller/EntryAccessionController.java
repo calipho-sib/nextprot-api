@@ -5,7 +5,6 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,7 +47,7 @@ public class EntryAccessionController {
 		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName, withSynonyms));
 	}
 
-	@ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<String> masterIdentifierByProteinExistence(
@@ -56,5 +55,5 @@ public class EntryAccessionController {
 					allowedvalues = { "PROTEIN_LEVEL"}) @PathVariable("proteinExistence")  String proteinExistence) {
 
 		return masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
-	}
+	}*/
 }
