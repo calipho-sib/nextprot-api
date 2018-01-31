@@ -371,6 +371,14 @@
 			<artifactId>poi</artifactId>
 			<version>3.13</version>
 		</dependency>
+
+		<dependency>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
+			<version>1.11.1</version>
+		</dependency>
+
+
 	</dependencies>
 
     <build>
