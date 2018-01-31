@@ -3,6 +3,7 @@ package org.nextprot.api.core.dao;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -42,8 +43,8 @@ public interface IsoformDAO {
     
     /**
      * Retrieves minimal information about isoforms ac + md5 + sequence
-     * @return the full list of valid isoforms 
+     * @return the full list of valid isoforms, for each isoform we get a map with 3 keys, one by field 
      */
-	List<Isoform> findListOfIsoformAcMd5Sequence();
+	List<Map<String,String>> findOrderedListOfIsoformAcMd5SequenceFieldMap();
 
 }

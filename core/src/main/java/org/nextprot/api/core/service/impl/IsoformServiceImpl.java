@@ -118,7 +118,7 @@ class IsoformServiceImpl implements IsoformService {
 
 	@Override
 	@Cacheable("isoforms-md5")
-	public List<Isoform> findListOfIsoformAcMd5Sequence() {
-		return isoformDAO.findListOfIsoformAcMd5Sequence();
+	public List<Map<String,String>> findListOfIsoformAcMd5Sequence() {
+		return isoformDAO.findOrderedListOfIsoformAcMd5SequenceFieldMap();
 	}
 }
