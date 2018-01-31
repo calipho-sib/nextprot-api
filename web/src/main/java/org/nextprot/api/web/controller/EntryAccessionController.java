@@ -48,11 +48,11 @@ public class EntryAccessionController {
 		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName, withSynonyms));
 	}
 
-	@ApiMethod(path = "/entry-accessions/protein-existence/{PE}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/entry-accessions/protein-existence/{PE}", method = { RequestMethod.GET })
+	@ApiMethod(path = "/entry-accessions/protein-existence/{proteinExistence}", verb = ApiVerb.GET, description = "Retrieves the entry accession number(s) corresponding to the given gene name", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<String> masterIdentifierByProteinExistence(
-			@ApiPathParam(name = "proteinExistence", description = "The protein existence value type (ALL, PROTEIN_LEVEL, TRANSCRIPT_LEVEL, HOMOLOGY, PREDICTED, UNCERTAIN)",
+			@ApiPathParam(name = "proteinExistence", description = "The protein existence value type (PROTEIN_LEVEL, TRANSCRIPT_LEVEL, HOMOLOGY, PREDICTED, UNCERTAIN)",
 					allowedvalues = { "PROTEIN_LEVEL"}) @PathVariable("proteinExistence")  String proteinExistence) {
 
 		return masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
