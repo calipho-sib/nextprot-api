@@ -39,4 +39,11 @@ public interface IsoformDAO {
      * @return a list of sets, each set contains entry accessions
      */
     List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform();
+    
+    /**
+     * Retrieves minimal information about isoforms ac + md5 + sequence
+     * @return the full list of valid isoforms 
+     */
+	List<Isoform> findListOfIsoformAcMd5Sequence();
+
 }

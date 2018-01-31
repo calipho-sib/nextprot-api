@@ -45,6 +45,18 @@ public class IsoformDAOImpl implements IsoformDAO {
 
 	}
 
+	private static class IsoformMinimumRowMapper implements ParameterizedRowMapper<Isoform> {
+		
+		@Override
+		public Isoform mapRow(ResultSet resultSet, int row) throws SQLException {
+			Isoform isoform = new Isoform();
+			isoform.setIsoformAccession(resultSet.getString("accession"));
+			isoform.setMd5(resultSet.getString("md5"));
+			isoform.setSequence(resultSet.getString("bio_sequence"));
+			return isoform;
+		}
+	}
+	
 	private static class IsoformRowMapper implements ParameterizedRowMapper<Isoform> {
 		
 		/*
@@ -73,7 +85,6 @@ public class IsoformDAOImpl implements IsoformDAO {
 			isoform.setSequence(resultSet.getString("bio_sequence"));
 			isoform.setMd5(resultSet.getString("md5"));
 			isoform.setSwissProtDisplayedIsoform(resultSet.getBoolean("is_swissprot_display"));
-
 			// Set the main entity
 			EntityName mainEntity = new EntityName();
 			mainEntity.setQualifier(null); // always null in data
@@ -157,6 +168,12 @@ public class IsoformDAOImpl implements IsoformDAO {
 	public List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform() {
 		String sql = sqlDictionary.getSQLQuery("equivalent-isoforms");
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new EquivalentIsoformsAsEquivalentEntriesRowMapper());
+	}
+
+	@Override
+	public List<Isoform> findListOfIsoformAcMd5Sequence() {
+		String sql = sqlDictionary.getSQLQuery("all-iso-ac-md5-sequences");
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new IsoformMinimumRowMapper());
 	}
 
 }
