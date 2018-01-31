@@ -5,12 +5,17 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,4 +61,19 @@ public class EntryAccessionController {
 
 		return masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence));
 	}*/
+
+	@RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = {RequestMethod.GET}, produces = MediaType.TEXT_PLAIN_VALUE)
+	public void masterIdentifierByProteinExistence(String proteinExistence, HttpServletResponse response) {
+
+		try {
+			PrintWriter writer = new PrintWriter(response.getOutputStream());
+
+			masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence))
+					.forEach(entryAccession -> writer.write(entryAccession));
+
+			writer.close();
+		} catch (IOException e) {
+			throw new NextProtException("cannot export entries by ProteinExistence in TXT format", e);
+		}
+	}
 }

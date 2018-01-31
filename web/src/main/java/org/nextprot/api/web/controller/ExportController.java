@@ -8,7 +8,6 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
@@ -25,14 +24,12 @@ import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.StreamEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
 
@@ -188,21 +185,6 @@ public class ExportController {
             writer.close();
         } catch (IOException e) {
             throw new NextProtException("cannot export all entries in TSV format", e);
-        }
-    }
-
-    @RequestMapping(value = "/entry-accessions/protein-existence/{proteinExistence}", method = {RequestMethod.GET}, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void exportEntriesByProteinExistence(String proteinExistence, HttpServletResponse response) {
-
-        try {
-            PrintWriter writer = new PrintWriter(response.getOutputStream());
-
-            masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.valueOfKey(proteinExistence))
-                    .forEach(entryAccession -> writer.write(entryAccession));
-
-            writer.close();
-        } catch (IOException e) {
-            throw new NextProtException("cannot export entries by ProteinExistence in TXT format", e);
         }
     }
 
