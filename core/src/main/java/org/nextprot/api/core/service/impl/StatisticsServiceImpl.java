@@ -3,7 +3,7 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PublicationStatisticsServiceImpl implements PublicationStatisticsService {
+public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private PublicationService publicationService;
