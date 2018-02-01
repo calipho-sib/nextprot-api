@@ -9,7 +9,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.web.service.impl.writer.JSONStringsWriter;
+import org.nextprot.api.web.service.impl.writer.JSONObjectsWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,7 @@ import java.util.Collection;
 @Api(name = "Entry Accessions", description = "Retrieves nextProt entry accession numbers")
 public class EntryAccessionController {
 
-	@Autowired	private MasterIdentifierService masterIdentifierService;
+	@Autowired private MasterIdentifierService masterIdentifierService;
 
     @ApiMethod(path = "/entry-accessions", verb = ApiVerb.GET, description = "Retrieves all neXtProt entry accession numbers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     @RequestMapping(value = "/entry-accessions", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE} )
@@ -93,7 +93,7 @@ public class EntryAccessionController {
 
         if (mediaType == NextprotMediaType.JSON) {
 
-            JSONStringsWriter writer = new JSONStringsWriter(response.getOutputStream());
+            JSONObjectsWriter<String> writer = new JSONObjectsWriter<>(response.getOutputStream());
             writer.write(entries);
         }
         else if (mediaType == NextprotMediaType.TXT) {

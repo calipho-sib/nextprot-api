@@ -7,20 +7,20 @@ import java.io.OutputStream;
 import java.util.Collection;
 
 /**
- * Export list of strings in JSON format
+ * Export list of objects in JSON format
  */
-public class JSONStringsWriter {
+public class JSONObjectsWriter<T> {
 
     private final ObjectMapper mapper;
     private final OutputStream os;
 
-    public JSONStringsWriter(OutputStream os) {
+    public JSONObjectsWriter(OutputStream os) {
 
         mapper = new ObjectMapper();
         this.os = os;
     }
 
-    public void write(Collection<String> strings) throws IOException {
+    public void write(Collection<T> strings) throws IOException {
 
         mapper.writeValue(os, strings);
     }

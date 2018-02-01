@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao;
 
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.SlimIsoform;
 
 import java.util.List;
 import java.util.Set;
@@ -39,4 +40,11 @@ public interface IsoformDAO {
      * @return a list of sets, each set contains entry accessions
      */
     List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform();
+    
+    /**
+     * Retrieves minimal information about isoforms ac + md5 + sequence
+     * @return the full list of valid isoforms, for each isoform we get a map with 3 keys, one by field 
+     */
+	List<SlimIsoform> findOrderedListOfIsoformAcMd5SequenceFieldMap();
+
 }

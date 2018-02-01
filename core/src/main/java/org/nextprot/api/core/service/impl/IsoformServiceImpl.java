@@ -10,6 +10,7 @@ import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.SlimIsoform;
 import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.IsoformService;
@@ -114,5 +115,11 @@ class IsoformServiceImpl implements IsoformService {
 	@Cacheable("entries-having-equivalent-isoforms")
 	public List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform() {
 		return isoformDAO.findSetsOfEntriesHavingAnEquivalentIsoform();
+	}
+
+	@Override
+	@Cacheable("isoforms-md5")
+	public List<SlimIsoform> findListOfIsoformAcMd5Sequence() {
+		return isoformDAO.findOrderedListOfIsoformAcMd5SequenceFieldMap();
 	}
 }

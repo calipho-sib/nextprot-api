@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.SlimIsoform;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
@@ -46,5 +47,7 @@ public interface IsoformService {
 	 * @return a list of sets, each set contains at least 2 entry accession numbers.
 	 */
 	List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform();
+
+	List<SlimIsoform> findListOfIsoformAcMd5Sequence();
 	
 }

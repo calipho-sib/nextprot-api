@@ -6,18 +6,17 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.export.io.SlimIsoformTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
 import org.nextprot.api.core.utils.annot.export.EntryPartWriterTSV;
 import org.nextprot.api.web.service.EntryPageService;
+import org.nextprot.api.web.service.impl.writer.JSONObjectsWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -26,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -135,6 +135,31 @@ public class EntryController {
 			@PathVariable("accession") String isoformAccession) {
 
 		return isoformService.formatPEFFHeader(isoformAccession);
+	}
+
+	@ApiMethod(path = "/isoforms", verb = ApiVerb.GET, description = "Retrieves all isoforms", produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE})
+	@RequestMapping(value = "/isoforms", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE} )
+	public void getListOfIsoformAcMd5Sequence(HttpServletRequest request, HttpServletResponse response) {
+
+		NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+		try {
+			List<SlimIsoform> isoforms = isoformService.findListOfIsoformAcMd5Sequence();
+
+			if (mediaType == NextprotMediaType.JSON) {
+
+				JSONObjectsWriter<SlimIsoform> writer = new JSONObjectsWriter<>(response.getOutputStream());
+				writer.write(isoforms);
+			}
+			else if (mediaType == NextprotMediaType.TSV) {
+
+				SlimIsoformTSVWriter writer = new SlimIsoformTSVWriter(response.getOutputStream());
+				writer.write(isoforms);
+				writer.close();
+			}
+		} catch (IOException e) {
+			throw new NextProtException("cannot get isoforms in "+mediaType.getExtension()+" format", e);
+		}
 	}
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
