@@ -26,11 +26,11 @@ public class SlimIsoformTSVWriter {
 
     public void write(Collection<SlimIsoform> isoforms) {
 
-        isoforms.forEach(isoform -> writer.write(
-                Stream.of(isoform.getAccession(), isoform.getMd5(), isoform.getSequence())
-                        .collect(Collectors.joining("\t"))));
-
-        writer.write("\n");
+        isoforms.forEach(isoform -> {
+            writer.write(Stream.of(isoform.getAccession(), isoform.getMd5(), isoform.getSequence())
+                    .collect(Collectors.joining("\t")));
+            writer.write("\n");
+        });
     }
 
     public void close() {
