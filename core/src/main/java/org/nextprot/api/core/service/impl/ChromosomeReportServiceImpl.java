@@ -95,12 +95,13 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.collect(Collectors.toList());
 	}
 
+	// TODO: see with pam how to change this code
 	@Cacheable("unconfirmed-ms-master-unique-names-by-chromosome")
 	@Override
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				//.filter(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withProteinExistence()).getProteinExistences().isInferenceFound())
+				//.filter(acc -> overviewService.findOverviewByEntry(acc).getProteinExistence().isInferenceFound())
 				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(
 						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations().withOverview())))
 				.collect(Collectors.toList());
@@ -127,7 +128,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
 
 			if (!pe2entries.containsKey(pe)) {
 
