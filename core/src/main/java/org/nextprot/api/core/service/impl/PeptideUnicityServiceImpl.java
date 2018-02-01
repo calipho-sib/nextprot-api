@@ -1,14 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.service.IsoformService;
@@ -16,6 +7,9 @@ import org.nextprot.api.core.service.PeptideUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 
@@ -69,7 +63,7 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 
 	@Override
 	@Cacheable("peptide-name-unicity-map")
-	public synchronized Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
+	public Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
 
 		Map<String,PeptideUnicity> result = new HashMap<>();
 		System.out.println("" + new Date() + "PeptideUnicityService building cache...");
