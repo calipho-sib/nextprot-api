@@ -128,7 +128,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
+			//ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getProteinExistence();
 
 			if (!pe2entries.containsKey(pe)) {
 

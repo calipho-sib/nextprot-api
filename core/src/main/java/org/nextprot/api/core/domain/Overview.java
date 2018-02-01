@@ -1,6 +1,5 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.EntityName;
 
@@ -295,11 +294,11 @@ public class Overview implements Serializable{
 		this.additionalNames = additionalNames;
 	}
 
-	public ProteinExistence getProteinExistence() {
+	/*public ProteinExistence getProteinExistence() {
 		return proteinExistences.getProteinExistence();
-	}
+	}*/
 
-	@JsonIgnore
+	//@JsonIgnore
 	public ProteinExistences getProteinExistences() {
 		return proteinExistences;
 	}
