@@ -18,15 +18,18 @@ import static org.junit.Assert.assertEquals;
 
 public class SequencePositionMapperTest {
 
+	
 	static
 	{
+		/*
 	    Logger rootLogger = Logger.getRootLogger();
 	    rootLogger.setLevel(Level.DEBUG);
 	    rootLogger.addAppender(new ConsoleAppender(
 	               new PatternLayout("\n%-6r [%p] %c - %m%n")));
+	    */
 	}
 	
-	private final static Log logger = LogFactory.getLog(SequencePositionMapperTest.class);
+	//private final static Log logger = LogFactory.getLog(SequencePositionMapperTest.class);
 
 	@Test
 	public void testCheckSequencePositions() {
@@ -115,7 +118,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(104);
     	codonNuPos.addNucleotidePosition(201);
     	result = SequencePositionMapper.getCodonNucleotideIndices(codonNuPos, genePosRanges);
-    	logger.debug(result);
+    	//logger.debug(result);
     	assertEquals(true, result.areInFrame());
     	assertEquals(new Integer(2), result.getAminoAcidPosition());
     }
