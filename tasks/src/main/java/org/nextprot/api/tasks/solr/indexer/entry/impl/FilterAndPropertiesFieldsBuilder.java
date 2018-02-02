@@ -1,13 +1,14 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
+import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 
 @EntryFieldBuilder
@@ -15,16 +16,20 @@ public class FilterAndPropertiesFieldsBuilder extends FieldBuilder{
 	
 	@Override
 	protected void init(Entry entry){
-		
+
+		// TODO: it is a smell (see also EntryReportServiceImpl)
+		// actually the entry information is the same for all potential entry reports -> the first is sufficient
+		EntryReport report = entryReportService.reportEntry(entry.getUniqueName()).get(0);
+
 		// Filters and entry properties
 		EntryProperties props = entry.getProperties();
-		addField(Fields.ISOFORM_NUM, props.getIsoformCount());
+		addField(Fields.ISOFORM_NUM, report.countIsoforms());
 		int cnt;
-		cnt = props.getPtmCount();
+		cnt = report.countPTMs();
 		if(cnt > 0) {
 			addField(Fields.PTM_NUM, cnt);
 		}
-		cnt = props.getVarCount();
+		cnt = report.countVariants();
 		if(cnt > 0) {
 			addField(Fields.VAR_NUM, cnt);
 		}
