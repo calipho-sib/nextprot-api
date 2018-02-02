@@ -4,6 +4,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -21,15 +22,8 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 	private TerminologyService terminologyservice;
 	private EntryBuilderService entryBuilderService;
 	private PublicationService publicationService;
+	private EntryReportService entryReportService;
     private boolean isGold;
-
-	public EntryBuilderService getEntryBuilderService() {
-		return entryBuilderService;
-	}
-
-	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
-		this.entryBuilderService = entryBuilderService;
-	}
 
 	// protected => only sub classes can use c'tor (was abstract class before)
 	protected EntryBaseSolrIndexer(String url, boolean isGold) {
@@ -53,6 +47,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 			fb.setTerminologyService(terminologyservice);
 			fb.setEntryBuilderService(entryBuilderService);
 			fb.setPublicationService(publicationService);
+			fb.setEntryReportService(entryReportService);
 			fb.initializeBuilder(entry);
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
@@ -67,6 +62,14 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		return doc;
 	}
 
+	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
+		this.entryBuilderService = entryBuilderService;
+	}
+
+	public EntryBuilderService getEntryBuilderService() {
+		return entryBuilderService;
+	}
+
 	public void setTerminologyservice(TerminologyService terminologyservice) {
 		this.terminologyservice = terminologyservice;
 	}
@@ -74,6 +77,10 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
     public void setPublicationService(PublicationService publicationService) {
         this.publicationService = publicationService;
     }
+
+	public void setEntryReportService(EntryReportService entryReportService) {
+		this.entryReportService = entryReportService;
+	}
 
 	static void initializeFieldBuilders(Map<Fields, FieldBuilder> fieldsBuilderMap) {
 		Reflections reflections = new Reflections("org.nextprot.api.tasks.solr.indexer.entry.impl");
