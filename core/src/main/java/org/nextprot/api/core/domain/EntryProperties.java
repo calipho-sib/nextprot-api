@@ -3,13 +3,10 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 
 
-public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
+public class EntryProperties  implements Serializable {
 	
-	private static final long serialVersionUID = 6L;
+	private static final long serialVersionUID = 7L;
 
-	private int ptmCount;
-	private int varCount;
-	private int isoformCount;
 	private int interactionCount;
 
 	private int maxSeqLen;
@@ -74,30 +71,5 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 
 	public void setMaxSeqLen(int maxSeqLen) {
 		this.maxSeqLen = maxSeqLen;
-	}
-
-	public int getIsoformCount() {
-		return isoformCount;
-	}
-
-	public void setIsoformCount(int isoformCount) {
-		this.isoformCount = isoformCount;
-	}
-
-	public int getVarCount() {
-		return varCount;
-	}
-
-	public void setVarCount(int varCount) {
-		this.varCount = varCount;
-	}
-
-
-	public int getPtmCount() {
-		return ptmCount;
-	}
-
-	public void setPtmCount(int ptmCount) {
-		this.ptmCount = ptmCount;
 	}
 }
