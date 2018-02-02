@@ -484,7 +484,7 @@ public class AnnotationUtils {
 		return null;
 	}
 	
-	// related to old and new rule to PE1 upgrade 
+	// related to old rule to PE1 upgrade 
 	public static boolean containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(List<Annotation> list, int n, int s) {
 		int cnt=0;
 		for (Annotation a: list) {
@@ -498,48 +498,83 @@ public class AnnotationUtils {
 	
 	// related to  rule to PE1 upgrade 
 	public static boolean isProteotypicPeptideMapping(Annotation a) {
-		
-    	Collection<AnnotationProperty> props = a.getPropertiesByKey("is proteotypic");
+    	Collection<AnnotationProperty> props = a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY);
     	if (props==null || props.size()==0) return false; // we don't know if proteotypic or not => NO !
     	return props.iterator().next().getValue().equals("Y");
 	}
 	
-	// related to new rule to PE1 upgrade 
-    public static void addToNonInclusivePeptideMappingList(Annotation a, List<Annotation> list, int minPepSize) {
+	// related to  rule to PE1 upgrade 
+	public static String getPeptideName(Annotation a) {
+    	Collection<AnnotationProperty> props = a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_NAME);
+    	if (props==null || props.size()==0) return null; // we don't know the name
+    	return props.iterator().next().getValue();
+	}
 
-		if (!isProteotypicPeptideMapping(a)) return;
+	// related to  rule to PE1 upgrade (for prod)
+	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list) {
+		return containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list,false);
+	}
 
-		Map<String, AnnotationIsoformSpecificity> timA = a.getTargetingIsoformsMap();
+	// related to  rule to PE1 upgrade (for tests)
+	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list, boolean debug) {
+		return containsAtLeast2NonInclusivePeptides(list,9,18,debug);
+	}
 
-    	for (String aIsoAC: timA.keySet()) {
-    		if (timA.containsKey(aIsoAC)) {
+	// related to  rule to PE1 upgrade 
+	private static boolean containsAtLeast2NonInclusivePeptides(List<Annotation> list, int peptideMinSize, int minCoverage, boolean debug) {
+		
+		if (list==null) return false;
+		
+		for (Annotation a: list) {
+			if (a.getAPICategory()!=AnnotationCategory.PEPTIDE_MAPPING) continue;
+			Map<String, AnnotationIsoformSpecificity> timA = a.getTargetingIsoformsMap();
+	    	for (String aIsoAC: timA.keySet()) {
 				AnnotationIsoformSpecificity aSpec = timA.get(aIsoAC);
-
+				String aName = getPeptideName(a);
+				if (aName==null) continue;
 				int aP1 = aSpec.getFirstPosition();
 				int aP2 = aSpec.getLastPosition();
 				int aPepSize = aP2 - aP1 + 1;
-				if (aPepSize < minPepSize) return;  // if < min size => ignore
-
-				ListIterator<Annotation> iter = list.listIterator();
-				while (iter.hasNext()) {
-					Annotation b = iter.next();
+				if (aPepSize < peptideMinSize) continue;  // if < min size => ignore
+				for (Annotation b: list) {
+					if (b.getAPICategory()!=AnnotationCategory.PEPTIDE_MAPPING) continue;
 					Map<String, AnnotationIsoformSpecificity> timB = b.getTargetingIsoformsMap();
-
 					if (timB.containsKey(aIsoAC)) {
 						AnnotationIsoformSpecificity bSpec = timB.get(aIsoAC);
+						String bName = getPeptideName(b);
+						if (bName==null || aName.equals(bName)) continue;
 						int bP1 = bSpec.getFirstPosition();
 						int bP2 = bSpec.getLastPosition();
-
-						// if a has same coverage as b or a  included in b => ignore
-						if (aP1 >= bP1 && aP2 <= bP2) return;
-
-						// if a includes b => remove b
-						if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
+						int bPepSize = bP2 - bP1 + 1;
+						if (bPepSize < peptideMinSize) continue;  // if < min size => ignore
+						// if b is on the left side of a with or without overlap
+						if (aP1 > bP1 && aP2 > bP2) {
+							int overlap = bP2 - aP1 + 1;
+							if (overlap<0) overlap=0;
+							if (aPepSize + bPepSize - overlap >= minCoverage) {
+								if (debug==true) {
+									System.out.println(
+										"Found 2 non inclusive peptides on " + aIsoAC + ":" 
+										+ aName + " at " + aP1 + "-" +aP2 + " and "
+										+ bName + " at " + bP1 + "-" +bP2 
+										+ " with overlap " + overlap + " and coverage " + (aPepSize + bPepSize - overlap)
+									);
+								}
+								return true; 
+							}
+						} 
+						// we get here in the following cases:
+						// 1) a includes b or a is included in b => ignore
+						// or 
+						// 2) b is on the right side of a with or without overlap 
+						// this case is met later on going iterating until a and b are swapped
+						// (symmetric situation for a and b)
 					}
 				}
-				// add it
-				list.add(a);
-			}
-    	}
-    }
+	    	}
+		}
+		return false;
+	}
+		
+	
 }

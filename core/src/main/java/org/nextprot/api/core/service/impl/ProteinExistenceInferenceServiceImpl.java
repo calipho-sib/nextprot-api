@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -86,16 +87,15 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	public boolean promotedAccordingToRule2(String entryAccession, Entry entry) {
 
-        List<Annotation> filteredPeptideMappingList = new ArrayList<>();
-
 		if (entry==null) entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
 
-		entry.getAnnotationsByCategory(AnnotationCategory.PEPTIDE_MAPPING).stream()
+        List<Annotation> filteredPeptideMappingList = 
+    		entry.getAnnotationsByCategory(AnnotationCategory.PEPTIDE_MAPPING).stream()
 				.filter(AnnotationUtils::isProteotypicPeptideMapping)
-                .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-                .forEach(pm -> AnnotationUtils.addToNonInclusivePeptideMappingList(pm, filteredPeptideMappingList, 9));
-
-		return filteredPeptideMappingList.size() > 1;
+	            .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+	            .collect(Collectors.toList());
+        return AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(filteredPeptideMappingList);
+        
 	}
 
 	// Spec: Entry must have an expression information annotation containing the text "(at protein level)"
