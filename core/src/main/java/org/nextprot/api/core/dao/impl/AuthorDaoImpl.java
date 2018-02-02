@@ -27,7 +27,7 @@ public class AuthorDaoImpl implements AuthorDao {
 
 	public List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationId", publicationId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper(publicationId));
 	}
 
 	@Override
@@ -43,6 +43,13 @@ public class AuthorDaoImpl implements AuthorDao {
 
 	private static class AuthorRowMapper implements ParameterizedRowMapper<PublicationAuthor> {
 
+		private final long publicationId;
+
+		AuthorRowMapper(long publicationId) {
+
+			this.publicationId = publicationId;
+		}
+
 		public PublicationAuthor mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			// Need to use a mapper, but it is not so bad if we don't want to use reflection since the database may use different names
@@ -57,6 +64,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			author.setEditor(resultSet.getBoolean("is_editor"));
 			author.setSuffix(resultSet.getString("suffix"));
 			author.setRank(resultSet.getInt("rank"));
+			author.setPublicationId(publicationId);
 			return author;
 		}
 	}
