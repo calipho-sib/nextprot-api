@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev", "cache" })
 public class DbXrefWebTest extends MVCDBUnitBaseTest {
 
 	@Test
