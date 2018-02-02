@@ -1,5 +1,6 @@
 package org.nextprot.api.web.controller;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
@@ -28,7 +29,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
-//@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
+@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
 public class EntryPublicationController {
 
 	@Autowired
@@ -173,14 +174,27 @@ public class EntryPublicationController {
         return view;
     }
 
-    @ApiMethod(path = "/publication/{pubid}", verb = ApiVerb.GET, description = "Get the publication",
+    @ApiMethod(path = "/publication/pubid/{pubid}", verb = ApiVerb.GET, description = "Get the publication",
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/publication/{pubid}", method = { RequestMethod.GET })
+    @RequestMapping(value = "/publication/pubid/{pubid}", method = { RequestMethod.GET })
     @ResponseBody
     public Publication getPublication(@ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
                                           @PathVariable("pubid") long publicationId) {
 
         return publicationService.findPublicationById(publicationId);
+    }
+
+    @ApiMethod(path = "/publication/database/{database}/accession/{accession}", verb = ApiVerb.GET, description = "Get a PubMed or DOI publication",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publication/database/{database}/accession/{accession}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Publication getPublicationFromAccessionAndDatabase(
+            @ApiPathParam(name = "database", description = "A database for publications (PubMed or DOI)", allowedvalues = { "PubMed" })
+            @PathVariable("database") String database,
+            @ApiPathParam(name = "accession", description = "A publication accession", allowedvalues = { "26487540" })
+            @PathVariable("accession") String accession) {
+
+        return publicationService.findPublicationByDatabaseAndAccession(database, accession);
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {
