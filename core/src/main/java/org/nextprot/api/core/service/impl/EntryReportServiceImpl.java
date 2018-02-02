@@ -68,6 +68,10 @@ public class EntryReportServiceImpl implements EntryReportService {
         setSubmissionCount(entry, report);
         setWebResourceCount(entry, report);
 
+        // TODO: it is a smell !!
+        // this service should have 2 services:
+        // - one named EntryReport without any Gene information
+        // - one named EntryGeneReport with only Gene information
         return duplicateReportForEachGene(entry, report);
     }
 
