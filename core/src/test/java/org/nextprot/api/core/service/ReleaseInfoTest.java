@@ -9,13 +9,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev", "cache" })
+/**
+ * @author pmichel
+ * These tests require computation on the full set of entries  
+ * => 4 hours at least with cache
+ * => untractable without cache
+ * And these tests don't test anything relevant
+ * => ignored
+ */
+
+@Ignore
+@ActiveProfiles({ "dev" })
 public class ReleaseInfoTest extends CoreUnitBaseTest {
 	
 	@Autowired private ReleaseInfoService releaseInfoService;
