@@ -60,13 +60,10 @@ public class RdfPublicationController {
 			model.put("prefix", withPrefix);
 			model.put("StringUtils", StringUtils.class);
 			model.put("publication", publication);
-			model.put("StringUtils", StringUtils.class);
 	        model.put("isLargeScale", publicationService.getPublicationStatistics(publication.getPublicationId()).isLargeScale());
 			v.render(model, request, response);
 			withPrefix=false;
 		}
 	}
-
-	
 }
 

@@ -3,7 +3,10 @@ package org.nextprot.api.web.service.impl.writer;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
+import org.nextprot.api.web.ApplicationContextProvider;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -18,6 +21,12 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
 
     private static class DataProvider implements EntryDataProvider {
 
+        private final EntryReportService entryReportService;
+
+        DataProvider() {
+            entryReportService = ApplicationContextProvider.getApplicationContext().getBean(EntryReportService.class);
+        }
+
         @Override
         public List<EntryBlock> getSourceEntryBlocks() {
             return Arrays.asList(EntryBlock.OVERVIEW, EntryBlock.CHROMOSOMAL_LOCATION);
@@ -31,6 +40,8 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
         @Override
         public List<Record> getRecords(Entry entry) {
 
+            EntryReport entryReport = entryReportService.reportEntry(entry.getUniqueName()).get(0);
+
             Object[] values = new Object[getFieldNames().length];
 
             values[0] = entry.getUniqueName();
@@ -40,9 +51,9 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
             values[4] = booleanToYesNoString(entry.getProperties().getFilterproteomics());
             values[5] = booleanToYesNoString(entry.getProperties().getFilterdisease());
             values[6] = booleanToYesNoString(entry.getProperties().getFilterstructure());
-            values[7] = entry.getProperties().getIsoformCount();
-            values[8] = entry.getProperties().getVarCount();
-            values[9] = entry.getProperties().getPtmCount();
+            values[7] = entryReport.countIsoforms();
+            values[8] = entryReport.countVariants();
+            values[9] = entryReport.countPTMs();
             values[10] = booleanToYesNoString(entry.getProperties().getFiltermutagenesis());
             values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
             values[12] = entry.getOverview().getProteinExistences().getProteinExistence().getDescription();

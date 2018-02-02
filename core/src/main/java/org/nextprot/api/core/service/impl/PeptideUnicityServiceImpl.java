@@ -60,10 +60,9 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 		}
 	}
 
-
 	@Override
 	@Cacheable("peptide-name-unicity-map")
-	public Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
+	public synchronized Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
 
 		Map<String,PeptideUnicity> result = new HashMap<>();
 		System.out.println("" + new Date() + "PeptideUnicityService building cache...");
