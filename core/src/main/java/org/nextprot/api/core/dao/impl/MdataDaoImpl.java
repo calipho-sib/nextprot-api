@@ -2,7 +2,9 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -22,31 +24,26 @@ public class MdataDaoImpl implements MdataDao {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private SQLDictionary sqlDictionary;
 	
-	
 	@Override
-	public List<Mdata> findMdataForNextprotPTMs(List<Long> evidenceIdList) {
-		
-		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", evidenceIdList);
-		
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
-				sqlDictionary.getSQLQuery("nextprot-ptm-mdata-by-evidence-ids"), 
+	public Map<Long, Long> findEvidenceIdMdataIdMapForPTMsByEntryName(String ac) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("entry_name", ac);
+		Map<Long,Long> map = new HashMap<>();
+		EvidenceMdataMapRowMapper mapper = new EvidenceMdataMapRowMapper(map);
+		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+				sqlDictionary.getSQLQuery("ptm-evidence-with-mdata-by-unique-name"), 
 				namedParameters, 
-				new MdataRowMapper());
-	}
-	
-	
+				mapper);
+		return map;		
+	};
+
 	@Override
-	public List<Mdata> findMdataForNonNextprotPTMs(List<Long> evidenceIdList) {
-
-		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", evidenceIdList);
-		
+	public List<Mdata> findMdataByIds(List<Long> mdataIds) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("mdata_ids", mdataIds);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
-				sqlDictionary.getSQLQuery("phosphoproteome-ptm-mdata-by-evidence-ids"), 
+				sqlDictionary.getSQLQuery("mdata-by-ids"), 
 				namedParameters, 
-				new MdataRowMapper());
-	}
+				new MdataRowMapper());	}	
 	
-
 	
 	
 	private static class MdataRowMapper implements ParameterizedRowMapper<Mdata> {
@@ -55,7 +52,6 @@ public class MdataDaoImpl implements MdataDao {
 		public Mdata mapRow(ResultSet rs, int row) throws SQLException {
 			
 			Mdata mdata = new Mdata();
-			mdata.setEvidenceId(rs.getLong("evidence_id"));
 			mdata.setId(rs.getLong("mdata_id"));
 			mdata.setAccession(rs.getString("mdata_ac"));
 			mdata.setTitle(rs.getString("mdata_title"));
@@ -64,6 +60,19 @@ public class MdataDaoImpl implements MdataDao {
 		}
 	}
 
+	private static class EvidenceMdataMapRowMapper implements ParameterizedRowMapper<Object> {
+
+		private Map<Long,Long> map;
+		public EvidenceMdataMapRowMapper(Map<Long,Long> map) {
+			this.map=map;
+		}
+		
+		@Override
+		public Object mapRow(ResultSet rs, int row) throws SQLException {
+			map.put(rs.getLong("evidence_id"), rs.getLong("mdata_id"));
+			return null;
+		}
+	}
 
 
 	//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -95,6 +104,14 @@ public class MdataDaoImpl implements MdataDao {
 					public Long mapRow(ResultSet rs, int arg1) throws SQLException {
 						return rs.getLong("evidence_id");
 					}});
-	};
+	}
+
+
+
+
+
+
+
+
 
 }

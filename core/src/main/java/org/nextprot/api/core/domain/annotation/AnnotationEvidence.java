@@ -33,8 +33,8 @@ public class AnnotationEvidence implements Serializable {
 	private String resourceAccession;
 	private String resourceDb;
 	private String resourceDesc;
-	private String publication_md5;
 	private Long experimentalContextId;
+	private Long mdataId;
 	private long annotationId;
 	private boolean isNegativeEvidence;
 	private String qualifierType;
@@ -72,9 +72,16 @@ public class AnnotationEvidence implements Serializable {
 	public Long getExperimentalContextId() {
 		return experimentalContextId;
 	}
+	public Long getMdataId() {
+		return mdataId;
+	}
 
 	public void setExperimentalContextId(Long experimentalContextId) {
 		this.experimentalContextId = experimentalContextId;
+	}
+
+	public void setMdataId(Long mdataId) {
+		this.mdataId = mdataId;
 	}
 
 	public long getResourceId() {

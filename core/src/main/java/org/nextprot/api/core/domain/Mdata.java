@@ -7,19 +7,11 @@ public class Mdata implements Serializable{
 
 	private static final long serialVersionUID = 1;
 
-	private long evidenceId; 	// id of the parent evidence
 	private long id; 			// equivalent to publication id
 	private String accession;   // MDATA name      
 	private String title; 
 	private String rawXml; 
 	
-	
-	public long getEvidenceId() {
-		return evidenceId;
-	}
-	public void setEvidenceId(long evidenceId) {
-		this.evidenceId = evidenceId;
-	}
 	public long getId() {
 		return id;
 	}
@@ -49,7 +41,6 @@ public class Mdata implements Serializable{
 		sb.append("id       : " + this.id + "\n");
 		sb.append("ac       : " + this.accession + "\n");
 		sb.append("title    : " + this.title + "'\n");
-		sb.append("evi.  id : " + this.evidenceId + "\n");
 		return sb.toString();
 	}
 	

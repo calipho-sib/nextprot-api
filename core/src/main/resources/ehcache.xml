@@ -367,4 +367,16 @@
 		   eternal="true" statistics="true">
     </cache>
 
+	<cache name="mdata-list-by-entry" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+
+	<cache name="evidence-mdata-map-by-entry" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+
 </ehcache>
