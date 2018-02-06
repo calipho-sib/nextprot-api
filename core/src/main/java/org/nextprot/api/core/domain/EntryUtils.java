@@ -27,6 +27,21 @@ public class EntryUtils implements Serializable{
 		return entryAccession;
 	}
 
+	public static Set<Long> getMdataIds(List<Annotation> annotations) {
+		Set<Long> mdataIds = new TreeSet<>();
+		if (annotations != null) {
+			for (Annotation annot : annotations) {
+				if (annot.getEvidences() != null) {
+					for (AnnotationEvidence evi: annot.getEvidences()) {
+						Long mdId = evi.getMdataId();
+						if (mdId != null && mdId != 0) mdataIds.add(mdId);
+					}
+				}
+			}
+		}
+		return mdataIds;
+	}
+	
 	public static Set<Long> getExperimentalContextIds(List<Annotation> annotations) {
 		Set<Long> ecIds = new TreeSet<>();
 		if (annotations != null) {

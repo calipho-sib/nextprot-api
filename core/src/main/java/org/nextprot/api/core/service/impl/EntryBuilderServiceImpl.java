@@ -9,6 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +29,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private AnnotationService annotationService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expCtxService;
+	@Autowired private MdataService mdataService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;
+	
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 		
@@ -78,17 +81,26 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				}
 			}
 			
+			if(entryConfig.hasMdata()){
+				List<Annotation> annotations = entry.getAnnotations();
+				//In case we did't set annotations but we need them to find experimental contexts
+				if(annotations == null) {
+					annotations = this.annotationService.findAnnotations(entryName);
+				}
+				List<Long> mdataIds = new ArrayList<>(EntryUtils.getMdataIds(annotations));
+				entry.setMdataList(mdataService.findMdataByIds(mdataIds));
+			}
+
 			if(entryConfig.hasExperimentalContext()){
 				List<Annotation> annotations = entry.getAnnotations();
 				//In case we did't set annotations but we need them to find experimental contexts
 				if(annotations == null) {
 					annotations = this.annotationService.findAnnotations(entryName);
-					
-					
 				}
 				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(annotations);
 				entry.setExperimentalContexts(expCtxService.findExperimentalContextsByIds(ecIds));
 			}
+
 			if(entryConfig.hasInteractions()){
 				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
 			}
@@ -145,6 +157,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
 				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(entry.getAnnotations());
 				entry.setExperimentalContexts(expCtxService.findExperimentalContextsByIds(ecIds));
+			}
+			if(entry.getMdataList() == null || entry.getMdataList().isEmpty()){
+				List<Long> mdIds = new ArrayList<>(EntryUtils.getMdataIds(entry.getAnnotations()));
+				entry.setMdataList(mdataService.findMdataByIds(mdIds));
 			}
 
 		}

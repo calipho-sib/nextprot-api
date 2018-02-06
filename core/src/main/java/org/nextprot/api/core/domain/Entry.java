@@ -43,6 +43,13 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<ExperimentalContext> experimentalContexts;
 
+	private List<Mdata> mdataList;
+
+	
+	public List<Mdata> getMdataList() {
+		return mdataList;
+	}
+
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
 	}
@@ -56,6 +63,10 @@ public class Entry implements KeyValueRepresentation {
 
 	public void setExperimentalContexts(List<ExperimentalContext> experimentalContexts) {
 		this.experimentalContexts = experimentalContexts;
+	}
+
+	public void setMdataList(List<Mdata> mdataList) {
+		this.mdataList = mdataList;
 	}
 
 	public Entry(String uniqueName) {

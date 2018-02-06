@@ -7,11 +7,11 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 
 public class EntryConfig implements KeyValueRepresentation{
 	
-	private boolean overview, publications, genomicMappings, xrefs, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
+	private boolean overview, publications, genomicMappings, xrefs, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext, mdata;
 	private boolean enzymes;
 	private boolean goldOnly = false;
 	private boolean bed = true;
-	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
+	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts,mdata
 	private boolean withoutProperties = false; //by default we get properties
 	private AnnotationCategory subpart;
 	private final String entryName;
@@ -74,6 +74,10 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public boolean hasExperimentalContext() {
 		return experimentalContext;
+	}
+
+	public boolean hasMdata() {
+		return mdata;
 	}
 
 	public boolean hasSubPart() {
@@ -154,6 +158,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		this.experimentalContext = true; return this;
 	}
 
+	public EntryConfig withMdata() {
+		this.mdata = true; return this;
+	}
+
 	public EntryConfig withoutProperties() {
 		this.withoutProperties = true; return this; 
 	}
@@ -170,7 +178,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	public EntryConfig withEverything() {
 		this.withOverview().withAnnotations().withPublications().withXrefs()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-		.withTargetIsoforms().withExperimentalContexts().withEnzymes();
+		.withTargetIsoforms().withExperimentalContexts().withMdata().withEnzymes();
 		return this;
 	}
 
@@ -212,6 +220,7 @@ public class EntryConfig implements KeyValueRepresentation{
 			case ISOFORM: this.withTargetIsoforms(); break;
 			case ANNOTATION: this.withAnnotations(); break;
 			case EXPERIMENTAL_CONTEXT: this.withExperimentalContexts(); break;
+			case MDATA: this.withMdata(); break;
 			default: {throw new NextProtException(block + " block not found");}
 		}
 		return this;
@@ -231,6 +240,9 @@ public class EntryConfig implements KeyValueRepresentation{
 		}
 		if(experimentalContext){
 			sb.append("experimentalContexts=true");
+		}
+		if(mdata){
+			sb.append("mdata=true");
 		}
 
 		return sb.toString();
