@@ -1,5 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import org.apache.log4j.Logger;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.service.IsoformService;
@@ -8,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 
@@ -19,6 +27,7 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 	@Autowired private IsoformService isoService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	
+    private static final Logger LOGGER = Logger.getLogger(PeptideUnicityServiceImpl.class);
 	
 	@Override
 	public PeptideUnicity getPeptideUnicityFromMappingIsoforms(Set<String> mappingIsoforms) {
@@ -64,10 +73,13 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 	@Cacheable("peptide-name-unicity-map")
 	public Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
 
+		LOGGER.info("Starting, thread: " + Thread.currentThread().getId());
+
 		Map<String,PeptideUnicity> result = new HashMap<>();
-		System.out.println("" + new Date() + "PeptideUnicityService building cache...");
 		List<String> list = peptideMappingDao.findPeptideIsoformMappingsList();
-		System.out.println("list size:" + list.size());
+
+		LOGGER.info("Got mapping iso-pep from db, size: " + list.size() + " , thread: " + Thread.currentThread().getId());
+
 		for (int i=0;i<list.size();i++) {
 			String row = list.get(i);
 			String[] fields = row.split(":");
@@ -77,8 +89,10 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 			PeptideUnicity pu = getPeptideUnicityFromMappingIsoforms(mappedIsoSet);
 			result.put(pep, pu);
 		}
-		System.out.println("size:" + result.size());
-		System.out.println("" + new Date() + "PeptideUnicityService building cache... done");
+		
+		LOGGER.info("Computed uncity for peptides, size: " + result.size() + " , thread: " + Thread.currentThread().getId());
+		LOGGER.info("Done" + " , thread: " + Thread.currentThread().getId());
+		
 		return result;
 	}
 	
