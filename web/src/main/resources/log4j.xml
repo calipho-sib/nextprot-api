@@ -102,11 +102,16 @@
 		<appender-ref ref="requestsFileAppender" />
 	</logger>
 
+
+
 	<!-- root element must be below all others otherwise errors -->
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="consoleAppender" />
+		
+	<!-- please uncomment the appender below only once you know how to avoid getting an error on each spring startup
 		<appender-ref ref="gelfFileAppender" />
+	-->
 	</root>
 
 </log4j:configuration>
