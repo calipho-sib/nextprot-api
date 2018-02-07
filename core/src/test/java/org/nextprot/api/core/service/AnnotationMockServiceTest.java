@@ -62,6 +62,9 @@ public class AnnotationMockServiceTest {
 	private IsoformDAO isoformDAO;
 
 	@Mock
+	private MdataService mdataService;
+
+	@Mock
 	private BioPhyChemPropsDao bioPhyChemPropsDao;
 
 	@Mock

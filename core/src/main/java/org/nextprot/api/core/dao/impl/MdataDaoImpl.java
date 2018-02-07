@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class MdataDaoImpl implements MdataDao {
 
 	@Override
 	public List<Mdata> findMdataByIds(List<Long> mdataIds) {
+		if (mdataIds==null || mdataIds.size()==0) return new ArrayList<Mdata>();
 		SqlParameterSource namedParameters = new MapSqlParameterSource("mdata_ids", mdataIds);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
 				sqlDictionary.getSQLQuery("mdata-by-ids"), 

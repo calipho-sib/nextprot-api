@@ -174,7 +174,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-
         Assert.assertTrue(content.matches("\\d+"));
     }
 }
