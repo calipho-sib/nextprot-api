@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +18,12 @@ class MdataServiceImpl implements MdataService {
 
 	@Cacheable("evidence-mdata-map-by-entry")
 	@Override
-	public Map<Long, Long> findEvidenceIdMdataIdMapForPTMsByEntryName(String ac) {
-		return mdataDao.findEvidenceIdMdataIdMapForPTMsByEntryName(ac);
+	public Map<Long, Long> findEvidenceIdMdataIdMapByEntryName(String ac) {
+		
+		Map<Long,Long> eviMdataMap = new HashMap<>();
+		eviMdataMap.putAll(mdataDao.findEvidenceIdMdataIdMapForPTMsByEntryName(ac));
+		eviMdataMap.putAll(mdataDao.findEvidenceIdMdataIdMapForPeptideMappingsByEntryName(ac));
+		return eviMdataMap;
 	}
 
 	@Cacheable("mdata-list-by-entry")
@@ -26,4 +31,5 @@ class MdataServiceImpl implements MdataService {
 	public List<Mdata> findMdataByIds(List<Long> mdataIds) {
 		return mdataDao.findMdataByIds(mdataIds);
 	}
+
 }

@@ -21,3 +21,4 @@ inner join nextprot.publications mdata on (mdata.resource_id = pxra_mdata.public
 inner join nextprot.cv_datasources ds on (ds.cv_id = ara.assigned_by_id and ds.cv_name = 'PeptideAtlas human phosphoproteome')
 where sim.unique_name = :entry_name
 -- 'NX_Q99622'
+

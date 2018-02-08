@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.MdataDao;
@@ -47,6 +48,17 @@ public class MdataDaoImpl implements MdataDao {
 				new MdataRowMapper());	}	
 	
 	
+	@Override
+	public Map<Long, Long> findEvidenceIdMdataIdMapForPeptideMappingsByEntryName(String ac) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("entry_name", ac);
+		Map<Long,Long> map = new HashMap<>();
+		EvidenceMdataMapRowMapper mapper = new EvidenceMdataMapRowMapper(map, IdentifierOffset.PEPTIDE_MAPPING_ANNOTATION_EVIDENCE_OFFSET);
+		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+				sqlDictionary.getSQLQuery("peptide-evidence-with-mdata-by-unique-name"), 
+				namedParameters, 
+				mapper);
+		return map;		
+	}
 	
 	private static class MdataRowMapper implements ParameterizedRowMapper<Mdata> {
 
@@ -65,13 +77,18 @@ public class MdataDaoImpl implements MdataDao {
 	private static class EvidenceMdataMapRowMapper implements ParameterizedRowMapper<Object> {
 
 		private Map<Long,Long> map;
+		private long evidenceOffset = 0;
 		public EvidenceMdataMapRowMapper(Map<Long,Long> map) {
+			this.map=map;			
+		}
+		public EvidenceMdataMapRowMapper(Map<Long,Long> map, Long evidenceOffset) {
 			this.map=map;
+			this.evidenceOffset=evidenceOffset;
 		}
 		
 		@Override
 		public Object mapRow(ResultSet rs, int row) throws SQLException {
-			map.put(rs.getLong("evidence_id"), rs.getLong("mdata_id"));
+			map.put(rs.getLong("evidence_id") + evidenceOffset, rs.getLong("mdata_id"));
 			return null;
 		}
 	}
@@ -107,6 +124,8 @@ public class MdataDaoImpl implements MdataDao {
 						return rs.getLong("evidence_id");
 					}});
 	}
+
+
 
 
 
