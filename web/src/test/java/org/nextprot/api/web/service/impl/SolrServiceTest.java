@@ -19,7 +19,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@ActiveProfiles("dev")
+@ActiveProfiles({"dev","cache"})
 public class SolrServiceTest extends WebUnitBaseTest {
 
     @Autowired private SolrService service;
