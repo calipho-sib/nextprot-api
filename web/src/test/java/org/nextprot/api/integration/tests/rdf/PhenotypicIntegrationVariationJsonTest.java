@@ -32,16 +32,30 @@ public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTe
 	@Test
 	public void shouldNotReturnSilverWhenAskingForGoldOnly() throws Exception {
 
-		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+		String content;
+		ObjectMapper om;
+		JsonNode actualObj;
+		String annotContent;
+		
+		content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json"))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
 				.getResponse().getContentAsString();
 		
-		Assert.assertTrue(content.toUpperCase().contains("SILVER"));
-	
+		om = new ObjectMapper();
+		actualObj = om.readTree(content);
+		annotContent = actualObj.get("entry").get("annotationsByCategory").toString();
+		Assert.assertTrue(annotContent.toUpperCase().contains("SILVER"));
+
+		
 		//Equivalent to /entry/NX_Q15858/phenotypic-variation.json?gold
-		String goldContent = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json").param("goldOnly", "true")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+		content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json").param("goldOnly", "true"))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
 				.getResponse().getContentAsString();
 
-		Assert.assertFalse(goldContent.toUpperCase().contains("SILVER"));
-
+		om = new ObjectMapper();
+		actualObj = om.readTree(content);
+		annotContent = actualObj.get("entry").get("annotationsByCategory").toString();
+		Assert.assertFalse(annotContent.toUpperCase().contains("SILVER"));
+	
 	}
 }
