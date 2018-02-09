@@ -1,12 +1,16 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -14,14 +18,25 @@ import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
-import org.nextprot.api.core.dao.MdataDao;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MdataService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
@@ -29,11 +44,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
-
-import java.security.InvalidParameterException;
-import java.util.*;
-import java.util.function.Predicate;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -201,15 +218,17 @@ public class AnnotationServiceImpl implements AnnotationService {
 	
 	
 	private void updatePtmAndPeptideMappingWithMdata(List<Annotation> annotations, String entryName) {
-		Map<Long,Long> evidenceMdataMap = mdataService.findEvidenceIdMdataIdMapForPTMsByEntryName(entryName);
-		annotations.stream().filter(a -> isPtmAnnotationWithPotentialMdata(a)).forEach(a -> { 
+		
+		Map<Long,Long> evidenceMdataMap = mdataService.findEvidenceIdMdataIdMapByEntryName(entryName);
+		annotations.stream().filter(a -> isAnnotationWithPotentialMdata(a)).forEach(a -> { 
 			a.getEvidences().forEach(e -> {
 				e.setMdataId(evidenceMdataMap.get(e.getEvidenceId()));
 			});
 		});
 	}
 	
-	private boolean isPtmAnnotationWithPotentialMdata(Annotation a) {
+	private boolean isAnnotationWithPotentialMdata(Annotation a) {
+		if (a.getAPICategory()==AnnotationCategory.PEPTIDE_MAPPING) return true;
 		if (a.getAPICategory()==AnnotationCategory.MODIFIED_RESIDUE) return true;
 		if (a.getAPICategory()==AnnotationCategory.GLYCOSYLATION_SITE) return true;
 		if (a.getAPICategory()==AnnotationCategory.CROSS_LINK ) return true;

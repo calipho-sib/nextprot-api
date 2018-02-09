@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.Mdata;
  */
 public interface MdataService {
 
-	Map<Long,Long> findEvidenceIdMdataIdMapForPTMsByEntryName(String ac);
+	Map<Long,Long> findEvidenceIdMdataIdMapByEntryName(String ac);
 	List<Mdata> findMdataByIds(List<Long> mdataIds);
 	
 }
