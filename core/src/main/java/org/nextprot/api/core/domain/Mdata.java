@@ -120,7 +120,7 @@ public class Mdata implements Serializable{
 		@JsonProperty
 		private List<MDataPublication> publication;
 
-		public List<MDataPublication> getValues() {
+		public List<MDataPublication> getPublication() {
 			return publication;
 		}
 	}
@@ -161,20 +161,23 @@ public class Mdata implements Serializable{
 		private MDataMetaDataProperties DA;
 		@JsonProperty
 		private MDataMetaDataProperties CL;
+		@JsonProperty
+		private MDataMetaDataProperties DE;
+		@JsonProperty
+		private MDataMetaDataProperties OG;
+		@JsonProperty
+		private MDataMetaDataProperties DI;
 
-		public MDataMetaDataProperties getCellLine() {
-			return CL;
-		}
 
-		public MDataMetaDataProperties getDetectionMethod() {
+		public MDataMetaDataProperties getDM() {
 			return DM;
 		}
 
-		public MDataMetaDataProperties getDataConfidenceDocumentation() {
+		public MDataMetaDataProperties getDC() {
 			return DC;
 		}
 
-		public MDataMetaDataProperties getInstrumentPlatform() {
+		public MDataMetaDataProperties getIP() {
 			return IP;
 		}
 
@@ -182,17 +185,34 @@ public class Mdata implements Serializable{
 			return CP;
 		}
 
-		public MDataMetaDataProperties getDataProcessingByNeXtProt() {
+		public MDataMetaDataProperties getDP() {
 			return DP;
 		}
 
-		public MDataMetaDataProperties getSamplePreparation() {
+		public MDataMetaDataProperties getSP() {
 			return SP;
 		}
 
-		public MDataMetaDataProperties getDataAnalysisProcedure() {
+		public MDataMetaDataProperties getDA() {
 			return DA;
 		}
+
+		public MDataMetaDataProperties getCL() {
+			return CL;
+		}
+
+		public MDataMetaDataProperties getDE() {
+			return DE;
+		}
+
+		public MDataMetaDataProperties getOG() {
+			return OG;
+		}
+
+		public MDataMetaDataProperties getDI() {
+			return DI;
+		}
+
 
 	}
 
