@@ -63,6 +63,7 @@ public class Mdata implements Serializable{
 			mapper.enable(SerializationFeature.INDENT_OUTPUT);
 			return mapper.readValue(jObject.toString(), MDataContext.class);
 		} catch (IOException e) {
+			System.out.println(xml);
 			throw new NextProtException("Failed to convert XML mdata to object ", e);
 		}
 	}
@@ -144,76 +145,84 @@ public class Mdata implements Serializable{
 	}
 
 
+
 	static class MDataMetaData {
 		@JsonProperty
-		private MDataMetaDataProperties DM;
+		private MDataMetaDataProperties BS;
 		@JsonProperty
-		private MDataMetaDataProperties DC;
-		@JsonProperty
-		private MDataMetaDataProperties IP;
-		@JsonProperty
-		private MDataMetaDataProperties CP;
-		@JsonProperty
-		private MDataMetaDataProperties DP;
-		@JsonProperty
-		private MDataMetaDataProperties SP;
-		@JsonProperty
-		private MDataMetaDataProperties DA;
+		private MDataMetaDataProperties CC;
 		@JsonProperty
 		private MDataMetaDataProperties CL;
 		@JsonProperty
+		private MDataMetaDataProperties DA;
+		@JsonProperty
+		private MDataMetaDataProperties DC;
+		@JsonProperty
 		private MDataMetaDataProperties DE;
+		@JsonProperty
+		private MDataMetaDataProperties DI;
+		@JsonProperty
+		private MDataMetaDataProperties DM;
+		@JsonProperty
+		private MDataMetaDataProperties DP;
+		@JsonProperty
+		private MDataMetaDataProperties IP;
 		@JsonProperty
 		private MDataMetaDataProperties OG;
 		@JsonProperty
-		private MDataMetaDataProperties DI;
-
-
-		public MDataMetaDataProperties getDM() {
-			return DM;
+		private MDataMetaDataProperties SP;
+		@JsonProperty
+		private MDataMetaDataProperties TP;
+		@JsonProperty
+		private MDataMetaDataProperties TS;
+		
+		// @JsonProperty private MDataMetaDataProperties CP; // ??
+		
+		public MDataMetaDataProperties getBS() {
+			return BS;
 		}
-
-		public MDataMetaDataProperties getDC() {
-			return DC;
+		public MDataMetaDataProperties getCC() {
+			return CC;
 		}
-
-		public MDataMetaDataProperties getIP() {
-			return IP;
-		}
-
-		public MDataMetaDataProperties getCP() {
-			return CP;
-		}
-
-		public MDataMetaDataProperties getDP() {
-			return DP;
-		}
-
-		public MDataMetaDataProperties getSP() {
-			return SP;
-		}
-
-		public MDataMetaDataProperties getDA() {
-			return DA;
-		}
-
 		public MDataMetaDataProperties getCL() {
 			return CL;
 		}
-
+		public MDataMetaDataProperties getDA() {
+			return DA;
+		}
+		public MDataMetaDataProperties getDC() {
+			return DC;
+		}
 		public MDataMetaDataProperties getDE() {
 			return DE;
 		}
-
-		public MDataMetaDataProperties getOG() {
-			return OG;
-		}
-
 		public MDataMetaDataProperties getDI() {
 			return DI;
 		}
+		public MDataMetaDataProperties getDM() {
+			return DM;
+		}
+		public MDataMetaDataProperties getDP() {
+			return DP;
+		}
+		public MDataMetaDataProperties getIP() {
+			return IP;
+		}
+		public MDataMetaDataProperties getOG() {
+			return OG;
+		}
+		public MDataMetaDataProperties getSP() {
+			return SP;
+		}
+		public MDataMetaDataProperties getTP() {
+			return TP;
+		}
+		public MDataMetaDataProperties getTS() {
+			return TS;
+		}
 
-
+		
+		
 	}
 
 	static class MDataContext {
