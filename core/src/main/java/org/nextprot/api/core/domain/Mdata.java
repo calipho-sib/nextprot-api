@@ -15,7 +15,6 @@ import java.util.List;
 
 public class Mdata implements Serializable{
 
-
 	private static final long serialVersionUID = 1;
 
 	private long id; 			// equivalent to publication id
@@ -81,7 +80,10 @@ public class Mdata implements Serializable{
 
 
 	// UTILITY CLASSES TO REPRESENT MDATA ////////////////////////////////////
-	static class DBXref {
+	static class DBXref implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		@JsonProperty
 		private String db, dbkey;
 
@@ -95,7 +97,10 @@ public class Mdata implements Serializable{
 
 	}
 
-	static class MDataPublication {
+	static class MDataPublication implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		@JsonProperty
 		private String type, key;
 
@@ -116,7 +121,10 @@ public class Mdata implements Serializable{
 
 	}
 
-	static class MDataPublications {
+	static class MDataPublications implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		@JsonProperty
 		private List<MDataPublication> publication;
 
@@ -125,7 +133,10 @@ public class Mdata implements Serializable{
 		}
 	}
 
-	static class MDataMetaDataProperties {
+	static class MDataMetaDataProperties implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		@JsonProperty
 		private String isVariable, label, content;
 
@@ -145,7 +156,10 @@ public class Mdata implements Serializable{
 
 
 
-	static class MDataMetaData {
+	static class MDataMetaData implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
+
 		@JsonProperty
 		private MDataMetaDataProperties BS;
 		@JsonProperty
@@ -224,7 +238,9 @@ public class Mdata implements Serializable{
 		
 	}
 
-	static class MDataContext {
+	static class MDataContext implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		@JsonProperty
 		private MDataMetaData metadata;
