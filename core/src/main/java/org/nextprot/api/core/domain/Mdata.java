@@ -63,7 +63,6 @@ public class Mdata implements Serializable{
 			mapper.enable(SerializationFeature.INDENT_OUTPUT);
 			return mapper.readValue(jObject.toString(), MDataContext.class);
 		} catch (IOException e) {
-			System.out.println(xml);
 			throw new NextProtException("Failed to convert XML mdata to object ", e);
 		}
 	}
