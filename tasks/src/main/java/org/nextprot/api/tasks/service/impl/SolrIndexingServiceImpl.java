@@ -5,10 +5,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
 import org.nextprot.api.solr.index.CvIndex;
@@ -36,6 +33,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private PublicationService publicationService;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
+	@Autowired private EntryReportService entryReportService;
 
 	@Override
 	public String indexEntriesChromosome(boolean isGold, String chrName) {
@@ -53,6 +51,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
 		indexer.setPublicationService(publicationService);
+		indexer.setEntryReportService(entryReportService);
 
 		logAndCollect(info,"getting entry list of chromosome " + chrName);
 		List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
