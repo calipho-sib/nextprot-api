@@ -1,0 +1,9 @@
+<release>
+      <data-source-list>
+          #foreach($rds in $release.datasources)
+              <data-source source='$rds.source' description="$rds.description" release="$rds.releaseVersion" last-import-date="$rds.lastImportDate">
+                  <url><![CDATA[$rds.url]]></url>
+              </data-source>
+          #end
+      </data-source-list>
+</release>
