@@ -89,7 +89,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shoudGetAllAncestors() { 
 		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
-		assertEquals(70,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
+		assertTrue(this.terminologyService.getAncestorSets(trees, "GO:1902667").size() > 60);
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	

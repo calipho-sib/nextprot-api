@@ -35,7 +35,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
                 graph.countNodes());
-        Assert.assertEquals(13391, graph.countEdges());
+        Assert.assertEquals(13736, graph.countEdges());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         int cvId = graph.getCvTermIdByAccession("GO:0005488");
 
-        Assert.assertEquals(50, graph.getChildren(cvId).length);
+        Assert.assertEquals(49, graph.getChildren(cvId).length);
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(graph.getCvTermAccessionById(cvId));
 
@@ -223,7 +223,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
 
-        Assert.assertEquals("high-affinity zinc uptake transmembrane transporter activity", graph.getCvTermNameById(1071));
+        Assert.assertEquals("high-affinity zinc transmembrane transporter activity", graph.getCvTermNameById(1071));
     }
 
     @Test
@@ -246,16 +246,20 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals("GO:0043491 descendant graph", view.getLabel());
         Assert.assertEquals(4, view.getNodes().size());
         Assert.assertEquals(5, view.getEdges().size());
-        Assert.assertEquals(26584, view.getEdges().get(0).getTail());
-        Assert.assertEquals(26586, view.getEdges().get(0).getHead());
-        Assert.assertEquals(20191, view.getEdges().get(1).getTail());
-        Assert.assertEquals(26586, view.getEdges().get(1).getHead());
-        Assert.assertEquals(26584, view.getEdges().get(2).getTail());
-        Assert.assertEquals(26585, view.getEdges().get(2).getHead());
-        Assert.assertEquals(20191, view.getEdges().get(3).getTail());
-        Assert.assertEquals(26585, view.getEdges().get(3).getHead());
-        Assert.assertEquals(20191, view.getEdges().get(4).getTail());
-        Assert.assertEquals(26584, view.getEdges().get(4).getHead());
+
+        for (CvTermGraph.View.Edge edge : view.getEdges()) {
+
+            int tail = edge.getTail();
+            int head = edge.getHead();
+
+            if (tail == 26584) {
+                Assert.assertTrue(head == 26586 || head == 26585);
+            }
+            else {
+                Assert.assertEquals(20191, tail);
+                Assert.assertTrue(head == 26585 || head == 26584 || head == 26586);
+            }
+        }
     }
 
     @Test
