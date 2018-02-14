@@ -81,7 +81,7 @@ public class Mdata implements Serializable{
 
 
 	// UTILITY CLASSES TO REPRESENT MDATA ////////////////////////////////////
-	static class DBXref implements Serializable {
+	public static class DBXref implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 
@@ -108,7 +108,7 @@ public class Mdata implements Serializable{
 
 	}
 
-	static class MDataPublication implements Serializable {
+	public static class MDataPublication implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 
@@ -144,7 +144,7 @@ public class Mdata implements Serializable{
 
 	}
 
-	static class MDataPublications implements Serializable {
+	public static class MDataPublications implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 
@@ -161,7 +161,7 @@ public class Mdata implements Serializable{
 
 	}
 
-	static class MDataMetaDataProperties implements Serializable {
+	public static class MDataMetaDataProperties implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 		private String isVariable;
@@ -198,7 +198,7 @@ public class Mdata implements Serializable{
 
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	static class MDataMetaData implements Serializable {
+	public static class MDataMetaData implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 
@@ -353,7 +353,7 @@ public class Mdata implements Serializable{
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	static class MDataContext implements Serializable {
+	public static class MDataContext implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
