@@ -3,6 +3,7 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.release.ReleaseContentsDataSource;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
@@ -53,13 +54,12 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 
 		Map<String, Integer> proteinExistencesCount = new HashMap<>();
 
-		/* TODO: the following code are time consuming when there is no cache !
 		proteinExistencesCount.put("PROTEIN_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PROTEIN_LEVEL).size());
 		proteinExistencesCount.put("TRANSCRIPT_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.TRANSCRIPT_LEVEL).size());
 		proteinExistencesCount.put("HOMOLOGY_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.HOMOLOGY).size());
 		proteinExistencesCount.put("PREDICTED_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PREDICTED).size());
 		proteinExistencesCount.put("UNCERTAIN_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.UNCERTAIN).size());
-*/
+
 		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper(proteinExistencesCount));
 	}
 
@@ -75,7 +75,7 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 		public ReleaseContentsDataSource mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			ReleaseContentsDataSource releaseInfoDs = new ReleaseContentsDataSource();
-			ReleaseDataSources ds = null;
+			ReleaseDataSources ds;
 			if(datasource == null){  ds = ReleaseDataSources.cvValueOf(resultSet.getString("cv_name"));
 			}else { ds = this.datasource; }
 			releaseInfoDs.setSource(ds.getDisplayName());
@@ -105,12 +105,12 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 			tagStat.setCategroy(resultSet.getString("category"));
 			tagStat.setSortOrder(resultSet.getInt("sort_order"));
 
-			//if ("Protein existence".equals(tagStat.getCategroy())) {
-			//	tagStat.setCount(proteinExistencesCount.get(tagStat.getTag()));
-			//}
-			//else {
-			tagStat.setCount(resultSet.getInt("count"));
-			//}
+			if ("Protein existence".equals(tagStat.getCategroy())) {
+				tagStat.setCount(proteinExistencesCount.get(tagStat.getTag()));
+			}
+			else {
+				tagStat.setCount(resultSet.getInt("count"));
+			}
 
 			return tagStat;
 		}
