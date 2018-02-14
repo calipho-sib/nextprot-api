@@ -8,11 +8,9 @@ import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +23,6 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 	@Autowired
 	private OverviewService overviewService;
-
-	@Autowired
-	private Environment springEnvironment;
 
 	@Override
 	@Cacheable("master-unique-names-chromossome")
@@ -58,18 +53,13 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 		List<String> entries = new ArrayList<>();
 
-		String[] profiles = springEnvironment.getActiveProfiles();
+		for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
 
-		if (Arrays.asList(profiles).contains("pro") && Arrays.asList(profiles).contains("cache")) {
+			//ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
 
-			for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
-
-				//ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
-				ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
-
-				if (pe == proteinExistence) {
-					entries.add(entryAccession);
-				}
+			if (pe == proteinExistence) {
+				entries.add(entryAccession);
 			}
 		}
 
