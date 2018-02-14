@@ -1288,7 +1288,7 @@
 		});
 		
 		checkURLExistence();
-		fetchReleaseInfo();
+		//fetchReleaseInfo();
 	});
 </script>
 
