@@ -10,7 +10,7 @@ public class MDataUnitTest {
     public void testWithMultiplePublications() {
         String xml = "<metadata><DM label=\"Detection method\" isVariable=\"N\" >Mass spectrometry LC-MS/MS.</DM>\n<DC label=\"Data confidence documentation\" isVariable=\"N\" >GOLD: All peptides.</DC>\n</metadata><publications>\n<publication key=\"1\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"22068332\"></db_xref></publication>\n<publication key=\"2\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"22278370\"></db_xref></publication>\n<publication key=\"3\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"23242552\"></db_xref></publication>\n<publication key=\"4\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"23933261\"></db_xref></publication>\n<publication key=\"5\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"24870543\"></db_xref></publication>\n<publication key=\"6\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"25977788\"></db_xref></publication>\n<publication key=\"7\" type=\"ARTICLE\"><db_xref db=\"PubMed\" dbkey=\"28112733\"></db_xref></publication>\n</publications>";
         Mdata.MDataContext mc = Mdata.convertXmlToMDataContext(xml);
-        assertEquals(mc.getPublications().getPublication().size(), 7);
+        assertEquals(mc.getPublications().getValues().size(), 7);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class MDataUnitTest {
         assertEquals(mc.getMetadata().getCL().getContent(), "Jurkat E6.1 [CVCL_0367].");
         assertEquals(mc.getMetadata().getCL().getIsVariable(), "N");
         assertEquals(mc.getMetadata().getDA().getLabel(), "Data analysis procedure");
-        assertEquals(mc.getPublications().getPublication().get(0).getDb_xref().getDbkey(), "23266961");
+        assertEquals(mc.getPublications().getValues().get(0).getDb_xref().getDbkey(), "23266961");
 
     }
 
