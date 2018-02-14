@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,16 +85,26 @@ public class Mdata implements Serializable{
 		
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty
-		private String db, dbkey;
+		private String db;
+		private String dbkey;
 
 		public String getDb() {
 			return db;
 		}
 
+		public void setDb(String db) {
+			this.db = db;
+		}
+
 		public String getDbkey() {
 			return dbkey;
 		}
+
+		public void setDbkey(String dbkey) {
+			this.dbkey = dbkey;
+		}
+
+
 
 	}
 
@@ -101,23 +112,35 @@ public class Mdata implements Serializable{
 		
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty
-		private String type, key;
-
-		@JsonProperty
-		private DBXref db_xref;
+		private String type;
 
 		public String getType() {
 			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
 		}
 
 		public String getKey() {
 			return key;
 		}
 
+		public void setKey(String key) {
+			this.key = key;
+		}
+
 		public DBXref getDb_xref() {
 			return db_xref;
 		}
+
+		public void setDb_xref(DBXref db_xref) {
+			this.db_xref = db_xref;
+		}
+
+		private String key;
+		private DBXref db_xref;
+
 
 	}
 
@@ -125,135 +148,234 @@ public class Mdata implements Serializable{
 		
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty
-		private List<MDataPublication> publication;
-
-		public List<MDataPublication> getPublication() {
-			return publication;
+		public List<MDataPublication> getValues() {
+			return values;
 		}
+
+		@JsonProperty("publication")
+		public void setPublication(List<MDataPublication> values) {
+			this.values = values;
+		}
+
+		private List<MDataPublication> values;
+
 	}
 
 	static class MDataMetaDataProperties implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
-
-		@JsonProperty
-		private String isVariable, label, content;
+		private String isVariable;
+		private String label;
 
 		public String getIsVariable() {
 			return isVariable;
+		}
+
+		public void setIsVariable(String isVariable) {
+			this.isVariable = isVariable;
 		}
 
 		public String getLabel() {
 			return label;
 		}
 
+		public void setLabel(String label) {
+			this.label = label;
+		}
+
 		public String getContent() {
 			return content;
 		}
 
+		public void setContent(String content) {
+			this.content = content;
+		}
+
+		private String content;
+
 	}
 
 
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	static class MDataMetaData implements Serializable {
 		
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty
 		private MDataMetaDataProperties BS;
-		@JsonProperty
 		private MDataMetaDataProperties CC;
-		@JsonProperty
 		private MDataMetaDataProperties CL;
-		@JsonProperty
 		private MDataMetaDataProperties DA;
-		@JsonProperty
 		private MDataMetaDataProperties DC;
-		@JsonProperty
 		private MDataMetaDataProperties DE;
-		@JsonProperty
 		private MDataMetaDataProperties DI;
-		@JsonProperty
 		private MDataMetaDataProperties DM;
-		@JsonProperty
 		private MDataMetaDataProperties DP;
-		@JsonProperty
 		private MDataMetaDataProperties IP;
-		@JsonProperty
 		private MDataMetaDataProperties OG;
-		@JsonProperty
 		private MDataMetaDataProperties SP;
-		@JsonProperty
 		private MDataMetaDataProperties TP;
-		@JsonProperty
 		private MDataMetaDataProperties TS;
-		
-		// @JsonProperty private MDataMetaDataProperties CP; // ??
-		
+
+
 		public MDataMetaDataProperties getBS() {
 			return BS;
 		}
+
 		public MDataMetaDataProperties getCC() {
 			return CC;
 		}
+
 		public MDataMetaDataProperties getCL() {
 			return CL;
 		}
+
 		public MDataMetaDataProperties getDA() {
 			return DA;
 		}
+
+
 		public MDataMetaDataProperties getDC() {
 			return DC;
 		}
-		public MDataMetaDataProperties getDE() {
-			return DE;
-		}
+
+
 		public MDataMetaDataProperties getDI() {
 			return DI;
 		}
+
 		public MDataMetaDataProperties getDM() {
 			return DM;
 		}
-		public MDataMetaDataProperties getDP() {
-			return DP;
+
+		public MDataMetaDataProperties getDE() {
+			return DE;
 		}
+
+
 		public MDataMetaDataProperties getIP() {
 			return IP;
 		}
+
+
 		public MDataMetaDataProperties getOG() {
 			return OG;
 		}
-		public MDataMetaDataProperties getSP() {
-			return SP;
-		}
+
 		public MDataMetaDataProperties getTP() {
 			return TP;
 		}
+
+		@JsonProperty("BS")
+		public void setBS(MDataMetaDataProperties BS) {
+			this.BS = BS;
+		}
+
+		@JsonProperty("CC")
+		public void setCC(MDataMetaDataProperties CC) {
+			this.CC = CC;
+		}
+		@JsonProperty("CL")
+		public void setCL(MDataMetaDataProperties CL) {
+			this.CL = CL;
+		}
+
+		@JsonProperty("DA")
+		public void setDA(MDataMetaDataProperties DA) {
+			this.DA = DA;
+		}
+
+		@JsonProperty("DC")
+		public void setDC(MDataMetaDataProperties DC) {
+			this.DC = DC;
+		}
+
+		@JsonProperty("DE")
+		public void setDE(MDataMetaDataProperties DE) {
+			this.DE = DE;
+		}
+
+		@JsonProperty("DI")
+		public void setDI(MDataMetaDataProperties DI) {
+			this.DI = DI;
+		}
+
+		@JsonProperty("DM")
+		public void setDM(MDataMetaDataProperties DM) {
+			this.DM = DM;
+		}
+
+		@JsonProperty("DP")
+		public MDataMetaDataProperties getDP() {
+			return DP;
+		}
+
+		@JsonProperty("DP")
+		public void setDP(MDataMetaDataProperties DP) {
+			this.DP = DP;
+		}
+
+		@JsonProperty("IP")
+		public void setIP(MDataMetaDataProperties IP) {
+			this.IP = IP;
+		}
+
+		@JsonProperty("OG")
+		public void setOG(MDataMetaDataProperties OG) {
+			this.OG = OG;
+		}
+
+		public MDataMetaDataProperties getSP() {
+			return SP;
+		}
+
+		@JsonProperty("SP")
+		public void setSP(MDataMetaDataProperties SP) {
+			this.SP = SP;
+		}
+
+
+		@JsonProperty("TP")
+		public void setTP(MDataMetaDataProperties TP) {
+			this.TP = TP;
+		}
+
 		public MDataMetaDataProperties getTS() {
 			return TS;
 		}
 
-		
-		
+		@JsonProperty("TS")
+		public void setTS(MDataMetaDataProperties TS) {
+			this.TS = TS;
+		}
+
+
 	}
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	static class MDataContext implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
-		@JsonProperty
 		private MDataMetaData metadata;
-		@JsonProperty
-		private MDataPublications publications;
 
 		public MDataMetaData getMetadata() {
 			return metadata;
 		}
 
+		public void setMetadata(MDataMetaData metadata) {
+			this.metadata = metadata;
+		}
+
 		public MDataPublications getPublications() {
 			return publications;
 		}
+
+		public void setPublications(MDataPublications publications) {
+			this.publications = publications;
+		}
+
+		private MDataPublications publications;
 
 	}
 
