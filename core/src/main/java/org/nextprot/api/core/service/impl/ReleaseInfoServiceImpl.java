@@ -3,7 +3,9 @@ package org.nextprot.api.core.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
+import org.nextprot.api.core.dao.ReleaseStatsDao;
 import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseStats;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,21 +23,28 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 	@Autowired(required = false) private ServletContext servletContext;
 	@Autowired private ReleaseInfoDao releaseInfoDao;
+	@Autowired private ReleaseStatsDao releaseStatsDao;
 	@Autowired private Environment env;
-	
+
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
 
-	
 	@Override
-	@Cacheable("release-contents")
+	@Cacheable("release-infos")
 	public ReleaseInfo findReleaseInfo() {
 		ReleaseInfo ri = new ReleaseInfo();
 		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
 		ri.setApiRelease(this.getApiVersion());
-		ri.setDatasources(releaseInfoDao.findReleaseInfoDataSources());
-		ri.setTagStatistics(releaseInfoDao.findTagStatistics());
-
 		return ri;
+	}
+
+	@Override
+	@Cacheable("release-stats")
+	public ReleaseStats findReleaseStats() {
+
+		ReleaseStats rs = new ReleaseStats();
+		rs.setDatasources(releaseStatsDao.findReleaseInfoDataSources());
+		rs.setTagStatistics(releaseStatsDao.findTagStatistics());
+		return rs;
 	}
 
 	private String getApiVersion() {

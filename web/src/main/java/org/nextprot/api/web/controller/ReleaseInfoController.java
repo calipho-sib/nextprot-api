@@ -24,4 +24,11 @@ public class ReleaseInfoController {
 		model.addAttribute("release", releaseService.findReleaseInfo());
 		return "release-contents";
 	}
+
+	@ApiMethod(path = "/release-stats", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@RequestMapping(value = "/release-stats", method = { RequestMethod.GET })
+	public String releaseStats(Model model) {
+		model.addAttribute("release-stats", releaseService.findReleaseStats());
+		return "release-stats";
+	}
 }

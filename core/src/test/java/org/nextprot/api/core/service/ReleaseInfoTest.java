@@ -1,20 +1,18 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static org.junit.Assert.*;
 
 /**
  * @author pmichel
@@ -47,7 +45,7 @@ public class ReleaseInfoTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldFindDataSources() {
-		int datasourcesSize = releaseInfoService.findReleaseInfo().getDatasources().size();
+		int datasourcesSize = releaseInfoService.findReleaseStats().getDatasources().size();
 		assertEquals(ReleaseDataSources.values().length,  datasourcesSize);
 	}
 
