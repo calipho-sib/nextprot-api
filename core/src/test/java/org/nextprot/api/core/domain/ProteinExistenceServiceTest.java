@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 // TODO: test should not be ignored once db changed
-@Ignore
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev","cache"})
 public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
         
     @Autowired
@@ -37,7 +36,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldMatchRule2() {
 
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule2("NX_Q9NV72"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule2("NX_Q9NV72"));
 	}
 
 	@Test
@@ -49,7 +48,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     @Test
     public void shouldMatchRule3() {
 
-        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q6SJ96"));
+        Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q6SJ96"));
     }
 
 	@Test
@@ -79,19 +78,13 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldMatchRule5() {
 
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule5("NX_P12830"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_P12830"));
 	}
 
 	@Test
 	public void shouldNotMatchRule5BecauseAssignedByUniprot() {
 
 		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_Q01094"));
-	}
-
-	@Test
-	public void shouldMatchRule6() {
-
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule6("NX_O60563"));
 	}
 
 	@Test
@@ -125,8 +118,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6SJ96");
 
-		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03, pe.getRule());
+		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
 	}
 
 	@Test
@@ -143,8 +135,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6V0L0");
 
-		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05, pe.getRule());
+		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
 	}
 
 	// Could not find an entry that match this rule:
