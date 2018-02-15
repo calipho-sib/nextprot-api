@@ -4,7 +4,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
@@ -20,14 +20,14 @@ import java.util.Map;
  */
 public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
 
-    private final EntryReportService entryReportService;
+    private final EntryReportStatsService entryReportStatsService;
     private final Map<String, Entry> cachedEntries;
 
     public EntryPEFFStreamWriter(OutputStream os) throws IOException {
 
         super(os);
 
-        this.entryReportService = applicationContext.getBean(EntryReportService.class);
+        this.entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
         cachedEntries = new HashMap<>();
     }
 
@@ -60,7 +60,7 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
     @Override
     protected void writeEntry(String entryName) throws IOException {
 
-        Map<String, String> isoformToPEFF = entryReportService.reportIsoformPeffHeaders(entryName);
+        Map<String, String> isoformToPEFF = entryReportStatsService.reportIsoformPeffHeaders(entryName);
 
         StringBuilder sb = new StringBuilder();
 

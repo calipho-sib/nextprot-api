@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -16,7 +16,7 @@ public abstract class FieldBuilder {
 	protected TerminologyService terminologyservice = null;
 	protected EntryBuilderService entryBuilderService = null;
 	protected PublicationService publicationService = null;
-	protected EntryReportService entryReportService = null;
+	protected EntryReportStatsService entryReportStatsService = null;
 
     public boolean isGold() {
 		return isGold;
@@ -38,8 +38,8 @@ public abstract class FieldBuilder {
         this.publicationService = publicationService;
     }
 
-	public void setEntryReportService(EntryReportService entryReportService) {
-		this.entryReportService = entryReportService;
+	public void setEntryReportStatsService(EntryReportStatsService entryReportStatsService) {
+		this.entryReportStatsService = entryReportStatsService;
 	}
 
 	boolean initialized = false;

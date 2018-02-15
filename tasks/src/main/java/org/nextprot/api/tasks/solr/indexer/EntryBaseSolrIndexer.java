@@ -4,7 +4,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -22,7 +22,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 	private TerminologyService terminologyservice;
 	private EntryBuilderService entryBuilderService;
 	private PublicationService publicationService;
-	private EntryReportService entryReportService;
+	private EntryReportStatsService entryReportStatsService;
     private boolean isGold;
 
 	// protected => only sub classes can use c'tor (was abstract class before)
@@ -47,7 +47,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 			fb.setTerminologyService(terminologyservice);
 			fb.setEntryBuilderService(entryBuilderService);
 			fb.setPublicationService(publicationService);
-			fb.setEntryReportService(entryReportService);
+			fb.setEntryReportStatsService(entryReportStatsService);
 			fb.initializeBuilder(entry);
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
@@ -78,8 +78,8 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
         this.publicationService = publicationService;
     }
 
-	public void setEntryReportService(EntryReportService entryReportService) {
-		this.entryReportService = entryReportService;
+	public void setEntryReportStatsService(EntryReportStatsService entryReportStatsService) {
+		this.entryReportStatsService = entryReportStatsService;
 	}
 
 	static void initializeFieldBuilders(Map<Fields, FieldBuilder> fieldsBuilderMap) {

@@ -3,8 +3,8 @@ package org.nextprot.api.web.service.impl.writer;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.domain.EntryReportStats;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.web.ApplicationContextProvider;
 
@@ -21,10 +21,10 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
 
     private static class DataProvider implements EntryDataProvider {
 
-        private final EntryReportService entryReportService;
+        private final EntryReportStatsService entryReportStatsService;
 
         DataProvider() {
-            entryReportService = ApplicationContextProvider.getApplicationContext().getBean(EntryReportService.class);
+            entryReportStatsService = ApplicationContextProvider.getApplicationContext().getBean(EntryReportStatsService.class);
         }
 
         @Override
@@ -40,7 +40,7 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
         @Override
         public List<Record> getRecords(Entry entry) {
 
-            EntryReport entryReport = entryReportService.reportEntry(entry.getUniqueName()).get(0);
+            EntryReportStats entryReport = entryReportStatsService.reportEntryStats(entry.getUniqueName());
 
             Object[] values = new Object[getFieldNames().length];
 

@@ -33,7 +33,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private PublicationService publicationService;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
-	@Autowired private EntryReportService entryReportService;
+	@Autowired private EntryReportStatsService entryReportStatsService;
 
 	@Override
 	public String indexEntriesChromosome(boolean isGold, String chrName) {
@@ -51,7 +51,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
 		indexer.setPublicationService(publicationService);
-		indexer.setEntryReportService(entryReportService);
+		indexer.setEntryReportStatsService(entryReportStatsService);
 
 		logAndCollect(info,"getting entry list of chromosome " + chrName);
 		List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);

@@ -30,7 +30,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
         indexer.setPublicationService(getBean(PublicationService.class));
-        indexer.setEntryReportService(getBean(EntryReportService.class));
+        indexer.setEntryReportStatsService(getBean(EntryReportStatsService.class));
 
 		// Remove previous indexes
 		logger.info("removing all solr entries records");
