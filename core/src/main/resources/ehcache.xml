@@ -389,4 +389,9 @@
 		statistics="true" >
 	</cache>
 
+	<cache name="entry-report-stats"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true" >
+	</cache>
 </ehcache>
