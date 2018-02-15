@@ -29,7 +29,7 @@ public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(Map<String, Object>infos) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
 
         int entryNum = (int) infos.get(ENTRY_COUNT);
         ReleaseInfoVersions releaseInfoVersions = (ReleaseInfoVersions) infos.get(RELEASE_INFO);

@@ -22,6 +22,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
     public static String ENTRY_COUNT = "entryCount";
     public static String ISOFORM_COUNT = "isoformCount";
     public static String RELEASE_INFO = "releaseInfo";
+    public static String RELEASE_DATA_SOURCES = "releaseDataSources";
     public static String DESCRIPTION = "description";
 
     static final String UTF_8 = "UTF-8";

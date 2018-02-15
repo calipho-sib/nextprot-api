@@ -37,25 +37,23 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
 
 		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
-
-		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
-		infos.put(DESCRIPTION, description);
-
-		writer.write(Collections.singletonList(accession), infos);
+		writer.write(Collections.singletonList(accession), createInfos(description));
 	}
 
 	@Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
+        writer.write(accessions, createInfos(description));
+    }
 
+    private Map<String, Object> createInfos(String description) {
 		Map<String, Object> infos = new HashMap<>();
 		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
+		infos.put(RELEASE_DATA_SOURCES, releaseInfoService.findReleaseDatasources());
 		infos.put(DESCRIPTION, description);
-
-        writer.write(accessions, infos);
-    }
+		return infos;
+	}
 
     @Override
     public void streamAllEntries(NextprotMediaType format, HttpServletResponse response) {

@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,28 +22,28 @@ public class ReleaseInfoController {
     @ApiMethod(path = "/release-info", verb = ApiVerb.GET, description = "Gets information about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping(value = "/release-info", method = { RequestMethod.GET })
 	public String releaseInformation(Model model) {
-		model.addAttribute("versions", releaseService.findReleaseVersions());
+		model.addAttribute(NXVelocityContext.RELEASE_NUMBER, releaseService.findReleaseVersions());
 		return "release-info";
 	}
 
 	@ApiMethod(path = "/release-stats", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/release-stats", method = { RequestMethod.GET })
 	public String releaseStats(Model model) {
-		model.addAttribute("release-stats", releaseService.findReleaseStats());
+		model.addAttribute(NXVelocityContext.RELEASE_STATS, releaseService.findReleaseStats());
 		return "release-stats";
 	}
 
 	@ApiMethod(path = "/release-data-sources", verb = ApiVerb.GET, description = "Gets data sources of current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping(value = "/release-data-sources", method = { RequestMethod.GET })
 	public String releaseDatasources(Model model) {
-		model.addAttribute("data-sources", releaseService.findReleaseDatasources());
+		model.addAttribute(NXVelocityContext.RELEASE_DATA_SOURCES, releaseService.findReleaseDatasources());
 		return "release-data-sources";
 	}
 
 	@RequestMapping(value = "/release-contents", method = { RequestMethod.GET })
 	public String releaseContents(Model model) {
-		model.addAttribute("versions", releaseService.findReleaseVersions());
-		model.addAttribute("data-sources", releaseService.findReleaseDatasources());
+		model.addAttribute(NXVelocityContext.RELEASE_NUMBER, releaseService.findReleaseVersions());
+		model.addAttribute(NXVelocityContext.RELEASE_DATA_SOURCES, releaseService.findReleaseDatasources());
 		return "release-contents";
 	}
 }

@@ -6,6 +6,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
+import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.NXVelocityContext;
 
@@ -87,12 +88,13 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
 
         int entryNum = (int) infos.get(ENTRY_COUNT);
         ReleaseInfoVersions releaseInfoVersions = (ReleaseInfoVersions) infos.get(RELEASE_INFO);
+        ReleaseInfoDataSources releaseInfoDataSources = (ReleaseInfoDataSources) infos.get(RELEASE_DATA_SOURCES);
 
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
         headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfoVersions), getStream());
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
-        writePrettyXml(releaseContentTemplate, new NXVelocityContext(entryNum, releaseInfoVersions), 2);
+        writePrettyXml(releaseContentTemplate, new NXVelocityContext(entryNum, releaseInfoVersions, releaseInfoDataSources), 2);
         getStream().write("    </header>\n");
         getStream().write("    <entry-list>\n");
     }
