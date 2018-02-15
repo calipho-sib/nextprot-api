@@ -49,7 +49,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 		ChromosomeReport report = new ChromosomeReport();
 
-        report.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
+        report.setDataRelease(releaseInfoService.findReleaseVersions().getDatabaseRelease());
 
 		List<String> allEntriesOnChromosome = masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
 
