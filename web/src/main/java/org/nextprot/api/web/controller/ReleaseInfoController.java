@@ -21,8 +21,8 @@ public class ReleaseInfoController {
     @ApiMethod(path = "/release-info", verb = ApiVerb.GET, description = "Gets information about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping(value = "/release-info", method = { RequestMethod.GET })
 	public String releaseInformation(Model model) {
-		model.addAttribute("release", releaseService.findReleaseInfo());
-		return "release-contents";
+		model.addAttribute("release", releaseService.findReleaseVersions());
+		return "release-info";
 	}
 
 	@ApiMethod(path = "/release-stats", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -30,5 +30,12 @@ public class ReleaseInfoController {
 	public String releaseStats(Model model) {
 		model.addAttribute("release-stats", releaseService.findReleaseStats());
 		return "release-stats";
+	}
+
+	@ApiMethod(path = "/release-data-sources", verb = ApiVerb.GET, description = "Gets data sources of current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@RequestMapping(value = "/release-data-sources", method = { RequestMethod.GET })
+	public String releaseDatasources(Model model) {
+		model.addAttribute("release-stats", releaseService.findReleaseDatasources());
+		return "release-data-sources";
 	}
 }
