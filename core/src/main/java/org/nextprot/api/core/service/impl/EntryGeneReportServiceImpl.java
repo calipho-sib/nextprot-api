@@ -2,14 +2,11 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.EntryReportStats;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryGeneReportService;
 import org.nextprot.api.core.service.EntryReportStatsService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.service.GeneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,13 +19,10 @@ import java.util.stream.Collectors;
 public class EntryGeneReportServiceImpl implements EntryGeneReportService {
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
-
-    @Autowired
-    private IsoformService isoformService;
-
-    @Autowired
     private EntryReportStatsService entryReportStatsService;
+
+    @Autowired
+    private GeneService geneService;
 
     @Cacheable("entry-reports")
     @Override
@@ -36,13 +30,9 @@ public class EntryGeneReportServiceImpl implements EntryGeneReportService {
 
         EntryReportStats ers = entryReportStatsService.reportEntryStats(entryAccession);
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
-                .withEverything()
-        );
-
         EntryReport report = new EntryReport();
 
-        report.setAccession(entry.getUniqueName());
+        report.setAccession(entryAccession);
         report.setDescription(ers.getDescription());
         report.setProteinExistence(ers.getProteinExistence());
         report.setPropertyTest(EntryReport.IS_PROTEOMICS, ers.isProteomics());
@@ -58,12 +48,12 @@ public class EntryGeneReportServiceImpl implements EntryGeneReportService {
         report.setPropertyCount(EntryReport.SUBMISSION_COUNT, ers.countSubmissions());
         report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT, ers.countWebResources());
 
-        return duplicateReportForEachGene(entry, report);
+        return duplicateReportForEachGene(entryAccession, report);
     }
 
-    private List<EntryReport> duplicateReportForEachGene(Entry entry, EntryReport report) {
+    private List<EntryReport> duplicateReportForEachGene(String entryAccession, EntryReport report) {
 
-        List<ChromosomalLocation> chromosomalLocations = entry.getChromosomalLocations();
+        List<ChromosomalLocation> chromosomalLocations = geneService.findChromosomalLocationsByEntry(entryAccession);
 
         if (chromosomalLocations.isEmpty()) {
             throw new NextProtException("Cannot make report for entry "  + report.getAccession() + ": no chromosome location found");

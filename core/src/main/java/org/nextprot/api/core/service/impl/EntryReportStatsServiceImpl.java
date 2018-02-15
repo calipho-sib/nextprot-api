@@ -2,18 +2,13 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationCategory;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.EntryReportStatsService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.service.*;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,39 +28,47 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     private static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
-
-    @Autowired
     private IsoformService isoformService;
 
     @Autowired
     private EntryPublicationService entryPublicationService;
 
+    @Autowired
+    private OverviewService overviewService;
+
+    @Autowired
+    private DbXrefService dbXrefService;
+
+    @Autowired
+    private PublicationService publicationService;
+
+    @Autowired
+    private AnnotationService annotationService;
+
     @Cacheable("entry-report-stats")
     @Override
     public EntryReportStats reportEntryStats(String entryAccession) {
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
-                .withoutProperties()
-                .withAnnotations());
-
         EntryReportStats ers = new EntryReportStats();
 
-        ers.setAccession(entry.getUniqueName());
-        setEntryDescription(entry, ers);
-        setProteinExistence(entry, ers);
-        setIsProteomics(entry, ers);
-        setIsAntibody(entry, ers);
-        setIs3D(entry, ers);
-        setIsDisease(entry, ers);
-        setIsoformCount(entry, ers);
-        setVariantCount(entry, ers);
-        setPTMCount(entry, ers);
-        setCuratedPublicationCount(entry, ers);
-        setAdditionalPublicationCount(entry, ers);
-        setPatentCount(entry, ers);
-        setSubmissionCount(entry, ers);
-        setWebResourceCount(entry, ers);
+        List<DbXref> xrefs = dbXrefService.findDbXrefsByMaster(entryAccession);
+        List<Annotation> annotations = annotationService.findAnnotations(entryAccession);
+
+        ers.setAccession(entryAccession);
+        setEntryDescription(entryAccession, ers);
+        setProteinExistence(entryAccession, ers);
+        setIsProteomics(entryAccession, xrefs, annotations, ers);
+        setIsAntibody(xrefs, annotations, ers);
+        setIs3D(annotations, ers);
+        setIsDisease(xrefs, annotations, ers);
+        setIsoformCount(entryAccession, ers);
+        setVariantCount(entryAccession, ers);
+        setPTMCount(annotations, ers);
+        setCuratedPublicationCount(entryAccession, ers);
+        setAdditionalPublicationCount(entryAccession, ers);
+        setPatentCount(entryAccession, ers);
+        setSubmissionCount(entryAccession, ers);
+        setWebResourceCount(entryAccession, ers);
 
         return ers;
     }
@@ -90,24 +93,24 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
                         isoform -> IsoformPEFFHeader.toString(isoformService.formatPEFFHeader(isoform.getIsoformAccession()))));
     }
 
-    private void setEntryDescription(Entry entry, EntryReportStats report) {
+    private void setEntryDescription(String entryAccession, EntryReportStats report) {
 
-        report.setDescription(entry.getOverview().getRecommendedProteinName().getName());
+        report.setDescription(overviewService.findOverviewByEntry(entryAccession).getRecommendedProteinName().getName());
     }
 
-    private void setIsProteomics(Entry entry, EntryReportStats report) {
+    private void setIsProteomics(String entryAccession, List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
 
     	boolean result = false;
     	
-    	if (entry.getXrefs().stream()
-    			.anyMatch(this::isPeptideAtlasOrMassSpecXref)) {
+    	if (xrefs.stream().anyMatch(this::isPeptideAtlasOrMassSpecXref)) {
     		result = true;
     	}
     	
-    	else if (entry.getPublications().stream().anyMatch(pub -> hasMassSpecScope(entry.getUniqueName(), pub.getPublicationId()))) {
+    	else if (publicationService.findPublicationsByEntryName(entryAccession).stream()
+                .anyMatch(pub -> hasMassSpecScope(entryAccession, pub.getPublicationId()))) {
     		result = true;
 
-    	} else if (entry.getAnnotations().stream()
+    	} else if (annotations.stream()
     			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
     		result = true;
     	}
@@ -151,30 +154,25 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
     }
     
-    private void setIsAntibody(Entry entry, EntryReportStats report) {
+    private void setIsAntibody(List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
     	
     	boolean result =false;
     	
     	// this works for public antibodies with accession like HPAxxxx (sequence is known and aligned on isoforms)    	 
-		if (entry.getAnnotations().stream()
+		if (annotations.stream()
 			.anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING)) result=true;
 			
 		// that works for patented antibodies with accession like CABxxx with an unknow sequence (and thus not aligned / mapped on isoforms)
-		if (entry.getXrefs().stream()
+		if (xrefs.stream()
 				.anyMatch(x -> x.getAccession().startsWith("CAB") && x.getDatabaseName().equals("HPA"))) result=true;
 		
         report.setPropertyTest(EntryReport.IS_ANTIBODY,result);
-    
-        
-    
     }
 
-    
-    
-    private void setIs3D(Entry entry, EntryReportStats report) {
+    private void setIs3D(List<Annotation> annotations, EntryReportStats report) {
 
-        report.setPropertyTest(EntryReport.IS_3D, 
-        		entry.getAnnotations().stream().
+        report.setPropertyTest(EntryReport.IS_3D,
+                annotations.stream().
         			anyMatch(a -> a.getAPICategory()==AnnotationCategory.UNIPROT_KEYWORD && "KW-0002".equals(a.getCvTermAccessionCode())));
     }
 
@@ -186,13 +184,13 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
      * - a xref from orphanet 
      * Note: Orphanet xrefs are turned into annotations, so should never need this criterion
      */
-    private void setIsDisease(Entry entry, EntryReportStats report) {
+    private void setIsDisease(List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
 
         boolean result = false;
         
-    	if (entry.getAnnotations().stream().anyMatch(a -> hasDiseaseCategory(a) || hasDiseaseKeywordTerm(a))) {
+    	if (annotations.stream().anyMatch(a -> hasDiseaseCategory(a) || hasDiseaseKeywordTerm(a))) {
     		result = true;
-    	} else if (entry.getXrefs().stream().anyMatch(x -> "Orphanet".equals(x.getDatabaseName()))) {
+    	} else if (xrefs.stream().anyMatch(x -> "Orphanet".equals(x.getDatabaseName()))) {
     		result = true;
     	}    	
         report.setPropertyTest(EntryReport.IS_DISEASE, result);
@@ -212,31 +210,31 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
      	return true;
     }
     
-    private void setProteinExistence(Entry entry, EntryReportStats report) {
+    private void setProteinExistence(String entryAccession, EntryReportStats report) {
 
-        ProteinExistence proteinExistence = entry.getOverview().getProteinExistences().getProteinExistence();
+        ProteinExistence proteinExistence = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
         if (proteinExistence == null) {
-            throw new NextProtException("undefined existence level for neXtProt entry "+ entry.getUniqueName());
+            throw new NextProtException("undefined existence level for neXtProt entry "+ entryAccession);
         }
 
         report.setProteinExistence(proteinExistence);
     }
 
-    private void setIsoformCount(Entry entry, EntryReportStats report) {
+    private void setIsoformCount(String entryAccession, EntryReportStats report) {
 
-        report.setPropertyCount(EntryReport.ISOFORM_COUNT, entry.getIsoforms().size());
+        report.setPropertyCount(EntryReport.ISOFORM_COUNT, isoformService.findIsoformsByEntryName(entryAccession).size());
     }
 
-    private void setVariantCount(Entry entry, EntryReportStats report) {
+    private void setVariantCount(String entryAccession, EntryReportStats report) {
 
-        report.setPropertyCount(EntryReport.VARIANT_COUNT, (int) entry.getAnnotations().stream()
+        report.setPropertyCount(EntryReport.VARIANT_COUNT, (int) annotationService.findAnnotations(entryAccession).stream()
                 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.VARIANT)
                 .count());
     }
 
-    private void setPTMCount(Entry entry, EntryReportStats report) {
+    private void setPTMCount(List<Annotation> annotations, EntryReportStats report) {
 
-        report.setPropertyCount(EntryReport.PTM_COUNT, (int) entry.getAnnotations().stream()
+        report.setPropertyCount(EntryReport.PTM_COUNT, (int) annotations.stream()
                 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.SELENOCYSTEINE ||
                                 annotation.getAPICategory() == AnnotationCategory.LIPIDATION_SITE ||
                                 annotation.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE ||
@@ -248,34 +246,34 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
                 .count());
     }
 
-    private void setCuratedPublicationCount(Entry entry, EntryReportStats report) {
+    private void setCuratedPublicationCount(String entryAccession, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.CURATED));
+                countPublicationsByEntryName(entryAccession, PublicationCategory.CURATED));
     }
 
-    private void setAdditionalPublicationCount(Entry entry, EntryReportStats report) {
+    private void setAdditionalPublicationCount(String entryAccession, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.ADDITIONAL));
+                countPublicationsByEntryName(entryAccession, PublicationCategory.ADDITIONAL));
     }
 
-    private void setPatentCount(Entry entry, EntryReportStats report) {
+    private void setPatentCount(String entryAccession, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.PATENT_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.PATENT));
+                countPublicationsByEntryName(entryAccession, PublicationCategory.PATENT));
     }
 
-    private void setSubmissionCount(Entry entry, EntryReportStats report) {
+    private void setSubmissionCount(String entryAccession, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.SUBMISSION));
+                countPublicationsByEntryName(entryAccession, PublicationCategory.SUBMISSION));
     }
 
-    private void setWebResourceCount(Entry entry, EntryReportStats report) {
+    private void setWebResourceCount(String entryAccession, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
-                countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.WEB_RESOURCE));
+                countPublicationsByEntryName(entryAccession, PublicationCategory.WEB_RESOURCE));
     }
 
     boolean isGoldAnnotation(Annotation annot) {
@@ -304,10 +302,9 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
 	boolean containsPtmAnnotation(String entryAccession, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());
-
-		List<Annotation> ptms = entry.getAnnotationsByCategory()
-				.get(StringUtils.camelToKebabCase(AnnotationCategory.MODIFIED_RESIDUE.getApiTypeName()));
+        List<Annotation> ptms = annotationService.findAnnotations(entryAccession).stream()
+                .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE)
+                .collect(Collectors.toList());
 
 		return nullableListToStream(ptms)
 				.anyMatch(annot -> isGoldAnnotation(annot) &&

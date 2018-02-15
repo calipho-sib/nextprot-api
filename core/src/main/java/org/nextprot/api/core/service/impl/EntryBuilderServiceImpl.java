@@ -32,7 +32,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private MdataService mdataService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;
-	
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 		
