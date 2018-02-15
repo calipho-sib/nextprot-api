@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -23,9 +22,8 @@ import static org.junit.Assert.*;
  * => ignored
  */
 
-@Ignore
 @ActiveProfiles({ "dev" })
-public class ReleaseInfoTest extends CoreUnitBaseTest {
+public class ReleaseInfoVersionsTest extends CoreUnitBaseTest {
 	
 	@Autowired private ReleaseInfoService releaseInfoService;
 
@@ -33,7 +31,7 @@ public class ReleaseInfoTest extends CoreUnitBaseTest {
 	public void shouldFindAValdiDatabaseRelease() {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String dbRelease = releaseInfoService.findReleaseInfo().getDatabaseRelease();
+			String dbRelease = releaseInfoService.findReleaseVersions().getDatabaseRelease();
 			Date d = null;
 			d = dateFormat.parse(dbRelease);
 			assertTrue(d != null);
@@ -45,7 +43,7 @@ public class ReleaseInfoTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldFindDataSources() {
-		int datasourcesSize = releaseInfoService.findReleaseStats().getDatasources().size();
+		int datasourcesSize = releaseInfoService.findReleaseDatasources().getDatasources().size();
 		assertEquals(ReleaseDataSources.values().length,  datasourcesSize);
 	}
 
