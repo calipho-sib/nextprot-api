@@ -11,7 +11,7 @@ import org.nextprot.api.core.utils.NXVelocityUtils;
 public class NXVelocityContext extends VelocityContext {
 
 	final static public String ENTRIES_COUNT = "entriesCount";
-	final static public String RELEASE_NUMBER = "release";
+	final static public String RELEASE_NUMBER = "versions";
 
 	public NXVelocityContext() {
 		super();
