@@ -42,10 +42,10 @@ public class EntryController {
 	@Autowired private EntryBuilderService entryBuilderService;
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private EntryReportService entryReportService;
+	@Autowired private EntryReportStatsService entryReportStatsService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
-	@Autowired private ProteinExistenceService proteinExistenceService;
+	@Autowired private EntryGeneReportService entryGeneReportService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -118,11 +118,11 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public List<EntryReport> getEntryReport(
+	public List<EntryReport> getGeneEntryReport(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName) {
 
-		return entryReportService.reportEntry(entryName).stream()
+		return entryGeneReportService.reportEntry(entryName).stream()
 				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(EntryReport.newByChromosomalPositionComparator()))
 				.collect(Collectors.toList());
 	}
@@ -199,6 +199,16 @@ public class EntryController {
 		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
 
 		return "entry";
+	}
+
+	@ApiMethod(path = "/entry/{entry}/stats", verb = ApiVerb.GET, description = "Reports neXtProt entry stats", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/stats", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public EntryReportStats getEntryReportStats(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
+
+		return entryReportStatsService.reportEntryStats(entryName);
 	}
 
 	/**
