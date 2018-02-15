@@ -21,11 +21,11 @@ public class ReleaseInfoController {
     @ApiMethod(path = "/release-info", verb = ApiVerb.GET, description = "Gets information about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping(value = "/release-info", method = { RequestMethod.GET })
 	public String releaseInformation(Model model) {
-		model.addAttribute("release", releaseService.findReleaseVersions());
+		model.addAttribute("versions", releaseService.findReleaseVersions());
 		return "release-info";
 	}
 
-	@ApiMethod(path = "/release-stats", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@ApiMethod(path = "/release-stats", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/release-stats", method = { RequestMethod.GET })
 	public String releaseStats(Model model) {
 		model.addAttribute("release-stats", releaseService.findReleaseStats());
@@ -35,7 +35,14 @@ public class ReleaseInfoController {
 	@ApiMethod(path = "/release-data-sources", verb = ApiVerb.GET, description = "Gets data sources of current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping(value = "/release-data-sources", method = { RequestMethod.GET })
 	public String releaseDatasources(Model model) {
-		model.addAttribute("release-stats", releaseService.findReleaseDatasources());
+		model.addAttribute("data-sources", releaseService.findReleaseDatasources());
 		return "release-data-sources";
+	}
+
+	@RequestMapping(value = "/release-contents", method = { RequestMethod.GET })
+	public String releaseContents(Model model) {
+		model.addAttribute("versions", releaseService.findReleaseVersions());
+		model.addAttribute("data-sources", releaseService.findReleaseDatasources());
+		return "release-contents";
 	}
 }

@@ -1,0 +1,6 @@
+<release>
+      <nextprot>
+          <database-release>$versions.databaseRelease</database-release>
+          <api-release>$versions.apiRelease</api-release>
+      </nextprot>
+</release>
