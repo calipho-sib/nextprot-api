@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.release;
 
 import java.io.Serializable;
 
-public class ReleaseInfo implements Serializable {
+public class ReleaseInfoVersions implements Serializable {
 
 	private static final long serialVersionUID = 2L;
 
