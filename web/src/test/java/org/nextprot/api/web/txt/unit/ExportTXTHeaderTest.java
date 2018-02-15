@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
@@ -55,7 +55,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
 
         Map<String, Object> infos = new HashMap<>();
-        infos.put(RELEASE_INFO, Mockito.mock(ReleaseInfo.class));
+        infos.put(RELEASE_INFO, Mockito.mock(ReleaseInfoVersions.class));
 
         exporter.write(Arrays.asList("NX_1", "NX_2"), infos);
        

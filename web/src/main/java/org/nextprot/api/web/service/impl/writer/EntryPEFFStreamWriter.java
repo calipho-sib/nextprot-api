@@ -3,7 +3,7 @@ package org.nextprot.api.web.service.impl.writer;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
@@ -45,7 +45,7 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
                 .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF);
 
         if (infos.containsKey(RELEASE_INFO))
-                sb.append("# DbVersion=").append(((ReleaseInfo)infos.get(RELEASE_INFO)).getDatabaseRelease()).append(StringUtils.CR_LF);
+                sb.append("# DbVersion=").append(((ReleaseInfoVersions)infos.get(RELEASE_INFO)).getDatabaseRelease()).append(StringUtils.CR_LF);
 
         sb.append("# Prefix=nxp").append(StringUtils.CR_LF)
                 .append("# NumberOfEntries=").append(isoformNumber).append(StringUtils.CR_LF)

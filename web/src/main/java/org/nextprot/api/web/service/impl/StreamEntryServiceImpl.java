@@ -39,7 +39,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
 
 		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
+		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
 		infos.put(DESCRIPTION, description);
 
 		writer.write(Collections.singletonList(accession), infos);
@@ -51,7 +51,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
 
 		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
+		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
 		infos.put(DESCRIPTION, description);
 
         writer.write(accessions, infos);

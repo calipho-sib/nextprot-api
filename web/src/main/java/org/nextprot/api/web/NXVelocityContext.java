@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-
-import java.util.Map;
 
 @JsonIgnoreProperties({"StringUtils", "NXUtils"})
 public class NXVelocityContext extends VelocityContext {
@@ -26,11 +24,11 @@ public class NXVelocityContext extends VelocityContext {
 		this.put("entry", entry);
 	}
 
-	public NXVelocityContext(int entryNum, ReleaseInfo releaseInfo) {
+	public NXVelocityContext(int entryNum, ReleaseInfoVersions releaseInfoVersions) {
 		this();
 
 		this.put(ENTRIES_COUNT, entryNum);
-		this.put(RELEASE_NUMBER, releaseInfo);
+		this.put(RELEASE_NUMBER, releaseInfoVersions);
 	}
 
 	public void add(String key, Object value) {

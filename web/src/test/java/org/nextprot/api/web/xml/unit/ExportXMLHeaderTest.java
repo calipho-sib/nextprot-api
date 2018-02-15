@@ -1,7 +1,7 @@
 package org.nextprot.api.web.xml.unit;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
@@ -27,7 +27,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         Writer writer = new PrintWriter(out);
         EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview");
         
-        ReleaseInfo rc = new ReleaseInfo();
+        ReleaseInfoVersions rc = new ReleaseInfoVersions();
         rc.setApiRelease("api-test-version");
         rc.setDatabaseRelease("database-test-version");
 
