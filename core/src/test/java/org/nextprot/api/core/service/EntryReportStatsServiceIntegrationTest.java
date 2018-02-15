@@ -14,24 +14,21 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @ActiveProfiles({ "dev","cache" })
-public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
+public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired
-	private ChromosomeReportService chromosomeReportService;
-
-	@Autowired
-	private EntryReportService entryReportService;
-	
-	@Autowired
-	private EntryBuilderService entryBuilderService;
+	private EntryGeneReportService entryGeneReportService;
 
 	@Autowired
 	private AnnotationService annotationService;
 
+	@Autowired
+	private EntryReportStatsService entryReportStatsService;
+
 	@Test
 	public void NX_Q9Y6F7ShouldHave1GeneWith2ChromosomalLocationsAtDifferentDNAStrands() {
 
-		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9Y6F7");
+		List<EntryReport> reports = entryGeneReportService.reportEntry("NX_Q9Y6F7");
 
 		Assert.assertEquals(2, reports.size());
 
@@ -45,7 +42,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void NX_Q9Y676ShouldHave1GoldOnnlyChromosomalLocation() {
 
-		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9Y676");
+		List<EntryReport> reports = entryGeneReportService.reportEntry("NX_Q9Y676");
 
 		Assert.assertEquals(1, reports.size());
 	}
@@ -53,7 +50,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void NX_Q9Y676ShouldHave2GoldOnnlyChromosomalLocation() {
 
-		List<EntryReport> reports = entryReportService.reportEntry("NX_A6NER0");
+		List<EntryReport> reports = entryGeneReportService.reportEntry("NX_A6NER0");
 
 		Assert.assertEquals(1, reports.size());
 	}
@@ -61,7 +58,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void NX_Q9Y676ShouldHaveAlso2GoldOnnlyChromosomalLocation() {
 
-		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9H239");
+		List<EntryReport> reports = entryGeneReportService.reportEntry("NX_Q9H239");
 
 		Assert.assertEquals(1, reports.size());
 	}
@@ -69,7 +66,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
     @Test
     public void NX_P01308ShouldHaveAlsoPubInfos() {
 
-        List<EntryReport> reports = entryReportService.reportEntry("NX_P01308");
+        List<EntryReport> reports = entryGeneReportService.reportEntry("NX_P01308");
         Assert.assertEquals(3, reports.get(0).countWebResources());
         Assert.assertEquals(4, reports.get(0).countSubmissions());
         Assert.assertEquals(0, reports.get(0).countPatents());
@@ -84,7 +81,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		List<String> negEntries = Arrays.asList("NX_P50052", "NX_Q8WXH6", "NX_O15255", "NX_Q9UJ90", "NX_Q8NG92");
 		int errCnt=0;
 		for (String ac:negEntries) {
-			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " proteomics should be false");
@@ -100,7 +97,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test // ok on np_20170413
 	public void NX_P46019ShouldHaveProteomicsTrue() {
 
-		List<EntryReport> reports = entryReportService.reportEntry("NX_P46019"); // has nextprot PTM
+		List<EntryReport> reports = entryGeneReportService.reportEntry("NX_P46019"); // has nextprot PTM
 		Assert.assertEquals(1, reports.size());
 		Assert.assertEquals(true, reports.get(0).isProteomics());
 		
@@ -117,7 +114,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		int errCnt=0;
 		for (String ac:posEntries) {
 			//if (ac.equals("NX_P29459")) break;
-			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==false) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " proteomics should be true");
@@ -135,7 +132,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		List<String> negEntries = Arrays.asList("NX_P0CW71", "NX_O43320","NX_Q07326", "NX_Q9H5Z6","NX_P29459","NX_Q96MM3","NX_Q86UD3");
 		int errCnt=0;
 		for (String ac:negEntries) {
-			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==false) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " proteomics should be true");
@@ -155,7 +152,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		List<String> negEntries = Arrays.asList("NX_P03886","NX_P16949","NX_P09326","NX_P84077","NX_Q13291", "NX_O43488", "NX_Q5T7P8");
 		int errCnt=0;
 		for (String ac:negEntries) {
-			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isAntibody()==false) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " antibody should be true");
@@ -181,7 +178,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			boolean result = entryReportService.isEntryNAcetyled(ac, isExperimentalPredicate);
+			boolean result = entryReportStatsService.isEntryNAcetyled(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " NAcetyl should be false");
@@ -206,7 +203,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			int errCnt=0;
 		for (String ac:negEntries) {
 			System.out.println("Entry: " + ac);
-			boolean result = entryReportService.isEntryPhosphorylated(ac, isExperimentalPredicate);
+			boolean result = entryReportStatsService.isEntryPhosphorylated(ac, isExperimentalPredicate);
 			if (result==true) {
 				errCnt++;
 				System.out.println("ERROR: " + ac + " Phosphorylated should be false");

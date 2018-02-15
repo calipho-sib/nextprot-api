@@ -11,7 +11,7 @@ import org.nextprot.api.core.domain.publication.PublicationCategory;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -28,10 +27,10 @@ import java.util.stream.Collectors;
 import static org.nextprot.api.commons.utils.StreamUtils.nullableListToStream;
 
 @Service
-public class EntryReportServiceImpl implements EntryReportService {
+public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
-	public static String NACETYLATION_REG_EXP = "^N.*?-acetyl.+$";
-	public static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
+	private static String NACETYLATION_REG_EXP = "^N.*?-acetyl.+$";
+    private static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
 
     @Autowired
     private EntryBuilderService entryBuilderService;
@@ -42,37 +41,33 @@ public class EntryReportServiceImpl implements EntryReportService {
     @Autowired
     private EntryPublicationService entryPublicationService;
 
-    @Cacheable("entry-reports")
+    @Cacheable("entry-report-stats")
     @Override
-    public List<EntryReport> reportEntry(String entryAccession) {
+    public EntryReportStats reportEntryStats(String entryAccession) {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
-                .withEverything()
-        );
+                .withoutProperties()
+                .withAnnotations());
 
-        EntryReport report = new EntryReport();
+        EntryReportStats ers = new EntryReportStats();
 
-        report.setAccession(entry.getUniqueName());
-        setEntryDescription(entry, report);
-        setProteinExistence(entry, report);
-        setIsProteomics(entry, report); 
-        setIsAntibody(entry, report);   
-        setIs3D(entry, report);        
-        setIsDisease(entry, report);    
-        setIsoformCount(entry, report);
-        setVariantCount(entry, report);
-        setPTMCount(entry, report);
-        setCuratedPublicationCount(entry, report);
-        setAdditionalPublicationCount(entry, report);
-        setPatentCount(entry, report);
-        setSubmissionCount(entry, report);
-        setWebResourceCount(entry, report);
+        ers.setAccession(entry.getUniqueName());
+        setEntryDescription(entry, ers);
+        setProteinExistence(entry, ers);
+        setIsProteomics(entry, ers);
+        setIsAntibody(entry, ers);
+        setIs3D(entry, ers);
+        setIsDisease(entry, ers);
+        setIsoformCount(entry, ers);
+        setVariantCount(entry, ers);
+        setPTMCount(entry, ers);
+        setCuratedPublicationCount(entry, ers);
+        setAdditionalPublicationCount(entry, ers);
+        setPatentCount(entry, ers);
+        setSubmissionCount(entry, ers);
+        setWebResourceCount(entry, ers);
 
-        // TODO: it is a smell !!
-        // this service should have 2 services:
-        // - one named EntryReport without any Gene information
-        // - one named EntryGeneReport with only Gene information
-        return duplicateReportForEachGene(entry, report);
+        return ers;
     }
 
     @Override
@@ -95,12 +90,12 @@ public class EntryReportServiceImpl implements EntryReportService {
                         isoform -> IsoformPEFFHeader.toString(isoformService.formatPEFFHeader(isoform.getIsoformAccession()))));
     }
 
-    private void setEntryDescription(Entry entry, EntryReport report) {
+    private void setEntryDescription(Entry entry, EntryReportStats report) {
 
         report.setDescription(entry.getOverview().getRecommendedProteinName().getName());
     }
 
-    private void setIsProteomics(Entry entry, EntryReport report) {
+    private void setIsProteomics(Entry entry, EntryReportStats report) {
 
     	boolean result = false;
     	
@@ -156,7 +151,7 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     }
     
-    private void setIsAntibody(Entry entry, EntryReport report) {
+    private void setIsAntibody(Entry entry, EntryReportStats report) {
     	
     	boolean result =false;
     	
@@ -176,7 +171,7 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     
     
-    private void setIs3D(Entry entry, EntryReport report) {
+    private void setIs3D(Entry entry, EntryReportStats report) {
 
         report.setPropertyTest(EntryReport.IS_3D, 
         		entry.getAnnotations().stream().
@@ -191,7 +186,7 @@ public class EntryReportServiceImpl implements EntryReportService {
      * - a xref from orphanet 
      * Note: Orphanet xrefs are turned into annotations, so should never need this criterion
      */
-    private void setIsDisease(Entry entry, EntryReport report) {
+    private void setIsDisease(Entry entry, EntryReportStats report) {
 
         boolean result = false;
         
@@ -217,7 +212,7 @@ public class EntryReportServiceImpl implements EntryReportService {
      	return true;
     }
     
-    private void setProteinExistence(Entry entry, EntryReport report) {
+    private void setProteinExistence(Entry entry, EntryReportStats report) {
 
         ProteinExistence proteinExistence = entry.getOverview().getProteinExistences().getProteinExistence();
         if (proteinExistence == null) {
@@ -227,19 +222,19 @@ public class EntryReportServiceImpl implements EntryReportService {
         report.setProteinExistence(proteinExistence);
     }
 
-    private void setIsoformCount(Entry entry, EntryReport report) {
+    private void setIsoformCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.ISOFORM_COUNT, entry.getIsoforms().size());
     }
 
-    private void setVariantCount(Entry entry, EntryReport report) {
+    private void setVariantCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.VARIANT_COUNT, (int) entry.getAnnotations().stream()
                 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.VARIANT)
                 .count());
     }
 
-    private void setPTMCount(Entry entry, EntryReport report) {
+    private void setPTMCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.PTM_COUNT, (int) entry.getAnnotations().stream()
                 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.SELENOCYSTEINE ||
@@ -253,49 +248,31 @@ public class EntryReportServiceImpl implements EntryReportService {
                 .count());
     }
 
-    private List<EntryReport> duplicateReportForEachGene(Entry entry, EntryReport report) {
-
-        List<ChromosomalLocation> chromosomalLocations = entry.getChromosomalLocations();
-
-        if (chromosomalLocations.isEmpty()) {
-            throw new NextProtException("Cannot make report for entry "  + report.getAccession() + ": no chromosome location found");
-        }
-        else if (chromosomalLocations.size() == 1) {
-            report.setChromosomalLocation(chromosomalLocations.get(0));
-            return Collections.singletonList(report);
-        }
-
-        return chromosomalLocations.stream()
-                .filter(ChromosomalLocation::isGoldMapping)
-                .map(report::duplicateThenSetChromosomalLocation)
-                .collect(Collectors.toList());
-    }
-
-    private void setCuratedPublicationCount(Entry entry, EntryReport report) {
+    private void setCuratedPublicationCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT,
                 countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.CURATED));
     }
 
-    private void setAdditionalPublicationCount(Entry entry, EntryReport report) {
+    private void setAdditionalPublicationCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT,
                 countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.ADDITIONAL));
     }
 
-    private void setPatentCount(Entry entry, EntryReport report) {
+    private void setPatentCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.PATENT_COUNT,
                 countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.PATENT));
     }
 
-    private void setSubmissionCount(Entry entry, EntryReport report) {
+    private void setSubmissionCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.SUBMISSION_COUNT,
                 countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.SUBMISSION));
     }
 
-    private void setWebResourceCount(Entry entry, EntryReport report) {
+    private void setWebResourceCount(Entry entry, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT,
                 countPublicationsByEntryName(entry.getUniqueName(), PublicationCategory.WEB_RESOURCE));
@@ -324,9 +301,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     	//System.out.println("annot " + evi.getAnnotationId() +  " evi " + evi.getEvidenceId() + " experimental: " + result);
     	return result;
     }
-    
-    
-    
+
 	boolean containsPtmAnnotation(String entryAccession, String ptmRegExp, Predicate<AnnotationEvidence> isExperimentalPredicate) {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withAnnotations());

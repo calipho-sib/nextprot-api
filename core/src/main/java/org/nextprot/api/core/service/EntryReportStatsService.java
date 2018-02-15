@@ -1,20 +1,14 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public interface EntryReportService {
+public interface EntryReportStatsService {
 
-	/**
-	 * Report informations about the given entry accession
-	 * @param entryAccession the neXtProt entry accession
-	 * @return a list of EntryReport (an Entry can map multiple chromosomal locations)
-	 */
-	List<EntryReport> reportEntry(String entryAccession);
+	EntryReportStats reportEntryStats(String entryAccession);
 
 	boolean isEntryNAcetyled(String entryAccession, Predicate<AnnotationEvidence> isExperimentalPredicate);
 

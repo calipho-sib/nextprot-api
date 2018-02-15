@@ -24,7 +24,10 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	private MasterIdentifierService masterIdentifierService;
 
 	@Autowired
-	private EntryReportService entryReportService;
+	private EntryGeneReportService entryGeneReportService;
+
+	@Autowired
+	private EntryReportStatsService entryReportStatsService;
 
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
@@ -54,7 +57,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		List<String> allEntriesOnChromosome = masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
 
 		List<EntryReport> entryReports = allEntriesOnChromosome.stream()
-				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
+				.map(entryAccession -> entryGeneReportService.reportEntry(entryAccession))
 				.flatMap(Collection::stream)
 				.filter(er -> er.getChromosome().equals(chromosome))
 				.sorted(EntryReport.newByChromosomalPositionComparator())
@@ -77,7 +80,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> entryReportService.isEntryNAcetyled(acc, isExperimentalPredicate))
+				.filter(acc -> entryReportStatsService.isEntryNAcetyled(acc, isExperimentalPredicate))
 				.sorted()
 				.collect(Collectors.toList());
 
@@ -90,7 +93,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> entryReportService.isEntryPhosphorylated(acc, isExperimentalPredicate))
+				.filter(acc -> entryReportStatsService.isEntryPhosphorylated(acc, isExperimentalPredicate))
 				.sorted()
 				.collect(Collectors.toList());
 	}

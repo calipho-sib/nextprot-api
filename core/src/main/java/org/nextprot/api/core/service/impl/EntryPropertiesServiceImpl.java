@@ -2,9 +2,9 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.domain.EntryProperties;
-import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.service.EntryPropertiesService;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	private EntryPropertiesDao entryPropertiesDao;
 
 	@Autowired
-	private EntryReportService entryReportService;
+	private EntryReportStatsService entryReportStatsService;
 
 	@Override
 	@Cacheable("entry-properties")
@@ -24,10 +24,10 @@ public class EntryPropertiesServiceImpl implements EntryPropertiesService {
 
 		EntryProperties entryProperties = entryPropertiesDao.findEntryProperties(uniqueName);
 
-		EntryReport er = entryReportService.reportEntry(uniqueName).get(0);
-		entryProperties.setIsoformCount(er.countIsoforms());
-		entryProperties.setPtmCount(er.countPTMs());
-		entryProperties.setVarCount(er.countVariants());
+		EntryReportStats ers = entryReportStatsService.reportEntryStats(uniqueName);
+		entryProperties.setIsoformCount(ers.countIsoforms());
+		entryProperties.setPtmCount(ers.countPTMs());
+		entryProperties.setVarCount(ers.countVariants());
 
 		return entryProperties;
 	}

@@ -13,7 +13,7 @@ public interface EntryService {
 	 * @return
 	 */
 	Entry findEntry(@ValidEntry String entryName);
-	
+
 	/**
 	 * 
 	 * @param entryNames
