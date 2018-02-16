@@ -1,14 +1,17 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.bio.Chromosome;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,17 +20,19 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.commons.utils.StreamUtils.nullableListToStream;
+
 @Service
 public class ChromosomeReportServiceImpl implements ChromosomeReportService {
+
+	private static String NACETYLATION_REG_EXP = "^N.*?-acetyl.+$";
+	private static String PHOSPHORYLATION_REG_EXP = "^Phospho.*$";
 
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
 	@Autowired
 	private EntryGeneReportService entryGeneReportService;
-
-	@Autowired
-	private EntryReportStatsService entryReportStatsService;
 
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
@@ -77,10 +82,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public List<String> findNAcetylatedEntries(String chromosome) {
 
-		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
-		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> entryReportStatsService.isEntryNAcetyled(acc, isExperimentalPredicate))
+				.filter(acc -> containsPtmAnnotation(acc, NACETYLATION_REG_EXP))
 				.sorted()
 				.collect(Collectors.toList());
 
@@ -90,10 +93,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public List<String> findPhosphorylatedEntries(String chromosome) {
 
-		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
-		
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> entryReportStatsService.isEntryPhosphorylated(acc, isExperimentalPredicate))
+				.filter(acc -> containsPtmAnnotation(acc, PHOSPHORYLATION_REG_EXP))
 				.sorted()
 				.collect(Collectors.toList());
 	}
@@ -145,5 +146,46 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		pe2entries.forEach((key, value) -> summary.setEntryCount(key, value.size()));
 	}
 
+	private boolean containsPtmAnnotation(String entryName, String ptmRegExp) {
 
+		List<Annotation> annotations = annotationService.findAnnotations(entryName);
+
+		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
+
+		List<Annotation> ptms = annotations.stream()
+				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE)
+				.collect(Collectors.toList());
+
+		return nullableListToStream(ptms)
+				.anyMatch(annot -> isGoldAnnotation(annot) &&
+						annotationTermMatchesPattern(annot, ptmRegExp) &&
+						annot.getEvidences().stream()
+								.anyMatch(evi -> isGoldEvidence(evi) && isExperimentalEvidence(evi,isExperimentalPredicate)
+								)
+				);
+	}
+
+	private boolean isGoldAnnotation(Annotation annot) {
+		boolean result = annot.getQualityQualifier().equals(QualityQualifier.GOLD.name());
+		//System.out.println("annot " + annot.getAnnotationId() + " quality: " + annot.getQualityQualifier());
+		return result;
+	}
+
+	private boolean annotationTermMatchesPattern(Annotation annot, String ptmRegExp) {
+		boolean result = annot.getCvTermName().matches(ptmRegExp);
+		//System.out.println("annot " + annot.getAnnotationId() + " matches " + ptmRegExp +": " + result);
+		return result;
+	}
+
+	private boolean isGoldEvidence(AnnotationEvidence evi) {
+		boolean result = evi.getQualityQualifier().equals(QualityQualifier.GOLD.name());
+		//System.out.println("annot " + evi.getAnnotationId() +  " evi " + evi.getEvidenceId() + " quality: " + evi.getQualityQualifier());
+		return result;
+	}
+
+	private boolean isExperimentalEvidence(AnnotationEvidence evi, Predicate<AnnotationEvidence> isExperimentalPredicate) {
+		boolean result = isExperimentalPredicate.test(evi);
+		//System.out.println("annot " + evi.getAnnotationId() +  " evi " + evi.getEvidenceId() + " experimental: " + result);
+		return result;
+	}
 }
