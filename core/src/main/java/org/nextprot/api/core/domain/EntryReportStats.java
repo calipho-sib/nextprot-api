@@ -56,18 +56,6 @@ public class EntryReportStats implements Serializable {
     private Map<String, Boolean> propertyTests = new HashMap<>(4);
     private Map<String, Integer> propertyCounts = new HashMap<>(4);
 
-    public EntryReport duplicateThenSetChromosomalLocation(ChromosomalLocation chromosomalLocation) {
-
-        EntryReport copy = new EntryReport();
-
-        copy.setAccession(accession);
-        copy.setDescription(description);
-        copy.setProteinExistence(proteinExistence);
-        copy.setChromosomalLocation(chromosomalLocation);
-
-        return copy;
-    }
-
     @JsonProperty(ENTRY_ACCESSION)
     public String getAccession() {
         return accession;
