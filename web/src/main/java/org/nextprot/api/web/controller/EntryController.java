@@ -128,16 +128,6 @@ public class EntryController {
 				.collect(Collectors.toList());
 	}
 
-	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public IsoformPEFFHeader getIsoformPEFFHeader(
-			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
-			@PathVariable("accession") String isoformAccession) {
-
-		return isoformService.formatPEFFHeader(isoformAccession);
-	}
-
 	@ApiMethod(path = "/isoforms", verb = ApiVerb.GET, description = "Retrieves all isoforms", produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE})
 	@RequestMapping(value = "/isoforms", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE} )
 	public void getListOfIsoformAcMd5Sequence(HttpServletRequest request, HttpServletResponse response) {
@@ -212,21 +202,21 @@ public class EntryController {
 		return entryReportStatsService.reportEntryStats(entryName);
 	}
 
-	@ApiMethod(path = "/isoform/{isoform}", verb = ApiVerb.GET, description = "Exports a neXtProt isoform",
+	@ApiMethod(path = "/isoform/{accession}", verb = ApiVerb.GET, description = "Exports a neXtProt isoform",
 			produces = { NextprotMediaType.FASTA_MEDIATYPE_VALUE})
-	@RequestMapping(value = "/isoform/{isoform}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/isoform/{accession}", method = { RequestMethod.GET })
 	public String exportIsoform(
-			@ApiPathParam(name = "isoform", description = "The name of the neXtProt isoform. For example, the insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
-			@PathVariable("isoform") String isoform, Model model) {
+			@ApiPathParam(name = "accession", description = "The name of the neXtProt isoform. For example, the insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
+			@PathVariable("accession") String isoformAccession, Model model) {
 
-		String entryAccession = entryService.findEntryAccessionFromIsoformAccession(isoform);
+		String entryAccession = entryService.findEntryAccessionFromIsoformAccession(isoformAccession);
 
-		Isoform iso = isoformService.findIsoformByName(entryAccession, isoform);
+		Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms().withOverview());
 
 		model.addAttribute("entry", entry);
-		model.addAttribute("isoform", iso);
+		model.addAttribute("isoform", isoform);
 
 		return "isoform";
 	}
