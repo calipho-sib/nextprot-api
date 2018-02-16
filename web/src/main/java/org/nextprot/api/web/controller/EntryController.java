@@ -46,6 +46,7 @@ public class EntryController {
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryGeneReportService entryGeneReportService;
+	@Autowired private EntryService entryService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -209,6 +210,25 @@ public class EntryController {
 			@PathVariable("entry") String entryName) {
 
 		return entryReportStatsService.reportEntryStats(entryName);
+	}
+
+	@ApiMethod(path = "/isoform/{isoform}", verb = ApiVerb.GET, description = "Exports a neXtProt isoform",
+			produces = { NextprotMediaType.FASTA_MEDIATYPE_VALUE})
+	@RequestMapping(value = "/isoform/{isoform}", method = { RequestMethod.GET })
+	public String exportIsoform(
+			@ApiPathParam(name = "isoform", description = "The name of the neXtProt isoform. For example, the insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
+			@PathVariable("isoform") String isoform, Model model) {
+
+		String entryAccession = entryService.findEntryAccessionFromIsoformAccession(isoform);
+
+		Isoform iso = isoformService.findIsoformByName(entryAccession, isoform);
+
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms().withOverview());
+
+		model.addAttribute("entry", entry);
+		model.addAttribute("isoform", iso);
+
+		return "isoform";
 	}
 
 	/**

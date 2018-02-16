@@ -32,10 +32,17 @@ public interface EntryService {
 
 	default Entry findEntryFromIsoformAccession(String isoformAccession) {
 
+		String entryAccession = findEntryAccessionFromIsoformAccession(isoformAccession);
+
+		return findEntry(entryAccession);
+	}
+
+	default String findEntryAccessionFromIsoformAccession(String isoformAccession) {
+
 		if (!isoformAccession.contains("-")) {
 			return null;
 		}
 
-		return findEntry(isoformAccession.split("-")[0]);
+		return isoformAccession.split("-")[0];
 	}
 }
