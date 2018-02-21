@@ -40,9 +40,8 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 		return ds;
 	}
 
-	@Override
-	public List<ReleaseStatsTag> findTagStatistics(Map<String, Integer> proteinExistencesCount) {
-		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper(proteinExistencesCount));
+	public List<ReleaseStatsTag> findTagStatistics() {
+		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper());
 	}
 
 	private static class ReleaseInfoRowMapper implements ParameterizedRowMapper<ReleaseContentsDataSource> {
@@ -71,12 +70,6 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 
 	private static class ReleaseStatsTagRowMapper implements ParameterizedRowMapper<ReleaseStatsTag> {
 
-		private final Map<String, Integer> proteinExistencesCount;
-
-		public ReleaseStatsTagRowMapper(Map<String, Integer> proteinExistencesCount){
-			this.proteinExistencesCount = proteinExistencesCount;
-		}
-
 		@Override
 		public ReleaseStatsTag mapRow(ResultSet resultSet, int row) throws SQLException {
 
@@ -86,13 +79,7 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 			tagStat.setTag(resultSet.getString("tag"));
 			tagStat.setCategroy(resultSet.getString("category"));
 			tagStat.setSortOrder(resultSet.getInt("sort_order"));
-
-			if ("Protein existence".equals(tagStat.getCategroy())) {
-				tagStat.setCount(proteinExistencesCount.get(tagStat.getTag()));
-			}
-			else {
-				tagStat.setCount(resultSet.getInt("count"));
-			}
+			tagStat.setCount(resultSet.getInt("count"));
 
 			return tagStat;
 		}
