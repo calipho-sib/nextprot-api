@@ -7,7 +7,6 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
@@ -49,7 +48,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
 	@Cacheable("terminology-ancestor-sets")
 	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession) {
-		Set<String> result = new TreeSet<String>();
+		Set<String> result = new TreeSet<>();
 		
 		for(Tree<CvTerm> tree : trees){
 			List<Node<CvTerm>> nodes = TerminologyUtils.getNodeListByName(tree, accession);
@@ -60,14 +59,6 @@ class TerminologyServiceImpl implements TerminologyService {
 
 		result.remove(accession); // a term is not it's own ancestor
 		return result;
-	}
-
-	@Override
-	@Cacheable("terminology-tree-depth")
-	public Terminology findTerminology(TerminologyCv terminologyCv) {
-		List<CvTerm> terms = findCvTermsByOntology(terminologyCv.name());
-		List<Tree<CvTerm>> result = TerminologyUtils.convertCvTermsToTerminology(terms, 1000);
-		return new Terminology(result, terminologyCv);
 	}
 
 	@Override

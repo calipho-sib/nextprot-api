@@ -2,10 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,46 +80,6 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	public void shouldReturnUniprotFamilies() {
 		List<CvTerm> terms = this.terminologyService.findCvTermsByOntology("UniprotFamilyCv");
 		assertTrue(terms.size() > 9700);
-	}
-	
-
-	@Test
-	public void shoudGetAllAncestors() { 
-		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
-		assertTrue(this.terminologyService.getAncestorSets(trees, "GO:1902667").size() > 60);
-		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
-	}
-	
-
-	@Test
-	public void shouldNotGetAnyAncestorForNextprotDomain() { // This is a particular case, because nextprot domains are attached to annotation cv ontology 
-		Terminology terminology = this.terminologyService.findTerminology(TerminologyCv.NextprotDomainCv);
-		assertTrue(terminology.getRootsCount() > 800); // all domains are roots (no hierarchy) and the super parent is the annotation CVAN_0106
-		assertEquals(0,this.terminologyService.getAncestorSets(terminology, "DO-00218").size());
-	}
-	
-	
-	@Test
-	public void shoudGetAllAncestorsForAChildOfCvan() { 
-		Terminology terminology = this.terminologyService.findTerminology(TerminologyCv.NextprotAnnotationCv);
-		assertEquals(3,this.terminologyService.getAncestorSets(terminology, "CVAN_0106").size());
-	}
-
-	@Test
-	public void shoudGetAllAncestorsForUnipathwayCv() { 
-		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.UnipathwayCv);
-		assertEquals(10,this.terminologyService.getAncestorSets(trees, "UPA00781").size());
-		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
-	}
-	
-	
-	@Test
-	public void shouldReturnTerminologies() {
-		for(TerminologyCv t : TerminologyCv.values()){
-			if(!t.equals(TerminologyCv.NextprotCellosaurusCv)){
-				this.terminologyService.findTerminology(t);
-			}
-		}
 	}
 
 	@Test

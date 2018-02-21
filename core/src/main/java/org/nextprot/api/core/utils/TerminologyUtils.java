@@ -7,7 +7,6 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Terminology;
 
 import java.util.*;
 
@@ -155,45 +154,6 @@ public class TerminologyUtils {
 			termMap.put(term.getAccession(), term);
 		}
 		return termMap;
-	}
-
-		
-	public static Terminology convertCvTermsToTerminology(List<CvTerm> terms, final int maxDepth) {
-		
-		String topLevelTermPrefix = "CVAN";
-		
-		Terminology terminology = new Terminology();
-		
-		for(CvTerm term: terms){
-			
-			//System.err.println(term.getAccession() +  " " + term.getAncestorAccession());
-			if((term.getAncestorAccession() == null) || (term.getAncestorAccession().isEmpty())){ //root
-				terminology.addTreeRoot(term);
-			} else {
-				
-				//For example DO-00218 from the terminology NextprotDomain, has as ancestor the top level terminology cv annotation (CVAN)
-				boolean localRoot = false;
-				if(!term.getAccession().startsWith(topLevelTermPrefix)){ //TOP Level domain (case where other terminologies link to this one)
-						for(String ancestorAccession : term.getAncestorAccession()){
-							if(ancestorAccession.startsWith(topLevelTermPrefix)){
-								localRoot = true;
-								break;
-							}
-						}
-				}
-				
-				if(localRoot){
-					terminology.addTreeRoot(term);
-				}
-			}
-		}
-		
-		for(Tree<CvTerm> tree : terminology){
-			populateTree(tree.getRoot(), convertToTerminologyMap(terms), 0, maxDepth);
-		}
-		
-		return terminology;
-		
 	}
 	
 	static void populateTree(Tree.Node<CvTerm> currentNode, Map<String, CvTerm> termMap, int depth, final int maxDepth) {

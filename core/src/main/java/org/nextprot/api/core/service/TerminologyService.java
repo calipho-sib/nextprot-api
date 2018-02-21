@@ -1,11 +1,9 @@
 package org.nextprot.api.core.service;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Terminology;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +22,6 @@ public interface TerminologyService {
 	 * @return a list of all {@code CvTerm}s of a given ontology
 	 */
 	List<CvTerm> findCvTermsByOntology(String ontology);
-
-	/**
-	 * @deprecated use {@link CvTermGraphService.findCvTermGraph(TerminologyCv)} instead
-	 */
-	@Deprecated
-	Terminology findTerminology(TerminologyCv terminologyCv);
 
 	/**
 	 * Retrieves terms sorted by ontology
