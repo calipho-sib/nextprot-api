@@ -1,10 +1,11 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.export.AnnotationExporter;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;

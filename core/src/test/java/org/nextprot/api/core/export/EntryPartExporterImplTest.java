@@ -1,16 +1,18 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.export.EntryPartExporter.Header;
+import org.nextprot.api.core.export.EntryPartExporter.Row;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import org.nextprot.api.core.utils.annot.export.EntryPartExporter.*;
 
 import java.util.List;
+
 
 @ActiveProfiles({ "dev","cache" })
 public class EntryPartExporterImplTest extends CoreUnitBaseTest {

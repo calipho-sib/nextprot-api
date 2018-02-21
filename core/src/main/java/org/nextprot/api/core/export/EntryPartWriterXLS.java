@@ -1,18 +1,13 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.export.EntryPartExporter;
+import org.nextprot.api.core.export.EntryPartWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Writes entry parts in excel format

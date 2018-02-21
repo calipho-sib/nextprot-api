@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -9,9 +9,8 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.nextprot.api.core.utils.annot.export.EntryPartExporter.Header.*;
+import static org.nextprot.api.core.export.EntryPartExporter.Header.*;
 
 /**
  * Export data depending on the type of annotation to export (expression-profile, variants, ...)
@@ -280,7 +279,7 @@ public class EntryPartExporterImpl implements EntryPartExporter {
     /**
      * Generic builder with common and custom fields to export
      */
-    static class Builder {
+    public static class Builder {
 
         private final Map<Header, Integer> headers = new HashMap<>();
         private final List<SortCriterion> sortCriteria = new ArrayList<>();

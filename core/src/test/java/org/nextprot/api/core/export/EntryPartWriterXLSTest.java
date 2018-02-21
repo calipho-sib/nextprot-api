@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,6 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.export.EntryPartExporterImpl;
+import org.nextprot.api.core.export.EntryPartWriterXLS;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;

@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.nextprot.api.core.domain.Entry;
 

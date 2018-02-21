@@ -1,12 +1,11 @@
-package org.nextprot.api.core.utils.annot.export;
+package org.nextprot.api.core.export;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.export.EntryPartExporter;
+import org.nextprot.api.core.export.EntryPartWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
