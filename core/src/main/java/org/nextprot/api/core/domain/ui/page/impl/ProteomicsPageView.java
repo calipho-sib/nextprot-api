@@ -1,4 +1,4 @@
-package org.nextprot.api.core.ui.page.impl;
+package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 

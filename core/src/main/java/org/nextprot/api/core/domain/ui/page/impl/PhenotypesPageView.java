@@ -1,41 +1,39 @@
-package org.nextprot.api.core.ui.page.impl;
+package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class IdentifiersPageView extends PageViewBase {
+public class PhenotypesPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList(
+				AnnotationCategory.PHENOTYPIC_VARIATION);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList();
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("CCDS", "GeneCards", "GeneID",  "HGNC", "H-InvDB", "HPA", "HPRD","KEGG","LOC",
-				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
-				"ChEMBL");
+		return Arrays.asList();
 	}
 
 	@Override
 	public String getLabel() {
-		return "Identifiers";
+		return "Phenotypes";
 	}
 
 	@Override
 	public String getLink() {
-		return "identifiers";
+		return "phenotypes";
 	}
 }

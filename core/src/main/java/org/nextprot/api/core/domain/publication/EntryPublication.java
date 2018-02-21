@@ -1,6 +1,6 @@
 package org.nextprot.api.core.domain.publication;
 
-import org.nextprot.api.core.ui.page.PageView;
+import org.nextprot.api.core.domain.ui.page.PageView;
 
 import java.io.Serializable;
 import java.util.*;

@@ -1,4 +1,4 @@
-package org.nextprot.api.core.ui.page;
+package org.nextprot.api.core.domain.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;

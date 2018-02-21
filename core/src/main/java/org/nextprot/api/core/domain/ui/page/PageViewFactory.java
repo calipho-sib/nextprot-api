@@ -1,6 +1,6 @@
-package org.nextprot.api.core.ui.page;
+package org.nextprot.api.core.domain.ui.page;
 
-import org.nextprot.api.core.ui.page.impl.*;
+import org.nextprot.api.core.domain.ui.page.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;

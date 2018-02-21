@@ -1,12 +1,13 @@
-package org.nextprot.api.core.ui.page.impl;
+package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ExonsPageView extends PageViewBase {
+public class IdentifiersPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
@@ -23,16 +24,18 @@ public class ExonsPageView extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList("CCDS", "GeneCards", "GeneID",  "HGNC", "H-InvDB", "HPA", "HPRD","KEGG","LOC",
+				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
+				"ChEMBL");
 	}
 
 	@Override
 	public String getLabel() {
-		return "Exons";
+		return "Identifiers";
 	}
 
 	@Override
 	public String getLink() {
-		return "exons";
+		return "identifiers";
 	}
 }
