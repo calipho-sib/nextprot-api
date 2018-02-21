@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
@@ -72,6 +73,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		System.out.println("Iso cnt:" + isoCnt);
 	}
 
+	@Ignore
 	@Test
 	public void shouldFindMainNamesMoreThan100TimesFasterAfterFirstTime() {
 
