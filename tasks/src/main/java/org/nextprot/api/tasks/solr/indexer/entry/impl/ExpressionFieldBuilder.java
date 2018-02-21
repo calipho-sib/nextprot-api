@@ -5,7 +5,6 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
@@ -50,7 +49,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 					logger.error(entry.getUniqueName() + " - term with accession |" + cv + "| not found with findCvTermByAccession()");
 					continue;
 				}
-				List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
+				List<String> ancestors = terminologyservice.getAllAncestorsAccession(term.getAccession());
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
 					  cv_tissues_final.add(ancestorac);  

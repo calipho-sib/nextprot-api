@@ -10,8 +10,8 @@ import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 
 import java.io.FileNotFoundException;
@@ -39,6 +39,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     private TerminologyService terminologyService;
+    private CvTermGraphService cvTermGraphService;
     private TerminologyCv[] terminologyCvs;
 
     private OntologyDAGAnalyserTask(String[] args) throws ParseException {
@@ -58,6 +59,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
     protected void execute() throws IOException {
 
         terminologyService = getBean(TerminologyService.class);
+        cvTermGraphService = getBean(CvTermGraphService.class);
 
         System.out.println("*** write to cache timings...");
         readWriteCache(false);
@@ -185,7 +187,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
         t = Instant.now();
         for (TerminologyCv ontology : terminologyCvs) {
 
-            terminologyService.findCvTermGraph(ontology);
+            cvTermGraphService.findCvTermGraph(ontology);
             pb.incrementValue();
         }
         pb.stop();
@@ -217,7 +219,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
         // COMPARE COMPUTATION DURATIONS
         Instant t = Instant.now();
         for (CvTerm cvTerm : cvTerms) {
-            ancestors.put(cvTerm.getId(), TerminologyUtils.getAllAncestorsAccession(cvTerm.getAccession(), terminologyService));
+            ancestors.put(cvTerm.getId(), terminologyService.getAllAncestorsAccession(cvTerm.getAccession()));
         }
         timings.add(ChronoUnit.MILLIS.between(t, Instant.now()));
 

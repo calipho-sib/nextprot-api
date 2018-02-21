@@ -1,17 +1,12 @@
 package org.nextprot.api.core.service.impl;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -23,34 +18,18 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.MdataService;
-import org.nextprot.api.core.service.PeptideMappingService;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import javax.annotation.Nullable;
+import java.security.InvalidParameterException;
+import java.util.*;
+import java.util.function.Predicate;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -66,6 +45,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private StatementService statementService;
 	@Autowired private TerminologyService terminologyService;
+	@Autowired private CvTermGraphService cvTermGraphService;
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	
 	@Override
@@ -170,7 +150,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		for (Annotation annot: annotations) {
 			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
 				CvTerm t = terminologyService.findCvTermByAccession(annot.getCvTermAccessionCode());
-				List<CvTerm> terms = TerminologyUtils.getOnePathToRootTerm(t.getAccession(), terminologyService);
+				List<CvTerm> terms = terminologyService.getOnePathToRootTerm(t.getAccession());
 				String longName = AnnotationUtils.getTermNameWithAncestors(annot, terms);
 				AnnotationProperty prop = new AnnotationProperty();
 				prop.setAnnotationId(annot.getAnnotationId());
@@ -393,7 +373,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		private BaseCvTermAncestorPredicate(CvTerm ancestor) {
 
 			this.ancestor = ancestor;
-			graph = terminologyService.findCvTermGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+			graph = cvTermGraphService.findCvTermGraph(TerminologyCv.valueOf(ancestor.getOntology()));
 		}
 	}
 

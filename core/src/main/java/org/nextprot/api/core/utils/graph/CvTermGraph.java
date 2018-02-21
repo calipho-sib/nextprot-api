@@ -32,6 +32,7 @@ public class CvTermGraph implements Serializable {
     private final TerminologyCv terminologyCv;
     protected final IntGraph graph;
 
+    // TODO: remove dependency to TerminologyService
     public CvTermGraph(TerminologyCv terminologyCv, TerminologyService service) {
 
         Preconditions.checkNotNull(terminologyCv);

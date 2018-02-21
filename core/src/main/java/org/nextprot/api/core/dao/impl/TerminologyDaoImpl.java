@@ -8,6 +8,7 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -39,8 +40,9 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	@Override
 	// TODO normally only terminology + accession is supposed to be unique !!!!
 	// SHOULD USE findTermByAccessionAndTerminology
+	@Cacheable("terminology-by-accession")
 	public CvTerm findTerminologyByAccession(String accession) {
-		Set<String> acs = new HashSet<String>();
+		Set<String> acs = new HashSet<>();
 		acs.add(accession);
 		SqlParameterSource params = new MapSqlParameterSource("accessions", acs);
 		List<CvTerm> terms = new NamedParameterJdbcTemplate(
