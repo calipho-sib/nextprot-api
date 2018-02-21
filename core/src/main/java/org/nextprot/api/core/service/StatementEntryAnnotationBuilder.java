@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,23 +6,20 @@ import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
-public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
+public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder<Annotation> {
 
-	protected EntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
+	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
 		super(terminologyService, publicationService,mainNamesService);
 	}
 
 	
-	public static EntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
-		return new EntryAnnotationBuilder(terminologyService, publicationService, mainNamesService);
+	public static StatementEntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
+		return new StatementEntryAnnotationBuilder(terminologyService, publicationService, mainNamesService);
 	}
 
 	@Override

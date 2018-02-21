@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;

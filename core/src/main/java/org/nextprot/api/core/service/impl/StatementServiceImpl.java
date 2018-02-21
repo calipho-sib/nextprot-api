@@ -1,8 +1,8 @@
-package com.nextprot.api.annotation.builder.statement.service.impl;
+package org.nextprot.api.core.service.impl;
 
-import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
+import org.nextprot.api.core.dao.StatementDao;
+import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
@@ -46,14 +46,14 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
-		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
 	}
 
 
 	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
+		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
 	}
 
 

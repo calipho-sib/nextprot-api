@@ -1,7 +1,7 @@
-package com.nextprot.api.annotation.builder.statement;
+package org.nextprot.api.core.export;
 
 import com.google.common.base.Preconditions;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.service.MasterIdentifierService;

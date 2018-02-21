@@ -1,15 +1,12 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
-import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
+import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +26,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		boolean missingPublications = false;
 		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 				StatementField.REFERENCE_ACCESSION, 
-				new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
+				new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
 		
 		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
 		for(String p : pubmedIds) {

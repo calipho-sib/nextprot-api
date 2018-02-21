@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.dao.impl;
+package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

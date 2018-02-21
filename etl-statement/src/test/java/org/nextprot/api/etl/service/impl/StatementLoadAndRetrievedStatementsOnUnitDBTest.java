@@ -1,6 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

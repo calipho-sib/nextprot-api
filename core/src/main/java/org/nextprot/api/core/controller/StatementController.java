@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.controller;
+package org.nextprot.api.core.controller;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import org.nextprot.api.core.service.StatementService;
 
 
 @Lazy

@@ -1,9 +1,10 @@
-package com.nextprot.api.annotation.builder.statement;
+package org.nextprot.api.core.service.statement;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.nextprot.api.core.export.StatementExporter;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;

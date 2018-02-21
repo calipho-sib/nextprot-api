@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.dao.impl;
+package org.nextprot.api.core.dao.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
+import org.nextprot.api.core.dao.StatementDao;
 
 @Repository
 public class StatementDaoImpl implements StatementDao {
@@ -97,7 +97,7 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, SimpleWhereClauseQueryDSL ... conditions) {
+	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementSimpleWhereClauseQueryDSL... conditions) {
 
 		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where ";
 		for(int i=0; i<conditions.length; i++){

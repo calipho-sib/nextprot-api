@@ -1,10 +1,11 @@
-package com.nextprot.api.annotation.builder.statement.service;
+package org.nextprot.api.core.service.statement.service;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
+import org.nextprot.api.core.service.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.StatementService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

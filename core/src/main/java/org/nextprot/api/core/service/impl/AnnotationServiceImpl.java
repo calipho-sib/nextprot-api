@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import org.nextprot.api.core.service.StatementService;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {

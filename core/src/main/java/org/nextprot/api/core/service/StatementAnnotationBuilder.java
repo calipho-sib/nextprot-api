@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
 import com.google.common.base.Supplier;
 import org.apache.log4j.Logger;
@@ -14,9 +14,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
@@ -24,9 +21,9 @@ import org.nextprot.commons.statements.StatementField;
 import java.util.*;
 import java.util.stream.Collectors;
 
-abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
+abstract class StatementAnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
-	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
+	protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
 
 	protected TerminologyService terminologyService = null;
 	protected PublicationService publicationService = null;
@@ -34,7 +31,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
-	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
+	protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
 		this.terminologyService = terminologyService;
 		this.publicationService = publicationService;
 		this.mainNamesService = mainNamesService;

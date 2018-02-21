@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.service;
+package org.nextprot.api.core.service;
 
 import java.util.List;
 

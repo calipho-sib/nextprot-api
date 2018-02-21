@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				.addField(StatementField.REFERENCE_DATABASE, "PubMed")
 				.addField(StatementField.REFERENCE_ACCESSION, "123").build();
 
-		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
+		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 		ab.findPublicationId(sb1);
 	}
 
@@ -34,13 +34,13 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 		Statement sb1 = StatementBuilder.createNew()
 				.addField(StatementField.REFERENCE_DATABASE, "PubMed")
 				.addField(StatementField.REFERENCE_ACCESSION, "000").build();
-		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
+		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 		ab.findPublicationId(sb1);
 	}
 	
 	@Override
-	protected EntryAnnotationBuilder newAnnotationBuilder() {
-		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
+	protected StatementAnnotationBuilder newAnnotationBuilder() {
+		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 	}
 
 	@Test

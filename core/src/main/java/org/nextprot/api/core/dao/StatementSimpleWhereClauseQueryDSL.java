@@ -1,13 +1,13 @@
-package com.nextprot.api.annotation.builder.statement.dao;
+package org.nextprot.api.core.dao;
 
 import org.nextprot.commons.statements.StatementField;
 
-public class SimpleWhereClauseQueryDSL {
+public class StatementSimpleWhereClauseQueryDSL {
 
 	private StatementField whereField;
 	private Object value;
 	
-	public SimpleWhereClauseQueryDSL(StatementField whereField, Object value) {
+	public StatementSimpleWhereClauseQueryDSL(StatementField whereField, Object value) {
 		this.whereField = whereField;
 		this.value = value;
 	}

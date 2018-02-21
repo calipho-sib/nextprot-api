@@ -2,8 +2,8 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
+import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
@@ -67,8 +67,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION,
-					new SimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
-					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
+					new StatementSimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
+					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
 				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
 		});
 

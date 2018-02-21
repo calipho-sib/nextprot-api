@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder;
+package org.nextprot.api.core.service;
 
 import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
@@ -8,9 +8,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.FileNotFoundException;
 
@@ -46,6 +43,6 @@ public abstract class AnnotationBuilderBastUnitTest {
 
 	}
 	
-	protected abstract AnnotationBuilder newAnnotationBuilder();
+	protected abstract StatementAnnotationBuilder newAnnotationBuilder();
 
 }

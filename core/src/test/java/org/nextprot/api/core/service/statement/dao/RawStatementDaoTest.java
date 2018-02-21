@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.dao;
+package org.nextprot.api.core.service.statement.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,12 +7,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
+import org.nextprot.api.core.service.AnnotationBuilderIntegrationBaseTest;
 
 public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 
