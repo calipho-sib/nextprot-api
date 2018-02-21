@@ -48,7 +48,8 @@ public class ProteomicsPageView extends PageViewBase {
 		return Arrays.asList(
 				"DOSAC-COBS-2DPAGE","OGP", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "UCD-2DPAGE",
 				"PhosphoSitePlus",
-				"EPD", "MaxQB", "PaxDb", "PeptideAtlas","PRIDE","TopDownProteomics");
+				"EPD", "MaxQB", "PaxDb", "PeptideAtlas","PRIDE","TopDownProteomics",
+				"Proteomes");
 	}
 
 	@Override
