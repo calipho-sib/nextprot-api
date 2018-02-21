@@ -2,10 +2,10 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.dao.PublicationDao;
+import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
