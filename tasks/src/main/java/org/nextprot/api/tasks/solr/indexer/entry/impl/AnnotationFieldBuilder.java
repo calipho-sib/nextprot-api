@@ -5,13 +5,12 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
@@ -276,7 +275,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					addField(Fields.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
 				}
 
-				List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(cvac, terminologyservice);
+				List<String> ancestors = terminologyservice.getAllAncestorsAccession(cvac);
 				String allancestors = "";
 				for (String ancestor : ancestors) {
 					if (!allancestors.isEmpty())

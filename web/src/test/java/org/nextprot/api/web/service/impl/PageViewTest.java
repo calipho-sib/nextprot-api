@@ -9,8 +9,8 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.ui.page.PageView;
-import org.nextprot.api.core.ui.page.impl.SequencePageView;
+import org.nextprot.api.core.domain.ui.page.PageView;
+import org.nextprot.api.core.domain.ui.page.impl.SequencePageView;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

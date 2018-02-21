@@ -1,6 +1,6 @@
 package org.nextprot.api.core.service.export.io;
 
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.Overview;

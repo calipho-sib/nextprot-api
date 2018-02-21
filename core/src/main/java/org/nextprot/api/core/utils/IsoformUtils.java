@@ -1,7 +1,7 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 

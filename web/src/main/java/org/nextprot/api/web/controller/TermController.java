@@ -6,6 +6,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class TermController {
 
 	@Autowired private TerminologyService terminologyService;
+	@Autowired private CvTermGraphService cvTermGraphService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,7 +54,7 @@ public class TermController {
 		for (TerminologyCv terminologyCv : TerminologyCv.values()) {
 
 			Instant t = Instant.now();
-			terminologyService.findCvTermGraph(terminologyCv);
+			cvTermGraphService.findCvTermGraph(terminologyCv);
 			long ms = ChronoUnit.MILLIS.between(t, Instant.now());
 
 			map.put(terminologyCv.name(), String.valueOf(ms)+" ms");
@@ -68,7 +70,7 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return Collections.singletonMap("terminology-graph", terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(terminology)).toView());
+		return Collections.singletonMap("terminology-graph", cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(terminology)).toView());
 	}
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +81,7 @@ public class TermController {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
-		CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
+		CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
 		return Collections.singletonMap("ancestor-graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
 	}
@@ -101,7 +103,7 @@ public class TermController {
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
-        CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
         return Collections.singletonMap("descendant-graph", graph.calcDescendantSubgraph(cvTerm.getId().intValue()).toView());
     }

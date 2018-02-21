@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
-import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.fluent.EntryConfig;

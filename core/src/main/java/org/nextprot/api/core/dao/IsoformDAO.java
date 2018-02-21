@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao;
 
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.SlimIsoform;
 
@@ -25,7 +26,7 @@ public interface IsoformDAO {
 	 * @param entryName the name of the master entry
 	 * @return the list of synoyms
 	 */
-    List<EntityName> findIsoformsSynonymsByEntryName(String entryName); 
+    List<EntityName> findIsoformsSynonymsByEntryName(String entryName);
 
     /**
      * Retrieves a list of sets. 

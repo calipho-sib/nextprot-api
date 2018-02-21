@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.ui.page.PageView;
+import org.nextprot.api.core.domain.ui.page.PageView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,7 @@
 package org.nextprot.api.core.dao;
 
+import org.nextprot.api.core.domain.EntityName;
+
 import java.util.List;
 
 public interface EntityNameDao {

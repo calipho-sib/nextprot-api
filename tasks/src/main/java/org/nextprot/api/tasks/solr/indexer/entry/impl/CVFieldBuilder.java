@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
@@ -69,7 +68,7 @@ public class CVFieldBuilder extends FieldBuilder {
 				logger.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
 				continue;
 			}
-			List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
+			List<String> ancestors = terminologyservice.getAllAncestorsAccession(term.getAccession());
 			if(ancestors != null) {
 			  for (String ancestor : ancestors) cv_ancestors_acs.add(ancestor); 
 			}

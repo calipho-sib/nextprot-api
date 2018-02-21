@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.ProteinExistenceInferred;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
@@ -31,6 +32,9 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	@Autowired
 	private AnnotationService annotationService;
+
+	@Autowired
+	private CvTermGraphService cvTermGraphService;
 
 	@Override
 	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
@@ -138,7 +142,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
 
-		CvTermGraph evidenceCodeTermGraph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+		CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
 		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
 
 		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);

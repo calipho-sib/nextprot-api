@@ -3,7 +3,7 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Isoform;

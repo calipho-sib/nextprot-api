@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;

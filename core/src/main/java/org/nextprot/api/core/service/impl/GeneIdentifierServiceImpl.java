@@ -1,6 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.GeneIdentifierDao;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.OverviewService;

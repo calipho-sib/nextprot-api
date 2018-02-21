@@ -13,8 +13,8 @@ import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
+import org.nextprot.api.core.dao.StatementDao;
 
 @Service
 public class ConsistencyServiceImpl implements ConsistencyService{
@@ -32,7 +32,7 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 		
 			List<String> ids = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION, 
-					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB));
+					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB));
 			
 			for(String id : ids) {
 				if(id != null){ 

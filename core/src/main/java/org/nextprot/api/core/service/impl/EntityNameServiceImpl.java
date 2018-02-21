@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.utils.StreamUtils;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.service.EntityNameService;
 import org.springframework.stereotype.Service;
 

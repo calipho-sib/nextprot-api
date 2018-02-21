@@ -3,11 +3,9 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
-import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.release.ReleaseContentsDataSource;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,8 +25,6 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 	private DataSourceServiceLocator dsLocator;
 	@Autowired
 	private SQLDictionary sqlDictionary;
-	@Autowired
-	private MasterIdentifierService masterIdentifierService;
 
 	@Override
 	public List<ReleaseContentsDataSource> findReleaseInfoDataSources() {
@@ -45,16 +41,7 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 	}
 
 	@Override
-	public List<ReleaseStatsTag> findTagStatistics() {
-
-		Map<String, Integer> proteinExistencesCount = new HashMap<>();
-
-		proteinExistencesCount.put("PROTEIN_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PROTEIN_LEVEL).size());
-		proteinExistencesCount.put("TRANSCRIPT_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.TRANSCRIPT_LEVEL).size());
-		proteinExistencesCount.put("HOMOLOGY_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.HOMOLOGY).size());
-		proteinExistencesCount.put("PREDICTED_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PREDICTED).size());
-		proteinExistencesCount.put("UNCERTAIN_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.UNCERTAIN).size());
-
+	public List<ReleaseStatsTag> findTagStatistics(Map<String, Integer> proteinExistencesCount) {
 		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper(proteinExistencesCount));
 	}
 

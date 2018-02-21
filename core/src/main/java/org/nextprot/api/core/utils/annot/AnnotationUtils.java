@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;

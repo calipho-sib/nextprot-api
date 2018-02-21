@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +21,16 @@ import java.util.stream.IntStream;
 @ActiveProfiles({"dev"})
 public class CvTermGraphTest extends CoreUnitBaseTest {
 
-    private CvTermGraph createGraph(TerminologyCv terminologyCv, TerminologyService service) {
-        return new CvTermGraph(terminologyCv, service);
-    }
-
     @Autowired
     private TerminologyService terminologyService;
+
+    @Autowired
+    private CvTermGraphService cvTermGraphService;
 
     @Test
     public void shouldCreateValidGeneOntologyGraph() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
@@ -41,7 +41,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void nodeGO0005488ShouldHaveChildren() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int cvId = graph.getCvTermIdByAccession("GO:0005488");
 
@@ -59,7 +59,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void nodeGO0005488ShouldHaveOneParent() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int cvId = graph.getCvTermIdByAccession("GO:0005488");
 
@@ -71,7 +71,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void nodeGO0000006ShouldBeALeaf() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int cvId = graph.getCvTermIdByAccession("GO:0000006");
 
@@ -81,7 +81,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void geneOntologyShouldContainOneRoot() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int[] roots = graph.getSources();
         Assert.assertEquals(1, roots.length);
@@ -99,7 +99,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void GO0005488shouldBeAncestorOfGO0005488() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int ancestorId = graph.getCvTermIdByAccession("GO:0005488");
         int descendantId = graph.getCvTermIdByAccession("GO:0051378");
@@ -111,7 +111,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void roudoudouShouldNotExistInOntology() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         Assert.assertFalse(graph.hasCvTermAccession("roudoudou"));
     }
@@ -119,7 +119,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void GO0042947ShouldNotExistInOntology() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         Assert.assertTrue(graph.hasCvTermAccession("GO:0042947"));
     }
@@ -127,7 +127,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void ancestorSubgraph() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoBiologicalProcessCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoBiologicalProcessCv);
 
         CvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("GO:0050789"));
 
@@ -157,7 +157,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void testBloodTermAncestorSubgraph() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.NextprotAnatomyCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.NextprotAnatomyCv);
 
         CvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("TS-0079"));
 
@@ -195,7 +195,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void testBloodTermAncestorSubgraphView() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.NextprotAnatomyCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.NextprotAnatomyCv);
 
         CvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("TS-0079"));
 
@@ -213,7 +213,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void cvterm1071ShouldHaveAnAccession() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         Assert.assertEquals("GO:0000006", graph.getCvTermAccessionById(1071));
     }
@@ -221,7 +221,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void cvterm1071ShouldHaveAName() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoMolecularFunctionCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         Assert.assertEquals("high-affinity zinc uptake transmembrane transporter activity", graph.getCvTermNameById(1071));
     }
@@ -229,7 +229,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void testUniprotFamilyGraph() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.UniprotFamilyCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.UniprotFamilyCv);
         Assert.assertEquals(9793, graph.countNodes());
         Assert.assertEquals(2091, graph.countEdges());
     }
@@ -237,7 +237,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void testBloodTermDescendantSubgraphView() throws Exception {
 
-        CvTermGraph graph = createGraph(TerminologyCv.GoBiologicalProcessCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoBiologicalProcessCv);
 
         CvTermGraph descendantSubgraph = graph.calcDescendantSubgraph(graph.getCvTermIdByAccession("GO:0043491"));
 
@@ -265,7 +265,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void testSubgraphMetadata() throws Exception {
 
-        CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
         Assert.assertTrue(graph.hasCvTermAccession("ECO:0000269"));
         Assert.assertTrue(graph.hasCvTermAccession("ECO:0001186"));
 

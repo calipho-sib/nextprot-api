@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;

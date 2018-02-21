@@ -5,7 +5,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
