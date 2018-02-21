@@ -2,7 +2,7 @@ package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.SlimIsoform;

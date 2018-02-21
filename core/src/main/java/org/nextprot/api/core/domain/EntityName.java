@@ -1,4 +1,4 @@
-package org.nextprot.api.core.dao;
+package org.nextprot.api.core.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

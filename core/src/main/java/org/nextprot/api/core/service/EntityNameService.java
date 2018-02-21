@@ -1,6 +1,6 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 
 
 public interface EntityNameService {

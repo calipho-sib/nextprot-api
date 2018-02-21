@@ -5,7 +5,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;

@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.dao.EntityName;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

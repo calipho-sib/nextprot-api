@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.domain.Overview;
 import org.springframework.beans.factory.annotation.Autowired;

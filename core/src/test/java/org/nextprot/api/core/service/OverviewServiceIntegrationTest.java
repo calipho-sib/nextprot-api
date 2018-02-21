@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.utils.CollectionTester;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;

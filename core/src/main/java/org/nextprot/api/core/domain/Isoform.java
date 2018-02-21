@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
-import org.nextprot.api.core.dao.EntityName;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

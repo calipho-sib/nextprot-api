@@ -9,7 +9,7 @@ import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 

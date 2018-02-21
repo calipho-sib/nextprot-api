@@ -97,69 +97,6 @@ public class TerminologyUtils {
 		return path;
 	}
 	
-	
-	
-	/**
-	 * @deprecated use #getAllAncestors() instead
-	 */
-	@Deprecated
-	public static List<String> getAllAncestorsOld(String cvterm, TerminologyService terminologyservice) {
-		Set<String> finalSet = new TreeSet<String>();
-		Set<String> multiParentSet = new TreeSet<String>();
-		Set<String> multiSetCurrent = new TreeSet<String>();
-		List<String> mylist = Arrays.asList("XXX");
-		String currTerm = cvterm;
-
-		while(!mylist.isEmpty()) {
-			CvTerm cvt = terminologyservice.findCvTermByAccession(currTerm);
-			if (cvt == null ) {
-				LOGGER.error(cvterm + " does not exist");
-				break;
-			}
-
-			mylist = cvt.getAncestorAccession();
-			if(mylist == null) break;
-			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
-
-			// when root loop on itself !
-			if (currTerm.equals(mylist.get(0)))
-				break;
-			currTerm = mylist.get(0);
-			finalSet.add(currTerm);
-		}
-		
-		while(!multiParentSet.isEmpty()) {
-			multiSetCurrent.clear();
-			multiSetCurrent.addAll(multiParentSet);
-			for(String cv : multiSetCurrent) {
-				finalSet.add(cv);
-				multiParentSet.remove(cv);
-
-				CvTerm cvt = terminologyservice.findCvTermByAccession(cv);
-				if (cvt == null ) {
-					LOGGER.error(cv + " does not exist");
-					break;
-				}
-
-				mylist = cvt.getAncestorAccession();
-				if(mylist == null) break;
-				while(mylist != null && !mylist.isEmpty()) {
-					if(mylist.size() > 1)
-						for (int i=1; i<mylist.size(); i++)
-							multiParentSet.add(mylist.get(i));
-					// when root loop on itself !
-					if (currTerm.equals(mylist.get(0)))
-						break;
-					currTerm = mylist.get(0);
-					finalSet.add(currTerm);
-					mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
-				}
-			}
-		}
-		
-		return(new ArrayList<>(finalSet));
-	}
-	
 	public static List<DbXref> convertToXrefs (String xrefsstring) {
 
 		if (xrefsstring == null) return null;
