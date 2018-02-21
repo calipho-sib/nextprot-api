@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.dao.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;

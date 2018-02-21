@@ -1,4 +1,4 @@
-package org.nextprot.api.core.dao;
+package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.commons.statements.StatementField;
 
