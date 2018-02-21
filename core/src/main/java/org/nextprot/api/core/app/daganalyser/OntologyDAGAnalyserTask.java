@@ -83,7 +83,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
             Instant t1 = Instant.now();
             // no cache here: create a new instance to access graph advanced methods
-            CvTermGraph graph = new CvTermGraph(terminologyCv, terminologyService);
+            CvTermGraph graph = cvTermGraphService.findCvTermGraph(terminologyCv);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
             List<String> statistics = calcStatistics(graph);
@@ -209,7 +209,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
 
         List<Long> timings = new ArrayList<>();
 
-        CvTermGraph graph = new CvTermGraph(terminologyCv, terminologyService);
+        CvTermGraph graph = cvTermGraphService.findCvTermGraph(terminologyCv);
 
         Map<Long, List<String>> ancestors = new HashMap<>();
         Map<Long, List<String>> ancestorsQuick = new HashMap<>();

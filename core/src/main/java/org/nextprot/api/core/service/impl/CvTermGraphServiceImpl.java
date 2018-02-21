@@ -18,6 +18,6 @@ class CvTermGraphServiceImpl implements CvTermGraphService {
 	@Cacheable("terminology-graph")
 	public CvTermGraph findCvTermGraph(TerminologyCv terminologyCv) {
 
-		return new CvTermGraph(terminologyCv, terminologyService);
+		return new CvTermGraph(terminologyCv, terminologyService.findCvTermsByOntology(terminologyCv.name()));
 	}
 }
