@@ -8,6 +8,7 @@ import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
@@ -15,17 +16,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
 
 	@Autowired
 	private TerminologyDao terminologyDao;
+	@Autowired
+	private CvTermGraphService cvTermGraphService;
 
 	@Override
-	@Cacheable("terminology-by-accession")
 	public CvTerm findCvTermByAccession(String cvTermAccession) {
 		return terminologyDao.findTerminologyByAccession(cvTermAccession);
 	}
@@ -72,13 +78,6 @@ class TerminologyServiceImpl implements TerminologyService {
 		// modifying the cache, since the cache returns a reference) copy on
 		// read and copy on write is too much time consuming
 		return new ImmutableList.Builder<CvTerm>().addAll(terms).build();
-	}
-
-	@Override
-	@Cacheable("terminology-graph")
-	public CvTermGraph findCvTermGraph(TerminologyCv terminologyCv) {
-
-		return new CvTermGraph(terminologyCv, this);
 	}
 
 	@Override
@@ -157,6 +156,32 @@ class TerminologyServiceImpl implements TerminologyService {
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot find PSI-MOD name for cv term "+cvTermAccession);
 		}
+	}
+
+	@Override
+	public List<CvTerm> getAllAncestorTerms(String cvTermAccession) {
+
+		CvTerm cvTerm = terminologyDao.findTerminologyByAccession(cvTermAccession);
+		CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.valueOf(cvTerm.getOntology()));
+
+		return Arrays.stream(graph.getAncestors(cvTerm.getId().intValue())).boxed()
+				.map(graph::getCvTermAccessionById)
+				.map(terminologyDao::findTerminologyByAccession)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<CvTerm> getOnePathToRootTerm(String cvTermAccession) {
+		List<CvTerm> path = new ArrayList<>();
+		String ac = cvTermAccession;
+		while (true) {
+			CvTerm t = findCvTermByAccession(ac);
+			path.add(t);
+			List<String> parents = t.getAncestorAccession();
+			if (parents==null || parents.size()==0) break;
+			ac = parents.get(0);
+		}
+		return path;
 	}
 
 	private Optional<String> findTermName(BufferedReader br) throws IOException {

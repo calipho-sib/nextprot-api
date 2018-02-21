@@ -6,7 +6,6 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
-import org.nextprot.api.core.utils.graph.CvTermGraph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +26,10 @@ public interface TerminologyService {
 	List<CvTerm> findCvTermsByOntology(String ontology);
 
 	/**
-	 * @deprecated use {@link #findCvTermGraph(TerminologyCv)} instead
+	 * @deprecated use {@link CvTermGraphService.findCvTermGraph(TerminologyCv)} instead
 	 */
 	@Deprecated
 	Terminology findTerminology(TerminologyCv terminologyCv);
-
-	/**
-	 * @return a graph of {@code CvTerm}s of a given terminology
-	 */
-	CvTermGraph findCvTermGraph(TerminologyCv terminologyCv);
 
 	/**
 	 * Retrieves terms sorted by ontology
@@ -108,4 +102,29 @@ public interface TerminologyService {
 
 		return Optional.empty();
 	}
+
+	List<CvTerm> getAllAncestorTerms(String cvTermAccession);
+
+	/**
+	 * Get all ancestors of the given cvterm
+	 *
+	 * @param cvTermAccession the cvterm accession
+	 * @return a list of cvterm ancestor accessions
+	 */
+	default List<String> getAllAncestorsAccession(String cvTermAccession) {
+
+		return getAllAncestorTerms(cvTermAccession).stream()
+				.map(CvTerm::getAccession)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns an ordered list of terms.
+	 * The first term is the Term identified with the parameter cvTermAccession
+	 * The next term is a parent of the previous term until we reach the root term
+	 * A known limitation is that only the first parent is retrieved for each term !
+	 *
+	 * @param cvTermAccession
+	 */
+	List<CvTerm> getOnePathToRootTerm(String cvTermAccession);
 }
