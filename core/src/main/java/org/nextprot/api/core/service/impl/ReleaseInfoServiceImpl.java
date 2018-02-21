@@ -4,9 +4,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoStats;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletContext;
 import java.io.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -26,6 +30,8 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Autowired private ReleaseInfoDao releaseInfoDao;
 	@Autowired private ReleaseStatsDao releaseStatsDao;
 	@Autowired private Environment env;
+	@Autowired private MasterIdentifierService masterIdentifierService;
+
 
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
 
@@ -43,7 +49,17 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	public ReleaseInfoStats findReleaseStats() {
 
 		ReleaseInfoStats rs = new ReleaseInfoStats();
-		rs.setTagStatistics(releaseStatsDao.findTagStatistics());
+
+		Map<String, Integer> proteinExistencesCount = new HashMap<>();
+
+		proteinExistencesCount.put("PROTEIN_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PROTEIN_LEVEL).size());
+		proteinExistencesCount.put("TRANSCRIPT_LEVEL_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.TRANSCRIPT_LEVEL).size());
+		proteinExistencesCount.put("HOMOLOGY_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.HOMOLOGY).size());
+		proteinExistencesCount.put("PREDICTED_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PREDICTED).size());
+		proteinExistencesCount.put("UNCERTAIN_MASTER", masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.UNCERTAIN).size());
+
+
+		rs.setTagStatistics(releaseStatsDao.findTagStatistics(proteinExistencesCount));
 		return rs;
 	}
 
@@ -106,14 +122,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		File file = new File(dir+filename);
 
 		if (file.isFile()) {
-
-			BufferedReader br = new BufferedReader(new FileReader(dir + filename));
-			String line = br.readLine();
-
-			br.close();
-			return line;
+			try (BufferedReader br = new BufferedReader(new FileReader(dir + filename))) {
+				return br.readLine();
+			}
 		}
-
 		return null;
 	}
 }
