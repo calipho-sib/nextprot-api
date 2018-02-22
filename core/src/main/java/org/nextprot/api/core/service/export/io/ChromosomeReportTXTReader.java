@@ -4,7 +4,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.export.ChromosomeReportReader;
 
 import java.io.IOException;
@@ -39,11 +39,11 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             "([\\d-]+)\\s+"                    + // Stop position
             "(?:(?:forward|reverse)\\s+)?"     + // Coding strand (only on API)
             "("+
-                "(?:\\b"+ProteinExistenceLevel.PROTEIN_LEVEL.getName()    + "\\b)|"+
-                "(?:\\b"+ProteinExistenceLevel.TRANSCRIPT_LEVEL.getName() + "\\b)|" +
-                "(?:\\b"+ProteinExistenceLevel.HOMOLOGY.getName()         + "\\b)|" +
-                "(?:\\b"+ProteinExistenceLevel.PREDICTED.getName()        + "\\b)|" +
-                "(?:\\b"+ProteinExistenceLevel.UNCERTAIN.getName()        + "\\b)" +
+                "(?:\\b"+ ProteinExistence.PROTEIN_LEVEL.getName()    + "\\b)|"+
+                "(?:\\b"+ ProteinExistence.TRANSCRIPT_LEVEL.getName() + "\\b)|" +
+                "(?:\\b"+ ProteinExistence.HOMOLOGY.getName()         + "\\b)|" +
+                "(?:\\b"+ ProteinExistence.PREDICTED.getName()        + "\\b)|" +
+                "(?:\\b"+ ProteinExistence.UNCERTAIN.getName()        + "\\b)" +
             ")\\s+"                            + // Protein existence
             "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Proteomics
             "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Antibody
@@ -147,7 +147,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
 
             entryReport.setAccession(matcher.group(2));
             entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? summary.getChromosome() : matcher.group(3)), matcher.group(4), matcher.group(5)));
-            entryReport.setProteinExistence(ProteinExistenceLevel.valueOfString(matcher.group(6)));
+            entryReport.setProteinExistence(ProteinExistence.valueOfKey(matcher.group(6)));
             entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
             entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, "yes".equals(matcher.group(8)));
             entryReport.setPropertyTest(EntryReport.IS_3D, "yes".equals(matcher.group(9)));

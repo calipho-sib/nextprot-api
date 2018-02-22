@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class EntryControllerTest extends MVCDBUnitBaseTest {
 
     @Test
@@ -96,34 +96,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
     }
 
     @Test
-    public void getIsoformSequenceInfos() throws Exception {
-
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/isoform/NX_P01308-1/peff").accept(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        String content = result.getResponse().getContentAsString();
-
-        Arrays.asList(
-            "\"isoformAccession\" : \"NX_P01308-1\"",
-            "\"isoformAccessionFormat\" : \"\\\\DbUniqueId=NX_P01308-1\"",
-            "\"proteinNameFormat\" : \"\\\\PName=Insulin isoform Iso 1\"",
-            "\"geneNameFormat\" : \"\\\\GName=INS\"",
-            "\"ncbiTaxonomyIdentifierFormat\" : \"\\\\NcbiTaxId=9606\"",
-            "\"taxonomyNameFormat\" : \"\\\\TaxName=Homo Sapiens\"",
-            "\"sequenceLengthFormat\" : \"\\\\Length=110\"",
-            "\"sequenceVersionFormat\" : \"\\\\SV=1\"",
-            "\"entryVersionFormat\" : \"\\\\EV=228\"",
-            "\"proteinEvidenceFormat\" : \"\\\\PE=1\"",
-            "\"variantSimpleFormat\" : \"\\\\VariantSimple=(2|T)(6|C)(6|G)(6|H)(8|Q)(9|S)(12|V)(18|R)(21|L)(22|V)(23|S)(23|T)(24|D)(24|V)(29|D)(29|P)(32|R)(32|S)(34|D)(35|P)(38|V)(42|A)(43|G)(44|R)(45|K)(46|Q)(47|V)(48|C)(48|S)(49|L)(51|I)(52|R)(53|E)(53|T)(55|C)(55|H)(56|W)(58|V)(63|A)(63|L)(64|W)(65|L)(68|M)(70|R)(71|V)(73|C)(75|D)(76|N)(76|R)(79|L)(81|V)(83|K)(84|R)(85|Y)(89|C)(89|H)(89|L)(89|P)(90|C)(90|D)(92|L)(93|K)(94|K)(96|S)(96|Y)(98|R)(101|C)(103|C)(106|D)(108|C)",
-            "\"variantComplexFormat\" : \"\"",
-            "\"modResPsiFormat\" : \"\"",
-            "\"modResFormat\" : \"\\\\ModRes=(31||Disulfide)(96||Disulfide)(43||Disulfide)(109||Disulfide)(95||Disulfide)(100||Disulfide)\"",
-            "\"processedMoleculeFormat\" : \"\\\\Processed=(1|24|signal peptide)(25|54|mature protein)(57|87|maturation peptide)(90|110|mature protein)\""
-        ).forEach(expectedContent -> Assert.assertTrue(content.contains(expectedContent)));
-    }
-
-    @Test
     public void getIsoformsMappings() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
@@ -174,7 +146,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-
         Assert.assertTrue(content.matches("\\d+"));
     }
 }

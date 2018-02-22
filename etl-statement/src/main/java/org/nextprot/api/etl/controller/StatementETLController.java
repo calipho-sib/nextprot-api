@@ -1,7 +1,5 @@
 package org.nextprot.api.etl.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Api(name = "ETL", description = "Extract Transform And Load Statements", group="ETL")
@@ -30,15 +30,14 @@ public class StatementETLController {
 	@ResponseBody
 	public String loadStatements(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
-			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-04-17" }) @PathVariable("release") String release,
+			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-01-12" }) @PathVariable("release") String release,
 			HttpServletRequest request) {
 
 		boolean load = true;
 		if("true".equalsIgnoreCase(request.getParameter("skipLoad"))){
 			load = false;
 		}
-		
-		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
+				return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
 
 	}
 

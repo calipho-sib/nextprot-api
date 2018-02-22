@@ -80,7 +80,7 @@ public class JSONDocRoleController extends JSONDocController {
 				"org.nextprot.api.web",
 				"org.nextprot.api.blast" }));
 
-		String version = releaseInfoService.findReleaseInfo().getApiRelease();
+		String version = releaseInfoService.findReleaseVersions().getApiRelease();
 		for (String profile : env.getActiveProfiles()) {
 			if (profile.equalsIgnoreCase("build")) {
 				packages.add("org.nextprot.api.build");
@@ -234,7 +234,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 
-		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseInfo().getApiRelease(), "");
+		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseVersions().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());

@@ -3,14 +3,10 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 
 
-public class EntryProperties  implements Serializable { //TODO daniel asks: should this be a map instead???
+public class EntryProperties  implements Serializable {
 	
-	private static final long serialVersionUID = 2L;
-	private String proteinExistence;
-	private String proteinExistenceInfo;
-	private int ptmCount;
-	private int varCount;
-	private int isoformCount;
+	private static final long serialVersionUID = 9L;
+
 	private int interactionCount;
 
 	private int maxSeqLen;
@@ -19,7 +15,7 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private boolean filtermutagenesis;
 	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
-	
+
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
 	}
@@ -76,46 +72,4 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	public void setMaxSeqLen(int maxSeqLen) {
 		this.maxSeqLen = maxSeqLen;
 	}
-
-	public int getIsoformCount() {
-		return isoformCount;
-	}
-
-	public void setIsoformCount(int isoformCount) {
-		this.isoformCount = isoformCount;
-	}
-
-	public int getVarCount() {
-		return varCount;
-	}
-
-	public void setVarCount(int varCount) {
-		this.varCount = varCount;
-	}
-
-
-	public int getPtmCount() {
-		return ptmCount;
-	}
-
-	public void setPtmCount(int ptmCount) {
-		this.ptmCount = ptmCount;
-	}
-
-	public String getProteinExistence() {
-		return proteinExistence;
-	}
-
-	public void setProteinExistence(String proteinExistence) {
-		this.proteinExistence = proteinExistence;
-	}
-
-	public String getProteinExistenceInfo() {
-		return proteinExistenceInfo;
-	}
-
-	public void setProteinExistenceInfo(String proteinExistenceInfo) {
-		this.proteinExistenceInfo = proteinExistenceInfo;
-	}
-
 }

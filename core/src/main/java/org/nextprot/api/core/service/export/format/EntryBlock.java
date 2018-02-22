@@ -16,6 +16,7 @@ public enum EntryBlock {
 	IDENTIFIER(NextprotMediaType.XML),
 	CHROMOSOMAL_LOCATION(NextprotMediaType.XML),
 	EXPERIMENTAL_CONTEXT(NextprotMediaType.XML),
+	MDATA(NextprotMediaType.XML),
 	GENOMIC_MAPPING(NextprotMediaType.XML),
 	ISOFORM(NextprotMediaType.XML);
 	

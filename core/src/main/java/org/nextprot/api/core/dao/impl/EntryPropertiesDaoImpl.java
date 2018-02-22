@@ -17,15 +17,15 @@ import java.sql.SQLException;
 @Repository
 public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 
-	@Autowired	private SQLDictionary sqlDictionary;
-	@Autowired	private DataSourceServiceLocator dsLocator;
-	
+	@Autowired private SQLDictionary sqlDictionary;
+	@Autowired private DataSourceServiceLocator dsLocator;
+
 	@Override
 	public EntryProperties findEntryProperties(String uniqueName) {
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
 		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
-		
+
 		return template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
 	}
 	
@@ -35,12 +35,6 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		public EntryProperties mapRow(ResultSet resultSet, int row) throws SQLException {
 			int res;
 			EntryProperties properties = new EntryProperties();
-			properties.setProteinExistence(resultSet.getString("pe"));
-			res = resultSet.getInt("ptmcnt");
-			properties.setPtmCount(res == -1? 0:res);
-			properties.setIsoformCount(resultSet.getInt("isocnt"));
-			res = resultSet.getInt("varcnt");
-			properties.setVarCount(res == -1? 0:res);
 			res = resultSet.getInt("mutcnt");
 			properties.setFiltermutagenesis(res == -1? 0:res);
 			res = resultSet.getInt("intcnt");

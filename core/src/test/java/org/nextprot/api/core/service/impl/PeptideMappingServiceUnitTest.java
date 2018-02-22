@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
+import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.annot.AnnotationUtilsTest;
@@ -112,28 +113,20 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		records.add(buildDaoRecord(annotId, "GOLD", 2, "NX_Q9UGM3-1", "NX_PEPT00113713", 881, 901));
 		records.add(buildDaoRecord(annotId2, "GOLD", 3, "NX_Q9UGM3-1", "NX_PEPT00113713", 382, 402));
 
-		List<AnnotationProperty> props = new ArrayList<>();
-		props.add(buildAnnotationProperty("NX_PEPT00113713", "is proteotypic", "Y"));
-		props.add(buildAnnotationProperty("NX_PEPT00113713", "is natural", "Y"));
-		props.add(buildAnnotationProperty("NX_PEPT00113713", "is synthetic", "N"));
-		Map<String,List<AnnotationProperty>> propMap = new HashMap<>();
-		propMap.put("NX_PEPT00113713", props);
 		
 		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
 		List<Annotation> annotations = new ArrayList<>(annotationMap.values());
-		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, propMap);
+		Map<String,PeptideUnicity> pepNameUnicityMap = new HashMap<>();
+		pepNameUnicityMap.put("NX_PEPT00113713", PeptideUnicity.createPeptideUnicityUnique());
+		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, pepNameUnicityMap);
 		
 		assertTrue(annotationMap.size()==2);
 
-    	Annotation annot;
-    	AnnotationProperty prop;
-
-    	// checking first annotation
-    	annot = annotationMap.get(annotId);
+    	Annotation annot = annotationMap.get(annotId);
     	assertTrue(annot.getAnnotationId()==annotId);
 
         AnnotationUtilsTest.assertContainsExpectedProperties(annot.getProperties(),
-                AnnotationUtilsTest.newAnnotationProperty(annotId, null, PropertyApiModel.NAME_PEPTIDE_NAME, "NX_PEPT00113713", null),
+                AnnotationUtilsTest.newAnnotationProperty(annotId, null,              PropertyApiModel.NAME_PEPTIDE_NAME, "NX_PEPT00113713", null),
                 AnnotationUtilsTest.newAnnotationProperty(annotId, "NX_PEPT00113713", PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "Y", null)
         );
 
@@ -219,34 +212,23 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		evidences.add(buildDistinctAnnotationEvidence(3));
 		evMap.put(pep2, evidences);
 		
-		// properties as provided by DAO
-		Map<String,List<AnnotationProperty>> propMap = new HashMap<>();
-		List<AnnotationProperty> props;
-		// properties related to pep1
-		props = new ArrayList<>();
-		props.add(buildAnnotationProperty(pep1, "is proteotypic", "Y"));
-		props.add(buildAnnotationProperty(pep1, "is natural", "Y"));
-		props.add(buildAnnotationProperty(pep1, "is synthetic", "N"));
-		propMap.put(pep1, props);
-		// properties related to pep2
-		props = new ArrayList<>();
-		props.add(buildAnnotationProperty(pep2, "is proteotypic", "N"));
-		props.add(buildAnnotationProperty(pep2, "is natural", "Y"));
-		props.add(buildAnnotationProperty(pep2, "is synthetic", "N"));
-		propMap.put(pep2, props);
 
+		Map<String,PeptideUnicity> pepNameUnicityMap = new HashMap<>();
+		pepNameUnicityMap.put("NX_PEPT00113713", PeptideUnicity.createPeptideUnicityUnique());
+		pepNameUnicityMap.put("NX_PEPT00000033", PeptideUnicity.createPeptideUnicityNonUnique(null));
+
+		
 		// apply same mechanism as service: should probably mock the DAO methods and call the service but...
 		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
 		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
-		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, propMap);	
+		
+		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, pepNameUnicityMap);	
 		PeptideMappingServiceImpl.attachPeptideEvidencesToAnnotations(annotations, evMap);	
 		
 		assertTrue(annotationMap.size()==3);
 
     	Annotation annot;
     	AnnotationEvidence ev;
-    	AnnotationProperty prop;
-    	AnnotationIsoformSpecificity spec;
     	
     	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     	// checking annot 1
@@ -277,11 +259,12 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(ev.getResourceAccession().equals("some resource ac 2"));
 
     	// checking properties of annot 1
-    	assertTrue(annot.getPropertiesMap().size()==2);
+    	assertTrue(annot.getPropertiesMap().size()==3);  // peptide name, proteotypicity, unicity = 3 props
 
         AnnotationUtilsTest.assertContainsExpectedProperties(annot.getProperties(),
                 AnnotationUtilsTest.newAnnotationProperty(annotId1, null, PropertyApiModel.NAME_PEPTIDE_NAME, pep1, null),
-                AnnotationUtilsTest.newAnnotationProperty(annotId1, pep1, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "Y", null)
+                AnnotationUtilsTest.newAnnotationProperty(annotId1, pep1, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "Y", null),
+                AnnotationUtilsTest.newAnnotationProperty(annotId1, pep1, PropertyApiModel.NAME_PEPTIDE_UNICITY, "UNIQUE", null)
         );
 
        	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -316,11 +299,12 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(ev.getResourceAccession().equals("some resource ac 2"));
 
     	// checking properties of annot 2
-    	assertTrue(annot.getPropertiesMap().size()==2);
+    	assertTrue(annot.getPropertiesMap().size()==3);  // peptide name, proteotypicity, unicity = 3 props
 
         AnnotationUtilsTest.assertContainsExpectedProperties(annot.getProperties(),
                 AnnotationUtilsTest.newAnnotationProperty(annotId2, null, PropertyApiModel.NAME_PEPTIDE_NAME, pep1, null),
-                AnnotationUtilsTest.newAnnotationProperty(annotId2, pep1, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "Y", null)
+                AnnotationUtilsTest.newAnnotationProperty(annotId2, pep1, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "Y", null),
+                AnnotationUtilsTest.newAnnotationProperty(annotId2, pep1, PropertyApiModel.NAME_PEPTIDE_UNICITY, "UNIQUE", null)
         );
 
        	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -348,11 +332,12 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(ev.getResourceAccession().equals("some resource ac 3"));
 
     	// checking properties of annot 3
-    	assertTrue(annot.getPropertiesMap().size()==2);
+    	assertTrue(annot.getPropertiesMap().size()==3);
 
         AnnotationUtilsTest.assertContainsExpectedProperties(annot.getProperties(),
                 AnnotationUtilsTest.newAnnotationProperty(annotId3, null, PropertyApiModel.NAME_PEPTIDE_NAME, pep2, null),
-                AnnotationUtilsTest.newAnnotationProperty(annotId3, pep2, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "N", null)
+                AnnotationUtilsTest.newAnnotationProperty(annotId3, pep2, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, "N", null),
+                AnnotationUtilsTest.newAnnotationProperty(annotId3, pep2, PropertyApiModel.NAME_PEPTIDE_UNICITY, "NOT_UNIQUE", null)
         );
     }
 

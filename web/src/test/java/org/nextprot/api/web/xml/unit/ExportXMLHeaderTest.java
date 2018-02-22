@@ -1,7 +1,7 @@
 package org.nextprot.api.web.xml.unit;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
@@ -27,7 +27,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         Writer writer = new PrintWriter(out);
         EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview");
         
-        ReleaseInfo rc = new ReleaseInfo();
+        ReleaseInfoVersions rc = new ReleaseInfoVersions();
         rc.setApiRelease("api-test-version");
         rc.setDatabaseRelease("database-test-version");
 
@@ -37,10 +37,10 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         exporter.write(Collections.emptyList(), infos);
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='database-release']");
-        assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");
+        assertEquals("database-test-version", dbReleaseNodes.item(0).getTextContent());
         NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='api-release']");
-        assertEquals(apiReleaseNodes.item(0).getTextContent(), "api-test-version");
+        assertEquals("api-test-version", apiReleaseNodes.item(0).getTextContent());
         NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='number-of-entries']");
-        assertEquals(entriesCountNode.item(0).getTextContent(), "0");
+        assertEquals("0", entriesCountNode.item(0).getTextContent());
     }
 }

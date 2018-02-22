@@ -3,7 +3,6 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;

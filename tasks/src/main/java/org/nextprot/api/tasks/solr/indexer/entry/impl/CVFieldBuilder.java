@@ -1,30 +1,21 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.utils.Tree;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
-import org.nextprot.api.tasks.solr.GenerateSolrIndex;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.*;
 
 @EntryFieldBuilder
 public class CVFieldBuilder extends FieldBuilder {
 
-	protected Logger logger = Logger.getLogger(GenerateSolrIndex.class);
+	protected Logger logger = Logger.getLogger(CVFieldBuilder.class);
 	
 	@Override
 	protected void init(Entry entry) {
@@ -36,7 +27,6 @@ public class CVFieldBuilder extends FieldBuilder {
 		
 		// CV accessions
 		List<Annotation> annots = entry.getAnnotations();
-		int cvac_cnt = 0;
 		boolean allnegative;
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
@@ -57,7 +47,6 @@ public class CVFieldBuilder extends FieldBuilder {
 					}
 					if(!this.isGold() || currannot.getQualityQualifier().equals("GOLD")) {
 					addField(Fields.CV_ACS, cvac);
-					cvac_cnt++;
 					cv_acs.add(cvac); // No duplicates: this is a Set, will be used for synonyms and ancestors
 					addField(Fields.CV_NAMES,  currannot.getCvTermName());
 					}
@@ -73,42 +62,30 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 		
 		// Final CV acs, ancestors and synonyms
-		//System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
-		Tree<CvTerm> tree = null;
-		//Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
 			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
-			//System.err.println(cvac + ": " + term);
-			String category = term.getOntology();
-			List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
-			//List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
-			//if(treeList.isEmpty()) 	ancestors2.clear();
-			//ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
-			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
-			//if(ancestors.size() != ancestors2.size()) {
-				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
-				//System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
-				//System.err.println(ancestors);
-			//}
-			if(ancestors != null) 
-			  for (String ancestor : ancestors) {
-                  cv_ancestors_acs.add(ancestor); 
-			  }
+			if (null==term) {
+				logger.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
+				continue;
+			}
+			List<String> ancestors = terminologyservice.getAllAncestorsAccession(term.getAccession());
+			if(ancestors != null) {
+			  for (String ancestor : ancestors) cv_ancestors_acs.add(ancestor); 
+			}
 			List<String> synonyms = term.getSynonyms();
-			if(synonyms != null) { //if (term.getOntology().startsWith("Go")) System.err.println("adding: " + synonyms.get(0));
-			  for (String synonym : synonyms)
-                  cv_synonyms.add(synonym.trim()); // No duplicate: this is a Set
-			      }
+			if(synonyms != null) { 
+			  for (String synonym : synonyms) cv_synonyms.add(synonym.trim()); // No duplicate: this is a Set
+			}
 		}
 		
 		// Remove uninformative top level ancestors (Annotation, feature, and ROI)
 		cv_ancestors_acs.removeAll(top_acs);
+
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
 			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccession(ancestorac).getName());
 		}
-		//System.err.println("CV ancestors done.");
 
 		for (String synonym : cv_synonyms) {
 			addField(Fields.CV_SYNONYMS, synonym);
@@ -118,7 +95,6 @@ public class CVFieldBuilder extends FieldBuilder {
 		List<CvTerm> enzymes = entry.getEnzymes();
 		String ec_names = "";
 		for (CvTerm currenzyme : enzymes) {
-			cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			addField(Fields.CV_NAMES, currenzyme.getName());
 			if(ec_names != "") ec_names += ", ";

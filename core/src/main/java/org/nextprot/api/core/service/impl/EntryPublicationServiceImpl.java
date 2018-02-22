@@ -2,14 +2,14 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.dao.EntryPublicationDao;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.*;
-import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.ui.page.PageView;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.domain.ui.page.PageView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,10 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
     private EntryPublicationDao entryPublicationDao;
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
+    private AnnotationService annotationService;
+
+    @Autowired
+    private PublicationService publicationService;
 
     @Cacheable("entry-publications")
     @Override
@@ -34,8 +37,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
         EntryPublications entryPublications = new EntryPublications();
         entryPublications.setEntryAccession(entryAccession);
-        entryPublications.setData(new EntryPublicationMapBuilder(entryBuilderService
-                .build(EntryConfig.newConfig(entryAccession).withEverything())).build());
+        entryPublications.setData(new EntryPublicationMapBuilder(entryAccession).build());
 
         return entryPublications;
     }
@@ -46,15 +48,19 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         private static final String PUBMED_DB = "PubMed";
         private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
 
-        private final Entry entry;
+        private final String entryAccession;
         private final Map<String, Long> accession2id;
         private final Map<Long, List<PublicationDirectLink>> directLinksByPubid;
+        private final List<Publication> publications;
+        private final List<Annotation> annotations;
 
-        EntryPublicationMapBuilder(Entry entry) {
+        EntryPublicationMapBuilder(String entryAccession) {
 
-            this.entry = entry;
-            accession2id = buildAccessionToIdMap(entry.getPublications());
-            directLinksByPubid = entryPublicationDao.findPublicationDirectLinks(entry.getUniqueName());
+            this.entryAccession = entryAccession;
+            this.publications = publicationService.findPublicationsByEntryName(entryAccession);
+            this.annotations = annotationService.findAnnotations(entryAccession);
+            accession2id = buildAccessionToIdMap();
+            directLinksByPubid = entryPublicationDao.findPublicationDirectLinks(entryAccession);
         }
 
         public Map<Long, EntryPublication> build() {
@@ -62,21 +68,21 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             Map<Long, EntryPublication> entryPublicationMap = new HashMap<>();
 
             // extract publications cited in annotation evidences (link A) and update references to PageViews
-            entry.getAnnotations()
+            annotations
                     .forEach(annotation -> annotation.getEvidences().stream()
                             .map(evidence -> extractPubIdFromEvidence(evidence))
                             .filter(Objects::nonNull)
-                            .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(entry.getUniqueName(), pubId)))
+                            .map(pubId -> entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(pubId)))
                             .forEach(entryPublication -> {
                                 entryPublication.setCited(true);
                                 entryPublication.addCitedInViews(PageView.getDisplayablePageViews(annotation));
                             }));
 
             // handle direct links (B and C) but publications with A link are further processed also
-            entry.getPublications()
+            publications
                     .forEach(publication -> {
                         long pubId = publication.getPublicationId();
-                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(entry.getUniqueName(), pubId));
+                        EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(pubId));
                         handlePublicationDirectLinks(entryPublication);
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
                     });
@@ -84,7 +90,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             return entryPublicationMap;
         }
 
-        private EntryPublication buildEntryPublication(String entryAccession, long publicationId) {
+        private EntryPublication buildEntryPublication(long publicationId) {
 
             EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
             entryPublication.setDirectLinks(directLinksByPubid.getOrDefault(publicationId, new ArrayList<>()));
@@ -92,9 +98,9 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             return entryPublication;
         }
 
-        private Map<String,Long> buildAccessionToIdMap(List<Publication> pubs) {
+        private Map<String,Long> buildAccessionToIdMap() {
             Map<String,Long> map = new HashMap<>();
-            for (Publication p: pubs) {
+            for (Publication p: publications) {
                 String accession = getPubMedOrNextProtSubmissionAc(p);
                 if (accession != null) map.put(accession, p.getPublicationId());
             }
@@ -124,8 +130,9 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
             // TODO: should be removed while AnnotationBuilder continue to set id to -1 publications missing in neXtProt DB !!!
             if (l != null && l < 0) {
-                LOGGER.severe(evi.getResourceType()+ " evidence of entry accession "+evi.getResourceAccession()
-                        + " has a incorrect resource id of "+l);
+                LOGGER.severe(evi.getResourceType()+ " evidence of resource accession "+evi.getResourceAccession()
+                        + " from annotation id " + evi.getAnnotationId() + " of entry " + entryAccession
+                        + " has an incorrect resource id of "+l);
                 return null;
             }
 

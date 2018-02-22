@@ -1,11 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import static org.junit.Assert.fail;
-import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
-
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -16,6 +10,12 @@ import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
+
+import java.util.Set;
+import java.util.function.Predicate;
+
+import static org.junit.Assert.fail;
+import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
 
 
 public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
@@ -29,7 +29,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	
 		try {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-			Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, null, "msh2-msh6-multiple-mutants-on-different-genes");
+			Set<Statement> rawStatements = sle.getStatementsForSourceForGeneNameAndEnvironment(null, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
 			statementETLServiceMocked.transformStatements(rawStatements, null);
 			
@@ -74,7 +74,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	public void shouldPropagateVariantsOnlyToMappableIsoforms() {
 
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, null, "msh6-variant-on-iso1-but-not-on-iso2");
+		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneNameAndEnvironment(null, null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
 		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());
@@ -112,7 +112,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	public void shouldPropagateVariantButNotPhenotypicVariationOnIsoSpecificVPAnnotations() {
 		
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, null, "scn9a-variant-iso-spec");
+		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneNameAndEnvironment(null, null, "scn9a-variant-iso-spec");
 
 		//Variant 
 		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());

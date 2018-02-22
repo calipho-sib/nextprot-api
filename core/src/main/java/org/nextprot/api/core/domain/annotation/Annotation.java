@@ -267,7 +267,9 @@ public class Annotation implements Serializable, IsoformSpecific {
      * @param key the key to access properties
      */
     public Collection<AnnotationProperty> getPropertiesByKey(String key) {
-        return Collections.unmodifiableCollection(properties.get(key));
+    	Collection<AnnotationProperty> props = properties.get(key);
+    	if (props==null) props = new ArrayList<>();
+        return Collections.unmodifiableCollection(props);
     }
 
     /**
@@ -318,12 +320,11 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void addProperty(AnnotationProperty property) {
 
-            String propertyName = property.getName();
-            if (!properties.containsKey(propertyName)) {
-                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
-            }
-            properties.get(propertyName).add(property);
-
+		String propertyName = property.getName();
+		if (!properties.containsKey(propertyName)) {
+			properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
+		}
+		properties.get(propertyName).add(property);
 	}
 	
 	

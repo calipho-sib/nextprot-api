@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -20,7 +19,6 @@ import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,7 @@ import java.util.function.Predicate;
 public class AnnotationServiceImpl implements AnnotationService {
 
 	@Autowired private AnnotationDAO annotationDAO;
+	@Autowired private MdataService mdataService;
 	@Autowired private PtmDao ptmDao;
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
@@ -45,6 +44,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private StatementService statementService;
 	@Autowired private TerminologyService terminologyService;
+	@Autowired private CvTermGraphService cvTermGraphService;
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	
 	@Override
@@ -136,6 +136,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		updateVariantsRelatedToDisease(annotations);
 		updateSubcellularLocationTermNameWithAncestors(annotations);
 		updateMiscRegionsRelatedToInteractions(annotations);
+		updatePtmAndPeptideMappingWithMdata(annotations, entryName);
 		
 		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
@@ -148,7 +149,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		for (Annotation annot: annotations) {
 			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
 				CvTerm t = terminologyService.findCvTermByAccession(annot.getCvTermAccessionCode());
-				List<CvTerm> terms = TerminologyUtils.getOnePathToRootTerm(t.getAccession(), terminologyService);
+				List<CvTerm> terms = terminologyService.getOnePathToRootTerm(t.getAccession());
 				String longName = AnnotationUtils.getTermNameWithAncestors(annot, terms);
 				AnnotationProperty prop = new AnnotationProperty();
 				prop.setAnnotationId(annot.getAnnotationId());
@@ -195,6 +196,24 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 	
 	
+	private void updatePtmAndPeptideMappingWithMdata(List<Annotation> annotations, String entryName) {
+		
+		Map<Long,Long> evidenceMdataMap = mdataService.findEvidenceIdMdataIdMapByEntryName(entryName);
+		annotations.stream().filter(a -> isAnnotationWithPotentialMdata(a)).forEach(a -> { 
+			a.getEvidences().forEach(e -> {
+				e.setMdataId(evidenceMdataMap.get(e.getEvidenceId()));
+			});
+		});
+	}
+	
+	private boolean isAnnotationWithPotentialMdata(Annotation a) {
+		if (a.getAPICategory()==AnnotationCategory.PEPTIDE_MAPPING) return true;
+		if (a.getAPICategory()==AnnotationCategory.MODIFIED_RESIDUE) return true;
+		if (a.getAPICategory()==AnnotationCategory.GLYCOSYLATION_SITE) return true;
+		if (a.getAPICategory()==AnnotationCategory.CROSS_LINK ) return true;
+		return false;
+	}
+	
 	private void updateMiscRegionsRelatedToInteractions(List<Annotation> annotations) {
 
 		// add property if annotation is a misc region and it is related to interaction
@@ -208,7 +227,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 				annot.addProperty(prop);
 			}
 		}
-
 	}
 	
 	
@@ -354,7 +372,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		private BaseCvTermAncestorPredicate(CvTerm ancestor) {
 
 			this.ancestor = ancestor;
-			graph = terminologyService.findCvTermGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+			graph = cvTermGraphService.findCvTermGraph(TerminologyCv.valueOf(ancestor.getOntology()));
 		}
 	}
 

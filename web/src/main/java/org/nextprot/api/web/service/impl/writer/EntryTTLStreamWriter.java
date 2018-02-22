@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.velocity.Template;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.NXVelocityContext;
 
 import java.io.IOException;
@@ -29,12 +29,12 @@ public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
     }
 
     @Override
-    protected void writeHeader(Map<String, Object>infos) throws IOException {
+    protected void writeHeader(Map<String, Object> infos) throws IOException {
 
         int entryNum = (int) infos.get(ENTRY_COUNT);
-        ReleaseInfo releaseInfo = (ReleaseInfo) infos.get(RELEASE_INFO);
+        ReleaseInfoVersions releaseInfoVersions = (ReleaseInfoVersions) infos.get(RELEASE_INFO);
 
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("turtle/prefix.ttl.vm");
-        headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfo), getStream());
+        headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfoVersions), getStream());
     }
 }

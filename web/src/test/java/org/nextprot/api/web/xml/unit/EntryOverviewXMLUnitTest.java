@@ -1,7 +1,7 @@
 package org.nextprot.api.web.xml.unit;
 
 import org.junit.Test;
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;

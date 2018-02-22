@@ -4,7 +4,7 @@ import org.apache.http.HttpStatus;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.solr.QueryRequest;
@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.DESCRIPTION;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.*;
 
 @Service
 public class StreamEntryServiceImpl implements StreamEntryService {
@@ -39,25 +37,23 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
 
 		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
-
-		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
-		infos.put(DESCRIPTION, description);
-
-		writer.write(Collections.singletonList(accession), infos);
+		writer.write(Collections.singletonList(accession), createInfos(description));
 	}
 
 	@Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
         EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
-
-		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseInfo());
-		infos.put(DESCRIPTION, description);
-
-        writer.write(accessions, infos);
+        writer.write(accessions, createInfos(description));
     }
+
+    private Map<String, Object> createInfos(String description) {
+		Map<String, Object> infos = new HashMap<>();
+		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
+		infos.put(RELEASE_DATA_SOURCES, releaseInfoService.findReleaseDatasources());
+		infos.put(DESCRIPTION, description);
+		return infos;
+	}
 
     @Override
     public void streamAllEntries(NextprotMediaType format, HttpServletResponse response) {

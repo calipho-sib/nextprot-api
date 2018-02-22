@@ -6,18 +6,17 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.export.io.SlimIsoformTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.core.utils.annot.export.EntryPartExporterImpl;
-import org.nextprot.api.core.utils.annot.export.EntryPartWriterTSV;
+import org.nextprot.api.core.export.EntryPartExporterImpl;
+import org.nextprot.api.core.export.EntryPartWriterTSV;
 import org.nextprot.api.web.service.EntryPageService;
+import org.nextprot.api.web.service.impl.writer.JSONObjectsWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -26,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -42,9 +42,11 @@ public class EntryController {
 	@Autowired private EntryBuilderService entryBuilderService;
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private EntryReportService entryReportService;
+	@Autowired private EntryReportStatsService entryReportStatsService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private EntryGeneReportService entryGeneReportService;
+	@Autowired private EntryService entryService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -117,23 +119,38 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public List<EntryReport> getEntryReport(
+	public List<EntryReport> getGeneEntryReport(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName) {
 
-		return entryReportService.reportEntry(entryName).stream()
+		return entryGeneReportService.reportEntry(entryName).stream()
 				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(EntryReport.newByChromosomalPositionComparator()))
 				.collect(Collectors.toList());
 	}
 
-	@ApiMethod(path = "/isoform/{accession}/peff", verb = ApiVerb.GET, description = "Get isoform sequence informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/isoform/{accession}/peff", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public IsoformPEFFHeader getIsoformPEFFHeader(
-			@ApiPathParam(name = "accession", description = "The neXtProt isoform accession. For example, the first isoform of insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
-			@PathVariable("accession") String isoformAccession) {
+	@ApiMethod(path = "/isoforms", verb = ApiVerb.GET, description = "Retrieves all isoforms", produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE})
+	@RequestMapping(value = "/isoforms", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE} )
+	public void getListOfIsoformAcMd5Sequence(HttpServletRequest request, HttpServletResponse response) {
 
-		return isoformService.formatPEFFHeader(isoformAccession);
+		NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+		try {
+			List<SlimIsoform> isoforms = isoformService.findListOfIsoformAcMd5Sequence();
+
+			if (mediaType == NextprotMediaType.JSON) {
+
+				JSONObjectsWriter<SlimIsoform> writer = new JSONObjectsWriter<>(response.getOutputStream());
+				writer.write(isoforms);
+			}
+			else if (mediaType == NextprotMediaType.TSV) {
+
+				SlimIsoformTSVWriter writer = new SlimIsoformTSVWriter(response.getOutputStream());
+				writer.write(isoforms);
+				writer.close();
+			}
+		} catch (IOException e) {
+			throw new NextProtException("cannot get isoforms in "+mediaType.getExtension()+" format", e);
+		}
 	}
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -173,6 +190,35 @@ public class EntryController {
 		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
 
 		return "entry";
+	}
+
+	@ApiMethod(path = "/entry/{entry}/stats", verb = ApiVerb.GET, description = "Reports neXtProt entry stats", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/stats", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public EntryReportStats getEntryReportStats(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
+
+		return entryReportStatsService.reportEntryStats(entryName);
+	}
+
+	@ApiMethod(path = "/isoform/{accession}", verb = ApiVerb.GET, description = "Exports a neXtProt isoform",
+			produces = { NextprotMediaType.FASTA_MEDIATYPE_VALUE})
+	@RequestMapping(value = "/isoform/{accession}", method = { RequestMethod.GET })
+	public String exportIsoform(
+			@ApiPathParam(name = "accession", description = "The name of the neXtProt isoform. For example, the insulin: NX_P01308-1",  allowedvalues = { "NX_P01308-1"})
+			@PathVariable("accession") String isoformAccession, Model model) {
+
+		String entryAccession = entryService.findEntryAccessionFromIsoformAccession(isoformAccession);
+
+		Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
+
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms().withOverview());
+
+		model.addAttribute("entry", entry);
+		model.addAttribute("isoform", isoform);
+
+		return "isoform";
 	}
 
 	/**

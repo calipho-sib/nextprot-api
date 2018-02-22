@@ -1,10 +1,10 @@
 package org.nextprot.api.core.service.export.io;
 
-import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.export.HPPChromosomeReportWriter;
 
@@ -66,7 +66,7 @@ public class HPPChromosomeReportTSVWriter implements HPPChromosomeReportWriter {
         return Arrays.asList(
                 entryReport.getAccession(),
                 getMainEntityNames(overview.getGeneNames()),
-                ProteinExistenceLevel.valueOfString(entryReport.getProteinExistence()).getDescription(),
+                ProteinExistence.valueOfKey(entryReport.getProteinExistence()).getDescription(),
                 (entryReport.isProteomics()) ? "yes" : "no",
                 (entryReport.isAntibody()) ? "yes" : "no"
         );

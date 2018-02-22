@@ -14,7 +14,7 @@
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
 	</cache>
-	
+
 	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 
 	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
@@ -59,8 +59,18 @@
 
 	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true"/>
 
-	<cache name="release-contents" maxEntriesLocalHeap="1"
+	<cache name="release-versions" maxEntriesLocalHeap="1"
 		eternal="true" statistics="true"/>
+
+	<cache name="release-data-sources" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true"/>
+
+	<cache name="release-stats" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true"/>
 
 	<!-- we have  20'000 proteins * 20 subpages = 400'000 urls -->
 	<!-- we have 200'000 terms    *  4 subpages = 800'000 urls -->
@@ -342,4 +352,46 @@
            diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
+
+  	<cache name="equivalent-isoforms" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+  	<cache name="entries-having-equivalent-isoforms" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+  	<cache name="peptide-name-unicity-map" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
+	<cache name="isoforms-md5" overflowToOffHeap="false" overflowToDisk="true"
+           diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
+           eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+	
+	<cache name="entry-accession-by-protein-existence" maxEntriesLocalHeap="22000"
+		   eternal="true" statistics="true">
+    </cache>
+
+	<cache name="mdata-list-by-entry" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+
+	<cache name="evidence-mdata-map-by-entry" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+
+	<cache name="entry-report-stats"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true" >
+	</cache>
 </ehcache>

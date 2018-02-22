@@ -21,8 +21,6 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 
 	
 	@Autowired AnnotationService annotationService;
-	@Autowired
-	private EntryBuilderService entryBuilderService;
 
 	@Test
 	public void shouldGetAnOrphanetAnnotationFromService() {

@@ -2,9 +2,11 @@ package org.nextprot.api.core.service;
 
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.SlimIsoform;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Extracts information related to the isoforms
@@ -29,4 +31,23 @@ public interface IsoformService {
 	 * @return a PEFF header pojo
 	 */
 	IsoformPEFFHeader formatPEFFHeader(String isoformAccession);
+
+	/**
+	 * Extract and return a list of isoform sets. 
+	 * Each set contains the accession of isoforms having the same sequence (= same md5 value)
+	 * 
+	 * @return a list of sets, each set contains at least 2 isoform accession numbers.
+	 */
+	List<Set<String>> getSetsOfEquivalentIsoforms();
+	
+	/**
+	 * Extract and return a list of entry sets. 
+	 * Each set contains the accession of entries having an equivalent isoform (isoform with same sequence = same md5 value)
+	 * 
+	 * @return a list of sets, each set contains at least 2 entry accession numbers.
+	 */
+	List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform();
+
+	List<SlimIsoform> findListOfIsoformAcMd5Sequence();
+	
 }

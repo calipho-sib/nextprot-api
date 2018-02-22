@@ -1,15 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -22,14 +12,15 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformSet;
-import org.nextprot.commons.statements.TargetIsoformStatementPosition;
+import org.nextprot.commons.statements.*;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
@@ -49,6 +40,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		for (Statement originalStatement : rawStatements) {
 
+			//If statements are complex with subject
 			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
@@ -96,11 +88,18 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		return remainingRawStatements.stream().map(statement -> {
 
-			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
+			String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
+			Optional isoSpecificAccession = Optional.empty();
+			if(accession != null && accession.contains("-")){ //It is iso specific for example NX_P19544-4 means only specifc to iso 4
+				isoSpecificAccession = Optional.of(accession);
+			}
+
+			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
 			
 			return StatementBuilder.createNew().addMap(statement)
 					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
-					.removeField(StatementField.STATEMENT_ID) 
+					.removeField(StatementField.STATEMENT_ID)
+					.removeField(StatementField.NEXTPROT_ACCESSION)
 					.buildWithAnnotationHash(AnnotationType.ENTRY);
 			
 		}).collect(Collectors.toSet());
@@ -184,7 +183,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					}
 					targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
 				}else {
-					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService).serializeToJsonString();
+					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService, Optional.empty()).serializeToJsonString();
 				}
 
 				if(objectStatement != null){

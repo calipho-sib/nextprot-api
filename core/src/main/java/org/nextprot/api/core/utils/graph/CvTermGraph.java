@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.graph.IntGraph;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,14 +31,13 @@ public class CvTermGraph implements Serializable {
     private final TerminologyCv terminologyCv;
     protected final IntGraph graph;
 
-    public CvTermGraph(TerminologyCv terminologyCv, TerminologyService service) {
+    public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
         Preconditions.checkNotNull(terminologyCv);
-        Preconditions.checkNotNull(service);
-
-        List<CvTerm> cvTerms = service.findCvTermsByOntology(terminologyCv.name());
+        Preconditions.checkNotNull(cvTerms);
 
         this.terminologyCv = terminologyCv;
+
         graph = new IntGraph(terminologyCv.name() + " graph");
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
@@ -242,7 +240,7 @@ public class CvTermGraph implements Serializable {
 
         public NotFoundNodeException(String accession) {
 
-            super("CvTerm node with accession "+accession+" was not found in "+getTerminologyCv() + " graph");
+            super("CvTerm node with accession "+accession+" was not found in "+terminologyCv + " graph");
         }
     }
 

@@ -1,8 +1,8 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.PublicationAuthor;
+
+import java.util.List;
 
 
 public interface AuthorService {
@@ -13,6 +13,7 @@ public interface AuthorService {
 	 * @param title
 	 * @return
 	 */
-	public List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId);
+	List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId);
 
+	List<PublicationAuthor> findAuthorsByPublicationIds(List<Long> publicationIds);
 }

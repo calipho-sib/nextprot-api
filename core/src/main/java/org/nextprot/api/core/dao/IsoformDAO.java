@@ -1,8 +1,11 @@
 package org.nextprot.api.core.dao;
 
-import java.util.List;
-
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.SlimIsoform;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Returns information about the isoforms and their synonyms
@@ -19,10 +22,30 @@ public interface IsoformDAO {
 	List<Isoform> findIsoformsByEntryName(String entryName);
 
 	/**
-	 * For a given master entry, all isoforms sysnomys (non-main) are returned
+	 * For a given master entry, all isoforms synonyms (non-main) are returned
 	 * @param entryName the name of the master entry
 	 * @return the list of synoyms
 	 */
-    List<EntityName> findIsoformsSynonymsByEntryName(String entryName); 
+    List<EntityName> findIsoformsSynonymsByEntryName(String entryName);
+
+    /**
+     * Retrieves a list of sets. 
+     * Each set contains at least 2 accessions identifying isoforms having the same sequence 
+     * @return a list of sets, each set contains isoform accessions
+     */
+    List<Set<String>> findSetsOfEquivalentIsoforms();
+  
+    /**
+     * Retrieves a list of sets. 
+     * Each set contains at least 2 accessions identifying entries having an identical isoform (same sequence = same md5) 
+     * @return a list of sets, each set contains entry accessions
+     */
+    List<Set<String>> findSetsOfEntriesHavingAnEquivalentIsoform();
+    
+    /**
+     * Retrieves minimal information about isoforms ac + md5 + sequence
+     * @return the full list of valid isoforms, for each isoform we get a map with 3 keys, one by field 
+     */
+	List<SlimIsoform> findOrderedListOfIsoformAcMd5SequenceFieldMap();
 
 }

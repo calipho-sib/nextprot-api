@@ -1,31 +1,17 @@
 package org.nextprot.api.core.domain;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.dao.EntityName;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Overview implements Serializable{
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 4L;
 
-	private static class PE {
-		String name;
-		int level;
-		PE(String name, int level) {this.name=name; this.level=level;}
-	}
-	private static Map<String,PE> peMap;
-    static {
-    	// key: as stored in db, value: as to be displayed
-    	peMap = new HashMap<>();
-    	peMap.put("protein level", new PE("Evidence_at_protein_level",1));
-    	peMap.put("transcript level", new PE("Evidence_at_transcript_level",2));
-    	peMap.put("homology", new PE("Inferred_from_homology",3));
-    	peMap.put("predicted", new PE("Predicted",4));
-    	peMap.put("uncertain", new PE("Uncertain",5));
-    }	
 	private History history;
 	private List<Family> families;
 	private List<EntityName> proteinNames;
@@ -34,6 +20,7 @@ public class Overview implements Serializable{
 	private List<EntityName> cleavedRegionNames;
 	private List<EntityName> additionalNames;
 	private List<EntityName> isoformNames;
+	private ProteinExistences proteinExistences;
 	
 	public List<EntityName> getIsoformNames() {
 		return isoformNames;
@@ -104,20 +91,6 @@ public class Overview implements Serializable{
 		return result;
 	}
 
-		
-	public String getProteinExistenceInfo() {
-		return this.history.getProteinExistenceInfo();
-	}
-	
-	public String getProteinExistence() {
-		return this.history.getProteinExistence();
-	}
-	
-	public int getProteinExistenceLevel() {
-		return this.history.getProteinExistenceLevel();
-	}
-
-
 	public void setHistory(History history) {
 		this.history = history;
 	}
@@ -133,10 +106,9 @@ public class Overview implements Serializable{
 
 	public static class History implements Serializable {
 
-		private static final long serialVersionUID = 778801504825937620L;
+		private static final long serialVersionUID = 2L;
 
-		@Deprecated
-		private String proteinExistence, proteinExistenceInfo;
+		private ProteinExistence proteinExistenceUniprot;
 		private Date nextprotIntegrationDate;
 		private Date nextprotUpdateDate;
 		private Date uniprotIntegrationDate;
@@ -146,61 +118,16 @@ public class Overview implements Serializable{
 		private String sequenceVersion;
 
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		
-		/**
-		 * @deprecated (Should use overview instead)
-		 * @return a string to be displayed in ttl, xml, etc. representing the protein existence
-		 */
-		@Deprecated
-		public String getProteinExistence() {
-			return Overview.peMap.get(proteinExistence).name;
-		}
 
-		/**
-		 * @deprecated (Should use overview instead)
-		 */
-		@Deprecated
-		public String getProteinExistenceInfo() {
-			return proteinExistenceInfo;
-		}
+        public ProteinExistence getProteinExistenceUniprot() {
+            return proteinExistenceUniprot;
+        }
 
-		/**
-		 * @deprecated (Should use overview instead)
-		 * @return the string stored in the db (not the one to be displayed, experted, etc...)
-		 */
-		@Deprecated
-		public String getProteinExistenceRaw() {
-			return this.proteinExistence;
-		}
+        public void setProteinExistenceUniprot(ProteinExistence proteinExistenceUniprot) {
+            this.proteinExistenceUniprot = proteinExistenceUniprot;
+        }
 
-		/**
-		 * @deprecated (Should use overview instead)
-		 * @return an integer representing the protein existence level between 1 and 5. 
-		 * 1 is the highest level of certainty
-		 */
-		@Deprecated
-		public int getProteinExistenceLevel() {
-			return Overview.peMap.get(proteinExistence).level;
-		}
-
-		/**
-		 * @deprecated (Should use overview instead)
-		 * @param proteinExistenceInfo
-		 */
-		@Deprecated
-		public void setProteinExistenceInfo(String proteinExistenceInfo) {
-			this.proteinExistenceInfo = proteinExistenceInfo;
-		}
-
-		/**
-		 * 
-		 * @param proteinExistence string as stored in the sequence identifier property value 
-		 */
-		public void setProteinExistence(String proteinExistence) {
-			this.proteinExistence = proteinExistence;
-		}
-
-		public Date getNextprotIntegrationDate() {
+        public Date getNextprotIntegrationDate() {
 			return nextprotIntegrationDate;
 		}
 		
@@ -364,6 +291,19 @@ public class Overview implements Serializable{
 
 	public void setAdditionalNames(List<EntityName> additionalNames) {
 		this.additionalNames = additionalNames;
+	}
+
+	/*public ProteinExistence getProteinExistence() {
+		return proteinExistences.getProteinExistence();
+	}*/
+
+	//@JsonIgnore
+	public ProteinExistences getProteinExistences() {
+		return proteinExistences;
+	}
+
+	public void setProteinExistences(ProteinExistences proteinExistences) {
+		this.proteinExistences = proteinExistences;
 	}
 
 	/**

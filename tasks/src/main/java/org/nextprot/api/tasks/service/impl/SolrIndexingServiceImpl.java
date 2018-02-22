@@ -1,15 +1,11 @@
 package org.nextprot.api.tasks.service.impl;
 
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
 import org.nextprot.api.solr.index.CvIndex;
@@ -37,8 +33,8 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private PublicationService publicationService;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
-	@Autowired private DbXrefService dbxrefService;
-	
+	@Autowired private EntryReportStatsService entryReportStatsService;
+
 	@Override
 	public String indexEntriesChromosome(boolean isGold, String chrName) {
 
@@ -54,6 +50,8 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		EntryBaseSolrIndexer indexer = isGold ? new EntryGoldSolrIndexer(serverUrl) : new EntrySolrIndexer(serverUrl);
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
+		indexer.setPublicationService(publicationService);
+		indexer.setEntryReportStatsService(entryReportStatsService);
 
 		logAndCollect(info,"getting entry list of chromosome " + chrName);
 		List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);

@@ -6,16 +6,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
         try {
             parameters.put("entries to analyse", getNextprotEntries().size());
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
             System.exit(2);
         }
@@ -86,44 +85,50 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
 
         LOGGER.info("**** Analysing dbxrefs from entry accession...");
 
-        DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
-                outputDirectory + "/allentries-xrefs-url.log");
+        ConsoleProgressBar pb;
+        try (DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
+                outputDirectory + "/allentries-xrefs-url.log")) {
 
-        DbXrefService xrefService = getBean(DbXrefService.class);
+            DbXrefService xrefService = getBean(DbXrefService.class);
 
-        Set<String> allEntryAcs = getNextprotEntries();
+            Set<String> allEntryAcs = getNextprotEntries();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt entries)", allEntryAcs.size());
-        pb.start();
+            pb = ConsoleProgressBar.determinated("analysing dbxrefs (from neXtProt entries)", allEntryAcs.size());
+            pb.start();
 
-        for (String entryAc : allEntryAcs) {
+            for (String entryAc : allEntryAcs) {
 
-            try {
-                visitor.visit(entryAc, xrefService.findDbXrefsByMaster(entryAc));
-                visitor.flush();
-                pb.incrementValue();
-            } catch (EntryNotFoundException e) {
+                try {
+                    visitor.visit(entryAc, xrefService.findDbXrefsByMaster(entryAc));
+                    visitor.flush();
+                    pb.incrementValue();
+                } catch (EntryNotFoundException e) {
 
-                LOGGER.error(e.getMessage()+": skipping entry "+entryAc);
+                    LOGGER.error(e.getMessage() + ": skipping entry " + entryAc);
+                }
             }
-        }
 
-        visitor.flush();
-        visitor.close();
+            visitor.flush();
+            visitor.close();
+        }
 
         pb.stop();
     }
 
-    private Set<String> getNextprotEntries() throws FileNotFoundException {
+    private Set<String> getNextprotEntries() throws IOException {
 
         if (getCommandLineParser().getEntriesFilename() != null) {
 
-            BufferedReader fr = new BufferedReader(new FileReader(getCommandLineParser().getEntriesFilename()));
+            try (BufferedReader fr = new BufferedReader(new FileReader(getCommandLineParser().getEntriesFilename()))) {
 
-            return fr.lines()
-                    .filter(l -> !l.isEmpty())
-                    .filter(l -> !l.startsWith("#"))
-                    .collect(Collectors.toSet());
+                return fr.lines()
+                        .filter(l -> !l.isEmpty())
+                        .filter(l -> !l.startsWith("#"))
+                        .collect(Collectors.toSet());
+            } catch (IOException e) {
+
+                throw e;
+            }
         }
         else {
             return getBean(MasterIdentifierService.class).findUniqueNames();
@@ -221,7 +226,6 @@ public class DbXrefAnalyserTask extends SpringBasedTask<DbXrefAnalyserTask.Argum
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");
-            e.printStackTrace();
 
             System.exit(1);
         }

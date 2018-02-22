@@ -27,25 +27,28 @@ public class AuthorDaoImpl implements AuthorDao {
 
 	public List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationId", publicationId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper(publicationId));
 	}
 
-	
 	@Override
 	public List<PublicationAuthor> findAuthorsByPublicationIds(List<Long> publicationIds) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationIds", publicationIds);
 		
 		if(publicationIds.isEmpty()) {
-			return new ArrayList<PublicationAuthor>();
+			return new ArrayList<>();
 		}
 		
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
-	};
+	}
 
-	
-	
-	
 	private static class AuthorRowMapper implements ParameterizedRowMapper<PublicationAuthor> {
+
+		private final long publicationId;
+
+		AuthorRowMapper(long publicationId) {
+
+			this.publicationId = publicationId;
+		}
 
 		public PublicationAuthor mapRow(ResultSet resultSet, int row) throws SQLException {
 
@@ -61,6 +64,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			author.setEditor(resultSet.getBoolean("is_editor"));
 			author.setSuffix(resultSet.getString("suffix"));
 			author.setRank(resultSet.getInt("rank"));
+			author.setPublicationId(publicationId);
 			return author;
 		}
 	}
@@ -84,5 +88,4 @@ public class AuthorDaoImpl implements AuthorDao {
 		}
 		
 	}
-
 }

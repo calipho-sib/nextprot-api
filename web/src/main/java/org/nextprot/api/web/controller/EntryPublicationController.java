@@ -1,5 +1,6 @@
 package org.nextprot.api.web.controller;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
@@ -10,7 +11,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.PublicationStatisticsService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
@@ -28,7 +29,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Controller
-//@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
+@Api(name = "Entry Publications", description = "Method to retrieve a publications linked to a neXtProt entry")
 public class EntryPublicationController {
 
 	@Autowired
@@ -36,7 +37,7 @@ public class EntryPublicationController {
     @Autowired
     private PublicationService publicationService;
     @Autowired
-    private PublicationStatisticsService publicationStatisticsService;
+    private StatisticsService statisticsService;
     @Autowired
     private SolrService solrService;
     @Autowired
@@ -99,7 +100,7 @@ public class EntryPublicationController {
     @ResponseBody
     public GlobalPublicationStatistics calcGlobalPublicationStats() {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics();
+        return statisticsService.getGlobalPublicationStatistics();
     }
 
     @ApiMethod(path = "/publications/pubid/{pubid}/stats", verb = ApiVerb.GET, description = "Get statistics over all publications linked with a neXtProt entry",
@@ -110,7 +111,7 @@ public class EntryPublicationController {
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId) {
 
-        return publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
+        return statisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
     @ApiMethod(path = "/publications/pubids/{statstype}", verb = ApiVerb.GET, description = "Get all publication ids by statistics type",
@@ -122,7 +123,7 @@ public class EntryPublicationController {
             @PathVariable(value = "statstype") String statisticsType) {
 
         StatisticsType type = StatisticsType.valueOf(statisticsType.toUpperCase());
-        Map<Long, GlobalPublicationStatistics.PublicationStatistics> map = publicationStatisticsService.getGlobalPublicationStatistics().getPublicationStatisticsById();
+        Map<Long, GlobalPublicationStatistics.PublicationStatistics> map = statisticsService.getGlobalPublicationStatistics().getPublicationStatisticsById();
 
         if (type == StatisticsType.ALL) {
             return map.keySet();
@@ -173,14 +174,27 @@ public class EntryPublicationController {
         return view;
     }
 
-    @ApiMethod(path = "/publication/{pubid}", verb = ApiVerb.GET, description = "Get the publication",
+    @ApiMethod(path = "/publication/pubid/{pubid}", verb = ApiVerb.GET, description = "Get the publication",
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/publication/{pubid}", method = { RequestMethod.GET })
+    @RequestMapping(value = "/publication/pubid/{pubid}", method = { RequestMethod.GET })
     @ResponseBody
     public Publication getPublication(@ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
                                           @PathVariable("pubid") long publicationId) {
 
         return publicationService.findPublicationById(publicationId);
+    }
+
+    @ApiMethod(path = "/publication/database/{database}/accession/{accession}", verb = ApiVerb.GET, description = "Get a PubMed or DOI publication",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publication/database/{database}/accession/{accession}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Publication getPublicationFromAccessionAndDatabase(
+            @ApiPathParam(name = "database", description = "A database for publications (PubMed or DOI)", allowedvalues = { "PubMed" })
+            @PathVariable("database") String database,
+            @ApiPathParam(name = "accession", description = "A publication accession", allowedvalues = { "26487540" })
+            @PathVariable("accession") String accession) {
+
+        return publicationService.findPublicationByDatabaseAndAccession(database, accession);
     }
 
     private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {

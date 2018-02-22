@@ -1,16 +1,15 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Overview.History;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @DatabaseSetup(value = "HistoryDaoTest.xml", type = DatabaseOperation.INSERT)
 public class HistoryDaoTest extends CoreUnitBaseTest {
@@ -23,7 +22,7 @@ public class HistoryDaoTest extends CoreUnitBaseTest {
 		assertEquals(1, histories.size());
 		
 		History history = histories.get(0);
-		assertEquals("Evidence_at_protein_level", history.getProteinExistence());
+		assertEquals("Evidence_at_protein_level", history.getProteinExistenceUniprot().getDescriptionName());
 		assertEquals("2010-03-01", history.getFormattedNextprotIntegrationDate());
 		assertEquals("2013-06-15", history.getFormattedNextprotUpdateDate());
 		assertEquals("2006-10-31", history.getFormattedUniprotIntegrationDate());

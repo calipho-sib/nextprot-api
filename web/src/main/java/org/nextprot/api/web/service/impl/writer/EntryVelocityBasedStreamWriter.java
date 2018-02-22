@@ -5,7 +5,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
@@ -25,7 +25,7 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
-    protected EntryReportService entryReportService;
+    protected EntryReportStatsService entryReportStatsService;
     protected VelocityConfig velocityConfig;
     private final Template template;
     private final String viewName;
@@ -38,7 +38,7 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
         Preconditions.checkNotNull(viewName);
 
         entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
-        entryReportService = applicationContext.getBean(EntryReportService.class);
+        entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
         velocityConfig = applicationContext.getBean(VelocityConfig.class);
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
 

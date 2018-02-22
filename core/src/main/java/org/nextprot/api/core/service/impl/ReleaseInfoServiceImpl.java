@@ -3,7 +3,13 @@ package org.nextprot.api.core.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
-import org.nextprot.api.core.domain.release.ReleaseInfo;
+import org.nextprot.api.core.dao.ReleaseStatsDao;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
+import org.nextprot.api.core.domain.release.ReleaseInfoStats;
+import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.domain.release.ReleaseStatsTag;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletContext;
 import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -21,21 +28,60 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 	@Autowired(required = false) private ServletContext servletContext;
 	@Autowired private ReleaseInfoDao releaseInfoDao;
+	@Autowired private ReleaseStatsDao releaseStatsDao;
 	@Autowired private Environment env;
-	
+	@Autowired private MasterIdentifierService masterIdentifierService;
+
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
 
-	
 	@Override
-	@Cacheable("release-contents")
-	public ReleaseInfo findReleaseInfo() {
-		ReleaseInfo ri = new ReleaseInfo();
+	@Cacheable("release-versions")
+	public ReleaseInfoVersions findReleaseVersions() {
+		ReleaseInfoVersions ri = new ReleaseInfoVersions();
 		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
 		ri.setApiRelease(this.getApiVersion());
-		ri.setDatasources(releaseInfoDao.findReleaseInfoDataSources());
-		ri.setTagStatistics(releaseInfoDao.findTagStatistics());
-
 		return ri;
+	}
+
+	@Override
+	@Cacheable("release-stats")
+	public ReleaseInfoStats findReleaseStats() {
+
+		ReleaseInfoStats rs = new ReleaseInfoStats();
+
+		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
+
+		for (ReleaseStatsTag statsTag : stats) {
+
+			if ("PROTEIN_LEVEL_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PROTEIN_LEVEL).size());
+			}
+			else if ("TRANSCRIPT_LEVEL_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.TRANSCRIPT_LEVEL).size());
+			}
+			else if ("HOMOLOGY_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.HOMOLOGY).size());
+			}
+			else if ("PREDICTED_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PREDICTED).size());
+			}
+			else if ("UNCERTAIN_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.UNCERTAIN).size());
+			}
+		}
+
+		rs.setTagStatistics(stats);
+
+		return rs;
+	}
+
+	@Override
+	@Cacheable("release-data-sources")
+	public ReleaseInfoDataSources findReleaseDatasources() {
+
+		ReleaseInfoDataSources sources = new ReleaseInfoDataSources();
+		sources.setDatasources(releaseStatsDao.findReleaseInfoDataSources());
+		return sources;
 	}
 
 	private String getApiVersion() {
@@ -88,14 +134,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		File file = new File(dir+filename);
 
 		if (file.isFile()) {
-
-			BufferedReader br = new BufferedReader(new FileReader(dir + filename));
-			String line = br.readLine();
-
-			br.close();
-			return line;
+			try (BufferedReader br = new BufferedReader(new FileReader(dir + filename))) {
+				return br.readLine();
+			}
 		}
-
 		return null;
 	}
 }

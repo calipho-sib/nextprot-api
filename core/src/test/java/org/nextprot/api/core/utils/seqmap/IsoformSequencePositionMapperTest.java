@@ -11,7 +11,7 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev", "cache" })
 public class IsoformSequencePositionMapperTest extends CoreUnitBaseTest {
 
     @Autowired

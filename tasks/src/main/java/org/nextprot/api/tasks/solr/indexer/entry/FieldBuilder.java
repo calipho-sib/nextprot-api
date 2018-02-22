@@ -3,6 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -14,7 +15,8 @@ public abstract class FieldBuilder {
 	boolean isGold = false;
 	protected TerminologyService terminologyservice = null;
 	protected EntryBuilderService entryBuilderService = null;
-	protected PublicationService publicationService;
+	protected PublicationService publicationService = null;
+	protected EntryReportStatsService entryReportStatsService = null;
 
     public boolean isGold() {
 		return isGold;
@@ -35,6 +37,10 @@ public abstract class FieldBuilder {
     public void setPublicationService(PublicationService publicationService) {
         this.publicationService = publicationService;
     }
+
+	public void setEntryReportStatsService(EntryReportStatsService entryReportStatsService) {
+		this.entryReportStatsService = entryReportStatsService;
+	}
 
 	boolean initialized = false;
 	private Map<Fields, Object> fields = new HashMap<>();

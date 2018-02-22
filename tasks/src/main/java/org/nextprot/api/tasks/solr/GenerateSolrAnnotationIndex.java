@@ -1,18 +1,14 @@
 package org.nextprot.api.tasks.solr;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
 
 import java.util.Set;
 
 public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 
-	
 	public static void main(String[] args) {
 		GenerateSolrAnnotationIndex i = new GenerateSolrAnnotationIndex();
 		i.launch(args);
@@ -34,6 +30,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
         indexer.setPublicationService(getBean(PublicationService.class));
+        indexer.setEntryReportStatsService(getBean(EntryReportStatsService.class));
 
 		// Remove previous indexes
 		logger.info("removing all solr entries records");

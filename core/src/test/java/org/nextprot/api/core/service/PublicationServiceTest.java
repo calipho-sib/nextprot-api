@@ -1,15 +1,12 @@
 package org.nextprot.api.core.service;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.commons.dao.MasterIdentifierDao;
-import org.nextprot.api.core.dao.AuthorDao;
-import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
@@ -30,22 +27,19 @@ public class PublicationServiceTest {
 	private PublicationService publicationService = new PublicationServiceImpl();
 
 	@Mock
-	private MasterIdentifierDao masterIdentifierDao;
+	private MasterIdentifierService masterIdentifierService;
 
 	@Mock
 	private PublicationDao publicationDao;
 
 	@Mock
-	private AuthorDao authorDao;
-
-	@Mock
-	private DbXrefDao dbXrefDao;
-
-	@Mock
-	private StatementDao statementDao;
+	private AuthorService authorService;
 
 	@Mock
 	private DbXrefService dbXrefService;
+
+	@Mock
+	private StatementDao statementDao; 	// injected in PublicationServiceImpl
 
 	@Before
 	public void init() {
@@ -63,8 +57,8 @@ public class PublicationServiceTest {
 		publicationService.findPublicationById(100L);
 
 		verify(publicationDao).findPublicationById(100L);
-		verify(authorDao).findAuthorsByPublicationId(1L);
-		verify(dbXrefDao).findDbXRefsByPublicationId(1L);
+		verify(authorService).findAuthorsByPublicationId(1L);
+		verify(dbXrefService).findDbXRefByPublicationId(1L);
 	}
 
 	@Ignore
@@ -80,17 +74,17 @@ public class PublicationServiceTest {
 
 		Publication publication = mock(Publication.class);
 		when(publication.getPublicationId()).thenReturn(1L);
-		when(masterIdentifierDao.findIdByUniqueName("NX_P12345")).thenReturn(100L);
+		when(masterIdentifierService.findIdByUniqueName("NX_P12345")).thenReturn(100L);
 
 		when(publicationDao.findSortedPublicationsByMasterId(100L)).thenReturn(Arrays.asList(publication));
 
 		publicationService.findPublicationsByEntryName("NX_P12345");
 
-		verify(masterIdentifierDao).findIdByUniqueName("NX_P12345");
+		verify(masterIdentifierService).findIdByUniqueName("NX_P12345");
 		verify(publicationDao).findSortedPublicationsByMasterId(100L);
 
 		verify(dbXrefService).findDbXRefByPublicationIds(Arrays.asList(1L));
-		verify(authorDao).findAuthorsByPublicationIds(Arrays.asList(1L));
+		verify(authorService).findAuthorsByPublicationIds(Arrays.asList(1L));
 	}
 
 	@Ignore

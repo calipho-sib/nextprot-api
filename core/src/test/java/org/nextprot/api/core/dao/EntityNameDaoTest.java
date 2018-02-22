@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;

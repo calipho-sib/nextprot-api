@@ -1,22 +1,22 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Test;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
-import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertEquals;
 
 public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 
