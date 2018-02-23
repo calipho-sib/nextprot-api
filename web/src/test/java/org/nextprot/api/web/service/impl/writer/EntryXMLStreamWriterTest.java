@@ -65,7 +65,7 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "    </entry-list>\n" +
                 "    <copyright>\n" +
                 "        Copyrighted by the SIB Swiss Institute of Bioinformatics.\n" +
-                "        Distributed under the Creative Commons Attribution-NoDerivs License - see http://creativecommons.org/licenses/by-nd/3.0/\n" +
+                "        Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0) - see https://creativecommons.org/licenses/by/4.0/\n" +
                 "    </copyright>\n" +
                 "</nextprot-export>\n", out.toString());
     }
@@ -167,7 +167,7 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "    </entry-list>\n" +
                 "    <copyright>\n" +
                 "        Copyrighted by the SIB Swiss Institute of Bioinformatics.\n" +
-                "        Distributed under the Creative Commons Attribution-NoDerivs License - see http://creativecommons.org/licenses/by-nd/3.0/\n" +
+                "        Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0) - see https://creativecommons.org/licenses/by/4.0/\n" +
                 "    </copyright>\n" +
                 "</nextprot-export>\n";
 
