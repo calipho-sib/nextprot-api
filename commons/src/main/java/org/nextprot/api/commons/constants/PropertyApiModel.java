@@ -40,11 +40,11 @@ public class PropertyApiModel {
 	public static final String NAME_INTENSITY="intensity";
 
 	
-	private static enum Parent { EVIDENCE, ANNOTATION }
+	private enum Parent { EVIDENCE, ANNOTATION }
 	
 	private static Map<AnnotationCategory,Set<PropertyApiModel>> anno2props;
 	static {
-		anno2props=new HashMap<>();
+		anno2props=new EnumMap<>(AnnotationCategory.class);
 
 		anno2props.put(AnnotationCategory.GLYCOSYLATION_SITE,
 				new HashSet<>(Arrays.asList(
@@ -129,7 +129,7 @@ public class PropertyApiModel {
 
 		if (value==null) return null;
 		
-		if (datatype.equals("boolean")) return toTrueFalse(value);
+		if ("boolean".equals(datatype)) return toTrueFalse(value);
 
 		if (dbName.equals(PropertyApiModel.NAME_EXPRESSION_LEVEL)) {
 			switch (value) {
@@ -158,9 +158,9 @@ public class PropertyApiModel {
 
 	protected String toTrueFalse(String value) {
 		String v2 = value.toLowerCase();
-		if (v2.startsWith("y") || v2.equals("1") || value.startsWith("t")) { 
+		if (v2.startsWith("y") || "1".equals(v2) || value.startsWith("t")) {
 			return "true"; 
-		} else if (v2.startsWith("n") || v2.equals("0") || value.startsWith("f")) {
+		} else if (v2.startsWith("n") || "0".equals(v2) || value.startsWith("f")) {
 			return "false";
 		} else {
 			return value;
