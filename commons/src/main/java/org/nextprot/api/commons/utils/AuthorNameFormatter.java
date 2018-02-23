@@ -18,7 +18,7 @@ public class AuthorNameFormatter {
 
         Preconditions.checkNotNull(forename);
 
-        if (forename.equals("-")) return "-";
+        if ("-".equals(forename)) return "-";
         
         StringBuilder sb = new StringBuilder();
 
@@ -28,25 +28,12 @@ public class AuthorNameFormatter {
             // composed name
             if (name.contains("-")) {
 
-                String[] composedName = name.split("[-]");
-
-                for (int i=0 ; i<composedName.length ; i++) {
-
-                    if (!composedName[i].isEmpty()) {
-
-                        sb.append(composedName[i].charAt(0));
-                        sb.append(".");
-                    }
-
-                    sb.append("-");
-                }
-            	sb.delete(sb.length()-1, sb.length());
+                formatComposedNameInitials(name, sb);
             }
             // standard name
             else if (name.length()>0) {
 
-                sb.append(name.charAt(0));
-                sb.append('.');
+                formatStandardNameInitials(name, sb);
             }
         }
 
@@ -54,6 +41,33 @@ public class AuthorNameFormatter {
             sb.append(" ").append(formatSuffix(suffix));
 
         return sb.toString();
+    }
+
+    private void formatComposedNameInitials(String composedName, StringBuilder sb) {
+
+        String[] names = composedName.split("[-]");
+
+        for (int i=0 ; i<names.length ; i++) {
+
+            sb.append(formatInitial(names[i]));
+            sb.append("-");
+        }
+        sb.delete(sb.length()-1, sb.length());
+    }
+
+    private void formatStandardNameInitials(String standardName, StringBuilder sb) {
+
+        sb.append(standardName.charAt(0));
+        sb.append('.');
+    }
+
+    private String formatInitial(String name) {
+
+        if (!name.isEmpty()) {
+
+            return name.charAt(0)+".";
+        }
+        return name;
     }
 
     public String formatSuffix(String suffix) {
@@ -79,9 +93,9 @@ public class AuthorNameFormatter {
                 return "Jr.";
             case "Sr":
                 return "Sr.";
+            default:
+                return suffix;
         }
-
-        return suffix;
     }
 
 }
