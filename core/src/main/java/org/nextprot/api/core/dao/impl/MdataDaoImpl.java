@@ -1,12 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -19,6 +12,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class MdataDaoImpl implements MdataDao {
@@ -36,11 +36,11 @@ public class MdataDaoImpl implements MdataDao {
 				namedParameters, 
 				mapper);
 		return map;		
-	};
+	}
 
 	@Override
 	public List<Mdata> findMdataByIds(List<Long> mdataIds) {
-		if (mdataIds==null || mdataIds.size()==0) return new ArrayList<Mdata>();
+		if (mdataIds==null || mdataIds.isEmpty()) return new ArrayList<>();
 		SqlParameterSource namedParameters = new MapSqlParameterSource("mdata_ids", mdataIds);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
 				sqlDictionary.getSQLQuery("mdata-by-ids"), 

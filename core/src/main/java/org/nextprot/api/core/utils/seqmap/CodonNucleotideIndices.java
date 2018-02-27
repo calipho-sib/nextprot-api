@@ -87,10 +87,11 @@ public class CodonNucleotideIndices {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		if (nuNum.size()>0) sb.append("|nu0:"+ nuNum.get(0) + "|"); else sb.append("|-|");
+		StringBuilder sb = new StringBuilder();
+		if (!nuNum.isEmpty()) sb.append("|nu0:"+ nuNum.get(0) + "|"); else sb.append("|-|");
 		if (nuNum.size()>1) sb.append("nu1:"+ nuNum.get(1) + "|"); else sb.append("-|");
 		if (nuNum.size()>2) sb.append("nu2:"+ nuNum.get(2) + "|"); else sb.append("-|");
 		sb.append(" - aaPosition:" + getAminoAcidPosition());

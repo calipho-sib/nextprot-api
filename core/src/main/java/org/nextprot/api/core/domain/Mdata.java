@@ -71,8 +71,9 @@ public class Mdata implements Serializable{
 		return mdataContext;
 	}
 
+	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("id       : " + this.id + "\n");
 		sb.append("ac       : " + this.accession + "\n");
 		sb.append("title    : " + this.title + "'\n");
