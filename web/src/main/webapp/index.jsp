@@ -196,7 +196,7 @@
 </script>
 
 <script id="reldata" type="text/x-handlebars-template">
-	Data release {{release.databaseRelease}}
+	Data release {{versions.databaseRelease}}
 </script>
 
 
