@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.*;
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 
 @Service
 public class StreamEntryServiceImpl implements StreamEntryService {
@@ -49,9 +49,9 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
     private Map<String, Object> createInfos(String description) {
 		Map<String, Object> infos = new HashMap<>();
-		infos.put(RELEASE_INFO, releaseInfoService.findReleaseVersions());
-		infos.put(RELEASE_DATA_SOURCES, releaseInfoService.findReleaseDatasources());
-		infos.put(DESCRIPTION, description);
+		infos.put(EntryStreamWriter.getReleaseInfoKey(), releaseInfoService.findReleaseVersions());
+		infos.put(EntryStreamWriter.getReleaseDataSourcesKey(), releaseInfoService.findReleaseDatasources());
+		infos.put(EntryStreamWriter.getDescriptionKey(), description);
 		return infos;
 	}
 

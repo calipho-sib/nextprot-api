@@ -34,8 +34,8 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
     @Override
     protected void writeHeader(Map<String, Object> infos) throws IOException {
 
-        int isoformNumber = (int)infos.get(ISOFORM_COUNT);
-        String description = (String) infos.getOrDefault(DESCRIPTION, "");
+        int isoformNumber = (int)infos.get(EntryStreamWriter.getIsoformCountKey());
+        String description = (String) infos.getOrDefault(EntryStreamWriter.getDescriptionKey(), "");
 
         StringBuilder sb = new StringBuilder();
 
@@ -44,8 +44,8 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
                 .append("# DbName=neXtProt: ").append(description).append(StringUtils.CR_LF)
                 .append("# DbSource=https://www.nextprot.org").append(StringUtils.CR_LF);
 
-        if (infos.containsKey(RELEASE_INFO))
-                sb.append("# DbVersion=").append(((ReleaseInfoVersions)infos.get(RELEASE_INFO)).getDatabaseRelease()).append(StringUtils.CR_LF);
+        if (infos.containsKey(EntryStreamWriter.getReleaseInfoKey()))
+                sb.append("# DbVersion=").append(((ReleaseInfoVersions)infos.get(EntryStreamWriter.getReleaseInfoKey())).getDatabaseRelease()).append(StringUtils.CR_LF);
 
         sb.append("# Prefix=nxp").append(StringUtils.CR_LF)
                 .append("# NumberOfEntries=").append(isoformNumber).append(StringUtils.CR_LF)
@@ -79,7 +79,7 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
         cacheBuiltEntries(entryAccessions);
 
         // isoform count information has to be computed before streaming all entries
-        infos.put(ISOFORM_COUNT, cachedEntries.values().stream()
+        infos.put(EntryStreamWriter.getIsoformCountKey(), cachedEntries.values().stream()
                 .mapToInt(e -> e.getIsoforms().size())
                 .sum());
 

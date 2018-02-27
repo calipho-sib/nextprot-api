@@ -19,11 +19,11 @@ import java.util.Map;
  */
 public abstract class EntryStreamWriter<S extends Flushable & Closeable> implements AutoCloseable {
 
-    public static String ENTRY_COUNT = "entryCount";
-    public static String ISOFORM_COUNT = "isoformCount";
-    public static String RELEASE_INFO = "releaseInfo";
-    public static String RELEASE_DATA_SOURCES = "releaseDataSources";
-    public static String DESCRIPTION = "description";
+    private static String ENTRY_COUNT = "entryCount";
+    private static String ISOFORM_COUNT = "isoformCount";
+    private static String RELEASE_INFO = "releaseInfo";
+    private static String RELEASE_DATA_SOURCES = "releaseDataSources";
+    private static String DESCRIPTION = "description";
 
     static final String UTF_8 = "UTF-8";
 
@@ -134,5 +134,25 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
             default:
                 throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
         }
+    }
+
+    public static String getEntryCountKey() {
+        return ENTRY_COUNT;
+    }
+
+    public static String getIsoformCountKey() {
+        return ISOFORM_COUNT;
+    }
+
+    public static String getReleaseInfoKey() {
+        return RELEASE_INFO;
+    }
+
+    public static String getReleaseDataSourcesKey() {
+        return RELEASE_DATA_SOURCES;
+    }
+
+    public static String getDescriptionKey() {
+        return DESCRIPTION;
     }
 }

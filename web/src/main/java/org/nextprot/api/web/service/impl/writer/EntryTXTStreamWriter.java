@@ -34,7 +34,7 @@ public class EntryTXTStreamWriter extends EntryVelocityBasedStreamWriter {
     @Override
     protected void writeHeader(Map<String, Object> infos) throws IOException {
 
-        int entryNum = (int) infos.get(ENTRY_COUNT);
+        int entryNum = (int) infos.get(EntryStreamWriter.getEntryCountKey());
 
         if (entryNum > 0)
             getStream().write("#nb entries=" + entryNum + CR_LF);
