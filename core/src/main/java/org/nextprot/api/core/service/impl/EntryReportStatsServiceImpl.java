@@ -80,40 +80,23 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
     private void setIsProteomics(String entryAccession, List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
 
-    	boolean result = false;
-    	
-    	if (xrefs.stream().anyMatch(this::isPeptideAtlasOrMassSpecXref)) {
-    		result = true;
-    	}
-    	
-    	else if (publicationService.findPublicationsByEntryName(entryAccession).stream()
-                .anyMatch(pub -> hasMassSpecScope(entryAccession, pub.getPublicationId()))) {
-    		result = true;
-
-    	} else if (annotations.stream()
-    			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
-    		result = true;
-    	}
+    	boolean result = xrefs.stream().anyMatch(this::isPeptideAtlasOrMassSpecXref) ||
+                publicationService.findPublicationsByEntryName(entryAccession).stream().anyMatch(pub -> hasMassSpecScope(entryAccession, pub.getPublicationId())) ||
+                annotations.stream().anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a));
 
     	report.setPropertyTest(EntryReport.IS_PROTEOMICS, result);
     }
-
     
     private boolean hasMassSpecScope(String entryAccession, long pubId) {
 
-    	//return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
     	return entryPublicationService.findEntryPublications(entryAccession).getEntryPublication(pubId).getDirectLinks(PublicationProperty.SCOPE).stream()
                 .anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
     	
-    	if ("PeptideAtlas".equals(x.getDatabaseName())) return true;
-    	
-    	if (x.getProperties().stream().anyMatch(
-    			p -> p.getName().equals("scope") && p.getValue().contains("MASS SPECTROMETRY"))) return true;
-    	
-    	return false;
+    	return "PeptideAtlas".equals(x.getDatabaseName()) ||
+                x.getProperties().stream().anyMatch(p -> "scope".equals(p.getName()) && "MASS SPECTROMETRY".contains(p.getValue()));
     }
     
     private boolean isPeptideMapping(Annotation a) {
@@ -144,7 +127,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 			
 		// that works for patented antibodies with accession like CABxxx with an unknow sequence (and thus not aligned / mapped on isoforms)
 		if (xrefs.stream()
-				.anyMatch(x -> x.getAccession().startsWith("CAB") && x.getDatabaseName().equals("HPA"))) result=true;
+				.anyMatch(x -> x.getAccession().startsWith("CAB") && "HPA".equals(x.getDatabaseName()))) result=true;
 		
         report.setPropertyTest(EntryReport.IS_ANTIBODY,result);
     }
@@ -166,16 +149,11 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
      */
     private void setIsDisease(List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
 
-        boolean result = false;
-        
-    	if (annotations.stream().anyMatch(a -> hasDiseaseCategory(a) || hasDiseaseKeywordTerm(a))) {
-    		result = true;
-    	} else if (xrefs.stream().anyMatch(x -> "Orphanet".equals(x.getDatabaseName()))) {
-    		result = true;
-    	}    	
+        boolean result = annotations.stream().anyMatch(a -> hasDiseaseCategory(a) || hasDiseaseKeywordTerm(a)) ||
+            xrefs.stream().anyMatch(x -> "Orphanet".equals(x.getDatabaseName()));
+
         report.setPropertyTest(EntryReport.IS_DISEASE, result);
     }
-    
 
     private boolean hasDiseaseCategory(Annotation a) {
     	return a.getAPICategory()==AnnotationCategory.DISEASE;
@@ -215,13 +193,8 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     private void setPTMCount(List<Annotation> annotations, EntryReportStats report) {
 
         report.setPropertyCount(EntryReport.PTM_COUNT, (int) annotations.stream()
-                .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.SELENOCYSTEINE ||
-                                annotation.getAPICategory() == AnnotationCategory.LIPIDATION_SITE ||
-                                annotation.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE ||
-                                annotation.getAPICategory() == AnnotationCategory.CROSS_LINK ||
-                                annotation.getAPICategory() == AnnotationCategory.DISULFIDE_BOND ||
-                                annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE
-                        // || annotation.getAPICategory() == AnnotationCategory.PTM_INFO
+                .filter(annotation -> annotation.getAPICategory().isChildOf(AnnotationCategory.GENERIC_PTM) &&
+                        annotation.getAPICategory() != AnnotationCategory.PTM_INFO
                 )
                 .count());
     }
