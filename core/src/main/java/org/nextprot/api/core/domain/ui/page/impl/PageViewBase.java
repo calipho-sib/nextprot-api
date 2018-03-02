@@ -9,7 +9,6 @@ import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -136,9 +135,7 @@ public abstract class PageViewBase implements PageView {
 	
 	@Override
 	public boolean doesDisplayAnnotationCategory(AnnotationCategory cat) {
-		if (getFeatureCategoryWhiteList().contains(cat)) return true;
-		if (getAnnotationCategoryWhiteList().contains(cat)) return true;
-		return false;
+		return getFeatureCategoryWhiteList().contains(cat) || getAnnotationCategoryWhiteList().contains(cat);
 	}
 	
 	/**
