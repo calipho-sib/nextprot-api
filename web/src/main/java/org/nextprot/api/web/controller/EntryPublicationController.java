@@ -10,6 +10,7 @@ import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.*;
 import org.nextprot.api.core.service.EntryPublicationService;
+import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.Query;
@@ -22,9 +23,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
-import java.util.*;
-import java.util.function.Function;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,8 @@ public class EntryPublicationController {
     private SolrService solrService;
     @Autowired
     private QueryBuilderService queryBuilderService;
+    @Autowired
+    private EntryPublicationViewService entryPublicationViewService;
 
 	@ApiMethod(path = "/entry-publications/entry/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -57,7 +61,7 @@ public class EntryPublicationController {
 
 		if (PublicationCategory.hasName(pubCategoryName)) {
 
-            return buildView(entryPublicationService.findEntryPublications(entryName), PublicationCategory.valueOfName(pubCategoryName));
+            return entryPublicationViewService.buildEntryPublicationView(entryName, PublicationCategory.valueOfName(pubCategoryName));
 		}
 
 		throw new NextProtException(publicationCategory + ": Unknown publication view");
@@ -195,123 +199,6 @@ public class EntryPublicationController {
             @PathVariable("accession") String accession) {
 
         return publicationService.findPublicationByDatabaseAndAccession(database, accession);
-    }
-
-    private List<EntryPublicationView> buildView(EntryPublications entryPublications, PublicationCategory publicationCategory) {
-
-        List<EntryPublicationView> list = new ArrayList<>();
-
-        Map<Long, EntryPublication> entryPublicationMap = entryPublications
-                .getEntryPublicationList(publicationCategory).stream()
-                .collect(Collectors.toMap(
-                        EntryPublication::getPubId,
-                        Function.identity(),
-                        (entryPublication, entryPublication2) -> entryPublication
-                ));
-
-        List<Publication> publications = publicationService.findPublicationsByEntryName(entryPublications.getEntryAccession());
-
-        for (Publication publication : publications) {
-
-            if (entryPublicationMap.containsKey(publication.getPublicationId())) {
-                EntryPublicationView view = new EntryPublicationView();
-
-                EntryPublication entryPublication = entryPublicationMap.get(publication.getPublicationId());
-
-                view.setCitedInViews(entryPublication.getCitedInViews());
-                view.setDirectLinks(entryPublication.getDirectLinks());
-                view.setPublication(publication);
-
-                list.add(view);
-            }
-        }
-
-        return list;
-    }
-
-    public static class EntryPublicationView implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private Publication publication;
-        private Map<String,String> citedInViews;
-        private List<PublicationDirectLink> directLinks;
-
-        public Publication getPublication() {
-            return publication;
-        }
-
-        public void setPublication(Publication publication) {
-            this.publication = publication;
-        }
-
-        public Map<String, String> getCitedInViews() {
-            return citedInViews;
-        }
-
-        public void setCitedInViews(Map<String, String> citedInViews) {
-            this.citedInViews = citedInViews;
-        }
-
-        public List<PublicationDirectLink> getDirectLinks() {
-            return directLinks;
-        }
-
-        public void setDirectLinks(List<PublicationDirectLink> directLinks) {
-            this.directLinks = directLinks;
-        }
-    }
-
-    public static class PublicationView implements Serializable {
-
-        private static final long serialVersionUID = 3L;
-
-        private Publication publication;
-        private int relatedEntryCount;
-        private Map<String, EntryPublication> entryPublicationMap = new HashMap<>();
-        private Map<String, Map<String, Object>> entrySolrResultMap = new HashMap<>();
-
-        public Publication getPublication() {
-            return publication;
-        }
-
-        public void setPublication(Publication publication) {
-            this.publication = publication;
-        }
-
-        public Map<String, EntryPublication> getEntryPublicationMap() {
-            return entryPublicationMap;
-        }
-
-        public Map<String, Map<String, Object>> getEntrySolrResultMap() {
-            return entrySolrResultMap;
-        }
-
-        public void addEntryPublicationList(List<EntryPublication> entryPublicationList) {
-
-            for (EntryPublication ep : entryPublicationList) {
-
-                entryPublicationMap.put(ep.getEntryAccession(), ep);
-            }
-        }
-
-        public void putEntrySolrResult(Map<String, Object> result) {
-
-            String accession = (String)result.get("id");
-
-            if (entrySolrResultMap.containsKey(accession)) {
-                throw new NextProtException("accession "+accession+" already exists");
-            }
-            entrySolrResultMap.put(accession, result);
-        }
-
-        public int getRelatedEntryCount() {
-            return relatedEntryCount;
-        }
-
-        public void setRelatedEntryCount(int relatedEntryCount) {
-            this.relatedEntryCount = relatedEntryCount;
-        }
     }
 
     private enum StatisticsType {
