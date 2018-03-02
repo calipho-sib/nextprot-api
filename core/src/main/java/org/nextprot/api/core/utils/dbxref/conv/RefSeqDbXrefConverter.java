@@ -3,7 +3,7 @@ package org.nextprot.api.core.utils.dbxref.conv;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverSupplier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ class RefSeqDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(XRefDatabase.REF_SEQ.getName());
+        dbXRef.setDatabaseName(DbXrefURLResolverSupplier.REF_SEQ.getName());
         dbXRef.setUrl(xref.getUrl());
         dbXRef.setLinkUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
         dbXRef.setProperties(new ArrayList<>());

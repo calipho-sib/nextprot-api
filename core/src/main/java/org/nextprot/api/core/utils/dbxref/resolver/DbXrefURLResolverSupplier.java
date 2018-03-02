@@ -1,17 +1,19 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
- * Databases referenced in DbXref with resolver
+ * Supply a DbXrefURLResolver from a specific database
  *
  * Created by fnikitin on 10/12/15.
  */
-public enum XRefDatabase {
+public enum DbXrefURLResolverSupplier implements Supplier<DbXrefURLResolver> {
 
     BGEE("Bgee",                       new BgeeXrefURLResolver()),
     BRENDA("BRENDA",                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.BRENDA)),
@@ -49,22 +51,22 @@ public enum XRefDatabase {
     UNI_GENE("UniGene",                new UnigeneXrefURLResolver()),
     WEBINFO("WEBINFO",                 new WebInfoXrefURLResolver()),
     CHITARS("ChiTaRS",                 new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),  
-    LOC("LOC",                 			new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC))	
+    LOC("LOC",                 		   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC))
     ;
 
     private final String name;
     private final DefaultDbXrefURLResolver resolver;
 
-    private static final Map<String, XRefDatabase> VALUE_OF_STRING_MAP = new HashMap<>();
+    private static final Map<String, DbXrefURLResolverSupplier> VALUE_OF_STRING_MAP = new HashMap<>();
 
     static {
-        for (XRefDatabase xRefDatabase : values()) {
+        for (DbXrefURLResolverSupplier dbXrefURLResolverSupplier : values()) {
 
-            VALUE_OF_STRING_MAP.put(xRefDatabase.getName().toUpperCase(), xRefDatabase);
+            VALUE_OF_STRING_MAP.put(dbXrefURLResolverSupplier.getName().toUpperCase(), dbXrefURLResolverSupplier);
         }
     }
 
-    XRefDatabase(String name, DefaultDbXrefURLResolver resolver) {
+    DbXrefURLResolverSupplier(String name, DefaultDbXrefURLResolver resolver) {
 
         this.name = name;
         this.resolver = resolver;
@@ -74,33 +76,34 @@ public enum XRefDatabase {
         return name;
     }
 
-    public DefaultDbXrefURLResolver getResolver() {
+    @Override
+    public DbXrefURLResolver get() {
 
         return resolver;
     }
 
     /**
      * Get a XRefDatabase enum from name
-     * @param name the enum name
+     * @param dbName the database name
      * @return XRefDatabase enum or null if not found
      */
-    public static XRefDatabase valueOfDbName(String name) {
+    public static DbXrefURLResolverSupplier fromDbName(String dbName) {
 
-        String uc = name.toUpperCase();
+        String dbNameUpperCase = dbName.toUpperCase();
 
-        if (VALUE_OF_STRING_MAP.containsKey(uc)) {
-            return VALUE_OF_STRING_MAP.get(uc);
+        if (VALUE_OF_STRING_MAP.containsKey(dbNameUpperCase)) {
+            return VALUE_OF_STRING_MAP.get(dbNameUpperCase);
         }
         return null;
     }
 
     /**
-     * Get an optional XRefDatabas enum from name
-     * @param name the enum name
-     * @return XRefDatabase enum of absent if not found
+     * Get an optional enum from a database name
+     * @param dbName the database name
+     * @return an Optional of DbXrefURLResolverSupplier enum or absent if not found
      */
-    public static Optional<XRefDatabase> valueOfName(String name) {
+    public static Optional<DbXrefURLResolverSupplier> fromExistingDbName(String dbName) {
 
-        return Optional.ofNullable(valueOfDbName(name));
+        return Optional.ofNullable(fromDbName(dbName));
     }
 }

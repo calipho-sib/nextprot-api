@@ -21,7 +21,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.nextprot.api.core.utils.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.utils.dbxref.conv.EnsemblXrefPropertyConverter;
-import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -277,8 +277,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		for (DbXref xref : xrefs) {
 
-			if (XRefDatabase.REF_SEQ.getName().equals(xref.getDatabaseName()) ||
-				XRefDatabase.EMBL.getName().equals(xref.getDatabaseName())) {
+			if (DbXrefURLResolverSupplier.REF_SEQ.getName().equals(xref.getDatabaseName()) ||
+				DbXrefURLResolverSupplier.EMBL.getName().equals(xref.getDatabaseName())) {
 
 				newXrefs.addAll(DbXrefConverter.getInstance().convert(xref));
 			}

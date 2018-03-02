@@ -16,13 +16,13 @@ class JcrbXrefURLResolver extends DefaultDbXrefURLResolver {
     @Override
     public String getTemplateURL(DbXref xref) {
 
-        Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
+        Optional<DbXrefURLResolverSupplier> optResolverSupplier = DbXrefURLResolverSupplier.fromExistingDbName(xref.getDatabaseName());
 
-        if (db.isPresent()) {
+        if (optResolverSupplier.isPresent()) {
 
-            if (db.get() == XRefDatabase.IFO)
+            if (optResolverSupplier.get() == DbXrefURLResolverSupplier.IFO)
                 return CvDatabasePreferredLink.IFO.getLink();
-            else if (db.get() == XRefDatabase.JCRB) {
+            else if (optResolverSupplier.get() == DbXrefURLResolverSupplier.JCRB) {
                 return CvDatabasePreferredLink.JCRB.getLink();
             }
             throw new UnresolvedXrefURLException("'"+xref.getDatabaseName()+"' is not a JCRB db");
