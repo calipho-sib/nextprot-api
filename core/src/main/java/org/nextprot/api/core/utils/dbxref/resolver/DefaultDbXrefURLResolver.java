@@ -55,9 +55,9 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
         if (xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
-            Optional<DbXrefURLResolverSupplier> optResolverSupplier = DbXrefURLResolverSupplier.fromExistingDbName(xref.getDatabaseName());
+            Optional<DbXrefURLResolverSupplier> optionalSupplier = DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
 
-            String templateURL = optResolverSupplier.isPresent() ? optResolverSupplier.get().get().getTemplateURL(xref) : xref.getLinkUrl();
+            String templateURL = optionalSupplier.isPresent() ? optionalSupplier.get().getResolver().getTemplateURL(xref) : xref.getLinkUrl();
 
             if (!templateURL.startsWith("http")) {
 

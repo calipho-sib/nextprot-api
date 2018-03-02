@@ -277,8 +277,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		for (DbXref xref : xrefs) {
 
-			if (DbXrefURLResolverSupplier.REF_SEQ.getName().equals(xref.getDatabaseName()) ||
-				DbXrefURLResolverSupplier.EMBL.getName().equals(xref.getDatabaseName())) {
+			if (DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase().equals(xref.getDatabaseName()) ||
+				DbXrefURLResolverSupplier.EMBL.getXrefDatabase().equals(xref.getDatabaseName())) {
 
 				newXrefs.addAll(DbXrefConverter.getInstance().convert(xref));
 			}

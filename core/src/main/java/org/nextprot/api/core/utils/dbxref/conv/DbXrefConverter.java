@@ -2,19 +2,20 @@ package org.nextprot.api.core.utils.dbxref.conv;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverSupplier;
 
 import java.util.*;
 
 public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
-    private final Map<DbXrefURLResolverSupplier, DbXrefPropertyToXrefConverter> converters;
+    private final Map<XrefDatabase, DbXrefPropertyToXrefConverter> converters;
 
     private DbXrefConverter() {
 
-        converters = new EnumMap<>(DbXrefURLResolverSupplier.class);
-        converters.put(DbXrefURLResolverSupplier.REF_SEQ, new RefSeqDbXrefConverter());
-        converters.put(DbXrefURLResolverSupplier.EMBL, new EmblDbXrefConverter());
+        converters = new EnumMap<>(XrefDatabase.class);
+        converters.put(XrefDatabase.REF_SEQ, new RefSeqDbXrefConverter());
+        converters.put(XrefDatabase.EMBL, new EmblDbXrefConverter());
     }
 
     public static DbXrefConverter getInstance() {
@@ -30,7 +31,7 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
         private static DbXrefConverter INSTANCE = new DbXrefConverter();
 
         private Loader() {
-            throw new IllegalAccessError("Cannot instanciate");
+            throw new IllegalAccessError("Cannot instanciate Loader");
         }
     }
 
@@ -39,10 +40,10 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
         Preconditions.checkNotNull(xref);
 
-        Optional<DbXrefURLResolverSupplier> optResolverSupplier = DbXrefURLResolverSupplier.fromExistingDbName(xref.getDatabaseName());
+        Optional<DbXrefURLResolverSupplier> optionalSupplier = DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
 
-        if (optResolverSupplier.isPresent() && converters.containsKey(optResolverSupplier.get())) {
-            return converters.get(optResolverSupplier.get()).convert(xref);
+        if (optionalSupplier.isPresent() && converters.containsKey(optionalSupplier.get().getXrefDatabase())) {
+            return converters.get(optionalSupplier.get().getXrefDatabase()).convert(xref);
         }
 
         return new ArrayList<>();

@@ -16,7 +16,7 @@ class JcrbXrefURLResolver extends DefaultDbXrefURLResolver {
     @Override
     public String getTemplateURL(DbXref xref) {
 
-        Optional<DbXrefURLResolverSupplier> optResolverSupplier = DbXrefURLResolverSupplier.fromExistingDbName(xref.getDatabaseName());
+        Optional<DbXrefURLResolverSupplier> optResolverSupplier = DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
 
         if (optResolverSupplier.isPresent()) {
 

@@ -38,7 +38,7 @@ class EmblDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(DbXrefURLResolverSupplier.EMBL.getName());
+        dbXRef.setDatabaseName(DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName());
         dbXRef.setUrl(xref.getUrl());
         dbXRef.setLinkUrl(preferredLink.getLink());
         dbXRef.setProperties(new ArrayList<>());

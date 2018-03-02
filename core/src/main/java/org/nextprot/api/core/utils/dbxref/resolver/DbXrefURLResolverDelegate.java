@@ -12,23 +12,23 @@ import java.util.Optional;
  */
 public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
 
-    private Optional<DbXrefURLResolverSupplier> getXRefDatabase(DbXref xref) {
+    private Optional<DbXrefURLResolverSupplier> getXRefResolverSupplier(DbXref xref) {
 
         Preconditions.checkNotNull(xref, "cannot resolve undefined DbXref");
 
-        return DbXrefURLResolverSupplier.fromExistingDbName(xref.getDatabaseName());
+        return DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
     }
 
     @Override
     public String resolve(DbXref xref) {
 
-        Optional<DbXrefURLResolverSupplier> db = getXRefDatabase(xref);
+        Optional<DbXrefURLResolverSupplier> optionalSupplier = getXRefResolverSupplier(xref);
 
-        if (db.isPresent()) {
-            return db.get().get().resolve(xref);
+        if (optionalSupplier.isPresent()) {
+            return optionalSupplier.get().getResolver().resolve(xref);
         }
         else if (xref.getLinkUrl().contains("purl.obolibrary.org/obo")) {
-            return DbXrefURLResolverSupplier.OBO.get().resolve(xref);
+            return DbXrefURLResolverSupplier.OBO.getResolver().resolve(xref);
         }
         return new DefaultDbXrefURLResolver().resolve(xref);
     }
@@ -36,16 +36,16 @@ public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
     @Override
     public String getTemplateURL(DbXref xref) {
 
-        return getXRefDatabase(xref)
-                .map(d -> d.get().getTemplateURL(xref))
-                .orElseGet(() -> "");
+        return getXRefResolverSupplier(xref)
+                .map(d -> d.getResolver().getTemplateURL(xref))
+                .orElse("");
     }
 
     @Override
     public String getValidXrefURL(String xrefURL, String databaseName) {
 
-        return DbXrefURLResolverSupplier.fromExistingDbName(databaseName)
-                .map(d -> d.get().getValidXrefURL(xrefURL, databaseName))
-                .orElseGet(() -> xrefURL);
+        return DbXrefURLResolverSupplier.fromDbName(databaseName)
+                .map(d -> d.getResolver().getValidXrefURL(xrefURL, databaseName))
+                .orElse(xrefURL);
     }
 }

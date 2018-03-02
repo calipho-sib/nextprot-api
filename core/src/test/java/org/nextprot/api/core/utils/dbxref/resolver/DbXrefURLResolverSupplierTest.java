@@ -10,7 +10,7 @@ public class DbXrefURLResolverSupplierTest {
 
         for (DbXrefURLResolverSupplier dbXrefURLResolverSupplier : DbXrefURLResolverSupplier.values()) {
 
-            Assert.assertTrue(DbXrefURLResolverSupplier.fromDbName(dbXrefURLResolverSupplier.getName()) != null);
+            Assert.assertTrue(DbXrefURLResolverSupplier.fromDbName(dbXrefURLResolverSupplier.getXrefDatabase().getName()) != null);
         }
         Assert.assertNull(DbXrefURLResolverSupplier.fromDbName("koekdkeo"));
     }
@@ -20,8 +20,8 @@ public class DbXrefURLResolverSupplierTest {
 
         for (DbXrefURLResolverSupplier dbXrefURLResolverSupplier : DbXrefURLResolverSupplier.values()) {
 
-            Assert.assertTrue(DbXrefURLResolverSupplier.fromExistingDbName(dbXrefURLResolverSupplier.getName()).isPresent());
+            Assert.assertTrue(DbXrefURLResolverSupplier.fromDbName(dbXrefURLResolverSupplier.getXrefDatabase().getName()).isPresent());
         }
-        Assert.assertTrue(!DbXrefURLResolverSupplier.fromExistingDbName("dedoekode").isPresent());
+        Assert.assertTrue(!DbXrefURLResolverSupplier.fromDbName("dedoekode").isPresent());
     }
 }

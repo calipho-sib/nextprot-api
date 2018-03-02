@@ -19,7 +19,7 @@ public class RefSeqDbXrefConverterTest {
 
         DbXrefPropertyToXrefConverter converter = new RefSeqDbXrefConverter();
 
-        DbXref xref = createDbXref("NP_000198.1", DbXrefURLResolverSupplier.REF_SEQ.getName(), "http://www.ncbi.nlm.nih.gov/protein/%s", "http://www.ncbi.nlm.nih.gov/refseq/");
+        DbXref xref = createDbXref("NP_000198.1", DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase().getName(), "http://www.ncbi.nlm.nih.gov/protein/%s", "http://www.ncbi.nlm.nih.gov/refseq/");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(5309676, "nucleotide sequence ID", "NM_000207.2")));
 
         List<DbXref> xrefs = converter.convert(xref);
@@ -31,7 +31,7 @@ public class RefSeqDbXrefConverterTest {
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/%s", ref.getLinkUrl());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/refseq/", ref.getUrl());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/NM_000207.2", ref.getResolvedUrl());
-        Assert.assertEquals(DbXrefURLResolverSupplier.REF_SEQ.getName(), ref.getDatabaseName());
+        Assert.assertEquals(DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase(), ref.getDatabaseName());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertTrue(ref.getProperties().isEmpty());
     }

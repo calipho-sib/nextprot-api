@@ -32,7 +32,7 @@ class RefSeqDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(DbXrefURLResolverSupplier.REF_SEQ.getName());
+        dbXRef.setDatabaseName(DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase().getName());
         dbXRef.setUrl(xref.getUrl());
         dbXRef.setLinkUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
         dbXRef.setProperties(new ArrayList<>());
