@@ -95,6 +95,11 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
                             entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
                         }
+                        if (publication.getPublicationType() == PublicationType.SUBMISSION) {
+                            if ("Submitted to EMBL/GenBank/DDBJ databases".equals(publication.getSubmission())) {
+                                entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
+                            }
+                        }
                     });
 
             return entryPublicationMap;

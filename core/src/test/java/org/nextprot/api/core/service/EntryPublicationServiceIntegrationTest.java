@@ -221,18 +221,27 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     }
 
 	@Test
-	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndStructure() {
+	public void NX_P02768SubmissionShouldBeCitedForViewsSequenceAndStructure() {
 
-		List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_P02768")
-				.getEntryPublicationList(PublicationCategory.PATENT);
+		List<EntryPublication> entryPublications = entryPublicationService.findEntryPublications("NX_P02768")
+				.getEntryPublicationList(PublicationCategory.SUBMISSION);
 
-		Assert.assertTrue(publications.size() >= 1);
+		Assert.assertTrue(entryPublications.size() >= 1);
 
-		EntryPublication patent = publications.get(0);
+		EntryPublication patent = entryPublications.get(0);
 
 		Map<String, String> views = patent.getCitedInViews();
 
 		Assert.assertTrue(views.containsKey("Sequence"));
 		Assert.assertTrue(views.containsKey("Structures"));
+	}
+
+	//TODO
+	@Test
+	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndStructure() {
+
+		List<EntryPublication> entryPublications = entryPublicationService.findEntryPublications("NX_P02768")
+				.getEntryPublicationList(PublicationCategory.PATENT);
+		Assert.fail("TO IMPLEMENT");
 	}
 }
