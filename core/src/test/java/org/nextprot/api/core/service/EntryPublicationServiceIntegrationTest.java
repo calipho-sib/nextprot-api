@@ -14,9 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev"})
 public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
@@ -218,4 +219,20 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
         Assert.assertTrue(publications.size() >= 46);
     }
+
+	@Test
+	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndStructure() {
+
+		List<EntryPublication> publications = entryPublicationService.findEntryPublications("NX_P02768")
+				.getEntryPublicationList(PublicationCategory.PATENT);
+
+		Assert.assertTrue(publications.size() >= 1);
+
+		EntryPublication patent = publications.get(0);
+
+		Map<String, String> views = patent.getCitedInViews();
+
+		Assert.assertTrue(views.containsKey("Sequence"));
+		Assert.assertTrue(views.containsKey("Structures"));
+	}
 }

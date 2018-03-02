@@ -1,15 +1,18 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.core.dao.EntryPublicationDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.ui.page.PageView;
+import org.nextprot.api.core.domain.ui.page.impl.SequencePageView;
+import org.nextprot.api.core.domain.ui.page.impl.StructuresPageView;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.domain.ui.page.PageView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -47,6 +50,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         // values should be equal to cv_databases.cv_name
         private static final String PUBMED_DB = "PubMed";
         private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
+        private static final String EPODOC_DB = "EPODOC";
 
         private final String entryAccession;
         private final Map<String, Long> accession2id;
@@ -85,6 +89,12 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                         EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(pubId));
                         handlePublicationDirectLinks(entryPublication);
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
+
+                        if (StreamUtils.nullableListToStream(publication.getDbXrefs())
+                                .anyMatch(xref -> EPODOC_DB.equals(xref.getDatabaseName()))) {
+
+                            entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
+                        }
                     });
 
             return entryPublicationMap;
