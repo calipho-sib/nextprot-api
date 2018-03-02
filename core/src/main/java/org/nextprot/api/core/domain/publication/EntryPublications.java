@@ -65,11 +65,6 @@ public class EntryPublications implements Serializable {
         return entryPublicationsById.get(pubId);
     }
 
-    public Map<PublicationCategory, List<EntryPublication>> getEntryPublicationsByCategory() {
-
-        return entryPublicationsByCategory;
-    }
-
     public List<EntryPublication> getEntryPublicationList(PublicationCategory category) {
 
         if (category == PublicationCategory.ALL) {
@@ -78,13 +73,4 @@ public class EntryPublications implements Serializable {
         }
         return entryPublicationsByCategory.getOrDefault(category, new ArrayList<>());
     }
-
-    /* useful ?
-    public List<EntryPublication> getEntryPublicationCitedList() {
-        return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isCited()).collect(Collectors.toList());
-    }
-    public List<EntryPublication> getEntryPublicationUncitedList() {
-        return orderedPubIdList.stream().map(id -> reportData.get(id)).filter(ep -> ep.isUncited()).collect(Collectors.toList());
-    }
-    */
 }
