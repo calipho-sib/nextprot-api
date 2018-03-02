@@ -11,13 +11,10 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev"})
+@ActiveProfiles({ "dev", "cache"})
 public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
@@ -28,6 +25,9 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
     @Autowired
     private EntryBuilderService entryBuilderService;
+
+	@Autowired
+	private EntryPublicationViewService entryPublicationViewService;
 
     @Ignore
     @Test
@@ -223,25 +223,34 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 	@Test
 	public void NX_P02768SubmissionShouldBeCitedForViewsSequenceAndStructure() {
 
-		List<EntryPublication> entryPublications = entryPublicationService.findEntryPublications("NX_P02768")
-				.getEntryPublicationList(PublicationCategory.SUBMISSION);
+		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.PATENT);
 
-		Assert.assertTrue(entryPublications.size() >= 1);
+		Optional<EntryPublicationView> epvOpt = epvList.stream()
+				.filter(epv -> epv.getPublication().getPublicationId() == 2707627)
+				.findFirst();
 
-		EntryPublication patent = entryPublications.get(0);
+		Assert.assertTrue(epvOpt.isPresent());
 
-		Map<String, String> views = patent.getCitedInViews();
+		Map<String, String> views = epvOpt.get().getCitedInViews();
 
 		Assert.assertTrue(views.containsKey("Sequence"));
 		Assert.assertTrue(views.containsKey("Structures"));
 	}
 
-	//TODO
 	@Test
 	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndStructure() {
 
-		List<EntryPublication> entryPublications = entryPublicationService.findEntryPublications("NX_P02768")
-				.getEntryPublicationList(PublicationCategory.PATENT);
-		Assert.fail("TO IMPLEMENT");
+		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.SUBMISSION);
+
+		Optional<EntryPublicationView> epvOpt = epvList.stream()
+				.filter(epv -> epv.getPublication().getPublicationId() == 6635395)
+				.findFirst();
+
+		Assert.assertTrue(epvOpt.isPresent());
+
+		Map<String, String> views = epvOpt.get().getCitedInViews();
+
+		Assert.assertTrue(views.containsKey("Sequence"));
+		Assert.assertTrue(views.containsKey("Structures"));
 	}
 }
