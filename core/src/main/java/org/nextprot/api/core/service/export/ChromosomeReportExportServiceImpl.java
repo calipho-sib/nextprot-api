@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -117,9 +118,9 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 		PrintWriter writer = new PrintWriter(os);
 
 		Chromosome.getNames().stream()
-				.map(chr -> chromosomeReportService.findUnconfirmedMsDataEntries(chr))
+				.map(chromosomeReportService::findUnconfirmedMsDataEntries)
 				.flatMap(Collection::stream)
-				.sorted()
+				.collect(Collectors.toCollection(TreeSet::new))
 				.forEach(acc -> writer.write(acc+"\n"));
 
 		writer.close();
