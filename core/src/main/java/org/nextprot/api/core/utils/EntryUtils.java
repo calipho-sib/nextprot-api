@@ -239,11 +239,14 @@ public class EntryUtils implements Serializable{
 
 	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 
-		ProteinExistence pe = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
+		ProteinExistence uniprotPE = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT);
 
-		if (pe== ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
-		if (pe== ProteinExistence.UNCERTAIN) return false; // we don't upgrade PE5
+		if (uniprotPE == ProteinExistence.PROTEIN_LEVEL) return false; // already PE1
+		if (uniprotPE == ProteinExistence.UNCERTAIN) return false; // we don't upgrade PE5
 		if (! e.getAnnotationsByCategory().containsKey("peptide-mapping")) return false; // no peptide mapping, no chance to upgrade to PE1
+
+		// See specs in: https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Custom+HPP+files#neXtProtCustomHPPfiles-FileHPPentrieswithunconfirmedMSdata.txt
+		// rule 2015-04: either 2 peptides 7 aa or 1 peptide 9 aa
 		List<Annotation> list = e.getAnnotationsByCategory().get("peptide-mapping").stream()
 				.filter(a -> AnnotationUtils.isProteotypicPeptideMapping(a)).collect(Collectors.toList());
 		if (list==null) return false;
@@ -251,4 +254,17 @@ public class EntryUtils implements Serializable{
 		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 1, 9)) return true;
 		return false;
 	}
+
+	/* 
+	 * This method returns true for entries which are NOT promoted to PE1 according to the current rules 
+	 * but which would have been promoted to PE1 according to earlier rules adopted by HUPO consortium 
+	 * See also specs
+	 * https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Custom+HPP+files#neXtProtCustomHPPfiles-FileHPPentrieswithunconfirmedMSdata.txt
+	 */
+	public static boolean isUnconfirmedMS(Entry e) {
+		// get PE according to current rules
+		ProteinExistence np2PE = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2);
+		return np2PE != ProteinExistence.PROTEIN_LEVEL && wouldUpgradeToPE1AccordingToOldRule(e);
+	}
+	
 }
