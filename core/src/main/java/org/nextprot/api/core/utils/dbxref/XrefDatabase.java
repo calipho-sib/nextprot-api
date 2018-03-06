@@ -4,6 +4,8 @@ package org.nextprot.api.core.utils.dbxref;
 import org.nextprot.api.commons.utils.EnumConstantDictionary;
 import org.nextprot.api.commons.utils.EnumDictionarySupplier;
 
+import java.util.Map;
+
 
 /**
  * Database names referenced by neXtProt
@@ -11,10 +13,10 @@ import org.nextprot.api.commons.utils.EnumDictionarySupplier;
 public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
-    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioGMuta"), BRENDA(),
+    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA(),
     CAZY("CAZy"), CCDS(), CDD(), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"),
     CLINVAR("Clinvar"), CORUM(), COSMIC("Cosmic"), CTD(),
-    DEPOD(), DIP(), DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM(), DNASU(), DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"),
+    DB_SNP("dbSNP"), DEPOD(), DIP(), DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM(), DNASU(), DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"),
     EGG_NOG("eggNOG"), ELM(), EMBL(), ENSEMBL("Ensembl"), EPD(), ESTHER(), EU_PATH_DB("EuPathDB"),
     EVOLUTIONARY_TRACE("EvolutionaryTrace"), EXPRESSION_ATLAS("ExpressionAtlas"),
     GENE_3D("Gene3D"), GENE_CARDS("GeneCards"), GENE_ID("GeneID"), GENE_REVIEWS("GeneReviews"), GENE_TREE("GeneTree"),
@@ -42,7 +44,15 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     ;
 
     private static EnumConstantDictionary<XrefDatabase> dictionaryOfConstants =
-            new EnumConstantDictionary<>(XrefDatabase.class, values()) ;
+            new EnumConstantDictionary<XrefDatabase>(XrefDatabase.class, values()) {
+                @Override
+                protected void updateDictionaryOfConstants(Map<String, XrefDatabase> dictionary) {
+
+                    for (XrefDatabase db : values()) {
+                        dictionary.put(db.getName(), db);
+                    }
+                }
+            };
 
     private final String name;
 

@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @param <T> an Enum class type
  */
-public class EnumConstantDictionary<T extends Enum<T>> {
+public abstract class EnumConstantDictionary<T extends Enum<T>> {
 
     private final Class<T> clazz;
     private final Map<String, T> constantDictionary;
@@ -60,5 +60,5 @@ public class EnumConstantDictionary<T extends Enum<T>> {
     /**
      * @param dictionary update the dictionary of constants for more flexibility
      */
-    protected void updateDictionaryOfConstants(Map<String, T> dictionary) {}
+    protected abstract void updateDictionaryOfConstants(Map<String, T> dictionary);
 }

@@ -55,7 +55,7 @@ public abstract class PageViewBase implements PageView {
 		// test xrefs
 		if (entry.getXrefs().stream()
 				.filter(xref -> !filterOutXref(xref))
-				.anyMatch(xr -> getXrefDatabaseWhiteList().contains(XrefDatabase.valueOfName(xr.getDatabaseName()))))
+				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName())))
 			return true;
 
 		// then annotations
@@ -89,7 +89,7 @@ public abstract class PageViewBase implements PageView {
 		// get a list of xrefs according to config
 		List<DbXref> xrefs = 
 				entry.getXrefs().stream()
-				.filter(x -> getXrefDatabaseWhiteList().contains(XrefDatabase.valueOfName(x.getDatabaseName())))
+				.filter(x -> getXrefDbNameWhiteList().contains(x.getDatabaseName()))
 				.filter(x -> ! filterOutXref(x))
 				.collect(Collectors.toList());
 		
@@ -186,4 +186,11 @@ public abstract class PageViewBase implements PageView {
 	 * @return a non null white list of xref database name
 	 */
 	@Nonnull protected abstract List<XrefDatabase> getXrefDatabaseWhiteList();
+
+	private List<String> getXrefDbNameWhiteList() {
+
+		return getXrefDatabaseWhiteList().stream()
+				.map(db -> db.getName())
+				.collect(Collectors.toList());
+	}
 }

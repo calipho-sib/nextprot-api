@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Optional;
+
 public class DbXrefURLResolverSupplierTest {
 
     @Test
@@ -12,7 +14,7 @@ public class DbXrefURLResolverSupplierTest {
 
             Assert.assertTrue(DbXrefURLResolverSupplier.fromDbName(dbXrefURLResolverSupplier.getXrefDatabase().getName()) != null);
         }
-        Assert.assertNull(DbXrefURLResolverSupplier.fromDbName("koekdkeo"));
+        Assert.assertEquals(Optional.empty(), DbXrefURLResolverSupplier.fromDbName("koekdkeo"));
     }
 
     @Test
