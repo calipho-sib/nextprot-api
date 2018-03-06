@@ -1,10 +1,13 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 /**
  * Please keep this class in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Interactions+view+specs
@@ -45,11 +48,9 @@ public class InteractionsPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList(
-				"BindingDB","DIP","IntAct","MINT",
-				"STRING", "SignaLink", "BioGrid","SIGNOR", "CORUM"
-			);
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
+
+		return Arrays.asList(BINDING_DB, DIP, INT_ACT, MINT, STRING, SIGNA_LINK, BIO_GRID, SIGNOR, CORUM);
 	}
 
 	@Override

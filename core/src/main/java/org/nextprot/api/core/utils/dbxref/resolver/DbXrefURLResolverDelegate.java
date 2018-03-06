@@ -12,23 +12,23 @@ import java.util.Optional;
  */
 public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
 
-    private Optional<XRefDatabase> getXRefDatabase(DbXref xref) {
+    private Optional<DbXrefURLResolverSupplier> getXRefResolverSupplier(DbXref xref) {
 
         Preconditions.checkNotNull(xref, "cannot resolve undefined DbXref");
 
-        return XRefDatabase.valueOfName(xref.getDatabaseName());
+        return DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
     }
 
     @Override
     public String resolve(DbXref xref) {
 
-        Optional<XRefDatabase> db = getXRefDatabase(xref);
+        Optional<DbXrefURLResolverSupplier> optionalSupplier = getXRefResolverSupplier(xref);
 
-        if (db.isPresent()) {
-            return db.get().getResolver().resolve(xref);
+        if (optionalSupplier.isPresent()) {
+            return optionalSupplier.get().getResolver().resolve(xref);
         }
         else if (xref.getLinkUrl().contains("purl.obolibrary.org/obo")) {
-            return XRefDatabase.OBO.getResolver().resolve(xref);
+            return DbXrefURLResolverSupplier.OBO.getResolver().resolve(xref);
         }
         return new DefaultDbXrefURLResolver().resolve(xref);
     }
@@ -36,16 +36,16 @@ public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
     @Override
     public String getTemplateURL(DbXref xref) {
 
-        return getXRefDatabase(xref)
+        return getXRefResolverSupplier(xref)
                 .map(d -> d.getResolver().getTemplateURL(xref))
-                .orElseGet(() -> "");
+                .orElse("");
     }
 
     @Override
     public String getValidXrefURL(String xrefURL, String databaseName) {
 
-        return XRefDatabase.valueOfName(databaseName)
+        return DbXrefURLResolverSupplier.fromDbName(databaseName)
                 .map(d -> d.getResolver().getValidXrefURL(xrefURL, databaseName))
-                .orElseGet(() -> xrefURL);
+                .orElse(xrefURL);
     }
 }

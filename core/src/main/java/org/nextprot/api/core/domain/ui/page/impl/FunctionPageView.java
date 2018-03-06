@@ -1,11 +1,14 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 /**
  * Please keep in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Function+view+specs
@@ -51,14 +54,12 @@ public class FunctionPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	public List<String> getXrefDbNameWhiteList() {
+	public List<XrefDatabase> getXrefDatabaseWhiteList() {
 
 		return Arrays.asList(
-				"GuidetoPHARMACOLOGY","SwissLipids",
-				"BioCyc", "BRENDA", "SABIO-RK",
-				"CAZy", "ESTHER", "MEROPS", "MoonProt", "PeroxiBase", "REBASE",
-				"SFLD",
-				"GeneWiki", "GenomeRNAi", "PRO"
+				GUIDETO_PHARMOCOLOGY, SWISS_LIPIDS, BIO_CYC, BRENDA, SABIO_RK,
+				CAZY, ESTHER, MEROPS, MOON_PROT, PEROXIBASE, REBASE, SFLD,
+				GENE_WIKI, GENOME_RNA_I, PRO
 			);
 	}
 
