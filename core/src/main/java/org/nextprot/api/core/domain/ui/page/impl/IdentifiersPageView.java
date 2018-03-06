@@ -1,11 +1,14 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 public class IdentifiersPageView extends PageViewBase {
 
@@ -23,10 +26,11 @@ public class IdentifiersPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("CCDS", "GeneCards", "GeneID",  "HGNC", "H-InvDB", "HPA", "HPRD","KEGG","LOC",
-				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
-				"ChEMBL");
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
+		return Arrays.asList(
+				CCDS, GENE_CARDS, GENE_ID, HGNC, H_INV_DB, HPA, HPRD, KEGG, LOC,
+				MIM,  NEXT_BIO, PDB, PHARM_GKB, PIR, REF_SEQ, UCSC, UNI_GENE,
+				CH_EMBL);
 	}
 
 	@Override

@@ -1,11 +1,13 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 public class SequencePageView extends PageViewBase {
 
@@ -85,44 +87,45 @@ public class SequencePageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 		return Arrays.asList(
 				
 				// ENZYME AND PATHWAY DATABASES
-				"SIGNOR",
+				SIGNOR,
 				
 				// FAMILY AND DOMAIN DATABASES
-				"CDD", "Gene3D", "HAMAP", "InterPro", "PANTHER", "Pfam", "PIRSF", "PRINTS", "ProDom", "PROSITE", "SFLD", "SMART", "SUPFAM", "TIGRFAMs",
+				CDD, GENE_3D, HAMAP, INTER_PRO, PANTHER, PFAM, PIRSF, PRINTS,
+				PRO_DOM, PROSITE, SFLD, SMART, SUPFAM, TIGRFAMS,
 				
 				// GENOME ANNOTATION DATABASES
-				"Ensembl", "KEGG", "UCSC",
+				ENSEMBL, KEGG, UCSC,
 				
 				// ORGANISM-SPECIFIC DATABASES
-				"MGI", "EuPathDB",
+				MGI, EU_PATH_DB,
 				
 				// OTHER
-				"ChiTaRS", "EvolutionaryTrace", "PIRNR", "PMAP-CutDB",
+				CHITARS, EVOLUTIONARY_TRACE, PIRNR, PMAP_CUT_DB,
 				
 				// PTM DATABASES
-				"DEPOD", "iPTMnet", "PhosphoSitePlus", "SwissPalm", "UniCarbKB",
+				DEPOD, I_PTM_NET, PHOSPHO_SITE_PLUS, SWISS_PALM, UNI_CARB_KB,
 				
 				// PHYLOGENOMIC DATABASES
-				"eggNOG", "GeneTree", "HOGENOM", "HOVERGEN", "InParanoid", "KO", "OMA", "OrthoDB", "PhylomeDB", "TreeFam",
+				EGG_NOG, GENE_TREE, HOGENOM, HOVERGEN, IN_PARANOID, KO, OMA, ORTHO_DB, PHYLOM_DB, TREE_FAM,
 				
 				// POLYMORPHISM AND MUTATION DATABASES
-				"BioMuta",
+				BIO_MUTA,
 				
 				// PROTEIN FAMILY/GROUP DATABASES
-				"IMGT_GENE-DB",
+				IMGT_GENE_DB,
 				
 				// PROTEIN-PROTEIN INTERACTION DATABASES
-				"ELM",
+				ELM,
 				
 				// SEQUENCE DATABASES
-				"CCDS", "EMBL", "PIR", "RefSeq", "UniProt",
+				CCDS, EMBL, PIR, REF_SEQ, UNI_PROT,
 				
 				// PROTOCOLS AND MATERIALS DATABASES
-				"DNASU"
+				DNASU
 			);
 	}
 

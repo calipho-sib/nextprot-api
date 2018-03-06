@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.ui.page.PageView;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -38,7 +39,7 @@ public abstract class PageViewBase implements PageView {
 	PageViewBase() {
 
 		Objects.requireNonNull(getAnnotationCategoryWhiteList(), "selected annotation category list should not be null");
-		Objects.requireNonNull(getXrefDbNameWhiteList(), "selected xref db name list should not be null");
+		Objects.requireNonNull(getXrefDatabaseWhiteList(), "selected xref db name list should not be null");
 		Objects.requireNonNull(getFeatureCategoryWhiteList(), "selected feature list should not be null");
 	}
 
@@ -54,7 +55,7 @@ public abstract class PageViewBase implements PageView {
 		// test xrefs
 		if (entry.getXrefs().stream()
 				.filter(xref -> !filterOutXref(xref))
-				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName())))
+				.anyMatch(xr -> getXrefDatabaseWhiteList().contains(XrefDatabase.valueOfName(xr.getDatabaseName()))))
 			return true;
 
 		// then annotations
@@ -76,7 +77,7 @@ public abstract class PageViewBase implements PageView {
 		
 	/**
 	 * Default implementation
-	 * Subclasses should only override getXrefDbNameWhiteList() and optionally override keepUniprotEntryXref()
+	 * Subclasses should only override getXrefDatabaseWhiteList() and optionally override keepUniprotEntryXref()
 	 * 
 	 * Computes the list of xrefs that should be displayed in an page view
 	 * @param entry an entry build with everything !!!
@@ -88,7 +89,7 @@ public abstract class PageViewBase implements PageView {
 		// get a list of xrefs according to config
 		List<DbXref> xrefs = 
 				entry.getXrefs().stream()
-				.filter(x -> getXrefDbNameWhiteList().contains(x.getDatabaseName()))
+				.filter(x -> getXrefDatabaseWhiteList().contains(XrefDatabase.valueOfName(x.getDatabaseName())))
 				.filter(x -> ! filterOutXref(x))
 				.collect(Collectors.toList());
 		
@@ -184,5 +185,5 @@ public abstract class PageViewBase implements PageView {
 	/**
 	 * @return a non null white list of xref database name
 	 */
-	@Nonnull protected abstract List<String> getXrefDbNameWhiteList();
+	@Nonnull protected abstract List<XrefDatabase> getXrefDatabaseWhiteList();
 }

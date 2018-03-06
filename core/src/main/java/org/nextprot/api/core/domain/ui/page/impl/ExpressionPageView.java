@@ -1,11 +1,15 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
+
 
 /**
  * Please keep in sync with specs in https://swissprot.isb-sib.ch/wiki/display/cal/neXtProt+Expression+view+specs
@@ -33,10 +37,8 @@ public class ExpressionPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList(
-				"Antibodypedia", "Bgee", "CleanEx", "GermOnline",
-				"HPA","ExpressionAtlas","Genevisible");
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
+		return Arrays.asList(ANTIBODYPEDIA, BGEE, CLEAN_EX, GERM_ONLINE, HPA, EXPRESSION_ATLAS, GENEVISIBLE);
 	}
 
 	@Override
