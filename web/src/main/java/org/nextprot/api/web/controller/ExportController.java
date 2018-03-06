@@ -8,6 +8,8 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.export.EntryPartExporterImpl;
+import org.nextprot.api.core.export.EntryPartWriter;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
@@ -16,8 +18,6 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.export.io.EntryProteinExistenceReportTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.export.EntryPartExporterImpl;
-import org.nextprot.api.core.export.EntryPartWriter;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Lazy
 @Controller
-@Api(name = "Export", description = "Export neXtProt entries ")
+@Api(name = "Export Sequences", description = "Export neXtProt isoform sequences")
 public class ExportController {
 
     @Autowired
@@ -58,7 +58,8 @@ public class ExportController {
     @Autowired
     private OverviewService overviewService;
 
-    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
+    @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Export all isoforms sequences from neXtProt entries", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
 
         streamEntryService.streamAllEntries(NextprotMediaType.valueOf(request), response);
@@ -151,13 +152,13 @@ public class ExportController {
         }
     }
 
-    @ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms from neXtProt entries located on a given chromosome in PSI Extended Fasta Format", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE } )
-    @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE })
-    public void exportEntriesAsPeffOnChromosome(
+    @ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export all isoforms sequences from neXtProt entries located on a given chromosome", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
+    public void exportEntriesAsPeffOnChromosome(HttpServletRequest request,
             @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
-            @PathVariable("chromosome")  String chromosome, HttpServletResponse response) {
+            @PathVariable("chromosome") String chromosome, HttpServletResponse response) {
 
-        streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.PEFF, response);
+         streamEntryService.streamAllChromosomeEntries(chromosome, NextprotMediaType.valueOf(request), response);
     }
 
     @ApiMethod(path = "/export/entry/{entry}", verb = ApiVerb.GET, description = "Export isoforms of a given neXtProt entry",

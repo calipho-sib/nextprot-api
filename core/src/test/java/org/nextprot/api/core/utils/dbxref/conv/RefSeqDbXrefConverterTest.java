@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverSupplier;
 
 import java.util.Collections;
@@ -31,7 +32,7 @@ public class RefSeqDbXrefConverterTest {
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/%s", ref.getLinkUrl());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/refseq/", ref.getUrl());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/NM_000207.2", ref.getResolvedUrl());
-        Assert.assertEquals(DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase(), ref.getDatabaseName());
+        Assert.assertEquals(XrefDatabase.REF_SEQ.getName(), ref.getDatabaseName());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertTrue(ref.getProperties().isEmpty());
     }
