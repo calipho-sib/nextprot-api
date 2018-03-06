@@ -2,12 +2,13 @@ package org.nextprot.api.core.utils.dbxref;
 
 
 import org.nextprot.api.commons.utils.EnumConstantDictionary;
+import org.nextprot.api.commons.utils.EnumDictionarySupplier;
 
 
 /**
  * Database names referenced by neXtProt
  */
-public enum XrefDatabase {
+public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
     BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioGMuta"), BRENDA(),
@@ -62,5 +63,11 @@ public enum XrefDatabase {
     public static XrefDatabase valueOfName(String name) {
 
         return dictionaryOfConstants.valueOfKey(name);
+    }
+
+    @Override
+    public EnumConstantDictionary<XrefDatabase> getEnumConstantDictionary() {
+
+        return dictionaryOfConstants;
     }
 }
