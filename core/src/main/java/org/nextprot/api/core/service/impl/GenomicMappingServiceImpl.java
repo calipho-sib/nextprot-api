@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.nextprot.api.core.dao.GeneDAO;
-import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.exon.ExonsAnalysisLogger;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
@@ -34,7 +34,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private static final IsoformMappingComparator ISOFORM_MAPPING_COMPARATOR = new IsoformMappingComparator();
 
 	@Autowired private GeneDAO geneDAO;
-	@Autowired private IsoformDAO isoformDAO;
+	@Autowired private IsoformService isoformService;
 
 	@Override
 	@Cacheable("genomic-mappings")
@@ -86,7 +86,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	private List<Isoform> findIsoforms(String entryName) {
 
-		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 		Preconditions.checkArgument(!isoforms.isEmpty(), "No isoforms found for entry " + entryName);
 
 		return isoforms;
@@ -95,7 +95,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private List<IsoformMapping> findAndSortIsoformAndTranscriptMappings(List<Isoform> isoforms) {
 
 		// map isoName -> isoform
-		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, isoform -> isoform.getUniqueName());
+		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, isoform -> isoform.getIsoformAccession());
 
 		// Find all transcripts mapping all isoforms
 		List<TranscriptMapping> transcriptMappings = geneDAO.findTranscriptsByIsoformNames(isoformsByName.keySet());
