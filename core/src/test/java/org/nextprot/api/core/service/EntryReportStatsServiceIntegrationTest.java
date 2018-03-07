@@ -17,12 +17,6 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 	@Autowired
 	private EntryGeneReportService entryGeneReportService;
 
-	@Autowired
-	private AnnotationService annotationService;
-
-	@Autowired
-	private EntryReportStatsService entryReportStatsService;
-
 	@Test
 	public void NX_Q9Y6F7ShouldHave1GeneWith2ChromosomalLocationsAtDifferentDNAStrands() {
 
