@@ -54,7 +54,6 @@ public class TranscriptMapping implements Serializable{
 
 	/**
 	 * Gets the exons in ascending order (first position comes first in the list)
-	 * @param exons
 	 */
 	public List<Exon> getExons() {
 		return exons;

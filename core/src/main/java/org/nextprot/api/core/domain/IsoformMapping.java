@@ -28,8 +28,8 @@ public class IsoformMapping implements Serializable{
 	private List<TranscriptMapping> transcriptMappings;
 	
 	public IsoformMapping(){
-		positionsOfIsoformOnReferencedGene = new ArrayList<Entry<Integer,Integer>>();
-		transcriptMappings = new ArrayList<TranscriptMapping>();
+		positionsOfIsoformOnReferencedGene = new ArrayList<>();
+		transcriptMappings = new ArrayList<>();
 	}
 
 	public String getUniqueName() {
