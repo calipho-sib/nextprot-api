@@ -13,6 +13,7 @@ import org.nextprot.api.core.domain.ui.page.impl.StructuresPageView;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -46,10 +47,6 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
     }
 
     private class EntryPublicationMapBuilder {
-
-        // values should be equal to cv_databases.cv_name
-        private static final String PUBMED_DB = "PubMed";
-        private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
 
         private final String entryAccession;
         private final Map<String, Long> accession2id;
@@ -125,8 +122,8 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         private String getPubMedOrNextProtSubmissionAc(Publication p) {
             if (! p.hasDbXrefs()) return null;
             for (DbXref x: p.getDbXrefs()) {
-                if (PUBMED_DB.equals(x.getDatabaseName())) return x.getAccession();
-                if (NEXTPROT_SUBMISSION_DB.equals(x.getDatabaseName())) return x.getAccession();
+                if (XrefDatabase.PUB_MED.getName().equals(x.getDatabaseName())) return x.getAccession();
+                if (XrefDatabase.NEXTPROT_SUBMISSION.getName().equals(x.getDatabaseName())) return x.getAccession();
             }
             return null;
         }
@@ -138,7 +135,8 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             if (evi.isResourceAPublication()) {
                 l = evi.getResourceId();
                 // special cases with indirect link to publication via an evidence xref
-            } else if ("PubMed".equals(evi.getResourceDb()) || "neXtProtSubmission".equals(evi.getResourceDb())) {
+            } else if (XrefDatabase.PUB_MED.getName().equals(evi.getResourceDb()) ||
+                    XrefDatabase.NEXTPROT_SUBMISSION.getName().equals(evi.getResourceDb())) {
                 String ac = evi.getResourceAccession();
                 l = accession2id.get(ac);
             }

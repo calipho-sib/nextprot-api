@@ -2,9 +2,9 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
-import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.dao.PublicationDao;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
@@ -13,6 +13,7 @@ import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.PublicationComparator;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,13 +64,13 @@ public class PublicationServiceImpl implements PublicationService {
 
 		// Getting publications from nx flat database
 		List<Publication> nxflatPublications = new ArrayList<>();
-		Arrays.asList("DOI", "PubMed").forEach(db -> {
+		Arrays.asList(XrefDatabase.DOI, XrefDatabase.PUB_MED).forEach(db -> {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION,
 					new StatementSimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
-					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
-				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
+					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db.getName()));
+				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db.getName(), npPublicationsXrefs));
 		});
 
 		updateMissingPublicationFields(nxflatPublications);
