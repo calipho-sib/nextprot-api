@@ -50,11 +50,10 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         // values should be equal to cv_databases.cv_name
         private static final String PUBMED_DB = "PubMed";
         private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
-        private static final String EPODOC_DB = "EPODOC";
 
         private final String entryAccession;
         private final Map<String, Long> accession2id;
-        private final Map<Long, List<PublicationDirectLink>> directLinksByPubid;
+        private final Map<Long, List<PublicationDirectLink>> id2directLinks;
         private final List<Publication> publications;
         private final List<Annotation> annotations;
 
@@ -64,7 +63,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             this.publications = publicationService.findPublicationsByEntryName(entryAccession);
             this.annotations = annotationService.findAnnotations(entryAccession);
             accession2id = buildAccessionToIdMap();
-            directLinksByPubid = entryPublicationDao.findPublicationDirectLinks(entryAccession);
+            id2directLinks = entryPublicationDao.findPublicationDirectLinks(entryAccession);
         }
 
         public Map<Long, EntryPublication> build() {
@@ -90,25 +89,26 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                         handlePublicationDirectLinks(entryPublication);
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
 
-                        if (StreamUtils.nullableListToStream(publication.getDbXrefs())
-                                .anyMatch(xref -> EPODOC_DB.equals(xref.getDatabaseName()))) {
-
-                            entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
+                        if (StreamUtils.nullableListToStream(id2directLinks.get(pubId)).anyMatch(dl -> isNucleotideSequenceScope(dl))) {
+                        	entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
                         }
-                        if (publication.getPublicationType() == PublicationType.SUBMISSION) {
-                            if ("Submitted to EMBL/GenBank/DDBJ databases".equals(publication.getSubmission())) {
-                                entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
-                            }
-                        }
+                       
                     });
 
             return entryPublicationMap;
         }
 
+        
+        private boolean isNucleotideSequenceScope(PublicationDirectLink dl) {
+        	if (dl.getPublicationProperty() != PublicationProperty.SCOPE) return false;
+        	return dl.getLabel().contains("NUCLEOTIDE SEQUENCE");
+
+        }
+        
         private EntryPublication buildEntryPublication(long publicationId) {
 
             EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
-            entryPublication.setDirectLinks(directLinksByPubid.getOrDefault(publicationId, new ArrayList<>()));
+            entryPublication.setDirectLinks(id2directLinks.getOrDefault(publicationId, new ArrayList<>()));
 
             return entryPublication;
         }
