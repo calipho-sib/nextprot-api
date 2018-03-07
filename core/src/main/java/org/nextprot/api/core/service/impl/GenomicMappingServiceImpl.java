@@ -55,7 +55,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				transcriptMapping.setExons(findAndSortExons(transcriptMapping));
 			}
 
-			if (!isoformMapping.getTranscriptMappings().isEmpty()) computeExonListPhasesAndAminoacids(isoformMapping, false);
+			if (!isoformMapping.getTranscriptMappings().isEmpty()) computeExonListPhasesAndAminoacids(isoformMapping);
 		}
 
 		// Gets all the genes for a given entry (can be more than one)
@@ -66,7 +66,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		return new ImmutableList.Builder<GenomicMapping>().addAll(genomicMappings).build();
 	}
 
-	private void computeExonListPhasesAndAminoacids(IsoformMapping isoformMapping, boolean logEnabled) {
+	private void computeExonListPhasesAndAminoacids(IsoformMapping isoformMapping) {
 
 		List<Entry<Integer, Integer>> positions = isoformMapping.getPositionsOfIsoformOnReferencedGene();
 
@@ -74,19 +74,13 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		final int endPositionIsoform = positions.get(positions.size() - 1).getValue();
 
 		TranscriptExonsAnalyser extractor;
-		ExonsAnalysisLogger exonInfoLogger = null;
-
-		if (logEnabled) {
-			exonInfoLogger = new ExonsAnalysisLogger();
-			extractor = new TranscriptExonsAnalyser(exonInfoLogger);
-		} else {
-			extractor = new TranscriptExonsAnalyser();
-		}
+		ExonsAnalysisLogger exonInfoLogger = new ExonsAnalysisLogger();
+		extractor = new TranscriptExonsAnalyser(exonInfoLogger);
 
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			if (logEnabled) LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
+			LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
 		}
 	}
 

@@ -6,7 +6,10 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.Exon;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Compute phases and categorize exons of isoform transcripts
@@ -55,12 +58,7 @@ public class TranscriptExonsAnalyser {
         this.currentPhase = 0;
         this.exons.addAll(exons);
 
-        Collections.sort(this.exons, new Comparator<Exon>() {
-            @Override
-            public int compare(Exon e1, Exon e2) {
-                return e1.getFirstPositionOnGene() - e2.getFirstPositionOnGene();
-            }
-        });
+        this.exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
         categorizer = new ExonCategorizer(startPositionIsoform, endPositionIsoform);
     }
