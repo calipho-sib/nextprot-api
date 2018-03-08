@@ -29,7 +29,7 @@ public class IsoformUtils {
 	public static Isoform getIsoformByIsoName(List<Isoform> isoforms, String isoformName) {
 		//TODO the isoforms should be stored in a map at the level of the Entry
 		for(Isoform iso : isoforms){
-			if(iso.getUniqueName().replaceAll("NX_", "").equals(isoformName.replaceAll("NX_", "")))
+			if(iso.getIsoformAccession().replaceAll("NX_", "").equals(isoformName.replaceAll("NX_", "")))
 				return iso;	
 		}
 		return null;
@@ -131,8 +131,8 @@ public class IsoformUtils {
 			if (iso1.isCanonicalIsoform()) { return -1; }
 			if (iso2.isCanonicalIsoform()) { return 1; }
 
-			String name1 = iso1.getMainEntityName().getValue();
-			String name2 = iso2.getMainEntityName().getValue();
+			String name1 = iso1.getMainEntityName().getName();
+			String name2 = iso2.getMainEntityName().getName();
 
 			if (numPat.matcher(name1).find() || numPat.matcher(name2).find()) {
 
