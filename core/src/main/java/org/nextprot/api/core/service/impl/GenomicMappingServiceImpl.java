@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -17,21 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	// -Djava.util.logging.SimpleFormatter.format=%5$s%6$s%n
 	private static final Logger LOGGER = Logger.getLogger(GenomicMappingServiceImpl.class.getSimpleName());
-
-	private static final ExonComparator EXON_COMPARATOR = new ExonComparator();
-	private static final IsoformMappingComparator ISOFORM_MAPPING_COMPARATOR = new IsoformMappingComparator();
 
 	@Autowired private GeneDAO geneDAO;
 	@Autowired private IsoformService isoformService;
@@ -40,13 +34,11 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	@Cacheable("genomic-mappings")
 	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
-		Preconditions.checkArgument((entryName != null) && (entryName.length() > 1), "The entry name "+entryName +" is not valid");
-
-		// Gets all the isoforms for a given entry
-		List<Isoform> isoforms = findIsoforms(entryName);
+		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");
+		Preconditions.checkArgument(!entryName.isEmpty(), "The entry name "+entryName +" is not empty");
 
 		// Gets all the isoform mappings (done for each gene)
-		List<IsoformMapping> isoformMappings = findAndSortIsoformAndTranscriptMappings(isoforms);
+		List<IsoformMapping> isoformMappings = findIsoformMappingList(entryName);
 
 		for (IsoformMapping isoformMapping : isoformMappings) {
 
@@ -92,10 +84,10 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		return isoforms;
 	}
 
-	private List<IsoformMapping> findAndSortIsoformAndTranscriptMappings(List<Isoform> isoforms) {
+	private List<IsoformMapping> findIsoformMappingList(String entryName) {
 
-		// map isoName -> isoform
-		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, isoform -> isoform.getIsoformAccession());
+		Map<String, Isoform> isoformsByName = findIsoforms(entryName).stream()
+				.collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
 
 		// Find all transcripts mapping all isoforms
 		List<TranscriptMapping> transcriptMappings = geneDAO.findTranscriptsByIsoformNames(isoformsByName.keySet());
@@ -103,19 +95,20 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		// Gets all the isoform mappings (done for each gene)
 		List<IsoformMapping> isoformMappings = geneDAO.getIsoformMappings(isoformsByName.keySet());
 
-		// Set isoform and populate transcript mappings
+		// Set missing fields of IsoformMappings
 		for (IsoformMapping isoformMapping : isoformMappings) {
 
-			Isoform isoform = isoformsByName.get(isoformMapping.getUniqueName());
+			isoformMapping.setIsoform(isoformsByName.get(isoformMapping.getUniqueName()));
 
-			isoformMapping.setIsoform(isoform);
+			List<TranscriptMapping> tms = transcriptMappings.stream()
+					.filter(tm -> tm.getReferenceGeneId() == isoformMapping.getReferenceGeneId() &&
+							      tm.getIsoformName().equals(isoformMapping.getUniqueName()))
+					.collect(Collectors.toList());
 
-			Collection<TranscriptMapping> tms = Collections2.filter(transcriptMappings, new TranscriptMappingPredicate(isoformMapping));
-
-			isoformMapping.getTranscriptMappings().addAll(tms);
+			isoformMapping.setTranscriptMappings(tms);
 		}
 
-		Collections.sort(isoformMappings, ISOFORM_MAPPING_COMPARATOR);
+		isoformMappings.sort(new IsoformMappingComparator());
 
 		return isoformMappings;
 	}
@@ -130,7 +123,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(transcriptMapping.getIsoformName(), transcriptMapping.getUniqueName(), transcriptMapping.getReferenceGeneUniqueName());
 		}
 
-		Collections.sort(exons, EXON_COMPARATOR);
+		exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
 		return exons;
 	}
@@ -146,26 +139,10 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			genomicMapping.addAllIsoformMappings(mappings);
 
-			Collections.sort(genomicMapping.getIsoformMappings(), ISOFORM_MAPPING_COMPARATOR);
+			genomicMapping.getIsoformMappings().sort(new IsoformMappingComparator());
 		}
 
 		return genomicMappings;
-	}
-
-	private static class TranscriptMappingPredicate implements Predicate<TranscriptMapping> {
-
-		private final IsoformMapping isoformMapping;
-
-		public TranscriptMappingPredicate(IsoformMapping isoformMapping) {
-
-			this.isoformMapping = isoformMapping;
-		}
-
-		@Override
-		public boolean apply(TranscriptMapping tm) {
-
-			return tm.getReferenceGeneId() == isoformMapping.getReferenceGeneId() && tm.getIsoformName().equals(isoformMapping.getUniqueName());
-		}
 	}
 
 	private static class IsoformMappingPredicate implements Predicate<IsoformMapping> {
@@ -181,14 +158,6 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		public boolean apply(IsoformMapping im) {
 
 			return im.getReferenceGeneId() == referenceGeneId;
-		}
-	}
-
-	private static class ExonComparator implements Comparator<Exon> {
-
-		@Override
-		public int compare(Exon e1, Exon e2) {
-			return e1.getFirstPositionOnGene() - e2.getFirstPositionOnGene();
 		}
 	}
 
