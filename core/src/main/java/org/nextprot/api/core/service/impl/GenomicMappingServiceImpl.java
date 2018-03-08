@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.core.utils.exon.ExonsAnalysisLogger;
+import org.nextprot.api.core.utils.exon.ExonsAnalysisMessageBuilder;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -93,19 +93,19 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	private void computeExonListPhasesAndAminoacids(IsoformMapping isoformMapping) {
 
-		List<Entry<Integer, Integer>> positions = isoformMapping.getPositionsOfIsoformOnReferencedGene();
+		List<Entry<Integer, Integer>> genePositions = isoformMapping.getPositionsOfIsoformOnReferencedGene();
 
-		final int startPositionIsoform = positions.get(0).getKey();
-		final int endPositionIsoform = positions.get(positions.size() - 1).getValue();
+		final int startPositionIsoformOnGene = genePositions.get(0).getKey();
+		final int endPositionIsoformOnGene = genePositions.get(genePositions.size() - 1).getValue();
 
-		TranscriptExonsAnalyser extractor;
-		ExonsAnalysisLogger exonInfoLogger = new ExonsAnalysisLogger();
-		extractor = new TranscriptExonsAnalyser(exonInfoLogger);
+		TranscriptExonsAnalyser analyser;
+		ExonsAnalysisMessageBuilder exonsAnalysisMessageBuilder = new ExonsAnalysisMessageBuilder();
+        analyser = new TranscriptExonsAnalyser(exonsAnalysisMessageBuilder);
 
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
-			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
+            analyser.analyse(isoformMapping.getBioSequence(), startPositionIsoformOnGene, endPositionIsoformOnGene, t.getExons());
+			LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
 		}
 	}
 

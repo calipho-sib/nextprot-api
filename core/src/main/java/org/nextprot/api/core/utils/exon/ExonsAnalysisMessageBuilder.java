@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.Exon;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class ExonsAnalysisLogger implements ExonsAnalysisListener {
+public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
 
     private StringBuilder sb;
 
@@ -33,9 +33,9 @@ public class ExonsAnalysisLogger implements ExonsAnalysisListener {
 
         if (exonOutOfBoundError.getAminoAcidOutOfBound() == ExonOutOfBoundError.AminoAcidOutOfBound.LAST) {
             sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
-            sb.append("ERROR-?(" + (exonOutOfBoundError.getLast().getPosition()-1) + ">=" + exonOutOfBoundError.getIsoformLength() + "!)");
+            sb.append("ERROR-?(").append(exonOutOfBoundError.getLast().getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)");
         } else {
-            sb.append("?(" + (first.getPosition()-1) + ">=" + exonOutOfBoundError.getIsoformLength() + "!)-ERROR-...");
+            sb.append("?(").append(first.getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)-ERROR-...");
         }
     }
 
@@ -50,7 +50,7 @@ public class ExonsAnalysisLogger implements ExonsAnalysisListener {
     @Override
     public void terminated() {}
 
-    public String getLog() {
+    public String getMessage() {
 
         return sb.toString();
     }

@@ -8,7 +8,6 @@ import org.nextprot.api.core.domain.Exon;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -23,13 +22,11 @@ public class TranscriptExonsAnalyser {
 
     private final List<Exon> exons;
     private final ExonsAnalysisListener handler;
-    private String accession;
 
     private ExonCategorizer categorizer;
 
-    private String isoformSequence;
-    private int startPositionIsoform;
-    private int endPositionIsoform;
+    private int startPositionIsoformOnGene;
+    private int endPositionIsoformOnGene;
     private int currentTranscriptLen;
     private int currentIsoformPos;
     private int currentPhase;
@@ -47,30 +44,22 @@ public class TranscriptExonsAnalyser {
         exons = new ArrayList<>();
     }
 
-    private void init(String accession, String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
+    private void init(int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exons) {
 
-        this.accession = accession;
-        this.isoformSequence = isoformSequence;
-        this.startPositionIsoform = startPositionIsoform;
-        this.endPositionIsoform = endPositionIsoform;
+        this.startPositionIsoformOnGene = startPositionIsoformOnGene;
+        this.endPositionIsoformOnGene = endPositionIsoformOnGene;
         this.currentTranscriptLen = 0;
         this.currentIsoformPos = -1;
         this.currentPhase = 0;
         this.exons.addAll(exons);
+        //this.exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
-        this.exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
-
-        categorizer = new ExonCategorizer(startPositionIsoform, endPositionIsoform);
+        this.categorizer = new ExonCategorizer(startPositionIsoformOnGene, endPositionIsoformOnGene);
     }
 
-    public void extract(String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
+    public void analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exons) {
 
-        extract("", isoformSequence, startPositionIsoform, endPositionIsoform, exons);
-    }
-
-    public void extract(String accession, String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
-
-        init(accession, isoformSequence, startPositionIsoform, endPositionIsoform, exons);
+        init(startPositionIsoformOnGene, endPositionIsoformOnGene, exons);
 
         handler.started();
         for (Exon exon : exons) {
@@ -104,19 +93,19 @@ public class TranscriptExonsAnalyser {
 
     private boolean handleCodingExon(String isoformSequence, Exon exon, ExonCategory cat) {
 
-        int startPositionExon = exon.getFirstPositionOnGene();
-        int endPositionExon = exon.getLastPositionOnGene();
+        int startPositionExonOnGene = exon.getFirstPositionOnGene();
+        int endPositionExonOnGene = exon.getLastPositionOnGene();
 
         if (cat == ExonCategory.START || cat == ExonCategory.MONO)
-            startPositionExon = startPositionIsoform;
+            startPositionExonOnGene = startPositionIsoformOnGene;
         if (cat == ExonCategory.STOP  || cat == ExonCategory.MONO)
-            endPositionExon = endPositionIsoform;
+            endPositionExonOnGene = endPositionIsoformOnGene;
 
         moveToNextFirstPos();
         AminoAcid first = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
         // update transcript length
-        currentTranscriptLen += endPositionExon - startPositionExon + 1;
+        currentTranscriptLen += endPositionExonOnGene - startPositionExonOnGene + 1;
 
         moveToNextLastPos();
         AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
