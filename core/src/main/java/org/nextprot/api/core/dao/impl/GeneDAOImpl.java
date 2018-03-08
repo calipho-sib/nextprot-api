@@ -166,12 +166,9 @@ public class GeneDAOImpl implements GeneDAO {
 			isoformMapping.setUniqueName(isoName);
 			isoformMapping.setBioSequence((String)m.get("bio_sequence"));
 			isoformMapping.setReferenceGeneName((String)m.get("reference_gene"));
-			isoformMapping.getPositionsOfIsoformOnReferencedGene().add(new AbstractMap.SimpleEntry<Integer,Integer>(((Integer)m.get("first_position")), ((Integer)m.get("last_position"))));
+			isoformMapping.getPositionsOfIsoformOnReferencedGene().add(new AbstractMap.SimpleEntry<>(((Integer)m.get("first_position")), ((Integer)m.get("last_position"))));
 		}
 		
-		return new ArrayList<IsoformMapping>(isoformMappings.values());
+		return new ArrayList<>(isoformMappings.values());
 	}
-
-
-
 }
