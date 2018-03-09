@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.GeneDAO;
-import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.impl.GenomicMappingServiceImpl;
@@ -31,7 +30,7 @@ public class GenomicMappingP41134ServiceTest {
 	private GeneDAO geneDAO;
 
 	@Mock
-	private IsoformDAO isoformDAO;
+	private IsoformService isoformService;
 
 	@Before
 	public void init() {
@@ -45,13 +44,13 @@ public class GenomicMappingP41134ServiceTest {
 		when(isoform.getUniqueName()).thenReturn("NX_P12345-1");
 
 		when(geneDAO.findGenomicMappingByEntryName("NX_P41134")).thenReturn(Lists.newArrayList(new GenomicMapping()));
-		when(isoformDAO.findIsoformsByEntryName("NX_P41134")).thenReturn(Lists.newArrayList(isoform));
+		when(isoformService.findIsoformsByEntryName("NX_P41134")).thenReturn(Lists.newArrayList(isoform));
 
 		genomicMappingService.findGenomicMappingsByEntryName("NX_P41134");
 
 		verify(geneDAO).findGenomicMappingByEntryName("NX_P41134");
-		verify(isoformDAO).findIsoformsByEntryName("NX_P41134");
-		verify(geneDAO).getIsoformMappings(anyListOf(String.class));
+		verify(isoformService).findIsoformsByEntryName("NX_P41134");
+		verify(geneDAO).getIsoformMappingByIsoformName(anyListOf(String.class));
 	}
 
 	@Ignore

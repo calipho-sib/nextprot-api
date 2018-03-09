@@ -4,6 +4,8 @@ import org.nextprot.api.core.domain.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface GeneDAO {
 
@@ -12,11 +14,11 @@ public interface GeneDAO {
 
 	List<GenomicMapping> findGenomicMappingByEntryName(String entryName);
 
-	List<TranscriptMapping> findTranscriptsByIsoformNames(Collection<String> isoformNames);
+	Map<String, Set<TranscriptMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames);
 
 	List<Exon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName);
 
 	List<Exon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
 
-	List<IsoformMapping> getIsoformMappings(Collection<String> isoformNames);
+	Map<String, IsoformMapping> getIsoformMappingByIsoformName(Collection<String> isoformNames);
 }
