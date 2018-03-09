@@ -50,7 +50,7 @@ public class GenomicMappingP41134ServiceTest {
 
 		verify(geneDAO).findGenomicMappingByEntryName("NX_P41134");
 		verify(isoformService).findIsoformsByEntryName("NX_P41134");
-		verify(geneDAO).getIsoformMappingByIsoformName(anyListOf(String.class));
+		verify(geneDAO).getIsoformMappingsByIsoformName(anyListOf(String.class));
 	}
 
 	@Ignore

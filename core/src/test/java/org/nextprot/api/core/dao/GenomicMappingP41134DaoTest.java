@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -41,7 +40,7 @@ public class GenomicMappingP41134DaoTest extends CoreUnitBaseTest {
 	@Ignore
 	@Test
 	public void shouldGetTranscriptMapping() throws Exception {
-		Map<String, Set<TranscriptMapping>> tms = geneDAO.findTranscriptMappingsByIsoformName(Arrays.asList("NX_P41134-1", "NX_P41134-2"));
+		Map<String, List<TranscriptMapping>> tms = geneDAO.findTranscriptMappingsByIsoformName(Arrays.asList("NX_P41134-1", "NX_P41134-2"));
 		assertEquals(2, tms.size());
 	}
 

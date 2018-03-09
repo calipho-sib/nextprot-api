@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,4 +91,13 @@ public class IsoformMapping implements Serializable{
 		return isoform;
 	}
 
+	@JsonIgnore
+	public int getFirstPositionIsoformOnGene() {
+		return positionsOfIsoformOnReferencedGene.get(0).getKey();
+	}
+
+	@JsonIgnore
+	public int getLastPositionIsoformOnGene() {
+		return positionsOfIsoformOnReferencedGene.get(positionsOfIsoformOnReferencedGene.size() - 1).getValue();
+	}
 }

@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.Exon;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class TranscriptExonsAnalyser {
         this.currentIsoformPos = -1;
         this.currentPhase = 0;
         this.exons.addAll(exons);
-        //this.exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
+        this.exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
         this.categorizer = new ExonCategorizer(startPositionIsoformOnGene, endPositionIsoformOnGene);
     }
