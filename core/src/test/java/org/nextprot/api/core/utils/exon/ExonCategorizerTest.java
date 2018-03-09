@@ -83,7 +83,7 @@ public class ExonCategorizerTest {
         Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
     }
 
-    private List<Exon> createMockExonList(int... startEnds) {
+    static List<Exon> createMockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
 

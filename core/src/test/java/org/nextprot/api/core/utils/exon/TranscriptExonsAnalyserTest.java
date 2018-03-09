@@ -9,8 +9,7 @@ import org.nextprot.api.core.domain.Exon;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.utils.exon.ExonCategorizerTest.createMockExonList;
 
 /**
  *
@@ -236,25 +235,6 @@ public class TranscriptExonsAnalyserTest {
         Assert.assertEquals(lastAA, info.getLastAA().getBase());
         Assert.assertEquals(lastPos, info.getLastAA().getPosition());
         Assert.assertEquals(endPhase, info.getLastAA().getPhase());
-    }
-
-    private List<Exon> createMockExonList(int... startEnds) {
-
-        Preconditions.checkArgument(startEnds.length % 2 == 0);
-
-        List<Exon> exons = new ArrayList<>();
-
-        for (int i=0 ; i<startEnds.length-1 ; i+=2) {
-
-            Exon exon = mock(Exon.class);
-
-            when(exon.getFirstPositionOnGene()).thenReturn(startEnds[i]);
-            when(exon.getLastPositionOnGene()).thenReturn(startEnds[i+1]);
-
-            exons.add(exon);
-        }
-
-        return exons;
     }
 
     public static class ExonInfo {
