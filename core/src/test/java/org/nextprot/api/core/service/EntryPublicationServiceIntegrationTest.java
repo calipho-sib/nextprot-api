@@ -221,7 +221,7 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     }
 
 	@Test
-	public void NX_P02768SubmissionShouldBeCitedForViewsSequenceAndStructure() {
+	public void NX_P02768SubmissionShouldBeCitedForViewsSequenceAndNotStructureAnyMore() {
 
 		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.PATENT);
 
@@ -234,11 +234,11 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 		Map<String, String> views = epvOpt.get().getCitedInViews();
 
 		Assert.assertTrue(views.containsKey("Sequence"));
-		Assert.assertTrue(views.containsKey("Structures"));
+		Assert.assertFalse(views.containsKey("Structures"));
 	}
 
 	@Test
-	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndStructure() {
+	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndNotStructureAnyMore() {
 
 		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.SUBMISSION);
 
@@ -251,6 +251,6 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 		Map<String, String> views = epvOpt.get().getCitedInViews();
 
 		Assert.assertTrue(views.containsKey("Sequence"));
-		Assert.assertTrue(views.containsKey("Structures"));
+		Assert.assertFalse(views.containsKey("Structures"));
 	}
 }
