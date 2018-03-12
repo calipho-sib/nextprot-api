@@ -87,7 +87,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
 
                         if (StreamUtils.nullableListToStream(id2directLinks.get(pubId)).anyMatch(dl -> isNucleotideSequenceScope(dl))) {
-                        	entryPublication.addCitedInViews(Arrays.asList(new SequencePageView(), new StructuresPageView()));
+                        	entryPublication.addCitedInViews(Arrays.asList(new SequencePageView()));
                         }
                        
                     });
