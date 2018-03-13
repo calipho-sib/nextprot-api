@@ -257,4 +257,19 @@ public enum AminoAcidCode {
 
         return AminoAcidCode.valueOfAminoAcid(code);
     }
+
+    /**
+     * Get an instance of AminoAcidCode given
+     * @param code1 one letter amino-acid code
+     * @return an AminoAcidCode
+     * @throws IllegalArgumentException if code1 is not found
+     */
+    public static AminoAcidCode valueOfAminoAcid1LetterCode(char code1) {
+
+        try {
+            return parseAminoAcidCode(String.valueOf(code1));
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("unknown 1-letter code amino-acid "+code1, e);
+        }
+    }
 }
