@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.exon;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.Exon;
 
@@ -22,8 +23,14 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
 
     @Override
     public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
-        sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
-        sb.append(category).append("-").append(last.getBase()).append("").append(last.getPosition()).append("(+").append(last.getPhase()).append(") ");
+
+        sb.append(first.getPosition());
+        sb.append("[");
+        sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
+        sb.append(category).append("--");
+        sb.append(getAACode(last, false)).append("(+").append(last.getPhase()).append(")");
+        sb.append("]");
+        sb.append(last.getPosition()).append(" ");
     }
 
     @Override
@@ -53,5 +60,19 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
     public String getMessage() {
 
         return sb.toString();
+    }
+
+    private String getAACode(AminoAcid aa, boolean first) {
+
+        String aa3code = AminoAcidCode.valueOfAminoAcid1LetterCode(aa.getBase()).get3LetterCode().toUpperCase();
+
+        int phase = aa.getPhase();
+
+        if (phase == 0) {
+            return aa3code;
+        }
+        else {
+            return (first) ? aa3code.substring(phase) : aa3code.substring(0, phase);
+        }
     }
 }
