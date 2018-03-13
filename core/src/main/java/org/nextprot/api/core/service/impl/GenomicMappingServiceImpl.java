@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -70,7 +71,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				isoformMapping.setIsoform(isoformsByName.get(isoformName));
 
 				// filter transcript mappings by gene name
-				List<TranscriptMapping> transcriptMappings = transcriptMappingsByIsoformName.get(isoformName).stream()
+				List<TranscriptMapping> transcriptMappings = StreamUtils.nullableListToStream(transcriptMappingsByIsoformName.get(isoformName))
 						.filter(tm -> tm.getReferenceGeneId() == isoformMapping.getReferenceGeneId())
 						.collect(Collectors.toList());
 
