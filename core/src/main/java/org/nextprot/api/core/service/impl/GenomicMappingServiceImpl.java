@@ -99,8 +99,15 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		ExonsAnalysisMessageBuilder exonsAnalysisMessageBuilder = new ExonsAnalysisMessageBuilder();
         analyser = new TranscriptExonsAnalyser(exonsAnalysisMessageBuilder);
 
-        analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene, transcriptMapping.getExons());
-        LOGGER.info(transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
+        boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
+				transcriptMapping.getExons());
+
+        if (success) {
+			LOGGER.info(transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
+		}
+		else {
+			LOGGER.severe("MAPPING ERROR: " + transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
+		}
 	}
 
 	private List<Isoform> findIsoforms(String entryName) {
