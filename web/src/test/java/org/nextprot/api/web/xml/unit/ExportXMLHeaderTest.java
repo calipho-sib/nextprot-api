@@ -3,6 +3,7 @@ package org.nextprot.api.web.xml.unit;
 import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
 import org.nextprot.api.web.utils.XMLUnitUtils;
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
 
 public class ExportXMLHeaderTest extends WebUnitBaseTest {
 	
@@ -32,7 +32,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         rc.setDatabaseRelease("database-test-version");
 
         Map<String, Object> infos = new HashMap<>();
-        infos.put(RELEASE_INFO, rc);
+        infos.put(EntryStreamWriter.getReleaseInfoKey(), rc);
 
         exporter.write(Collections.emptyList(), infos);
 

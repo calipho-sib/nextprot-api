@@ -1,15 +1,19 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.core.dao.EntryPublicationDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.ui.page.PageView;
+import org.nextprot.api.core.domain.ui.page.impl.SequencePageView;
+import org.nextprot.api.core.domain.ui.page.impl.StructuresPageView;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.domain.ui.page.PageView;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -44,13 +48,9 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
 
     private class EntryPublicationMapBuilder {
 
-        // values should be equal to cv_databases.cv_name
-        private static final String PUBMED_DB = "PubMed";
-        private static final String NEXTPROT_SUBMISSION_DB = "neXtProtSubmission";
-
         private final String entryAccession;
         private final Map<String, Long> accession2id;
-        private final Map<Long, List<PublicationDirectLink>> directLinksByPubid;
+        private final Map<Long, List<PublicationDirectLink>> id2directLinks;
         private final List<Publication> publications;
         private final List<Annotation> annotations;
 
@@ -60,7 +60,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             this.publications = publicationService.findPublicationsByEntryName(entryAccession);
             this.annotations = annotationService.findAnnotations(entryAccession);
             accession2id = buildAccessionToIdMap();
-            directLinksByPubid = entryPublicationDao.findPublicationDirectLinks(entryAccession);
+            id2directLinks = entryPublicationDao.findPublicationDirectLinks(entryAccession);
         }
 
         public Map<Long, EntryPublication> build() {
@@ -85,15 +85,27 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
                         EntryPublication entryPublication = entryPublicationMap.computeIfAbsent(pubId, k -> buildEntryPublication(pubId));
                         handlePublicationDirectLinks(entryPublication);
                         handlePublicationFlagsByType(entryPublication, publication.getPublicationType());
+
+                        if (StreamUtils.nullableListToStream(id2directLinks.get(pubId)).anyMatch(dl -> isNucleotideSequenceScope(dl))) {
+                        	entryPublication.addCitedInViews(Arrays.asList(new SequencePageView()));
+                        }
+                       
                     });
 
             return entryPublicationMap;
         }
 
+        
+        private boolean isNucleotideSequenceScope(PublicationDirectLink dl) {
+        	if (dl.getPublicationProperty() != PublicationProperty.SCOPE) return false;
+        	return dl.getLabel().contains("NUCLEOTIDE SEQUENCE");
+
+        }
+        
         private EntryPublication buildEntryPublication(long publicationId) {
 
             EntryPublication entryPublication = new EntryPublication(entryAccession, publicationId);
-            entryPublication.setDirectLinks(directLinksByPubid.getOrDefault(publicationId, new ArrayList<>()));
+            entryPublication.setDirectLinks(id2directLinks.getOrDefault(publicationId, new ArrayList<>()));
 
             return entryPublication;
         }
@@ -110,8 +122,8 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
         private String getPubMedOrNextProtSubmissionAc(Publication p) {
             if (! p.hasDbXrefs()) return null;
             for (DbXref x: p.getDbXrefs()) {
-                if (PUBMED_DB.equals(x.getDatabaseName())) return x.getAccession();
-                if (NEXTPROT_SUBMISSION_DB.equals(x.getDatabaseName())) return x.getAccession();
+                if (XrefDatabase.PUB_MED.getName().equals(x.getDatabaseName())) return x.getAccession();
+                if (XrefDatabase.NEXTPROT_SUBMISSION.getName().equals(x.getDatabaseName())) return x.getAccession();
             }
             return null;
         }
@@ -123,7 +135,8 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
             if (evi.isResourceAPublication()) {
                 l = evi.getResourceId();
                 // special cases with indirect link to publication via an evidence xref
-            } else if ("PubMed".equals(evi.getResourceDb()) || "neXtProtSubmission".equals(evi.getResourceDb())) {
+            } else if (XrefDatabase.PUB_MED.getName().equals(evi.getResourceDb()) ||
+                    XrefDatabase.NEXTPROT_SUBMISSION.getName().equals(evi.getResourceDb())) {
                 String ac = evi.getResourceAccession();
                 l = accession2id.get(ac);
             }

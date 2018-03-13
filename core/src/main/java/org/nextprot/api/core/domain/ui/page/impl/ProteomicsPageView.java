@@ -1,11 +1,14 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 public class ProteomicsPageView extends PageViewBase {
 
@@ -43,13 +46,13 @@ public class ProteomicsPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 		
 		return Arrays.asList(
-				"DOSAC-COBS-2DPAGE","OGP", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "UCD-2DPAGE",
-				"PhosphoSitePlus",
-				"EPD", "MaxQB", "PaxDb", "PeptideAtlas","PRIDE","TopDownProteomics",
-				"Proteomes");
+				DOSAC_COBS_2DPAGE, OGP, REPRODUCTION_2DPAGE, SWISS_2DPAGE, UCD_2DPAGE,
+				PHOSPHO_SITE_PLUS,
+				EPD, MAX_QB, PAX_DB, PEPTIDE_ATLAS, PRIDE, TOP_DOWN_PROTEOMICS,
+				PROTEOMES);
 	}
 
 	@Override

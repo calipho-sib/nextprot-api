@@ -31,7 +31,7 @@ public class EnumConstantDictionaryTest {
         Pair.valueOf("lasts");
     }
 
-    private enum Pair {
+    private enum Pair implements EnumDictionarySupplier<Pair> {
 
         FIRST, SECOND;
 
@@ -50,6 +50,12 @@ public class EnumConstantDictionaryTest {
         public static Pair valueOfName(String name) {
 
             return dictionaryOfConstants.valueOfKey(name);
+        }
+
+        @Override
+        public EnumConstantDictionary<Pair> getEnumConstantDictionary() {
+
+            return dictionaryOfConstants;
         }
     }
 }

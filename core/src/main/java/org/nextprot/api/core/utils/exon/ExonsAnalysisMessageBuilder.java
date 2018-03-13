@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.exon;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.Exon;
 
@@ -8,7 +9,7 @@ import org.nextprot.api.core.domain.Exon;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class ExonsAnalysisLogger implements ExonsAnalysisListener {
+public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
 
     private StringBuilder sb;
 
@@ -22,8 +23,14 @@ public class ExonsAnalysisLogger implements ExonsAnalysisListener {
 
     @Override
     public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
-        sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
-        sb.append(category).append("-").append(last.getBase()).append("").append(last.getPosition()).append("(+").append(last.getPhase()).append(") ");
+
+        sb.append(first.getPosition());
+        sb.append("[");
+        sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
+        sb.append(category).append("--");
+        sb.append(getAACode(last, false)).append("(+").append(last.getPhase()).append(")");
+        sb.append("]");
+        sb.append(last.getPosition()).append(" ");
     }
 
     @Override
@@ -33,9 +40,9 @@ public class ExonsAnalysisLogger implements ExonsAnalysisListener {
 
         if (exonOutOfBoundError.getAminoAcidOutOfBound() == ExonOutOfBoundError.AminoAcidOutOfBound.LAST) {
             sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
-            sb.append("ERROR-?(" + (exonOutOfBoundError.getLast().getPosition()-1) + ">=" + exonOutOfBoundError.getIsoformLength() + "!)");
+            sb.append("ERROR-?(").append(exonOutOfBoundError.getLast().getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)");
         } else {
-            sb.append("?(" + (first.getPosition()-1) + ">=" + exonOutOfBoundError.getIsoformLength() + "!)-ERROR-...");
+            sb.append("?(").append(first.getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)-ERROR-...");
         }
     }
 
@@ -50,8 +57,22 @@ public class ExonsAnalysisLogger implements ExonsAnalysisListener {
     @Override
     public void terminated() {}
 
-    public String getLog() {
+    public String getMessage() {
 
         return sb.toString();
+    }
+
+    private String getAACode(AminoAcid aa, boolean first) {
+
+        String aa3code = AminoAcidCode.valueOfAminoAcid1LetterCode(aa.getBase()).get3LetterCode().toUpperCase();
+
+        int phase = aa.getPhase();
+
+        if (phase == 0) {
+            return aa3code;
+        }
+        else {
+            return (first) ? aa3code.substring(phase) : aa3code.substring(0, phase);
+        }
     }
 }

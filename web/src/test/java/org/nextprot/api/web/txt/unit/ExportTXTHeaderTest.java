@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryTXTStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
 
@@ -24,7 +25,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.RELEASE_INFO;
 
 /**
  * Adding test for txt export (including header)
@@ -55,7 +55,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
 
         Map<String, Object> infos = new HashMap<>();
-        infos.put(RELEASE_INFO, Mockito.mock(ReleaseInfoVersions.class));
+        infos.put(EntryStreamWriter.getReleaseInfoKey(), Mockito.mock(ReleaseInfoVersions.class));
 
         exporter.write(Arrays.asList("NX_1", "NX_2"), infos);
        

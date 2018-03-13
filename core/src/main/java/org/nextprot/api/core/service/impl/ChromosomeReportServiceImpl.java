@@ -104,7 +104,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
         return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(
+				.filter(acc -> EntryUtils.isUnconfirmedMS(
 						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations().withOverview())))
 				.collect(Collectors.toList());
 	}

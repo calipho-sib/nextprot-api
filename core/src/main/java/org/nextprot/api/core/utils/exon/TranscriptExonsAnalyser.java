@@ -6,7 +6,10 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.Exon;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Compute phases and categorize exons of isoform transcripts
@@ -18,15 +21,12 @@ public class TranscriptExonsAnalyser {
     private final static Log LOGGER = LogFactory.getLog(TranscriptExonsAnalyser.class);
     private static final ExonsAnalysisListener DEFAULT_HANDLER = new ExonsAnalysisListenerImpl();
 
-    private final List<Exon> exons;
     private final ExonsAnalysisListener handler;
-    private String accession;
 
     private ExonCategorizer categorizer;
 
-    private String isoformSequence;
-    private int startPositionIsoform;
-    private int endPositionIsoform;
+    private int startPositionIsoformOnGene;
+    private int endPositionIsoformOnGene;
     private int currentTranscriptLen;
     private int currentIsoformPos;
     private int currentPhase;
@@ -41,47 +41,47 @@ public class TranscriptExonsAnalyser {
         Preconditions.checkNotNull(handler);
 
         this.handler = handler;
-        exons = new ArrayList<>();
     }
 
-    private void init(String accession, String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
+    private void init(int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
-        this.accession = accession;
-        this.isoformSequence = isoformSequence;
-        this.startPositionIsoform = startPositionIsoform;
-        this.endPositionIsoform = endPositionIsoform;
+        this.startPositionIsoformOnGene = startPositionIsoformOnGene;
+        this.endPositionIsoformOnGene = endPositionIsoformOnGene;
         this.currentTranscriptLen = 0;
         this.currentIsoformPos = -1;
         this.currentPhase = 0;
-        this.exons.addAll(exons);
 
-        Collections.sort(this.exons, new Comparator<Exon>() {
-            @Override
-            public int compare(Exon e1, Exon e2) {
-                return e1.getFirstPositionOnGene() - e2.getFirstPositionOnGene();
-            }
-        });
-
-        categorizer = new ExonCategorizer(startPositionIsoform, endPositionIsoform);
+        this.categorizer = new ExonCategorizer(startPositionIsoformOnGene, endPositionIsoformOnGene);
     }
 
-    public void extract(String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
+    /**
+     * Analyse given exons
+     * @param isoformSequence sequence in amino-acids
+     * @param startPositionIsoformOnGene start position on gene of mapping isoform
+     * @param endPositionIsoformOnGene end position on gene of mapping isoform
+     * @param exonList the exons to analyse
+     * @return true if analysis succeed
+     */
+    public boolean analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exonList) {
 
-        extract("", isoformSequence, startPositionIsoform, endPositionIsoform, exons);
-    }
+        List<Exon> exonsSorted = new ArrayList<>(exonList);
+        exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
-    public void extract(String accession, String isoformSequence, int startPositionIsoform, int endPositionIsoform, Collection<Exon> exons) {
-
-        init(accession, isoformSequence, startPositionIsoform, endPositionIsoform, exons);
+        init(startPositionIsoformOnGene, endPositionIsoformOnGene);
 
         handler.started();
-        for (Exon exon : exons) {
+        for (Exon exon : exonsSorted) {
 
             handler.startedExon(exon);
             ExonCategory exonCategory = categorizer.categorize(exon);
 
             if (exonCategory.isCoding()) {
-                if (!handleCodingExon(isoformSequence, exon, exonCategory)) break;
+                boolean success = analyseCodingExon(isoformSequence, exon, exonCategory);
+
+                // there were some errors
+                if (!success) {
+                    return false;
+                }
             }
             else {
                 handler.analysedNonCodingExon(exon, exonCategory);
@@ -89,6 +89,8 @@ public class TranscriptExonsAnalyser {
             handler.terminated(exon);
         }
         handler.terminated();
+
+        return true;
     }
 
     private void moveToNextFirstPos() {
@@ -104,21 +106,21 @@ public class TranscriptExonsAnalyser {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private boolean handleCodingExon(String isoformSequence, Exon exon, ExonCategory cat) {
+    private boolean analyseCodingExon(String isoformSequence, Exon exon, ExonCategory cat) {
 
-        int startPositionExon = exon.getFirstPositionOnGene();
-        int endPositionExon = exon.getLastPositionOnGene();
+        int startPositionExonOnGene = exon.getFirstPositionOnGene();
+        int endPositionExonOnGene = exon.getLastPositionOnGene();
 
         if (cat == ExonCategory.START || cat == ExonCategory.MONO)
-            startPositionExon = startPositionIsoform;
+            startPositionExonOnGene = startPositionIsoformOnGene;
         if (cat == ExonCategory.STOP  || cat == ExonCategory.MONO)
-            endPositionExon = endPositionIsoform;
+            endPositionExonOnGene = endPositionIsoformOnGene;
 
         moveToNextFirstPos();
         AminoAcid first = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
         // update transcript length
-        currentTranscriptLen += endPositionExon - startPositionExon + 1;
+        currentTranscriptLen += endPositionExonOnGene - startPositionExonOnGene + 1;
 
         moveToNextLastPos();
         AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);

@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class LocalisationPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 		return new ArrayList<>();
 	}
 

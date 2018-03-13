@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Should be used internally by any Enum class that need to provide a more flexible access to their constant via valueOfKey(key).
+ * Should be used internally by any Enum class that needs to access their constants via a String key that does not match
+ * exactly the constant name.
  *
- * @param <T> an Enum class
+ * @param <T> an Enum class type
  */
 public abstract class EnumConstantDictionary<T extends Enum<T>> {
 

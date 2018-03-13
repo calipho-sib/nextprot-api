@@ -9,8 +9,7 @@ import org.nextprot.api.core.domain.Exon;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.utils.exon.ExonCategorizerTest.createMockExonList;
 
 /**
  *
@@ -19,14 +18,14 @@ import static org.mockito.Mockito.when;
 public class TranscriptExonsAnalyserTest {
 
     @Test
-    public void testExtractInfosNX_Q9Y281_3() throws Exception {
+    public void testanalyseInfosNX_Q9Y281_3() throws Exception {
 
         List<Exon> exons = createMockExonList(134, 286, 1263, 1570, 1688, 1764, 1847, 4437);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MASGVTVNDEVIKVFNDMKVRKSSTQEEIKKRKKAVLFCLSDDKRQIIVEEAKQILVGDIGDTVEDPYTSFVKLLPLNDCRYALYDATYETKESKKEDLVFIFWAPESAPLKSKMIYASSKDAIKKKFTGIKHEWQVNGLDDIKDRSTLGEKLGGNVVVSLEGKPL", 284, 1956, exons);
+        analyser.analyse("MASGVTVNDEVIKVFNDMKVRKSSTQEEIKKRKKAVLFCLSDDKRQIIVEEAKQILVGDIGDTVEDPYTSFVKLLPLNDCRYALYDATYETKESKKEDLVFIFWAPESAPLKSKMIYASSKDAIKKKFTGIKHEWQVNGLDDIKDRSTLGEKLGGNVVVSLEGKPL", 284, 1956, exons);
 
         /**
          name	positions	gene_id	sequence
@@ -44,14 +43,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosNX_Q96M20() throws Exception {
+    public void testanalyseInfosNX_Q96M20() throws Exception {
 
         List<Exon> exons = createMockExonList(34,224,4040,4177,7360,7413,11870,12033,15393,15549,16038,16189,18806,18944,26449,26563,39708,39885,42548,42668,61768,62080);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MRRHMVTYAWQLLKKELGLYQLAMDIIIMIRVCKMFRQGLRGFREYQIIETAHWKHPIFSFWDKKMQSRVTFDTMDFIAEEGHFPPKAIQIMQKKPSWRTEDEIQAVCNILQVLDSYRNYAEPLQLLLAKVMRFERFGRRRVIIKKGQKGNSFYFIYLGTVAITKDEDGSSAFLDPHPKLLHKGSCFGEMDVLHASVRRSTIVCMEETEFLVVDREDFFANKLDQEVQKDAQYRFEFFRKMELFASWSDEKLWQLVAMAKIERFSYGQLISKDFGESPFIMFISKGSCEVLRLLDLGASPSYRRWIWQHLELIDGRPLKTHLSEYSPMERFKEFQIKSYPLQDFSSLKLPHLKKAWGLQGTSFSRKIRTSGDTLPKMLGPKIQSRPAQSIKCAMINIKPGELPKEAAVGAYVKVHTVEQGEIL", 174, 61767, exons);
+        analyser.analyse("MRRHMVTYAWQLLKKELGLYQLAMDIIIMIRVCKMFRQGLRGFREYQIIETAHWKHPIFSFWDKKMQSRVTFDTMDFIAEEGHFPPKAIQIMQKKPSWRTEDEIQAVCNILQVLDSYRNYAEPLQLLLAKVMRFERFGRRRVIIKKGQKGNSFYFIYLGTVAITKDEDGSSAFLDPHPKLLHKGSCFGEMDVLHASVRRSTIVCMEETEFLVVDREDFFANKLDQEVQKDAQYRFEFFRKMELFASWSDEKLWQLVAMAKIERFSYGQLISKDFGESPFIMFISKGSCEVLRLLDLGASPSYRRWIWQHLELIDGRPLKTHLSEYSPMERFKEFQIKSYPLQDFSSLKLPHLKKAWGLQGTSFSRKIRTSGDTLPKMLGPKIQSRPAQSIKCAMINIKPGELPKEAAVGAYVKVHTVEQGEIL", 174, 61767, exons);
 
         /**
          name	positions	gene_id	sequence
@@ -79,14 +78,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosNX_P20592_2() throws Exception {
+    public void testanalyseInfosNX_P20592_2() throws Exception {
 
         List<Exon> exons = createMockExonList(8143, 8407, 14894, 15213, 15847, 16039, 20468, 20622, 33645, 33843, 35671, 35749, 36955, 37000);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MSKAHKPWPYRRRSQFSSRKYLKKEMNSFQQQPPPFGTVPPQMMFPPNWQGAEKDAAFLAKDFNFLTLNNQPPPGNRSQPRAMGPENNLYSQYEQKVRPCIDLIDSLRALGVEQDLALPAIAVIGDQSSGKSSVLEALSGVALPRGSAQNVMAGNGRGISHELISLEITSPEVPDLTIIDLPGITRVAVDNQPRDIGLQVS", 14965, 33650, exons);
+        analyser.analyse("MSKAHKPWPYRRRSQFSSRKYLKKEMNSFQQQPPPFGTVPPQMMFPPNWQGAEKDAAFLAKDFNFLTLNNQPPPGNRSQPRAMGPENNLYSQYEQKVRPCIDLIDSLRALGVEQDLALPAIAVIGDQSSGKSSVLEALSGVALPRGSAQNVMAGNGRGISHELISLEITSPEVPDLTIIDLPGITRVAVDNQPRDIGLQVS", 14965, 33650, exons);
 
         Assert.assertEquals(7, collector.size());
 
@@ -107,28 +106,28 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosMonoNX_O15541() throws Exception {
+    public void testanalyseInfosMonoNX_O15541() throws Exception {
 
         List<Exon> exons = createMockExonList(1, 1295);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MAEQLSPGKAVDQVCTFLFKKPGRKGAAGRRKRPACDPEPGESGSSSDEGCTVVRPEKKRVTHNPMIQKTRDSGKQKAAYGDLSSEEEEENEPESLGVVYKSTRSAKPVGPEDMGATAVYELDTEKERDAQAIFERSQKIQEELRGKEDDKIYRGINNYQKYMKPKDTSMGNASSGMVRKGPIRAPEHLRATVRWDYQPDICKDYKETGFCGFGDSCKFLHDRSDYKHGWQIERELDEGRYGVYEDENYEVGSDDEEIPFKCFICRQSFQNPVVTKCRHYFCESCALQHFRTTPRCYVCDQQTNGVFNPAKELIAKLEKHRATGEGGASDLPEDPDEDAIPIT", 216, 1244, exons);
+        analyser.analyse("MAEQLSPGKAVDQVCTFLFKKPGRKGAAGRRKRPACDPEPGESGSSSDEGCTVVRPEKKRVTHNPMIQKTRDSGKQKAAYGDLSSEEEEENEPESLGVVYKSTRSAKPVGPEDMGATAVYELDTEKERDAQAIFERSQKIQEELRGKEDDKIYRGINNYQKYMKPKDTSMGNASSGMVRKGPIRAPEHLRATVRWDYQPDICKDYKETGFCGFGDSCKFLHDRSDYKHGWQIERELDEGRYGVYEDENYEVGSDDEEIPFKCFICRQSFQNPVVTKCRHYFCESCALQHFRTTPRCYVCDQQTNGVFNPAKELIAKLEKHRATGEGGASDLPEDPDEDAIPIT", 216, 1244, exons);
 
         Assert.assertEquals(1, collector.size());
         assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'T', 343, 0, ExonCategory.MONO);
     }
 
     @Test
-    public void testExtractInfosNX_Q8NFW8_2() throws Exception {
+    public void testanalyseInfosNX_Q8NFW8_2() throws Exception {
 
         List<Exon> exons = createMockExonList(52, 390, 8976, 9118, 9282, 9437, 12394, 12527, 14659, 14753, 16108, 16261, 18948, 19501);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MDSVEKGAATSVSNPRGRPSRGRPPKLQRNSRGGQGRGVEKPPHLAALILARGGSKGIPLKNIKHLAGVPLIGWVLRAALDSGAFQSVWVSTDHDEIENVAKQFGAQVHRRSSEVSKDSSTSLDAIIEFLNYHNEVDIVGNIQATSPCLHPTDLQKVAEMIREEGYDSVFSVVRRHQFRWSEIQKGVREVTEPLNLNPAKRPRRQDWDGELYENGSFYFAKRHLIEMGYLQGGKMAYYEMRAEHSVDIDVDIDWPIAEQRVLR", 131, 16108, exons);
+        analyser.analyse("MDSVEKGAATSVSNPRGRPSRGRPPKLQRNSRGGQGRGVEKPPHLAALILARGGSKGIPLKNIKHLAGVPLIGWVLRAALDSGAFQSVWVSTDHDEIENVAKQFGAQVHRRSSEVSKDSSTSLDAIIEFLNYHNEVDIVGNIQATSPCLHPTDLQKVAEMIREEGYDSVFSVVRRHQFRWSEIQKGVREVTEPLNLNPAKRPRRQDWDGELYENGSFYFAKRHLIEMGYLQGGKMAYYEMRAEHSVDIDVDIDWPIAEQRVLR", 131, 16108, exons);
 
         Assert.assertEquals(7, collector.size());
         assertInfoEquals(collector.getInfoAt(0), 'M', 1,   0, 'S', 87, 2,  ExonCategory.START);
@@ -144,14 +143,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosMiniExons() throws Exception {
+    public void testanalyseInfosMiniExons() throws Exception {
 
         List<Exon> exons = createMockExonList(1, 11, 100, 100, 150, 151, 200, 300);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MRTEQ", 10, 209, exons);
+        analyser.analyse("MRTEQ", 10, 209, exons);
 
         Assert.assertEquals(4, collector.size());
 
@@ -162,14 +161,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosNX_Q5JQC4_1_ENST00000416816AndException() throws Exception {
+    public void testanalyseInfosNX_Q5JQC4_1_ENST00000416816AndException() throws Exception {
 
         List<Exon> exons = createMockExonList(1, 997, 1885, 2040, 54668, 54808);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
-        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        extractor.extract("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
+        analyser.analyse("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
 
         Assert.assertEquals(1, collector.size());
 
@@ -182,14 +181,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     /*@Test
-    public void testExtractInfosNX_Q658P3Iso3() throws Exception {
+    public void testanalyseInfosNX_Q658P3Iso3() throws Exception {
 
         List<Exon> exons = createMockExonList(1, 81, 6813, 7227, 21682, 22181, 23872, 24399, 30877, 31041, 39250, 41842);
 
         TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        TranscriptInfosanalyser analyser = new TranscriptInfosanalyser(collector);
 
-        extractor.extract("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
+        analyser.analyse("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
 
         Assert.assertEquals(5, collector.size());
 
@@ -204,14 +203,14 @@ public class TranscriptExonsAnalyserTest {
     }
 
     @Test
-    public void testExtractInfosNX_Q658P3Iso3np1() throws Exception {
+    public void testanalyseInfosNX_Q658P3Iso3np1() throws Exception {
 
         List<Exon> exons = createMockExonList(46, 81, 21682, 22181, 23872, 24399, 30877, 30906, 30910, 31041, 39250, 39891);
 
         TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        TranscriptInfosanalyser analyser = new TranscriptInfosanalyser(collector);
 
-        extractor.extract("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
+        analyser.analyse("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
 
         Assert.assertEquals(6, collector.size());
 
@@ -236,25 +235,6 @@ public class TranscriptExonsAnalyserTest {
         Assert.assertEquals(lastAA, info.getLastAA().getBase());
         Assert.assertEquals(lastPos, info.getLastAA().getPosition());
         Assert.assertEquals(endPhase, info.getLastAA().getPhase());
-    }
-
-    private List<Exon> createMockExonList(int... startEnds) {
-
-        Preconditions.checkArgument(startEnds.length % 2 == 0);
-
-        List<Exon> exons = new ArrayList<>();
-
-        for (int i=0 ; i<startEnds.length-1 ; i+=2) {
-
-            Exon exon = mock(Exon.class);
-
-            when(exon.getFirstPositionOnGene()).thenReturn(startEnds[i]);
-            when(exon.getLastPositionOnGene()).thenReturn(startEnds[i+1]);
-
-            exons.add(exon);
-        }
-
-        return exons;
     }
 
     public static class ExonInfo {

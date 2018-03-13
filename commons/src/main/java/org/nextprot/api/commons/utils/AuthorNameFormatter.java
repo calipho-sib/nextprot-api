@@ -2,12 +2,22 @@ package org.nextprot.api.commons.utils;
 
 import com.google.common.base.Preconditions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Format author name for publication
  *
  * Created by fnikitin on 31/08/15.
  */
 public class AuthorNameFormatter {
+
+    private final Map<String, String> suffixMapping;
+
+    public AuthorNameFormatter() {
+
+        suffixMapping = buildSuffixMapping();
+    }
 
     public String formatForenameInitials(String forename) {
 
@@ -18,7 +28,7 @@ public class AuthorNameFormatter {
 
         Preconditions.checkNotNull(forename);
 
-        if (forename.equals("-")) return "-";
+        if ("-".equals(forename)) return "-";
         
         StringBuilder sb = new StringBuilder();
 
@@ -28,25 +38,12 @@ public class AuthorNameFormatter {
             // composed name
             if (name.contains("-")) {
 
-                String[] composedName = name.split("[-]");
-
-                for (int i=0 ; i<composedName.length ; i++) {
-
-                    if (!composedName[i].isEmpty()) {
-
-                        sb.append(composedName[i].charAt(0));
-                        sb.append(".");
-                    }
-
-                    sb.append("-");
-                }
-            	sb.delete(sb.length()-1, sb.length());
+                formatComposedNameInitials(name, sb);
             }
             // standard name
             else if (name.length()>0) {
 
-                sb.append(name.charAt(0));
-                sb.append('.');
+                formatStandardNameInitials(name, sb);
             }
         }
 
@@ -56,32 +53,56 @@ public class AuthorNameFormatter {
         return sb.toString();
     }
 
-    public String formatSuffix(String suffix) {
+    private void formatComposedNameInitials(String composedName, StringBuilder sb) {
 
-        switch (suffix) {
+        String[] names = composedName.split("[-]");
 
-            case "I":
-            case "1st":
-                return "I";
-            case "2nd":
-                return "II";
-            case "3rd":
-                return "III";
-            case "4th":
-                return "IV";
-            case "V":
-            case "5th":
-                return "V";
-            case "6th":
-                return "VI";
-            case "Filho":
-            case "Jr":
-                return "Jr.";
-            case "Sr":
-                return "Sr.";
+        for (int i=0 ; i<names.length ; i++) {
+
+            sb.append(formatInitial(names[i]));
+            sb.append("-");
         }
-
-        return suffix;
+        sb.delete(sb.length()-1, sb.length());
     }
 
+    private void formatStandardNameInitials(String standardName, StringBuilder sb) {
+
+        sb.append(standardName.charAt(0));
+        sb.append('.');
+    }
+
+    private String formatInitial(String name) {
+
+        if (!name.isEmpty()) {
+
+            return name.charAt(0)+".";
+        }
+        return name;
+    }
+
+    public String formatSuffix(String suffix) {
+
+        if (!suffixMapping.containsKey(suffix)) {
+            return suffix;
+        }
+
+        return suffixMapping.get(suffix);
+    }
+
+    private static Map<String, String> buildSuffixMapping() {
+
+        Map<String, String> suffixMapping = new HashMap<>();
+
+        suffixMapping.put("1st", "I");
+        suffixMapping.put("2nd", "II");
+        suffixMapping.put("3rd", "III");
+        suffixMapping.put("4th", "IV");
+        suffixMapping.put("5th", "V");
+        suffixMapping.put("6th", "VI");
+        suffixMapping.put("Filho", "Jr.");
+        suffixMapping.put("Jr", "Jr.");
+        suffixMapping.put("Sr", "Sr.");
+
+        return suffixMapping;
+    }
 }

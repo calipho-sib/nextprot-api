@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +65,7 @@ public class ChromosomeReport implements Serializable {
 		private String chromosome;
 		private int entryCount;
 		private int entryReportCount;
-		private Map<ProteinExistence, Integer> countByProteinEvidence = new HashMap<>(5);
+		private Map<ProteinExistence, Integer> countByProteinEvidence = new EnumMap<>(ProteinExistence.class);
 
 		public String getChromosome() {
 			return chromosome;

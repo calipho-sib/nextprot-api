@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class GeneDAOImpl implements GeneDAO {
@@ -82,15 +83,14 @@ public class GeneDAOImpl implements GeneDAO {
 			return genomicMapping;
 		}
 	}
-	
-	
-	
+
 	@Override
-	public List<TranscriptMapping> findTranscriptsByIsoformNames(Collection<String> isoformNames) {
+	public Map<String, List<TranscriptMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("transcripts-by-isoform-names"), namedParameters, new TranscriptRowMapper());
+		List<TranscriptMapping> list = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("transcripts-by-isoform-names"), namedParameters, new TranscriptRowMapper());
 
+		return list.stream().collect(Collectors.groupingBy(TranscriptMapping::getIsoformName, Collectors.toList()));
 	}
 	
 	private static class TranscriptRowMapper implements ParameterizedRowMapper<TranscriptMapping> {
@@ -101,8 +101,6 @@ public class GeneDAOImpl implements GeneDAO {
 			transcript.setQuality(resultSet.getString("quality"));
 			transcript.setReferenceGeneId(resultSet.getLong("gene_id"));
 			transcript.setReferenceGeneUniqueName(resultSet.getString("gene_name"));
-			transcript.setIsoformName(resultSet.getString("isoform"));
-
 			transcript.setIsoformName(resultSet.getString("isoform"));
 			transcript.setName(resultSet.getString("transcript"));
 			transcript.setAccession(resultSet.getString("accession"));
@@ -147,14 +145,16 @@ public class GeneDAOImpl implements GeneDAO {
 			return exon;
 		}
 	}
-	
+
+	// TODO: see with pam !! why do we have the mapping of iso vs gene and not transcript vs gene instead ????
+    // anyway we don't know which transcript gives this mapping possible like it seems to appear in exons view (https://www.nextprot.org/entry/NX_P52701/exons)
 	@Override
-	public List<IsoformMapping> getIsoformMappings(Collection<String> isoformNames){
-		
+	public Map<String, List<IsoformMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames){
+
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
 		List<Map<String,Object>> result = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("isoform-mappings"), namedParameters);
-		
-		Map<String, IsoformMapping> isoformMappings = new HashMap<String, IsoformMapping>();
+
+		Map<String, IsoformMapping> isoformMappings = new HashMap<>();
 		for(Map<String,Object> m : result){
 			String isoName = ((String)m.get("isoform"));
 			long geneId = ( (Long)m.get("reference_identifier_id"));
@@ -168,12 +168,10 @@ public class GeneDAOImpl implements GeneDAO {
 			isoformMapping.setUniqueName(isoName);
 			isoformMapping.setBioSequence((String)m.get("bio_sequence"));
 			isoformMapping.setReferenceGeneName((String)m.get("reference_gene"));
-			isoformMapping.getPositionsOfIsoformOnReferencedGene().add(new AbstractMap.SimpleEntry<Integer,Integer>(((Integer)m.get("first_position")), ((Integer)m.get("last_position"))));
+			isoformMapping.getPositionsOfIsoformOnReferencedGene().add(new AbstractMap.SimpleEntry<>(((Integer)m.get("first_position")), ((Integer)m.get("last_position"))));
 		}
-		
-		return new ArrayList<IsoformMapping>(isoformMappings.values());
+
+		return isoformMappings.values().stream()
+				.collect(Collectors.groupingBy(IsoformMapping::getUniqueName, Collectors.toList()));
 	}
-
-
-
 }

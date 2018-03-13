@@ -1,11 +1,14 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
 
 public class StructuresPageView extends PageViewBase {
 
@@ -52,8 +55,9 @@ public class StructuresPageView extends PageViewBase {
 
 	@Nonnull
 	@Override
-	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("DisProt", "PDB","PDBsum", "ProteinModelPortal", "Proteopedia", "SMR" );
+	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
+
+		return Arrays.asList(DISPROT, PDB, PDB_SUM, PROTEIN_MODEL_PORTAL, PROTEOPEDIA, SMR);
 	}
 
 	@Override

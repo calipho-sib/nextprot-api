@@ -1,20 +1,20 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 import org.nextprot.api.etl.service.ConsistencyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import org.nextprot.api.core.dao.StatementDao;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ConsistencyServiceImpl implements ConsistencyService{
@@ -28,15 +28,15 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 		
 		List<String> missingPublications = new ArrayList<>();
 
-		Arrays.asList("PubMed", "DOI").stream().forEach(referenceDB -> {
+		Arrays.asList(XrefDatabase.PUB_MED, XrefDatabase.DOI).forEach(referenceDB -> {
 		
 			List<String> ids = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 					StatementField.REFERENCE_ACCESSION, 
-					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB));
+					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB.getName()));
 			
 			for(String id : ids) {
 				if(id != null){ 
-					Publication pub = publicationService.findPublicationByDatabaseAndAccession(referenceDB, id);
+					Publication pub = publicationService.findPublicationByDatabaseAndAccession(referenceDB.getName(), id);
 					if(pub == null){
 						missingPublications.add(referenceDB + id);
 					}

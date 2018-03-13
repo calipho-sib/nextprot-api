@@ -86,9 +86,9 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
     @Override
     protected void writeHeader(Map<String, Object> infos) throws IOException {
 
-        int entryNum = (int) infos.get(ENTRY_COUNT);
-        ReleaseInfoVersions releaseInfoVersions = (ReleaseInfoVersions) infos.get(RELEASE_INFO);
-        ReleaseInfoDataSources releaseInfoDataSources = (ReleaseInfoDataSources) infos.get(RELEASE_DATA_SOURCES);
+        int entryNum = (int) infos.get(EntryStreamWriter.getEntryCountKey());
+        ReleaseInfoVersions releaseInfoVersions = (ReleaseInfoVersions) infos.get(EntryStreamWriter.getReleaseInfoKey());
+        ReleaseInfoDataSources releaseInfoDataSources = (ReleaseInfoDataSources) infos.get(EntryStreamWriter.getReleaseDataSourcesKey());
 
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
         headerTemplate.merge(new NXVelocityContext(entryNum, releaseInfoVersions), getStream());

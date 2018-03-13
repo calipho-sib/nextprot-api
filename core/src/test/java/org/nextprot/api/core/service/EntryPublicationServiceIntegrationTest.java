@@ -11,12 +11,10 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev", "cache"})
 public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
         
     @Autowired
@@ -27,6 +25,9 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
     @Autowired
     private EntryBuilderService entryBuilderService;
+
+	@Autowired
+	private EntryPublicationViewService entryPublicationViewService;
 
     @Ignore
     @Test
@@ -218,4 +219,38 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
 
         Assert.assertTrue(publications.size() >= 46);
     }
+
+	@Test
+	public void NX_P02768SubmissionShouldBeCitedForViewsSequenceAndNotStructureAnyMore() {
+
+		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.PATENT);
+
+		Optional<EntryPublicationView> epvOpt = epvList.stream()
+				.filter(epv -> epv.getPublication().getPublicationId() == 2707627)
+				.findFirst();
+
+		Assert.assertTrue(epvOpt.isPresent());
+
+		Map<String, String> views = epvOpt.get().getCitedInViews();
+
+		Assert.assertTrue(views.containsKey("Sequence"));
+		Assert.assertFalse(views.containsKey("Structures"));
+	}
+
+	@Test
+	public void NX_P02768PatentShouldBeCitedForViewsSequenceAndNotStructureAnyMore() {
+
+		List<EntryPublicationView> epvList = entryPublicationViewService.buildEntryPublicationView("NX_P02768", PublicationCategory.SUBMISSION);
+
+		Optional<EntryPublicationView> epvOpt = epvList.stream()
+				.filter(epv -> epv.getPublication().getPublicationId() == 6635395)
+				.findFirst();
+
+		Assert.assertTrue(epvOpt.isPresent());
+
+		Map<String, String> views = epvOpt.get().getCitedInViews();
+
+		Assert.assertTrue(views.containsKey("Sequence"));
+		Assert.assertFalse(views.containsKey("Structures"));
+	}
 }
