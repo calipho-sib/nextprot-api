@@ -102,10 +102,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
         boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
 				transcriptMapping.getExons());
 
-        if (success) {
-			LOGGER.info(transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
-		}
-		else {
+        if (!success) {
 			LOGGER.severe("MAPPING ERROR: " + transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
 		}
 	}
