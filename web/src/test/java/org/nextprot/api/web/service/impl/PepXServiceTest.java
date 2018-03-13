@@ -83,7 +83,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		@SuppressWarnings("unchecked")
 		List<Annotation> annotations = mock(List.class);
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn(ISO_ACCESSION);
+		when(isoform.getIsoformAccession()).thenReturn(ISO_ACCESSION);
 		when(isoform.getSequence()).thenReturn("AGANAPA");
 
 		List<Isoform> isoforms = Arrays.asList(isoform);
@@ -108,7 +108,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		@SuppressWarnings("unchecked")
 		List<Annotation> annotations = mock(List.class);
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn(ISO_ACCESSION);
+		when(isoform.getIsoformAccession()).thenReturn(ISO_ACCESSION);
 		when(isoform.getSequence()).thenReturn("AAAAAA");// Sequence does not
 															// contain the
 															// peptide
@@ -136,7 +136,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	 * 
 	 * @SuppressWarnings("unchecked") List<Annotation> annotations =
 	 * mock(List.class); Isoform isoform = mock(Isoform.class);
-	 * when(isoform.getUniqueName()).thenReturn("Iso-1");
+	 * when(isoform.getIsoformAccession()).thenReturn("Iso-1");
 	 * when(isoform.getSequence()).thenReturn("AAAAAA");//Sequence does not
 	 * contain the peptide
 	 * 
@@ -159,7 +159,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		String isoName = "NX_Q9H6T3-3";
 
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn(isoName);
+		when(isoform.getIsoformAccession()).thenReturn(isoName);
 		// https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html
 		// (check that page to format the sequence)
 		// GANAL is present instead of GANAP
@@ -192,7 +192,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		String isoName = "NX_Q9H6T3-3";
 
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn(isoName);
+		when(isoform.getIsoformAccession()).thenReturn(isoName);
 		// https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html
 		// (check that page to format the sequence)
 		// GANAL is present instead of GANAP
@@ -224,7 +224,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	 * modeIsoleucine = true; String isoName = "NX_Q9H6T3-3";
 	 * 
 	 * Isoform isoform = mock(Isoform.class);
-	 * when(isoform.getUniqueName()).thenReturn(isoName);
+	 * when(isoform.getIsoformAccession()).thenReturn(isoName);
 	 * //https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/
 	 * simple.html (check that page to format the sequence) //GANAL is present
 	 * instead of GANAP when(isoform.getSequence()).thenReturn(
@@ -256,7 +256,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform isoform = mock(Isoform.class);
-			when(isoform.getUniqueName()).thenReturn(isoName);
+			when(isoform.getIsoformAccession()).thenReturn(isoName);
 			// https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html
 			// (check that page to format the sequence)
 			// GANAL is present instead of GANAP
@@ -295,7 +295,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform iso1 = mock(Isoform.class);
-			when(iso1.getUniqueName()).thenReturn("another-iso-name");
+			when(iso1.getIsoformAccession()).thenReturn("another-iso-name");
 			when(iso1.getSequence()).thenReturn(
 					"MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG");
 
