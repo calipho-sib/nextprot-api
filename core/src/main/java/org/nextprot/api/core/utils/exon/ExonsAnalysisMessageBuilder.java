@@ -39,10 +39,23 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
         AminoAcid first = exonOutOfBoundError.getFirst();
 
         if (exonOutOfBoundError.getAminoAcidOutOfBound() == ExonOutOfBoundError.AminoAcidOutOfBound.LAST) {
-            sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
-            sb.append("ERROR-?(").append(exonOutOfBoundError.getLast().getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)");
+            sb.append(first.getPosition());
+            sb.append("[");
+            sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
+            sb.append("OUT-OF-BOUND--");
+            sb.append("NA");
+            sb.append("]!");
+            sb.append(exonOutOfBoundError.getLast().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
         } else {
-            sb.append("?(").append(first.getPosition() - 1).append(">=").append(exonOutOfBoundError.getIsoformLength()).append("!)-ERROR-...");
+            sb.append(first.getPosition());
+            sb.append("!");
+            sb.append(exonOutOfBoundError.getFirst().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
+            sb.append("[");
+            sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
+            sb.append("OUT-OF-BOUND--");
+            sb.append("NA");
+            sb.append("]!");
+            sb.append(exonOutOfBoundError.getLast().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
         }
     }
 
