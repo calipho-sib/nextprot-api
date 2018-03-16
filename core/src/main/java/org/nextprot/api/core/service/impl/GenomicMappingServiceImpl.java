@@ -76,7 +76,13 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 						.collect(Collectors.toList());
 
 				for (TranscriptMapping transcriptMapping : transcriptMappings) {
-					findAndSetExonsAlignedToTranscript(transcriptMapping);
+
+					transcriptMapping.setExons(
+							findExonsAlignedToTranscriptAccordingToEnsembl(
+									isoformName,
+									transcriptMapping.getReferenceGeneUniqueName(),
+									transcriptMapping.getUniqueName(),
+									transcriptMapping.getQuality()));
 				}
 
 				isoformMapping.setTranscriptMappings(transcriptMappings);
@@ -116,20 +122,18 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		return isoforms;
 	}
 
-	private void findAndSetExonsAlignedToTranscript(TranscriptMapping transcriptMapping) {
+	private List<Exon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
 
 		List<Exon> exons;
 
-		String refGeneUniqueName = transcriptMapping.getReferenceGeneUniqueName();
-
-		if ("GOLD".equalsIgnoreCase(transcriptMapping.getQuality())) {
-			exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptMapping.getUniqueName(), refGeneUniqueName);
+		if ("GOLD".equalsIgnoreCase(quality)) {
+			exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptAccession, refGeneUniqueName);
 		} else {
-			exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(transcriptMapping.getIsoformName(), transcriptMapping.getUniqueName(), refGeneUniqueName);
+			exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(isoformAccession, transcriptAccession, refGeneUniqueName);
 		}
 
 		exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
-		transcriptMapping.setExons(exons);
+		return exons;
 	}
 }
