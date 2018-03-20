@@ -1,21 +1,21 @@
 <genomic-mapping accession='$genomicMapping.accession' database='$genomicMapping.database'>
-	#if(!$genomicMapping.isoformMappings.isEmpty())
+	#if(!$genomicMapping.isoformGeneMappings.isEmpty())
 	<isoform-mapping-list>
-		#foreach($isoformMapping in $genomicMapping.isoformMappings)
-		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
-			#if(!$isoformMapping.getTranscriptMappings().isEmpty())
+		#foreach($isoformGeneMapping in $genomicMapping.isoformGeneMappings)
+		<isoform-mapping accession="$isoformGeneMapping.isoformName" main-name="$isoformGeneMapping.isoform.mainEntityName.value">
+			#if(!$isoformGeneMapping.transcriptGeneMappings.isEmpty())
 			<transcript-mapping-list>
-				#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
-				<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database' quality='$transcriptMapping.quality'>
-					<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
+				#foreach($transcriptGeneMapping in $isoformGeneMapping.transcriptGeneMappings)
+				<transcript-mapping accession='$transcriptGeneMapping.databaseAccession' database='$transcriptGeneMapping.database' quality='$transcriptGeneMapping.quality'>
+					<transcript-protein accession='$transcriptGeneMapping.proteinId' database='$transcriptGeneMapping.database'/>
 					<exon-list>
-						#foreach($exon in $transcriptMapping.exons)
-			   			<exon rank='$exon.rank' #if($exon.codingStatus)coding-status='$exon.codingStatus'#end accession='$exon.accession' database='$transcriptMapping.database'>
-							<position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
-							#if($exon.getFirstAminoAcid())
+						#foreach($exon in $transcriptGeneMapping.exons)
+			   			<exon rank='$exon.rank' #if($exon.codingStatus)coding-status='$exon.codingStatus'#end accession='$exon.accession' database='$transcriptGeneMapping.database'>
+							<position-on-gene begin='$exon.firstPosition' end='$exon.lastPosition' />
+							#if($exon.firstPosition)
 								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
                 			#end
-							#if($exon.getLastAminoAcid())
+							#if($exon.lastPosition)
                 				<amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.base'/>
                 			#end
               			</exon>

@@ -3,8 +3,8 @@ package org.nextprot.api.core.service.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.GenomicMapping;
-import org.nextprot.api.core.domain.IsoformMapping;
-import org.nextprot.api.core.domain.TranscriptMapping;
+import org.nextprot.api.core.domain.IsoformGeneMapping;
+import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
         Assert.assertEquals(1, gml.size());
 
-        List<IsoformMapping> iml = gml.get(0).getIsoformMappings();
+        List<IsoformGeneMapping> iml = gml.get(0).getIsoformGeneMappings();
         Assert.assertEquals(3, iml.size());
 
         assertExonStructures(iml, "NX_P78324-4", "NX_ENSG00000198053", "NX_ENST00000356025",
@@ -39,7 +39,7 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_Q12805");
         Assert.assertEquals(1, gml.size());
 
-        List<IsoformMapping> iml = gml.get(0).getIsoformMappings();
+        List<IsoformGeneMapping> iml = gml.get(0).getIsoformGeneMappings();
         Assert.assertEquals(5, iml.size());
 
         assertExonStructures(iml, "NX_Q12805-3", "NX_ENSG00000115380", "NX_ENST00000355426",
@@ -47,25 +47,25 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
                 "353-429,1201-1241,1693-1780,5873-5921,6089-6126,6130-6475,42406-42528,46275-46394,47398-47517,49075-49194,53017-53140,53225-53420,56906-57280");
     }
 
-    private void assertExonStructures(List<IsoformMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {
+    private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {
 
-        IsoformMapping isoformMapping = iml.stream()
-                .filter(im -> im.getUniqueName().equals(isoName))
+        IsoformGeneMapping isoformGeneMapping = iml.stream()
+                .filter(im -> im.getIsoformName().equals(isoName))
                 .collect(Collectors.toList()).get(0);
 
-        Assert.assertEquals(expEnsg, isoformMapping.getReferenceGeneName());
+        Assert.assertEquals(expEnsg, isoformGeneMapping.getReferenceGeneName());
 
-        String isoPosOnRefGene = isoformMapping.getPositionsOfIsoformOnReferencedGene().stream()
-                .map(k -> k.getKey()+"-"+k.getValue())
+        String isoPosOnRefGene = isoformGeneMapping.getIsoformCodingGeneRegionMappings().stream()
+                .map(k -> k.getFirstPosition()+"-"+k.getLastPosition())
                 .collect(Collectors.joining(","));
 
         Assert.assertEquals(expIsoPosOnRefGene, isoPosOnRefGene);
 
-        TranscriptMapping transcriptMapping = isoformMapping.getTranscriptMappings().stream()
+        TranscriptGeneMapping transcriptGeneMapping = isoformGeneMapping.getTranscriptGeneMappings().stream()
                 .filter(tm -> tm.getUniqueName().equals(expEnst))
                 .collect(Collectors.toList()).get(0);
 
-        String exonPosOnRefGene = transcriptMapping.getExons().stream()
+        String exonPosOnRefGene = transcriptGeneMapping.getExons().stream()
                 .map(e -> e.getFirstPositionOnGene()+"-"+e.getLastPositionOnGene())
                 .collect(Collectors.joining(","));
 

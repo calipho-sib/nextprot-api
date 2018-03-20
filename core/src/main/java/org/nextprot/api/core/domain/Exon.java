@@ -1,48 +1,50 @@
 package org.nextprot.api.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
-public class Exon implements Serializable{
+public class Exon implements Serializable {
 
-	private static final long serialVersionUID = -2078534367601549856L;
-	private int rank;
-	private String codingStatus;
-	private String accession;
-	private int firstPositionOnGene;
-	private int lastPositionOnGene;
-	private String transcriptName;
-	private String geneName;
-	
+	private static final long serialVersionUID = 2L;
+
 	private String name;
-	private String bioSequence;
-
+	private String accession;
+	private String transcriptName;
+	private GeneRegion geneRegion;
+	private String codingStatus;
+	private int rank;
 	private AminoAcid firstAminoAcid;
 	private AminoAcid lastAminoAcid;
-	
-	public int getRank() {
-		return rank;
-	}
 
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-
-	public String getCodingStatus() {
-		return codingStatus;
-	}
-
-	public void setCodingStatus(String codingStatus) {
-		this.codingStatus = codingStatus;
+	public String getName() {
+		return name;
 	}
 
 	public String getAccession() {
 		return accession;
 	}
 
-	public void setAccession(String accession) {
-		this.accession = accession;
+	public String getTranscriptName() {
+		return transcriptName;
 	}
 
+	public void setTranscriptName(String transcriptName) {
+		this.transcriptName = transcriptName;
+	}
+
+	public void setAccession(String nextprotAccession) {
+		this.name = nextprotAccession;
+		this.accession = nextprotAccession.substring(3);
+	}
+
+	public GeneRegion getGeneRegion() {
+		return geneRegion;
+	}
+
+	public void setGeneRegion(GeneRegion geneRegion) {
+		this.geneRegion = geneRegion;
+	}
 
 	public AminoAcid getFirstAminoAcid() {
 		return firstAminoAcid;
@@ -60,47 +62,29 @@ public class Exon implements Serializable{
 		this.lastAminoAcid = lastAminoAcid;
 	}
 
-	public String getTranscriptName() {
-		return transcriptName;
+	public int getRank() {
+		return rank;
 	}
 
-	public void setTranscriptName(String transcriptName) {
-		this.transcriptName = transcriptName;
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 
-	public String getName() {
-		return name;
+	public String getCodingStatus() {
+		return codingStatus;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-		this.accession = name.substring(3);
+	public void setCodingStatus(String codingStatus) {
+		this.codingStatus = codingStatus;
 	}
 
-	public int getLastPositionOnGene() {
-		return lastPositionOnGene;
-	}
-
-	public void setLastPositionOnGene(int lastPositionOnGene) {
-		this.lastPositionOnGene = lastPositionOnGene;
-	}
-
+	@JsonIgnore
 	public int getFirstPositionOnGene() {
-		return firstPositionOnGene;
+		return geneRegion.getFirstPosition();
 	}
 
-	public void setFirstPositionOnGene(int firstPositionOnGene) {
-		this.firstPositionOnGene = firstPositionOnGene;
+	@JsonIgnore
+	public int getLastPositionOnGene() {
+		return geneRegion.getLastPosition();
 	}
-
-	public String getGeneName() {
-		return geneName;
-	}
-
-	public void setGeneName(String geneName) {
-		this.geneName = geneName;
-	}
-
-
-
 }
