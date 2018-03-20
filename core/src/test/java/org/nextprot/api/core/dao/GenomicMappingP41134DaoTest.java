@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenomicMapping;
-import org.nextprot.api.core.domain.TranscriptMapping;
+import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,7 +40,7 @@ public class GenomicMappingP41134DaoTest extends CoreUnitBaseTest {
 	@Ignore
 	@Test
 	public void shouldGetTranscriptMapping() throws Exception {
-		Map<String, List<TranscriptMapping>> tms = geneDAO.findTranscriptMappingsByIsoformName(Arrays.asList("NX_P41134-1", "NX_P41134-2"));
+		Map<String, List<TranscriptGeneMapping>> tms = geneDAO.findTranscriptMappingsByIsoformName(Arrays.asList("NX_P41134-1", "NX_P41134-2"));
 		assertEquals(2, tms.size());
 	}
 

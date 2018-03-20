@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class GenomicMapping implements Serializable{
+public class GenomicMapping implements Serializable {
 
-	private static final long serialVersionUID = 4988428417905584804L;
+	private static final long serialVersionUID = 1L;
+
 	private long geneSeqId;
 	private String database;
 	private String accession;
-	private List<IsoformMapping> isoformMappings;
+	private List<IsoformGeneMapping> isoformGeneMappings;
 
 	public GenomicMapping() {
 
-		isoformMappings = new ArrayList<>();
+		isoformGeneMappings = new ArrayList<>();
 	}
 
 	public String getDatabase() {
@@ -42,12 +43,12 @@ public class GenomicMapping implements Serializable{
 		this.geneSeqId = geneSeqId;
 	}
 
-	public List<IsoformMapping> getIsoformMappings() {
-		return isoformMappings;
+	public List<IsoformGeneMapping> getIsoformGeneMappings() {
+		return isoformGeneMappings;
 	}
 
-	public boolean addAllIsoformMappings(Collection<IsoformMapping> mappings) {
+	public boolean addAllIsoformMappings(Collection<IsoformGeneMapping> mappings) {
 
-		return isoformMappings.addAll(mappings);
+		return isoformGeneMappings.addAll(mappings);
 	}
 }

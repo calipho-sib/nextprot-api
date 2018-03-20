@@ -4,20 +4,19 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class TranscriptMapping implements Serializable{
+public class TranscriptGeneMapping implements Serializable {
 
-	private static final long serialVersionUID = -9783197460101612L;
+	private static final long serialVersionUID = 1L;
+
 	private long referenceGeneId;
 	private String referenceGeneUniqueName;
-	
 	private String isoformName;
 	private String database;
-	private String accession;
+	private String databaseAccession;
 	private String uniqueName;
 	private String proteinId;
-	private String bioSequence;
+	private int nucleotideSequenceLength;
 	private String quality;
-	
 	private List<Exon> exons;
 
 	public String getDatabase() {
@@ -28,12 +27,12 @@ public class TranscriptMapping implements Serializable{
 		this.database = database;
 	}
 
-	public String getAccession() {
-		return accession;
+	public String getDatabaseAccession() {
+		return databaseAccession;
 	}
 
-	public void setAccession(String accession) {
-		this.accession = accession;
+	public void setDatabaseAccession(String databaseAccession) {
+		this.databaseAccession = databaseAccession;
 	}
 
 	public String getProteinId() {
@@ -68,18 +67,16 @@ public class TranscriptMapping implements Serializable{
 		this.exons = exons;
 	}
 
-	
 	public void setUniqueName(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
 
-
-	public String getBioSequence() {
-		return bioSequence;
+	public int getNucleotideSequenceLength() {
+		return nucleotideSequenceLength;
 	}
 
-	public void setBioSequence(String bioSequence) {
-		this.bioSequence = bioSequence;
+	public void setNucleotideSequenceLength(int nucleotideSequenceLength) {
+		this.nucleotideSequenceLength = nucleotideSequenceLength;
 	}
 
 	public String getIsoformName() {

@@ -13,11 +13,11 @@ public interface GeneDAO {
 
 	List<GenomicMapping> findGenomicMappingByEntryName(String entryName);
 
-	Map<String, List<TranscriptMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames);
+	Map<String, List<TranscriptGeneMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames);
 
 	List<Exon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName);
 
 	List<Exon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
 
-	Map<String, List<IsoformMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames);
+	Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames);
 }

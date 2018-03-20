@@ -37,80 +37,80 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Preconditions.checkArgument(!entryName.isEmpty(), "The entry name "+entryName +" is not empty");
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName);
-		Collection<IsoformMapping> isoformMappings = findIsoformMappings(entryName);
+		Collection<IsoformGeneMapping> isoformGeneMappings = findIsoformGeneMappings(entryName);
 
-		isoformMappings.forEach(isoformMapping -> analyseExons(isoformMapping));
+		isoformGeneMappings.forEach(isoformMapping -> analyseExons(isoformMapping));
 
 		// Puts the isoformMappings to the associated gene and order it
 		for (GenomicMapping genomicMapping : genomicMappings) {
 
-			List<IsoformMapping> mappings = isoformMappings.stream()
+			List<IsoformGeneMapping> mappings = isoformGeneMappings.stream()
 					.filter(im -> im.getReferenceGeneId() == genomicMapping.getGeneSeqId())
 					.collect(Collectors.toList());
 
 			genomicMapping.addAllIsoformMappings(mappings);
-			genomicMapping.getIsoformMappings().sort((im1, im2) -> isoformComparator.compare(im1.getIsoform(), im2.getIsoform()));
+			genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(im1.getIsoform(), im2.getIsoform()));
 		}
 
 		return new ImmutableList.Builder<GenomicMapping>().addAll(genomicMappings).build();
 	}
 
-	private Collection<IsoformMapping> findIsoformMappings(String entryName) {
+	private Collection<IsoformGeneMapping> findIsoformGeneMappings(String entryName) {
 
 		Map<String, Isoform> isoformsByName = findIsoforms(entryName).stream()
 				.collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
 
-        Map<String, List<IsoformMapping>> isoformMappingsByIsoformName = geneDAO.getIsoformMappingsByIsoformName(isoformsByName.keySet());
-        Map<String, List<TranscriptMapping>> transcriptMappingsByIsoformName = geneDAO.findTranscriptMappingsByIsoformName(isoformsByName.keySet());
+        Map<String, List<IsoformGeneMapping>> isoformMappingsByIsoformName = geneDAO.getIsoformMappingsByIsoformName(isoformsByName.keySet());
+        Map<String, List<TranscriptGeneMapping>> transcriptMappingsByIsoformName = geneDAO.findTranscriptMappingsByIsoformName(isoformsByName.keySet());
 
 		// Set missing fields of IsoformMappings
 		for (String isoformName : isoformMappingsByIsoformName.keySet()) {
 
-		    for (IsoformMapping isoformMapping : isoformMappingsByIsoformName.get(isoformName)) {
+		    for (IsoformGeneMapping isoformGeneMapping : isoformMappingsByIsoformName.get(isoformName)) {
 
-				isoformMapping.setIsoform(isoformsByName.get(isoformName));
+				isoformGeneMapping.setIsoform(isoformsByName.get(isoformName));
 
 				// filter transcript mappings by gene name
-				List<TranscriptMapping> transcriptMappings = StreamUtils.nullableListToStream(transcriptMappingsByIsoformName.get(isoformName))
-						.filter(tm -> tm.getReferenceGeneId() == isoformMapping.getReferenceGeneId())
+				List<TranscriptGeneMapping> transcriptGeneMappings = StreamUtils.nullableListToStream(transcriptMappingsByIsoformName.get(isoformName))
+						.filter(tm -> tm.getReferenceGeneId() == isoformGeneMapping.getReferenceGeneId())
 						.collect(Collectors.toList());
 
-				for (TranscriptMapping transcriptMapping : transcriptMappings) {
+				for (TranscriptGeneMapping transcriptGeneMapping : transcriptGeneMappings) {
 
-					transcriptMapping.setExons(
+					transcriptGeneMapping.setExons(
 							findExonsAlignedToTranscriptAccordingToEnsembl(
 									isoformName,
-									transcriptMapping.getReferenceGeneUniqueName(),
-									transcriptMapping.getUniqueName(),
-									transcriptMapping.getQuality()));
+									transcriptGeneMapping.getReferenceGeneUniqueName(),
+									transcriptGeneMapping.getUniqueName(),
+									transcriptGeneMapping.getQuality()));
 				}
 
-				isoformMapping.setTranscriptMappings(transcriptMappings);
+				isoformGeneMapping.setTranscriptGeneMappings(transcriptGeneMappings);
 			}
 		}
 
 		return isoformMappingsByIsoformName.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
 	}
 
-	private void analyseExons(IsoformMapping isoformMapping) {
+	private void analyseExons(IsoformGeneMapping isoformGeneMapping) {
 
-		isoformMapping.getTranscriptMappings().forEach(transcriptMapping ->
-			computeExonListPhasesAndAminoacids(transcriptMapping, isoformMapping.getAminoAcidSequence(),
-						isoformMapping.getFirstPositionIsoformOnGene(),
-						isoformMapping.getLastPositionIsoformOnGene()));
+		isoformGeneMapping.getTranscriptGeneMappings().forEach(transcriptMapping ->
+			computeExonListPhasesAndAminoacids(transcriptMapping, isoformGeneMapping.getAminoAcidSequence(),
+						isoformGeneMapping.getFirstPositionIsoformOnGene(),
+						isoformGeneMapping.getLastPositionIsoformOnGene()));
 	}
 
-	private void computeExonListPhasesAndAminoacids(TranscriptMapping transcriptMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
+	private void computeExonListPhasesAndAminoacids(TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
 		TranscriptExonsAnalyser analyser;
 		ExonsAnalysisMessageBuilder exonsAnalysisMessageBuilder = new ExonsAnalysisMessageBuilder();
         analyser = new TranscriptExonsAnalyser(exonsAnalysisMessageBuilder);
 
         boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
-				transcriptMapping.getExons());
+				transcriptGeneMapping.getExons());
 
         if (!success) {
-			LOGGER.severe("MAPPING ERROR: " + transcriptMapping.getIsoformName() + "." + transcriptMapping.getAccession() + "." + transcriptMapping.getReferenceGeneUniqueName() + " (" + transcriptMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
+			LOGGER.severe("MAPPING ERROR: " + transcriptGeneMapping.getIsoformName() + "." + transcriptGeneMapping.getDatabaseAccession() + "." + transcriptGeneMapping.getReferenceGeneUniqueName() + " (" + transcriptGeneMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
 		}
 	}
 
