@@ -95,7 +95,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private void analyseExons(IsoformMapping isoformMapping) {
 
 		isoformMapping.getTranscriptMappings().forEach(transcriptMapping ->
-			computeExonListPhasesAndAminoacids(transcriptMapping, isoformMapping.getBioSequence(),
+			computeExonListPhasesAndAminoacids(transcriptMapping, isoformMapping.getAminoAcidSequence(),
 						isoformMapping.getFirstPositionIsoformOnGene(),
 						isoformMapping.getLastPositionIsoformOnGene()));
 	}

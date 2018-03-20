@@ -13,17 +13,15 @@ import java.util.Map.Entry;
  * @author dteixeira
  *
  */
-public class IsoformMapping implements Serializable{
+public class IsoformMapping implements Serializable {
 
-	private static final long serialVersionUID = -7849782759942855394L;
+	private static final long serialVersionUID = 2L;
+
 	private long referenceGeneId;
 	private String referenceGeneName;
-	
-
 	private String uniqueName;
 	private Isoform isoform;
-
-	private String bioSequence;
+	private String aminoAcidSequence;
 
 	// list of gene regions mapping the isoform protein
 	private List<Entry<Integer,Integer>> positionsOfIsoformOnReferencedGene;
@@ -66,13 +64,18 @@ public class IsoformMapping implements Serializable{
 		this.positionsOfIsoformOnReferencedGene = positionsOfIsoformOnReferencedGene;
 	}
 
-
+	/** @deprecated  As of serialVersionUID 2L, replaced by {@link #getAminoAcidSequence()} */
+	@Deprecated
 	public String getBioSequence() {
-		return bioSequence;
+		return aminoAcidSequence;
 	}
 
-	public void setBioSequence(String bioSequence) {
-		this.bioSequence = bioSequence;
+	public String getAminoAcidSequence() {
+		return aminoAcidSequence;
+	}
+
+	public void setAminoAcidSequence(String aminoAcidSequence) {
+		this.aminoAcidSequence = aminoAcidSequence;
 	}
 
 	public List<TranscriptMapping> getTranscriptMappings() {
