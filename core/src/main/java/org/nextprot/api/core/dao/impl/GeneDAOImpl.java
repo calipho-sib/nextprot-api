@@ -145,7 +145,7 @@ public class GeneDAOImpl implements GeneDAO {
 					resultSet.getInt("last_position"));
 
 			exon.setTranscriptName(resultSet.getString("transcript_name"));
-			exon.setAccession(resultSet.getString("exon"));
+			exon.setNameDeduceAccession(resultSet.getString("exon"));
 			exon.setRank(resultSet.getInt("rank")+1);
 			exon.setGeneRegion(geneRegion);
 

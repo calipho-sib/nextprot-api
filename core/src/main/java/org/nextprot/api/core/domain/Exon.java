@@ -33,9 +33,9 @@ public class Exon implements Serializable {
 		this.transcriptName = transcriptName;
 	}
 
-	public void setAccession(String nextprotAccession) {
-		this.name = nextprotAccession;
-		this.accession = nextprotAccession.substring(3);
+	public void setNameDeduceAccession(String exonName) {
+		this.name = exonName;
+		this.accession = exonName.substring(3);
 	}
 
 	public GeneRegion getGeneRegion() {
