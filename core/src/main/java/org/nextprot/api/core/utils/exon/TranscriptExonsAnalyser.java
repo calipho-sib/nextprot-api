@@ -160,18 +160,6 @@ public class TranscriptExonsAnalyser {
         public void startedExon(Exon exon) {}
 
         @Override
-        public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
-            exon.setFirstAminoAcid(first);
-            exon.setLastAminoAcid(last);
-            exon.setCodingStatus(category.getTypeString());
-        }
-
-        @Override
-        public void analysedNonCodingExon(Exon exon, ExonCategory category) {
-            exon.setCodingStatus(category.getTypeString());
-        }
-
-        @Override
         public void terminated(Exon exon) {}
 
         @Override

@@ -24,13 +24,13 @@ public interface ExonsAnalysisListener {
      * @param exon the analysed coding exon
      * @param first the first exon aa
      * @param last the last exon aa
-     * @param cat the exon category
+     * @param category the exon category
      */
-    default void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory cat) {
+    default void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
 
         exon.setFirstAminoAcid(first);
         exon.setLastAminoAcid(last);
-        exon.setCodingStatus(cat.getTypeString());
+        exon.setCodingStatus(category);
     }
 
     /**
@@ -43,9 +43,12 @@ public interface ExonsAnalysisListener {
     /**
      * The analysed non-coding exon is about to be handled.
      * @param exon the analysed non-coding exon
-     * @param cat the exon category
+     * @param category the exon category
      */
-    void analysedNonCodingExon(Exon exon, ExonCategory cat);
+    default void analysedNonCodingExon(Exon exon, ExonCategory category) {
+
+        exon.setCodingStatus(category);
+    }
 
     /**
      * The specified exon analysis has been terminated.

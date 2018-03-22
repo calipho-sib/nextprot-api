@@ -63,6 +63,9 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
 
     @Override
     public void analysedNonCodingExon(Exon exon, ExonCategory category) {
+
+        ExonsAnalysisListener.super.analysedNonCodingExon(exon, category);
+
         sb.append(category.getTypeString()).append(" ");
     }
 
