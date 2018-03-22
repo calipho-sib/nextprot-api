@@ -41,8 +41,10 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
 				.peek(genomicMapping -> {
-					genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
-					genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(im1.getIsoform(), im2.getIsoform()));
+					if (isoformGeneMappings.containsKey(genomicMapping.getGeneSeqId())) {
+						genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
+						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(im1.getIsoform(), im2.getIsoform()));
+					}
 				})
 				.collect(Collectors.toList());
 
