@@ -21,7 +21,7 @@ public class ExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(284, 1956);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(134, 286).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(134, 286).get(0));
         Assert.assertEquals(ExonCategory.START, status);
     }
 
@@ -30,7 +30,7 @@ public class ExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(284, 1956);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(996, 1150).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(996, 1150).get(0));
         Assert.assertEquals(ExonCategory.CODING, status);
     }
 
@@ -39,7 +39,7 @@ public class ExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(284, 1956);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(184, 2000).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(184, 2000).get(0));
         Assert.assertEquals(ExonCategory.MONO, status);
     }
 
@@ -49,7 +49,7 @@ public class ExonCategorizerTest {
         // NX_Q96M20-3
         ExonCategorizer categorizer = new ExonCategorizer(174, 61767);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(61768, 62080).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(61768, 62080).get(0));
 
         Assert.assertEquals(ExonCategory.STOP_ONLY, status);
     }
@@ -60,7 +60,7 @@ public class ExonCategorizerTest {
         // NX_Q96M20-1
         ExonCategorizer categorizer = new ExonCategorizer(174, 62056);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(61768, 62080).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(61768, 62080).get(0));
         Assert.assertEquals(ExonCategory.STOP, status);
     }
 
@@ -70,7 +70,7 @@ public class ExonCategorizerTest {
         // NX_Q8NFW8-2
         ExonCategorizer categorizer = new ExonCategorizer(131, 16108);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(16108, 16261).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(16108, 16261).get(0));
         Assert.assertEquals(ExonCategory.STOP, status);
     }
 
@@ -79,11 +79,11 @@ public class ExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
 
-        ExonCategory status = categorizer.categorize(createMockExonList(276, 289).get(0));
+        ExonCategory status = categorizer.categorize(mockExonList(276, 289).get(0));
         Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
     }
 
-    static List<Exon> createMockExonList(int... startEnds) {
+    public static List<Exon> mockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
 

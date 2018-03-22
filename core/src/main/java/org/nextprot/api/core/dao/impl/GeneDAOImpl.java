@@ -177,7 +177,7 @@ public class GeneDAOImpl implements GeneDAO {
 					((Integer)m.get("first_position")),
 					((Integer)m.get("last_position")));
 
-			isoformGeneMapping.getIsoformCodingGeneRegionMappings().add(geneRegion);
+			isoformGeneMapping.getIsoformGeneRegionMappings().add(geneRegion);
 		}
 
 		return isoformMappings.values().stream()

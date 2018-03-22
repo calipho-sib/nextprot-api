@@ -8,7 +8,7 @@ public class ExonsMappingConsistencyTest {
     @Test
     public void checkConsistency() {
 
-        ExonsMappingConsistency consistency = new ExonsMappingConsistency("NX_P78324-4");
+        ExonsMappingConsistency consistency = new ExonsMappingConsistency("NX_P78324");
         ExonsMappingConsistency.ConsistencyResult consistencyResult = consistency.check("ENSG00000198053");
 
         Assert.assertTrue(consistencyResult.isConsistent());

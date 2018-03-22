@@ -51,22 +51,9 @@ public class ExonsMappingConsistency {
         isoformMapping.ifPresent(im -> compareTranscriptMappingsWithIsoformPosOnRefGene(im, consistencyResult));
     }
 
-    private List<GeneRegion> calculateAllPossibleExons(List<IsoformGeneMapping> iml) {
-
-       return iml.stream()
-               .map(im -> im.getTranscriptGeneMappings())
-               .flatMap(Collection::stream)
-               .map(tm -> tm.getExons())
-               .flatMap(Collection::stream)
-               .map(e -> e.getGeneRegion())
-               .distinct()
-               .sorted(Comparator.comparingInt(gi -> gi.getFirstPosition()))
-               .collect(Collectors.toList());
-    }
-
     private void compareTranscriptMappingsWithIsoformPosOnRefGene(IsoformGeneMapping isoformGeneMapping, ConsistencyResult consistencyResult) {
 
-        List<GeneRegion> isoPositionsOnRefGene = isoformGeneMapping.getIsoformCodingGeneRegionMappings();
+        List<GeneRegion> isoPositionsOnRefGene = isoformGeneMapping.getIsoformGeneRegionMappings();
 
         for (TranscriptGeneMapping tm : isoformGeneMapping.getTranscriptGeneMappings()) {
 
@@ -75,7 +62,7 @@ public class ExonsMappingConsistency {
                     .filter(gi -> gi.getLastPosition() > isoPositionsOnRefGene.get(0).getFirstPosition())
                     .collect(Collectors.toList());
 
-            compareTranscriptMappingWithIsoformPosOnRefGene(tm.getUniqueName(), isoPositionsOnRefGene, geneRegions, consistencyResult);
+            compareTranscriptMappingWithIsoformPosOnRefGene(tm.getName(), isoPositionsOnRefGene, geneRegions, consistencyResult);
         }
     }
 

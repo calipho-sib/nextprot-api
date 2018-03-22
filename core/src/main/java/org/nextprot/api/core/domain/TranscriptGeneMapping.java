@@ -43,7 +43,7 @@ public class TranscriptGeneMapping implements Serializable {
 		this.proteinId = proteinId;
 	}
 
-	public String getUniqueName() {
+	public String getName() {
 		return uniqueName;
 	}
 

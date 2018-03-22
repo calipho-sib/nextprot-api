@@ -22,15 +22,16 @@ public class IsoformGeneMapping implements Serializable {
 	private Isoform isoform;
 
 	// list of gene regions mapping this isoform protein
-	private List<GeneRegion> isoformCodingGeneRegionMappings;
+	private List<GeneRegion> isoformGeneRegionMappings;
 	// list of transcripts mapping this isoform protein
 	private List<TranscriptGeneMapping> transcriptGeneMappings;
 	
 	public IsoformGeneMapping(){
-		isoformCodingGeneRegionMappings = new ArrayList<>();
+		isoformGeneRegionMappings = new ArrayList<>();
 		transcriptGeneMappings = new ArrayList<>();
 	}
 
+	@JsonIgnore
 	public String getIsoformName() {
 		return isoformName;
 	}
@@ -55,19 +56,10 @@ public class IsoformGeneMapping implements Serializable {
 		this.referenceGeneName = referenceGeneName;
 	}
 
-	public List<GeneRegion> getIsoformCodingGeneRegionMappings() {
-		return isoformCodingGeneRegionMappings;
+	public List<GeneRegion> getIsoformGeneRegionMappings() {
+		return isoformGeneRegionMappings;
 	}
 
-	/** @deprecated  As of serialVersionUID 2L, replaced by {@link #getIsoform().getSequence()} */
-	@Deprecated
-	public String getBioSequence() {
-
-		return getAminoAcidSequence();
-	}
-
-    /** @deprecated  As of serialVersionUID 2L, replaced by {@link #getIsoform().getSequence()}} */
-    @Deprecated
 	public String getAminoAcidSequence() {
 		return (isoform != null) ? isoform.getSequence() : "";
 	}
@@ -90,11 +82,11 @@ public class IsoformGeneMapping implements Serializable {
 
 	@JsonIgnore
 	public int getFirstPositionIsoformOnGene() {
-		return isoformCodingGeneRegionMappings.get(0).getFirstPosition();
+		return isoformGeneRegionMappings.get(0).getFirstPosition();
 	}
 
 	@JsonIgnore
 	public int getLastPositionIsoformOnGene() {
-		return isoformCodingGeneRegionMappings.get(isoformCodingGeneRegionMappings.size() - 1).getLastPosition();
+		return isoformGeneRegionMappings.get(isoformGeneRegionMappings.size() - 1).getLastPosition();
 	}
 }
