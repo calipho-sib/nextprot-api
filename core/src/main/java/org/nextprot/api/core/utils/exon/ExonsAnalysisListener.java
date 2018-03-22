@@ -26,7 +26,12 @@ public interface ExonsAnalysisListener {
      * @param last the last exon aa
      * @param cat the exon category
      */
-    void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory cat);
+    default void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory cat) {
+
+        exon.setFirstAminoAcid(first);
+        exon.setLastAminoAcid(last);
+        exon.setCodingStatus(cat.getTypeString());
+    }
 
     /**
      * Handling the analysed coding exon which generates an error.

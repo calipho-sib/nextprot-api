@@ -24,6 +24,8 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
     @Override
     public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
 
+        ExonsAnalysisListener.super.analysedCodingExon(exon, first, last, category);
+
         sb.append(first.getPosition());
         sb.append("[");
         sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
