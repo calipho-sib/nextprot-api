@@ -10,12 +10,12 @@
 					<transcript-protein accession='$transcriptGeneMapping.proteinId' database='$transcriptGeneMapping.database'/>
 					<exon-list>
 						#foreach($exon in $transcriptGeneMapping.exons)
-			   			<exon rank='$exon.rank' #if($exon.codingStatus)coding-status='$exon.codingStatus'#end accession='$exon.accession' database='$transcriptGeneMapping.database'>
-							<position-on-gene begin='$exon.firstPosition' end='$exon.lastPosition' />
-							#if($exon.firstPosition)
+			   			<exon rank='$exon.rank' #if($exon.codingStatus)coding-status='$exon.codingStatus'#end #if($exon.accession)accession='$exon.accession'#end #if($exon.accession)database='$transcriptGeneMapping.database'#else database='neXtProt'#end>
+							<position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
+							#if($exon.firstAminoAcid)
 								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
                 			#end
-							#if($exon.lastPosition)
+							#if($exon.lastAminoAcid)
                 				<amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.base'/>
                 			#end
               			</exon>
