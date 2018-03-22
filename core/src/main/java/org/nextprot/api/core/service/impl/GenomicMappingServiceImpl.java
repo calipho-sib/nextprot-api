@@ -76,6 +76,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 					isoformGeneMapping.setTranscriptGeneMappings(StreamUtils.nullableListToStream(transcriptGeneMappingsByIsoformName.get(isoformName))
 							.filter(tm -> tm.getReferenceGeneId() == isoformGeneMapping.getReferenceGeneId())
 							.peek(tm -> resetTranscriptGeneMappingExons(tm, isoformGeneMapping.getIsoformGeneRegionMappings()))
+							.sorted(Comparator.comparingInt(TranscriptGeneMapping::getNucleotideSequenceLength))
 							.collect(Collectors.toList()));
 				}
 			}
