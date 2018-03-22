@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.nextprot.api.core.utils.exon.ExonCategory;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ public class Exon implements Serializable {
 	private String accession;
 	private String transcriptName;
 	private GeneRegion geneRegion;
-	private String codingStatus;
+	private ExonCategory codingStatus;
 	private int rank;
 	private AminoAcid firstAminoAcid;
 	private AminoAcid lastAminoAcid;
@@ -71,10 +72,10 @@ public class Exon implements Serializable {
 	}
 
 	public String getCodingStatus() {
-		return codingStatus;
+		return codingStatus.getTypeString();
 	}
 
-	public void setCodingStatus(String codingStatus) {
+	public void setCodingStatus(ExonCategory codingStatus) {
 		this.codingStatus = codingStatus;
 	}
 
