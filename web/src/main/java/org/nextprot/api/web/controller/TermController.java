@@ -76,7 +76,8 @@ public class TermController {
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTermGraph.View> getAncestorGraph(
-			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+			@ApiPathParam(name = "term", description = "The accession of the c" +
+					"v term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
@@ -86,11 +87,16 @@ public class TermController {
 		return Collections.singletonMap("ancestor-graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
 	}
 
+	//
 	@ApiMethod(path = "/term/{term}", verb = ApiVerb.GET, description = "Get information for the given term", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/term/{term}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/term/{term:.+}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public CvTerm getTermInfo(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
+
+		//Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
+		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
+		term = term.replace(".json", "").replace(".JSON", "");
 
 		return terminologyService.findCvTermByAccession(term);
 	}
