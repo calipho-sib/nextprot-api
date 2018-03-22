@@ -47,7 +47,7 @@ public class GenomicMapping implements Serializable {
 		return isoformGeneMappings;
 	}
 
-	public boolean addAllIsoformMappings(Collection<IsoformGeneMapping> mappings) {
+	public boolean addAllIsoformGeneMappings(Collection<IsoformGeneMapping> mappings) {
 
 		return isoformGeneMappings.addAll(mappings);
 	}
