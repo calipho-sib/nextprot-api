@@ -55,14 +55,14 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
 
         Assert.assertEquals(expEnsg, isoformGeneMapping.getReferenceGeneName());
 
-        String isoPosOnRefGene = isoformGeneMapping.getIsoformCodingGeneRegionMappings().stream()
+        String isoPosOnRefGene = isoformGeneMapping.getIsoformGeneRegionMappings().stream()
                 .map(k -> k.getFirstPosition()+"-"+k.getLastPosition())
                 .collect(Collectors.joining(","));
 
         Assert.assertEquals(expIsoPosOnRefGene, isoPosOnRefGene);
 
         TranscriptGeneMapping transcriptGeneMapping = isoformGeneMapping.getTranscriptGeneMappings().stream()
-                .filter(tm -> tm.getUniqueName().equals(expEnst))
+                .filter(tm -> tm.getName().equals(expEnst))
                 .collect(Collectors.toList()).get(0);
 
         String exonPosOnRefGene = transcriptGeneMapping.getExons().stream()
