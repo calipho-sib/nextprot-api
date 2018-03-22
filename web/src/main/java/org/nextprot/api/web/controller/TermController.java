@@ -76,8 +76,7 @@ public class TermController {
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTermGraph.View> getAncestorGraph(
-			@ApiPathParam(name = "term", description = "The accession of the c" +
-					"v term",  allowedvalues = { "TS-0079"})
+			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
