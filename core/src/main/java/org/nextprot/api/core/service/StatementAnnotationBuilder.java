@@ -182,12 +182,6 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 		String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
 		String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
 
-        // TODO: remove the following line after next release data jan 2018
-        if ("23248292".equals(referenceAC)) {
-
-            return -1;
-        }
-
         Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
 		if (publication == null) {
             String message = "can 't find publication db:" + referenceDB + " id:" + referenceAC;
