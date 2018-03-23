@@ -19,6 +19,7 @@ public class CvTerm implements Serializable {
 	private String description;
 	private String ontology;
 	private String ontologyAltname;
+	private String ontologyDisplayName;
 	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
@@ -181,6 +182,9 @@ public class CvTerm implements Serializable {
 		sb.append("ontologyAltname=");
 		sb.append(this.ontologyAltname);
 		sb.append("\n");
+		sb.append("ontologyDisplayName=");
+		sb.append(this.ontologyDisplayName);
+		sb.append("\n");
 		sb.append("ancestors=");
 		sb.append(this.parentAccession);
 		sb.append("\n");
@@ -188,7 +192,15 @@ public class CvTerm implements Serializable {
 		return sb.toString();
 	}
 
-	public static class TermProperty implements Serializable {
+
+	public String getOntologyDisplayName() {
+		return ontologyDisplayName;
+	}
+	public void setOntologyDisplayName(String ontologyDisplayName) {
+        this.ontologyDisplayName = ontologyDisplayName;
+    }
+
+    public static class TermProperty implements Serializable {
 
 		private static final long serialVersionUID = 5662052927182501529L;
 		

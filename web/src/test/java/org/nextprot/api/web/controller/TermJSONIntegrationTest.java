@@ -21,6 +21,8 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
 
         String content = result.getResponse().getContentAsString();
         Assert.assertTrue(content.contains("\"description\" : \"Alcohol dehydrogenase\""));
+        Assert.assertTrue(content.contains("\"ontologyDisplayName\" : \"Enzyme classification\""));
+
     }
 
     @Test

@@ -101,6 +101,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setProperties(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
 			term.setOntology(resultSet.getString("ontology"));
 			term.setOntologyAltname(resultSet.getString("ontologyAltname"));
+			term.setOntologyDisplayName(resultSet.getString("ontologyDisplayName"));
 			term.setAncestorAccession(resultSet.getString("ancestor"));
 			term.setChildAccession(resultSet.getString("children"));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
