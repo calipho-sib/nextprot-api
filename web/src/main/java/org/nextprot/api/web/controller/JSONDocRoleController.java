@@ -234,6 +234,15 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 
+		for (Entry<String, Set<ApiDoc>> stringSetEntry : contextApis.entrySet()) {
+			stringSetEntry.getValue().stream()
+				.flatMap(e -> e.getMethods().stream())
+				.filter(m -> m.getPath().endsWith(":.+}")) //special case for 1.1.1.1 which should not be considered as extension
+				.forEach(m -> {
+				m.setPath(m.getPath().replace(":.+", ""));
+			});
+		}
+
 		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseVersions().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
