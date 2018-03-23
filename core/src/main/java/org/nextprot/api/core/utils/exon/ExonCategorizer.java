@@ -22,13 +22,15 @@ public class ExonCategorizer {
         this.endPositionIsoform = endPositionIsoform;
     }
 
-    public ExonCategory categorize(Exon exon) {
+    public ExonCategory categorize(Exon exon) throws ExonInvalidBoundException {
 
         int startPositionExon = exon.getFirstPositionOnGene();
         int endPositionExon = exon.getLastPositionOnGene();
 
-        Preconditions.checkArgument(startPositionIsoform <= endPositionIsoform, "The start position of the isoform on the gene " + startPositionIsoform + " can not be bigger than the end " + endPositionIsoform);
-        Preconditions.checkArgument(startPositionExon <= endPositionExon, "The start position of the exon on the gene " + startPositionIsoform + " can not be bigger than the end " + endPositionIsoform);
+        if (startPositionExon > endPositionExon) {
+
+            throw new ExonInvalidBoundException(exon);
+        }
 
         ExonCategory codingStatus;
 
@@ -79,5 +81,13 @@ public class ExonCategorizer {
         }
 
         return codingStatus;
+    }
+
+    public static class ExonInvalidBoundException extends Exception {
+
+        public ExonInvalidBoundException(Exon exon) {
+
+            super("exon mapping gene "+exon.getGeneRegion().getGeneName() + " has invalid bounds ["+exon.getFirstPositionOnGene()+"-"+exon.getLastPositionOnGene()+"]");
+        }
     }
 }
