@@ -4,7 +4,8 @@
           nextprot.cv_terms.cv_name as name, 
           nextprot.cv_terms.description as description, 
           nextprot.cv_term_categories.cv_api_name as ontology, 
-          nextprot.cv_term_categories.cv_name as ontologyAltname, 
+          nextprot.cv_term_categories.cv_name as ontologyAltname,
+          nextprot.cv_term_categories.cv_display_name as ontologyDisplayName,
           (select string_agg(cvsyn.synonym_name, ' | ') from  nextprot.cv_term_synonyms cvsyn where cvsyn.cv_term_id=nextprot.cv_terms.cv_id ) as synonyms,
           (select string_agg(properties.property_name ||':='|| properties.property_value, ' | ') from nextprot.cv_term_properties properties where properties.cv_term_id = nextprot.cv_terms.cv_id) as properties,
 -- get ancestor          
