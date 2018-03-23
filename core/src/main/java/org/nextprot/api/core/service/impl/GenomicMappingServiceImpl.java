@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.exon.ExonCategorizer;
 import org.nextprot.api.core.utils.exon.ExonsAnalysisMessageBuilder;
 import org.nextprot.api.core.utils.exon.GeneRegionMappingConflictSolver;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
@@ -137,11 +138,15 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			ExonsAnalysisMessageBuilder exonsAnalysisMessageBuilder = new ExonsAnalysisMessageBuilder();
 			analyser = new TranscriptExonsAnalyser(exonsAnalysisMessageBuilder);
 
-			boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
-					transcriptGeneMapping.getExons());
+			try {
+				boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
+                        transcriptGeneMapping.getExons());
+				if (!success) {
+					LOGGER.severe("MAPPING ERROR: isoform name=" + transcriptGeneMapping.getIsoformName() + ", transcript name=" + transcriptGeneMapping.getDatabaseAccession() + ", gene name=" + transcriptGeneMapping.getReferenceGeneUniqueName() + ", quality=" + transcriptGeneMapping.getQuality() + ", message=" + exonsAnalysisMessageBuilder.getMessage());
+				}
+			} catch (ExonCategorizer.ExonInvalidBoundException e) {
 
-			if (!success) {
-				LOGGER.severe("MAPPING ERROR: " + transcriptGeneMapping.getIsoformName() + "." + transcriptGeneMapping.getDatabaseAccession() + "." + transcriptGeneMapping.getReferenceGeneUniqueName() + " (" + transcriptGeneMapping.getQuality() + "): " + exonsAnalysisMessageBuilder.getMessage());
+				LOGGER.severe("MAPPING ERROR: isoform name="+ transcriptGeneMapping.getIsoformName()+", transcript name="+transcriptGeneMapping.getDatabaseAccession() +", message=" + e.getMessage());
 			}
 		}
 

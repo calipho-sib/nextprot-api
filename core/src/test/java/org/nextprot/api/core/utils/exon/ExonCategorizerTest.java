@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Exon;
+import org.nextprot.api.core.domain.GeneRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,19 @@ public class ExonCategorizerTest {
 
         ExonCategory status = categorizer.categorize(mockExonList(276, 289).get(0));
         Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
+    }
+
+    @Test(expected = ExonCategorizer.ExonInvalidBoundException.class)
+    public void testOutOfBoundExon() throws Exception {
+
+        ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
+
+        Exon exon = mockExonList(276, 28).get(0);
+        GeneRegion gr = new GeneRegion();
+        gr.setGeneName("roudoudou");
+        when(exon.getGeneRegion()).thenReturn(gr);
+
+        categorizer.categorize(exon);
     }
 
     public static List<Exon> mockExonList(int... startEnds) {

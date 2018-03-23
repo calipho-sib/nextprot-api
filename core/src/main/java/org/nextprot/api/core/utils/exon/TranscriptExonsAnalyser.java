@@ -62,7 +62,7 @@ public class TranscriptExonsAnalyser {
      * @param exonList the exons to analyse
      * @return true if analysis succeed
      */
-    public boolean analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exonList) {
+    public boolean analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exonList) throws ExonCategorizer.ExonInvalidBoundException {
 
         List<Exon> exonsSorted = new ArrayList<>(exonList);
         exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
