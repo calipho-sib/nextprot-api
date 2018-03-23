@@ -30,7 +30,7 @@ public interface ExonsAnalysisListener {
 
         exon.setFirstAminoAcid(first);
         exon.setLastAminoAcid(last);
-        exon.setCodingStatus(category);
+        exon.setExonCategory(category);
     }
 
     /**
@@ -47,7 +47,7 @@ public interface ExonsAnalysisListener {
      */
     default void analysedNonCodingExon(Exon exon, ExonCategory category) {
 
-        exon.setCodingStatus(category);
+        exon.setExonCategory(category);
     }
 
     /**

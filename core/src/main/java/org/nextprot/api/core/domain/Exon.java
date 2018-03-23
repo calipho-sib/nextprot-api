@@ -13,7 +13,7 @@ public class Exon implements Serializable {
 	private String accession;
 	private String transcriptName;
 	private GeneRegion geneRegion;
-	private ExonCategory codingStatus;
+	private ExonCategory exonCategory;
 	private int rank;
 	private AminoAcid firstAminoAcid;
 	private AminoAcid lastAminoAcid;
@@ -71,12 +71,12 @@ public class Exon implements Serializable {
 		this.rank = rank;
 	}
 
-	public String getCodingStatus() {
-		return codingStatus.getTypeString();
+	public String getExonCategory() {
+		return exonCategory.getTypeString();
 	}
 
-	public void setCodingStatus(ExonCategory codingStatus) {
-		this.codingStatus = codingStatus;
+	public void setExonCategory(ExonCategory exonCategory) {
+		this.exonCategory = exonCategory;
 	}
 
 	@JsonIgnore
@@ -88,4 +88,6 @@ public class Exon implements Serializable {
 	public int getLastPositionOnGene() {
 		return geneRegion.getLastPosition();
 	}
+
+
 }
