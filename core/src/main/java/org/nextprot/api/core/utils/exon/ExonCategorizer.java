@@ -82,12 +82,4 @@ public class ExonCategorizer {
 
         return codingStatus;
     }
-
-    public static class ExonInvalidBoundException extends Exception {
-
-        public ExonInvalidBoundException(Exon exon) {
-
-            super("exon mapping gene "+exon.getGeneRegion().getGeneName() + " has invalid bounds ["+exon.getFirstPositionOnGene()+"-"+exon.getLastPositionOnGene()+"]");
-        }
-    }
 }
