@@ -36,9 +36,8 @@ public interface ExonsAnalysis {
     /**
      * Handling the analysed coding exon which generates an error.
      * @param exon the exon that failed
-     * @param error the out of bound error
      */
-    void analysedCodingExonFailed(Exon exon, ExonOutOfBoundError error);
+    void analysedCodingExonFailed(Exon exon, ExonOutOfIsoformBoundException outOfBoundException);
 
     /**
      * The analysed non-coding exon is about to be handled.

@@ -48,7 +48,9 @@ public class TranscriptExonsAnalyser {
      * @param exonList the exons to analyse
      * @return true if analysis succeed
      */
-    public boolean analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, Collection<Exon> exonList) throws ExonCategorizer.ExonInvalidBoundException {
+    public Results analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, final Collection<Exon> exonList) {
+
+        Results results = new Results();
 
         List<Exon> exonsSorted = new ArrayList<>(exonList);
         exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
@@ -59,24 +61,26 @@ public class TranscriptExonsAnalyser {
         for (Exon exon : exonsSorted) {
 
             exonsAnalysis.startedExon(exon);
-            ExonCategory exonCategory = categorizer.categorize(exon);
+            try {
+                ExonCategory exonCategory = categorizer.categorize(exon);
 
-            if (exonCategory.isCoding()) {
-                boolean success = analyseCodingExon(isoformSequence, exon, exonCategory);
-
-                // there were some errors
-                if (!success) {
-                    return false;
+                if (exonCategory.isCoding()) {
+                    analyseCodingExon(isoformSequence, exon, exonCategory);
                 }
+                else {
+                    exonsAnalysis.analysedNonCodingExon(exon, exonCategory);
+                }
+
+                results.addValidExon(exon);
+                exonsAnalysis.terminated(exon);
+            } catch (InvalidExonException e) {
+
+                results.addInvalidExonException(e);
             }
-            else {
-                exonsAnalysis.analysedNonCodingExon(exon, exonCategory);
-            }
-            exonsAnalysis.terminated(exon);
         }
         exonsAnalysis.terminated();
 
-        return true;
+        return results;
     }
 
     private void moveToNextFirstPos() {
@@ -92,39 +96,64 @@ public class TranscriptExonsAnalyser {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private boolean analyseCodingExon(String isoformSequence, Exon exon, ExonCategory cat) {
+    private int calcStartPositionExonOnGene(Exon exon,  ExonCategory cat) {
 
         int startPositionExonOnGene = exon.getFirstPositionOnGene();
-        int endPositionExonOnGene = exon.getLastPositionOnGene();
 
         if (cat == ExonCategory.START || cat == ExonCategory.MONO)
             startPositionExonOnGene = startPositionIsoformOnGene;
-        if (cat == ExonCategory.STOP  || cat == ExonCategory.MONO)
-            endPositionExonOnGene = endPositionIsoformOnGene;
+
+        return startPositionExonOnGene;
+    }
+
+    private void analyseCodingExon(String isoformSequence, Exon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
+
+        int startPositionExonOnGene = calcStartPositionExonOnGene(exon, cat);
+        int endPositionExonOnGene = calcEndPositionExonOnGene(exon, cat);
 
         moveToNextFirstPos();
         AminoAcid first = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
-        // update transcript length
         currentTranscriptLen += endPositionExonOnGene - startPositionExonOnGene + 1;
 
         moveToNextLastPos();
         AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
-        if (first.getPosition() > isoformSequence.length()) {
-            exonsAnalysis.analysedCodingExonFailed(exon, new ExonOutOfBoundError(first, last,
-                    ExonOutOfBoundError.AminoAcidOutOfBound.FIRST, isoformSequence.length()));
-            return false;
-        }
-        else if (last.getPosition() > isoformSequence.length()) {
-            exonsAnalysis.analysedCodingExonFailed(exon, new ExonOutOfBoundError(first, last,
-                    ExonOutOfBoundError.AminoAcidOutOfBound.LAST, isoformSequence.length()));
-            return false;
+        if (first.getPosition() > isoformSequence.length() || last.getPosition() > isoformSequence.length()) {
+
+            ExonOutOfIsoformBoundException exception = createExonOutOfIsoformBoundException(exon, first, last, isoformSequence.length());
+
+            exonsAnalysis.analysedCodingExonFailed(exon, exception);
+            throw exception;
         }
 
         exonsAnalysis.analysedCodingExon(exon, first, last, cat);
+    }
 
-        return true;
+    private int calcEndPositionExonOnGene(Exon exon,  ExonCategory cat) {
+
+        int endPositionExonOnGene = exon.getLastPositionOnGene();
+
+        if (cat == ExonCategory.STOP  || cat == ExonCategory.MONO)
+            endPositionExonOnGene = endPositionIsoformOnGene;
+
+        return endPositionExonOnGene;
+    }
+
+    private ExonOutOfIsoformBoundException createExonOutOfIsoformBoundException(Exon exon, AminoAcid first, AminoAcid last, int isoformLength) {
+
+        if (first.getPosition() > isoformLength) {
+
+            return new ExonOutOfIsoformBoundException(exon, first, last,
+                    ExonOutOfIsoformBoundException.AminoAcidOutOfBound.FIRST, isoformLength);
+        }
+        else if (last.getPosition() > isoformLength) {
+
+            return new ExonOutOfIsoformBoundException(exon, first, last,
+                    ExonOutOfIsoformBoundException.AminoAcidOutOfBound.LAST, isoformLength);
+        }
+
+        throw new IllegalStateException("should throw a ExonOutOfIsoformBoundException !");
     }
 
     private AminoAcid newAminoAcid(String isoformSequence, int aaPosition, int phase) {
@@ -132,5 +161,36 @@ public class TranscriptExonsAnalyser {
         if (aaPosition >= isoformSequence.length()) return new AminoAcid(aaPosition + 1, phase, '?');
 
         return new AminoAcid(aaPosition + 1, phase, isoformSequence.charAt(aaPosition));
+    }
+
+    public static class Results {
+
+        private final List<InvalidExonException> exceptions = new ArrayList<>();
+        private final List<Exon> validExons = new ArrayList<>();
+
+        void addInvalidExonException(InvalidExonException e) {
+
+            exceptions.add(e);
+        }
+
+        void addValidExon(Exon exon) {
+
+            validExons.add(exon);
+        }
+
+        public List<Exon> getValidExons() {
+
+            return Collections.unmodifiableList(validExons);
+        }
+
+        public List<InvalidExonException> getExceptionList() {
+
+            return Collections.unmodifiableList(exceptions);
+        }
+
+        public boolean isSuccess() {
+
+            return exceptions.isEmpty();
+        }
     }
 }

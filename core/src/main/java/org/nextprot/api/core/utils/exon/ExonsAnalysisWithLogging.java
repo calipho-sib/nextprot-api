@@ -36,28 +36,28 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
     }
 
     @Override
-    public void analysedCodingExonFailed(Exon exon, ExonOutOfBoundError exonOutOfBoundError) {
+    public void analysedCodingExonFailed(Exon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
 
-        AminoAcid first = exonOutOfBoundError.getFirst();
+        AminoAcid first = exonOutOfIsoformBoundException.getFirst();
 
-        if (exonOutOfBoundError.getAminoAcidOutOfBound() == ExonOutOfBoundError.AminoAcidOutOfBound.LAST) {
+        if (exonOutOfIsoformBoundException.getAminoAcidOutOfBound() == ExonOutOfIsoformBoundException.AminoAcidOutOfBound.LAST) {
             sb.append(first.getPosition());
             sb.append("[");
             sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
             sb.append("OUT-OF-BOUND--");
             sb.append("NA");
             sb.append("]!");
-            sb.append(exonOutOfBoundError.getLast().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
+            sb.append(exonOutOfIsoformBoundException.getLast().getPosition()).append(">").append(exonOutOfIsoformBoundException.getIsoformLength()).append("!");
         } else {
             sb.append(first.getPosition());
             sb.append("!");
-            sb.append(exonOutOfBoundError.getFirst().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
+            sb.append(exonOutOfIsoformBoundException.getFirst().getPosition()).append(">").append(exonOutOfIsoformBoundException.getIsoformLength()).append("!");
             sb.append("[");
             sb.append(getAACode(first, true)).append("(+").append(first.getPhase()).append(")--");
             sb.append("OUT-OF-BOUND--");
             sb.append("NA");
             sb.append("]!");
-            sb.append(exonOutOfBoundError.getLast().getPosition()).append(">").append(exonOutOfBoundError.getIsoformLength()).append("!");
+            sb.append(exonOutOfIsoformBoundException.getLast().getPosition()).append(">").append(exonOutOfIsoformBoundException.getIsoformLength()).append("!");
         }
     }
 

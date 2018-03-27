@@ -7,7 +7,6 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.core.utils.exon.ExonCategorizer;
 import org.nextprot.api.core.utils.exon.ExonsAnalysisWithLogging;
 import org.nextprot.api.core.utils.exon.GeneRegionMappingConflictSolver;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
@@ -134,19 +133,18 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 		private void computeExonListPhasesAndAminoacids(TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
-			TranscriptExonsAnalyser analyser;
 			ExonsAnalysisWithLogging exonsAnalysisWithLogging = new ExonsAnalysisWithLogging();
-			analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
+			TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
 
-			try {
-				boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
-                        transcriptGeneMapping.getExons());
-				if (!success) {
-					LOGGER.severe("MAPPING ERROR: isoform name=" + transcriptGeneMapping.getIsoformName() + ", transcript name=" + transcriptGeneMapping.getDatabaseAccession() + ", gene name=" + transcriptGeneMapping.getReferenceGeneUniqueName() + ", quality=" + transcriptGeneMapping.getQuality() + ", message=" + exonsAnalysisWithLogging.getMessage());
-				}
-			} catch (ExonCategorizer.ExonInvalidBoundException e) {
+			TranscriptExonsAnalyser.Results results = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
+					transcriptGeneMapping.getExons());
 
-				LOGGER.severe("MAPPING ERROR: isoform name="+ transcriptGeneMapping.getIsoformName()+", transcript name="+transcriptGeneMapping.getDatabaseAccession() +", message=" + e.getMessage());
+			if (!results.isSuccess()) {
+
+				transcriptGeneMapping.setExons(results.getValidExons());
+
+				LOGGER.severe("SKIPPING EXON(S) WITH MAPPING ERROR: isoform name=" + transcriptGeneMapping.getIsoformName() + ", transcript name=" + transcriptGeneMapping.getDatabaseAccession() + ", gene name=" + transcriptGeneMapping.getReferenceGeneUniqueName() + ", quality=" + transcriptGeneMapping.getQuality()
+						+ ", exon structure=" + exonsAnalysisWithLogging.getMessage()+", messages="+results.getExceptionList().stream().map(e -> e.getMessage()).collect(Collectors.joining(",")));
 			}
 		}
 
