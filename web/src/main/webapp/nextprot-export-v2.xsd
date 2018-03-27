@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:		2018/03/27
+    2 parameters of <exon> are now optional: parameters 'accession' and 'database' of exon tag are optional
+
     Date:		2017/04/24
     New annotation category added: electrophysiological-parameter
 
@@ -727,8 +730,8 @@
             <xs:documentation>Describes a protein sequence to which the transcript sequence maps.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
-			<xs:attribute ref="accession" use="required"/>
-			<xs:attribute ref="database" use="required"/>
+			<xs:attribute ref="accession" use="optional"/>
+			<xs:attribute ref="database" use="optional"/>
 		</xs:complexType>
     </xs:element>	
     <!-- Transcript protein definition ends -->
@@ -770,8 +773,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute ref="accession" use="required"/>
-			<xs:attribute ref="database" use="required"/>
+			<xs:attribute ref="accession"/>
+			<xs:attribute ref="database"/>
 		</xs:complexType>
     </xs:element>	
     <!-- Exon definition ends -->
