@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 
-@ActiveProfiles({ "dev","cache" })
+@Ignore // should not be integration tests, mock deps
+@ActiveProfiles({ "dev" })
 public class PEFFVariantTest extends CoreUnitBaseTest {
 
     @Autowired
