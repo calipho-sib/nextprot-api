@@ -154,7 +154,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 
 	@Override
-	public Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames){
+	public Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
 		List<Map<String,Object>> result = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("isoform-mappings"), namedParameters);
@@ -164,7 +164,7 @@ public class GeneDAOImpl implements GeneDAO {
 			String isoName = ((String)m.get("isoform"));
 			long geneId = ( (Long)m.get("reference_identifier_id"));
 
-			String isoformMappingKey = isoName + geneId;
+			String isoformMappingKey = isoName + "."+ geneId;
 			if(!isoformMappings.containsKey(isoformMappingKey)){
 				isoformMappings.put(isoformMappingKey, new IsoformGeneMapping());
 			}
