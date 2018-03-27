@@ -12,9 +12,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by fnikitin on 21/07/15.
- */
+
 public class ExonCategorizerTest {
 
     @Test
@@ -84,7 +82,7 @@ public class ExonCategorizerTest {
         Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
     }
 
-    @Test(expected = ExonCategorizer.ExonInvalidBoundException.class)
+    @Test(expected = ExonInvalidBoundException.class)
     public void testOutOfBoundExon() throws Exception {
 
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
@@ -106,9 +104,14 @@ public class ExonCategorizerTest {
         for (int i=0 ; i<startEnds.length-1 ; i+=2) {
 
             Exon exon = mock(Exon.class);
+            GeneRegion geneRegion = mock(GeneRegion.class);
+            when(geneRegion.getFirstPosition()).thenReturn(startEnds[i]);
+            when(geneRegion.getLastPosition()).thenReturn(startEnds[i+1]);
+            when(geneRegion.getGeneName()).thenReturn("roudoudou");
 
             when(exon.getFirstPositionOnGene()).thenReturn(startEnds[i]);
             when(exon.getLastPositionOnGene()).thenReturn(startEnds[i+1]);
+            when(exon.getGeneRegion()).thenReturn(geneRegion);
 
             exons.add(exon);
         }

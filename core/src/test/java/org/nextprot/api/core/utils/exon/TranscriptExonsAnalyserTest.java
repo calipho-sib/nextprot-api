@@ -164,16 +164,47 @@ public class TranscriptExonsAnalyserTest {
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
 
-        analyser.analyse("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
+        TranscriptExonsAnalyser.Results results = analyser.analyse("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT",
+                256, 53495, exons);
 
-        Assert.assertEquals(1, collector.size());
+        Assert.assertEquals(2, results.getValidExons().size());
 
         assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
-        //assertInfoEquals(collector.getInfoAt(1), 'E', 248, 1, 'T', 288, 1, ExonCategory.CODING);
-        //Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(2).getExonCategory());
-        //Assert.assertNull(collector.getInfoAt(2).getFirstAA());
-        //Assert.assertNull(collector.getInfoAt(2).getLastAA());
-        Assert.assertTrue(collector.hasError());
+        Assert.assertTrue(!results.isSuccess());
+    }
+
+
+    @Test
+    public void testInvalidExonInNX_Q8NHL6_1_ENST0000396332() {
+
+        List<Exon> exons = mockExonList(1, 192,
+                13360, 13476,
+                13869, 13950,
+                14114, 14149,
+                18102, 18139,
+                18400, 18452,
+                19337, 19336,
+                19340, 19495
+                );
+
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
+
+        TranscriptExonsAnalyser.Results results = analyser.analyse("MTPILTVLICLGLSLGPRTHVQAGHLPKPTLWAEPGSVITQGSPVTLRCQGGQETQEYRLYREKKTALWITRIPQELVKKGQFPIPSITWEHAGRYRCYYGSDTAGRSESSDPLELVVTGAYIKPTLSAQPSPVVNSGGNVILQCDSQVAFDGFSLCKEGEDEHPQCLNSQPHARGSSRAIFSVGPVSPSRRWWYRCYAYDSNSPYEWSLPSDLLELLVLGVSKKPSLSVQPGPIVAPEETLTLQCGSDAGYNRFVLYKDGERDFLQLAGAQPQAGLSQANFTLGPVSRSYGGQYRCYGAHNLSSEWSAPSDPLDILIAGQFYDRVSLSVQPGPTVASGENVTLLCQSQGWMQTFLLTKEGAADDPWRLRSTYQSQKYQAEFPMGPVTSAHAGTYRCYGSQSSKPYLLTHPSDPLELVVSGPSGGPSSPTTGPTSTSGPEDQPLTPTGSDPQSGLGRHLGVVIGILVAVILLLLLLLLLFLILRHRRQGKHWTSTQRKADFQHPAGAVGPEPTDRGLQWRSSPAADAQEENLYAAVKHTQPEDGVEMDTRSPHDEDPQAVTYAEVKHSRPRREMASPPSPLSGEFLDTKDRQAEEDRQMDTEAAASEAPQDVTYAQLHSLTLRREATEPPPSQEGPSPAVPSIYATLAIH",
+                13917, 19718, exons);
+
+        Assert.assertEquals(8, exons.size());
+        Assert.assertEquals(7, results.getValidExons().size());
+        List<Exon> validExons = results.getValidExons();
+
+        Assert.assertEquals(1, validExons.get(0).getFirstPositionOnGene());
+        Assert.assertEquals(192, validExons.get(0).getLastPositionOnGene());
+        Assert.assertEquals(18400, validExons.get(5).getFirstPositionOnGene());
+        Assert.assertEquals(18452, validExons.get(5).getLastPositionOnGene());
+        Assert.assertEquals(19340, validExons.get(6).getFirstPositionOnGene());
+        Assert.assertEquals(19495, validExons.get(6).getLastPositionOnGene());
+        Assert.assertEquals(1, results.getExceptionList().size());
+        System.out.println(results.getExceptionList().get(0).getMessage());
     }
 
     /*@Test
@@ -290,7 +321,7 @@ public class TranscriptExonsAnalyserTest {
         }
 
         @Override
-        public void analysedCodingExonFailed(Exon exon, ExonOutOfBoundError exonOutOfBoundError) {
+        public void analysedCodingExonFailed(Exon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
             error = true;
         }
 
@@ -307,12 +338,12 @@ public class TranscriptExonsAnalyserTest {
         @Override
         public void terminated() {}
 
-        public ExonInfo getInfoAt(int index) {
+        ExonInfo getInfoAt(int index) {
             Preconditions.checkElementIndex(index, exonInfos.size());
             return exonInfos.get(index);
         }
 
-        public boolean hasError() {
+        boolean hasError() {
             return error;
         }
 
