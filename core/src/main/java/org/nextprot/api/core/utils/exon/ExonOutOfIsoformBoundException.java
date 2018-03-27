@@ -1,22 +1,26 @@
 package org.nextprot.api.core.utils.exon;
 
 import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.Exon;
 
 /**
  * An exon out of bound error
  *
  * Created by fnikitin on 28/07/15.
  */
-public class ExonOutOfBoundError {
+public class ExonOutOfIsoformBoundException extends InvalidExonException {
 
-    public enum AminoAcidOutOfBound {FIRST, LAST};
+    public enum AminoAcidOutOfBound {FIRST, LAST}
 
     private final AminoAcid first;
     private final AminoAcid last;
     private final AminoAcidOutOfBound aminoAcidOutOfBound;
     private final int isoformLength;
 
-    public ExonOutOfBoundError(AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
+    public ExonOutOfIsoformBoundException(Exon exon, AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
+
+        super(exon, "outofbound aa="+aminoAcidOutOfBound+", isoform length="+isoformLength);
+
         this.first = first;
         this.last = last;
         this.aminoAcidOutOfBound = aminoAcidOutOfBound;
@@ -33,14 +37,6 @@ public class ExonOutOfBoundError {
 
     public AminoAcid getLast() {
         return last;
-    }
-
-    public AminoAcid getOutOfBoundAminoAcid() {
-        return (aminoAcidOutOfBound == AminoAcidOutOfBound.FIRST) ? first : last;
-    }
-
-    public AminoAcid getInBoundAminoAcid() {
-        return (aminoAcidOutOfBound == AminoAcidOutOfBound.FIRST) ? last : first;
     }
 
     public AminoAcidOutOfBound getAminoAcidOutOfBound() {
