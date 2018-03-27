@@ -11,10 +11,6 @@ import java.util.List;
 
 import static org.nextprot.api.core.utils.exon.ExonCategorizerTest.mockExonList;
 
-/**
- *
- * Created by fnikitin on 22/07/15.
- */
 public class TranscriptExonsAnalyserTest {
 
     @Test
@@ -268,7 +264,7 @@ public class TranscriptExonsAnalyserTest {
         }
     }
 
-    private class InfoCollectorAnalysis implements ExonsAnalysisListener {
+    private class InfoCollectorAnalysis implements ExonsAnalysis {
 
         private final List<ExonInfo> exonInfos;
         private ExonInfo exonInfo;

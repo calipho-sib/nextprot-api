@@ -19,9 +19,9 @@ import java.util.List;
 public class TranscriptExonsAnalyser {
 
     private final static Log LOGGER = LogFactory.getLog(TranscriptExonsAnalyser.class);
-    private static final ExonsAnalysisListener DEFAULT_HANDLER = new ExonsAnalysisListenerImpl();
+    private static final ExonsAnalysis DEFAULT_HANDLER = new ExonsAnalysisImpl();
 
-    private final ExonsAnalysisListener handler;
+    private final ExonsAnalysis handler;
 
     private ExonCategorizer categorizer;
 
@@ -36,7 +36,7 @@ public class TranscriptExonsAnalyser {
         this(DEFAULT_HANDLER);
     }
 
-    public TranscriptExonsAnalyser(ExonsAnalysisListener handler) {
+    public TranscriptExonsAnalyser(ExonsAnalysis handler) {
 
         Preconditions.checkNotNull(handler);
 
@@ -151,7 +151,7 @@ public class TranscriptExonsAnalyser {
     /**
      * Update exon on the fly in this default implementation
      */
-    private static class ExonsAnalysisListenerImpl implements ExonsAnalysisListener {
+    private static class ExonsAnalysisImpl implements ExonsAnalysis {
 
         @Override
         public void started() {}

@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.Exon;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
+public class ExonsAnalysisWithLogging implements ExonsAnalysis {
 
     private StringBuilder sb;
 
@@ -24,7 +24,7 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
     @Override
     public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
 
-        ExonsAnalysisListener.super.analysedCodingExon(exon, first, last, category);
+        ExonsAnalysis.super.analysedCodingExon(exon, first, last, category);
 
         sb.append(first.getPosition());
         sb.append("[");
@@ -64,7 +64,7 @@ public class ExonsAnalysisMessageBuilder implements ExonsAnalysisListener {
     @Override
     public void analysedNonCodingExon(Exon exon, ExonCategory category) {
 
-        ExonsAnalysisListener.super.analysedNonCodingExon(exon, category);
+        ExonsAnalysis.super.analysedNonCodingExon(exon, category);
 
         sb.append(category.getTypeString()).append(" ");
     }

@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.Exon;
  *
  * Created by fnikitin on 22/07/15.
  */
-public interface ExonsAnalysisListener {
+public interface ExonsAnalysis {
 
     /** The transcript analysis is about to be started. */
     void started();

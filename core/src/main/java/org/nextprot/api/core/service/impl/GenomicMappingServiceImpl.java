@@ -8,7 +8,7 @@ import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.exon.ExonCategorizer;
-import org.nextprot.api.core.utils.exon.ExonsAnalysisMessageBuilder;
+import org.nextprot.api.core.utils.exon.ExonsAnalysisWithLogging;
 import org.nextprot.api.core.utils.exon.GeneRegionMappingConflictSolver;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,14 +135,14 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		private void computeExonListPhasesAndAminoacids(TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
 			TranscriptExonsAnalyser analyser;
-			ExonsAnalysisMessageBuilder exonsAnalysisMessageBuilder = new ExonsAnalysisMessageBuilder();
-			analyser = new TranscriptExonsAnalyser(exonsAnalysisMessageBuilder);
+			ExonsAnalysisWithLogging exonsAnalysisWithLogging = new ExonsAnalysisWithLogging();
+			analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
 
 			try {
 				boolean success = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene,
                         transcriptGeneMapping.getExons());
 				if (!success) {
-					LOGGER.severe("MAPPING ERROR: isoform name=" + transcriptGeneMapping.getIsoformName() + ", transcript name=" + transcriptGeneMapping.getDatabaseAccession() + ", gene name=" + transcriptGeneMapping.getReferenceGeneUniqueName() + ", quality=" + transcriptGeneMapping.getQuality() + ", message=" + exonsAnalysisMessageBuilder.getMessage());
+					LOGGER.severe("MAPPING ERROR: isoform name=" + transcriptGeneMapping.getIsoformName() + ", transcript name=" + transcriptGeneMapping.getDatabaseAccession() + ", gene name=" + transcriptGeneMapping.getReferenceGeneUniqueName() + ", quality=" + transcriptGeneMapping.getQuality() + ", message=" + exonsAnalysisWithLogging.getMessage());
 				}
 			} catch (ExonCategorizer.ExonInvalidBoundException e) {
 
