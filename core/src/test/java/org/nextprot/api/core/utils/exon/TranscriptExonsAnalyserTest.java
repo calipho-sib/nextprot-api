@@ -85,18 +85,18 @@ public class TranscriptExonsAnalyserTest {
 
         Assert.assertEquals(7, collector.size());
 
-        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, collector.getInfoAt(0).getExonCategory());
+        Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(0).getExonCategory());
         Assert.assertNull(collector.getInfoAt(0).getFirstAA());
         Assert.assertNull(collector.getInfoAt(0).getLastAA());
         assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'M', 83, 0, ExonCategory.START);
         assertInfoEquals(collector.getInfoAt(2), 'G', 84, 0, 'A', 148, 1, ExonCategory.CODING);
         assertInfoEquals(collector.getInfoAt(3), 'A', 148, 1, 'Q', 199, 0, ExonCategory.CODING);
         assertInfoEquals(collector.getInfoAt(4), 'V', 200, 0, 'S', 201, 0, ExonCategory.STOP);
-        Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(5).getExonCategory());
+        Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(5).getExonCategory());
         Assert.assertNull(collector.getInfoAt(5).getFirstAA());
         Assert.assertNull(collector.getInfoAt(5).getLastAA());
 
-        Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(6).getExonCategory());
+        Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(6).getExonCategory());
         Assert.assertNull(collector.getInfoAt(6).getFirstAA());
         Assert.assertNull(collector.getInfoAt(6).getLastAA());
     }
@@ -133,7 +133,7 @@ public class TranscriptExonsAnalyserTest {
         assertInfoEquals(collector.getInfoAt(4), 'G', 232, 0, 'R', 263, 2, ExonCategory.CODING);
         assertInfoEquals(collector.getInfoAt(5), 'R', 263, 2, 'R', 263, 0, ExonCategory.STOP);
 
-        Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(6).getExonCategory());
+        Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(6).getExonCategory());
         Assert.assertNull(collector.getInfoAt(6).getFirstAA());
         Assert.assertNull(collector.getInfoAt(6).getLastAA());
     }

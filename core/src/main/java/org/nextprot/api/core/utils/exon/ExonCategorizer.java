@@ -36,7 +36,7 @@ public class ExonCategorizer {
 
         // not coding exons in the beginning of the transcript
         if (endPositionExon < startPositionIsoform) {
-            codingStatus = ExonCategory.NOT_CODING_PRE;
+            codingStatus = ExonCategory.NOT_CODING;
             // ************ SPI ******************* EPI *******************
             // **<SPE>***EPE***********************************************
         }
@@ -49,7 +49,7 @@ public class ExonCategorizer {
                 codingStatus = ExonCategory.STOP_ONLY;
             }
             else {
-                codingStatus = ExonCategory.NOT_CODING_POST;
+                codingStatus = ExonCategory.NOT_CODING;
             }
             // ************ SPI ******************* EPI *******************
             // ********************************************SPE*<EPE>*******

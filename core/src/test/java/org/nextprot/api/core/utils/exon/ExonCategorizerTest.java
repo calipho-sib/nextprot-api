@@ -79,7 +79,7 @@ public class ExonCategorizerTest {
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
 
         ExonCategory status = categorizer.categorize(mockExonList(276, 289).get(0));
-        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
+        Assert.assertEquals(ExonCategory.NOT_CODING, status);
     }
 
     @Test(expected = ExonInvalidBoundException.class)

@@ -9,8 +9,7 @@ public enum ExonCategory {
     CODING("CODING", true),
     MONO("MONO", true),
     STOP("STOP", true),
-    NOT_CODING_PRE("NOT_CODING", false),
-    NOT_CODING_POST("NOT_CODING", false),
+    NOT_CODING("NOT_CODING", false),
     STOP_ONLY("STOP_ONLY", false)
     ;
 
