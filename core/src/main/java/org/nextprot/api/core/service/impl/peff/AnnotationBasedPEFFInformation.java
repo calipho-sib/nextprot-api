@@ -41,7 +41,7 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
         }
     }
 
-    protected boolean doHandleAnnotation(Annotation annotation) {
+    protected boolean selectAnnotation(Annotation annotation) {
 
         return supportedApiModels.contains(annotation.getAPICategory());
     }
@@ -68,7 +68,7 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
 
         StringBuilder sb = new StringBuilder("");
 
-        List<Annotation> annots = selectAnnotation();
+        List<Annotation> annots = filterAnnotation(isoformAccession);
         annots.sort(createAnnotationComparator(isoformAccession));
 
         for (Annotation annotation : annots) {
@@ -79,13 +79,13 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
         return sb.toString();
     }
 
-    protected List<Annotation> selectAnnotation() {
+    protected List<Annotation> filterAnnotation(String isoformAccession) {
 
         List<Annotation> annots = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoformAccession)) {
 
-            if (doHandleAnnotation(annotation)) {
+            if (selectAnnotation(annotation)) {
 
                 annots.add(annotation);
             }

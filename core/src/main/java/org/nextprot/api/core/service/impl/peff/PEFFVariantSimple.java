@@ -27,9 +27,9 @@ public class PEFFVariantSimple extends AnnotationBasedPEFFInformation {
     }
 
     @Override
-    protected boolean doHandleAnnotation(Annotation annotation) {
+    protected boolean selectAnnotation(Annotation annotation) {
 
-        return super.doHandleAnnotation(annotation) &&
+        return super.selectAnnotation(annotation) &&
                 annotation.getStartPositionForIsoform(isoformAccession).intValue() == annotation.getEndPositionForIsoform(isoformAccession).intValue() &&
                 annotation.getVariant().getVariant().length() == 1 && !annotation.getVariant().getVariant().equals("-");
     }

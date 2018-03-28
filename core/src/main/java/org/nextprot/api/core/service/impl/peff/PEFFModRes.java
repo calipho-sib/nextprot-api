@@ -38,7 +38,7 @@ public class PEFFModRes extends PEFFPTMInformation {
 
         for (PEFFPTMInformation information : formatterList) {
 
-            if (information.doHandleAnnotation(annotation)) {
+            if (information.selectAnnotation(annotation)) {
                 return information;
             }
         }
@@ -65,9 +65,9 @@ public class PEFFModRes extends PEFFPTMInformation {
     }
 
     @Override
-    protected List<Annotation> selectAnnotation() {
+    protected List<Annotation> filterAnnotation(String isoformAccession) {
 
-        List<Annotation> selectedAnnotations = super.selectAnnotation();
+        List<Annotation> selectedAnnotations = super.filterAnnotation(isoformAccession);
 
         selectedAnnotations.addAll(unmappedUniprotModAnnotations);
 

@@ -28,9 +28,9 @@ public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
     }
 
     @Override
-    protected boolean doHandleAnnotation(Annotation annotation) {
+    protected boolean selectAnnotation(Annotation annotation) {
 
-        return super.doHandleAnnotation(annotation) &&
+        return super.selectAnnotation(annotation) &&
                 (
                     annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
                     annotation.getVariant().getVariant().length() == 0 || // deletion
