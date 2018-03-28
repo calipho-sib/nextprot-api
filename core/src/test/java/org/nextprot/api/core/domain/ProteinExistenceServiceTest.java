@@ -8,7 +8,8 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-// TODO: test should not be ignored once db changed
+@Ignore
+// Should mock deps and unit test this service
 @ActiveProfiles({ "dev","cache"})
 public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
         
@@ -118,7 +119,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6SJ96");
 
-		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 	}
 
 	@Test
@@ -135,7 +136,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6V0L0");
 
-		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
+		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 	}
 
 	// Could not find an entry that match this rule:
