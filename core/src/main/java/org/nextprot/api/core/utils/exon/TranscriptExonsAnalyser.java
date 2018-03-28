@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils.exon;
 
 import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenericExon;
 
 import java.util.*;
@@ -53,7 +54,7 @@ public class TranscriptExonsAnalyser {
         Results results = new Results();
 
         List<GenericExon> exonsSorted = new ArrayList<>(exonList);
-        exonsSorted.sort(Comparator.comparingInt(GenericExon::getFirstPositionOnGene));
+        exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
         init(startPositionIsoformOnGene, endPositionIsoformOnGene);
 

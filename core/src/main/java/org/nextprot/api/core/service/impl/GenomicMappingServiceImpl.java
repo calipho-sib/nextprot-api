@@ -118,7 +118,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(isoformAccession, transcriptAccession, refGeneUniqueName);
 			}
 
-			exons.sort(Comparator.comparingInt(GenericExon::getFirstPositionOnGene));
+			exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
 			return exons;
 		}

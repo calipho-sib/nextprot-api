@@ -5,7 +5,7 @@ import org.nextprot.api.core.utils.exon.ExonCategory;
 
 import java.io.Serializable;
 
-public class GenericExon implements Serializable {
+public class GenericExon implements Exon, Serializable {
 
 	private static final long serialVersionUID = 3L;
 
@@ -18,14 +18,17 @@ public class GenericExon implements Serializable {
 	private AminoAcid firstAminoAcid;
 	private AminoAcid lastAminoAcid;
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getAccession() {
 		return accession;
 	}
 
+	@Override
 	public String getTranscriptName() {
 		return transcriptName;
 	}
@@ -39,6 +42,7 @@ public class GenericExon implements Serializable {
 		this.accession = exonName.substring(3);
 	}
 
+	@Override
 	public GeneRegion getGeneRegion() {
 		return geneRegion;
 	}
@@ -47,6 +51,7 @@ public class GenericExon implements Serializable {
 		this.geneRegion = geneRegion;
 	}
 
+	@Override
 	public AminoAcid getFirstAminoAcid() {
 		return firstAminoAcid;
 	}
@@ -55,6 +60,7 @@ public class GenericExon implements Serializable {
 		this.firstAminoAcid = firstAminoAcid;
 	}
 
+	@Override
 	public AminoAcid getLastAminoAcid() {
 		return lastAminoAcid;
 	}
@@ -63,6 +69,7 @@ public class GenericExon implements Serializable {
 		this.lastAminoAcid = lastAminoAcid;
 	}
 
+	@Override
 	public int getRank() {
 		return rank;
 	}
@@ -71,6 +78,7 @@ public class GenericExon implements Serializable {
 		this.rank = rank;
 	}
 
+	@Override
 	public ExonCategory getExonCategory() {
 		return exonCategory;
 	}
@@ -80,14 +88,14 @@ public class GenericExon implements Serializable {
 	}
 
 	@JsonIgnore
+	@Override
 	public int getFirstPositionOnGene() {
 		return geneRegion.getFirstPosition();
 	}
 
 	@JsonIgnore
+	@Override
 	public int getLastPositionOnGene() {
 		return geneRegion.getLastPosition();
 	}
-
-
 }
