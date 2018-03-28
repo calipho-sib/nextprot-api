@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev", "cache" })
 public class EntryControllerTest extends MVCDBUnitBaseTest {
 
     @Test
@@ -89,8 +89,13 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
                 "\"3D\" : true",
                 "\"disease\" : true",
                 "\"isoforms\" : 1",
-                "\"variants\" : 70",
-                "\"ptms\" : 3",
+                "\"variants\" : ",
+                "\"ptms\" : ",
+                "\"curatedPublicationCount\" : ",
+                "\"additionalPublicationCount\" : ",
+                "\"patentCount\" : ",
+                "\"submissionCount\" : ",
+                "\"webResourceCount\" : ",
                 "\"entryDescription\" : \"Insulin\""
         ).forEach(expectedContent -> Assert.assertTrue(content.contains(expectedContent)));
     }

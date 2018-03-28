@@ -35,7 +35,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
                 graph.countNodes());
-        Assert.assertEquals(13391, graph.countEdges());
+        Assert.assertEquals(13736, graph.countEdges());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         int cvId = graph.getCvTermIdByAccession("GO:0005488");
 
-        Assert.assertEquals(50, graph.getChildren(cvId).length);
+        Assert.assertEquals(49, graph.getChildren(cvId).length);
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(graph.getCvTermAccessionById(cvId));
 
@@ -223,7 +223,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
-        Assert.assertEquals("high-affinity zinc uptake transmembrane transporter activity", graph.getCvTermNameById(1071));
+        Assert.assertEquals("high-affinity zinc transmembrane transporter activity", graph.getCvTermNameById(1071));
     }
 
     @Test
