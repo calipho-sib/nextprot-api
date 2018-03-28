@@ -5,9 +5,9 @@ import org.nextprot.api.core.utils.exon.ExonCategory;
 
 import java.io.Serializable;
 
-public class Exon implements Serializable {
+public class GenericExon implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 	private String name;
 	private String accession;
@@ -71,8 +71,8 @@ public class Exon implements Serializable {
 		this.rank = rank;
 	}
 
-	public String getExonCategory() {
-		return exonCategory.getTypeString();
+	public ExonCategory getExonCategory() {
+		return exonCategory;
 	}
 
 	public void setExonCategory(ExonCategory exonCategory) {

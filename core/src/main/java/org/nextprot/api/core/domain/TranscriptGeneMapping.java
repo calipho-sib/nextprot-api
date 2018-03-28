@@ -17,7 +17,7 @@ public class TranscriptGeneMapping implements Serializable {
 	private String proteinId;
 	private int nucleotideSequenceLength;
 	private String quality;
-	private List<Exon> exons;
+	private List<GenericExon> exons;
 
 	public String getDatabase() {
 		return database;
@@ -54,7 +54,7 @@ public class TranscriptGeneMapping implements Serializable {
 	/**
 	 * Gets the exons in ascending order (first position comes first in the list)
 	 */
-	public List<Exon> getExons() {
+	public List<GenericExon> getExons() {
 		return exons;
 	}
 
@@ -63,7 +63,7 @@ public class TranscriptGeneMapping implements Serializable {
 	 * When setting the exons be careful, to set them in ascending order (first positions comes first in the list)
 	 * @param exons
 	 */
-	public void setExons(List<Exon> exons) {
+	public void setExons(List<GenericExon> exons) {
 		this.exons = exons;
 	}
 

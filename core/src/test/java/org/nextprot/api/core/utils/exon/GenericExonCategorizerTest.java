@@ -3,8 +3,8 @@ package org.nextprot.api.core.utils.exon;
 import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GeneRegion;
+import org.nextprot.api.core.domain.GenericExon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class ExonCategorizerTest {
+public class GenericExonCategorizerTest {
 
     @Test
     public void testFirstExonStatus() throws Exception {
@@ -87,7 +87,7 @@ public class ExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
 
-        Exon exon = mockExonList(276, 28).get(0);
+        GenericExon exon = mockExonList(276, 28).get(0);
         GeneRegion gr = new GeneRegion();
         gr.setGeneName("roudoudou");
         when(exon.getGeneRegion()).thenReturn(gr);
@@ -95,15 +95,15 @@ public class ExonCategorizerTest {
         categorizer.categorize(exon);
     }
 
-    public static List<Exon> mockExonList(int... startEnds) {
+    public static List<GenericExon> mockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
 
-        List<Exon> exons = new ArrayList<>();
+        List<GenericExon> exons = new ArrayList<>();
 
         for (int i=0 ; i<startEnds.length-1 ; i+=2) {
 
-            Exon exon = mock(Exon.class);
+            GenericExon exon = mock(GenericExon.class);
             GeneRegion geneRegion = mock(GeneRegion.class);
             when(geneRegion.getFirstPosition()).thenReturn(startEnds[i]);
             when(geneRegion.getLastPosition()).thenReturn(startEnds[i+1]);

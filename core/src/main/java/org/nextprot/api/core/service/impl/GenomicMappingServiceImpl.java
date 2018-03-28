@@ -93,7 +93,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			Map<Integer, Integer> exonsFromEnsemblIndices = new HashMap<>();
 
-			List<Exon> exonsFromEnsembl = findExonsAlignedToTranscriptAccordingToEnsembl(
+			List<GenericExon> exonsFromEnsembl = findExonsAlignedToTranscriptAccordingToEnsembl(
 					transcriptGeneMapping.getIsoformName(),
 					transcriptGeneMapping.getReferenceGeneUniqueName(),
 					transcriptGeneMapping.getName(),
@@ -108,9 +108,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			transcriptGeneMapping.setExons(rebuildExonList(validatedGeneRegions, exonsFromEnsembl, exonsFromEnsemblIndices));
 		}
 
-		private List<Exon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
+		private List<GenericExon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
 
-			List<Exon> exons;
+			List<GenericExon> exons;
 
 			if ("GOLD".equalsIgnoreCase(quality)) {
 				exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptAccession, refGeneUniqueName);
@@ -118,7 +118,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(isoformAccession, transcriptAccession, refGeneUniqueName);
 			}
 
-			exons.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
+			exons.sort(Comparator.comparingInt(GenericExon::getFirstPositionOnGene));
 
 			return exons;
 		}
@@ -148,20 +148,20 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			}
 		}
 
-		private List<Exon> rebuildExonList(List<GeneRegion> geneRegions, List<Exon> exonsFromEnsembl, Map<Integer, Integer> oldGeneRegionIndices) {
+		private List<GenericExon> rebuildExonList(List<GeneRegion> geneRegions, List<GenericExon> exonsFromEnsembl, Map<Integer, Integer> oldGeneRegionIndices) {
 
-			List<Exon> exons = new ArrayList<>(geneRegions.size());
+			List<GenericExon> exons = new ArrayList<>(geneRegions.size());
 
 			for(int i = 0; i < geneRegions.size(); i++) {
 
-				Exon exon;
+				GenericExon exon;
 
 				// already there
 				if (oldGeneRegionIndices.containsKey(i)) {
 					exon = exonsFromEnsembl.get(oldGeneRegionIndices.get(i));
 				}
 				else {
-					exon = new Exon();
+					exon = new GenericExon();
 					exon.setGeneRegion(geneRegions.get(i));
 					exon.setTranscriptName(exonsFromEnsembl.get(0).getTranscriptName());
 				}

@@ -116,7 +116,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 
 	@Override
-	public List<Exon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName) {
+	public List<GenericExon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName) {
 		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
@@ -125,7 +125,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 	
 	@Override
-	public List<Exon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName) {
+	public List<GenericExon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName) {
 		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
@@ -134,11 +134,11 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static class ExonMapper implements ParameterizedRowMapper<Exon> {
+	private static class ExonMapper implements ParameterizedRowMapper<GenericExon> {
 
 		@Override
-		public Exon mapRow(ResultSet resultSet, int row) throws SQLException {
-			Exon exon = new Exon();
+		public GenericExon mapRow(ResultSet resultSet, int row) throws SQLException {
+			GenericExon exon = new GenericExon();
 
 			GeneRegion geneRegion = new GeneRegion(resultSet.getString("gene_name"),
 					resultSet.getInt("first_position"),

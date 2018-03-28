@@ -15,9 +15,9 @@ public interface GeneDAO {
 
 	Map<String, List<TranscriptGeneMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames);
 
-	List<Exon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName);
+	List<GenericExon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName);
 
-	List<Exon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
+	List<GenericExon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
 
 	Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames);
 }
