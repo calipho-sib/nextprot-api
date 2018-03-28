@@ -1,10 +1,10 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PEFFProcessedMolecule extends AnnotationBasedPEFFInformation {
@@ -22,9 +22,9 @@ public class PEFFProcessedMolecule extends AnnotationBasedPEFFInformation {
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "transit peptide"); // was "TRANSIT"
     }
 
-    public PEFFProcessedMolecule(Entry entry, String isoformAccession) {
+    public PEFFProcessedMolecule(String isoformAccession, List<Annotation> isoformAnnotations) {
 
-        super(entry, isoformAccession, ANNOTATION_CATEGORY_TO_NAME.keySet(), Key.PROCESSED);
+        super(isoformAccession, isoformAnnotations, ANNOTATION_CATEGORY_TO_NAME.keySet(), Key.PROCESSED);
     }
 
     @Override

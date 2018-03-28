@@ -1,31 +1,33 @@
 package org.nextprot.api.core.service.impl.peff;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.TerminologyService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class IsoformPEFFHeaderBuilder {
 
-    private final Entry entry;
+    private final List<Annotation> isoformAnnotations;
     private final Isoform isoform;
     private final Overview overview;
     private final IsoformPEFFHeader peff = new IsoformPEFFHeader();
-    private final TerminologyService terminologyService;
+    private final Function<String, Optional<String>> cvTermToPsiModAccessionFunc;
+    private final Function<String, Optional<String>> cvTermToPsiModNameFunc;
 
-    public IsoformPEFFHeaderBuilder(String isoformAccession, Entry entry, IsoformService isoformService, TerminologyService terminologyService) {
+    public IsoformPEFFHeaderBuilder(Isoform isoform, List<Annotation> isoformAnnotations, Overview overview,
+                                    Function<String, Optional<String>> cvTermToPsiModAccessionFunc,
+                                    Function<String, Optional<String>> cvTermToPsiModNameFunc) {
 
-        this.entry = entry;
-        isoform = isoformService.findIsoformByName(entry.getUniqueName(), isoformAccession);
-        overview = entry.getOverview();
-
-        this.terminologyService = terminologyService;
+        this.isoform = isoform;
+        this.isoformAnnotations = isoformAnnotations;
+        this.overview = overview;
+        this.cvTermToPsiModAccessionFunc = cvTermToPsiModAccessionFunc;
+        this.cvTermToPsiModNameFunc = cvTermToPsiModNameFunc;
     }
 
     public IsoformPEFFHeaderBuilder withEverything() {
@@ -130,14 +132,14 @@ public class IsoformPEFFHeaderBuilder {
 
         List<Annotation> unmappedUniprotModAnnotations = new ArrayList<>();
 
-        peff.setModResPsiFormat(new PEFFModResPsi(entry, isoform.getIsoformAccession(),
-                terminologyService::findPsiModAccession,
-                terminologyService::findPsiModName,
+        peff.setModResPsiFormat(new PEFFModResPsi(isoform.getIsoformAccession(), isoformAnnotations,
+                cvTermToPsiModAccessionFunc,
+                cvTermToPsiModNameFunc,
                 unmappedUniprotModAnnotations
                 ).format()
         );
 
-        peff.setModResFormat(new PEFFModRes(entry, isoform.getIsoformAccession(), unmappedUniprotModAnnotations)
+        peff.setModResFormat(new PEFFModRes(isoform.getIsoformAccession(), isoformAnnotations, unmappedUniprotModAnnotations)
                 .format());
 
         return this;
@@ -145,7 +147,7 @@ public class IsoformPEFFHeaderBuilder {
 
     IsoformPEFFHeaderBuilder withVariantSimpleFormat() {
 
-        peff.setVariantSimpleFormat(new PEFFVariantSimple(entry, isoform.getIsoformAccession())
+        peff.setVariantSimpleFormat(new PEFFVariantSimple(isoform.getIsoformAccession(), isoformAnnotations)
                 .format());
 
         return this;
@@ -153,7 +155,7 @@ public class IsoformPEFFHeaderBuilder {
 
     IsoformPEFFHeaderBuilder withVariantComplexFormat() {
 
-        peff.setVariantComplexFormat(new PEFFVariantComplex(entry, isoform.getIsoformAccession())
+        peff.setVariantComplexFormat(new PEFFVariantComplex(isoform.getIsoformAccession(), isoformAnnotations)
                 .format());
 
         return this;
@@ -161,15 +163,13 @@ public class IsoformPEFFHeaderBuilder {
 
     IsoformPEFFHeaderBuilder withProcessedMoleculeFormat() {
 
-        peff.setProcessedMoleculeFormat(new PEFFProcessedMolecule(entry, isoform.getIsoformAccession())
+        peff.setProcessedMoleculeFormat(new PEFFProcessedMolecule(isoform.getIsoformAccession(), isoformAnnotations)
                 .format());
 
         return this;
     }
 
     private String getProteinName() {
-
-        Overview overview = entry.getOverview();
 
         return (overview.hasMainProteinName()) ?
                 overview.getMainProteinName() + " isoform " + isoform.getMainEntityName().getName() : "";

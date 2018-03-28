@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.impl.peff;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.NullableComparable;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.*;
@@ -19,10 +18,10 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
     private static final Map<AnnotationCategory, PEFFInformation> map = new HashMap<>();
 
     private final Set<AnnotationCategory> supportedApiModels;
-    protected final Entry entry;
     protected final String isoformAccession;
+    private final List<Annotation> isoformAnnotations;
 
-    AnnotationBasedPEFFInformation(Entry entry, String isoformAccession,
+    AnnotationBasedPEFFInformation(String isoformAccession, List<Annotation> isoformAnnotations,
                                    Set<AnnotationCategory> supportedApiModels,
                                    Key Key) {
 
@@ -31,8 +30,8 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
         Preconditions.checkNotNull(supportedApiModels);
         Preconditions.checkNotNull(Key);
 
-        this.entry = entry;
         this.isoformAccession = isoformAccession;
+        this.isoformAnnotations = isoformAnnotations;
         this.supportedApiModels = supportedApiModels;
 
         for (AnnotationCategory model : supportedApiModels) {
@@ -83,7 +82,7 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
 
         List<Annotation> annots = new ArrayList<>();
 
-        for (Annotation annotation : entry.getAnnotationsByIsoform(isoformAccession)) {
+        for (Annotation annotation : isoformAnnotations) {
 
             if (selectAnnotation(annotation)) {
 

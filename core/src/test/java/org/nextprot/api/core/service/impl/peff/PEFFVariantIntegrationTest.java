@@ -2,25 +2,30 @@ package org.nextprot.api.core.service.impl.peff;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
-@ActiveProfiles({ "dev","cache" })
+
+@ActiveProfiles({ "dev", "cache" })
 public class PEFFVariantIntegrationTest extends CoreUnitBaseTest {
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
+    private AnnotationService annotationService;
 
     @Test
-    public void formatSimpleVariant() throws Exception {
+    public void formatSimpleVariant() {
 
-        Entry entry = entryBuilderService.buildWithEverything("NX_P43246");
+        List<Annotation> isoformAnnotations = annotationService.findAnnotations("NX_P43246").stream()
+                .filter(annotation -> annotation.isSpecificForIsoform("NX_P43246-1"))
+                .collect(Collectors.toList());
 
-        PEFFVariantSimple variantSimple = new PEFFVariantSimple(entry, "NX_P43246-1");
+        PEFFVariantSimple variantSimple = new PEFFVariantSimple("NX_P43246-1", isoformAnnotations);
 
         String expectedFormat = variantSimple.format();
 
@@ -29,11 +34,13 @@ public class PEFFVariantIntegrationTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void formatComplexVariant() throws Exception {
+    public void formatComplexVariant() {
 
-        Entry entry = entryBuilderService.buildWithEverything("NX_P43246");
+        List<Annotation> isoformAnnotations = annotationService.findAnnotations("NX_P43246").stream()
+                .filter(annotation -> annotation.isSpecificForIsoform("NX_P43246-1"))
+                .collect(Collectors.toList());
 
-        PEFFVariantComplex variantComplex = new PEFFVariantComplex(entry, "NX_P43246-1");
+        PEFFVariantComplex variantComplex = new PEFFVariantComplex("NX_P43246-1", isoformAnnotations);
 
         String expectedFormat = variantComplex.format();
 

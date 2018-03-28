@@ -1,11 +1,11 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * A variation located on an isoform
@@ -14,9 +14,9 @@ import java.util.EnumSet;
  */
 public class PEFFVariantSimple extends AnnotationBasedPEFFInformation {
 
-    public PEFFVariantSimple(Entry entry, String isoformAccession) {
+    public PEFFVariantSimple(String isoformAccession, List<Annotation> isoformAnnotations) {
 
-        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.VARIANT), Key.VARIANT_SIMPLE);
+        super(isoformAccession, isoformAnnotations, EnumSet.of(AnnotationCategory.VARIANT), Key.VARIANT_SIMPLE);
     }
 
     @Override
