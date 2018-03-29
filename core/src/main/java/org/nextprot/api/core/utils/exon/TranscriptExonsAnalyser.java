@@ -1,8 +1,6 @@
 package org.nextprot.api.core.utils.exon;
 
-import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.Exon;
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.*;
 
 import java.util.*;
 
@@ -72,7 +70,16 @@ public class TranscriptExonsAnalyser {
                     exonsAnalysis.analysedNonCodingExon(exon, exonCategory);
                 }
 
-                results.addValidExon(exon);
+                if (exon.getExonCategory() == ExonCategory.START) {
+                    results.addValidExon(new ExonStart(exon, startPositionIsoformOnGene));
+                }
+                else if (exon.getExonCategory() == ExonCategory.STOP) {
+                    results.addValidExon(new ExonStop(exon, endPositionIsoformOnGene));
+                }
+                else {
+                    results.addValidExon(exon);
+                }
+
                 exonsAnalysis.terminated(exon);
             } catch (InvalidExonException e) {
 
@@ -95,16 +102,6 @@ public class TranscriptExonsAnalyser {
         currentPhase = currentTranscriptLen % 3;
 
         if (currentPhase == 0) currentIsoformPos--;
-    }
-
-    private int calcStartPositionExonOnGene(GenericExon exon, ExonCategory cat) {
-
-        int startPositionExonOnGene = exon.getFirstPositionOnGene();
-
-        if (cat == ExonCategory.START || cat == ExonCategory.MONO)
-            startPositionExonOnGene = startPositionIsoformOnGene;
-
-        return startPositionExonOnGene;
     }
 
     private void analyseCodingExon(String isoformSequence, GenericExon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
@@ -131,7 +128,17 @@ public class TranscriptExonsAnalyser {
         exonsAnalysis.analysedCodingExon(exon, first, last, cat);
     }
 
-    private int calcEndPositionExonOnGene(GenericExon exon, ExonCategory cat) {
+    private int calcStartPositionExonOnGene(Exon exon, ExonCategory cat) {
+
+        int startPositionExonOnGene = exon.getFirstPositionOnGene();
+
+        if (cat == ExonCategory.START || cat == ExonCategory.MONO)
+            startPositionExonOnGene = startPositionIsoformOnGene;
+
+        return startPositionExonOnGene;
+    }
+
+    private int calcEndPositionExonOnGene(Exon exon, ExonCategory cat) {
 
         int endPositionExonOnGene = exon.getLastPositionOnGene();
 
@@ -167,19 +174,19 @@ public class TranscriptExonsAnalyser {
     public static class Results {
 
         private final List<InvalidExonException> exceptions = new ArrayList<>();
-        private final List<GenericExon> validExons = new ArrayList<>();
+        private final List<Exon> validExons = new ArrayList<>();
 
         void addInvalidExonException(InvalidExonException e) {
 
             exceptions.add(e);
         }
 
-        void addValidExon(GenericExon exon) {
+        void addValidExon(Exon exon) {
 
             validExons.add(exon);
         }
 
-        public List<GenericExon> getValidExons() {
+        public List<Exon> getValidExons() {
 
             return Collections.unmodifiableList(validExons);
         }
@@ -189,9 +196,9 @@ public class TranscriptExonsAnalyser {
             return Collections.unmodifiableList(exceptions);
         }
 
-        public boolean isSuccess() {
+        public boolean hasMappingErrors() {
 
-            return exceptions.isEmpty();
+            return !exceptions.isEmpty();
         }
     }
 }
