@@ -11,7 +11,9 @@ public class ExonStop implements Exon, Serializable {
 	private Exon exon;
 	private int stopPosition;
 
-	public void setExon(Exon exon, int stopPosition) {
+	public ExonStop() {}
+
+	public ExonStop(Exon exon, int stopPosition) {
 
 		if (exon.getExonCategory() != ExonCategory.STOP) {
 			throw new IllegalArgumentException("cannot make an exon stop from "+exon.getExonCategory());
