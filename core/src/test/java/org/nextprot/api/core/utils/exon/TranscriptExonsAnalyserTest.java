@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenericExon;
 
 import java.util.ArrayList;
@@ -68,8 +69,8 @@ public class TranscriptExonsAnalyserTest {
         assertInfoEquals(collector.getInfoAt(8), 'E', 324, 1, 'Q', 383, 2, ExonCategory.CODING);
         assertInfoEquals(collector.getInfoAt(9), 'Q', 383, 2, 'L', 423, 0, ExonCategory.CODING);
         Assert.assertEquals(ExonCategory.STOP_ONLY, collector.getInfoAt(10).getExonCategory());
-        Assert.assertEquals(null, collector.getInfoAt(10).getFirstAA());
-        Assert.assertEquals(null, collector.getInfoAt(10).getLastAA());
+        Assert.assertNull(collector.getInfoAt(10).getFirstAA());
+        Assert.assertNull(collector.getInfoAt(10).getLastAA());
 
     }
 
@@ -170,7 +171,7 @@ public class TranscriptExonsAnalyserTest {
         Assert.assertEquals(2, results.getValidExons().size());
 
         assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
-        Assert.assertTrue(!results.isSuccess());
+        Assert.assertTrue(results.hasMappingErrors());
     }
 
 
@@ -195,7 +196,7 @@ public class TranscriptExonsAnalyserTest {
 
         Assert.assertEquals(8, exons.size());
         Assert.assertEquals(7, results.getValidExons().size());
-        List<GenericExon> validExons = results.getValidExons();
+        List<Exon> validExons = results.getValidExons();
 
         Assert.assertEquals(1, validExons.get(0).getFirstPositionOnGene());
         Assert.assertEquals(192, validExons.get(0).getLastPositionOnGene());
@@ -203,53 +204,8 @@ public class TranscriptExonsAnalyserTest {
         Assert.assertEquals(18452, validExons.get(5).getLastPositionOnGene());
         Assert.assertEquals(19340, validExons.get(6).getFirstPositionOnGene());
         Assert.assertEquals(19495, validExons.get(6).getLastPositionOnGene());
-        Assert.assertEquals(1, results.getExceptionList().size());
-        System.out.println(results.getExceptionList().get(0).getMessage());
+        Assert.assertTrue(results.hasMappingErrors());
     }
-
-    /*@Test
-    public void testanalyseInfosNX_Q658P3Iso3() throws Exception {
-
-        List<Exon> exons = createMockExonList(1, 81, 6813, 7227, 21682, 22181, 23872, 24399, 30877, 31041, 39250, 41842);
-
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosanalyser analyser = new TranscriptInfosanalyser(collector);
-
-        analyser.analyse("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
-
-        Assert.assertEquals(5, collector.size());
-
-        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, collector.getInfoAt(0).getExonCategory());
-        Assert.assertNull(collector.getInfoAt(0).getFirstAA());
-        Assert.assertNull(collector.getInfoAt(0).getLastAA());
-        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'Q', 164, 0, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(2), 'V', 165, 0, 'Q', 340, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'V', 341, 0, 'V', 350, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(4), 'E', 351, 0, 'Q', 394, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(5), 'S', 395, 0, 'V', 487, 0, ExonCategory.STOP);
-    }
-
-    @Test
-    public void testanalyseInfosNX_Q658P3Iso3np1() throws Exception {
-
-        List<Exon> exons = createMockExonList(46, 81, 21682, 22181, 23872, 24399, 30877, 30906, 30910, 31041, 39250, 39891);
-
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosanalyser analyser = new TranscriptInfosanalyser(collector);
-
-        analyser.analyse("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
-
-        Assert.assertEquals(6, collector.size());
-
-        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, collector.getInfoAt(0).getExonCategory());
-        Assert.assertNull(collector.getInfoAt(0).getFirstAA());
-        Assert.assertNull(collector.getInfoAt(0).getLastAA());
-        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'Q', 164, 0, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(2), 'V', 165, 0, 'Q', 340, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'V', 341, 0, 'V', 350, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(4), 'E', 351, 0, 'Q', 394, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(5), 'S', 395, 0, 'V', 487, 0, ExonCategory.STOP);
-    }*/
 
     private void assertInfoEquals(ExonInfo info, char firstAA, int firstPos, int startPhase,  char lastAA, int lastPos, int endPhase, ExonCategory type) {
 
