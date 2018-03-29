@@ -32,11 +32,11 @@ public class ExonCategorizer {
             throw new ExonInvalidBoundException(exon);
         }
 
-        ExonCategory codingStatus;
+        ExonCategory exonCategory;
 
         // not coding exons in the beginning of the transcript
         if (endPositionExon < startPositionIsoform) {
-            codingStatus = ExonCategory.NOT_CODING;
+            exonCategory = ExonCategory.NOT_CODING;
             // ************ SPI ******************* EPI *******************
             // **<SPE>***EPE***********************************************
         }
@@ -46,10 +46,10 @@ public class ExonCategorizer {
             // Some kind of hack has probably been done in the db here !!
             // We consider exon to be of kind STOP_ONLY if it is closed to the last coding exon !!
             if (startPositionExon - endPositionIsoform < 3) {
-                codingStatus = ExonCategory.STOP_ONLY;
+                exonCategory = ExonCategory.STOP_ONLY;
             }
             else {
-                codingStatus = ExonCategory.NOT_CODING;
+                exonCategory = ExonCategory.NOT_CODING;
             }
             // ************ SPI ******************* EPI *******************
             // ********************************************SPE*<EPE>*******
@@ -57,29 +57,29 @@ public class ExonCategorizer {
 
         // start codon
         else if (startPositionExon <= startPositionIsoform && endPositionExon < endPositionIsoform) {
-            codingStatus = ExonCategory.START;
+            exonCategory = ExonCategory.START;
             // ************ SPI ******************* EPI *******************
             // *******SPE**********<EPE>***********************************
         }
 
         // end codon
         else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform) {
-            codingStatus = ExonCategory.STOP;
+            exonCategory = ExonCategory.STOP;
             // ************ SPI ******************* EPI *******************
             // *********************<SPE>******************EPE*************
         }
 
         // Case where only one exon can translate the whole isoform
         else if (startPositionExon <= startPositionIsoform) {
-            codingStatus = ExonCategory.MONO;
+            exonCategory = ExonCategory.MONO;
             // ************ SPI ******************* EPI *******************
             // *************SPE**********************************EPE*******
         } else {
 
             // In the last case it must be a coding exon
-            codingStatus = ExonCategory.CODING;
+            exonCategory = ExonCategory.CODING;
         }
 
-        return codingStatus;
+        return exonCategory;
     }
 }
