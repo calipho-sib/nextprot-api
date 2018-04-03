@@ -65,17 +65,53 @@ public class GeneRegionMappingConflictSolver {
 
         for (int i=0 ; i<isoformToGeneMappings.size() ; i++) {
 
-            GeneRegion pos = isoformToGeneMappings.get(i);
-
-            // first or last gene region
-            if (i == 0 && pos.getLastPosition() == geneRegionMappedToTranscript.getLastPosition() && pos.getFirstPosition() >= geneRegionMappedToTranscript.getFirstPosition() ||
-                    i == isoformToGeneMappings.size()-1 && pos.getFirstPosition() == geneRegionMappedToTranscript.getFirstPosition() && pos.getLastPosition() <= geneRegionMappedToTranscript.getLastPosition() ||
-                    pos.getFirstPosition() == geneRegionMappedToTranscript.getFirstPosition() && pos.getLastPosition() == geneRegionMappedToTranscript.getLastPosition()) {
+            if (isFirstCodingExon(i, geneRegionMappedToTranscript)  ||
+                isLastCodingExon(i, geneRegionMappedToTranscript)   ||
+                isSingleCodingExon(i, geneRegionMappedToTranscript) ||
+                isInternalCodingExon(i, geneRegionMappedToTranscript)) {
 
                 return true;
             }
+
+            if (isFirstCodingExon(i, geneRegionMappedToTranscript)) {
+                return true;
+            }
+
         }
         return false;
+    }
+
+    private boolean isFirstCodingExon(int i, GeneRegion geneRegionMappedToTranscript) {
+
+        GeneRegion isoformToGeneMapping = isoformToGeneMappings.get(i);
+
+        return i == 0 && isoformToGeneMapping.getLastPosition() == geneRegionMappedToTranscript.getLastPosition() &&
+                isoformToGeneMapping.getFirstPosition() >= geneRegionMappedToTranscript.getFirstPosition();
+    }
+
+    private boolean isLastCodingExon(int i, GeneRegion geneRegionMappedToTranscript) {
+
+        GeneRegion isoformToGeneMapping = isoformToGeneMappings.get(i);
+
+        return i == isoformToGeneMappings.size()-1 &&
+                isoformToGeneMapping.getFirstPosition() == geneRegionMappedToTranscript.getFirstPosition()
+                && isoformToGeneMapping.getLastPosition() <= geneRegionMappedToTranscript.getLastPosition();
+    }
+
+    private boolean isSingleCodingExon(int i, GeneRegion geneRegionMappedToTranscript) {
+
+        GeneRegion isoformToGeneMapping = isoformToGeneMappings.get(i);
+
+        return i == 0 && isoformToGeneMapping.getLastPosition() <= geneRegionMappedToTranscript.getLastPosition() &&
+                isoformToGeneMapping.getFirstPosition() >= geneRegionMappedToTranscript.getFirstPosition();
+    }
+
+    private boolean isInternalCodingExon(int i, GeneRegion geneRegionMappedToTranscript) {
+
+        GeneRegion isoformToGeneMapping = isoformToGeneMappings.get(i);
+
+        return isoformToGeneMapping.getFirstPosition() == geneRegionMappedToTranscript.getFirstPosition() &&
+                isoformToGeneMapping.getLastPosition() == geneRegionMappedToTranscript.getLastPosition();
     }
 
     private List<GeneRegion> findIncludedGeneRegionsInIsoformGeneRegion(GeneRegion geneRegion) {
