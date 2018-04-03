@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.exon.Exon;
+import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.ExonCategory;
 import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
@@ -167,7 +167,7 @@ public class TranscriptExonsAnalyserTest {
         TranscriptExonsAnalyser.Results results = analyser.analyse("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT",
                 256, 53495, exons);
 
-        Assert.assertEquals(2, results.getValidExons().size());
+        Assert.assertEquals(2, results.getCategorizedExons().size());
 
         assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
         Assert.assertTrue(results.hasMappingErrors());
@@ -194,15 +194,15 @@ public class TranscriptExonsAnalyserTest {
                 13917, 19718, exons);
 
         Assert.assertEquals(8, exons.size());
-        Assert.assertEquals(7, results.getValidExons().size());
-        List<Exon> validExons = results.getValidExons();
+        Assert.assertEquals(7, results.getCategorizedExons().size());
+        List<CategorizedExon> categorizedExons = results.getCategorizedExons();
 
-        Assert.assertEquals(1, validExons.get(0).getFirstPositionOnGene());
-        Assert.assertEquals(192, validExons.get(0).getLastPositionOnGene());
-        Assert.assertEquals(18400, validExons.get(5).getFirstPositionOnGene());
-        Assert.assertEquals(18452, validExons.get(5).getLastPositionOnGene());
-        Assert.assertEquals(19340, validExons.get(6).getFirstPositionOnGene());
-        Assert.assertEquals(19495, validExons.get(6).getLastPositionOnGene());
+        Assert.assertEquals(1, categorizedExons.get(0).getFirstPositionOnGene());
+        Assert.assertEquals(192, categorizedExons.get(0).getLastPositionOnGene());
+        Assert.assertEquals(18400, categorizedExons.get(5).getFirstPositionOnGene());
+        Assert.assertEquals(18452, categorizedExons.get(5).getLastPositionOnGene());
+        Assert.assertEquals(19340, categorizedExons.get(6).getFirstPositionOnGene());
+        Assert.assertEquals(19495, categorizedExons.get(6).getLastPositionOnGene());
         Assert.assertTrue(results.hasMappingErrors());
     }
 

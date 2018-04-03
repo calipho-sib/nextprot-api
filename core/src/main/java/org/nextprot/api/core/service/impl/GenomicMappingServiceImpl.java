@@ -146,7 +146,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
 
 			TranscriptExonsAnalyser.Results results = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene, exons);
-			transcriptGeneMapping.setExons(results.getValidExons());
+			transcriptGeneMapping.setExons(results.getCategorizedExons());
 
 			if (results.hasMappingErrors()) {
 

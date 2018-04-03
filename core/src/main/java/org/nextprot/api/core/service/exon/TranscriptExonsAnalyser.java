@@ -183,21 +183,21 @@ public class TranscriptExonsAnalyser {
     public static class Results {
 
         private final List<InvalidExonException> exceptions = new ArrayList<>();
-        private final List<Exon> validExons = new ArrayList<>();
+        private final List<CategorizedExon> categorizedExons = new ArrayList<>();
 
         void addInvalidExonException(InvalidExonException e) {
 
             exceptions.add(e);
         }
 
-        void addValidExon(Exon exon) {
+        void addValidExon(CategorizedExon exon) {
 
-            validExons.add(exon);
+            categorizedExons.add(exon);
         }
 
-        public List<Exon> getValidExons() {
+        public List<CategorizedExon> getCategorizedExons() {
 
-            return Collections.unmodifiableList(validExons);
+            return Collections.unmodifiableList(categorizedExons);
         }
 
         public List<InvalidExonException> getExceptionList() {
