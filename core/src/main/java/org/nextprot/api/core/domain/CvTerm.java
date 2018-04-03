@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import org.nextprot.api.commons.constants.TerminologyMapping;
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
@@ -8,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CvTerm implements Serializable {
     
@@ -144,9 +147,15 @@ public class CvTerm implements Serializable {
 		this.xrefs = xrefs;
 	}
 
-	public List<String> getSameAs() {
-		// To remain compatible with previous API version (Terminology.getSameAs() is used for ttl generation in term.ttl.vm )
-		return TerminologyUtils.convertXrefsToSameAsStrings(getFilteredXrefs("Ontologies"));
+	/*
+	 * Related terms are retrieved from the term xrefs.
+	 * It is the subset of xrefs of terms that are actually loaded in neXtProt
+	 */
+	public List<String> getACsOfRelatedTerms() {
+		return StreamUtils.nullableListToStream(this.getXrefs())
+			.filter(x -> x.getPropertyByName("term_name")!=null)
+			.map(x -> x.getAccession())
+			.collect(Collectors.toList());
 	}
 	
 	public String toString(){
@@ -171,7 +180,7 @@ public class CvTerm implements Serializable {
 		sb.append(TerminologyUtils.convertXrefsToString(this.getXrefs()));
 		sb.append("\n");
 		sb.append("sameAs=");
-		sb.append(this.getSameAs());
+		sb.append(this.getACsOfRelatedTerms());
 		sb.append("\n");
 		sb.append("properties=");
 		sb.append(TerminologyUtils.convertPropertiesToString(this.getProperties()));

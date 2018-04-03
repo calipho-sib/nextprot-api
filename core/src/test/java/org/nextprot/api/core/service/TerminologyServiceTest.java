@@ -84,19 +84,24 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldReturnAllTerms()  {
-		int sameascnt = 0, refcnt = 0, maxref = 0;
+		int numberOfTermsHavingRelatedTerms = 0, sizeOfRelatedTerms = 0, maxSizeOfRelatedTerms = 0; 
+		String tac=null;
 		List<CvTerm> terms = this.terminologyService.findAllCVTerms();
 		assertTrue(terms.size() > 145000);
 		for(CvTerm term : terms)  {
-			List<String> sameas = term.getSameAs();
-			if(sameas != null) {
-				sameascnt++;
-			refcnt = sameas.size();
-			if(refcnt > maxref) maxref = refcnt;
+			List<String> relatedAcs = term.getACsOfRelatedTerms();
+			if(relatedAcs != null) {
+				numberOfTermsHavingRelatedTerms++;
+				sizeOfRelatedTerms = relatedAcs.size();
+				if(sizeOfRelatedTerms > maxSizeOfRelatedTerms) {
+					maxSizeOfRelatedTerms = sizeOfRelatedTerms;
+					tac = term.getAccession();
+				}
 			}
 		}
-		assertTrue(sameascnt > 44000);
-		assertEquals(64,maxref);
+		assertTrue(numberOfTermsHavingRelatedTerms > 44000);
+		System.out.println(tac + " has " + maxSizeOfRelatedTerms + " related terms");
+		assertTrue(maxSizeOfRelatedTerms > 4000 && maxSizeOfRelatedTerms < 5000);
 	}
 
 	@Test

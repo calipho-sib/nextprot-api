@@ -2,11 +2,13 @@ package org.nextprot.api.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
+
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,12 +41,21 @@ public class DbXref implements Serializable {
 	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
-	private List<DbXrefProperty> properties = Collections.emptyList();
+	private List<DbXrefProperty> properties = new ArrayList<DbXrefProperty>();
 
 	public Long getDbXrefId() {
 		return dbXrefId;
 	}
 
+	public void addProperty(String name, String value, Long propertyId) {
+		DbXrefProperty p = new DbXrefProperty();
+		p.setDbXrefId(this.dbXrefId);
+		p.setName(name);
+		p.setValue(value);
+		p.setPropertyId(propertyId);
+		this.properties.add(p);
+	}
+	
 	public void setDbXrefId(Long dbXrefId) {
 		this.dbXrefId = dbXrefId;
 	}

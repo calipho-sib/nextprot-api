@@ -7,6 +7,7 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 
 import java.util.*;
 
@@ -47,7 +48,8 @@ public class TerminologyUtils {
 	public static List<DbXref> convertToXrefs (String xrefsstring) {
 
 		if (xrefsstring == null) return null;
-		// Builds DbXref list from String of xrefs formatted as "dbcat, db, acc, linkurl" quartetss separated by pipes
+		// Builds DbXref list from String of xrefs formatted as "dbcat^ db^ acc^ id^ url^ link_url^ term_id^ term_name^ term_onto| ..."
+		//                                               fields: 0      1   2    3   4    5         6        7          8
 		List<DbXref> xrefs = new ArrayList<>();
 		List<String> allxrefs = Arrays.asList(xrefsstring.split(" \\| "));
 		for (String onexref: allxrefs) {			
@@ -77,6 +79,12 @@ public class TerminologyUtils {
 				dbref.setUrl(url);
 				dbref.setLinkUrl(linkurl);
 			}
+			
+			if (fields.size() > 6) dbref.addProperty("term_id", fields.get(6), null);
+			if (fields.size() > 7) dbref.addProperty("term_name", fields.get(7), null);
+			if (fields.size() > 8) dbref.addProperty("term_ontology_display_name", fields.get(8), null);
+			
+			
 			xrefs.add(dbref);
 		}
 
@@ -137,16 +145,6 @@ public class TerminologyUtils {
 		return sb.toString();
 	}
 
-	public static List<String> convertXrefsToSameAsStrings(List<DbXref> xrefs) {
-
-		if (xrefs == null) return null;
-		// Build List of strings of xref accessions  as needed for the old Terminology.getSameAs method
-		List<String> sameas = new ArrayList<>();
-		for (DbXref xref : xrefs) {
-			sameas.add(xref.getAccession());
-		}
-		return sameas;
-	}
 
 	public static Map<String, CvTerm> convertToTerminologyMap(List<CvTerm> terms) {
 		Map<String, CvTerm> termMap = new HashMap<>();
