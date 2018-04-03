@@ -153,7 +153,7 @@ public class CvTerm implements Serializable {
 	 */
 	public List<String> getACsOfRelatedTerms() {
 		return StreamUtils.nullableListToStream(this.getXrefs())
-			.filter(x -> x.getPropertyByName("term_name")!=null)
+			.filter(x -> x.getPropertyByName("term_id")!=null)
 			.map(x -> x.getAccession())
 			.collect(Collectors.toList());
 	}
