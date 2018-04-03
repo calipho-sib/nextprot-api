@@ -6,6 +6,8 @@ import org.nextprot.api.core.domain.GeneRegion;
 
 public class UncategorizedExon implements Exon {
 
+	private static final long serialVersionUID = 1L;
+
 	private String name;
 	private String accession;
 	private String transcriptName;

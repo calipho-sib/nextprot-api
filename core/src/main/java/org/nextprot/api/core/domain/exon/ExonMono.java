@@ -1,15 +1,11 @@
 package org.nextprot.api.core.domain.exon;
 
-import java.io.Serializable;
-
-public class ExonMono extends CategorizedExon implements Serializable {
+public class ExonMono extends CategorizedExon {
 
 	private static final long serialVersionUID = 1L;
 
 	private int startPosition;
 	private int stopPosition;
-
-	public ExonMono() { super(); }
 
 	public ExonMono(Exon exon) {
 

@@ -3,19 +3,16 @@ package org.nextprot.api.core.domain.exon;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.GeneRegion;
 
-import java.io.Serializable;
-
-public class CategorizedExon implements Exon, Serializable {
+public class CategorizedExon implements Exon {
 
 	private static final long serialVersionUID = 1L;
 
 	private Exon exon;
 	private ExonCategory exonCategory;
 
-	public CategorizedExon() {}
-
 	public CategorizedExon(Exon exon, ExonCategory exonCategory) {
-		this.exon= exon;
+
+		this.exon = exon;
 		this.exonCategory = exonCategory;
 	}
 
