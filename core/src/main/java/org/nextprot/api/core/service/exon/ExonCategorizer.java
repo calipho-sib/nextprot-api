@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.exon.UncategorizedExon;
  *
  * Created by fnikitin on 21/07/15.
  */
-public class ExonCategorizer {
+class ExonCategorizer {
 
     private final int startPositionIsoform;
     private final int endPositionIsoform;

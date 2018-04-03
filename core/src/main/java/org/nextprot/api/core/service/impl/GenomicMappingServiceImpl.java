@@ -9,7 +9,7 @@ import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.exon.ExonsAnalysisWithLogging;
 import org.nextprot.api.core.service.exon.GeneRegionMappingConflictSolver;
-import org.nextprot.api.core.service.exon.TranscriptExonsAnalyser;
+import org.nextprot.api.core.service.exon.TranscriptExonsCategorizer;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -143,9 +143,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		private void computeExonListPhasesAndAminoacids(List<UncategorizedExon> exons, TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
 			ExonsAnalysisWithLogging exonsAnalysisWithLogging = new ExonsAnalysisWithLogging();
-			TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
+			TranscriptExonsCategorizer analyser = new TranscriptExonsCategorizer(exonsAnalysisWithLogging);
 
-			TranscriptExonsAnalyser.Results results = analyser.analyse(bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene, exons);
+			TranscriptExonsCategorizer.Results results = analyser.categorizeExons(exons, bioSequence, startPositionIsoformOnGene, endPositionIsoformOnGene);
 			transcriptGeneMapping.setExons(results.getCategorizedExons());
 
 			if (results.hasMappingErrors()) {

@@ -13,7 +13,7 @@ import java.util.*;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class TranscriptExonsAnalyser {
+public class TranscriptExonsCategorizer {
 
     private final ExonsAnalysis exonsAnalysis;
 
@@ -25,7 +25,7 @@ public class TranscriptExonsAnalyser {
     private int currentIsoformPos;
     private int currentPhase;
 
-    public TranscriptExonsAnalyser(ExonsAnalysis exonsAnalysis) {
+    public TranscriptExonsCategorizer(ExonsAnalysis exonsAnalysis) {
 
         Objects.requireNonNull(exonsAnalysis);
 
@@ -44,14 +44,14 @@ public class TranscriptExonsAnalyser {
     }
 
     /**
-     * Analyse given exons
+     * Categorize exons
+     * @param exonList the exons to categorize
      * @param isoformSequence sequence in amino-acids
      * @param startPositionIsoformOnGene start position on gene of mapping isoform
      * @param endPositionIsoformOnGene end position on gene of mapping isoform
-     * @param exonList the exons to analyse
      * @return true if analysis succeed
      */
-    public Results analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, final Collection<UncategorizedExon> exonList) {
+    public Results categorizeExons(final Collection<UncategorizedExon> exonList, String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
         Results results = new Results();
 
