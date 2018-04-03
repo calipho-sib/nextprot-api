@@ -1,13 +1,15 @@
-package org.nextprot.api.core.domain;
+package org.nextprot.api.core.domain.exon;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.utils.exon.ExonCategory;
 
 import java.io.Serializable;
 
-public class GenericExon implements Exon, Serializable {
+public class CategorizedExon implements Exon, Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 1L;
 
 	private String name;
 	private String accession;
@@ -17,6 +19,21 @@ public class GenericExon implements Exon, Serializable {
 	private int rank;
 	private AminoAcid firstAminoAcid;
 	private AminoAcid lastAminoAcid;
+
+	public CategorizedExon(ExonCategory exonCategory) {
+		this.exonCategory = exonCategory;
+	}
+
+	public void fillFrom(UncategorizedExon exon) {
+
+		this.name = exon.getName();
+		this.accession = exon.getAccession();
+		this.transcriptName = exon.getTranscriptName();
+		this.geneRegion = exon.getGeneRegion();
+		this.rank = exon.getRank();
+		this.firstAminoAcid= exon.getFirstAminoAcid();
+		this.lastAminoAcid= exon.getLastAminoAcid();
+	}
 
 	@Override
 	public String getName() {
@@ -33,22 +50,9 @@ public class GenericExon implements Exon, Serializable {
 		return transcriptName;
 	}
 
-	public void setTranscriptName(String transcriptName) {
-		this.transcriptName = transcriptName;
-	}
-
-	public void setNameDeduceAccession(String exonName) {
-		this.name = exonName;
-		this.accession = exonName.substring(3);
-	}
-
 	@Override
 	public GeneRegion getGeneRegion() {
 		return geneRegion;
-	}
-
-	public void setGeneRegion(GeneRegion geneRegion) {
-		this.geneRegion = geneRegion;
 	}
 
 	@Override
@@ -56,17 +60,9 @@ public class GenericExon implements Exon, Serializable {
 		return firstAminoAcid;
 	}
 
-	public void setFirstAminoAcid(AminoAcid firstAminoAcid) {
-		this.firstAminoAcid = firstAminoAcid;
-	}
-
 	@Override
 	public AminoAcid getLastAminoAcid() {
 		return lastAminoAcid;
-	}
-
-	public void setLastAminoAcid(AminoAcid lastAminoAcid) {
-		this.lastAminoAcid = lastAminoAcid;
 	}
 
 	@Override
@@ -78,13 +74,8 @@ public class GenericExon implements Exon, Serializable {
 		this.rank = rank;
 	}
 
-	@Override
 	public ExonCategory getExonCategory() {
 		return exonCategory;
-	}
-
-	public void setExonCategory(ExonCategory exonCategory) {
-		this.exonCategory = exonCategory;
 	}
 
 	@JsonIgnore

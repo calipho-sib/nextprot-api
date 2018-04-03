@@ -1,6 +1,7 @@
-package org.nextprot.api.core.domain;
+package org.nextprot.api.core.domain.exon;
 
-import org.nextprot.api.core.utils.exon.ExonCategory;
+import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.GeneRegion;
 
 public interface Exon {
 
@@ -18,10 +19,7 @@ public interface Exon {
 
 	int getRank();
 
-	ExonCategory getExonCategory();
-
 	int getFirstPositionOnGene();
 
 	int getLastPositionOnGene();
-
 }
