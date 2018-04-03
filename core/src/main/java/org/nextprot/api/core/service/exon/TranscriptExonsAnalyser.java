@@ -1,7 +1,10 @@
 package org.nextprot.api.core.service.exon;
 
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.exon.*;
+import org.nextprot.api.core.domain.exon.CategorizedExon;
+import org.nextprot.api.core.domain.exon.Exon;
+import org.nextprot.api.core.domain.exon.ExonCategory;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 import java.util.*;
 
@@ -71,18 +74,7 @@ public class TranscriptExonsAnalyser {
                     exonsAnalysis.analysedNonCodingExon(exon, exonCategory);
                 }
 
-                if (exonCategory == ExonCategory.START) {
-
-                    results.addValidExon(new ExonStart(exon, startPositionIsoformOnGene));
-                }
-                else if (exonCategory == ExonCategory.STOP) {
-
-                    results.addValidExon(new ExonStop(exon, endPositionIsoformOnGene));
-                }
-                else {
-
-                    results.addValidExon(new CategorizedExon(exon, exonCategory));
-                }
+                results.addCategorizedExon(CategorizedExon.valueOf(exonCategory, exon, startPositionIsoformOnGene, endPositionIsoformOnGene));
 
                 exonsAnalysis.terminated(exon);
             } catch (InvalidExonException e) {
@@ -185,7 +177,7 @@ public class TranscriptExonsAnalyser {
             exceptions.add(e);
         }
 
-        void addValidExon(CategorizedExon exon) {
+        void addCategorizedExon(CategorizedExon exon) {
 
             categorizedExons.add(exon);
         }

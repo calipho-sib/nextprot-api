@@ -19,6 +19,21 @@ public class CategorizedExon implements Exon, Serializable {
 		this.exonCategory = exonCategory;
 	}
 
+	public static CategorizedExon valueOf(ExonCategory exonCategory, Exon exon, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
+
+        switch (exonCategory) {
+
+            case START:
+                return new ExonStart(exon, startPositionIsoformOnGene);
+            case STOP:
+                return new ExonStop(exon, endPositionIsoformOnGene);
+            case MONO:
+                return new ExonMono(exon, startPositionIsoformOnGene, endPositionIsoformOnGene);
+            default:
+                return new CategorizedExon(exon, exonCategory);
+        }
+    }
+
 	public ExonCategory getExonCategory() {
 		return exonCategory;
 	}
