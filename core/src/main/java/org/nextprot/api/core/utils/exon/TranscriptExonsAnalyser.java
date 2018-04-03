@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils.exon;
 
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.AminoAcid;
+import org.nextprot.api.core.domain.exon.*;
 
 import java.util.*;
 
@@ -47,17 +48,17 @@ public class TranscriptExonsAnalyser {
      * @param exonList the exons to analyse
      * @return true if analysis succeed
      */
-    public Results analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, final Collection<GenericExon> exonList) {
+    public Results analyse(String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene, final Collection<UncategorizedExon> exonList) {
 
         Results results = new Results();
 
-        List<GenericExon> exonsSorted = new ArrayList<>(exonList);
+        List<UncategorizedExon> exonsSorted = new ArrayList<>(exonList);
         exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
         init(startPositionIsoformOnGene, endPositionIsoformOnGene);
 
         exonsAnalysis.started();
-        for (GenericExon exon : exonsSorted) {
+        for (UncategorizedExon exon : exonsSorted) {
 
             exonsAnalysis.startedExon(exon);
             try {
@@ -70,14 +71,22 @@ public class TranscriptExonsAnalyser {
                     exonsAnalysis.analysedNonCodingExon(exon, exonCategory);
                 }
 
-                if (exon.getExonCategory() == ExonCategory.START) {
-                    results.addValidExon(new ExonStart(exon, startPositionIsoformOnGene));
+                if (exonCategory == ExonCategory.START) {
+                    ExonStart start = new ExonStart(startPositionIsoformOnGene);
+                    start.fillFrom(exon);
+
+                    results.addValidExon(start);
                 }
-                else if (exon.getExonCategory() == ExonCategory.STOP) {
-                    results.addValidExon(new ExonStop(exon, endPositionIsoformOnGene));
+                else if (exonCategory == ExonCategory.STOP) {
+                    ExonStop stop = new ExonStop(endPositionIsoformOnGene);
+                    stop.fillFrom(exon);
+                    results.addValidExon(stop);
                 }
                 else {
-                    results.addValidExon(exon);
+                    CategorizedExon categorizedExon = new CategorizedExon(exonCategory);
+                    categorizedExon.fillFrom(exon);
+
+                    results.addValidExon(categorizedExon);
                 }
 
                 exonsAnalysis.terminated(exon);
@@ -104,7 +113,7 @@ public class TranscriptExonsAnalyser {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private void analyseCodingExon(String isoformSequence, GenericExon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
+    private void analyseCodingExon(String isoformSequence, UncategorizedExon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
 
         int startPositionExonOnGene = calcStartPositionExonOnGene(exon, cat);
         int endPositionExonOnGene = calcEndPositionExonOnGene(exon, cat);
@@ -148,7 +157,7 @@ public class TranscriptExonsAnalyser {
         return endPositionExonOnGene;
     }
 
-    private ExonOutOfIsoformBoundException createExonOutOfIsoformBoundException(GenericExon exon, AminoAcid first, AminoAcid last, int isoformLength) {
+    private ExonOutOfIsoformBoundException createExonOutOfIsoformBoundException(UncategorizedExon exon, AminoAcid first, AminoAcid last, int isoformLength) {
 
         if (first.getPosition() > isoformLength) {
 

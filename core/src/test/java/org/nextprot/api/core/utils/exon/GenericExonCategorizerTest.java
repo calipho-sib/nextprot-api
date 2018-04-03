@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.GeneRegion;
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ public class GenericExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
 
-        GenericExon exon = mockExonList(276, 28).get(0);
+        UncategorizedExon exon = mockExonList(276, 28).get(0);
         GeneRegion gr = new GeneRegion();
         gr.setGeneName("roudoudou");
         when(exon.getGeneRegion()).thenReturn(gr);
@@ -95,15 +95,15 @@ public class GenericExonCategorizerTest {
         categorizer.categorize(exon);
     }
 
-    public static List<GenericExon> mockExonList(int... startEnds) {
+    public static List<UncategorizedExon> mockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
 
-        List<GenericExon> exons = new ArrayList<>();
+        List<UncategorizedExon> exons = new ArrayList<>();
 
         for (int i=0 ; i<startEnds.length-1 ; i+=2) {
 
-            GenericExon exon = mock(GenericExon.class);
+            UncategorizedExon exon = mock(UncategorizedExon.class);
             GeneRegion geneRegion = mock(GeneRegion.class);
             when(geneRegion.getFirstPosition()).thenReturn(startEnds[i]);
             when(geneRegion.getLastPosition()).thenReturn(startEnds[i+1]);

@@ -4,9 +4,9 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.GenericExon;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +46,7 @@ public class GenomicMappingP41134DaoTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldGetExons() throws Exception {
-		List<GenericExon> exs = geneDAO.findExonsAlignedToTranscriptOfGene("NX_ENST00000376105", "NX_ENSG00000125968");
+		List<UncategorizedExon> exs = geneDAO.findExonsAlignedToTranscriptOfGene("NX_ENST00000376105", "NX_ENSG00000125968");
 		assertEquals(exs.size(), 1);
 	}
 

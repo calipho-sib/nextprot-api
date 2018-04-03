@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.Exon;
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.exon.Exon;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosNX_Q9Y281_3() throws Exception {
 
-        List<GenericExon> exons = mockExonList(134, 286, 1263, 1570, 1688, 1764, 1847, 4437);
+        List<UncategorizedExon> exons = mockExonList(134, 286, 1263, 1570, 1688, 1764, 1847, 4437);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -42,7 +42,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosNX_Q96M20() throws Exception {
 
-        List<GenericExon> exons = mockExonList(34,224,4040,4177,7360,7413,11870,12033,15393,15549,16038,16189,18806,18944,26449,26563,39708,39885,42548,42668,61768,62080);
+        List<UncategorizedExon> exons = mockExonList(34,224,4040,4177,7360,7413,11870,12033,15393,15549,16038,16189,18806,18944,26449,26563,39708,39885,42548,42668,61768,62080);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -77,7 +77,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosNX_P20592_2() throws Exception {
 
-        List<GenericExon> exons = mockExonList(8143, 8407, 14894, 15213, 15847, 16039, 20468, 20622, 33645, 33843, 35671, 35749, 36955, 37000);
+        List<UncategorizedExon> exons = mockExonList(8143, 8407, 14894, 15213, 15847, 16039, 20468, 20622, 33645, 33843, 35671, 35749, 36955, 37000);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -105,7 +105,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosMonoNX_O15541() throws Exception {
 
-        List<GenericExon> exons = mockExonList(1, 1295);
+        List<UncategorizedExon> exons = mockExonList(1, 1295);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -119,7 +119,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosNX_Q8NFW8_2() throws Exception {
 
-        List<GenericExon> exons = mockExonList(52, 390, 8976, 9118, 9282, 9437, 12394, 12527, 14659, 14753, 16108, 16261, 18948, 19501);
+        List<UncategorizedExon> exons = mockExonList(52, 390, 8976, 9118, 9282, 9437, 12394, 12527, 14659, 14753, 16108, 16261, 18948, 19501);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -142,7 +142,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosMiniExons() throws Exception {
 
-        List<GenericExon> exons = mockExonList(1, 11, 100, 100, 150, 151, 200, 300);
+        List<UncategorizedExon> exons = mockExonList(1, 11, 100, 100, 150, 151, 200, 300);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -160,7 +160,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testanalyseInfosNX_Q5JQC4_1_ENST00000416816AndException() throws Exception {
 
-        List<GenericExon> exons = mockExonList(1, 997, 1885, 2040, 54668, 54808);
+        List<UncategorizedExon> exons = mockExonList(1, 997, 1885, 2040, 54668, 54808);
 
         InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
         TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(collector);
@@ -178,7 +178,7 @@ public class TranscriptExonsAnalyserTest {
     @Test
     public void testInvalidExonInNX_Q8NHL6_1_ENST0000396332() {
 
-        List<GenericExon> exons = mockExonList(1, 192,
+        List<UncategorizedExon> exons = mockExonList(1, 192,
                 13360, 13476,
                 13869, 13950,
                 14114, 14149,
@@ -265,29 +265,29 @@ public class TranscriptExonsAnalyserTest {
         public void started() {}
 
         @Override
-        public void startedExon(GenericExon exon) {
+        public void startedExon(UncategorizedExon exon) {
             exonInfo = new ExonInfo();
         }
 
         @Override
-        public void analysedCodingExon(GenericExon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+        public void analysedCodingExon(UncategorizedExon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
             exonInfo.setFirstAA(first);
             exonInfo.setLastAA(last);
             exonInfo.setExonCategory(category);
         }
 
         @Override
-        public void analysedCodingExonFailed(GenericExon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
+        public void analysedCodingExonFailed(UncategorizedExon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
             error = true;
         }
 
         @Override
-        public void analysedNonCodingExon(GenericExon exon, ExonCategory cat) {
+        public void analysedNonCodingExon(UncategorizedExon exon, ExonCategory cat) {
             exonInfo.setExonCategory(cat);
         }
 
         @Override
-        public void terminated(GenericExon exon) {
+        public void terminated(UncategorizedExon exon) {
             exonInfos.add(exonInfo);
         }
 

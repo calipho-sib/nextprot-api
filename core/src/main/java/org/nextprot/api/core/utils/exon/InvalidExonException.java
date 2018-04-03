@@ -1,10 +1,10 @@
 package org.nextprot.api.core.utils.exon;
 
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 public abstract class InvalidExonException extends Exception {
 
-    public InvalidExonException(GenericExon exon, String message) {
+    public InvalidExonException(UncategorizedExon exon, String message) {
 
         super("Invalid exon mapping to gene "+exon.getGeneRegion().getGeneName()+": message="+message);
     }

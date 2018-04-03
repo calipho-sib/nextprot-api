@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils.exon;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 /**
  * A logger for TranscriptExonsAnalyser
@@ -19,10 +19,10 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
     }
 
     @Override
-    public void startedExon(GenericExon exon) {}
+    public void startedExon(UncategorizedExon exon) {}
 
     @Override
-    public void analysedCodingExon(GenericExon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+    public void analysedCodingExon(UncategorizedExon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
 
         ExonsAnalysis.super.analysedCodingExon(exon, first, last, category);
 
@@ -36,7 +36,7 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
     }
 
     @Override
-    public void analysedCodingExonFailed(GenericExon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
+    public void analysedCodingExonFailed(UncategorizedExon exon, ExonOutOfIsoformBoundException exonOutOfIsoformBoundException) {
 
         AminoAcid first = exonOutOfIsoformBoundException.getFirst();
 
@@ -62,7 +62,7 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
     }
 
     @Override
-    public void analysedNonCodingExon(GenericExon exon, ExonCategory category) {
+    public void analysedNonCodingExon(UncategorizedExon exon, ExonCategory category) {
 
         ExonsAnalysis.super.analysedNonCodingExon(exon, category);
 
@@ -70,7 +70,7 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
     }
 
     @Override
-    public void terminated(GenericExon exon) {}
+    public void terminated(UncategorizedExon exon) {}
 
     @Override
     public void terminated() {}

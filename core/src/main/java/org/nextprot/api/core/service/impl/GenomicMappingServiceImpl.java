@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -67,7 +68,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Map<Long, List<IsoformGeneMapping>> find() {
 
 			// key=gene.isoform.transcript
-			Map<String, List<GenericExon>> uncategorizedExons = new HashMap<>();
+			Map<String, List<UncategorizedExon>> uncategorizedExons = new HashMap<>();
 
 			// Set missing fields of IsoformGeneMapping
 			for (String isoformName : isoformMappingsByIsoformName.keySet()) {
@@ -98,11 +99,11 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			return transcriptGeneMapping.getReferenceGeneUniqueName()+"."+transcriptGeneMapping.getIsoformName()+"."+transcriptGeneMapping.getName();
 		}
 
-		private List<GenericExon> buildExonListFromTranscriptAndIsoformGeneMapping(TranscriptGeneMapping transcriptGeneMapping, List<GeneRegion> isoformGeneMappings) {
+		private List<UncategorizedExon> buildExonListFromTranscriptAndIsoformGeneMapping(TranscriptGeneMapping transcriptGeneMapping, List<GeneRegion> isoformGeneMappings) {
 
 			Map<Integer, Integer> transcriptToGeneMappingsIndices = new HashMap<>();
 
-			List<GenericExon> exonsFromEnsembl = findExonsAlignedToTranscriptAccordingToEnsembl(
+			List<UncategorizedExon> exonsFromEnsembl = findExonsAlignedToTranscriptAccordingToEnsembl(
 					transcriptGeneMapping.getIsoformName(),
 					transcriptGeneMapping.getReferenceGeneUniqueName(),
 					transcriptGeneMapping.getName(),
@@ -117,9 +118,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			return buildExonList(validatedGeneRegions, exonsFromEnsembl, transcriptToGeneMappingsIndices);
 		}
 
-		private List<GenericExon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
+		private List<UncategorizedExon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
 
-			List<GenericExon> exons;
+			List<UncategorizedExon> exons;
 
 			if ("GOLD".equalsIgnoreCase(quality)) {
 				exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptAccession, refGeneUniqueName);
@@ -130,7 +131,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			return exons;
 		}
 
-		private void computeExonListPhasesAndAminoacids(Map<String, List<GenericExon>> exons, IsoformGeneMapping isoformGeneMapping) {
+		private void computeExonListPhasesAndAminoacids(Map<String, List<UncategorizedExon>> exons, IsoformGeneMapping isoformGeneMapping) {
 
 			isoformGeneMapping.getTranscriptGeneMappings().forEach(transcriptMapping ->
 					computeExonListPhasesAndAminoacids(exons.get(buildKey(transcriptMapping)),
@@ -139,7 +140,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 							isoformGeneMapping.getLastPositionIsoformOnGene()));
 		}
 
-		private void computeExonListPhasesAndAminoacids(List<GenericExon> exons, TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
+		private void computeExonListPhasesAndAminoacids(List<UncategorizedExon> exons, TranscriptGeneMapping transcriptGeneMapping, String bioSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
 			ExonsAnalysisWithLogging exonsAnalysisWithLogging = new ExonsAnalysisWithLogging();
 			TranscriptExonsAnalyser analyser = new TranscriptExonsAnalyser(exonsAnalysisWithLogging);
@@ -157,19 +158,19 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		/**
 		 * Build the list of exon composed of ensembl exons and our mapping exons
 		 */
-		private List<GenericExon> buildExonList(List<GeneRegion> geneRegions, List<GenericExon> exonsFromEnsembl, Map<Integer, Integer> transcriptToGeneMappingsIndices) {
+		private List<UncategorizedExon> buildExonList(List<GeneRegion> geneRegions, List<UncategorizedExon> exonsFromEnsembl, Map<Integer, Integer> transcriptToGeneMappingsIndices) {
 
-			List<GenericExon> exons = new ArrayList<>(geneRegions.size());
+			List<UncategorizedExon> exons = new ArrayList<>(geneRegions.size());
 
 			for(int i = 0; i < geneRegions.size(); i++) {
 
-				GenericExon exon;
+				UncategorizedExon exon;
 
 				if (transcriptToGeneMappingsIndices.containsKey(i)) {
 					exon = exonsFromEnsembl.get(transcriptToGeneMappingsIndices.get(i));
 				}
 				else {
-					exon = new GenericExon();
+					exon = new UncategorizedExon();
 					exon.setGeneRegion(geneRegions.get(i));
 					exon.setTranscriptName(exonsFromEnsembl.get(0).getTranscriptName());
 				}

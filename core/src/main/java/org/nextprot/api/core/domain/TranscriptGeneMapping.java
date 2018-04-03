@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.core.domain.exon.Exon;
+
 import java.io.Serializable;
 import java.util.List;
 

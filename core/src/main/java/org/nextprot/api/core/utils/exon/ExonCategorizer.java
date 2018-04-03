@@ -1,7 +1,7 @@
 package org.nextprot.api.core.utils.exon;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.core.domain.GenericExon;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 
 /**
  * Categorise exons according to gene coordinate of a protein isoform
@@ -22,7 +22,7 @@ public class ExonCategorizer {
         this.endPositionIsoform = endPositionIsoform;
     }
 
-    public ExonCategory categorize(GenericExon exon) throws ExonInvalidBoundException {
+    public ExonCategory categorize(UncategorizedExon exon) throws ExonInvalidBoundException {
 
         int startPositionExon = exon.getFirstPositionOnGene();
         int endPositionExon = exon.getLastPositionOnGene();
