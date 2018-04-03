@@ -1,7 +1,5 @@
 package org.nextprot.api.core.domain.exon;
 
-import org.nextprot.api.core.utils.exon.ExonCategory;
-
 import java.io.Serializable;
 
 public class ExonStop extends CategorizedExon implements Serializable {

@@ -1,7 +1,7 @@
 package org.nextprot.api.core.domain.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.utils.dbxref.XrefDatabase;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

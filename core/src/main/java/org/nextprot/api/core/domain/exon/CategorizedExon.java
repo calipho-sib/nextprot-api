@@ -3,7 +3,6 @@ package org.nextprot.api.core.domain.exon;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.GeneRegion;
-import org.nextprot.api.core.utils.exon.ExonCategory;
 
 import java.io.Serializable;
 

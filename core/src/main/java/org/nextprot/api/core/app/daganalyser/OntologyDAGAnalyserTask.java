@@ -5,14 +5,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.app.CommandLineSpringParser;
+import org.nextprot.api.commons.app.ConsoleProgressBar;
+import org.nextprot.api.commons.app.SpringBasedTask;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
-import org.nextprot.api.commons.utils.app.SpringBasedTask;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.graph.CvTermGraph;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

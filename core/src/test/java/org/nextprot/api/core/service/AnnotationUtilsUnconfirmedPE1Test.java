@@ -6,8 +6,8 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;

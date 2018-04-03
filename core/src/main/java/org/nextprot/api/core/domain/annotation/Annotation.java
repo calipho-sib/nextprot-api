@@ -4,7 +4,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
-import org.nextprot.api.core.utils.annot.comp.AnnotationPropertyComparator;
+import org.nextprot.api.core.service.annotation.comp.AnnotationPropertyComparator;
 
 import java.io.Serializable;
 import java.util.*;
