@@ -19,6 +19,14 @@ public class UncategorizedExon implements Exon {
 		return name;
 	}
 
+	protected void setName(String name) {
+		this.name = name;
+	}
+
+	protected void setAccession(String accession) {
+		this.accession = accession;
+	}
+
 	@Override
 	public String getAccession() {
 		return accession;

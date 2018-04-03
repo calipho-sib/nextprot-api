@@ -72,21 +72,16 @@ public class TranscriptExonsAnalyser {
                 }
 
                 if (exonCategory == ExonCategory.START) {
-                    ExonStart start = new ExonStart(startPositionIsoformOnGene);
-                    start.fillFrom(exon);
 
-                    results.addValidExon(start);
+                    results.addValidExon(new ExonStart(exon, startPositionIsoformOnGene));
                 }
                 else if (exonCategory == ExonCategory.STOP) {
-                    ExonStop stop = new ExonStop(endPositionIsoformOnGene);
-                    stop.fillFrom(exon);
-                    results.addValidExon(stop);
+
+                    results.addValidExon(new ExonStop(exon, endPositionIsoformOnGene));
                 }
                 else {
-                    CategorizedExon categorizedExon = new CategorizedExon(exonCategory);
-                    categorizedExon.fillFrom(exon);
 
-                    results.addValidExon(categorizedExon);
+                    results.addValidExon(new CategorizedExon(exon, exonCategory));
                 }
 
                 exonsAnalysis.terminated(exon);

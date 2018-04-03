@@ -8,14 +8,16 @@ public class ExonStart extends CategorizedExon implements Serializable {
 
 	private int startPosition;
 
-	public ExonStart() {
+	public ExonStart() { super(); }
 
-		super(ExonCategory.START);
+	public ExonStart(Exon exon) {
+
+		super(exon, ExonCategory.START);
 	}
 
-	public ExonStart(int startPosition) {
+	public ExonStart(Exon exon, int startPosition) {
 
-		this();
+		this(exon);
 		this.startPosition = startPosition;
 	}
 

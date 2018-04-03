@@ -8,13 +8,15 @@ public class ExonStop extends CategorizedExon implements Serializable {
 
 	private int stopPosition;
 
-	public ExonStop() {
-        super(ExonCategory.STOP);
+	public ExonStop() { super(); }
+
+	public ExonStop(Exon exon) {
+        super(exon, ExonCategory.STOP);
     }
 
-	public ExonStop(int stopPosition) {
+	public ExonStop(Exon exon, int stopPosition) {
 
-	    this();
+	    this(exon);
 		this.stopPosition = stopPosition;
 	}
 
