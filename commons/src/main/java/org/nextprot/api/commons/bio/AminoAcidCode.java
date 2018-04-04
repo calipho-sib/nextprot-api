@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
@@ -98,6 +99,7 @@ public enum AminoAcidCode {
     /**
      * @return the amino-acid 3-letter code
      */
+    @JsonValue
     public String get3LetterCode() {
         return code3;
     }

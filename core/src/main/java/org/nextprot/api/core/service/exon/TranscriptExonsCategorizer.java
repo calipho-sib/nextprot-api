@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.exon;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.Exon;
@@ -162,9 +163,10 @@ public class TranscriptExonsCategorizer {
 
     private AminoAcid newAminoAcid(String isoformSequence, int aaPosition, int phase) {
 
-        if (aaPosition >= isoformSequence.length()) return new AminoAcid(aaPosition + 1, phase, '?');
+        if (aaPosition >= isoformSequence.length()) return new AminoAcid(aaPosition + 1, phase, null);
 
-        return new AminoAcid(aaPosition + 1, phase, isoformSequence.charAt(aaPosition));
+        return new AminoAcid(aaPosition + 1, phase,
+                AminoAcidCode.valueOfAminoAcid1LetterCode(isoformSequence.charAt(aaPosition)));
     }
 
     public static class Results {

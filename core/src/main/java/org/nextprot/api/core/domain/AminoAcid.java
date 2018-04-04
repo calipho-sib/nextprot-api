@@ -1,18 +1,19 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
+
 import java.io.Serializable;
 
-public class AminoAcid implements Serializable{
+public class AminoAcid implements Serializable {
 
-	private static final long serialVersionUID = 1838981287480263681L;
-	private char base;
+	private static final long serialVersionUID = 2L;
+	private AminoAcidCode code;
 	private int position;
 	private int phase;
 
-
-	public AminoAcid(int position, int phase, char base) {
+	public AminoAcid(int position, int phase, AminoAcidCode code) {
 		super();
-		this.base = base;
+		this.code = code;
 		this.position = position;
 		this.phase = phase;
 	}
@@ -25,12 +26,12 @@ public class AminoAcid implements Serializable{
 		this.phase = phase;
 	}
 
-	public char getBase() {
-		return base;
+	public AminoAcidCode getCode() {
+		return code;
 	}
 
-	public void setBase(char base) {
-		this.base = base;
+	public void setCode(AminoAcidCode code) {
+		this.code = code;
 	}
 
 	public int getPosition() {
