@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CvTerm implements Serializable {
-    
+	
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;
@@ -23,7 +23,6 @@ public class CvTerm implements Serializable {
 	private String ontology;
 	private String ontologyAltname;
 	private String ontologyDisplayName;
-	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
 	private List<String> childAccession;
@@ -133,27 +132,24 @@ public class CvTerm implements Serializable {
 		return xrefs;
 	}
 
-	public List<DbXref> getFilteredXrefs(String category) {
-		if(xrefs == null) return null;
-		List<DbXref> filteredxrefs = new ArrayList<>();
-		for (DbXref currxref : xrefs) {
-			if(currxref.getDatabaseCategory().equals(category)) filteredxrefs.add(currxref);
-		}
-		if(filteredxrefs.size() == 0) return null;
-		return filteredxrefs;
-	}
-
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
 	}
 
+	private boolean isExternalReference(DbXref x) {
+		return x.getPropertyByName("term_id")==null;
+	}
+	private boolean isRelatedTerm(DbXref x) {
+		return ! isExternalReference(x);
+	}
+	
 	/*
 	 * Related terms are retrieved from the term xrefs.
 	 * It is the subset of xrefs of terms that are actually loaded in neXtProt
 	 */
 	public List<String> getACsOfRelatedTerms() {
 		return StreamUtils.nullableListToStream(this.getXrefs())
-			.filter(x -> x.getPropertyByName("term_id")!=null)
+			.filter(x -> isRelatedTerm(x))
 			.map(x -> x.getAccession())
 			.collect(Collectors.toList());
 	}

@@ -46,7 +46,6 @@ public class CvTermSolrIndexer extends SolrIndexer<CvTerm> {
 		}
 		
 		List<DbXref> xrefs = terminology.getXrefs();
-		// If filter is needed alternatively use: terminology.getFilteredXrefs(String category)
 		if (xrefs != null) {
 			doc.addField("other_xrefs",TerminologyUtils.convertXrefsToSolrString(xrefs));
 		}
