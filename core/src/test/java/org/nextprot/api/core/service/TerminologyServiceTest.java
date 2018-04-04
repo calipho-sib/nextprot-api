@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -104,6 +105,28 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertTrue(maxSizeOfRelatedTerms > 4000 && maxSizeOfRelatedTerms < 5000);
 	}
 
+	
+	@Ignore
+	@Test
+	public void computeRelatedTermDistribution()  {
+
+		int[] xaxis = new int[20];
+		List<CvTerm> terms = this.terminologyService.findAllCVTerms();
+		for(CvTerm term : terms)  {
+			List<String> relatedAcs = term.getACsOfRelatedTerms();
+			if (relatedAcs== null || relatedAcs.isEmpty()) {
+				xaxis[0] = xaxis[0] + 1;
+			} else {
+				int index = 32 - Integer.numberOfLeadingZeros(relatedAcs.size());
+				xaxis[index] = xaxis[index] +1; 
+			}
+		}
+		for (int i=0;i<20;i++) {
+			System.out.println(i + "\t" + xaxis[i]);
+		}
+	}
+
+	
 	@Test
 	public void shouldFindXrefPsiMod()  {
 
