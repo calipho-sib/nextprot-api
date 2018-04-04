@@ -13,10 +13,10 @@
 			   			<exon rank='$exon.rank' #if($exon.exonCategory)coding-status='$exon.exonCategory'#end #if($exon.accession)accession='$exon.accession' database='$transcriptGeneMapping.database'#end>
 							<position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
 							#if($exon.firstAminoAcid)
-								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
+								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.code.get1LetterCode()'/>
                 			#end
 							#if($exon.lastAminoAcid)
-                				<amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.base'/>
+                				<amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.code.get1LetterCode()'/>
                 			#end
               			</exon>
 						#end

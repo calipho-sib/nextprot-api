@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.exon;
 
-import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.exon.ExonCategory;
 import org.nextprot.api.core.domain.exon.UncategorizedExon;
@@ -83,7 +82,7 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
 
     private String getAACode(AminoAcid aa, boolean first) {
 
-        String aa3code = AminoAcidCode.valueOfAminoAcid1LetterCode(aa.getBase()).get3LetterCode().toUpperCase();
+        String aa3code = aa.getCode().get3LetterCode();
 
         int phase = aa.getPhase();
 

@@ -31,10 +31,10 @@ public class TranscriptExonsCategorizerTest {
          */
 
         Assert.assertEquals(4, collector.size());
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'M', 1, 0, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(1), 'A', 2, 0, 'W', 104, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(2), 'W', 104, 2, 'G', 130, 1, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'G', 130, 1, 'L', 166, 0, ExonCategory.STOP);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1, 0, "M", 1, 0, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(1), "A", 2, 0, "W", 104, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(2), "W", 104, 2, "G", 130, 1, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), "G", 130, 1, "L", 166, 0, ExonCategory.STOP);
 
     }
 
@@ -57,16 +57,16 @@ public class TranscriptExonsCategorizerTest {
          */
 
         Assert.assertEquals(11, collector.size());
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'L', 17, 0, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(1), 'G', 18, 0, 'D', 63, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(2), 'K', 64, 0, 'E', 81, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'G',  82, 0, 'R', 136, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(4), 'R', 136, 2, 'G', 188, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(5), 'E', 189, 0, 'R', 239, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(6), 'R', 239, 2, 'K', 285, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(7), 'G', 286, 0, 'E', 324, 1, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(8), 'E', 324, 1, 'Q', 383, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(9), 'Q', 383, 2, 'L', 423, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1, 0, "L", 17, 0, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(1), "G", 18, 0, "D", 63, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(2), "K", 64, 0, "E", 81, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), "G",  82, 0, "R", 136, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(4), "R", 136, 2, "G", 188, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(5), "E", 189, 0, "R", 239, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(6), "R", 239, 2, "K", 285, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(7), "G", 286, 0, "E", 324, 1, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(8), "E", 324, 1, "Q", 383, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(9), "Q", 383, 2, "L", 423, 0, ExonCategory.CODING);
         Assert.assertEquals(ExonCategory.STOP_ONLY, collector.getInfoAt(10).getExonCategory());
         Assert.assertNull(collector.getInfoAt(10).getFirstAA());
         Assert.assertNull(collector.getInfoAt(10).getLastAA());
@@ -88,10 +88,10 @@ public class TranscriptExonsCategorizerTest {
         Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(0).getExonCategory());
         Assert.assertNull(collector.getInfoAt(0).getFirstAA());
         Assert.assertNull(collector.getInfoAt(0).getLastAA());
-        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'M', 83, 0, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(2), 'G', 84, 0, 'A', 148, 1, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'A', 148, 1, 'Q', 199, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(4), 'V', 200, 0, 'S', 201, 0, ExonCategory.STOP);
+        assertInfoEquals(collector.getInfoAt(1), "M", 1, 0, "M", 83, 0, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(2), "G", 84, 0, "A", 148, 1, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), "A", 148, 1, "Q", 199, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(4), "V", 200, 0, "S", 201, 0, ExonCategory.STOP);
         Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(5).getExonCategory());
         Assert.assertNull(collector.getInfoAt(5).getFirstAA());
         Assert.assertNull(collector.getInfoAt(5).getLastAA());
@@ -112,7 +112,7 @@ public class TranscriptExonsCategorizerTest {
         analyser.categorizeExons(exons,"MAEQLSPGKAVDQVCTFLFKKPGRKGAAGRRKRPACDPEPGESGSSSDEGCTVVRPEKKRVTHNPMIQKTRDSGKQKAAYGDLSSEEEEENEPESLGVVYKSTRSAKPVGPEDMGATAVYELDTEKERDAQAIFERSQKIQEELRGKEDDKIYRGINNYQKYMKPKDTSMGNASSGMVRKGPIRAPEHLRATVRWDYQPDICKDYKETGFCGFGDSCKFLHDRSDYKHGWQIERELDEGRYGVYEDENYEVGSDDEEIPFKCFICRQSFQNPVVTKCRHYFCESCALQHFRTTPRCYVCDQQTNGVFNPAKELIAKLEKHRATGEGGASDLPEDPDEDAIPIT", 216, 1244);
 
         Assert.assertEquals(1, collector.size());
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'T', 343, 0, ExonCategory.MONO);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1, 0, "T", 343, 0, ExonCategory.MONO);
     }
 
     @Test
@@ -126,12 +126,12 @@ public class TranscriptExonsCategorizerTest {
         analyser.categorizeExons(exons,"MDSVEKGAATSVSNPRGRPSRGRPPKLQRNSRGGQGRGVEKPPHLAALILARGGSKGIPLKNIKHLAGVPLIGWVLRAALDSGAFQSVWVSTDHDEIENVAKQFGAQVHRRSSEVSKDSSTSLDAIIEFLNYHNEVDIVGNIQATSPCLHPTDLQKVAEMIREEGYDSVFSVVRRHQFRWSEIQKGVREVTEPLNLNPAKRPRRQDWDGELYENGSFYFAKRHLIEMGYLQGGKMAYYEMRAEHSVDIDVDIDWPIAEQRVLR", 131, 16108);
 
         Assert.assertEquals(7, collector.size());
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1,   0, 'S', 87, 2,  ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(1), 'S', 87,  2, 'E', 135, 1, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(2), 'E', 135, 1, 'V', 187, 1, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'V', 187, 1, 'Q', 231, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(4), 'G', 232, 0, 'R', 263, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(5), 'R', 263, 2, 'R', 263, 0, ExonCategory.STOP);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1,   0, "S", 87, 2,  ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(1), "S", 87,  2, "E", 135, 1, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(2), "E", 135, 1, "V", 187, 1, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), "V", 187, 1, "Q", 231, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(4), "G", 232, 0, "R", 263, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(5), "R", 263, 2, "R", 263, 0, ExonCategory.STOP);
 
         Assert.assertEquals(ExonCategory.NOT_CODING, collector.getInfoAt(6).getExonCategory());
         Assert.assertNull(collector.getInfoAt(6).getFirstAA());
@@ -150,10 +150,10 @@ public class TranscriptExonsCategorizerTest {
 
         Assert.assertEquals(4, collector.size());
 
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'M', 1, 2, ExonCategory.START);
-        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 2, 'M', 1, 0, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(2), 'R', 2, 0, 'R', 2, 2, ExonCategory.CODING);
-        assertInfoEquals(collector.getInfoAt(3), 'R', 2, 2, 'Q', 5, 0, ExonCategory.STOP);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1, 0, "M", 1, 2, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(1), "M", 1, 2, "M", 1, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(2), "R", 2, 0, "R", 2, 2, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), "R", 2, 2, "Q", 5, 0, ExonCategory.STOP);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class TranscriptExonsCategorizerTest {
 
         Assert.assertEquals(2, results.getCategorizedExons().size());
 
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(0), "M", 1, 0, "E", 248, 1, ExonCategory.START);
         Assert.assertTrue(results.hasMappingErrors());
     }
 
@@ -206,15 +206,15 @@ public class TranscriptExonsCategorizerTest {
         Assert.assertTrue(results.hasMappingErrors());
     }
 
-    private void assertInfoEquals(ExonInfo info, char firstAA, int firstPos, int startPhase,  char lastAA, int lastPos, int endPhase, ExonCategory type) {
+    private void assertInfoEquals(ExonInfo info, String firstAA, int firstPos, int startPhase,  String lastAA, int lastPos, int endPhase, ExonCategory type) {
 
         Assert.assertEquals(type, info.getExonCategory());
 
-        Assert.assertEquals(firstAA, info.getFirstAA().getBase());
+        Assert.assertEquals(firstAA, info.getFirstAA().getCode().get1LetterCode());
         Assert.assertEquals(firstPos, info.getFirstAA().getPosition());
         Assert.assertEquals(startPhase, info.getFirstAA().getPhase());
 
-        Assert.assertEquals(lastAA, info.getLastAA().getBase());
+        Assert.assertEquals(lastAA, info.getLastAA().getCode().get1LetterCode());
         Assert.assertEquals(lastPos, info.getLastAA().getPosition());
         Assert.assertEquals(endPhase, info.getLastAA().getPhase());
     }
