@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.dbxref.resolver;
+package org.nextprot.api.core.service.dbxref.resolver;
 
 import org.junit.Assert;
 import org.junit.Before;
