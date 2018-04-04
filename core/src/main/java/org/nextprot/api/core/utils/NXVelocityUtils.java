@@ -5,9 +5,12 @@ import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Family;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.Proteoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

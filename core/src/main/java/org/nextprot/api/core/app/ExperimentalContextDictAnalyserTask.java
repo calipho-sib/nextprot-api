@@ -5,8 +5,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.github.jamm.MemoryMeter;
-import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
-import org.nextprot.api.commons.utils.app.SpringBasedTask;
+import org.nextprot.api.commons.app.CommandLineSpringParser;
+import org.nextprot.api.commons.app.SpringBasedTask;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 

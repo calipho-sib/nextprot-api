@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.dbxref.XrefDatabase;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.etl.service.ConsistencyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;

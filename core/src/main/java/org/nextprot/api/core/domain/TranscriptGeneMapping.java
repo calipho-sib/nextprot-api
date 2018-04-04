@@ -1,12 +1,14 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.core.domain.exon.CategorizedExon;
+
 import java.io.Serializable;
 import java.util.List;
 
 
 public class TranscriptGeneMapping implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3L;
 
 	private long referenceGeneId;
 	private String referenceGeneUniqueName;
@@ -17,7 +19,7 @@ public class TranscriptGeneMapping implements Serializable {
 	private String proteinId;
 	private int nucleotideSequenceLength;
 	private String quality;
-	private List<Exon> exons;
+	private List<CategorizedExon> exons;
 
 	public String getDatabase() {
 		return database;
@@ -54,7 +56,7 @@ public class TranscriptGeneMapping implements Serializable {
 	/**
 	 * Gets the exons in ascending order (first position comes first in the list)
 	 */
-	public List<Exon> getExons() {
+	public List<CategorizedExon> getExons() {
 		return exons;
 	}
 
@@ -63,7 +65,7 @@ public class TranscriptGeneMapping implements Serializable {
 	 * When setting the exons be careful, to set them in ascending order (first positions comes first in the list)
 	 * @param exons
 	 */
-	public void setExons(List<Exon> exons) {
+	public void setExons(List<CategorizedExon> exons) {
 		this.exons = exons;
 	}
 

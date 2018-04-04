@@ -5,9 +5,9 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.ui.page.PageView;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.core.utils.XrefUtils;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.core.utils.dbxref.XrefDatabase;
 
 import javax.annotation.Nonnull;
 import java.util.List;

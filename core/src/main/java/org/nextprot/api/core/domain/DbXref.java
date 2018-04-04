@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
-import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;

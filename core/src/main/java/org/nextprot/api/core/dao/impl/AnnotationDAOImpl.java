@@ -10,7 +10,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
 import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.utils.annot.GoDatasource;
+import org.nextprot.api.core.service.annotation.GoDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

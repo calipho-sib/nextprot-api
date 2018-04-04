@@ -4,6 +4,7 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.exon.UncategorizedExon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -116,7 +117,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 
 	@Override
-	public List<Exon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName) {
+	public List<UncategorizedExon> findExonsAlignedToTranscriptOfGene(String transcriptName, String geneName) {
 		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
@@ -125,7 +126,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 	
 	@Override
-	public List<Exon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName) {
+	public List<UncategorizedExon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName) {
 		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
@@ -134,11 +135,11 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static class ExonMapper implements ParameterizedRowMapper<Exon> {
+	private static class ExonMapper implements ParameterizedRowMapper<UncategorizedExon> {
 
 		@Override
-		public Exon mapRow(ResultSet resultSet, int row) throws SQLException {
-			Exon exon = new Exon();
+		public UncategorizedExon mapRow(ResultSet resultSet, int row) throws SQLException {
+			UncategorizedExon exon = new UncategorizedExon();
 
 			GeneRegion geneRegion = new GeneRegion(resultSet.getString("gene_name"),
 					resultSet.getInt("first_position"),

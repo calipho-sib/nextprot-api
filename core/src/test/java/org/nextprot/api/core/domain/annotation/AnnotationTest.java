@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.annotation;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.utils.annot.AnnotationUtilsTest;
+import org.nextprot.api.core.service.annotation.AnnotationUtilsTest;
 
 import java.util.ArrayList;
 import java.util.Collection;

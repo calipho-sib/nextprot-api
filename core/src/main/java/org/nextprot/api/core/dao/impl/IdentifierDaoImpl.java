@@ -5,7 +5,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Identifier;
-import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
