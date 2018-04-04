@@ -1,16 +1,15 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Preconditions;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {

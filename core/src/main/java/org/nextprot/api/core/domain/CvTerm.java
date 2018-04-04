@@ -1,16 +1,14 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class CvTerm implements Serializable {
 	

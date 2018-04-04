@@ -1,5 +1,11 @@
 package org.nextprot.api.core.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -7,9 +13,6 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-
-import java.util.*;
 
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
