@@ -80,9 +80,11 @@ public class TerminologyUtils {
 				dbref.setLinkUrl(linkurl);
 			}
 			
-			if (fields.size() > 6) dbref.addProperty("term_id", fields.get(6), null);
-			if (fields.size() > 7) dbref.addProperty("term_name", fields.get(7), null);
-			if (fields.size() > 8) dbref.addProperty("term_ontology_display_name", fields.get(8), null);
+			if (fields.size() > 6 && ! fields.get(6).equals("-1")) {
+				dbref.addProperty("term_id", fields.get(6), null);
+				if (fields.size() > 7) dbref.addProperty("term_name", fields.get(7), null);
+				if (fields.size() > 8) dbref.addProperty("term_ontology_display_name", fields.get(8), null);
+			}
 			
 			
 			xrefs.add(dbref);
