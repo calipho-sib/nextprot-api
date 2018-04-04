@@ -1,16 +1,17 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.TerminologyMapping;
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class CvTerm implements Serializable {
-    
+	
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;
@@ -20,7 +21,6 @@ public class CvTerm implements Serializable {
 	private String ontology;
 	private String ontologyAltname;
 	private String ontologyDisplayName;
-	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
 	private List<String> childAccession;
@@ -130,23 +130,26 @@ public class CvTerm implements Serializable {
 		return xrefs;
 	}
 
-	public List<DbXref> getFilteredXrefs(String category) {
-		if(xrefs == null) return null;
-		List<DbXref> filteredxrefs = new ArrayList<>();
-		for (DbXref currxref : xrefs) {
-			if(currxref.getDatabaseCategory().equals(category)) filteredxrefs.add(currxref);
-		}
-		if(filteredxrefs.size() == 0) return null;
-		return filteredxrefs;
-	}
-
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
 	}
 
-	public List<String> getSameAs() {
-		// To remain compatible with previous API version (Terminology.getSameAs() is used for ttl generation in term.ttl.vm )
-		return TerminologyUtils.convertXrefsToSameAsStrings(getFilteredXrefs("Ontologies"));
+	private boolean isExternalReference(DbXref x) {
+		return x.getPropertyByName("term_id")==null;
+	}
+	private boolean isRelatedTerm(DbXref x) {
+		return ! isExternalReference(x);
+	}
+	
+	/*
+	 * Related terms are retrieved from the term xrefs.
+	 * It is the subset of xrefs of terms that are actually loaded in neXtProt
+	 */
+	public List<String> getACsOfRelatedTerms() {
+		return StreamUtils.nullableListToStream(this.getXrefs())
+			.filter(x -> isRelatedTerm(x))
+			.map(x -> x.getAccession())
+			.collect(Collectors.toList());
 	}
 	
 	public String toString(){
@@ -171,7 +174,7 @@ public class CvTerm implements Serializable {
 		sb.append(TerminologyUtils.convertXrefsToString(this.getXrefs()));
 		sb.append("\n");
 		sb.append("sameAs=");
-		sb.append(this.getSameAs());
+		sb.append(this.getACsOfRelatedTerms());
 		sb.append("\n");
 		sb.append("properties=");
 		sb.append(TerminologyUtils.convertPropertiesToString(this.getProperties()));
