@@ -42,4 +42,9 @@ public class AminoAcid implements Serializable {
 		this.position = position;
 	}
 
+	@Override
+	public String toString() {
+
+		return code.get3LetterCode()+", phase="+phase+", position="+position;
+	}
 }
