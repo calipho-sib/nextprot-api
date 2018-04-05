@@ -45,6 +45,6 @@ public class AminoAcid implements Serializable {
 	@Override
 	public String toString() {
 
-		return code.get3LetterCode()+", phase="+phase+", position="+position;
+		return (code != null) ? code.get3LetterCode():"?"+", phase="+phase+", position="+position;
 	}
 }
