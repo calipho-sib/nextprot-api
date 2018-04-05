@@ -19,7 +19,7 @@ public class ExonOutOfIsoformBoundException extends InvalidExonException {
 
     public ExonOutOfIsoformBoundException(UncategorizedExon exon, AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
 
-        super(exon, "outofbound aa="+aminoAcidOutOfBound+", isoform length="+isoformLength);
+        super(exon, "outofbound aa="+((aminoAcidOutOfBound == AminoAcidOutOfBound.FIRST) ? first : last) +", isoform length="+isoformLength);
 
         this.first = first;
         this.last = last;
