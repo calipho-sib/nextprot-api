@@ -60,6 +60,6 @@ public class GoDatasource {
 		ref2src.put("GO_REF:0000107", "GOA curators");
 		ref2src.put("GO_REF:0000108", "GOA curators");
 		ref2src.put("GO_REF:0000111", "GOA curators");
-
+		ref2src.put("GO_REF:0000113", "GOA curators");
 	}
 }
