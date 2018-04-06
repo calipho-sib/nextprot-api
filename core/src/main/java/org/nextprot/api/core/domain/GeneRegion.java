@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class GeneRegion implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private String geneName;
 	private int firstPosition;
@@ -41,5 +41,9 @@ public class GeneRegion implements Serializable {
 
 	public void setGeneName(String geneName) {
 		this.geneName = geneName;
+	}
+
+	public int getLength() {
+		return lastPosition - firstPosition + 1;
 	}
 }
