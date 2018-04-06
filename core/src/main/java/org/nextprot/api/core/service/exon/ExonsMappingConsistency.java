@@ -45,7 +45,7 @@ public class ExonsMappingConsistency {
         List<IsoformGeneMapping> iml = genomicMapping.getIsoformGeneMappings();
 
         Optional<IsoformGeneMapping> isoformMapping = iml.stream()
-                .filter(im -> im.getIsoformName().equals(isoformName))
+                .filter(im -> im.getIsoformAccession().equals(isoformName))
                 .findFirst();
 
         isoformMapping.ifPresent(im -> compareTranscriptMappingsWithIsoformPosOnRefGene(im, consistencyResult));

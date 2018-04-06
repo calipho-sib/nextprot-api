@@ -47,10 +47,19 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
                 "353-429,1201-1241,1693-1780,5873-5921,6089-6126,6130-6475,42406-42528,46275-46394,47398-47517,49075-49194,53017-53140,53225-53420,56906-57280");
     }
 
+    @Test
+    public void testIsoformAccessionAndName() {
+
+        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
+
+        Assert.assertEquals("NX_P78324-1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformAccession());
+        Assert.assertEquals("Iso 1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformMainName());
+    }
+
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {
 
         IsoformGeneMapping isoformGeneMapping = iml.stream()
-                .filter(im -> im.getIsoformName().equals(isoName))
+                .filter(im -> im.getIsoformAccession().equals(isoName))
                 .collect(Collectors.toList()).get(0);
 
         Assert.assertEquals(expEnsg, isoformGeneMapping.getReferenceGeneName());

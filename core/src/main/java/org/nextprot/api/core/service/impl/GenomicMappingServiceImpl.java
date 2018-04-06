@@ -47,7 +47,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				.peek(genomicMapping -> {
 					if (isoformGeneMappings.containsKey(genomicMapping.getGeneSeqId())) {
 						genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
-						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(isoformsByName.get(im1.getIsoformName()), isoformsByName.get(im2.getIsoformName())));
+						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(isoformsByName.get(im1.getIsoformAccession()), isoformsByName.get(im2.getIsoformAccession())));
 					}
 				})
 				.collect(Collectors.toList());
@@ -78,6 +78,8 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 				// By isoform name
 				for (IsoformGeneMapping isoformGeneMapping : isoformMappingsByIsoformName.get(isoformName)) {
+
+				    isoformGeneMapping.setIsoformMainName(isoformsByName.get(isoformName).getMainEntityName().getName());
 
 					// exons provided by ensembl can conflict with isoform to gene mappings and are solved here
 					isoformGeneMapping.setTranscriptGeneMappings(StreamUtils.nullableListToStream(transcriptGeneMappingsByIsoformName.get(isoformName))

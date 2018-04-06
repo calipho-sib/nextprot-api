@@ -16,7 +16,8 @@ public class IsoformGeneMapping implements Serializable {
 
 	private static final long serialVersionUID = 3L;
 
-	private String isoformName;
+	private String isoformAccession;
+	private String isoformMainName;
 	private long referenceGeneId;
 	private String referenceGeneName;
 
@@ -30,12 +31,12 @@ public class IsoformGeneMapping implements Serializable {
 		transcriptGeneMappings = new ArrayList<>();
 	}
 
-	public String getIsoformName() {
-		return isoformName;
+	public String getIsoformAccession() {
+		return isoformAccession;
 	}
 
-	public void setIsoformName(String isoformName) {
-		this.isoformName = isoformName;
+	public void setIsoformAccession(String isoformAccession) {
+		this.isoformAccession = isoformAccession;
 	}
 
 	public long getReferenceGeneId() {
@@ -64,6 +65,14 @@ public class IsoformGeneMapping implements Serializable {
 
 	public void setTranscriptGeneMappings(List<TranscriptGeneMapping> transcriptGeneMappings) {
 		this.transcriptGeneMappings = transcriptGeneMappings;
+	}
+
+	public String getIsoformMainName() {
+		return isoformMainName;
+	}
+
+	public void setIsoformMainName(String isoformMainName) {
+		this.isoformMainName = isoformMainName;
 	}
 
 	@JsonIgnore

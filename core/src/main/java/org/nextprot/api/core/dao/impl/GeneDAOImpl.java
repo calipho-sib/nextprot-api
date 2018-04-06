@@ -171,7 +171,7 @@ public class GeneDAOImpl implements GeneDAO {
 			}
 			IsoformGeneMapping isoformGeneMapping = isoformMappings.get(isoformMappingKey);
 			isoformGeneMapping.setReferenceGeneId(geneId);
-			isoformGeneMapping.setIsoformName(isoName);
+			isoformGeneMapping.setIsoformAccession(isoName);
 			isoformGeneMapping.setReferenceGeneName((String)m.get("reference_gene"));
 
 			GeneRegion geneRegion = new GeneRegion(isoformGeneMapping.getReferenceGeneName(),
@@ -182,6 +182,6 @@ public class GeneDAOImpl implements GeneDAO {
 		}
 
 		return isoformMappings.values().stream()
-				.collect(Collectors.groupingBy(IsoformGeneMapping::getIsoformName, Collectors.toList()));
+				.collect(Collectors.groupingBy(IsoformGeneMapping::getIsoformAccession, Collectors.toList()));
 	}
 }
