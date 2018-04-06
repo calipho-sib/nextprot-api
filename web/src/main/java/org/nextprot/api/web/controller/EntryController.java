@@ -8,7 +8,6 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.export.EntryPartExporterImpl;
 import org.nextprot.api.core.export.EntryPartWriterTSV;
 import org.nextprot.api.core.service.*;
@@ -48,7 +47,6 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryGeneReportService entryGeneReportService;
 	@Autowired private EntryService entryService;
-	@Autowired private ExonMappingService exonMappingService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -221,18 +219,6 @@ public class EntryController {
 		model.addAttribute("isoform", isoform);
 
 		return "isoform";
-	}
-
-	@ApiMethod(path = "/entry/exon-mapping/{entry}/{genename}", verb = ApiVerb.GET, description = "Exports exons mapping of a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/entry/exon-mapping/{entry}", method = { RequestMethod.GET })
-	@ResponseBody
-	public List<ExonMapping> getExonMapping(
-			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
-			@PathVariable("entry") String entryName,
-            @ApiPathParam(name = "genename", description = "The gene name given by ensembl.",  allowedvalues = { "ENSG00000254647"})
-            @PathVariable("genename") String geneName) {
-
-		return exonMappingService.findExonMappings(entryName, geneName);
 	}
 
 	/**
