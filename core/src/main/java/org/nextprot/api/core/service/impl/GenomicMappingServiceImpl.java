@@ -37,14 +37,17 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");
 		Preconditions.checkArgument(!entryName.isEmpty(), "The entry name "+entryName +" is not empty");
 
-		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(entryName)
+		Map<String, Isoform> isoformsByName = isoformService.findIsoformsByEntryName(entryName).stream()
+				.collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
+
+		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(isoformsByName)
 				.find();
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
 				.peek(genomicMapping -> {
 					if (isoformGeneMappings.containsKey(genomicMapping.getGeneSeqId())) {
 						genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
-						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(im1.getIsoform(), im2.getIsoform()));
+						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(isoformsByName.get(im1.getIsoformName()), isoformsByName.get(im2.getIsoformName())));
 					}
 				})
 				.collect(Collectors.toList());
@@ -58,9 +61,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		private final Map<String, List<IsoformGeneMapping>> isoformMappingsByIsoformName;
 		private final Map<String, List<TranscriptGeneMapping>> transcriptGeneMappingsByIsoformName;
 
-		private IsoformGeneMappingsFinder(String entryName) {
+		private IsoformGeneMappingsFinder(Map<String, Isoform> isoformsByName) {
 
-			this.isoformsByName = isoformService.findIsoformsByEntryName(entryName).stream().collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
+			this.isoformsByName = isoformsByName;
 			this.isoformMappingsByIsoformName = geneDAO.getIsoformMappingsByIsoformName(isoformsByName.keySet());
 			this.transcriptGeneMappingsByIsoformName = geneDAO.findTranscriptMappingsByIsoformName(isoformsByName.keySet());
 		}
@@ -75,8 +78,6 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 				// By isoform name
 				for (IsoformGeneMapping isoformGeneMapping : isoformMappingsByIsoformName.get(isoformName)) {
-
-					isoformGeneMapping.setIsoform(isoformsByName.get(isoformName));
 
 					// exons provided by ensembl can conflict with isoform to gene mappings and are solved here
 					isoformGeneMapping.setTranscriptGeneMappings(StreamUtils.nullableListToStream(transcriptGeneMappingsByIsoformName.get(isoformName))
@@ -135,7 +136,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			isoformGeneMapping.getTranscriptGeneMappings().forEach(transcriptMapping ->
 					computeExonListPhasesAndAminoacids(exons.get(buildKey(transcriptMapping)),
-							transcriptMapping, isoformGeneMapping.getAminoAcidSequence(),
+							transcriptMapping, isoformsByName.get(transcriptMapping.getIsoformName()).getSequence(),
 							isoformGeneMapping.getFirstPositionIsoformOnGene(),
 							isoformGeneMapping.getLastPositionIsoformOnGene()));
 		}

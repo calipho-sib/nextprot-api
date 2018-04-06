@@ -14,12 +14,11 @@ import java.util.List;
  */
 public class IsoformGeneMapping implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
+	private String isoformName;
 	private long referenceGeneId;
 	private String referenceGeneName;
-	private String isoformName;
-	private Isoform isoform;
 
 	// list of gene regions mapping this isoform protein
 	private List<GeneRegion> isoformGeneRegionMappings;
@@ -31,7 +30,6 @@ public class IsoformGeneMapping implements Serializable {
 		transcriptGeneMappings = new ArrayList<>();
 	}
 
-	@JsonIgnore
 	public String getIsoformName() {
 		return isoformName;
 	}
@@ -60,24 +58,12 @@ public class IsoformGeneMapping implements Serializable {
 		return isoformGeneRegionMappings;
 	}
 
-	public String getAminoAcidSequence() {
-		return (isoform != null) ? isoform.getSequence() : "";
-	}
-
 	public List<TranscriptGeneMapping> getTranscriptGeneMappings() {
 		return transcriptGeneMappings;
 	}
 
 	public void setTranscriptGeneMappings(List<TranscriptGeneMapping> transcriptGeneMappings) {
 		this.transcriptGeneMappings = transcriptGeneMappings;
-	}
-
-	public void setIsoform(Isoform isoform) {
-		this.isoform = isoform;
-	}
-
-	public Isoform getIsoform() {
-		return isoform;
 	}
 
 	@JsonIgnore
