@@ -1,6 +1,8 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.GenomicMapping;
+import org.nextprot.api.core.domain.IsoformGeneMapping;
+import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.ExonMappingService;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -25,6 +27,17 @@ public class ExonMappingServiceImpl implements ExonMappingService {
 
 			GenomicMapping gm = gmm.get(geneName);
 
+            for (IsoformGeneMapping isoformGeneMapping : gm.getIsoformGeneMappings()) {
+
+				String isoformMainName = isoformGeneMapping.getIsoformMainName();
+
+				for (TranscriptGeneMapping transcriptGeneMapping : isoformGeneMapping.getTranscriptGeneMappings()) {
+
+					String enstAccession = transcriptGeneMapping.getDatabaseAccession();
+
+					ExonMapping exonMapping = new ExonMapping();
+				}
+            }
 		}
 
 		return null;
