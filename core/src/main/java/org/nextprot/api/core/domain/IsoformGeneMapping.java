@@ -55,6 +55,7 @@ public class IsoformGeneMapping implements Serializable {
 		this.referenceGeneName = referenceGeneName;
 	}
 
+    @JsonIgnore
 	public List<GeneRegion> getIsoformGeneRegionMappings() {
 		return isoformGeneRegionMappings;
 	}
