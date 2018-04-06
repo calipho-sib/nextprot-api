@@ -1,10 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setChromosomalLocations(this.geneService.findChromosomalLocationsByEntry(entryName));
 			}
 			if(entryConfig.hasGenomicMappings()){
-				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName));
+				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName).values());
 			}
 			if(entryConfig.hasTargetIsoforms()){
 				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));

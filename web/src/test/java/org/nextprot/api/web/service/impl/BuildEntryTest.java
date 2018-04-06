@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
@@ -22,8 +23,9 @@ public class BuildEntryTest extends WebIntegrationBaseTest {
 		Assert.assertEquals(1, entry.getChromosomalLocations().size());
 		Assert.assertEquals("ENSG00000254647", entry.getChromosomalLocations().get(0).getAccession());
 		Assert.assertTrue(!entry.getGenomicMappings().isEmpty());
-		Assert.assertEquals("ENSG00000254647", entry.getGenomicMappings().get(0).getAccession());
-		Assert.assertEquals("Ensembl", entry.getGenomicMappings().get(0).getDatabase());
+		GenomicMapping gm = entry.getGenomicMappings().iterator().next();
+		Assert.assertEquals("ENSG00000254647", gm.getAccession());
+		Assert.assertEquals("Ensembl", gm.getDatabase());
 	}
 
 	@Test

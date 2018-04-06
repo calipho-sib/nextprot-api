@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ActiveProfiles({ "dev" })
@@ -22,10 +23,10 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
     @Test
     public void NX_P78324_4MappingAgainstNX_ENST00000356025ShouldHaveValidExons() {
 
-        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
+        Map<String, GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
         Assert.assertEquals(1, gml.size());
 
-        List<IsoformGeneMapping> iml = gml.get(0).getIsoformGeneMappings();
+        List<IsoformGeneMapping> iml = gml.get("ENSG00000198053").getIsoformGeneMappings();
         Assert.assertEquals(3, iml.size());
 
         assertExonStructures(iml, "NX_P78324-4", "NX_ENSG00000198053", "NX_ENST00000356025",
@@ -36,10 +37,10 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
     @Test
     public void NX_Q12805_3MappingAgainstNX_ENST00000355426ShouldHaveValidExons() {
 
-        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_Q12805");
+        Map<String, GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_Q12805");
         Assert.assertEquals(1, gml.size());
 
-        List<IsoformGeneMapping> iml = gml.get(0).getIsoformGeneMappings();
+        List<IsoformGeneMapping> iml = gml.get("ENSG00000115380").getIsoformGeneMappings();
         Assert.assertEquals(5, iml.size());
 
         assertExonStructures(iml, "NX_Q12805-3", "NX_ENSG00000115380", "NX_ENST00000355426",
@@ -50,10 +51,10 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
     @Test
     public void testIsoformAccessionAndName() {
 
-        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
+        Map<String, GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P78324");
 
-        Assert.assertEquals("NX_P78324-1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformAccession());
-        Assert.assertEquals("Iso 1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformMainName());
+        Assert.assertEquals("NX_P78324-1", gml.get("ENSG00000198053").getIsoformGeneMappings().get(0).getIsoformAccession());
+        Assert.assertEquals("Iso 1", gml.get("ENSG00000198053").getIsoformGeneMappings().get(0).getIsoformMainName());
     }
 
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {

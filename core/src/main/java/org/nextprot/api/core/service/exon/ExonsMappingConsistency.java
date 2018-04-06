@@ -27,13 +27,14 @@ public class ExonsMappingConsistency {
 
         GenomicMappingService genomicMappingService = springConfig.getBean(GenomicMappingService.class);
 
-        Optional<GenomicMapping> genomicMapping = genomicMappingService.findGenomicMappingsByEntryName(isoformName.split("-")[0]).stream()
-                .filter(gm -> gm.getAccession().equals(ensgAccession))
-                .findFirst();
+        GenomicMapping genomicMapping = genomicMappingService.findGenomicMappingsByEntryName(isoformName.split("-")[0])
+                .get(ensgAccession);
 
         ConsistencyResult consistencyResult = new ConsistencyResult();
 
-        genomicMapping.ifPresent(genomicMapping1 -> check(genomicMapping1, consistencyResult));
+        if (genomicMapping != null) {
+            check(genomicMapping, consistencyResult);
+        }
 
         springConfig.stopApplicationContext();
 

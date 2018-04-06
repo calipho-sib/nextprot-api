@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+
+import java.util.Map;
 
 /**
  * Extracts gene / chromosomal information about an entry
@@ -12,6 +12,5 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
  */
 public interface GenomicMappingService {
 
-	List<GenomicMapping> findGenomicMappingsByEntryName(@ValidEntry String entryName);
-
+	Map<String, GenomicMapping> findGenomicMappingsByEntryName(@ValidEntry String entryName);
 }
