@@ -2,7 +2,7 @@
 	#if(!$genomicMapping.isoformGeneMappings.isEmpty())
 	<isoform-mapping-list>
 		#foreach($isoformGeneMapping in $genomicMapping.isoformGeneMappings)
-		<isoform-mapping accession="$isoformGeneMapping.isoformName" main-name="$isoformGeneMapping.isoform.mainEntityName.value">
+		<isoform-mapping accession="$isoformGeneMapping.isoformAccession" main-name="$isoformGeneMapping.isoformMainName">
 			#if(!$isoformGeneMapping.transcriptGeneMappings.isEmpty())
 			<transcript-mapping-list>
 				#foreach($transcriptGeneMapping in $isoformGeneMapping.transcriptGeneMappings)
