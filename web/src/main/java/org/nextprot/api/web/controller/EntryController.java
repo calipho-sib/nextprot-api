@@ -8,6 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.export.EntryPartExporterImpl;
 import org.nextprot.api.core.export.EntryPartWriterTSV;
 import org.nextprot.api.core.service.*;
@@ -47,6 +48,7 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryGeneReportService entryGeneReportService;
 	@Autowired private EntryService entryService;
+	@Autowired private EntryExonMappingService entryExonMappingService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -220,6 +222,44 @@ public class EntryController {
 
 		return "isoform";
 	}
+
+	@ApiMethod(path = "/exon-mapping/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "...", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/exon-mapping/entry/{entry}/gene/{gene}", method = { RequestMethod.GET })
+	@ResponseBody
+	public ExonMapping findExonsByIsoformByShorterENST(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName,
+			@ApiPathParam(name = "geneName", description = "The ensembl gene name", allowedvalues = { "ENSG00000254647"})
+			@PathVariable("gene") String geneName) {
+
+		return entryExonMappingService.findExonMappingGeneXIsoformXShorterENST(entryName, geneName);
+	}
+
+	/*@ApiMethod(path = "/gene-regions/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "...", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/gene-regions/entry/{entry}/gene/{gene}", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<GeneRegion> findSortedGeneRegions(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName,
+			@ApiPathParam(name = "geneName", description = "The ensembl gene name", allowedvalues = { "ENSG00000254647"})
+			@PathVariable("gene") String geneName) {
+
+		return entryExonMappingService.findSortedGeneRegionsOfRefENST(entryName, geneName);
+	}
+
+	@ApiMethod(path = "/gene-regions/entry/{entry}/gene/{gene}/iso/{iso}", verb = ApiVerb.GET, description = "...", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/gene-regions/entry/{entry}/gene/{gene}/iso/{iso}", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<GeneRegion> findCommonGeneRegions(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName,
+			@ApiPathParam(name = "geneName", description = "The ensembl gene name", allowedvalues = { "ENSG00000254647"})
+			@PathVariable("gene") String geneName,
+			@ApiPathParam(name = "isoName", description = "The isoform name", allowedvalues = { "NX_P01308-1"})
+			@PathVariable("iso") String isoName) {
+
+		return entryExonMappingService.findCommonGeneRegions(entryName, geneName, isoName);
+	}*/
 
 	/**
 	 * Filter entry annotations
