@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +49,12 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 		mapping.setExons(exons);
 
 		return mapping;
+	}
+
+	@Override
+	public Set<String> findENSGs(String entryName) {
+
+		return genomicMappingService.findGenomicMappingsByEntryName(entryName).keySet();
 	}
 
 	private List<IsoformGeneMapping> findIsoformGeneMappings(String entryName, String geneName) {

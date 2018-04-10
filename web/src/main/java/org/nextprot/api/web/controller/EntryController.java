@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -223,7 +224,7 @@ public class EntryController {
 		return "isoform";
 	}
 
-	@ApiMethod(path = "/exon-mapping/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "...", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/exon-mapping/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "Find the list of ENSGs associated with a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/exon-mapping/entry/{entry}/gene/{gene}", method = { RequestMethod.GET })
 	@ResponseBody
 	public ExonMapping findExonsByIsoformByShorterENST(
@@ -234,6 +235,16 @@ public class EntryController {
 
 		return entryExonMappingService.findExonMappingGeneXIsoformXShorterENST(entryName, geneName);
 	}
+
+    @ApiMethod(path = "/ensg/{entry}", verb = ApiVerb.GET, description = "Find the list of Ensembl gene identifiers associated with a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/ensg/{entry}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Set<String> findENSGList(
+            @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+            @PathVariable("entry") String entryName) {
+
+        return entryExonMappingService.findENSGs(entryName);
+    }
 
 	/*@ApiMethod(path = "/gene-regions/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "...", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/gene-regions/entry/{entry}/gene/{gene}", method = { RequestMethod.GET })
