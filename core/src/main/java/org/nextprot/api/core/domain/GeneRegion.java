@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class GeneRegion implements Serializable {
 
@@ -45,5 +46,21 @@ public class GeneRegion implements Serializable {
 
 	public int getLength() {
 		return lastPosition - firstPosition + 1;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		GeneRegion that = (GeneRegion) o;
+		return firstPosition == that.firstPosition &&
+				lastPosition == that.lastPosition &&
+				Objects.equals(geneName, that.geneName);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(geneName, firstPosition, lastPosition);
 	}
 }
