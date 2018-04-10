@@ -25,7 +25,7 @@ public class IsoformGeneMapping implements Serializable {
 	private List<GeneRegion> isoformGeneRegionMappings;
 	// list of transcripts mapping this isoform protein
 	private List<TranscriptGeneMapping> transcriptGeneMappings;
-	
+
 	public IsoformGeneMapping(){
 		isoformGeneRegionMappings = new ArrayList<>();
 		transcriptGeneMappings = new ArrayList<>();

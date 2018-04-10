@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.exon;
 
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.exon.UncategorizedExon;
+import org.nextprot.api.core.domain.exon.SimpleExon;
 
 /**
  * An exon out of bound error
@@ -17,7 +17,7 @@ public class ExonOutOfIsoformBoundException extends InvalidExonException {
     private final AminoAcidOutOfBound aminoAcidOutOfBound;
     private final int isoformLength;
 
-    public ExonOutOfIsoformBoundException(UncategorizedExon exon, AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
+    public ExonOutOfIsoformBoundException(SimpleExon exon, AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
 
         super(exon, "outofbound aa="+((aminoAcidOutOfBound == AminoAcidOutOfBound.FIRST) ? first : last) +", isoform length="+isoformLength);
 

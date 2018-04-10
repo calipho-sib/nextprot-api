@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.GeneRegion;
 
-public class UncategorizedExon implements Exon {
+public class SimpleExon implements Exon {
 
 	private static final long serialVersionUID = 1L;
 
 	private String name;
 	private String accession;
 	private String transcriptName;
+	private String isoformName;
 	private GeneRegion geneRegion;
 	private int rank;
 	private AminoAcid firstAminoAcid;
@@ -46,6 +47,15 @@ public class UncategorizedExon implements Exon {
 	public void setNameDeduceAccession(String exonName) {
 		this.name = exonName;
 		this.accession = exonName.substring(3);
+	}
+
+	@Override
+	public String getIsoformName() {
+		return isoformName;
+	}
+
+	public void setIsoformName(String isoformName) {
+		this.isoformName = isoformName;
 	}
 
 	@Override

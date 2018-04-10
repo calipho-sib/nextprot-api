@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.Exon;
 import org.nextprot.api.core.domain.exon.ExonCategory;
-import org.nextprot.api.core.domain.exon.UncategorizedExon;
+import org.nextprot.api.core.domain.exon.SimpleExon;
 
 import java.util.*;
 
@@ -52,17 +52,17 @@ public class TranscriptExonsCategorizer {
      * @param endPositionIsoformOnGene end position on gene of mapping isoform
      * @return true if analysis succeed
      */
-    public Results categorizeExons(final Collection<UncategorizedExon> exonList, String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
+    public Results categorizeExons(final Collection<SimpleExon> exonList, String isoformSequence, int startPositionIsoformOnGene, int endPositionIsoformOnGene) {
 
         Results results = new Results();
 
-        List<UncategorizedExon> exonsSorted = new ArrayList<>(exonList);
+        List<SimpleExon> exonsSorted = new ArrayList<>(exonList);
         exonsSorted.sort(Comparator.comparingInt(Exon::getFirstPositionOnGene));
 
         init(startPositionIsoformOnGene, endPositionIsoformOnGene);
 
         exonsAnalysis.started();
-        for (UncategorizedExon exon : exonsSorted) {
+        for (SimpleExon exon : exonsSorted) {
 
             exonsAnalysis.startedExon(exon);
             try {
@@ -101,7 +101,7 @@ public class TranscriptExonsCategorizer {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private void analyseCodingExon(String isoformSequence, UncategorizedExon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
+    private void analyseCodingExon(String isoformSequence, SimpleExon exon, ExonCategory cat) throws ExonOutOfIsoformBoundException {
 
         int startPositionExonOnGene = calcStartPositionExonOnGene(exon, cat);
         int endPositionExonOnGene = calcEndPositionExonOnGene(exon, cat);
@@ -145,7 +145,7 @@ public class TranscriptExonsCategorizer {
         return endPositionExonOnGene;
     }
 
-    private ExonOutOfIsoformBoundException createExonOutOfIsoformBoundException(UncategorizedExon exon, AminoAcid first, AminoAcid last, int isoformLength) {
+    private ExonOutOfIsoformBoundException createExonOutOfIsoformBoundException(SimpleExon exon, AminoAcid first, AminoAcid last, int isoformLength) {
 
         if (first.getPosition() > isoformLength) {
 

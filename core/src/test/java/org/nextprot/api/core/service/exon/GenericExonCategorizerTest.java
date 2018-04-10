@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.domain.exon.ExonCategory;
-import org.nextprot.api.core.domain.exon.UncategorizedExon;
+import org.nextprot.api.core.domain.exon.SimpleExon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +88,7 @@ public class GenericExonCategorizerTest {
 
         ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
 
-        UncategorizedExon exon = mockExonList(276, 28).get(0);
+        SimpleExon exon = mockExonList(276, 28).get(0);
         GeneRegion gr = new GeneRegion();
         gr.setGeneName("roudoudou");
         when(exon.getGeneRegion()).thenReturn(gr);
@@ -96,15 +96,15 @@ public class GenericExonCategorizerTest {
         categorizer.categorize(exon);
     }
 
-    public static List<UncategorizedExon> mockExonList(int... startEnds) {
+    public static List<SimpleExon> mockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
 
-        List<UncategorizedExon> exons = new ArrayList<>();
+        List<SimpleExon> exons = new ArrayList<>();
 
         for (int i=0 ; i<startEnds.length-1 ; i+=2) {
 
-            UncategorizedExon exon = mock(UncategorizedExon.class);
+            SimpleExon exon = mock(SimpleExon.class);
             GeneRegion geneRegion = mock(GeneRegion.class);
             when(geneRegion.getFirstPosition()).thenReturn(startEnds[i]);
             when(geneRegion.getLastPosition()).thenReturn(startEnds[i+1]);

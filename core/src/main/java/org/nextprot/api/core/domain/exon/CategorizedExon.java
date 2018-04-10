@@ -50,7 +50,12 @@ public class CategorizedExon implements Exon {
 		return exon.getTranscriptName();
 	}
 
-	@Override
+    @Override
+    public String getIsoformName() {
+        return exon.getIsoformName();
+    }
+
+    @Override
 	public GeneRegion getGeneRegion() {
 		return exon.getGeneRegion();
 	}
