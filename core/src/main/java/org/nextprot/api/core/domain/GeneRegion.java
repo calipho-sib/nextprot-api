@@ -63,4 +63,9 @@ public class GeneRegion implements Serializable {
 
 		return Objects.hash(geneName, firstPosition, lastPosition);
 	}
+
+	@Override
+	public String toString() {
+		return "[" + firstPosition + "-" + lastPosition + "]";
+	}
 }
