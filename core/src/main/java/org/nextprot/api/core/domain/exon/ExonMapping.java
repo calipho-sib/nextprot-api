@@ -12,7 +12,7 @@ public class ExonMapping implements Serializable {
 
     private Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
     private List<String> sortedKeys = new ArrayList<>();
-    private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
+    private List<Map<String, Object>> isoformInfos = new ArrayList<>();
 
     public Map<GeneRegion, Map<String, Exon>> getExons() {
         return exons;
@@ -28,16 +28,20 @@ public class ExonMapping implements Serializable {
                         .collect(Collectors.toList()));
     }
 
-    public Map<String, Map<String, Object>> getIsoformInfos() {
+    public List<Map<String, Object>> getIsoformInfos() {
 
-        return Collections.unmodifiableMap(isoformInfos);
+        return Collections.unmodifiableList(isoformInfos);
     }
 
-    public void setIsoformInfos(String isoformName, List<String> ensts, String mainName) {
+    public void setIsoformInfos(String isoformAccession, List<String> ensts, String mainName) {
 
-        this.isoformInfos.computeIfAbsent(isoformName, k -> new HashMap<>())
-                .put("transcripts", ensts);
-        this.isoformInfos.get(isoformName).put("name", mainName);
+        HashMap<String, Object> infos = new HashMap<>();
+
+        infos.put("accession", isoformAccession);
+        infos.put("name", mainName);
+        infos.put("transcripts", ensts);
+
+        this.isoformInfos.add(infos);
     }
 
     public List<String> getSortedKeys() {
