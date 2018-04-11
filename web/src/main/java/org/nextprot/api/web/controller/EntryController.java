@@ -224,8 +224,8 @@ public class EntryController {
 		return "isoform";
 	}
 
-	@ApiMethod(path = "/exon-mapping/entry/{entry}/gene/{gene}", verb = ApiVerb.GET, description = "Find the list of ENSGs associated with a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/exon-mapping/entry/{entry}/gene/{gene}", method = { RequestMethod.GET })
+	//@ApiMethod(path = "/entry/{entry}/exon-mapping/ensg/{gene}", verb = ApiVerb.GET, description = "Find the exon mappings of a neXtProt entry and a gene", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/entry/{entry}/exon-mapping/ensg/{gene}", method = { RequestMethod.GET })
 	@ResponseBody
 	public ExonMapping findExonsByIsoformByShorterENST(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -236,8 +236,8 @@ public class EntryController {
 		return entryExonMappingService.findExonMappingGeneXIsoformXShorterENST(entryName, geneName);
 	}
 
-    @ApiMethod(path = "/ensg/{entry}", verb = ApiVerb.GET, description = "Find the list of Ensembl gene identifiers associated with a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
-    @RequestMapping(value = "/ensg/{entry}", method = { RequestMethod.GET })
+    //@ApiMethod(path = "/entry/{entry}/ensgs", verb = ApiVerb.GET, description = "Find the list of ENSGs associated with a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/entry/{entry}/ensgs", method = { RequestMethod.GET })
     @ResponseBody
     public Set<String> findENSGList(
             @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
