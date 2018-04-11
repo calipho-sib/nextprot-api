@@ -66,6 +66,6 @@ public class GeneRegion implements Serializable {
 
 	@Override
 	public String toString() {
-		return "[" + firstPosition + "-" + lastPosition + "]";
+		return firstPosition + "-" + lastPosition;
 	}
 }

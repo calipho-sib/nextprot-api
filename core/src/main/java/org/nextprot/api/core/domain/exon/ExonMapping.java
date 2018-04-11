@@ -4,13 +4,14 @@ import org.nextprot.api.core.domain.GeneRegion;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
-    private List<GeneRegion> sortedGeneRegions = new ArrayList<>();
+    private List<String> sortedKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
 
     public Map<GeneRegion, Map<String, Exon>> getExons() {
@@ -20,9 +21,11 @@ public class ExonMapping implements Serializable {
     public void setExons(Map<GeneRegion, Map<String, Exon>> exons) {
 
         this.exons = exons;
-        this.sortedGeneRegions.addAll(exons.keySet());
-        this.sortedGeneRegions.sort(Comparator.comparingInt(GeneRegion::getFirstPosition)
-                .thenComparing((gr1, gr2) -> gr2.getLastPosition() - gr1.getLastPosition()));
+        this.sortedKeys.addAll(new ArrayList<>(exons.keySet()).stream()
+                        .sorted(Comparator.comparingInt(GeneRegion::getFirstPosition)
+                                .thenComparing((gr1, gr2) -> gr2.getLastPosition() - gr1.getLastPosition()))
+                        .map(gr -> gr.toString())
+                        .collect(Collectors.toList()));
     }
 
     public Map<String, Map<String, Object>> getIsoformInfos() {
@@ -37,8 +40,8 @@ public class ExonMapping implements Serializable {
         this.isoformInfos.get(isoformName).put("name", mainName);
     }
 
-    public List<GeneRegion> getSortedGeneRegions() {
+    public List<String> getSortedKeys() {
 
-        return Collections.unmodifiableList(sortedGeneRegions);
+        return Collections.unmodifiableList(sortedKeys);
     }
 }
