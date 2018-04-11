@@ -224,8 +224,8 @@ public class EntryController {
 		return "isoform";
 	}
 
-	//@ApiMethod(path = "/entry/{entry}/exon-mapping/ensg/{gene}", verb = ApiVerb.GET, description = "Find the exon mappings of a neXtProt entry and a gene", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping(value = "/entry/{entry}/exon-mapping/ensg/{gene}", method = { RequestMethod.GET })
+	//@ApiMethod(path = "/entry/{entry}/exon-mapping/{gene}", verb = ApiVerb.GET, description = "Find the exon mappings of a neXtProt entry and a gene", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/entry/{entry}/exon-mapping/{gene}", method = { RequestMethod.GET })
 	@ResponseBody
 	public ExonMapping findExonsByIsoformByShorterENST(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
