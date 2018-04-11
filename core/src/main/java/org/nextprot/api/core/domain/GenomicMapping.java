@@ -7,12 +7,13 @@ import java.util.List;
 
 public class GenomicMapping implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private long geneSeqId;
 	private String database;
 	private String accession;
 	private List<IsoformGeneMapping> isoformGeneMappings;
+	private boolean chosenForAlignment;
 
 	public GenomicMapping() {
 
@@ -50,5 +51,13 @@ public class GenomicMapping implements Serializable {
 	public boolean addAllIsoformGeneMappings(Collection<IsoformGeneMapping> mappings) {
 
 		return isoformGeneMappings.addAll(mappings);
+	}
+
+	public boolean isChosenForAlignment() {
+		return chosenForAlignment;
+	}
+
+	public void setChosenForAlignment(boolean chosenForAlignment) {
+		this.chosenForAlignment = chosenForAlignment;
 	}
 }
