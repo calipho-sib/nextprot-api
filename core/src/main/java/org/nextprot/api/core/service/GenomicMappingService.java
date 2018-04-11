@@ -3,7 +3,7 @@ package org.nextprot.api.core.service;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Extracts gene / chromosomal information about an entry
@@ -18,5 +18,5 @@ public interface GenomicMappingService {
 	 * @param entryName the neXtProt entry accession
 	 * @return the genomic mappings by gene accession
 	 */
-	Map<String, GenomicMapping> findGenomicMappingsByEntryName(@ValidEntry String entryName);
+	List<GenomicMapping> findGenomicMappingsByEntryName(@ValidEntry String entryName);
 }

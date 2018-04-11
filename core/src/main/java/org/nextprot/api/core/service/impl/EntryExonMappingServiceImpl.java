@@ -1,9 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.domain.GenomicMapping;
-import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.exon.Exon;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.EntryExonMappingService;
@@ -12,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,50 +21,40 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 	private GenomicMappingService genomicMappingService;
 
 	@Override
-	public ExonMapping findExonMappingGeneXIsoformXShorterENST(String entryName, String geneName) {
+	public ExonMapping findExonMappingGeneXIsoformXShorterENST(String entryName) {
 
 		ExonMapping mapping = new ExonMapping();
 		Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
 
-		List<IsoformGeneMapping> igms = findIsoformGeneMappings(entryName, geneName);
+		Optional<GenomicMapping> gm = findChosenIsoformGeneMapping(entryName);
 
-		igms.stream()
-				.peek(igm -> mapping.setIsoformInfos(igm.getIsoformAccession(),
-						igm.getTranscriptGeneMappings().stream()
-								.map(tgm -> tgm.getDatabaseAccession())
-								.collect(Collectors.toList()),
-						igm.getIsoformMainName()))
-				.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
-				.flatMap(e -> e.stream())
-				.forEach(exon -> {
-					GeneRegion gr = exon.getGeneRegion();
+		if (gm.isPresent()) {
+			gm.get().getIsoformGeneMappings().stream()
+					.peek(igm -> mapping.setIsoformInfos(igm.getIsoformAccession(),
+							igm.getTranscriptGeneMappings().stream()
+									.map(tgm -> tgm.getDatabaseAccession())
+									.collect(Collectors.toList()),
+							igm.getIsoformMainName()))
+					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
+					.flatMap(e -> e.stream())
+					.forEach(exon -> {
+						GeneRegion gr = exon.getGeneRegion();
 
-					exons.computeIfAbsent(gr, k -> new HashMap<>())
-							.put(exon.getIsoformName(), exon);
-				});
+						exons.computeIfAbsent(gr, k -> new HashMap<>())
+								.put(exon.getIsoformName(), exon);
+					});
 
-		mapping.setExons(exons);
+			mapping.setExons(exons);
+		}
 
 		return mapping;
 	}
 
-	@Override
-	public Set<String> findENSGs(String entryName) {
+	private Optional<GenomicMapping> findChosenIsoformGeneMapping(String entryName) {
 
-		return genomicMappingService.findGenomicMappingsByEntryName(entryName).keySet();
-	}
-
-	private List<IsoformGeneMapping> findIsoformGeneMappings(String entryName, String geneName) {
-
-		Map<String, GenomicMapping> genomicMappings = genomicMappingService.findGenomicMappingsByEntryName(entryName);
-
-		if (!genomicMappings.containsKey(geneName)) {
-
-			throw new NextProtException("gene " + geneName + " could not be found in genomic mappings of entry " +
-					entryName + " (mapped genes=" + genomicMappings.keySet() + ")");
-		}
-
-		return genomicMappings.get(geneName).getIsoformGeneMappings();
+		return genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
+				.filter(genomicMapping -> genomicMapping.isChosenForAlignment())
+				.findFirst();
 	}
 
 	/*

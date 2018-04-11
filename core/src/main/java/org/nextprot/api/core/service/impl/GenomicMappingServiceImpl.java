@@ -32,7 +32,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	@Override
 	@Cacheable("genomic-mappings")
-	public Map<String, GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
+	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
 		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");
 		Preconditions.checkArgument(!entryName.isEmpty(), "The entry name "+entryName +" is not empty");
@@ -43,16 +43,16 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(isoformsByName)
 				.find();
 
-		Map<String, GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
+		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
 				.peek(genomicMapping -> {
 					if (isoformGeneMappings.containsKey(genomicMapping.getGeneSeqId())) {
 						genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
 						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(isoformsByName.get(im1.getIsoformAccession()), isoformsByName.get(im2.getIsoformAccession())));
 					}
 				})
-				.collect(Collectors.toMap(GenomicMapping::getAccession, Function.identity()));
+				.collect(Collectors.toList());
 
-		return Collections.unmodifiableMap(genomicMappings);
+		return Collections.unmodifiableList(genomicMappings);
 	}
 
 	private class IsoformGeneMappingsFinder {

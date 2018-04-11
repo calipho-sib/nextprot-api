@@ -65,7 +65,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setChromosomalLocations(this.geneService.findChromosomalLocationsByEntry(entryName));
 			}
 			if(entryConfig.hasGenomicMappings()){
-				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName).values());
+				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName));
 			}
 			if(entryConfig.hasTargetIsoforms()){
 				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));

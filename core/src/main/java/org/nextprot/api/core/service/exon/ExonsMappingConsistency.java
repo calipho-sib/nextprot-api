@@ -21,20 +21,19 @@ public class ExonsMappingConsistency {
         this.springConfig = new SpringConfig("dev");
     }
 
-    public ConsistencyResult check(String ensgAccession) {
+    public ConsistencyResult check() {
 
         springConfig.startApplicationContext();
 
         GenomicMappingService genomicMappingService = springConfig.getBean(GenomicMappingService.class);
 
-        GenomicMapping genomicMapping = genomicMappingService.findGenomicMappingsByEntryName(isoformName.split("-")[0])
-                .get(ensgAccession);
+        Optional<GenomicMapping> genomicMapping = genomicMappingService.findGenomicMappingsByEntryName(isoformName.split("-")[0]).stream()
+                .filter(gm -> gm.isChosenForAlignment())
+                .findFirst();
 
         ConsistencyResult consistencyResult = new ConsistencyResult();
 
-        if (genomicMapping != null) {
-            check(genomicMapping, consistencyResult);
-        }
+        genomicMapping.ifPresent(gm -> check(gm, consistencyResult));
 
         springConfig.stopApplicationContext();
 
