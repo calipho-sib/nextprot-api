@@ -1,4 +1,4 @@
-select gene.identifier_id, dbs.cv_name, xrefs.accession
+select gene.identifier_id, dbs.cv_name, xrefs.accession, mapping.is_master
 from nextprot.sequence_identifiers gene   
 inner join nextprot.mapping_annotations mapping on (mapping.reference_identifier_id = gene.identifier_id and mapping.cv_quality_qualifier_id != 100)   
 inner join nextprot.cv_mapping_annotation_types mapping_types on (mapping.cv_type_id = mapping_types.cv_id)   
