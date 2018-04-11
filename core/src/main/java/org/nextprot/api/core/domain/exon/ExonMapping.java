@@ -39,7 +39,10 @@ public class ExonMapping implements Serializable {
 
         infos.put("accession", isoformAccession);
         infos.put("name", mainName);
-        infos.put("transcripts", ensts);
+        infos.put("main-transcript", ensts.get(0));
+        if (ensts.size() > 1) {
+            infos.put("other-transcripts", ensts.subList(1, ensts.size()));
+        }
 
         this.isoformInfos.add(infos);
     }
