@@ -83,7 +83,8 @@ public class GeneDAOImpl implements GeneDAO {
 			genomicMapping.setGeneSeqId(resultSet.getLong("identifier_id"));
 			genomicMapping.setAccession(resultSet.getString("accession"));
 			genomicMapping.setDatabase(resultSet.getString("cv_name"));
-			
+			genomicMapping.setChosenForAlignment(resultSet.getBoolean("is_master"));
+
 			return genomicMapping;
 		}
 	}
