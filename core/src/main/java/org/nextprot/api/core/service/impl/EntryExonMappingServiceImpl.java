@@ -26,15 +26,21 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 		ExonMapping mapping = new ExonMapping();
 		Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
 
-		Optional<GenomicMapping> gm = findChosenIsoformGeneMapping(entryName);
+		Optional<GenomicMapping> gm = genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
+                .filter(genomicMapping -> genomicMapping.isChosenForAlignment())
+                .findFirst();
 
 		if (gm.isPresent()) {
 			gm.get().getIsoformGeneMappings().stream()
-					.peek(igm -> mapping.setIsoformInfos(igm.getIsoformAccession(),
-							igm.getTranscriptGeneMappings().stream()
-									.map(tgm -> tgm.getDatabaseAccession())
-									.collect(Collectors.toList()),
-							igm.getIsoformMainName()))
+					.peek(igm -> {
+                        mapping.setIsoformInfos(igm.getIsoformAccession(),
+                                igm.getTranscriptGeneMappings().stream()
+                                        .map(tgm -> tgm.getDatabaseAccession())
+                                        .collect(Collectors.toList()),
+                                igm.getIsoformMainName());
+
+                        mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
+					})
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
@@ -50,6 +56,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 		return mapping;
 	}
 
+	/*
 	private Optional<GenomicMapping> findChosenIsoformGeneMapping(String entryName) {
 
 		return genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
@@ -57,7 +64,6 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 				.findFirst();
 	}
 
-	/*
 	@Override
 	public List<GeneRegion> findSortedGeneRegionsOfRefENST(String entryName, String geneName) {
 
