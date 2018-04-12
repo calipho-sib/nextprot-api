@@ -15,6 +15,7 @@ public class ExonMapping implements Serializable {
     private Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
+    private List<String> nonAlignedIsoforms = new ArrayList<>();
 
     public Map<GeneRegion, Map<String, Exon>> getExons() {
         return exons;
@@ -64,5 +65,13 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableList(isoformInfos.keySet().stream()
                 .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
                 .collect(Collectors.toList()));
+    }
+
+    public List<String> getNonAlignedIsoforms() {
+        return nonAlignedIsoforms;
+    }
+
+    public void setNonAlignedIsoforms(List<String> nonAlignedIsoforms) {
+        this.nonAlignedIsoforms = nonAlignedIsoforms;
     }
 }

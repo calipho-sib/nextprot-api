@@ -13,6 +13,7 @@ public class GenomicMapping implements Serializable {
 	private String database;
 	private String accession;
 	private List<IsoformGeneMapping> isoformGeneMappings;
+	private List<String> nonMappingIsoforms = new ArrayList<>();
 	private boolean chosenForAlignment;
 
 	public GenomicMapping() {
@@ -59,5 +60,13 @@ public class GenomicMapping implements Serializable {
 
 	public void setChosenForAlignment(boolean chosenForAlignment) {
 		this.chosenForAlignment = chosenForAlignment;
+	}
+
+	public List<String> getNonMappingIsoforms() {
+		return nonMappingIsoforms;
+	}
+
+	public void setNonMappingIsoforms(List<String> nonMappingIsoforms) {
+		this.nonMappingIsoforms = nonMappingIsoforms;
 	}
 }
