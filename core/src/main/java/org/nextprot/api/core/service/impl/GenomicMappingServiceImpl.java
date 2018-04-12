@@ -49,10 +49,24 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 						genomicMapping.addAllIsoformGeneMappings(isoformGeneMappings.get(genomicMapping.getGeneSeqId()));
 						genomicMapping.getIsoformGeneMappings().sort((im1, im2) -> isoformComparator.compare(isoformsByName.get(im1.getIsoformAccession()), isoformsByName.get(im2.getIsoformAccession())));
 					}
+
+					genomicMapping.setNonMappingIsoforms(calcNonMappingIsoformAccessionList(isoformsByName.keySet(),
+							genomicMapping.getIsoformGeneMappings().stream()
+									.map(igm -> igm.getIsoformAccession())
+									.collect(Collectors.toList())));
 				})
 				.collect(Collectors.toList());
 
 		return Collections.unmodifiableList(genomicMappings);
+	}
+
+	private List<String> calcNonMappingIsoformAccessionList(Set<String> allIsoformAccessions, List<String> mappedIsoformAccessions) {
+
+		List<String> accessions = new ArrayList<>(allIsoformAccessions);
+
+		accessions.removeAll(mappedIsoformAccessions);
+
+		return accessions;
 	}
 
 	private class IsoformGeneMappingsFinder {
