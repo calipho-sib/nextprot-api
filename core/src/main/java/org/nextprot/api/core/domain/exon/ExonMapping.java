@@ -26,7 +26,7 @@ public class ExonMapping implements Serializable {
         this.exons = exons;
         this.sortedExonKeys.addAll(new ArrayList<>(exons.keySet()).stream()
                         .sorted(Comparator.comparingInt(GeneRegion::getFirstPosition)
-                                .thenComparing((gr1, gr2) -> gr2.getLastPosition() - gr1.getLastPosition()))
+                                .thenComparingInt(GeneRegion::getLastPosition))
                         .map(gr -> gr.toString())
                         .collect(Collectors.toList()));
     }
