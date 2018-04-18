@@ -39,6 +39,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     SUPFAM, SWISS_2DPAGE("SWISS-2DPAGE"), SWISS_LIPIDS("SwissLipids"), SWISS_PALM("SwissPalm"),
     TIGRFAMS("TIGRFAMs"), TKG, TOP_DOWN_PROTEOMICS("TopDownProteomics"), TREE_FAM("TreeFam"),
     UCSC, UCD_2DPAGE("UCD-2DPAGE"), UNI_GENE("UniGene"), UNI_CARB_KB("UniCarbKB"), UNI_PROT("UniProt"),
+    PSIMOD("PSI-MOD"),
     WEBINFO
     ;
 

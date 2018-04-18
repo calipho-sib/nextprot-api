@@ -52,6 +52,15 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", resolver.resolve(xref));
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", xref.getLinkUrl());
     }
+    
+    @Test
+    public void testResolvePsiMod() throws Exception {
+
+        DbXref xref = createDbXref("00952", "PSI-MOD", "http://www.ebi.ac.uk/ena/data/view/%s");
+
+        Assert.assertEquals("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_00952", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_%s", xref.getLinkUrl());
+    }
 
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
