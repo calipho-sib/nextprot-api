@@ -41,8 +41,8 @@ public class ExonMapping implements Serializable {
         return exons.values().stream()
                 .map(m -> m.values())
                 .flatMap(m -> m.stream())
-                .filter(e -> e.getExonCategory() == ExonCategory.START)
-                .map(e -> ((ExonStart) e).getStartPosition())
+                .filter(e -> e.getExonCategory() == ExonCategory.START || e.getExonCategory() == ExonCategory.MONO)
+                .map(e -> ((FirstCodingExon) e).getStartPosition())
                 .sorted()
                 .distinct()
                 .collect(Collectors.toList());
@@ -53,8 +53,8 @@ public class ExonMapping implements Serializable {
         return exons.values().stream()
                 .map(m -> m.values())
                 .flatMap(m -> m.stream())
-                .filter(e -> e.getExonCategory() == ExonCategory.STOP)
-                .map(e -> ((ExonStop) e).getStopPosition())
+                .filter(e -> e.getExonCategory() == ExonCategory.STOP || e.getExonCategory() == ExonCategory.MONO)
+                .map(e -> ((LastCodingExon) e).getStopPosition())
                 .sorted(Comparator.reverseOrder())
                 .distinct()
                 .collect(Collectors.toList());

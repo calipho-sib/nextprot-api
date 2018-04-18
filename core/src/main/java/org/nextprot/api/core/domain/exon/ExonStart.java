@@ -1,6 +1,6 @@
 package org.nextprot.api.core.domain.exon;
 
-public class ExonStart extends CategorizedExon {
+public class ExonStart extends CategorizedExon implements FirstCodingExon {
 
 	private static final long serialVersionUID = 1L;
 
@@ -17,6 +17,7 @@ public class ExonStart extends CategorizedExon {
 		this.startPosition = startPosition;
 	}
 
+	@Override
 	public int getStartPosition() {
 		return startPosition;
 	}
