@@ -37,6 +37,7 @@ public enum CvDatabasePreferredLink {
 	EXPRESSION_ATLAS("http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s"),
 	CHITARS("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&human=1"),
 	LOC("https://www.ncbi.nlm.nih.gov/gene?term=%s[All Fields]&cmd=DetailsSearch"),
+	PSIMOD("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_%s"),
 	;
 
 	private final String link;
