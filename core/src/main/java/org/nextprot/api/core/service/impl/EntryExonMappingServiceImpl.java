@@ -2,7 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.domain.GenomicMapping;
-import org.nextprot.api.core.domain.exon.Exon;
+import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.EntryExonMappingService;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -24,7 +24,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 	public ExonMapping findExonMappingGeneXIsoformXShorterENST(String entryName) {
 
 		ExonMapping mapping = new ExonMapping();
-		Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
+		Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
 
 		Optional<GenomicMapping> gm = genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
                 .filter(genomicMapping -> genomicMapping.isChosenForAlignment())

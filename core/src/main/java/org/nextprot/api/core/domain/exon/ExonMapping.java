@@ -10,18 +10,20 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
-    private Map<GeneRegion, Map<String, Exon>> exons = new HashMap<>();
+    private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
     private List<String> nonAlignedIsoforms = new ArrayList<>();
+    private List<Integer> startExonPositions;
+    private List<Integer> stopExonPositions;
 
-    public Map<GeneRegion, Map<String, Exon>> getExons() {
+    public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
     }
 
-    public void setExons(Map<GeneRegion, Map<String, Exon>> exons) {
+    public void setExons(Map<GeneRegion, Map<String, CategorizedExon>> exons) {
 
         this.exons = exons;
         this.sortedExonKeys.addAll(new ArrayList<>(exons.keySet()).stream()
@@ -29,6 +31,33 @@ public class ExonMapping implements Serializable {
                                 .thenComparingInt(GeneRegion::getLastPosition))
                         .map(gr -> gr.toString())
                         .collect(Collectors.toList()));
+
+        this.startExonPositions = extractStartExonPositions();
+        this.stopExonPositions = extractStopExonPositions();
+    }
+
+    private List<Integer> extractStartExonPositions() {
+
+        return exons.values().stream()
+                .map(m -> m.values())
+                .flatMap(m -> m.stream())
+                .filter(e -> e.getExonCategory() == ExonCategory.START)
+                .map(e -> ((ExonStart) e).getStartPosition())
+                .sorted()
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<Integer> extractStopExonPositions() {
+
+        return exons.values().stream()
+                .map(m -> m.values())
+                .flatMap(m -> m.stream())
+                .filter(e -> e.getExonCategory() == ExonCategory.STOP)
+                .map(e -> ((ExonStop) e).getStopPosition())
+                .sorted(Comparator.reverseOrder())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public Map<String, Map<String, Object>> getIsoformInfos() {
@@ -73,5 +102,13 @@ public class ExonMapping implements Serializable {
 
     public void setNonAlignedIsoforms(List<String> nonAlignedIsoforms) {
         this.nonAlignedIsoforms = nonAlignedIsoforms;
+    }
+
+    public List<Integer> getStartExonPositions() {
+        return startExonPositions;
+    }
+
+    public List<Integer> getStopExonPositions() {
+        return stopExonPositions;
     }
 }
