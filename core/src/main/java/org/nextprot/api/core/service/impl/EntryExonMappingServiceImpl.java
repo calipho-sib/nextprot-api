@@ -42,16 +42,15 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
                 .findFirst();
 
 		if (gm.isPresent()) {
+
 			gm.get().getIsoformGeneMappings().stream()
-					.peek(igm -> {
+					.peek(igm ->
                         mapping.setIsoformInfos(igm.getIsoformAccession(),
                                 igm.getTranscriptGeneMappings().stream()
                                         .map(tgm -> tgm.getDatabaseAccession())
                                         .collect(Collectors.toList()),
-                                igm.getIsoformMainName());
-
-                        mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
-					})
+                                igm.getIsoformMainName())
+					)
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
@@ -63,6 +62,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
 			mapping.setExons(exons);
 			mapping.setCanonicalIsoformAccession(canonicalIsoformAccession);
+            mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
 		}
 
 		return mapping;

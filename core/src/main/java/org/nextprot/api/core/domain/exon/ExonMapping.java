@@ -15,6 +15,7 @@ public class ExonMapping implements Serializable {
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
+    private List<String> sortedIsoformKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
     private List<String> nonAlignedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions;
@@ -90,6 +91,8 @@ public class ExonMapping implements Serializable {
         if (ensts.size() > 1) {
             infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
+
+        sortedIsoformKeys = updateSortedIsoformKeys();
     }
 
     public List<String> getSortedExonKeys() {
@@ -97,7 +100,7 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableList(sortedExonKeys);
     }
 
-    public List<String> getSortedIsoformKeys() {
+    private List<String> updateSortedIsoformKeys() {
 
         //CANONICAL first then list in order based on accession numeric values
         List<String> list = isoformInfos.keySet().stream()
@@ -105,9 +108,16 @@ public class ExonMapping implements Serializable {
                 .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
                 .collect(Collectors.toList());
 
-        list.add(0, canonicalIsoformAccession);
+        if (!list.isEmpty()) {
+            list.add(0, canonicalIsoformAccession);
+        }
 
-        return Collections.unmodifiableList(list);
+        return list;
+    }
+
+    public List<String> getSortedIsoformKeys() {
+
+        return Collections.unmodifiableList(sortedIsoformKeys);
     }
 
     public List<String> getNonAlignedIsoforms() {
@@ -115,7 +125,9 @@ public class ExonMapping implements Serializable {
     }
 
     public void setNonAlignedIsoforms(List<String> nonAlignedIsoforms) {
-        this.nonAlignedIsoforms = nonAlignedIsoforms;
+        this.nonAlignedIsoforms = nonAlignedIsoforms.stream()
+                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
+                .collect(Collectors.toList());
     }
 
     public List<Integer> getStartExonPositions() {
