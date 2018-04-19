@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.domain.GenomicMapping;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.EntryExonMappingService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,13 +30,17 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 	@Override
 	public ExonMapping findExonMappingGeneXIsoformXShorterENST(String entryName) {
 
-        String canonicalIsoformAccession = isoformService.findIsoformsByEntryName(entryName).stream()
+        List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
+
+        String canonicalIsoformAccession = isoforms.stream()
                 .filter(isoform -> isoform.isCanonicalIsoform())
                 .findFirst()
                 .orElseThrow(() -> new NextProtException("could not find canonical isoform accession for entry "+ entryName))
                 .getIsoformAccession();
 
 		ExonMapping mapping = new ExonMapping();
+        mapping.setCanonicalIsoformAccession(canonicalIsoformAccession);
+
 		Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
 
 		Optional<GenomicMapping> gm = genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
@@ -61,9 +67,13 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 					});
 
 			mapping.setExons(exons);
-			mapping.setCanonicalIsoformAccession(canonicalIsoformAccession);
-            mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
+            mapping.setNonMappedIsoforms(gm.get().getNonMappingIsoforms());
 		}
+		else {
+            mapping.setNonMappedIsoforms(isoforms.stream()
+                .map(isoform -> isoform.getIsoformAccession())
+                .collect(Collectors.toList()));
+        }
 
 		return mapping;
 	}
