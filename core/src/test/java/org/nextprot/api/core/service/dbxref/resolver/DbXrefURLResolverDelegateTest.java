@@ -56,7 +56,7 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolvePsiMod() throws Exception {
 
-        DbXref xref = createDbXref("00952", "PSI-MOD", "http://www.ebi.ac.uk/ena/data/view/%s");
+        DbXref xref = createDbXref("00952", "PSI-MOD", "http://www.ebi.ac.uk/whatever/%s");
 
         Assert.assertEquals("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_00952", resolver.resolve(xref));
         Assert.assertEquals("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_%s", xref.getLinkUrl());
