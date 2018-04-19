@@ -1,6 +1,5 @@
 package org.nextprot.api.core.domain.exon;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -20,8 +19,6 @@ public class ExonMapping implements Serializable {
     private List<String> nonAlignedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions;
     private List<Integer> stopExonPositions;
-    @JsonIgnore
-    private String canonicalIsoformAccession;
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -42,7 +39,7 @@ public class ExonMapping implements Serializable {
 
     public void setCanonicalIsoformAccession(String canonicalIsoformAccession) {
 
-        this.canonicalIsoformAccession = canonicalIsoformAccession;
+        sortedIsoformKeys = updateSortedIsoformKeys(canonicalIsoformAccession);
     }
 
     private List<Integer> extractStartExonPositions() {
@@ -91,8 +88,6 @@ public class ExonMapping implements Serializable {
         if (ensts.size() > 1) {
             infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
-
-        sortedIsoformKeys = updateSortedIsoformKeys();
     }
 
     public List<String> getSortedExonKeys() {
@@ -100,7 +95,7 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableList(sortedExonKeys);
     }
 
-    private List<String> updateSortedIsoformKeys() {
+    private List<String> updateSortedIsoformKeys(String canonicalIsoformAccession) {
 
         //CANONICAL first then list in order based on accession numeric values
         List<String> list = isoformInfos.keySet().stream()
@@ -108,9 +103,7 @@ public class ExonMapping implements Serializable {
                 .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
                 .collect(Collectors.toList());
 
-        if (!list.isEmpty()) {
-            list.add(0, canonicalIsoformAccession);
-        }
+        list.add(0, canonicalIsoformAccession);
 
         return list;
     }
