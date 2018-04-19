@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.exon;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
@@ -18,6 +19,8 @@ public class ExonMapping implements Serializable {
     private List<String> nonAlignedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions;
     private List<Integer> stopExonPositions;
+    @JsonIgnore
+    private String canonicalIsoformAccession;
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -34,6 +37,11 @@ public class ExonMapping implements Serializable {
 
         this.startExonPositions = extractStartExonPositions();
         this.stopExonPositions = extractStopExonPositions();
+    }
+
+    public void setCanonicalIsoformAccession(String canonicalIsoformAccession) {
+
+        this.canonicalIsoformAccession = canonicalIsoformAccession;
     }
 
     private List<Integer> extractStartExonPositions() {
@@ -91,9 +99,15 @@ public class ExonMapping implements Serializable {
 
     public List<String> getSortedIsoformKeys() {
 
-        return Collections.unmodifiableList(isoformInfos.keySet().stream()
+        //CANONICAL first then list in order based on accession numeric values
+        List<String> list = isoformInfos.keySet().stream()
+                .filter(isoAccession -> !isoAccession.equals(canonicalIsoformAccession))
                 .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+
+        list.add(0, canonicalIsoformAccession);
+
+        return Collections.unmodifiableList(list);
     }
 
     public List<String> getNonAlignedIsoforms() {
