@@ -39,7 +39,6 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
                 .getIsoformAccession();
 
 		ExonMapping mapping = new ExonMapping();
-        mapping.setCanonicalIsoformAccession(canonicalIsoformAccession);
 
 		Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
 
@@ -75,7 +74,9 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
                 .collect(Collectors.toList()));
         }
 
-		return mapping;
+        mapping.calcSortedMappedIsoformKeys(canonicalIsoformAccession);
+
+        return mapping;
 	}
 
 	/*

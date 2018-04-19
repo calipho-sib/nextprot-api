@@ -14,7 +14,7 @@ public class ExonMapping implements Serializable {
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
-    private List<String> sortedMappedIsoformKeys = new ArrayList<>();
+    private List<String> sortedMappedIsoformInfoKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> mappedIsoformInfos = new HashMap<>();
     private List<String> nonMappedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions = new ArrayList<>();;
@@ -37,9 +37,9 @@ public class ExonMapping implements Serializable {
         this.stopExonPositions = extractStopExonPositions();
     }
 
-    public void setCanonicalIsoformAccession(String canonicalIsoformAccession) {
+    public void calcSortedMappedIsoformKeys(String canonicalIsoformAccession) {
 
-        sortedMappedIsoformKeys = updateSortedMappedIsoformKeys(canonicalIsoformAccession);
+        sortedMappedIsoformInfoKeys = updateSortedMappedIsoformKeys(canonicalIsoformAccession);
     }
 
     private List<Integer> extractStartExonPositions() {
@@ -112,9 +112,9 @@ public class ExonMapping implements Serializable {
         return mappedIsoform;
     }
 
-    public List<String> getSortedMappedIsoformKeys() {
+    public List<String> getSortedMappedIsoformInfoKeys() {
 
-        return Collections.unmodifiableList(sortedMappedIsoformKeys);
+        return Collections.unmodifiableList(sortedMappedIsoformInfoKeys);
     }
 
     public List<String> getNonMappedIsoforms() {
