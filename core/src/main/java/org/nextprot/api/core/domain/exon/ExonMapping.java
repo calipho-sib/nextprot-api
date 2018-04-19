@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.exon;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -10,14 +11,17 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
+    private List<String> sortedIsoformKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
     private List<String> nonAlignedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions;
     private List<Integer> stopExonPositions;
+    @JsonIgnore
+    private String canonicalIsoformAccession;
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -36,13 +40,18 @@ public class ExonMapping implements Serializable {
         this.stopExonPositions = extractStopExonPositions();
     }
 
+    public void setCanonicalIsoformAccession(String canonicalIsoformAccession) {
+
+        this.canonicalIsoformAccession = canonicalIsoformAccession;
+    }
+
     private List<Integer> extractStartExonPositions() {
 
         return exons.values().stream()
                 .map(m -> m.values())
                 .flatMap(m -> m.stream())
-                .filter(e -> e.getExonCategory() == ExonCategory.START)
-                .map(e -> ((ExonStart) e).getStartPosition())
+                .filter(e -> e.getExonCategory() == ExonCategory.START || e.getExonCategory() == ExonCategory.MONO)
+                .map(e -> ((FirstCodingExon) e).getStartPosition())
                 .sorted()
                 .distinct()
                 .collect(Collectors.toList());
@@ -53,8 +62,8 @@ public class ExonMapping implements Serializable {
         return exons.values().stream()
                 .map(m -> m.values())
                 .flatMap(m -> m.stream())
-                .filter(e -> e.getExonCategory() == ExonCategory.STOP)
-                .map(e -> ((ExonStop) e).getStopPosition())
+                .filter(e -> e.getExonCategory() == ExonCategory.STOP || e.getExonCategory() == ExonCategory.MONO)
+                .map(e -> ((LastCodingExon) e).getStopPosition())
                 .sorted(Comparator.reverseOrder())
                 .distinct()
                 .collect(Collectors.toList());
@@ -82,6 +91,8 @@ public class ExonMapping implements Serializable {
         if (ensts.size() > 1) {
             infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
+
+        sortedIsoformKeys = updateSortedIsoformKeys();
     }
 
     public List<String> getSortedExonKeys() {
@@ -89,11 +100,24 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableList(sortedExonKeys);
     }
 
+    private List<String> updateSortedIsoformKeys() {
+
+        //CANONICAL first then list in order based on accession numeric values
+        List<String> list = isoformInfos.keySet().stream()
+                .filter(isoAccession -> !isoAccession.equals(canonicalIsoformAccession))
+                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
+                .collect(Collectors.toList());
+
+        if (!list.isEmpty()) {
+            list.add(0, canonicalIsoformAccession);
+        }
+
+        return list;
+    }
+
     public List<String> getSortedIsoformKeys() {
 
-        return Collections.unmodifiableList(isoformInfos.keySet().stream()
-                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
-                .collect(Collectors.toList()));
+        return Collections.unmodifiableList(sortedIsoformKeys);
     }
 
     public List<String> getNonAlignedIsoforms() {
@@ -101,7 +125,9 @@ public class ExonMapping implements Serializable {
     }
 
     public void setNonAlignedIsoforms(List<String> nonAlignedIsoforms) {
-        this.nonAlignedIsoforms = nonAlignedIsoforms;
+        this.nonAlignedIsoforms = nonAlignedIsoforms.stream()
+                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
+                .collect(Collectors.toList());
     }
 
     public List<Integer> getStartExonPositions() {

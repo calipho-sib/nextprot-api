@@ -1,6 +1,6 @@
 package org.nextprot.api.core.domain.exon;
 
-public class ExonStop extends CategorizedExon {
+public class ExonStop extends CategorizedExon implements LastCodingExon {
 
 	private static final long serialVersionUID = 1L;
 
@@ -16,6 +16,7 @@ public class ExonStop extends CategorizedExon {
 		this.stopPosition = stopPosition;
 	}
 
+	@Override
 	public int getStopPosition() {
 		return stopPosition;
 	}

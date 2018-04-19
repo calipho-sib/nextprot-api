@@ -1,11 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.EntryExonMappingService;
 import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +22,17 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 	@Autowired
 	private GenomicMappingService genomicMappingService;
 
+	@Autowired
+    private IsoformService isoformService;
+
 	@Override
 	public ExonMapping findExonMappingGeneXIsoformXShorterENST(String entryName) {
+
+        String canonicalIsoformAccession = isoformService.findIsoformsByEntryName(entryName).stream()
+                .filter(isoform -> isoform.isCanonicalIsoform())
+                .findFirst()
+                .orElseThrow(() -> new NextProtException("could not find canonical isoform accession for entry "+ entryName))
+                .getIsoformAccession();
 
 		ExonMapping mapping = new ExonMapping();
 		Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
@@ -31,16 +42,15 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
                 .findFirst();
 
 		if (gm.isPresent()) {
+
 			gm.get().getIsoformGeneMappings().stream()
-					.peek(igm -> {
+					.peek(igm ->
                         mapping.setIsoformInfos(igm.getIsoformAccession(),
                                 igm.getTranscriptGeneMappings().stream()
                                         .map(tgm -> tgm.getDatabaseAccession())
                                         .collect(Collectors.toList()),
-                                igm.getIsoformMainName());
-
-                        mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
-					})
+                                igm.getIsoformMainName())
+					)
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
@@ -51,6 +61,8 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 					});
 
 			mapping.setExons(exons);
+			mapping.setCanonicalIsoformAccession(canonicalIsoformAccession);
+            mapping.setNonAlignedIsoforms(gm.get().getNonMappingIsoforms());
 		}
 
 		return mapping;
