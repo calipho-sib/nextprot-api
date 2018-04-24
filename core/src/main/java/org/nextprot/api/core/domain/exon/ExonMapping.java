@@ -1,6 +1,5 @@
 package org.nextprot.api.core.domain.exon;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.GeneRegion;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -11,17 +10,15 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 5L;
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
-    private List<String> sortedIsoformKeys = new ArrayList<>();
-    private Map<String, Map<String, Object>> isoformInfos = new HashMap<>();
-    private List<String> nonAlignedIsoforms = new ArrayList<>();
-    private List<Integer> startExonPositions;
-    private List<Integer> stopExonPositions;
-    @JsonIgnore
-    private String canonicalIsoformAccession;
+    private List<String> sortedMappedIsoformInfoKeys = new ArrayList<>();
+    private Map<String, Map<String, Object>> mappedIsoformInfos = new HashMap<>();
+    private List<String> nonMappedIsoforms = new ArrayList<>();
+    private List<Integer> startExonPositions = new ArrayList<>();;
+    private List<Integer> stopExonPositions = new ArrayList<>();;
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -40,9 +37,9 @@ public class ExonMapping implements Serializable {
         this.stopExonPositions = extractStopExonPositions();
     }
 
-    public void setCanonicalIsoformAccession(String canonicalIsoformAccession) {
+    public void calcSortedMappedIsoformKeys(String canonicalIsoformAccession) {
 
-        this.canonicalIsoformAccession = canonicalIsoformAccession;
+        sortedMappedIsoformInfoKeys = updateSortedMappedIsoformKeys(canonicalIsoformAccession);
     }
 
     private List<Integer> extractStartExonPositions() {
@@ -69,21 +66,21 @@ public class ExonMapping implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Map<String, Object>> getIsoformInfos() {
+    public Map<String, Map<String, Object>> getMappedIsoformInfos() {
 
-        return Collections.unmodifiableMap(isoformInfos);
+        return Collections.unmodifiableMap(mappedIsoformInfos);
     }
 
     public void setIsoformInfos(String isoformAccession, List<String> ensts, String mainName) {
 
-        if (this.isoformInfos.containsKey(isoformAccession)) {
+        if (this.mappedIsoformInfos.containsKey(isoformAccession)) {
 
             throw new NextProtException("infos already exist for isoform "+isoformAccession);
         }
 
-        this.isoformInfos.put(isoformAccession, new HashMap<>());
+        this.mappedIsoformInfos.put(isoformAccession, new HashMap<>());
 
-        Map<String, Object> infos = isoformInfos.get(isoformAccession);
+        Map<String, Object> infos = mappedIsoformInfos.get(isoformAccession);
 
         infos.put("accession", isoformAccession);
         infos.put("name", mainName);
@@ -91,8 +88,6 @@ public class ExonMapping implements Serializable {
         if (ensts.size() > 1) {
             infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
-
-        sortedIsoformKeys = updateSortedIsoformKeys();
     }
 
     public List<String> getSortedExonKeys() {
@@ -100,32 +95,34 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableList(sortedExonKeys);
     }
 
-    private List<String> updateSortedIsoformKeys() {
+    private List<String> updateSortedMappedIsoformKeys(String canonicalIsoformAccession) {
 
-        //CANONICAL first then list in order based on accession numeric values
-        List<String> list = isoformInfos.keySet().stream()
-                .filter(isoAccession -> !isoAccession.equals(canonicalIsoformAccession))
-                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
-                .collect(Collectors.toList());
+        List<String> mappedIsoform = new ArrayList<>();
 
-        if (!list.isEmpty()) {
-            list.add(0, canonicalIsoformAccession);
+        if (mappedIsoformInfos.containsKey(canonicalIsoformAccession)) {
+            mappedIsoform.add(canonicalIsoformAccession);
         }
 
-        return list;
+        //CANONICAL first then list in order based on accession numeric values
+        mappedIsoformInfos.keySet().stream()
+                .filter(isoAccession -> !isoAccession.equals(canonicalIsoformAccession))
+                .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
+                .forEach(isoformAccession -> mappedIsoform.add(isoformAccession));
+
+        return mappedIsoform;
     }
 
-    public List<String> getSortedIsoformKeys() {
+    public List<String> getSortedMappedIsoformInfoKeys() {
 
-        return Collections.unmodifiableList(sortedIsoformKeys);
+        return Collections.unmodifiableList(sortedMappedIsoformInfoKeys);
     }
 
-    public List<String> getNonAlignedIsoforms() {
-        return nonAlignedIsoforms;
+    public List<String> getNonMappedIsoforms() {
+        return nonMappedIsoforms;
     }
 
-    public void setNonAlignedIsoforms(List<String> nonAlignedIsoforms) {
-        this.nonAlignedIsoforms = nonAlignedIsoforms.stream()
+    public void setNonMappedIsoforms(List<String> nonMappedIsoforms) {
+        this.nonMappedIsoforms = nonMappedIsoforms.stream()
                 .sorted(new IsoformUtils.ByIsoformUniqueNameComparator())
                 .collect(Collectors.toList());
     }
