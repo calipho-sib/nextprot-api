@@ -51,6 +51,95 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		}
 	}
 
+	@Test
+	public void shouldRetrieveTermWithSelfXref() {
+		// terms having an external definition should have a self xref
+		// Examples: GO:0072576, MeSH D017093
+		String  ac; CvTerm t; DbXref x;
+
+		ac = "GO:0072576";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("GO", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("https://www.ebi.ac.uk/QuickGO/term/GO:0072576", x.getResolvedUrl());
+		
+		ac = "D017093";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("MeSH", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=D017093", x.getResolvedUrl());
+		
+		
+	}
+
+	@Test
+	public void shouldRetrieveTermWithSelfXrefHavingNoResolvedUrl() {
+		// terms having a xref from a db with NO link_url defined i.e. some UniProt and neXtProt xrefs
+		// Examples: neXtProt tissue (CALOHA) TS-0252, UniProt disease DI-02634, ...
+		String ac; CvTerm t; DbXref x;
+
+		ac = "TS-0252";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("UniProt control vocabulary", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("None", x.getResolvedUrl());
+		
+		ac = "DI-02634";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("UniProt control vocabulary", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("None", x.getResolvedUrl());
+
+		ac = "CVTO_0008";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("neXtProt control vocabulary", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("None", x.getResolvedUrl());
+
+		ac = "CVOR_0002";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("neXtProt control vocabulary", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("None", x.getResolvedUrl());
+
+		ac = "CVAN_0016";
+		t = terminologyDao.findTerminologyByAccession(ac);
+		x = t.getSelfXref();
+		assertEquals(false, x==null);
+		assertEquals(false, x.getDbXrefId()==null);
+		assertEquals(ac, x.getAccession());
+		assertEquals("neXtProt control vocabulary", x.getDatabaseName());
+		assertEquals("Ontologies", x.getDatabaseCategory());
+		assertEquals("None", x.getResolvedUrl());
+
+	}
+
+	
+	
 		
 	@Test
 	public void shouldTheTerminologiesByInSyncWithDB() {

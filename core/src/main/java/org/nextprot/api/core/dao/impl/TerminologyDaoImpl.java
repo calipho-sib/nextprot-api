@@ -6,6 +6,8 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Mdata.DBXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -92,9 +94,12 @@ public class TerminologyDaoImpl implements TerminologyDao {
 
 		@Override
 		public CvTerm mapRow(ResultSet resultSet, int row) throws SQLException {
+			List<DbXref> xrefs = null;
 			CvTerm term = new CvTerm();
 			term.setId(resultSet.getLong("id"));
 			term.setAccession(resultSet.getString("accession"));
+			xrefs = TerminologyUtils.convertToXrefs(resultSet.getString("selfxref"));
+			term.setSelfXref(xrefs==null || xrefs.isEmpty() ? null : xrefs.get(0));
 			term.setDescription(resultSet.getString("description"));
 			term.setName(resultSet.getString("name"));
 			term.setSynonyms(resultSet.getString("synonyms"));

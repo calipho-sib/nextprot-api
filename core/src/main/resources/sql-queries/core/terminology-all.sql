@@ -1,6 +1,11 @@
    select distinct 
           nextprot.cv_terms.cv_id as id, 
           nextprot.db_xrefs.accession as accession, 
+(select selfcat.cv_name || '^ ' || selfdb.cv_name || '^ ' || nextprot.db_xrefs.accession || '^ ' || nextprot.db_xrefs.resource_id || '^ ' || selfdb.url || '^ ' || selfdb.link_url
+from nextprot.cv_databases selfdb
+inner join nextprot.cv_database_categories selfcat on (selfdb.cv_category_id=selfcat.cv_id) 
+where nextprot.db_xrefs.cv_database_id=selfdb.cv_id
+) as selfxref,       
           nextprot.cv_terms.cv_name as name, 
           nextprot.cv_terms.description as description, 
           nextprot.cv_term_categories.cv_api_name as ontology, 

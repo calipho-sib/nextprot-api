@@ -1,6 +1,11 @@
    select distinct 
           nextprot.cv_terms.cv_id as id, 
           nextprot.db_xrefs.accession as accession, 
+(select selfcat.cv_name || '^ ' || selfdb.cv_name || '^ ' || nextprot.db_xrefs.accession || '^ ' || nextprot.db_xrefs.resource_id || '^ ' || selfdb.url || '^ ' || selfdb.link_url
+from nextprot.cv_databases selfdb
+inner join nextprot.cv_database_categories selfcat on (selfdb.cv_category_id=selfcat.cv_id) 
+where nextprot.db_xrefs.cv_database_id=selfdb.cv_id
+) as selfxref,          
           nextprot.cv_terms.cv_name as name, 
           nextprot.cv_terms.description as description, 
           nextprot.cv_term_categories.cv_api_name as ontology, 
@@ -48,6 +53,6 @@ inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id)
 from nextprot.cv_terms
 inner join nextprot.db_xrefs on (nextprot.cv_terms.db_xref_id = nextprot.db_xrefs.resource_id)
 inner join nextprot.cv_term_categories on (nextprot.cv_terms.cv_category_id = nextprot.cv_term_categories.cv_id)
-     where nextprot.db_xrefs.accession in (:accessions) and nextprot.cv_terms.cv_status_id=1 -- No obsolete terms
+     where nextprot.db_xrefs.accession in ( :accessions ) and nextprot.cv_terms.cv_status_id=1 -- No obsolete terms
   order by nextprot.cv_term_categories.cv_api_name
   

@@ -24,9 +24,18 @@ public class CvTerm implements Serializable {
 
 	private List<String> parentAccession;
 	private List<String> childAccession;
+	private DbXref selfXref;
 	private List<DbXref> xrefs;
 	private List<String> synonyms;
 	private List<TermProperty> properties;
+	
+	public DbXref getSelfXref() {
+		return selfXref;
+	}
+
+	public void setSelfXref(DbXref selfXref) {
+		this.selfXref = selfXref;
+	}
 
 	public Long getId() {
 		return id;
