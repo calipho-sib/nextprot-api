@@ -274,16 +274,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private List<DbXref> createMissingDbXrefs(List<DbXref> xrefs) {
 
 		List<DbXref> newXrefs = new ArrayList<>();
-
+		String refseqDbName = DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase().getName();
+		String emblDbName = DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName();
 		for (DbXref xref : xrefs) {
-
-			if (DbXrefURLResolverSupplier.REF_SEQ.getXrefDatabase().equals(xref.getDatabaseName()) ||
-				DbXrefURLResolverSupplier.EMBL.getXrefDatabase().equals(xref.getDatabaseName())) {
-
+			if (refseqDbName.equals(xref.getDatabaseName()) || emblDbName.equals(xref.getDatabaseName())) {
 				newXrefs.addAll(DbXrefConverter.getInstance().convert(xref));
 			}
 		}
-
 		return newXrefs;
 	}
 
