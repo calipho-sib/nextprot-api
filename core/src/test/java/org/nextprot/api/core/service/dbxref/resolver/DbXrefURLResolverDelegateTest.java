@@ -91,6 +91,18 @@ public class DbXrefURLResolverDelegateTest {
 
     }
 
+    @Test
+    public void testResolveUniPathway() throws Exception {
+
+        DbXref xref = createDbXref("UPA00125", "UniPathway", "http://www.ebi.ac.uk/whatever/%s");
+
+        Assert.assertEquals("None", resolver.resolve(xref));
+        
+        // WARNING: do not rely on getLinkURL() for UniPathway, its value would be different if called before getResolvedUrl();
+        Assert.assertEquals(null, xref.getLinkUrl()); 
+
+    }
+
     
     
     
