@@ -27,7 +27,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     JCRB,
     KEGG, KO,
     LOC,
-    MALA_CARDS("MalaCards"), MAX_QB("MaxQB"), MEROPS, MGI, MIM, MINT, MOON_PROT("MoonProt"),
+    MALA_CARDS("MalaCards"), MAX_QB("MaxQB"), MESH("MeSH"), MEROPS, MGI, MIM, MINT, MOON_PROT("MoonProt"),
     NEXT_BIO("NextBio"), NEXTPROT_SUBMISSION("neXtProtSubmission"), NIH_ARP("NIH-ARP"),
     OBO, OGP, OMA, OPEN_TARGETS("OpenTargets"), ORPHANET("Orphanet"), ORTHO_DB("OrthoDB"),
     PANTHER, PAX_DB("PaxDb"), PDB, PDB_SUM("PDBsum"), PEPTIDE_ATLAS("PeptideAtlas"), PEROXIBASE("PeroxiBase"),

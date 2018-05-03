@@ -81,6 +81,16 @@ public class DbXrefURLResolverDelegateTest {
 
     }
 
+    @Test
+    public void testResolveMeSH() throws Exception {
+
+        DbXref xref = createDbXref("D000005", "MeSH", "http://www.ebi.ac.uk/whatever/%s");
+
+        Assert.assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=D000005", resolver.resolve(xref));
+        Assert.assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=%s", xref.getLinkUrl());
+
+    }
+
     
     
     

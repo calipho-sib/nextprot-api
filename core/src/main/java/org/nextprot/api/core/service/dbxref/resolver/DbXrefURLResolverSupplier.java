@@ -35,6 +35,7 @@ public enum DbXrefURLResolverSupplier {
     INTACT(XrefDatabase.INT_ACT,                     new IntactXrefURLResolver()),
     JCRB(XrefDatabase.JCRB,                         new JcrbXrefURLResolver()),
     LOC(XrefDatabase.LOC,                 		    new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC)),
+    MESH(XrefDatabase.MESH,                         new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.MESH)),
     NIH_ARP(XrefDatabase.NIH_ARP,                   new NihArpXrefURLResolver()),
     OBO(XrefDatabase.OBO,                           new OboLibraryXrefURLResolver()),
     PDB(XrefDatabase.PDB,                           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB)),
