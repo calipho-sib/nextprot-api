@@ -53,6 +53,9 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", xref.getLinkUrl());
     }
     
+
+    
+    
     @Test
     public void testResolvePsiMod() throws Exception {
 
@@ -62,6 +65,27 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_%s", xref.getLinkUrl());
     }
 
+    
+    
+    
+    
+    
+    @Test
+    public void testResolveECO() throws Exception {
+
+        DbXref xref = createDbXref("ECO:0000040", "ECO", "http://www.ebi.ac.uk/whatever/%s");
+
+        Assert.assertEquals("http://purl.obolibrary.org/obo/ECO_0000040", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ontobee.org/ontology/ECO", resolver.getValidXrefURL("whatever", "ECO"));
+        Assert.assertEquals("http://purl.obolibrary.org/obo/%s", xref.getLinkUrl());
+
+    }
+
+    
+    
+    
+    
+    
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
 
