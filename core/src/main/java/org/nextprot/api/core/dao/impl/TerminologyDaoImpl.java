@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -116,7 +117,12 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setDescription(resultSet.getString("description"));
 			term.setName(resultSet.getString("name"));
 			term.setSynonyms(resultSet.getString("synonyms"));
-			term.setProperties(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
+			
+			List<CvTerm.TermProperty> props = new ArrayList<>();
+			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
+			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("abbreviations"), term.getId(), term.getAccession()));
+			if (! props.isEmpty()) term.setProperties(props);
+		
 			term.setOntology(resultSet.getString("ontology"));
 			term.setOntologyAltname(resultSet.getString("ontologyAltname"));
 			term.setOntologyDisplayName(resultSet.getString("ontologyDisplayName"));

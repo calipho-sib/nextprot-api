@@ -11,7 +11,8 @@ where nextprot.db_xrefs.cv_database_id=selfdb.cv_id
           nextprot.cv_term_categories.cv_api_name as ontology, 
           nextprot.cv_term_categories.cv_name as ontologyAltname,
           nextprot.cv_term_categories.cv_display_name as ontologyDisplayName,
-          (select string_agg(cvsyn.synonym_name, ' | ') from  nextprot.cv_term_synonyms cvsyn where cvsyn.cv_term_id=nextprot.cv_terms.cv_id ) as synonyms,
+          (select string_agg(cvsyn.synonym_name, ' | ') from  nextprot.cv_term_synonyms cvsyn where cvsyn.is_main is false and cvsyn.cv_term_id=nextprot.cv_terms.cv_id ) as synonyms,
+          (select string_agg('abbreviation:=' || cvsyn.synonym_name, ' | ') from  nextprot.cv_term_synonyms cvsyn where cvsyn.is_main is true and cvsyn.cv_term_id=nextprot.cv_terms.cv_id ) as abbreviations,
           (select string_agg(properties.property_name ||':='|| properties.property_value, ' | ') from nextprot.cv_term_properties properties where properties.cv_term_id = nextprot.cv_terms.cv_id) as properties,
      -- get ancestor          
           (select string_agg((select (xref.accession || '->' || root_rt.cv_name) from nextprot.db_xrefs   xref where parent.db_xref_id=xref.resource_id ),'|')

@@ -23,6 +23,17 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 	@Autowired TerminologyDao terminologyDao;
 
 	@Test
+	public void shouldDealWithAbbreviations() {
+		CvTerm t = terminologyDao.findTerminologyByAccession("DI-00002");
+		assertEquals(true, t.getProperties()!=null);
+		assertEquals(true, 
+			t.getProperties().stream().anyMatch(p -> p.getPropertyName().equals("abbreviation") && p.getPropertyValue().equals("HADH deficiency"))
+		);
+		assertEquals(true, t.getSynonyms().size()==3); // "HADH deficiency" is now an abbreviation
+	}
+	
+	
+	@Test
 	public void shouldRetrieveTermXrefs() {
 		CvTerm t = terminologyDao.findTerminologyByAccession("DI-03265");
 		assertEquals(5, t.getXrefs().size());
