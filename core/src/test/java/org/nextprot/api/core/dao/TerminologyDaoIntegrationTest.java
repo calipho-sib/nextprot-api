@@ -33,7 +33,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 			}
 			// this one is a related term  (there is actually 1 term corresponding to the AC loaded in db)
 			if (x.getAccession().equals("D011666")) {
-				assertEquals("http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=D011666", x.getResolvedUrl());
+				assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=D011666", x.getResolvedUrl());
 				assertEquals("Pulmonary Valve Stenosis", x.getPropertyValue("term_name"));
 				assertEquals("MeSH", x.getPropertyValue("term_ontology_display_name"));
 			}
@@ -74,7 +74,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		assertEquals(ac, x.getAccession());
 		assertEquals("MeSH", x.getDatabaseName());
 		assertEquals("Ontologies", x.getDatabaseCategory());
-		assertEquals("http://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?field=uid&term=D017093", x.getResolvedUrl());
+		assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=D017093", x.getResolvedUrl());
 		
 		
 	}
@@ -82,10 +82,10 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldRetrieveTermWithSelfXrefHavingNoResolvedUrl() {
 		// terms having a xref from a db with NO link_url defined i.e. some UniProt and neXtProt xrefs
-		// Examples: neXtProt tissue (CALOHA) TS-0252, UniProt disease DI-02634, ...
+		// Examples: neXtProt tissue (CALOHA) TS-0252, UniProt PTMs PTM-004
 		String ac; CvTerm t; DbXref x;
 
-		ac = "TS-0252";
+		ac = "TS-0252";  
 		t = terminologyDao.findTerminologyByAccession(ac);
 		x = t.getSelfXref();
 		assertEquals(false, x==null);
@@ -95,7 +95,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		assertEquals("Ontologies", x.getDatabaseCategory());
 		assertEquals("None", x.getResolvedUrl());
 		
-		ac = "DI-02634";
+		ac = "DI-02634"; // this one resolves now
 		t = terminologyDao.findTerminologyByAccession(ac);
 		x = t.getSelfXref();
 		assertEquals(false, x==null);
@@ -103,7 +103,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		assertEquals(ac, x.getAccession());
 		assertEquals("UniProt control vocabulary", x.getDatabaseName());
 		assertEquals("Ontologies", x.getDatabaseCategory());
-		assertEquals("None", x.getResolvedUrl());
+		assertEquals("http://www.uniprot.org/diseases/DI-02634", x.getResolvedUrl());
 
 		ac = "CVTO_0008";
 		t = terminologyDao.findTerminologyByAccession(ac);
