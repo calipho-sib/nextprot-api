@@ -40,6 +40,9 @@ public enum CvDatabasePreferredLink {
 	RULEBASE("http://www.uniprot.org/unirule/%s"),
 	SIGNOR("http://signor.uniroma2.it/relation_result.php?id=%u&organism=human"),
 	UCSC("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u"),
+	UNIPROT_DISEASES("http://www.uniprot.org/diseases/%s"),
+	UNIPROT_KEYWORDS("http://www.uniprot.org/keywords/%s"),
+	UNIPROT_LOCATIONS("http://www.uniprot.org/locations/%s"),
 	;
 
 	private final String link;

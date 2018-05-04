@@ -107,6 +107,41 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals(null, xref.getLinkUrl()); 
     }
 
+    @Test
+    public void testResolveUniprotControlVocabulary() throws Exception {
+    	    	// DI-04168','KW-0413','SL-0002','SL-9910','SL-9902
+        DbXref xref;
+        
+        // disease terms
+        xref = createDbXref("DI-04168", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("http://www.uniprot.org/diseases/DI-04168", resolver.resolve(xref));    
+
+        // keywords
+        xref = createDbXref("KW-0413", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("http://www.uniprot.org/keywords/KW-0413", resolver.resolve(xref));    
+
+        // subcell localizations
+        xref = createDbXref("SL-0002", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("http://www.uniprot.org/locations/SL-0002", resolver.resolve(xref));    
+
+        // orientation
+        xref = createDbXref("SL-9910", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("http://www.uniprot.org/locations/SL-9910", resolver.resolve(xref));    
+
+        // topology
+        xref = createDbXref("SL-9902", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("http://www.uniprot.org/locations/SL-9902", resolver.resolve(xref));    
+
+        // families are not resolved
+        xref = createDbXref("DDX4/VASA subfamily", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("None", resolver.resolve(xref));    
+
+        // PTMs are not resolved
+        xref = createDbXref("PTM-0390", "UniProt control vocabulary", "http://www.toto.ch/whatever/%s");
+        Assert.assertEquals("None", resolver.resolve(xref));    
+        
+    }
+
     
     
     
@@ -553,27 +588,6 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("http://www.uniprot.org/unirule/RU000461", resolver.resolve(xref));
     }
 
-    @Test
-    public void testResolveWithAccessionUniPathway() throws Exception {
-
-        DbXref xref = createDbXrefWithEntry("NX_Q96I99","UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
-        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolve(xref));
-    }
-
-    @Test(expected = UnresolvedXrefURLException.class)
-    public void testResolveWithAccessionUniPathwayMissingStampW() throws Exception {
-
-        DbXref xref = createDbXrefWithEntry("NX_Q96I99","UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
-        resolver.resolve(xref);
-    }
-
-    @Test
-    public void testResolveWithUrlEncodingShouldNotThrowUnresolvedXrefURLException() throws Exception {
-
-        DbXref xref = createDbXref("Thymosin_%CE%B11", "UniPathway", "http://en.wikipedia.org/wiki/%s");
-        //resolver.resolve(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
-        resolver.resolve(xref);
-    }
 
     @Test
     public void testResolveCCLE() throws Exception {

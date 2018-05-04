@@ -55,6 +55,7 @@ public enum DbXrefURLResolverSupplier {
     UCSC(XrefDatabase.UCSC,                         new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.UCSC)),
     UNIPATHWAY(XrefDatabase.UNIPATHWAY,             new UnresolvedXrefURLResolver()),
     UNI_GENE(XrefDatabase.UNI_GENE,                 new UnigeneXrefURLResolver()),
+    UNIPROT_CV(XrefDatabase.UNIPROT_CONTROL_VOC,    new UniprotControlVocabularyXrefURLResolver()),
     WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver()),
     PSIMOD(XrefDatabase.PSIMOD, 					new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PSIMOD))
     ;

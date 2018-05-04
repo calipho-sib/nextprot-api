@@ -13,10 +13,7 @@ class EcoXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {
-    	System.out.println("I am in EcoXrefURLResolver.getAccessionNumber()");
-
         return xref.getAccession().replace(':', '_');
-
     }
 
     @Override
