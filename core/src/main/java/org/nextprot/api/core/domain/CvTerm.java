@@ -11,7 +11,8 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 public class CvTerm implements Serializable {
-	
+
+
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;
@@ -21,9 +22,9 @@ public class CvTerm implements Serializable {
 	private String ontology;
 	private String ontologyAltname;
 	private String ontologyDisplayName;
+	private List<TermAccessionRelation> ancestorsRelations;
+	private List<TermAccessionRelation> childrenRelations;
 
-	private List<String> parentAccession;
-	private List<String> childAccession;
 	private DbXref selfXref;
 	private List<DbXref> xrefs;
 	private List<String> synonyms;
@@ -110,29 +111,18 @@ public class CvTerm implements Serializable {
 	public void setOntologyAltname(String ontologyAltname) {
 		this.ontologyAltname = ontologyAltname;
 	}
-	
-	
+
+
 	public List<String> getChildAccession() {
-		return childAccession;
-	}
-
-	public void setChildAccession(String accession) {
-		if (accession == null)
-			return;
-		List<String> all = Arrays.asList(accession.split("\\|"));
-		this.childAccession = all;
-
+		if(childrenRelations != null){
+			return this.childrenRelations.stream().map(c -> c.getTermAccession()).collect(Collectors.toList());
+		}return null;
 	}
 
 	public List<String> getAncestorAccession() {
-		return parentAccession;
-	}
-
-	public void setAncestorAccession(String accession) {
-		if (accession == null)
-			return;
-		List<String> all = Arrays.asList(accession.split("\\|"));
-		this.parentAccession = all;
+		if(ancestorsRelations != null) {
+			return this.ancestorsRelations.stream().map(c -> c.getTermAccession()).collect(Collectors.toList());
+		}return null;
 	}
 
 	public List<DbXref> getXrefs() {
@@ -160,7 +150,26 @@ public class CvTerm implements Serializable {
 			.map(x -> x.getAccession())
 			.collect(Collectors.toList());
 	}
-	
+
+
+
+	public List<TermAccessionRelation> getAncestorsRelations() {
+		return ancestorsRelations;
+	}
+
+	public void setAncestorsRelations(List<TermAccessionRelation> ancestorsRelations) {
+		this.ancestorsRelations = ancestorsRelations;
+	}
+
+	public List<TermAccessionRelation> getChildrenRelations() {
+		return childrenRelations;
+	}
+
+	public void setChildrenRelations(List<TermAccessionRelation> childrenRelations) {
+		this.childrenRelations = childrenRelations;
+	}
+
+
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		
@@ -198,7 +207,7 @@ public class CvTerm implements Serializable {
 		sb.append(this.ontologyDisplayName);
 		sb.append("\n");
 		sb.append("ancestors=");
-		sb.append(this.parentAccession);
+		sb.append(this.ancestorsRelations);
 		sb.append("\n");
 		
 		return sb.toString();
@@ -240,7 +249,35 @@ public class CvTerm implements Serializable {
 		}
 
 	}
-	
+
+
+
+	//Utility class to add relation type to a ancestor / children term
+	public static class TermAccessionRelation implements Serializable {
+
+		private String termAccession;
+		private String relationType;
+
+		public TermAccessionRelation(String termAccession, String relationType) {
+			this.termAccession = termAccession;
+			this.relationType = relationType;
+		}
+
+		public String getTermAccession() {
+			return termAccession;
+		}
+
+		public String getRelationType() {
+			return relationType;
+		}
+
+		@Override
+		public String toString(){
+			return termAccession + "->" + relationType;
+		}
+
+	}
+
 }
 
 

@@ -14,16 +14,18 @@ where nextprot.db_xrefs.cv_database_id=selfdb.cv_id
           (select string_agg(cvsyn.synonym_name, ' | ') from  nextprot.cv_term_synonyms cvsyn where cvsyn.cv_term_id=nextprot.cv_terms.cv_id ) as synonyms,
           (select string_agg(properties.property_name ||':='|| properties.property_value, ' | ') from nextprot.cv_term_properties properties where properties.cv_term_id = nextprot.cv_terms.cv_id) as properties,
 -- get ancestor          
-          (select string_agg((select xref.accession from nextprot.db_xrefs   xref where parent.db_xref_id=xref.resource_id ),'|')
+          (select string_agg((select (xref.accession || '->' || root_rt.cv_name) from nextprot.db_xrefs   xref where parent.db_xref_id=xref.resource_id ),'|')
       from nextprot.cv_terms parent
 inner join nextprot.cv_term_relationships root_r on (parent.cv_id=root_r.object_id)
-inner join nextprot.cv_terms root on (root_r.subject_id=root.cv_id)    
+inner join nextprot.cv_term_relationship_types root_rt on (root_r.cv_type_id = root_rt.cv_id)
+inner join nextprot.cv_terms root on (root_r.subject_id=root.cv_id)
 inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id) 
      where xrefr.accession=nextprot.db_xrefs.accession  and parent.cv_status_id=1)  as ancestor, 
 -- get children
-  (select string_agg(cx.accession,'|') 
+  (select string_agg(cx.accession || '->' || rt.cv_name,'|')
     from nextprot.cv_term_relationships r 
     inner join nextprot.cv_terms child on (child.cv_id=r.subject_id)
+    inner join nextprot.cv_term_relationship_types rt on (r.cv_type_id = rt.cv_id)
     inner join nextprot.db_xrefs cx on (child.db_xref_id=cx.resource_id)
     where nextprot.cv_terms.cv_id=r.object_id and child.cv_status_id=1
   ) as children,

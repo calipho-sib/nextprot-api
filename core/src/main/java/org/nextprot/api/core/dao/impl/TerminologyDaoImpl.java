@@ -7,7 +7,6 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Mdata.DBXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -90,6 +90,19 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	}
 
 
+	static List<CvTerm.TermAccessionRelation> extractPipeDelimitedRelations (String accession){
+		if (accession == null)
+			return null;
+		else {
+			return Arrays.asList(accession.split("\\|")).stream().map(s -> {
+				int separatorIndex = s.indexOf("->");
+				return new CvTerm.TermAccessionRelation(s.substring(0, separatorIndex), s.substring(separatorIndex + 2, s.length()));
+			}).collect(Collectors.toList());
+		}
+	}
+
+
+
 	private static class DbTermRowMapper implements ParameterizedRowMapper<CvTerm> {
 
 		@Override
@@ -107,8 +120,8 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setOntology(resultSet.getString("ontology"));
 			term.setOntologyAltname(resultSet.getString("ontologyAltname"));
 			term.setOntologyDisplayName(resultSet.getString("ontologyDisplayName"));
-			term.setAncestorAccession(resultSet.getString("ancestor"));
-			term.setChildAccession(resultSet.getString("children"));
+			term.setAncestorsRelations(extractPipeDelimitedRelations(resultSet.getString("ancestor")));
+			term.setChildrenRelations(extractPipeDelimitedRelations(resultSet.getString("children")));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
 			return term;
 		}

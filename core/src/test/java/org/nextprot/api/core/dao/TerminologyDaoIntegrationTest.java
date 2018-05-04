@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import junit.framework.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 

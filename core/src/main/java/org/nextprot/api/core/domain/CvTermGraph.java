@@ -24,8 +24,8 @@ public class CvTermGraph implements Serializable {
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
 
-    private static String ACCESSION_KEY = "accession";
-    private static String NAME_KEY = "name";
+    private static final String ACCESSION_KEY = "accession";
+    private static final String NAME_KEY = "name";
 
     private final TerminologyCv terminologyCv;
     protected final IntGraph graph;
@@ -61,16 +61,18 @@ public class CvTermGraph implements Serializable {
         graph.addNode(nodeId);
         graph.addNodeMetadata(nodeId, ACCESSION_KEY, cvTerm.getAccession());
         graph.addNodeMetadata(nodeId, NAME_KEY, cvTerm.getName());
+
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
 
-        List<String> parentAccessions = cvTerm.getAncestorAccession();
+        List<CvTerm.TermAccessionRelation> parentAccessions = cvTerm.getAncestorsRelations();
 
         if (parentAccessions != null) {
             parentAccessions.forEach(parent -> {
                 try {
-                    graph.addEdge(getCvTermIdByAccession(parent), Math.toIntExact(cvTerm.getId()));
+                    int eid = graph.addEdge(getCvTermIdByAccession(parent.getTermAccession()), Math.toIntExact(cvTerm.getId()));
+                    graph.setEdgeLabel(eid, parent.getRelationType());
                 } catch (NotFoundNodeException e) {
                     LOGGER.warning(cvTerm.getAccession()+" cannot connect to unknown node parent: "+e.getMessage());
                 }
