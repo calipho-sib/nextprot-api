@@ -2,7 +2,7 @@ package org.nextprot.api.core.service.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
 
-class UniPathwayXrefURLResolver extends DefaultDbXrefURLResolver {
+class UnresolvedXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     public String getTemplateURL(DbXref xref) {

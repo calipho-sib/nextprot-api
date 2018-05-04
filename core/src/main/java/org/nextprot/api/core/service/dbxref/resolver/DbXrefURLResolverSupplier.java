@@ -24,6 +24,7 @@ public enum DbXrefURLResolverSupplier {
     ECO(XrefDatabase.ECO,                         	new EcoXrefURLResolver()),
     EMBL(XrefDatabase.EMBL,                         new EmblXrefURLResolver()),
     ENSEMBL(XrefDatabase.ENSEMBL,                   new EnsemblXrefURLResolver()),
+    EVOC(XrefDatabase.EVOC,				 			new UnresolvedXrefURLResolver()),
     EXPRESSION_ATLAS(XrefDatabase.EXPRESSION_ATLAS, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.EXPRESSION_ATLAS)),
     GENEVESTIGATOR(XrefDatabase.GENEVESTIGATOR,     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR)),
     GENEVISIBLE(XrefDatabase.GENEVISIBLE,           new GenevisibleXrefURLResolver()),
@@ -52,7 +53,7 @@ public enum DbXrefURLResolverSupplier {
     SRM_ATLAS(XrefDatabase.SRM_ATLAS,               new SrmAtlasXrefURLResolver()),
     TKG(XrefDatabase.TKG,                           new TkgXrefURLResolver()),
     UCSC(XrefDatabase.UCSC,                         new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.UCSC)),
-    UNIPATHWAY(XrefDatabase.UNIPATHWAY,             new UniPathwayXrefURLResolver()),
+    UNIPATHWAY(XrefDatabase.UNIPATHWAY,             new UnresolvedXrefURLResolver()),
     UNI_GENE(XrefDatabase.UNI_GENE,                 new UnigeneXrefURLResolver()),
     WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver()),
     PSIMOD(XrefDatabase.PSIMOD, 					new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PSIMOD))

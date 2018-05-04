@@ -85,22 +85,26 @@ public class DbXrefURLResolverDelegateTest {
     public void testResolveMeSH() throws Exception {
 
         DbXref xref = createDbXref("D000005", "MeSH", "http://www.ebi.ac.uk/whatever/%s");
-
         Assert.assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=D000005", resolver.resolve(xref));
         Assert.assertEquals("https://meshb.nlm.nih.gov/record/ui?ui=%s", xref.getLinkUrl());
+    }
 
+    @Test
+    public void testResolveEvocDevStage() throws Exception {
+
+        DbXref xref = createDbXref("EV:0300005", "eVOC", "http://www.ebi.ac.uk/whatever/%s");
+        Assert.assertEquals("None", resolver.resolve(xref));       
+        // WARNING: do not rely on getLinkURL() for eVOC, its value would be different if called before getResolvedUrl();
+        Assert.assertEquals(null, xref.getLinkUrl()); 
     }
 
     @Test
     public void testResolveUniPathway() throws Exception {
 
         DbXref xref = createDbXref("UPA00125", "UniPathway", "http://www.ebi.ac.uk/whatever/%s");
-
-        Assert.assertEquals("None", resolver.resolve(xref));
-        
+        Assert.assertEquals("None", resolver.resolve(xref));      
         // WARNING: do not rely on getLinkURL() for UniPathway, its value would be different if called before getResolvedUrl();
         Assert.assertEquals(null, xref.getLinkUrl()); 
-
     }
 
     
