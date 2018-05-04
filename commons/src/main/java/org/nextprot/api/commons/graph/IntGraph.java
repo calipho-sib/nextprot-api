@@ -439,9 +439,11 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
             int tail = getTailNode(edges[i]);
             int head = getHeadNode(edges[i]);
+            String label = getEdgeLabel(edges[i]);
 
             if (sg.containsNode(tail) && sg.containsNode(head)) {
-                sg.addEdge(tail, head);
+                int eid = sg.addEdge(tail, head);
+                sg.setEdgeLabel(eid, label);
             }
         }
 
