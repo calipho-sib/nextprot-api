@@ -579,6 +579,20 @@ public class AnnotationUtils {
 		}
 		return false;
 	}
-		
-	
+
+
+	public static boolean onlyNegativeEvidences(Annotation annot) {
+
+		if(annot == null || (annot.getEvidences() == null) || annot.getEvidences().isEmpty()){
+			return false;
+		}
+
+		for(AnnotationEvidence ev : annot.getEvidences()){
+			if(!ev.isNegativeEvidence()) {
+				return false;
+			}
+		}
+		return true;
+
+	}
 }
