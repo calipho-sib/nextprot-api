@@ -36,7 +36,8 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
         List<String> cvNames = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("ECO:0000219"));
-		assertTrue(cvNames.contains("nucleotide sequencing assay evidence"));
+		//The text should not be indexed
+		assertFalse(cvNames.contains("nucleotide sequencing assay evidence"));
 
     }
 
@@ -55,8 +56,29 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		List<String> cvNames = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("SL-9910"));
-		assertTrue(cvNames.contains("Cytoplasmic side"));
+		//The text should not be indexed
+		assertFalse(cvNames.contains("Cytoplasmic side"));
 		assertTrue(cvAvs.contains("SL-9903"));
-		assertTrue(cvNames.contains("Peripheral membrane protein"));
+		//The text should not be indexed
+		assertFalse(cvNames.contains("Peripheral membrane protein"));
+	}
+
+
+	@Test
+	public void shouldContainEnzymeAndFamilyNames() {
+
+		String entryName = "NX_P12821";
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
+
+		CVFieldBuilder cvfb = new CVFieldBuilder();
+		cvfb.setTerminologyService(terminologyService);
+		cvfb.initializeBuilder(entry);
+
+		String enzymes = cvfb.getFieldValue(Fields.EC_NAME, String.class);
+		assertTrue(enzymes.contains("EC 3.4.15.1"));
+
+		List<String> names = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
+		assertTrue(names.contains("Peptidase M2 family")); //family names
+
 	}
 }
