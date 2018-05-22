@@ -17,8 +17,8 @@ public class ExonMapping implements Serializable {
     private List<String> sortedMappedIsoformInfoKeys = new ArrayList<>();
     private Map<String, Map<String, Object>> mappedIsoformInfos = new HashMap<>();
     private List<String> nonMappedIsoforms = new ArrayList<>();
-    private List<Integer> startExonPositions = new ArrayList<>();;
-    private List<Integer> stopExonPositions = new ArrayList<>();;
+    private List<Integer> startExonPositions = new ArrayList<>();
+    private List<Integer> stopExonPositions = new ArrayList<>();
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -84,11 +84,9 @@ public class ExonMapping implements Serializable {
 
         infos.put("accession", isoformAccession);
         infos.put("name", mainName);
-        if (!ensts.isEmpty()) {
-            infos.put("main-transcript", ensts.get(0));
-            if (ensts.size() > 1) {
-                infos.put("other-transcripts", ensts.subList(1, ensts.size()));
-            }
+        infos.put("main-transcript", ensts.get(0));
+        if (ensts.size() > 1) {
+            infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
     }
 

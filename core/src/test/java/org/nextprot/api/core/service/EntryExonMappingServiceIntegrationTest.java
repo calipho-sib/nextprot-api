@@ -19,7 +19,7 @@ public class EntryExonMappingServiceIntegrationTest extends CoreUnitBaseTest {
 
         ExonMapping mapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_Q96JG8");
 
-        Assert.assertTrue(!mapping.getMappedIsoformInfos().get("NX_Q96JG8-3").containsKey("main-transcript"));
-        Assert.assertTrue(!mapping.getMappedIsoformInfos().get("NX_Q96JG8-3").containsKey("other-transcripts"));
+        Assert.assertTrue(!mapping.getMappedIsoformInfos().containsKey("NX_Q96JG8-3"));
+        Assert.assertTrue(mapping.getNonMappedIsoforms().contains("NX_Q96JG8-3"));
     }
 }
