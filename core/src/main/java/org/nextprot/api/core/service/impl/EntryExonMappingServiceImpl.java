@@ -56,6 +56,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
                                         .collect(Collectors.toList()),
                                 igm.getIsoformMainName())
 					)
+                    .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
