@@ -13,12 +13,12 @@ abstract class BaseIntGraphTest {
     protected abstract DirectedGraph createGraph();
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         graph = createGraph();
     }
 
     @Test
-    public void addNode() throws Exception {
+    public void addNode() {
 
         graph.addNode(0);
         graph.addNode(1);
@@ -30,7 +30,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test(expected = java.lang.AssertionError.class)
-    public void addSameNodes() throws Exception {
+    public void addSameNodes() {
 
         graph.addNode(0);
         graph.addNode(0);
@@ -39,7 +39,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void addEdge() throws Exception {
+    public void addEdge() {
 
         int edgeId = graph.addEdge(0, 1);
 
@@ -54,7 +54,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getNodes() throws Exception {
+    public void getNodes() {
 
         graph.addNode(0);
         graph.addNode(1);
@@ -63,7 +63,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getEdges() throws Exception {
+    public void getEdges() {
 
         graph.addEdge(5, 2);
         graph.addEdge(5, 4);
@@ -72,7 +72,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getEdgeNodes() throws Exception {
+    public void getEdgeNodes() {
 
         graph.addEdge(5, 2);
         graph.addEdge(5, 4);
@@ -84,7 +84,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void testGetDegree() throws Exception {
+    public void testGetDegree() {
 
         populateExampleGraph(graph);
 
@@ -94,7 +94,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getAncestors() throws Exception {
+    public void getAncestors() {
 
         populateExampleGraph(graph);
 
@@ -107,7 +107,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getIncidentEdges() throws Exception {
+    public void getIncidentEdges() {
 
         populateExampleGraph(graph);
 
@@ -116,7 +116,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getInEdges() throws Exception {
+    public void getInEdges() {
 
         populateExampleGraph(graph);
 
@@ -127,7 +127,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getOutEdges() throws Exception {
+    public void getOutEdges() {
 
         populateExampleGraph(graph);
 
@@ -144,7 +144,7 @@ abstract class BaseIntGraphTest {
                7 __/
    */
     @Test
-    public void calcSubgraph() throws Exception {
+    public void calcSubgraph() {
 
         populateExampleGraph(graph);
 
@@ -160,7 +160,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void getEdgeByEndPoints() throws Exception {
+    public void getEdgeByEndPoints() {
 
         populateExampleGraph(graph);
 
@@ -168,7 +168,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void couldNotGetEdgeByEndPoints() throws Exception {
+    public void couldNotGetEdgeByEndPoints() {
 
         populateExampleGraph(graph);
 
@@ -176,7 +176,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void couldNotGetEdgeByMissingEndPoint() throws Exception {
+    public void couldNotGetEdgeByMissingEndPoint() {
 
         populateExampleGraph(graph);
 
@@ -184,7 +184,7 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void setGraphlabel() throws Exception {
+    public void setGraphlabel() {
 
         graph.setGraphLabel("maurice");
 
@@ -192,39 +192,51 @@ abstract class BaseIntGraphTest {
     }
 
     @Test
-    public void setNodelabel() throws Exception {
+    public void setNodelabel() {
 
         populateExampleGraph(graph);
         graph.addNodeMetadata(1, "label", "node 1");
 
         Assert.assertEquals("node 1", graph.getNodeMetadataValue(1, "label"));
-        Assert.assertEquals(null, graph.getNodeMetadataValue(2, "label"));
+        Assert.assertNull(graph.getNodeMetadataValue(2, "label"));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setNodelabelUnknownNode() throws Exception {
+    public void setNodelabelUnknownNode() {
 
         populateExampleGraph(graph);
         graph.addNodeMetadata(14,"label","node 1");
     }
 
     @Test
-    public void setEdgelabel() throws Exception {
+    public void setEdgelabel() {
 
         populateExampleGraph(graph);
         graph.setEdgeLabel(1, "edge 1");
 
         Assert.assertEquals("edge 1", graph.getEdgeLabel(1));
-        Assert.assertEquals(null, graph.getEdgeLabel(2));
+        Assert.assertNull(graph.getEdgeLabel(2));
     }
 
     @Test
-    public void getDescendants() throws Exception {
+    public void getDescendants() {
 
         populateExampleGraph(graph);
 
         Assert.assertTrue(new TIntHashSet(graph.getDescendants(5))
                 .containsAll(new int[]{2, 3, 4}));
+    }
+
+    @Test
+    public void testSubgraphEdgeLabel() {
+
+        populateExampleGraph(graph);
+
+        graph.setEdgeLabel(graph.getEdge(6, 7), "6 --- 7");
+
+        DirectedGraph sg = graph.calcSubgraph(4, 6, 7, 5);
+
+        Assert.assertEquals("6 --- 7", sg.getEdgeLabel(sg.getEdge(6, 7)));
     }
 
     /*
