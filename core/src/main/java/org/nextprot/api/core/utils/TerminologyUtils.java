@@ -1,18 +1,19 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
+
+import static org.nextprot.api.commons.constants.TerminologyCv.EnzymeClassificationCv;
+import static org.nextprot.api.commons.constants.TerminologyCv.NextprotCellosaurusCv;
+import static org.nextprot.api.commons.constants.TerminologyCv.NextprotDomainCv;
 
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
@@ -208,5 +209,48 @@ public class TerminologyUtils {
 				getNodeListByNameAndPopulateResult(currentResult, child, accession);
 			}
 		}
+	}
+
+	public static List<String> filterSynonyms(String ontology, String termName, String termDescription, String synonyms) {
+
+		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
+
+		List<String> finalSynonyms = new ArrayList<>();
+		if(synonyms == null)
+			return finalSynonyms;
+
+		for(String currentSyn : allsyn){
+			String synonym = currentSyn.trim();
+			boolean skip = false;
+
+			if(!TerminologyCv.valueOf(ontology).equals(NextprotCellosaurusCv)) {
+				if((synonym).equals(termName)){
+					skip = true;
+				}
+			}
+
+			if(TerminologyCv.valueOf(ontology).equals(EnzymeClassificationCv)) {
+				if(synonym == termDescription || termDescription.endsWith(synonym)){
+					skip = true;
+				}
+			}else if(TerminologyCv.valueOf(ontology).equals(NextprotDomainCv)) {
+				if((synonym + " DNA-binding domain").equals(termName)){
+					skip = true;
+				}else if((synonym + " domain").equals(termName)){
+					skip = true;
+				}else if((synonym + " repeat").equals(termName)){
+					skip = true;
+				}else if((synonym + " zinc finger").equals(termName)){
+					skip = true;
+				}
+			}
+
+			if(!skip){
+				finalSynonyms.add(synonym);
+			}
+		}
+
+		return finalSynonyms;
+
 	}
 }

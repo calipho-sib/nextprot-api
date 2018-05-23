@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -31,8 +32,30 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		);
 		assertEquals(true, t.getSynonyms().size()==3); // "HADH deficiency" is now an abbreviation
 	}
-	
-	
+
+
+	@Test
+	public void shouldDealWithSynonymsForEnzymes() {
+		//Avenacosidase should be discarded
+		CvTerm t = terminologyDao.findTerminologyByAccession("3.2.1.188");
+		Assert.assertTrue(t.getSynonyms().isEmpty());
+	}
+
+	@Test
+	public void shouldDealWithSynonymsForNextprotDomainsDNABINDING() {
+		//Should remove ETS DNA-binding domain
+		CvTerm t = terminologyDao.findTerminologyByAccession("DO-00210");
+		Assert.assertTrue(!t.getSynonyms().contains("ETS"));
+	}
+
+	@Test
+	public void shouldDealWithSynonymsForNextprotDomainsDOMAIN() {
+		//Should remove ETS DNA-binding domain
+		CvTerm t = terminologyDao.findTerminologyByAccession("DO-00348");
+		Assert.assertTrue(!t.getSynonyms().contains("KA1"));
+	}
+
+
 	@Test
 	public void shouldRetrieveTermXrefs() {
 		CvTerm t = terminologyDao.findTerminologyByAccession("DI-03265");
