@@ -211,6 +211,10 @@ public class TerminologyUtils {
 		}
 	}
 
+	/**
+	 * Filters synonyms according to specs:
+	 * https://docs.google.com/document/d/1NFWHy-M2K2qYrIePzRWulZi4UeJ2gp1Itrkpl2uEJec/edit?ts=5afda74d#
+	 */
 	public static List<String> filterSynonyms(String ontology, String termName, String termDescription, String synonyms) {
 
 		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
@@ -223,28 +227,40 @@ public class TerminologyUtils {
 			String synonym = currentSyn.trim();
 			boolean skip = false;
 
+			//If the synonym is for a term from CELLOSAURUS, keep it
 			if(!TerminologyCv.valueOf(ontology).equals(NextprotCellosaurusCv)) {
+				//Else If the <term_name> = <synonym>, discard it
 				if((synonym).equals(termName)){
 					skip = true;
 				}
 			}
 
+			//Else If the synonym stands for an ENZYME term and <term_description> = (“…”) + <synonym>, discard it (si le synonyme est égal ou matche la fin de la description)
 			if(TerminologyCv.valueOf(ontology).equals(EnzymeClassificationCv)) {
 				if(synonym == termDescription || termDescription.endsWith(synonym)){
 					skip = true;
 				}
-			}else if(TerminologyCv.valueOf(ontology).equals(NextprotDomainCv)) {
+			}
+			else if(TerminologyCv.valueOf(ontology).equals(NextprotDomainCv)) {
+				//Else If the synonym stands for a UNIPROT_DOMAIN term and <term_name> =  <synonym> + ” DNA-binding domain”, discard it
 				if((synonym + " DNA-binding domain").equals(termName)){
 					skip = true;
-				}else if((synonym + " domain").equals(termName)){
+				}
+				//Else If the synonym stands for a UNIPROT_DOMAIN term and <term_name> =  <synonym> + ” domain”, discard it
+				else if((synonym + " domain").equals(termName)){
 					skip = true;
-				}else if((synonym + " repeat").equals(termName)){
+				}
+				// Else If the synonym stands for a UNIPROT_DOMAIN term and <term_name> =  <synonym> + ” repeat”, discard it
+				else if((synonym + " repeat").equals(termName)){
 					skip = true;
-				}else if((synonym + " zinc finger").equals(termName)){
+				}
+				//Else If the synonym stands for a UNIPROT_DOMAIN term and <term_name> =  <synonym> + ” zinc finger”, discard it
+				else if((synonym + " zinc finger").equals(termName)){
 					skip = true;
 				}
 			}
 
+			//Else keep it
 			if(!skip){
 				finalSynonyms.add(synonym);
 			}
