@@ -217,11 +217,11 @@ public class TerminologyUtils {
 	 */
 	public static List<String> filterSynonyms(String ontology, String termName, String termDescription, String synonyms) {
 
-		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
-
 		List<String> finalSynonyms = new ArrayList<>();
 		if(synonyms == null)
 			return finalSynonyms;
+
+		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
 
 		for(String currentSyn : allsyn){
 			String synonym = currentSyn.trim();
