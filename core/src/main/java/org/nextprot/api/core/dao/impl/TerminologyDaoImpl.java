@@ -116,8 +116,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setSelfXref(xrefs==null || xrefs.isEmpty() ? null : xrefs.get(0));
 			term.setDescription(resultSet.getString("description"));
 			term.setName(resultSet.getString("name"));
-			term.setSynonyms(resultSet.getString("synonyms"));
-			
+
 			List<CvTerm.TermProperty> props = new ArrayList<>();
 			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
 			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("abbreviations"), term.getId(), term.getAccession()));
@@ -129,6 +128,9 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setAncestorsRelations(extractPipeDelimitedRelations(resultSet.getString("ancestor")));
 			term.setChildrenRelations(extractPipeDelimitedRelations(resultSet.getString("children")));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
+
+			term.setSynonyms(TerminologyUtils.filterSynonyms(term.getOntology(), term.getName(), term.getDescription(), resultSet.getString("synonyms")));
+
 			return term;
 		}
 	}
