@@ -52,6 +52,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 					genomicMapping.setNonMappingIsoforms(calcNonMappingIsoformAccessionList(isoformsByName.keySet(),
 							genomicMapping.getIsoformGeneMappings().stream()
+                                    .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 									.map(igm -> igm.getIsoformAccession())
 									.collect(Collectors.toList())));
 				})

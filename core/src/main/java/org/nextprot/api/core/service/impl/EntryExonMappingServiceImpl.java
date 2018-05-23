@@ -49,6 +49,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 		if (gm.isPresent()) {
 
 			gm.get().getIsoformGeneMappings().stream()
+                    .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 					.peek(igm ->
                         mapping.setIsoformInfos(igm.getIsoformAccession(),
                                 igm.getTranscriptGeneMappings().stream()

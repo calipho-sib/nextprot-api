@@ -5,6 +5,5 @@ left join nextprot.db_xrefs x on x.accession = vmm.identifier_name
 inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id
 inner join nextprot.cv_database_categories cat on cat.cv_id = dbs.cv_category_id 
 where unique_name = :uniqueName
-and
-  ((db_name = 'Ensembl' and accession !~ '^(NX_)?VG_.+')
-  or db_name = 'HPA')
+and identifier_id = ('XR' || x.resource_id)
+and  ((db_name = 'Ensembl' and accession !~ '^(NX_)?VG_.+') or db_name = 'HPA')
