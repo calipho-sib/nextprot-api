@@ -280,6 +280,7 @@ public class CvTermGraph implements Serializable {
             private int id;
             private String accession;
             private String name;
+            private Long relevantFor;
 
             public int getId() {
                 return id;
@@ -298,6 +299,13 @@ public class CvTermGraph implements Serializable {
                 this.accession = accession;
                 this.name = name;
             }
+
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            public Long getRelevantFor() { return relevantFor; }
+            public void setRelevantFor(Long relevantFor) { this.relevantFor = relevantFor; }
+
+
         }
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -337,6 +345,7 @@ public class CvTermGraph implements Serializable {
             public void setLabel(String label) {
                 this.label = label;
             }
+
         }
 
     }
