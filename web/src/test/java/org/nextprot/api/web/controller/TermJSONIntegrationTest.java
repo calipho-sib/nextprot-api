@@ -104,21 +104,14 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
 
         Assert.assertEquals(count, 7); //6 children + itself
 
-
-
         //children
-        Assert.assertTrue(content.contains("Gestational structure"));
+        Assert.assertTrue(content.contains("Blood"));
+        Assert.assertTrue(content.contains("Cardiovascular system"));
+        Assert.assertTrue(content.contains("Hematopoietic and immune systems"));
         Assert.assertTrue(content.contains("Fluid and secretion"));
-        Assert.assertTrue(content.contains("Cell type"));
-        Assert.assertTrue(content.contains("Anatomical system"));
-        Assert.assertTrue(content.contains("Body part"));
-        Assert.assertTrue(content.contains("Tissue"));
-
-
-        //itself
         Assert.assertTrue(content.contains("Human anatomical entity"));
-
-
+        Assert.assertTrue(content.contains("Anatomical system"));
+        Assert.assertTrue(content.contains("Hemolymphoid and immune system"));
 
     }
 }
