@@ -66,11 +66,8 @@ public class CvTerm implements Serializable {
 		return synonyms;
 	}
 
-	public void setSynonyms(String synonyms) {
-		if (synonyms == null)
-			return;
-		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
-		this.synonyms = allsyn;
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
 	public List<TermProperty> getProperties() {

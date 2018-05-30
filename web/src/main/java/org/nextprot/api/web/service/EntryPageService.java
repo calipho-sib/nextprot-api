@@ -1,8 +1,9 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
+import java.util.List;
 import java.util.Map;
 
 public interface EntryPageService {
@@ -15,10 +16,10 @@ public interface EntryPageService {
     Map<String, Boolean> hasContentForPageDisplay(@ValidEntry String entryName);
 
     /**
-     * Keep data from Entry specific to the page view
+     * Extract xrefs specific to the page view
      * @param entryName the nextprot accession number
      * @param pageViewName the page view name (ex: "sequence", "function", ...)
-     * @return a slimmer Entry
+     * @return the list of xrefs for the page view
      */
-    Entry filterXrefInPageView(String entryName, String pageViewName);
+    List<DbXref> extractXrefForPageView(String entryName, String pageViewName);
 }

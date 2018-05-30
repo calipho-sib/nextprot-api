@@ -186,12 +186,13 @@ public class EntryController {
 	}
 
 	@RequestMapping("/page-view/{view}/{entry}/xref")
-	public String getEntryPageViewXref(@PathVariable("view") String viewName,
-									   @PathVariable("entry") String entryName, Model model) {
+    @ResponseBody
+	public Entry getEntryPageViewXref(@PathVariable("view") String viewName, @PathVariable("entry") String entryName) {
 
-		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
+	    Entry entry = new Entry(entryName);
+        entry.setXrefs(entryPageService.extractXrefForPageView(entryName, viewName));
 
-		return "entry";
+		return entry;
 	}
 
 	@ApiMethod(path = "/entry/{entry}/stats", verb = ApiVerb.GET, description = "Reports neXtProt entry stats", produces = { MediaType.APPLICATION_JSON_VALUE } )

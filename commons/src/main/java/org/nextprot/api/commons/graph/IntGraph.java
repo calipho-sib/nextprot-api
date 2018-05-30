@@ -310,10 +310,15 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
     @Override
     public int[] getDescendants(int node) {
+        return getDescendants(node, 0);
+    }
+
+    @Override
+    public int[] getDescendants(int node, int maxDepth) {
 
         TIntSet descendants = new TIntHashSet();
 
-        getDescendants(node, descendants);
+        getDescendants(node, 1, maxDepth, descendants);
 
         return descendants.toArray();
     }
@@ -333,7 +338,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
         });
     }
 
-    private void getDescendants(int node, TIntSet descendants) {
+    private void getDescendants(int node, int currentDepth, int maxDepth, TIntSet descendants) {
 
         if (!successorLists.containsKey(node)) {
             return;
@@ -342,7 +347,9 @@ public class IntGraph implements DirectedGraph, Externalizable {
         successorLists.get(node).forEach(successor -> {
 
             descendants.add(successor);
-            getDescendants(successor, descendants);
+            if(maxDepth == 0 || (maxDepth > currentDepth)){
+                getDescendants(successor, currentDepth + 1 , maxDepth,  descendants);
+            }
 
             return true;
         });
