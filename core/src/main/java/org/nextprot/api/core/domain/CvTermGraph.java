@@ -171,8 +171,12 @@ public class CvTermGraph implements Serializable {
     }
 
     public CvTermGraph calcDescendantSubgraph(int cvTermId) {
+        return calcDescendantSubgraph(cvTermId, 0);
+    }
 
-        return buildSubgraph(cvTermId, (id) -> graph.getDescendants(id), "descendant");
+    public CvTermGraph calcDescendantSubgraph(int cvTermId, int maxDepth) {
+
+        return buildSubgraph(cvTermId, (id) -> graph.getDescendants(id, maxDepth), "descendant");
     }
 
     private CvTermGraph buildSubgraph(int cvTermId, Function<Integer, int[]> func, String type) {

@@ -139,6 +139,11 @@ public interface DirectedGraph {
     int[] getDescendants(int node);
 
     /**
+     * @return descendants of the given node
+     */
+    int[] getDescendants(int node, int maxDepth);
+
+    /**
      * @return true if queryDescendant is a descendant of queryAncestor
      */
     boolean isAncestorOf(int queryAncestor, int queryDescendant);

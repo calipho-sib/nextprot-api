@@ -115,7 +115,7 @@ public class TermController {
 
 			QueryRequest qr = new QueryRequest();
 			qr.setQuery(node.getAccession());
-			qr.setQuality("gold-and-silver");
+			qr.setQuality("gold");
 			qr.setRows("0");
 			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
 			try {
@@ -150,13 +150,13 @@ public class TermController {
     public Map<String, CvTermGraph.View> getDescendantGraph(
             @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
             @PathVariable("term") String term,
-			@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor) {
+			@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
+			@ApiQueryParam(name="depth") @RequestParam(value="depth", required=false, defaultValue= "0") int depthMax) {
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
-
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-		CvTermGraph.View subgraphView = graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView();
+		CvTermGraph.View subgraphView = graph.calcDescendantSubgraph(cvTerm.getId().intValue(), depthMax).toView();
 
 		if(includeRelevantFor){
 			addRelevantFor(subgraphView);
