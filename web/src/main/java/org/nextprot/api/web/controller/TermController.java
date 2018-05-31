@@ -94,7 +94,8 @@ public class TermController {
 	public Map<String, CvTermGraph.View> getAncestorGraph(
 		@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 		@PathVariable("term") String term,
-		@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor) {
+		@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
+		@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
@@ -103,19 +104,25 @@ public class TermController {
 		CvTermGraph.View subgraphView = graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView();
 
 		if(includeRelevantFor){
-			addRelevantFor(subgraphView);
+			addRelevantFor(subgraphView, includeSilver);
 		}
 
 		return Collections.singletonMap("ancestor-graph", subgraphView);
 	}
 
-	private void addRelevantFor(CvTermGraph.View subgraphView){
+	private void addRelevantFor(CvTermGraph.View subgraphView, boolean includeSilver){
 
 		subgraphView.getNodes().forEach(node -> {
 
 			QueryRequest qr = new QueryRequest();
 			qr.setQuery(node.getAccession());
-			qr.setQuality("gold");
+
+			if(includeSilver){
+				qr.setQuality("gold-and-silver");
+			}else {
+				qr.setQuality("gold");
+			}
+
 			qr.setRows("0");
 			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
 			try {
@@ -151,6 +158,7 @@ public class TermController {
             @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
             @PathVariable("term") String term,
 			@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
+			@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver,
 			@ApiQueryParam(name="depth") @RequestParam(value="depth", required=false, defaultValue= "0") int depthMax) {
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
@@ -159,7 +167,7 @@ public class TermController {
 		CvTermGraph.View subgraphView = graph.calcDescendantSubgraph(cvTerm.getId().intValue(), depthMax).toView();
 
 		if(includeRelevantFor){
-			addRelevantFor(subgraphView);
+			addRelevantFor(subgraphView, includeSilver);
 		}
 
 		return Collections.singletonMap("descendant-graph", subgraphView);
