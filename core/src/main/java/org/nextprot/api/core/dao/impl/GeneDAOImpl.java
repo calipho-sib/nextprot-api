@@ -108,10 +108,10 @@ public class GeneDAOImpl implements GeneDAO {
 			transcript.setReferenceGeneUniqueName(resultSet.getString("gene_name"));
 			transcript.setIsoformName(resultSet.getString("isoform"));
 			transcript.setName(resultSet.getString("transcript"));
-			transcript.setDatabaseAccession(resultSet.getString("accession"));
-			transcript.setDatabase(resultSet.getString("database_name"));
-			transcript.setProteinId(resultSet.getString("ensemble_protein"));
-			transcript.setNucleotideSequenceLength(resultSet.getString("bio_sequence").length());
+			transcript.setDatabaseAccession(resultSet.getString("enst_ac"));
+			transcript.setDatabase("Ensembl");
+			transcript.setProteinId(resultSet.getString("ensp_ac"));
+			transcript.setNucleotideSequenceLength(resultSet.getString("tr_sequence").length());
 
 			return transcript;
 		}

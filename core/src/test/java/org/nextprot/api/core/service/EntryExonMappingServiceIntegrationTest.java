@@ -15,11 +15,24 @@ public class EntryExonMappingServiceIntegrationTest extends CoreUnitBaseTest {
 	private EntryExonMappingService entryExonMappingService;
 
     @Test
-    public void NX_Q96JG8_3DoesNotMapAnyTranscript() {
+    public void NX_Q96JG8_3DoesMapSomeTranscript() {
 
         ExonMapping mapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_Q96JG8");
 
-        Assert.assertTrue(!mapping.getMappedIsoformInfos().containsKey("NX_Q96JG8-3"));
-        Assert.assertTrue(mapping.getNonMappedIsoforms().contains("NX_Q96JG8-3"));
+        Assert.assertTrue(mapping.getMappedIsoformInfos().containsKey("NX_Q96JG8-3"));
+        Assert.assertTrue(!mapping.getNonMappedIsoforms().contains("NX_Q96JG8-3"));
     }
+    
+    
+    // 
+    @Test
+    public void NX_Q5TIA1_4_DoesNotMapAnyTranscript() {
+
+        ExonMapping mapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_Q5TIA1");
+
+        Assert.assertTrue(!mapping.getMappedIsoformInfos().containsKey("NX_Q5TIA1-4"));
+        Assert.assertTrue(mapping.getNonMappedIsoforms().contains("NX_Q5TIA1-4"));
+    }
+    
 }
+

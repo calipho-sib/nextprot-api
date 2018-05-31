@@ -1,18 +1,25 @@
-select cvqq.cv_name quality, gene.identifier_id gene_id, gene.unique_name gene_name, isoforms.unique_name isoform, transcript.unique_name transcript, xrefs.accession accession, dbs.cv_name database_name, ens_protein_xref.accession ensemble_protein, bio_seq.bio_sequence bio_sequence    
-from nextprot.sequence_identifiers isoforms      
-inner join nextprot.mapping_annotations mapping on (mapping.mapped_identifier_id = isoforms.identifier_id)      
-inner join nextprot.cv_mapping_annotation_types mapping_types on (mapping.cv_type_id = mapping_types.cv_id)      
-inner join nextprot.sequence_identifiers transcript on (transcript.identifier_id = mapping.reference_identifier_id)      
-inner join nextprot.mapping_annotations mapping_gene on (mapping_gene.mapped_identifier_id = transcript.identifier_id and mapping_gene.cv_type_id = 2)  
-inner join nextprot.sequence_identifiers gene on (gene.identifier_id = mapping_gene.reference_identifier_id)      
-inner join nextprot.bio_sequences bio_seq on (bio_seq.identifier_id = transcript.identifier_id)      
-inner join nextprot.identifier_resource_assoc assoc_ens_protein on (assoc_ens_protein.identifier_id = transcript.identifier_id)  
-left join nextprot.resources ens_protein on (ens_protein.resource_id = assoc_ens_protein.resource_id)   
-inner join nextprot.db_xrefs ens_protein_xref on (ens_protein_xref.resource_id = ens_protein.resource_id)   
-inner join nextprot.db_xrefs xrefs on (xrefs.resource_id = transcript.db_xref_id)   
-inner join nextprot.cv_databases dbs on (xrefs.cv_database_id = dbs.cv_id)   
-inner join nextprot.cv_quality_qualifiers cvqq on (cvqq.cv_id = mapping.cv_quality_qualifier_id)   
-where isoforms.unique_name in (:isoform_names)   
-and mapping_types.cv_name = 'PROTEIN_ISOFORM_TRANSCRIPT'  
-and ens_protein_xref.cv_database_id = dbs.cv_id
-				
+select  
+cvqq.cv_name as quality, 
+gen.identifier_id as gene_id, 
+gen.unique_name as gene_name, 
+iso.unique_name as isoform, 
+tra.unique_name as transcript, 
+enstx.accession as enst_ac, 
+enspx.accession as ensp_ac, 
+tra_seq.bio_sequence as tr_sequence    
+from nextprot.sequence_identifiers iso
+inner join nextprot.mapping_annotations itmap on (itmap.mapped_identifier_id = iso.identifier_id and itmap.cv_type_id=7) -- 7:iso-tra map     
+inner join nextprot.sequence_identifiers tra on (tra.identifier_id = itmap.reference_identifier_id)      
+inner join nextprot.mapping_annotations tgmap on (tgmap.mapped_identifier_id = tra.identifier_id and tgmap.cv_type_id = 2)  
+inner join nextprot.sequence_identifiers gen on (gen.identifier_id = tgmap.reference_identifier_id)      
+inner join nextprot.bio_sequences tra_seq on (tra_seq.identifier_id = tra.identifier_id)      
+inner join nextprot.cv_quality_qualifiers cvqq on (cvqq.cv_id = itmap.cv_quality_qualifier_id)   
+inner join nextprot.db_xrefs enstx on (enstx.resource_id = tra.db_xref_id and enstx.cv_database_id = 32)   
+left outer join (
+  select tr_ira.identifier_id, px.accession
+  from nextprot.identifier_resource_assoc tr_ira
+  inner join nextprot.resources rp on (rp.resource_id = tr_ira.resource_id)   
+  inner join nextprot.db_xrefs px 
+    on (px.resource_id = rp.resource_id and px.cv_database_id = 32)   
+  ) as enspx on (enspx.identifier_id = tra.identifier_id)
+where iso.unique_name in (:isoform_names) 
