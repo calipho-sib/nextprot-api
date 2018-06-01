@@ -139,10 +139,10 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			List<SimpleExon> exons;
 
-			if ("GOLD".equalsIgnoreCase(quality)) {
-				exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptAccession, refGeneUniqueName);
+			if ("BRONZE".equalsIgnoreCase(quality)) {
+                exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(isoformAccession, transcriptAccession, refGeneUniqueName);
 			} else {
-				exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(isoformAccession, transcriptAccession, refGeneUniqueName);
+                exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptAccession, refGeneUniqueName);
 			}
 
 			return exons;

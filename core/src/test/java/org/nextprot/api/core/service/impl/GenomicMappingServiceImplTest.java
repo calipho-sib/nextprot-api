@@ -62,6 +62,23 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
     }
 
     @Test
+    public void testIsoformNX_Q9H221_2SilverExonMapping() {
+
+        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_Q9H221");
+
+        Assert.assertEquals(2, gml.get(0).getIsoformGeneMappings().size());
+        Assert.assertEquals("Iso 1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformMainName());
+        Assert.assertEquals("GOLD", gml.get(0).getIsoformGeneMappings().get(0).getQuality());
+        Assert.assertEquals("Iso 2", gml.get(0).getIsoformGeneMappings().get(1).getIsoformMainName());
+        Assert.assertEquals("SILVER", gml.get(0).getIsoformGeneMappings().get(1).getQuality());
+        Assert.assertEquals(13, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().size());
+        Assert.assertEquals(1, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getFirstPositionOnGene());
+        Assert.assertEquals(153, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getLastPositionOnGene());
+        Assert.assertEquals(38813, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getFirstPositionOnGene());
+        Assert.assertEquals(39503, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getLastPositionOnGene());
+    }
+
+    @Test
     public void exonMappingIsoformInfoShouldContainAQuality() {
 
         ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_O94759");
