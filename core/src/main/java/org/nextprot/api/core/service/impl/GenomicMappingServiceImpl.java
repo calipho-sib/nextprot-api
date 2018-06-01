@@ -40,8 +40,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Map<String, Isoform> isoformsByName = isoformService.findIsoformsByEntryName(entryName).stream()
 				.collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
 
-		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(isoformsByName)
-				.find();
+		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(isoformsByName).find();
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
 				.peek(genomicMapping -> {

@@ -6,15 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This represents an isoform mapped to a specific gene.
- * In most cases there is only one gene, but in special cases like the HIST1H4A, Histone H4 we can have up to 14 genes (NX_P62805).
- * @author dteixeira
- *
- */
+
 public class IsoformGeneMapping implements Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	private String isoformAccession;
 	private String isoformMainName;
@@ -85,4 +80,8 @@ public class IsoformGeneMapping implements Serializable {
 	public int getLastPositionIsoformOnGene() {
 		return isoformGeneRegionMappings.get(isoformGeneRegionMappings.size() - 1).getLastPosition();
 	}
+
+	public String getQuality() {
+	    return (transcriptGeneMappings != null && !transcriptGeneMappings.isEmpty()) ? transcriptGeneMappings.get(0).getQuality() : "BRONZE";
+    }
 }
