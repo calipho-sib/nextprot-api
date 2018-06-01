@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 5L;
+    private static final long serialVersionUID = 6L;
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
@@ -71,7 +71,7 @@ public class ExonMapping implements Serializable {
         return Collections.unmodifiableMap(mappedIsoformInfos);
     }
 
-    public void setIsoformInfos(String isoformAccession, List<String> ensts, String mainName) {
+    public void setIsoformInfos(String isoformAccession, List<String> ensts, String mainName, String quality) {
 
         if (this.mappedIsoformInfos.containsKey(isoformAccession)) {
 
@@ -88,6 +88,7 @@ public class ExonMapping implements Serializable {
         if (ensts.size() > 1) {
             infos.put("other-transcripts", ensts.subList(1, ensts.size()));
         }
+        infos.put("quality", quality);
     }
 
     public List<String> getSortedExonKeys() {

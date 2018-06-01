@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
+import org.nextprot.api.core.domain.exon.ExonMapping;
+import org.nextprot.api.core.service.EntryExonMappingService;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
 
     @Autowired
     private GenomicMappingService genomicMappingService;
+
+    @Autowired
+    private EntryExonMappingService entryExonMappingService;
 
     @Test
     public void NX_P78324_4MappingAgainstNX_ENST00000356025ShouldHaveValidExons() {
@@ -54,6 +59,14 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
 
         Assert.assertEquals("NX_P78324-1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformAccession());
         Assert.assertEquals("Iso 1", gml.get(0).getIsoformGeneMappings().get(0).getIsoformMainName());
+    }
+
+    @Test
+    public void exonMappingIsoformInfoShouldContainAQuality() {
+
+        ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_O94759");
+
+        Assert.assertTrue(exonMapping.getMappedIsoformInfos().values().stream().allMatch(map -> map.containsKey("quality")));
     }
 
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {
