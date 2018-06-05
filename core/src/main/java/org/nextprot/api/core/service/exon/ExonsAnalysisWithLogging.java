@@ -82,6 +82,10 @@ public class ExonsAnalysisWithLogging implements ExonsAnalysis {
 
     private String getAACode(AminoAcid aa, boolean first) {
 
+        if (aa.getCode()== null) {
+            return "?";
+        }
+
         String aa3code = aa.getCode().get3LetterCode();
 
         int phase = aa.getPhase();
