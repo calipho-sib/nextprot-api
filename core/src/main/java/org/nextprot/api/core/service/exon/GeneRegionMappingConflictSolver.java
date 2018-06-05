@@ -21,7 +21,7 @@ public class GeneRegionMappingConflictSolver {
         this.isoformToGeneMappings = isoformToGeneMappings;
     }
 
-    public List<GeneRegion> fixGeneRegions(Map<Integer, Integer> transcriptToGeneMappingsIndices) {
+    public List<GeneRegion> resolveConflicts(Map<Integer, Integer> transcriptToGeneMappingsIndices) {
 
         List<GeneRegion> geneRegions = new ArrayList<>();
 

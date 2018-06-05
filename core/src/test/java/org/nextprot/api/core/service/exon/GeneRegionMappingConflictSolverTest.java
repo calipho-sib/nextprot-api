@@ -27,7 +27,7 @@ public class GeneRegionMappingConflictSolverTest {
         Map<Integer, Integer> transcriptExonsIndices = new HashMap<>();
 
         List<GeneRegion> geneRegions = new GeneRegionMappingConflictSolver(transcriptExons, isoformToGeneMappings)
-                .fixGeneRegions(transcriptExonsIndices);
+                .resolveConflicts(transcriptExonsIndices);
 
         assertPositions(geneRegions.get(0), 617,630);
         assertPositions(geneRegions.get(1), 1273,1360);

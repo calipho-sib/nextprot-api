@@ -130,7 +130,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 					exonsFromEnsembl.stream()
 							.map(exon -> exon.getGeneRegion())
 							.collect(Collectors.toList()), isoformGeneMappings
-			).fixGeneRegions(transcriptToGeneMappingsIndices);
+			).resolveConflicts(transcriptToGeneMappingsIndices);
 
 			return buildExonList(validatedGeneRegions, exonsFromEnsembl, transcriptToGeneMappingsIndices, transcriptGeneMapping.getIsoformName());
 		}
