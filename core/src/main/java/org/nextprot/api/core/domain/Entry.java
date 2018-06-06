@@ -8,10 +8,7 @@ import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @JsonInclude(Include.NON_NULL)
@@ -35,7 +32,7 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<Annotation> annotations;
 
-	private List<GenomicMapping> genomicMappings;
+	private Collection<GenomicMapping> genomicMappings;
 
 	private List<Interaction> interactions;
 
@@ -172,11 +169,11 @@ public class Entry implements KeyValueRepresentation {
 		return Entry.filterByIsoform(interactions, isoform);
 	}
 
-	public List<GenomicMapping> getGenomicMappings() {
+	public Collection<GenomicMapping> getGenomicMappings() {
 		return genomicMappings;
 	}
 
-	public void setGenomicMappings(List<GenomicMapping> genomicMappings) {
+	public void setGenomicMappings(Collection<GenomicMapping> genomicMappings) {
 		this.genomicMappings = genomicMappings;
 	}
 

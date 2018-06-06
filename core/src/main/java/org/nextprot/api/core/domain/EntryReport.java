@@ -45,6 +45,8 @@ public class EntryReport implements Serializable {
 
 	private static final String SENSE_CODING_STRAND = "forward";
 	private static final String ANTISENSE_CODING_STRAND = "reverse";
+	private static final String UNKNOWN_CODING_STRAND = "-"; // unknown
+	
 
 	public static final String GENE_NAME = "geneName";
 	public static final String CODING_STRAND = "codingStrand";
@@ -121,7 +123,9 @@ public class EntryReport implements Serializable {
 
 	@JsonProperty(CODING_STRAND)
 	public String getCodingStrand() {
-		return (chromosomalLocation.getStrand() > 0) ? SENSE_CODING_STRAND: ANTISENSE_CODING_STRAND;
+		if (chromosomalLocation.getStrand() > 0) return SENSE_CODING_STRAND;
+		if (chromosomalLocation.getStrand() < 0) return ANTISENSE_CODING_STRAND;
+		return UNKNOWN_CODING_STRAND;
 	}
 
 	@JsonProperty(GENE_START_POSITION)

@@ -7,8 +7,8 @@ import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideUnicity;
 import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.service.annotation.AnnotationUtilsTest;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.core.utils.annot.AnnotationUtilsTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;

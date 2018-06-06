@@ -8,13 +8,14 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.exon.ExonMapping;
+import org.nextprot.api.core.export.EntryPartExporterImpl;
+import org.nextprot.api.core.export.EntryPartWriterTSV;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.export.io.SlimIsoformTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.core.export.EntryPartExporterImpl;
-import org.nextprot.api.core.export.EntryPartWriterTSV;
 import org.nextprot.api.web.service.EntryPageService;
 import org.nextprot.api.web.service.impl.writer.JSONObjectsWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryGeneReportService entryGeneReportService;
 	@Autowired private EntryService entryService;
+	@Autowired private EntryExonMappingService entryExonMappingService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -184,12 +186,13 @@ public class EntryController {
 	}
 
 	@RequestMapping("/page-view/{view}/{entry}/xref")
-	public String getEntryPageViewXref(@PathVariable("view") String viewName,
-									   @PathVariable("entry") String entryName, Model model) {
+    @ResponseBody
+	public Entry getEntryPageViewXref(@PathVariable("view") String viewName, @PathVariable("entry") String entryName) {
 
-		model.addAttribute("entry", entryPageService.filterXrefInPageView(entryName, viewName));
+	    Entry entry = new Entry(entryName);
+        entry.setXrefs(entryPageService.extractXrefForPageView(entryName, viewName));
 
-		return "entry";
+		return entry;
 	}
 
 	@ApiMethod(path = "/entry/{entry}/stats", verb = ApiVerb.GET, description = "Reports neXtProt entry stats", produces = { MediaType.APPLICATION_JSON_VALUE } )
@@ -219,6 +222,16 @@ public class EntryController {
 		model.addAttribute("isoform", isoform);
 
 		return "isoform";
+	}
+
+	//@ApiMethod(path = "/entry/{entry}/exon-mapping", verb = ApiVerb.GET, description = "Find the exon mappings of a neXtProt entry", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/entry/{entry}/exon-mapping", method = { RequestMethod.GET })
+	@ResponseBody
+	public ExonMapping findExonsByIsoformByShorterENST(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
+
+		return entryExonMappingService.findExonMappingGeneXIsoformXShorterENST(entryName);
 	}
 
 	/**

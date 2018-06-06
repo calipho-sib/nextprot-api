@@ -49,5 +49,18 @@ public interface IsoformService {
 	List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform();
 
 	List<SlimIsoform> findListOfIsoformAcMd5Sequence();
-	
+
+	default String findEntryAccessionFromIsoformAccession(String isoformAccession) {
+
+		if (!isoformAccession.contains("-")) {
+			return null;
+		}
+
+		return isoformAccession.split("-")[0];
+	}
+
+	default Isoform findIsoform(String isoformAccession) {
+
+		return findIsoformByName(findEntryAccessionFromIsoformAccession(isoformAccession), isoformAccession);
+	}
 }

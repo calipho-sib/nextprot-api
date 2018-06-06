@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,10 +13,11 @@ import java.util.Set;
  */
 public abstract class PEFFPTMInformation extends AnnotationBasedPEFFInformation {
 
-    PEFFPTMInformation(Entry entry, String isoformAccession, Set<AnnotationCategory> supportedApiModel,
+    PEFFPTMInformation(String isoformAccession, List<Annotation> isoformAnnotations,
+                       Set<AnnotationCategory> supportedApiModel,
                        Key Key) {
 
-        super(entry, isoformAccession, supportedApiModel, Key);
+        super(isoformAccession, isoformAnnotations, supportedApiModel, Key);
     }
 
     protected abstract String getModAccession(Annotation annotation);

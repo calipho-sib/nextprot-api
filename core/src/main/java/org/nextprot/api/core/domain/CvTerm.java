@@ -1,16 +1,18 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.TerminologyMapping;
+import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class CvTerm implements Serializable {
-    
+
+
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;
@@ -19,13 +21,22 @@ public class CvTerm implements Serializable {
 	private String description;
 	private String ontology;
 	private String ontologyAltname;
-	//private List<String> sameAs = new ArrayList<>();
+	private String ontologyDisplayName;
+	private List<TermAccessionRelation> ancestorsRelations;
+	private List<TermAccessionRelation> childrenRelations;
 
-	private List<String> parentAccession;
-	private List<String> childAccession;
+	private DbXref selfXref;
 	private List<DbXref> xrefs;
 	private List<String> synonyms;
 	private List<TermProperty> properties;
+	
+	public DbXref getSelfXref() {
+		return selfXref;
+	}
+
+	public void setSelfXref(DbXref selfXref) {
+		this.selfXref = selfXref;
+	}
 
 	public Long getId() {
 		return id;
@@ -55,11 +66,8 @@ public class CvTerm implements Serializable {
 		return synonyms;
 	}
 
-	public void setSynonyms(String synonyms) {
-		if (synonyms == null)
-			return;
-		List<String> allsyn = Arrays.asList(synonyms.split("\\|"));
-		this.synonyms = allsyn;
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
 	public List<TermProperty> getProperties() {
@@ -100,54 +108,65 @@ public class CvTerm implements Serializable {
 	public void setOntologyAltname(String ontologyAltname) {
 		this.ontologyAltname = ontologyAltname;
 	}
-	
-	
+
+
 	public List<String> getChildAccession() {
-		return childAccession;
-	}
-
-	public void setChildAccession(String accession) {
-		if (accession == null)
-			return;
-		List<String> all = Arrays.asList(accession.split("\\|"));
-		this.childAccession = all;
-
+		if(childrenRelations != null){
+			return this.childrenRelations.stream().map(c -> c.getTermAccession()).collect(Collectors.toList());
+		}return null;
 	}
 
 	public List<String> getAncestorAccession() {
-		return parentAccession;
-	}
-
-	public void setAncestorAccession(String accession) {
-		if (accession == null)
-			return;
-		List<String> all = Arrays.asList(accession.split("\\|"));
-		this.parentAccession = all;
+		if(ancestorsRelations != null) {
+			return this.ancestorsRelations.stream().map(c -> c.getTermAccession()).collect(Collectors.toList());
+		}return null;
 	}
 
 	public List<DbXref> getXrefs() {
 		return xrefs;
 	}
 
-	public List<DbXref> getFilteredXrefs(String category) {
-		if(xrefs == null) return null;
-		List<DbXref> filteredxrefs = new ArrayList<>();
-		for (DbXref currxref : xrefs) {
-			if(currxref.getDatabaseCategory().equals(category)) filteredxrefs.add(currxref);
-		}
-		if(filteredxrefs.size() == 0) return null;
-		return filteredxrefs;
-	}
-
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
 	}
 
-	public List<String> getSameAs() {
-		// To remain compatible with previous API version (Terminology.getSameAs() is used for ttl generation in term.ttl.vm )
-		return TerminologyUtils.convertXrefsToSameAsStrings(getFilteredXrefs("Ontologies"));
+	private boolean isExternalReference(DbXref x) {
+		return x.getPropertyByName("term_id")==null;
+	}
+	private boolean isRelatedTerm(DbXref x) {
+		return ! isExternalReference(x);
 	}
 	
+	/*
+	 * Related terms are retrieved from the term xrefs.
+	 * It is the subset of xrefs of terms that are actually loaded in neXtProt
+	 */
+	public List<String> getACsOfRelatedTerms() {
+		return StreamUtils.nullableListToStream(this.getXrefs())
+			.filter(x -> isRelatedTerm(x))
+			.map(x -> x.getAccession())
+			.collect(Collectors.toList());
+	}
+
+
+
+	public List<TermAccessionRelation> getAncestorsRelations() {
+		return ancestorsRelations;
+	}
+
+	public void setAncestorsRelations(List<TermAccessionRelation> ancestorsRelations) {
+		this.ancestorsRelations = ancestorsRelations;
+	}
+
+	public List<TermAccessionRelation> getChildrenRelations() {
+		return childrenRelations;
+	}
+
+	public void setChildrenRelations(List<TermAccessionRelation> childrenRelations) {
+		this.childrenRelations = childrenRelations;
+	}
+
+
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		
@@ -170,7 +189,7 @@ public class CvTerm implements Serializable {
 		sb.append(TerminologyUtils.convertXrefsToString(this.getXrefs()));
 		sb.append("\n");
 		sb.append("sameAs=");
-		sb.append(this.getSameAs());
+		sb.append(this.getACsOfRelatedTerms());
 		sb.append("\n");
 		sb.append("properties=");
 		sb.append(TerminologyUtils.convertPropertiesToString(this.getProperties()));
@@ -181,14 +200,25 @@ public class CvTerm implements Serializable {
 		sb.append("ontologyAltname=");
 		sb.append(this.ontologyAltname);
 		sb.append("\n");
+		sb.append("ontologyDisplayName=");
+		sb.append(this.ontologyDisplayName);
+		sb.append("\n");
 		sb.append("ancestors=");
-		sb.append(this.parentAccession);
+		sb.append(this.ancestorsRelations);
 		sb.append("\n");
 		
 		return sb.toString();
 	}
 
-	public static class TermProperty implements Serializable {
+
+	public String getOntologyDisplayName() {
+		return ontologyDisplayName;
+	}
+	public void setOntologyDisplayName(String ontologyDisplayName) {
+        this.ontologyDisplayName = ontologyDisplayName;
+    }
+
+    public static class TermProperty implements Serializable {
 
 		private static final long serialVersionUID = 5662052927182501529L;
 		
@@ -216,7 +246,35 @@ public class CvTerm implements Serializable {
 		}
 
 	}
-	
+
+
+
+	//Utility class to add relation type to a ancestor / children term
+	public static class TermAccessionRelation implements Serializable {
+
+		private String termAccession;
+		private String relationType;
+
+		public TermAccessionRelation(String termAccession, String relationType) {
+			this.termAccession = termAccession;
+			this.relationType = relationType;
+		}
+
+		public String getTermAccession() {
+			return termAccession;
+		}
+
+		public String getRelationType() {
+			return relationType;
+		}
+
+		@Override
+		public String toString(){
+			return termAccession + "->" + relationType;
+		}
+
+	}
+
 }
 
 

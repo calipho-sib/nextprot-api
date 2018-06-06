@@ -1,20 +1,30 @@
 package org.nextprot.api.web.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.graph.CvTermGraph;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,13 +32,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Controller
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
 public class TermController {
 
+	private static final Log LOGGER = LogFactory.getLog(TermController.class);
+
+
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
+	@Autowired private SolrService solrService;
+	@Autowired private QueryBuilderService queryBuilderService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,21 +92,62 @@ public class TermController {
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTermGraph.View> getAncestorGraph(
-			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
-			@PathVariable("term") String term) {
+		@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+		@PathVariable("term") String term,
+		@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
+		@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
 		CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-		return Collections.singletonMap("ancestor-graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
+		CvTermGraph.View subgraphView = graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView();
+
+		if(includeRelevantFor){
+			addRelevantFor(subgraphView, includeSilver);
+		}
+
+		return Collections.singletonMap("ancestor-graph", subgraphView);
 	}
 
+	private void addRelevantFor(CvTermGraph.View subgraphView, boolean includeSilver){
+
+		subgraphView.getNodes().forEach(node -> {
+
+			QueryRequest qr = new QueryRequest();
+			qr.setQuery(node.getAccession());
+
+			if(includeSilver){
+				qr.setQuality("gold-and-silver");
+			}else {
+				qr.setQuality("gold");
+			}
+
+			qr.setRows("0");
+			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
+			try {
+				SearchResult sr = solrService.executeQuery(query);
+				long relevantForEntry = sr.getFound();
+				node.setRelevantFor(relevantForEntry);
+			} catch (SearchQueryException e) {
+				e.printStackTrace();
+				LOGGER.error(e.getLocalizedMessage());
+			}
+		});
+
+	}
+
+
+	//
 	@ApiMethod(path = "/term/{term}", verb = ApiVerb.GET, description = "Get information for the given term", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/term/{term}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/term/{term:.+}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public CvTerm getTermInfo(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
+
+		//Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
+		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
+		term = term.replace(".json", "").replace(".JSON", "");
 
 		return terminologyService.findCvTermByAccession(term);
 	}
@@ -99,12 +156,20 @@ public class TermController {
     @RequestMapping(value = "/term/{term}/descendant-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, CvTermGraph.View> getDescendantGraph(
             @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
-            @PathVariable("term") String term) {
+            @PathVariable("term") String term,
+			@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
+			@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver,
+			@ApiQueryParam(name="depth") @RequestParam(value="depth", required=false, defaultValue= "0") int depthMax) {
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
-
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-        return Collections.singletonMap("descendant-graph", graph.calcDescendantSubgraph(cvTerm.getId().intValue()).toView());
-    }
+		CvTermGraph.View subgraphView = graph.calcDescendantSubgraph(cvTerm.getId().intValue(), depthMax).toView();
+
+		if(includeRelevantFor){
+			addRelevantFor(subgraphView, includeSilver);
+		}
+
+		return Collections.singletonMap("descendant-graph", subgraphView);
+	}
 }

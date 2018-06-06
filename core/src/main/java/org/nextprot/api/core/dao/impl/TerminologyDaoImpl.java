@@ -6,6 +6,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -88,22 +91,46 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	}
 
 
+	static List<CvTerm.TermAccessionRelation> extractPipeDelimitedRelations (String accession){
+		if (accession == null)
+			return null;
+		else {
+			return Arrays.asList(accession.split("\\|")).stream().map(s -> {
+				int separatorIndex = s.indexOf("->");
+				return new CvTerm.TermAccessionRelation(s.substring(0, separatorIndex), s.substring(separatorIndex + 2, s.length()));
+			}).collect(Collectors.toList());
+		}
+	}
+
+
+
 	private static class DbTermRowMapper implements ParameterizedRowMapper<CvTerm> {
 
 		@Override
 		public CvTerm mapRow(ResultSet resultSet, int row) throws SQLException {
+			List<DbXref> xrefs = null;
 			CvTerm term = new CvTerm();
 			term.setId(resultSet.getLong("id"));
 			term.setAccession(resultSet.getString("accession"));
+			xrefs = TerminologyUtils.convertToXrefs(resultSet.getString("selfxref"));
+			term.setSelfXref(xrefs==null || xrefs.isEmpty() ? null : xrefs.get(0));
 			term.setDescription(resultSet.getString("description"));
 			term.setName(resultSet.getString("name"));
-			term.setSynonyms(resultSet.getString("synonyms"));
-			term.setProperties(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
+
+			List<CvTerm.TermProperty> props = new ArrayList<>();
+			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
+			props.addAll(TerminologyUtils.convertToProperties(resultSet.getString("abbreviations"), term.getId(), term.getAccession()));
+			if (! props.isEmpty()) term.setProperties(props);
+		
 			term.setOntology(resultSet.getString("ontology"));
 			term.setOntologyAltname(resultSet.getString("ontologyAltname"));
-			term.setAncestorAccession(resultSet.getString("ancestor"));
-			term.setChildAccession(resultSet.getString("children"));
+			term.setOntologyDisplayName(resultSet.getString("ontologyDisplayName"));
+			term.setAncestorsRelations(extractPipeDelimitedRelations(resultSet.getString("ancestor")));
+			term.setChildrenRelations(extractPipeDelimitedRelations(resultSet.getString("children")));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
+
+			term.setSynonyms(TerminologyUtils.filterSynonyms(term.getOntology(), term.getName(), term.getDescription(), resultSet.getString("synonyms")));
+
 			return term;
 		}
 	}

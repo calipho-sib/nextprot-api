@@ -5,16 +5,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
-import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformPEFFHeader;
-import org.nextprot.api.core.domain.SlimIsoform;
-import org.nextprot.api.core.service.EntityNameService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 class IsoformServiceImpl implements IsoformService {
@@ -39,10 +35,13 @@ class IsoformServiceImpl implements IsoformService {
 	private EntityNameService entityNameService;
 
 	@Autowired
-	private EntryService entryService;
+	private TerminologyService terminologyService;
 
 	@Autowired
-	private TerminologyService terminologyService;
+	private AnnotationService annotationService;
+
+	@Autowired
+    private OverviewService overviewService;
 
 	@Override
 	@Cacheable("isoforms")
@@ -94,9 +93,18 @@ class IsoformServiceImpl implements IsoformService {
 	@Cacheable("peff-by-isoform")
 	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 
-		return new IsoformPEFFHeaderBuilder(isoformAccession,
-				entryService.findEntryFromIsoformAccession(isoformAccession), this, terminologyService).withEverything()
-				.build();
+	    String entryAccession = findEntryAccessionFromIsoformAccession(isoformAccession);
+
+        List<Annotation> isoformAnnotations = annotationService.findAnnotations(entryAccession).stream()
+                .filter(annotation -> annotation.isSpecificForIsoform(isoformAccession))
+                .collect(Collectors.toList());
+
+        Overview overview = overviewService.findOverviewByEntry(entryAccession);
+
+		return new IsoformPEFFHeaderBuilder(findIsoform(isoformAccession), isoformAnnotations, overview,
+                terminologyService::findPsiModAccession, terminologyService::findPsiModName)
+                .withEverything()
+                .build();
 	}
 
 	private class SynonymFunction implements Function<EntityName, String> {

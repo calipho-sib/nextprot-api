@@ -1,14 +1,14 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class FamilyDaoIntegrationTest extends CoreUnitBaseTest {
@@ -35,7 +35,7 @@ public class FamilyDaoIntegrationTest extends CoreUnitBaseTest {
 	public void shouldReturn_1_Parent_Family() {
  		List<Family> families = familyDao.findFamilies("NX_Q3SY69");
  		Long familyId = families.get(0).getFamilyId();
- 		Family fam = familyDao.findParentOfFamilyId(familyId);
+ 		Family fam = familyDao.findParentOfFamilyId(64506L);
 		assertTrue(fam.getAccession()!=null);
 		assertTrue(fam.getDescription()==null); // always null (region comes from annotation)
 		assertTrue(fam.getName()!=null);

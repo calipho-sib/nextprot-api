@@ -1,7 +1,7 @@
 package org.nextprot.api.core.domain.publication;
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
 import java.util.ArrayList;

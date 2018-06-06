@@ -7,11 +7,11 @@ cv:$StringUtils.slug($terminology.getAccession()) a :$terminology.getOntology();
   :childOf cv:$StringUtils.slug($ancestor);
 #end  
 #end
-#if($terminology.getSameAs())
+#if($terminology.getACsOfRelatedTerms())
 ## we add the term itself to make the query  in one shot   
   :related cv:$StringUtils.slug($terminology.getAccession());
-#foreach($sameas in $terminology.getSameAs())
-  :related cv:$StringUtils.slug($sameas);
+#foreach($termAc in $terminology.getACsOfRelatedTerms())
+  :related cv:$StringUtils.slug($termAc);
 #end  
 #end
   .      

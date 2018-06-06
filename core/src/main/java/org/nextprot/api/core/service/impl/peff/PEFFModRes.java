@@ -2,7 +2,6 @@ package org.nextprot.api.core.service.impl.peff;
 
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.ArrayList;
@@ -20,16 +19,16 @@ public class PEFFModRes extends PEFFPTMInformation {
     private final List<PEFFPTMInformation> formatterList;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    PEFFModRes(Entry entry, String isoformAccession, List<Annotation> unmappedUniprotModAnnotations) {
+    PEFFModRes(String isoformAccession, List<Annotation> isoformAnnotations, List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(entry, isoformAccession, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
+        super(isoformAccession, isoformAnnotations, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
                 Key.MOD_RES);
 
         formatterList = new ArrayList<>();
 
-        formatterList.add(new PEFFGlycosylationOrSelenoCysteine(entry, isoformAccession));
-        formatterList.add(new PEFFDisulfideBond(entry, isoformAccession));
-        formatterList.add(new PEFFNonMappingModResPsi(entry, isoformAccession));
+        formatterList.add(new PEFFGlycosylationOrSelenoCysteine(isoformAccession, isoformAnnotations));
+        formatterList.add(new PEFFDisulfideBond(isoformAccession, isoformAnnotations));
+        formatterList.add(new PEFFNonMappingModResPsi(isoformAccession, isoformAnnotations));
 
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
     }
@@ -38,7 +37,7 @@ public class PEFFModRes extends PEFFPTMInformation {
 
         for (PEFFPTMInformation information : formatterList) {
 
-            if (information.doHandleAnnotation(annotation)) {
+            if (information.selectAnnotation(annotation)) {
                 return information;
             }
         }
@@ -65,9 +64,9 @@ public class PEFFModRes extends PEFFPTMInformation {
     }
 
     @Override
-    protected List<Annotation> selectAnnotation() {
+    protected List<Annotation> filterAnnotation(String isoformAccession) {
 
-        List<Annotation> selectedAnnotations = super.selectAnnotation();
+        List<Annotation> selectedAnnotations = super.filterAnnotation(isoformAccession);
 
         selectedAnnotations.addAll(unmappedUniprotModAnnotations);
 
@@ -78,9 +77,9 @@ public class PEFFModRes extends PEFFPTMInformation {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.GLYCOSYLATION_SITE, AnnotationCategory.SELENOCYSTEINE);
 
-        private PEFFGlycosylationOrSelenoCysteine(Entry entry, String isoformAccession) {
+        private PEFFGlycosylationOrSelenoCysteine(String isoformAccession, List<Annotation> isoformAnnotations) {
 
-            super(entry, isoformAccession, ANNOTATION_CATEGORIES, Key.MOD_RES);
+            super(isoformAccession, isoformAnnotations, ANNOTATION_CATEGORIES, Key.MOD_RES);
         }
 
         @Override
@@ -100,9 +99,9 @@ public class PEFFModRes extends PEFFPTMInformation {
 
         static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.DISULFIDE_BOND);
 
-        private PEFFDisulfideBond(Entry entry, String isoformAccession) {
+        private PEFFDisulfideBond(String isoformAccession, List<Annotation> isoformAnnotations) {
 
-            super(entry, isoformAccession, ANNOTATION_CATEGORIES, Key.MOD_RES);
+            super(isoformAccession, isoformAnnotations, ANNOTATION_CATEGORIES, Key.MOD_RES);
         }
 
         @Override
@@ -142,9 +141,9 @@ public class PEFFModRes extends PEFFPTMInformation {
 
     private static class PEFFNonMappingModResPsi extends PEFFPTMInformation {
 
-        PEFFNonMappingModResPsi(Entry entry, String isoformAccession) {
+        PEFFNonMappingModResPsi(String isoformAccession, List<Annotation> isoformAnnotations) {
 
-            super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE,
+            super(isoformAccession, isoformAnnotations, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE,
                     AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE), Key.MOD_RES);
         }
 

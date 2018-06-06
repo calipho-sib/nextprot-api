@@ -2,12 +2,14 @@ package org.nextprot.api.web.service;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,22 +46,20 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 		String entryAC = "NX_P02649";
 		Entry originalEntry = entryBuilderService.build(EntryConfig.newConfig(entryAC).withEverything());
 
-		Entry filteredEntry;
-		
-		filteredEntry = entryPageService.filterXrefInPageView(entryAC, "sequence");
-		Assert.assertTrue(originalEntry.getXrefs().size() > filteredEntry.getXrefs().size());
+        List<DbXref> xrefs = entryPageService.extractXrefForPageView(entryAC, "sequence");
+		Assert.assertTrue(originalEntry.getXrefs().size() > xrefs.size());
 		// uniprot xref should be present
 		Assert.assertTrue(
-				filteredEntry.getXrefs().stream().anyMatch(x -> 
+                xrefs.stream().anyMatch(x ->
 					x.getDatabaseName().equals("UniProt") && 
 					x.getAccession().equals(originalEntry.getUniprotName()))
 		);
 
-		filteredEntry = entryPageService.filterXrefInPageView(entryAC, "expression");
-		Assert.assertTrue(originalEntry.getXrefs().size() > filteredEntry.getXrefs().size());
+        xrefs = entryPageService.extractXrefForPageView(entryAC, "expression");
+		Assert.assertTrue(originalEntry.getXrefs().size() > xrefs.size());
 		// uniprot xref should NOT be present
 		Assert.assertFalse(
-				filteredEntry.getXrefs().stream().anyMatch(x -> 
+                xrefs.stream().anyMatch(x ->
 					x.getDatabaseName().equals("UniProt") && 
 					x.getAccession().equals(originalEntry.getUniprotName()))
 		);
@@ -69,8 +69,8 @@ public class EntryPageServiceTest extends WebIntegrationBaseTest {
 	public void proteomicPageShouldFilterPhosphoSitePlusDb() {
 
 		String entryAC = "NX_P52701";
-		Entry filteredEntry = entryPageService.filterXrefInPageView(entryAC, "proteomics");
-		Assert.assertTrue(filteredEntry.getXrefs().stream()
+		List<DbXref> xrefs = entryPageService.extractXrefForPageView(entryAC, "proteomics");
+		Assert.assertTrue(xrefs.stream()
                 .anyMatch(x -> x.getDatabaseName().equals("PhosphoSitePlus"))
         );
 	}

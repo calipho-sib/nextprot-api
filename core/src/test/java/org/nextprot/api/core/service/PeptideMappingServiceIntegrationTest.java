@@ -54,7 +54,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 	}
 	
 
-    //@Ignore
+    @Ignore
     @Test
 	public void shouldComputeHTML4Highlight() throws FileNotFoundException {
 		

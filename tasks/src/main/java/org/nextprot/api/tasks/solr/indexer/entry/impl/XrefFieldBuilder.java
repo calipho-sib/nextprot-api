@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.nextprot.api.core.utils.dbxref.XrefDatabase.*;
+import static org.nextprot.api.core.service.dbxref.XrefDatabase.*;
 
 @EntryFieldBuilder
 public class XrefFieldBuilder extends FieldBuilder {

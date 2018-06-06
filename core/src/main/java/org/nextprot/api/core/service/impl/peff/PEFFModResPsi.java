@@ -1,7 +1,6 @@
 package org.nextprot.api.core.service.impl.peff;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.EnumSet;
@@ -24,10 +23,12 @@ public class PEFFModResPsi extends PEFFPTMInformation {
     private final Function<String, Optional<String>> uniprotModToPsiName;
     private final List<Annotation> unmappedUniprotModAnnotations;
 
-    public PEFFModResPsi(Entry entry, String isoformAccession, Function<String, Optional<String>> uniprotModToPsi, Function<String, Optional<String>> uniprotModToPsiName,
+    public PEFFModResPsi(String isoformAccession, List<Annotation> isoformAnnotations,
+                         Function<String, Optional<String>> uniprotModToPsi,
+                         Function<String, Optional<String>> uniprotModToPsiName,
                          List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(entry, isoformAccession, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
+        super(isoformAccession, isoformAnnotations, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
                 Key.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
