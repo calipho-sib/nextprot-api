@@ -163,8 +163,8 @@ public class ExportController {
     }
 
     @ApiMethod(path = "/export/entry/{entry}", verb = ApiVerb.GET, description = "Export isoforms of a given neXtProt entry",
-            produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE, MediaType.APPLICATION_XML_VALUE} )
-    @RequestMapping(value = "/export/entry/{entry}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE, MediaType.APPLICATION_XML_VALUE })
+            produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE, MediaType.APPLICATION_XML_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE} )
+    @RequestMapping(value = "/export/entry/{entry}", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE, MediaType.APPLICATION_XML_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE })
     public void exportEntry(HttpServletRequest request,
             @ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
             @PathVariable("entry") String entryName, HttpServletResponse response) {
