@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -185,14 +186,18 @@ public class EntryController {
 		return entryPageService.hasContentForPageDisplay(entryName);
 	}
 
-	@RequestMapping("/page-view/{view}/{entry}/xref")
+	@RequestMapping(value = "/page-view/{view}/{entry}/xref", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-	public Entry getEntryPageViewXref(@PathVariable("view") String viewName, @PathVariable("entry") String entryName) {
+	public Map<String, Object> getEntryPageViewXref(@PathVariable("view") String viewName, @PathVariable("entry") String entryName) {
+
+	    Map<String, Object> map = new HashMap<>();
 
 	    Entry entry = new Entry(entryName);
         entry.setXrefs(entryPageService.extractXrefForPageView(entryName, viewName));
 
-		return entry;
+        map.put("entry", entry);
+
+		return map;
 	}
 
 	@ApiMethod(path = "/entry/{entry}/stats", verb = ApiVerb.GET, description = "Reports neXtProt entry stats", produces = { MediaType.APPLICATION_JSON_VALUE } )
