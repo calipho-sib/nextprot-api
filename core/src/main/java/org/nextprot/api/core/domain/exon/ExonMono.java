@@ -1,22 +1,21 @@
 package org.nextprot.api.core.domain.exon;
 
+import org.nextprot.api.core.domain.GeneRegion;
+
 public class ExonMono extends CategorizedExon implements FirstCodingExon, LastCodingExon {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private int startPosition;
 	private int stopPosition;
-
-	public ExonMono(Exon exon) {
-
-		super(exon, ExonCategory.MONO);
-	}
+    private GeneRegion codingGeneRegion;
 
 	public ExonMono(Exon exon, int startPosition, int stopPosition) {
 
-		this(exon);
+        super(exon, ExonCategory.MONO);
 		this.startPosition = startPosition;
 		this.stopPosition = stopPosition;
+		this.codingGeneRegion = new GeneRegion(exon.getGeneRegion().getGeneName(), startPosition, stopPosition);
 	}
 
 	@Override
@@ -28,4 +27,10 @@ public class ExonMono extends CategorizedExon implements FirstCodingExon, LastCo
 	public int getStopPosition() {
 		return stopPosition;
 	}
+
+    @Override
+    public GeneRegion getCodingGeneRegion() {
+
+        return codingGeneRegion;
+    }
 }

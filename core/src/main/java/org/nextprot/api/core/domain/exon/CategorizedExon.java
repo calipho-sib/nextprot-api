@@ -1,11 +1,10 @@
 package org.nextprot.api.core.domain.exon;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.GeneRegion;
 
-public class CategorizedExon implements Exon {
-
-	private static final long serialVersionUID = 1L;
+public abstract class CategorizedExon implements Exon {
 
 	private Exon exon;
 	private ExonCategory exonCategory;
@@ -24,10 +23,15 @@ public class CategorizedExon implements Exon {
                 return new ExonStart(exon, startPositionIsoformOnGene);
             case STOP:
                 return new ExonStop(exon, endPositionIsoformOnGene);
+            case CODING:
+                return new CodingExon(exon);
             case MONO:
                 return new ExonMono(exon, startPositionIsoformOnGene, endPositionIsoformOnGene);
+            case NOT_CODING:
+            case STOP_ONLY:
+                return new NotCodingExon(exon, exonCategory);
             default:
-                return new CategorizedExon(exon, exonCategory);
+                throw new NextProtException("unknown exon category "+exonCategory);
         }
     }
 
@@ -60,7 +64,17 @@ public class CategorizedExon implements Exon {
 		return exon.getGeneRegion();
 	}
 
-	@Override
+    /**
+     * @return the coding gene region or null if non coding
+     */
+    abstract public GeneRegion getCodingGeneRegion();
+
+    public boolean isCodingExon() {
+
+        return exonCategory.isCoding();
+    }
+
+    @Override
 	public AminoAcid getFirstAminoAcid() {
 		return exon.getFirstAminoAcid();
 	}
