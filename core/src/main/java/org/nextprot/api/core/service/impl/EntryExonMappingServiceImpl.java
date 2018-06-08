@@ -48,6 +48,8 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
 		if (gm.isPresent()) {
 
+            final boolean allBadQualityMappings = allBadQualityMappings(gm.get());
+
 			gm.get().getIsoformGeneMappings().stream()
                     .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 					.peek(igm ->
@@ -61,7 +63,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
-						GeneRegion gr = exon.getGeneRegion();
+						GeneRegion gr = (allBadQualityMappings) ? exon.getCodingGeneRegion(): exon.getGeneRegion();
 
 						exons.computeIfAbsent(gr, k -> new HashMap<>())
 								.put(exon.getIsoformName(), exon);
@@ -80,4 +82,11 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
         return mapping;
 	}
+
+    private boolean allBadQualityMappings(GenomicMapping gm) {
+
+	    return gm.getIsoformGeneMappings().stream()
+                .map(igm -> igm.getTranscriptGeneMappings().get(0))
+                .allMatch(tgm -> "BRONZE".equals(tgm.getQuality()));
+    }
 }
