@@ -84,6 +84,15 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_O94759");
 
         Assert.assertTrue(exonMapping.getMappedIsoformInfos().values().stream().allMatch(map -> map.containsKey("quality")));
+        Assert.assertFalse(exonMapping.isLowQualityMappings());
+    }
+
+    @Test
+    public void testNX_Q07157ExonMapping() {
+
+        ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_Q07157");
+
+        Assert.assertTrue(exonMapping.isLowQualityMappings());
     }
 
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {
