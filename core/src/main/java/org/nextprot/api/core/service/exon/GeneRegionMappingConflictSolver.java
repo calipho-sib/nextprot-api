@@ -1,27 +1,26 @@
 package org.nextprot.api.core.service.exon;
 
 import org.nextprot.api.core.domain.GeneRegion;
+import org.nextprot.api.core.domain.exon.SimpleExon;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * This class resolve the potential conflicts between GeneRegion mapped from transcript and from isoform
- */
-public class GeneRegionMappingConflictSolver {
 
-    private final List<GeneRegion> transcriptToGeneMappings;
-    private final List<GeneRegion> isoformToGeneMappings;
+class GeneRegionMappingConflictSolver extends ExonMappingConflictSolver {
 
-    public GeneRegionMappingConflictSolver(List<GeneRegion> transcriptToGeneMappings, List<GeneRegion> isoformToGeneMappings) {
+    private final Map<Integer, Integer> transcriptToGeneMappingsIndices = new HashMap<>();
 
-        this.transcriptToGeneMappings = transcriptToGeneMappings;
-        this.isoformToGeneMappings = isoformToGeneMappings;
+    GeneRegionMappingConflictSolver(String isoformName, List<SimpleExon> exonsFromEnsembl, List<GeneRegion> isoformToGeneMappings) {
+
+        super(isoformName, exonsFromEnsembl, isoformToGeneMappings);
     }
 
-    public List<GeneRegion> resolveConflicts(Map<Integer, Integer> transcriptToGeneMappingsIndices) {
+    @Override
+    protected List<GeneRegion> resolveConflicts() {
 
         List<GeneRegion> geneRegions = new ArrayList<>();
 
@@ -48,6 +47,18 @@ public class GeneRegionMappingConflictSolver {
         }
 
         return geneRegions;
+    }
+
+    @Override
+    protected boolean foundGeneRegion(List<GeneRegion> validatedGeneRegions,int geneRegionIndex) {
+
+        return transcriptToGeneMappingsIndices.containsKey(geneRegionIndex);
+    }
+
+    @Override
+    protected SimpleExon getEnsemblExon(List<GeneRegion> validatedGeneRegions,int geneRegionIndex) {
+
+        return exonsFromEnsembl.get(transcriptToGeneMappingsIndices.get(geneRegionIndex));
     }
 
     private boolean isCodingRegion(GeneRegion geneRegion) {
