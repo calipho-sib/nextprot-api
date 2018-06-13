@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.exon;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.AminoAcid;
 import org.nextprot.api.core.domain.GeneRegion;
@@ -69,9 +70,10 @@ public abstract class CategorizedExon implements Exon {
      */
     abstract public GeneRegion getCodingGeneRegion();
 
-    public boolean isCodingExon() {
+    @JsonIgnore
+    public boolean isStopExon() {
 
-        return exonCategory.isCoding();
+        return exonCategory == ExonCategory.STOP || exonCategory == ExonCategory.STOP_ONLY;
     }
 
     @Override
