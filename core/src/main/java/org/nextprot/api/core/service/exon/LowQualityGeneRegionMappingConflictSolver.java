@@ -55,15 +55,13 @@ class LowQualityGeneRegionMappingConflictSolver extends ExonMappingConflictSolve
 
         Map<GeneRegion, List<GeneRegion>> transcriptToIsoMappings = new HashMap<>();
 
-        for (int i=0 ; i<transcriptToGeneMappings.size() ; i++) {
-
-            GeneRegion transcriptToGeneRegion = transcriptToGeneMappings.get(i);
+        for (GeneRegion transcriptToGeneRegion : transcriptToGeneMappings) {
 
             List<GeneRegion> mappingIsoRegions = new ArrayList<>();
 
             transcriptToIsoMappings.put(transcriptToGeneRegion, mappingIsoRegions);
 
-            for (int j=0 ; j<isoformToGeneMappings.size() ; j++) {
+            for (int j = 0; j < isoformToGeneMappings.size(); j++) {
 
                 GeneRegion isoToGeneRegion = isoformToGeneMappings.get(j);
 
@@ -73,7 +71,7 @@ class LowQualityGeneRegionMappingConflictSolver extends ExonMappingConflictSolve
                 ISOFORM     ---------[ A ]-[B]----------
                 => 1 -> [A, B]
                  */
-                if (isoToGeneRegion.getFirstPosition() >= transcriptToGeneRegion.getFirstPosition() &&
+                if (j != isoformToGeneMappings.size()-1 && isoToGeneRegion.getFirstPosition() >= transcriptToGeneRegion.getFirstPosition() &&
                         isoToGeneRegion.getLastPosition() <= transcriptToGeneRegion.getLastPosition()) {
 
                     mappingIsoRegions.add(isoToGeneRegion);

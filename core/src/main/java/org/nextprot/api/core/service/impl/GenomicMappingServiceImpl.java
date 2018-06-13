@@ -7,8 +7,8 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.exon.SimpleExon;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.exon.ExonMappingConflictSolver;
 import org.nextprot.api.core.service.exon.ExonsAnalysisWithLogging;
-import org.nextprot.api.core.service.exon.GeneRegionMappingConflictSolver;
 import org.nextprot.api.core.service.exon.TranscriptExonsCategorizer;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		Map<String, Isoform> isoformsByName = isoformService.findIsoformsByEntryName(entryName).stream()
 				.collect(Collectors.toMap(Isoform::getIsoformAccession, Function.identity()));
 
-		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = new IsoformGeneMappingsFinder(isoformsByName).find();
+        IsoformGeneMappingsFinder finder = new IsoformGeneMappingsFinder(isoformsByName);
+
+		Map<Long, List<IsoformGeneMapping>> isoformGeneMappings = finder.find();
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName).stream()
 				.peek(genomicMapping -> {
@@ -54,6 +56,8 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
                                     .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 									.map(igm -> igm.getIsoformAccession())
 									.collect(Collectors.toList())));
+
+					genomicMapping.setLowQualityMappings(finder.isLowQualityMappings());
 				})
 				.collect(Collectors.toList());
 
@@ -74,12 +78,14 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		private final Map<String, Isoform> isoformsByName;
 		private final Map<String, List<IsoformGeneMapping>> isoformMappingsByIsoformName;
 		private final Map<String, List<TranscriptGeneMapping>> transcriptGeneMappingsByIsoformName;
+        private final boolean isLowQualityMappings;
 
 		private IsoformGeneMappingsFinder(Map<String, Isoform> isoformsByName) {
 
 			this.isoformsByName = isoformsByName;
-			this.isoformMappingsByIsoformName = geneDAO.getIsoformMappingsByIsoformName(isoformsByName.keySet());
-			this.transcriptGeneMappingsByIsoformName = geneDAO.findTranscriptMappingsByIsoformName(isoformsByName.keySet());
+			isoformMappingsByIsoformName = geneDAO.getIsoformMappingsByIsoformName(isoformsByName.keySet());
+			transcriptGeneMappingsByIsoformName = geneDAO.findTranscriptMappingsByIsoformName(isoformsByName.keySet());
+            isLowQualityMappings = transcriptGeneMappingsByIsoformName.values().stream().flatMap(Collection::stream).allMatch(tgm -> "BRONZE".equals(tgm.getQuality()));
 		}
 
 		Map<Long, List<IsoformGeneMapping>> find() {
@@ -118,21 +124,14 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 		private List<SimpleExon> buildExonListFromTranscriptAndIsoformGeneMapping(TranscriptGeneMapping transcriptGeneMapping, List<GeneRegion> isoformGeneMappings) {
 
-			Map<Integer, Integer> transcriptToGeneMappingsIndices = new HashMap<>();
-
 			List<SimpleExon> exonsFromEnsembl = findExonsAlignedToTranscriptAccordingToEnsembl(
-					transcriptGeneMapping.getIsoformName(),
-					transcriptGeneMapping.getReferenceGeneUniqueName(),
-					transcriptGeneMapping.getName(),
-					transcriptGeneMapping.getQuality());
+					transcriptGeneMapping.getIsoformName(), transcriptGeneMapping.getReferenceGeneUniqueName(),
+                    transcriptGeneMapping.getName(), transcriptGeneMapping.getQuality()
+            );
 
-			List<GeneRegion> validatedGeneRegions = new GeneRegionMappingConflictSolver(
-					exonsFromEnsembl.stream()
-							.map(exon -> exon.getGeneRegion())
-							.collect(Collectors.toList()), isoformGeneMappings
-			).resolveConflicts(transcriptToGeneMappingsIndices);
-
-			return buildExonList(validatedGeneRegions, exonsFromEnsembl, transcriptToGeneMappingsIndices, transcriptGeneMapping.getIsoformName());
+            return ExonMappingConflictSolver.newConflictSolver(transcriptGeneMapping.getIsoformName(),
+                    exonsFromEnsembl, isoformGeneMappings, isLowQualityMappings
+            ).solveMapping();
 		}
 
 		private List<SimpleExon> findExonsAlignedToTranscriptAccordingToEnsembl(String isoformAccession, String refGeneUniqueName, String transcriptAccession, String quality) {
@@ -172,33 +171,8 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			}
 		}
 
-		/**
-		 * Build the list of exon composed of ensembl exons and our mapping exons
-		 */
-		private List<SimpleExon> buildExonList(List<GeneRegion> geneRegions, List<SimpleExon> exonsFromEnsembl, Map<Integer, Integer> transcriptToGeneMappingsIndices, String isoformName) {
-
-			List<SimpleExon> exons = new ArrayList<>(geneRegions.size());
-
-			for(int i = 0; i < geneRegions.size(); i++) {
-
-				SimpleExon exon;
-
-				if (transcriptToGeneMappingsIndices.containsKey(i)) {
-					exon = exonsFromEnsembl.get(transcriptToGeneMappingsIndices.get(i));
-				}
-				else {
-					exon = new SimpleExon();
-					exon.setGeneRegion(geneRegions.get(i));
-					exon.setTranscriptName(exonsFromEnsembl.get(0).getTranscriptName());
-				}
-
-				exon.setIsoformName(isoformName);
-				exon.setRank(i + 1);
-
-				exons.add(exon);
-			}
-			return exons;
-		}
-
+		boolean isLowQualityMappings() {
+            return isLowQualityMappings;
+        }
 	}
 }
