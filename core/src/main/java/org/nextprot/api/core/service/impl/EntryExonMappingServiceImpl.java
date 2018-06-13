@@ -32,25 +32,18 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
         List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 
-        String canonicalIsoformAccession = isoforms.stream()
-                .filter(isoform -> isoform.isCanonicalIsoform())
-                .findFirst()
-                .orElseThrow(() -> new NextProtException("could not find canonical isoform accession for entry "+ entryName))
-                .getIsoformAccession();
-
 		ExonMapping mapping = new ExonMapping();
 
-		Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
-
-		Optional<GenomicMapping> gm = genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
+		Optional<GenomicMapping> ogm = genomicMappingService.findGenomicMappingsByEntryName(entryName).stream()
                 .filter(genomicMapping -> genomicMapping.isChosenForAlignment())
                 .findFirst();
 
-		if (gm.isPresent()) {
+		if (ogm.isPresent()) {
 
-            mapping.setLowQualityMappings(gm.get().isLowQualityMappings());
+            GenomicMapping gm = ogm.get();
+            final Map<GeneRegion, Map<String, CategorizedExon>> categorizedExons = new HashMap<>();
 
-			gm.get().getIsoformGeneMappings().stream()
+			gm.getIsoformGeneMappings().stream()
                     .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
 					.peek(igm ->
                         mapping.setIsoformInfos(igm.getIsoformAccession(),
@@ -63,23 +56,33 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 					.map(igm -> igm.getTranscriptGeneMappings().get(0).getExons())
 					.flatMap(e -> e.stream())
 					.forEach(exon -> {
-						GeneRegion gr = (mapping.isLowQualityMappings()) ? exon.getCodingGeneRegion(): exon.getGeneRegion();
+                        GeneRegion gr = (gm.isLowQualityMappings() && !exon.isStopExon()) ? exon.getCodingGeneRegion() : exon.getGeneRegion();
 
-						exons.computeIfAbsent(gr, k -> new HashMap<>())
+                        categorizedExons.computeIfAbsent(gr, k -> new HashMap<>())
 								.put(exon.getIsoformName(), exon);
 					});
 
-			mapping.setExons(exons);
-            mapping.setNonMappedIsoforms(gm.get().getNonMappingIsoforms());
-		}
+			mapping.setExons(categorizedExons);
+            mapping.setNonMappedIsoforms(gm.getNonMappingIsoforms());
+            mapping.setLowQualityMappings(gm.isLowQualityMappings());
+        }
 		else {
             mapping.setNonMappedIsoforms(isoforms.stream()
                 .map(isoform -> isoform.getIsoformAccession())
                 .collect(Collectors.toList()));
         }
 
-        mapping.calcSortedMappedIsoformKeys(canonicalIsoformAccession);
+        mapping.calcSortedMappedIsoformKeys(getCanonicalIsoform(isoforms)
+                .orElseThrow(() -> new NextProtException("could not find canonical isoform accession for entry "+ entryName))
+                .getIsoformAccession());
 
         return mapping;
 	}
+
+	private Optional<Isoform> getCanonicalIsoform(List<Isoform> isoforms) {
+
+	    return isoforms.stream()
+                .filter(isoform -> isoform.isCanonicalIsoform())
+                .findFirst();
+    }
 }
