@@ -48,7 +48,7 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
 		if (gm.isPresent()) {
 
-            mapping.setLowQualityMappings(allBadQualityMappings(gm.get()));
+            mapping.setLowQualityMappings(gm.get().isLowQualityMappings());
 
 			gm.get().getIsoformGeneMappings().stream()
                     .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
@@ -82,11 +82,4 @@ public class EntryExonMappingServiceImpl implements EntryExonMappingService {
 
         return mapping;
 	}
-
-    private boolean allBadQualityMappings(GenomicMapping gm) {
-
-	    return gm.getIsoformGeneMappings().stream()
-                .map(igm -> igm.getTranscriptGeneMappings().get(0))
-                .allMatch(tgm -> "BRONZE".equals(tgm.getQuality()));
-    }
 }
