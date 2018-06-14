@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GenomicMapping implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 	private long geneSeqId;
 	private String database;
@@ -15,6 +15,7 @@ public class GenomicMapping implements Serializable {
 	private List<IsoformGeneMapping> isoformGeneMappings;
 	private List<String> nonMappingIsoforms = new ArrayList<>();
 	private boolean chosenForAlignment;
+    private boolean lowQualityMappings;
 
 	public GenomicMapping() {
 
@@ -69,4 +70,12 @@ public class GenomicMapping implements Serializable {
 	public void setNonMappingIsoforms(List<String> nonMappingIsoforms) {
 		this.nonMappingIsoforms = nonMappingIsoforms;
 	}
+
+    public boolean isLowQualityMappings() {
+        return lowQualityMappings;
+    }
+
+    public void setLowQualityMappings(boolean lowQualityMappings) {
+        this.lowQualityMappings = lowQualityMappings;
+    }
 }
