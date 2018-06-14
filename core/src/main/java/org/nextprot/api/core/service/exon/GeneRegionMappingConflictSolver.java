@@ -50,7 +50,7 @@ class GeneRegionMappingConflictSolver extends ExonMappingConflictSolver {
     }
 
     @Override
-    protected boolean foundGeneRegion(List<GeneRegion> validatedGeneRegions,int geneRegionIndex) {
+    protected boolean foundEnsemblGeneRegion(List<GeneRegion> validatedGeneRegions, int geneRegionIndex) {
 
         return transcriptToGeneMappingsIndices.containsKey(geneRegionIndex);
     }

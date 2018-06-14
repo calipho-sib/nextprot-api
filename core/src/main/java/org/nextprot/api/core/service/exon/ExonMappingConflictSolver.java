@@ -36,7 +36,7 @@ public abstract class ExonMappingConflictSolver {
     }
 
     protected abstract List<GeneRegion> resolveConflicts();
-    protected abstract boolean foundGeneRegion(List<GeneRegion> validatedGeneRegions, int geneRegionIndex);
+    protected abstract boolean foundEnsemblGeneRegion(List<GeneRegion> validatedGeneRegions, int geneRegionIndex);
     protected abstract SimpleExon getEnsemblExon(List<GeneRegion> validatedGeneRegions, int geneRegionIndex);
 
     /**
@@ -52,7 +52,7 @@ public abstract class ExonMappingConflictSolver {
 
             SimpleExon exon;
 
-            if (foundGeneRegion(validatedGeneRegions, i)) {
+            if (foundEnsemblGeneRegion(validatedGeneRegions, i)) {
                 exon = getEnsemblExon(validatedGeneRegions, i);
             }
             else {

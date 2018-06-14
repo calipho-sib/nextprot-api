@@ -40,7 +40,7 @@ class LowQualityGeneRegionMappingConflictSolver extends ExonMappingConflictSolve
     }
 
     @Override
-    protected boolean foundGeneRegion(List<GeneRegion> validatedGeneRegions, int geneRegionIndex) {
+    protected boolean foundEnsemblGeneRegion(List<GeneRegion> validatedGeneRegions, int geneRegionIndex) {
 
         return geneRegionToEnsemblExon.containsKey(validatedGeneRegions.get(geneRegionIndex));
     }
