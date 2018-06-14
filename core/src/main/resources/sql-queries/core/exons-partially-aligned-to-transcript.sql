@@ -2,6 +2,7 @@
  * This is a particular case where there is not a 100% match between the mapping from exons to the transcript,
  * this query is only used when the mapping is classified as BRONZE
  */
+/* select sig.unique_name gene_name, sit.unique_name transcript_name, sie.unique_name exon, mp_ig.*, mp_eg.* */
 select sig.unique_name gene_name, sit.unique_name transcript_name, sie.unique_name exon, (ma_et.rank - 1) rank, (mp_eg.first_pos +1) as first_position, mp_eg.last_pos as last_position
   from nextprot.sequence_identifiers sii
        inner join nextprot.mapping_annotations ma_ig on (ma_ig.mapped_identifier_id = sii.identifier_id and ma_ig.cv_type_id = 8) -- mapping de l isoform sur le gene
@@ -21,6 +22,7 @@ select sig.unique_name gene_name, sit.unique_name transcript_name, sie.unique_na
    and sit.unique_name = :transcriptName
    and sig.unique_name = :geneName
    and sii.unique_name = :isoformName
+group by gene_name, transcript_name, exon, ma_et.rank, first_position, last_position
 order by gene_name, transcript_name, first_position
 
 /**

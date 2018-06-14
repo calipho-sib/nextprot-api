@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
+import org.nextprot.api.core.domain.exon.CategorizedExon;
 import org.nextprot.api.core.domain.exon.ExonMapping;
 import org.nextprot.api.core.service.EntryExonMappingService;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -84,6 +85,63 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_O94759");
 
         Assert.assertTrue(exonMapping.getMappedIsoformInfos().values().stream().allMatch(map -> map.containsKey("quality")));
+        Assert.assertFalse(exonMapping.isLowQualityMappings());
+    }
+
+    @Test
+    public void testIsoformNX_Q07157BronzeExonMappings() {
+
+        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_Q07157");
+
+        Assert.assertEquals(2, gml.get(0).getIsoformGeneMappings().size());
+
+        GenomicMapping gm = gml.get(0);
+
+        List<CategorizedExon> exonsForLong = gm.getIsoformGeneMappings().get(0).getTranscriptGeneMappings().get(0).getExons();
+        List<CategorizedExon> exonsForShort = gm.getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons();
+
+        Assert.assertEquals(28, exonsForLong.size());
+        Assert.assertEquals(27, exonsForShort.size());
+
+        Assert.assertEquals(27, exonsForLong.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(57, exonsForLong.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(2323, exonsForLong.get(27).getGeneRegion().getLength());
+
+        Assert.assertEquals(27, exonsForShort.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(57, exonsForShort.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(95, exonsForShort.get(26).getGeneRegion().getLength());
+    }
+
+    @Test
+    public void testNX_Q07157ExonMappingQualityShouldBeLow() {
+
+        ExonMapping exonMapping = entryExonMappingService.findExonMappingGeneXIsoformXShorterENST("NX_Q07157");
+
+        Assert.assertTrue(exonMapping.isLowQualityMappings());
+    }
+
+    @Test
+    public void testIsoformNX_P17405ExonMapping() {
+
+        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P17405");
+
+        Assert.assertEquals(2, gml.get(0).getIsoformGeneMappings().size());
+
+        GenomicMapping gm = gml.get(0);
+
+        List<CategorizedExon> exonsForIso1 = gm.getIsoformGeneMappings().get(0).getTranscriptGeneMappings().get(0).getExons();
+        List<CategorizedExon> exonsForIso4 = gm.getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons();
+
+        Assert.assertEquals(7, exonsForIso1.size());
+        Assert.assertEquals(7, exonsForIso4.size());
+
+        Assert.assertEquals(108, exonsForIso1.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(204, exonsForIso1.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(798, exonsForIso1.get(6).getGeneRegion().getLength());
+
+        Assert.assertEquals(108, exonsForIso4.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(204, exonsForIso4.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(581, exonsForIso4.get(6).getGeneRegion().getLength());
     }
 
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {

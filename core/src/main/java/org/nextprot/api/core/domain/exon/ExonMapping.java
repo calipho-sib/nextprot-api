@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ExonMapping implements Serializable {
 
-    private static final long serialVersionUID = 6L;
+    private static final long serialVersionUID = 7L;
 
     private Map<GeneRegion, Map<String, CategorizedExon>> exons = new HashMap<>();
     private List<String> sortedExonKeys = new ArrayList<>();
@@ -19,6 +19,7 @@ public class ExonMapping implements Serializable {
     private List<String> nonMappedIsoforms = new ArrayList<>();
     private List<Integer> startExonPositions = new ArrayList<>();
     private List<Integer> stopExonPositions = new ArrayList<>();
+    private boolean lowQualityMappings;
 
     public Map<GeneRegion, Map<String, CategorizedExon>> getExons() {
         return exons;
@@ -134,5 +135,13 @@ public class ExonMapping implements Serializable {
 
     public List<Integer> getStopExonPositions() {
         return stopExonPositions;
+    }
+
+    public boolean isLowQualityMappings() {
+        return lowQualityMappings;
+    }
+
+    public void setLowQualityMappings(boolean lowQualityMappings) {
+        this.lowQualityMappings = lowQualityMappings;
     }
 }
