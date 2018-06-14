@@ -2,7 +2,10 @@ package org.nextprot.api.web.controller;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -37,6 +40,20 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
         Assert.assertTrue(content.contains("\"description\" : \"Alcohol dehydrogenase\""));
     }
 
+    @Autowired
+    TerminologyService terminologyService;
+
+    @Test
+    public void shouldAllowToQueryWithPlusSymbol() throws Exception {
+
+        CvTerm term = terminologyService.findCvTermByAccession("EV:0300156+");
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/term/EV:0300156+").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"accession\" : \"EV:0300156 \""));
+    }
 
     @Test
     public void shouldAllowToQueryTissues() throws Exception {
@@ -56,7 +73,6 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                 .get("/term/TS-2178/descendant-graph.json?includeRelevantFor=true&depth=1").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-
         String content = result.getResponse().getContentAsString();
 
         int count = StringUtils.countOccurrencesOf(content, "accession");

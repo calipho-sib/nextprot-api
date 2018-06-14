@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 @Controller
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
@@ -149,6 +148,10 @@ public class TermController {
 		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
 		term = term.replace(".json", "").replace(".JSON", "");
 
+		//eVOC Development Stage
+		if(term.toUpperCase().startsWith("EV:")){
+			term = term.replace("+", " ");
+		}
 		return terminologyService.findCvTermByAccession(term);
 	}
 
