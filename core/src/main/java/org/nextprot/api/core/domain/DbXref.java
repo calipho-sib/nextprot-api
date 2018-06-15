@@ -1,20 +1,19 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Preconditions;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
 
-	private static final long serialVersionUID = 2316953378438971441L;
+	private static final long serialVersionUID = 2L;
 
 	@ApiObjectField(description = "The entry identifier referering this DbXref")
 	private String proteinAccessionReferer = "";
@@ -34,13 +33,14 @@ public class DbXref implements Serializable {
 	@ApiObjectField(description = "The url")
 	private String url;
 
+    @ApiObjectField(description = "The link url")
 	private String linkUrl;
 
 	@ApiObjectField(description = "The resolved url")
 	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
-	private List<DbXrefProperty> properties = new ArrayList<DbXrefProperty>();
+	private List<DbXrefProperty> properties = new ArrayList<>();
 
 	public Long getDbXrefId() {
 		return dbXrefId;
