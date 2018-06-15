@@ -39,14 +39,14 @@ inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id)
 	inner join nextprot.db_xrefs x2 on (txa.db_xref_id=x2.resource_id)
 	inner join nextprot.cv_databases db2 on (x2.cv_database_id=db2.cv_id)
 	inner join nextprot.cv_database_categories dbc2 on (db2.cv_category_id=dbc2.cv_id)
-	left join nextprot.cv_terms t2 on (x2.resource_id=t2.db_xref_id)
+	left join nextprot.cv_terms t2 on (x2.resource_id=t2.db_xref_id and t2.cv_status_id = 1)
 	left join nextprot.cv_term_categories tc2 on (t2.cv_category_id=tc2.cv_id)
 	where txa.cv_term_id=cv_terms.cv_id
 	union
 	select dbc2.cv_name as cat, db2.cv_name as db, x2.accession as ac, x2.resource_id as xref_id, db2.url, db2.link_url, coalesce(t2.cv_id,-1) as term_id
 	, coalesce(t2.cv_name,'') as term_name, coalesce(tc2.cv_display_name,'') as term_onto
 	from nextprot.cv_term_db_xref_assoc txa 
-	inner join nextprot.cv_terms t2 on (txa.cv_term_id=t2.cv_id)
+	inner join nextprot.cv_terms t2 on (txa.cv_term_id=t2.cv_id and t2.cv_status_id = 1)
 	inner join nextprot.cv_term_categories tc2 on (t2.cv_category_id=tc2.cv_id)
 	inner join nextprot.db_xrefs x2 on (t2.db_xref_id=x2.resource_id)
 	inner join nextprot.cv_databases db2 on (x2.cv_database_id=db2.cv_id)
