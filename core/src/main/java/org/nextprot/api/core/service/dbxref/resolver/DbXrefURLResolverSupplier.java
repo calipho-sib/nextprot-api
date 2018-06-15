@@ -28,12 +28,12 @@ public enum DbXrefURLResolverSupplier {
     EXPRESSION_ATLAS(XrefDatabase.EXPRESSION_ATLAS, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.EXPRESSION_ATLAS)),
     GENEVESTIGATOR(XrefDatabase.GENEVESTIGATOR,     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR)),
     GENEVISIBLE(XrefDatabase.GENEVISIBLE,           new GenevisibleXrefURLResolver()),
-    GERMONLINE(XrefDatabase.GERM_ONLINE,             new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
+    GERMONLINE(XrefDatabase.GERM_ONLINE,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
     HAMAP_RULE(XrefDatabase.HAMAP_RULE,             new ConstantXrefDatabasebURLResolver("http://hamap.expasy.org/")),
     HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver()),
     HSSP(XrefDatabase.HSSP,                         new HsspXrefURLResolver()),
     IFO(XrefDatabase.IFO,                           new JcrbXrefURLResolver()),
-    INTACT(XrefDatabase.INT_ACT,                     new IntactXrefURLResolver()),
+    INTACT(XrefDatabase.INT_ACT,                    new IntactXrefURLResolver()),
     JCRB(XrefDatabase.JCRB,                         new JcrbXrefURLResolver()),
     LOC(XrefDatabase.LOC,                 		    new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC)),
     MESH(XrefDatabase.MESH,                         new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.MESH)),
@@ -46,6 +46,7 @@ public enum DbXrefURLResolverSupplier {
     PROSITE(XrefDatabase.PROSITE,                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE)),
     PROSITE_PRORULE(XrefDatabase.PROSITE_PRORULE,   new ConstantXrefDatabasebURLResolver("http://prosite.expasy.org/")),
     PROTEOPEDIA(XrefDatabase.PROTEOPEDIA,           new DefaultDbXrefURLResolver()),
+    PSIMOD(XrefDatabase.PSIMOD, 					new PsiModXrefURLResolver()),
     REF_SEQ(XrefDatabase.REF_SEQ,                   new DefaultDbXrefURLResolver()),
     RULEBASE(XrefDatabase.RULEBASE,                 new RuleBaseXrefURLResolver()),
     SIGNOR(XrefDatabase.SIGNOR,                     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.SIGNOR)),
@@ -56,8 +57,7 @@ public enum DbXrefURLResolverSupplier {
     UNIPATHWAY(XrefDatabase.UNIPATHWAY,             new UnresolvedXrefURLResolver()),
     UNI_GENE(XrefDatabase.UNI_GENE,                 new UnigeneXrefURLResolver()),
     UNIPROT_CV(XrefDatabase.UNIPROT_CONTROL_VOC,    new UniprotControlVocabularyXrefURLResolver()),
-    WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver()),
-    PSIMOD(XrefDatabase.PSIMOD, 					new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PSIMOD))
+    WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver())
     ;
 
     private final XrefDatabase xrefDatabase;
