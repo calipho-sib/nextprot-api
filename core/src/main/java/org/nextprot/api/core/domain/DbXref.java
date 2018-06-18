@@ -33,11 +33,11 @@ public class DbXref implements Serializable {
 	@ApiObjectField(description = "The url")
 	private String url;
 
-    @ApiObjectField(description = "The link url")
-	private String linkUrl;
-
 	@ApiObjectField(description = "The resolved url")
 	private String resolvedUrl;
+
+    @ApiObjectField(description = "The link url")
+    private String linkUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
 	private List<DbXrefProperty> properties = new ArrayList<>();
@@ -102,14 +102,6 @@ public class DbXref implements Serializable {
 		this.url = new DbXrefURLResolverDelegate().getValidXrefURL(url, databaseName);
 	}
 
-	public String getLinkUrl() {
-		return linkUrl;
-	}
-
-	public void setLinkUrl(String linkUrl) {
-		this.linkUrl = linkUrl;
-	}
-
 	public String getResolvedUrl() {
 
 		if (resolvedUrl == null) {
@@ -125,6 +117,13 @@ public class DbXref implements Serializable {
 		return resolvedUrl;
 	}
 
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
+    }
 	public List<DbXrefProperty> getProperties() {
 		return properties;
 	}
