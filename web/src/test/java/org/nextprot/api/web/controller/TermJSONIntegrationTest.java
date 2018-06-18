@@ -2,17 +2,12 @@ package org.nextprot.api.web.controller;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
 
@@ -46,7 +41,6 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
     @Test
     public void shouldAllowToQueryWithPlusSymbol() throws Exception {
 
-        CvTerm term = terminologyService.findCvTermByAccession("EV:0300156+");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                 .get("/term/EV:0300156+").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
