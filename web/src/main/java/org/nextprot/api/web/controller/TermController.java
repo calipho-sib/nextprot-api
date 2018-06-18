@@ -146,7 +146,15 @@ public class TermController {
 
 		//Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
 		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
-		term = term.replace(".json", "").replace(".JSON", "");
+		term = term.toUpperCase().replace(".JSON", "");
+
+		// TODO: see with Daniel why he has discarded the test below (failing test TermJSONIntegrationTest.shouldAllowToQueryWithPlusSymbol())
+        //eVOC Development Stage
+        if(term.startsWith("EV:")){
+            term = term.replace("+", " ");
+        }
+        // TODO END
+
 		return terminologyService.findCvTermByAccession(term);
 	}
 
