@@ -53,4 +53,23 @@ public class IntGraphTest extends BaseIntGraphTest {
         Assert.assertEquals(2, graphRead.getTailNode(graphRead.getEdges()[1]));
         Assert.assertEquals(3, graphRead.getHeadNode(graphRead.getEdges()[1]));
     }
+
+
+    @Test
+    public void testCalcTreeHeight() throws DirectedGraph.NotATreeException {
+
+        IntGraph graph = (IntGraph) createGraph();
+        populateExampleTree(graph);
+
+        Assert.assertEquals(3, graph.calcHeight());
+    }
+
+    @Test(expected = DirectedGraph.CycleDetectedException.class)
+    public void testCalcTreeHeightCycle() throws DirectedGraph.NotATreeException {
+
+        IntGraph graph = (IntGraph) createGraph();
+        populateExampleGraphWithCycle(graph);
+
+        graph.calcHeight();
+    }
 }

@@ -8,6 +8,7 @@ import org.nextprot.api.commons.graph.IntGraph;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -254,6 +255,7 @@ public class CvTermGraph implements Serializable {
         private String label;
         private List<Node> nodes = new ArrayList<>();
         private List<Edge> edges = new ArrayList<>();
+        private Properties properties = new Properties();
 
         public String getLabel() {
             return label;
