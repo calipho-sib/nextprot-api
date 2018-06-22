@@ -258,7 +258,7 @@ public class CvTermGraph implements Serializable {
             view.addEdge(edge);
         }
 
-        view.addProperty("height", getHeight());
+        view.addProperty(View.HEIGHT, getHeight());
 
         return view;
     }
@@ -275,6 +275,8 @@ public class CvTermGraph implements Serializable {
     }
 
     public static class View {
+
+        public static String HEIGHT = "height";
 
         private String label;
         private List<Node> nodes = new ArrayList<>();
