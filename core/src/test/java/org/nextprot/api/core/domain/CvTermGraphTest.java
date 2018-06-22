@@ -10,10 +10,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -273,5 +270,37 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         Assert.assertTrue(sg.hasCvTermAccession("ECO:0000269"));
         Assert.assertTrue(sg.hasCvTermAccession("ECO:0001186"));
+    }
+
+    @Test
+    public void testHeightProperties() {
+
+        EnumSet<TerminologyCv> nonHierarchicalSet = EnumSet.of(
+                TerminologyCv.NciMetathesaurusCv,
+                TerminologyCv.NextprotDomainCv,
+                TerminologyCv.NextprotMetalCv,
+                TerminologyCv.NextprotProteinPropertyCv,
+                TerminologyCv.NextprotTopologyCv,
+                TerminologyCv.NonStandardAminoAcidCv,
+                TerminologyCv.OmimCv,
+                TerminologyCv.OrganelleCv,
+                TerminologyCv.SequenceOntologyCv,
+                TerminologyCv.UniprotDiseaseCv,
+                TerminologyCv.UniprotPtmCv,
+                TerminologyCv.UniprotSubcellularOrientationCv
+        );
+
+        for (TerminologyCv terminologyCv : TerminologyCv.values()) {
+
+            CvTermGraph graph = cvTermGraphService.findCvTermGraph(terminologyCv);
+
+            if (nonHierarchicalSet.contains(terminologyCv)) {
+
+                Assert.assertEquals(0, graph.getHeight());
+            }
+            else {
+                Assert.assertTrue(terminologyCv + " should be hierarchical", graph.getHeight()>0);
+            }
+        }
     }
 }

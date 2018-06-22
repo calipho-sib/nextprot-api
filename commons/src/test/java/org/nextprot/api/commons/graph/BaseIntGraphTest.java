@@ -257,4 +257,43 @@ abstract class BaseIntGraphTest {
         graph.addEdge(6, 5);
         graph.addEdge(6, 7);
     }
+
+    /*
+                1
+              /   \
+             2     3
+            / \   /|\
+           4   5 6 7 8
+          /
+         9
+    */
+    static void populateExampleTree(DirectedGraph graph) {
+
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(2, 4);
+        graph.addEdge(2, 5);
+        graph.addEdge(4, 9);
+        graph.addEdge(3, 6);
+        graph.addEdge(3, 7);
+        graph.addEdge(3, 8);
+    }
+
+    /*
+                1
+              /  \
+             2  - 3
+              \  /|\
+               5  7 8
+    */
+    static void populateExampleGraphWithCycle(DirectedGraph graph) {
+
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+        graph.addEdge(2, 5);
+        graph.addEdge(5, 3);
+        graph.addEdge(3, 2);
+        graph.addEdge(3, 7);
+        graph.addEdge(3, 8);
+    }
 }
