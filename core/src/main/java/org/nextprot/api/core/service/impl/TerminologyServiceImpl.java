@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.graph.DirectedGraph;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -20,12 +21,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
 
-	@Autowired
+    private final static Logger LOGGER = Logger.getLogger(TerminologyServiceImpl.class.getSimpleName());
+
+    @Autowired
 	private TerminologyDao terminologyDao;
 	@Autowired
 	private CvTermGraphService cvTermGraphService;
@@ -175,7 +179,19 @@ class TerminologyServiceImpl implements TerminologyService {
 		return path;
 	}
 
-	private Optional<String> findTermName(BufferedReader br) throws IOException {
+    @Override
+    @Cacheable("terminology-graph-is-hierarchical")
+    public boolean isHierarchical(TerminologyCv terminologyCv) {
+
+        try {
+            return cvTermGraphService.findCvTermGraph(terminologyCv).calcHeight() > 0;
+        } catch (DirectedGraph.NotATreeException e) {
+            LOGGER.warning(e.getMessage()+": "+terminologyCv);
+        }
+        return false;
+    }
+
+    private Optional<String> findTermName(BufferedReader br) throws IOException {
 
 		String line;
 

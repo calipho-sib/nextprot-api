@@ -3,6 +3,7 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
@@ -215,5 +216,38 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 		System.out.println(map.get("UniprotPtmCv"));
 	}
+
+	@Ignore
+    @Test
+    public void testIsHierarchical() {
+
+        EnumSet<TerminologyCv> nonHierarchicalSet = EnumSet.of(
+                TerminologyCv.NciMetathesaurusCv,
+                TerminologyCv.NextprotDomainCv,
+                TerminologyCv.NextprotMetalCv,
+                TerminologyCv.NextprotProteinPropertyCv,
+                TerminologyCv.NextprotTopologyCv,
+                TerminologyCv.NonStandardAminoAcidCv,
+                TerminologyCv.OmimCv,
+                TerminologyCv.OrganelleCv,
+                TerminologyCv.SequenceOntologyCv,
+                TerminologyCv.UniprotDiseaseCv,
+                TerminologyCv.UniprotPtmCv,
+                TerminologyCv.UniprotSubcellularOrientationCv
+        );
+
+        for (TerminologyCv terminologyCv : TerminologyCv.values()) {
+
+            boolean isHierarchical = terminologyService.isHierarchical(terminologyCv);
+
+            if (nonHierarchicalSet.contains(terminologyCv)) {
+
+                Assert.assertFalse(terminologyCv + " should not be hierarchical",isHierarchical);
+            }
+            else {
+                Assert.assertTrue(terminologyCv + " should be hierarchical", isHierarchical);
+            }
+        }
+    }
 }
 

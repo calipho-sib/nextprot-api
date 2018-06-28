@@ -94,9 +94,7 @@ public class TermController {
             @ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
             @PathVariable("terminology") String terminology) {
 
-        int height = (int) cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(terminology)).toView().getProperties().get(CvTermGraph.View.HEIGHT);
-
-        return Collections.singletonMap("is-hierarchical", height > 1);
+        return Collections.singletonMap("is-hierarchical", terminologyService.isHierarchical(TerminologyCv.getTerminologyOf(terminology)));
     }
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)

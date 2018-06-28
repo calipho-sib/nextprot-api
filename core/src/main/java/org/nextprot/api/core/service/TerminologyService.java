@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
@@ -119,4 +120,9 @@ public interface TerminologyService {
 	 * @param cvTermAccession
 	 */
 	List<CvTerm> getOnePathToRootTerm(String cvTermAccession);
+
+    /**
+     * @return true if the terminology is hierarchical
+     */
+    boolean isHierarchical(TerminologyCv terminologyCv);
 }
