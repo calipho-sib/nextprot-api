@@ -36,6 +36,15 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     @Test
+    public void testResolveCellosaurus() throws Exception {
+
+        DbXref xref = createDbXref("CVCL_7180", "Cellosaurus", "http://www.youpie.uk/whatever");
+
+        Assert.assertEquals("https://web.expasy.org/cellosaurus/CVCL_7180", resolver.resolve(xref));
+        Assert.assertEquals("https://web.expasy.org/cellosaurus/%s", xref.getLinkUrl());
+    }
+    
+    @Test
     public void testResolveExpressionAtlas() throws Exception {
 
         DbXref xref = createDbXref("AF009225", "ExpressionAtlas", "http://www.ebi.ac.uk/whatever");

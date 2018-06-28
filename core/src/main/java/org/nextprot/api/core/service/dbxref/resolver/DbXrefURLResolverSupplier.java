@@ -17,6 +17,7 @@ public enum DbXrefURLResolverSupplier {
 
     BGEE(XrefDatabase.BGEE,                         new BgeeXrefURLResolver()),
     BRENDA(XrefDatabase.BRENDA,                     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.BRENDA)),
+    CELLOSAURUS(XrefDatabase.CELLOSAURUS,           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CELLOSAURUS)),
     CGH_DB(XrefDatabase.CGH_DB,                     new CghDbArpXrefURLResolver()),
     CHITARS(XrefDatabase.CHITARS,                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),
     CLINVAR(XrefDatabase.CLINVAR,                   new ClinvarXrefURLResolver()),

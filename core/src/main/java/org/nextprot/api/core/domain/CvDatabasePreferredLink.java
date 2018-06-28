@@ -5,6 +5,7 @@ public enum CvDatabasePreferredLink {
 
 	BRENDA("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u"),
 	BRENDA_BTO("http://purl.obolibrary.org/obo/%s"),
+	CELLOSAURUS("https://web.expasy.org/cellosaurus/%s"),
 	CHITARS("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&human=1"),
 	CLINVAR_MUTATION( "http://www.ncbi.nlm.nih.gov/clinvar/%s"),
 	CLINVAR_GENE( "http://www.ncbi.nlm.nih.gov/clinvar/?term=%s"),
