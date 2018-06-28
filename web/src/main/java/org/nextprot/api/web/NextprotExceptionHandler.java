@@ -1,7 +1,6 @@
 package org.nextprot.api.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import net.sf.ehcache.CacheException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.InvalidClassException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -124,11 +124,11 @@ public class NextprotExceptionHandler {
 	}
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(CacheException.class)
+    @ExceptionHandler(InvalidClassException.class)
     @ResponseBody
-    public RestErrorResponse handle(CacheException ex) {
+    public RestErrorResponse handle(InvalidClassException ex) {
 
-        LOGGER.warn("Cache exception occurred " + ex.getLocalizedMessage());
+        LOGGER.warn("Invalid class exception occurred " + ex.getLocalizedMessage());
         return getResponseError(ex);
     }
 
