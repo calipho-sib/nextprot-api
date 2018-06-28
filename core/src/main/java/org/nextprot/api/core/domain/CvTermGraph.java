@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
@@ -8,9 +9,7 @@ import org.nextprot.api.commons.graph.IntGraph;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -32,7 +31,6 @@ public class CvTermGraph implements Serializable {
 
     private final TerminologyCv terminologyCv;
     protected final IntGraph graph;
-    private final int height;
 
     public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
@@ -44,8 +42,6 @@ public class CvTermGraph implements Serializable {
         graph = new IntGraph(terminologyCv.name() + " graph");
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
-
-        this.height = calcHeight(terminologyCv, graph);
     }
 
     CvTermGraph(TerminologyCv terminologyCv, IntGraph graph) {
@@ -58,19 +54,6 @@ public class CvTermGraph implements Serializable {
         if (graph.getGraphLabel().length() == 0) {
             graph.setGraphLabel(terminologyCv.name() + " graph");
         }
-
-        this.height = calcHeight(terminologyCv, graph);
-    }
-
-    private static int calcHeight(TerminologyCv terminologyCv, IntGraph graph) {
-
-        try {
-            return graph.calcHeight();
-        } catch (DirectedGraph.NotATreeException e) {
-            LOGGER.warning(e.getMessage()+": "+terminologyCv);
-        }
-
-        return 0;
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -235,10 +218,6 @@ public class CvTermGraph implements Serializable {
         return graph.getHeadNode(edge);
     }
 
-    public int getHeight() {
-        return height;
-    }
-
     public View toView() {
 
         View view = new View();
@@ -258,8 +237,6 @@ public class CvTermGraph implements Serializable {
             view.addEdge(edge);
         }
 
-        view.addProperty(View.HEIGHT, getHeight());
-
         return view;
     }
 
@@ -274,14 +251,17 @@ public class CvTermGraph implements Serializable {
         }
     }
 
-    public static class View {
+    @JsonIgnore
+    public int calcHeight() throws DirectedGraph.NotATreeException {
 
-        public static String HEIGHT = "height";
+        return graph.calcHeight();
+    }
+
+    public static class View {
 
         private String label;
         private List<Node> nodes = new ArrayList<>();
         private List<Edge> edges = new ArrayList<>();
-        private Map<String, Object> properties = new HashMap<>();
 
         public String getLabel() {
             return label;
@@ -305,15 +285,6 @@ public class CvTermGraph implements Serializable {
 
         public void addEdge(Edge edge) {
             this.edges.add(edge);
-        }
-
-        void addProperty(String name, Object value) {
-
-            properties.put(name, value);
-        }
-
-        public Map<String, Object> getProperties() {
-            return properties;
         }
 
         public static class Node {
