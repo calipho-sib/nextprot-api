@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.InvalidClassException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,6 +87,16 @@ public class NextprotExceptionHandler {
 		return getResponseError(ex);
 	}
 
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(Exception.class)
+	@ResponseBody
+	public RestErrorResponse handle(Exception ex) {
+		String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
+		LOGGER.error("unexpected error occurred:" + code + "\t" + ex.getLocalizedMessage());
+		ex.printStackTrace();
+		return getResponseErrorMsg("Oops something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
+	}
+
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(EntryNotFoundException.class)
 	@ResponseBody
@@ -119,37 +128,18 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseBody
 	public RestErrorResponse handle(AccessDeniedException ex) {
-		LOGGER.warn("Some error occurred " + ex.getLocalizedMessage());
+		LOGGER.warn("Some error occured " + ex.getLocalizedMessage());
 		return getResponseError(ex);
 	}
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(InvalidClassException.class)
-    @ResponseBody
-    public RestErrorResponse handle(InvalidClassException ex) {
-
-        LOGGER.warn("Invalid class exception occurred " + ex.getLocalizedMessage());
-        return getResponseError(ex);
-    }
 
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	@ResponseBody
 	public RestErrorResponse handle(DataIntegrityViolationException ex) {
-		LOGGER.warn("Data Integration violation occurred " + ex.getLocalizedMessage());
+		LOGGER.warn("Data Integration violation occured " + ex.getLocalizedMessage());
 		ex.printStackTrace();
 		return getResponseErrorMsg("conflict with another resource (try to use a different name)");
 	}
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    @ResponseBody
-    public RestErrorResponse handle(Exception ex) {
-        String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
-        LOGGER.error("unexpected error occurred:" + code + "\t" + ex.getLocalizedMessage());
-        ex.printStackTrace();
-        return getResponseErrorMsg("Oops something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
-    }
 
 	private static RestErrorResponse getResponseError(Throwable t) {
 		t.printStackTrace();
