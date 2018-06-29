@@ -1,10 +1,8 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.graph.DirectedGraph;
 import org.nextprot.api.commons.graph.IntGraph;
 
 import java.io.Serializable;
@@ -22,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class CvTermGraph implements Serializable {
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
 
@@ -249,12 +247,6 @@ public class CvTermGraph implements Serializable {
 
             super("CvTerm node with accession "+accession+" was not found in "+terminologyCv + " graph");
         }
-    }
-
-    @JsonIgnore
-    public int calcHeight() throws DirectedGraph.NotATreeException {
-
-        return graph.calcHeight();
     }
 
     public static class View {
