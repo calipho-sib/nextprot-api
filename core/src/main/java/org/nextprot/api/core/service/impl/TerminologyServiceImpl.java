@@ -20,12 +20,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
 
-	@Autowired
+    private final static Logger LOGGER = Logger.getLogger(TerminologyServiceImpl.class.getSimpleName());
+
+    @Autowired
 	private TerminologyDao terminologyDao;
 	@Autowired
 	private CvTermGraphService cvTermGraphService;
@@ -175,7 +178,7 @@ class TerminologyServiceImpl implements TerminologyService {
 		return path;
 	}
 
-	private Optional<String> findTermName(BufferedReader br) throws IOException {
+    private Optional<String> findTermName(BufferedReader br) throws IOException {
 
 		String line;
 

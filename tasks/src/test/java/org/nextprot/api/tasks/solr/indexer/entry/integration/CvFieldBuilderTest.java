@@ -81,4 +81,18 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		assertTrue(names.contains("Peptidase M2 family")); //family names
 
 	}
+
+
+
+	@Test
+	public void shouldWork() {
+
+		String entryName = "NX_P78536";
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().withAnnotations());
+
+		CVFieldBuilder cvfb = new CVFieldBuilder();
+		cvfb.setTerminologyService(terminologyService);
+		cvfb.initializeBuilder(entry);
+
+	}
 }

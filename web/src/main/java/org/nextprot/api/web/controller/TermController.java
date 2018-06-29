@@ -80,7 +80,7 @@ public class TermController {
 		return map;
 	}
 
-	@ApiMethod(path = "/terminology-graph/{terminology}", verb = ApiVerb.GET, description = "Gets the graph of terminology", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/terminology-graph/{terminology}", verb = ApiVerb.GET, description = "Get the graph of terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology-graph/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTermGraph.View> getTerminologyGraph(
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
@@ -88,6 +88,17 @@ public class TermController {
 
 		return Collections.singletonMap("terminology-graph", cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(terminology)).toView());
 	}
+
+    @ApiMethod(path = "/term/{term}/is-hierarchical-terminology", verb = ApiVerb.GET, description = "Tells if the terminology of the given term is hierarchical", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/term/{term}/is-hierarchical-terminology", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Boolean> isTermOntologyHierarchical(
+            @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+            @PathVariable("term") String term) {
+
+        CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+
+        return Collections.singletonMap("is-hierarchical-terminology", TerminologyCv.getTerminologyOf(cvTerm.getOntology()).isHierarchical());
+    }
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)

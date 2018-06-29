@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  */
 public class CvTermGraph implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 4L;
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
 
