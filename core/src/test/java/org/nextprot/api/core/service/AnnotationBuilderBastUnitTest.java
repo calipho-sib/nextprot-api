@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service;
 
-import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -8,8 +7,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
-
-import java.io.FileNotFoundException;
 
 public abstract class AnnotationBuilderBastUnitTest {
 
@@ -21,7 +18,7 @@ public abstract class AnnotationBuilderBastUnitTest {
 	protected MainNamesService mainNamesService;
 
 	@Before
-	public void init() throws FileNotFoundException, DataSetException {
+	public void init() {
 
 		MockitoAnnotations.initMocks(this);
 
@@ -31,6 +28,7 @@ public abstract class AnnotationBuilderBastUnitTest {
 		cvterm.setDescription("some description");
 
 		Mockito.when(terminologyService.findCvTermByAccession(Matchers.anyString())).thenReturn(cvterm);
+		Mockito.when(terminologyService.findCvTermByAccessionOrThrowRuntimeException(Matchers.anyString())).thenReturn(cvterm);
 
 		Publication pub = new Publication();
 		pub.setId(999);

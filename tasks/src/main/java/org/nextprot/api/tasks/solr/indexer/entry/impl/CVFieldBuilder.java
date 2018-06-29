@@ -152,7 +152,7 @@ public class CVFieldBuilder extends FieldBuilder {
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
-			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccession(ancestorac).getName());
+			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 		}
 
 		for (String synonym : cv_synonyms) {

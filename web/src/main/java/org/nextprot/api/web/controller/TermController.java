@@ -8,7 +8,6 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
@@ -95,7 +94,7 @@ public class TermController {
             @ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
             @PathVariable("term") String term) {
 
-        CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+        CvTerm cvTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(term);
 
         return Collections.singletonMap("is-hierarchical-terminology", TerminologyCv.getTerminologyOf(cvTerm.getOntology()).isHierarchical());
     }
@@ -108,7 +107,7 @@ public class TermController {
 		@ApiQueryParam(name="includeRelevantFor") @RequestParam(value="includeRelevantFor", required=false) boolean includeRelevantFor,
 		@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver) {
 
-		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+		CvTerm cvTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(term);
 
 		CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
@@ -156,18 +155,11 @@ public class TermController {
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
-		//Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
-		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
-		term = term.replace(".json", "").replace(".JSON", "");
-		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
-
-		if(cvTerm == null){
-			//This returns a nice message to the user and a 404 code
-			throw new ResourceNotFoundException("There is no cv term information available in neXtProt for " +  term + ". Suggestions for updates are welcome! Please contact us.");
-		}else {
-			return cvTerm;
-		}
-	}
+        //Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
+        //The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
+        term = term.replace(".json", "").replace(".JSON", "");
+        return terminologyService.findCvTermByAccessionOrThrowRuntimeException(term);
+    }
 
     @ApiMethod(path = "/term/{term}/descendant-graph", verb = ApiVerb.GET, description = "Get the descendant graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/term/{term}/descendant-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -178,7 +170,7 @@ public class TermController {
 			@ApiQueryParam(name="includeSilver") @RequestParam(value="includeSilver", required=false, defaultValue= "false") boolean includeSilver,
 			@ApiQueryParam(name="depth") @RequestParam(value="depth", required=false, defaultValue= "0") int depthMax) {
 
-        CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+        CvTerm cvTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(term);
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
 		CvTermGraph.View subgraphView = graph.calcDescendantSubgraph(cvTerm.getId().intValue(), depthMax).toView();

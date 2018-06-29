@@ -129,12 +129,8 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
                      evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
 
                      if(statementEvidenceCode != null){
-                         CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
-                         if(term != null){
-                             evidence.setEvidenceCodeName(term.getName());
-                         }else {
-                             throw new NextProtException("Not found " + statementEvidenceCode + " in the database");
-                         }
+                         CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
+                         evidence.setEvidenceCodeName(term.getName());
                      }
 
                      evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
