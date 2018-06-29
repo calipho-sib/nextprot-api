@@ -25,7 +25,7 @@ public interface TerminologyService {
 	default CvTerm findCvTermByAccessionOrThrowRuntimeException(String term) {
 
         return Optional.ofNullable(findCvTermByAccession(term))
-                .orElseThrow(() -> new ResourceNotFoundException("There is no cv term information available in neXtProt for " +  term + ". Suggestions for updates are welcome! Please contact us."));
+                .orElseThrow(() -> new ResourceNotFoundException("Term '" +  term + "' not found."));
     }
 
 	/**
