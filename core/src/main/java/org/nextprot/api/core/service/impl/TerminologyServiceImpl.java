@@ -20,13 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
-
-    private final static Logger LOGGER = Logger.getLogger(TerminologyServiceImpl.class.getSimpleName());
 
     @Autowired
 	private TerminologyDao terminologyDao;
@@ -169,7 +166,7 @@ class TerminologyServiceImpl implements TerminologyService {
 		List<CvTerm> path = new ArrayList<>();
 		String ac = cvTermAccession;
 		while (true) {
-			CvTerm t = findCvTermByAccession(ac);
+			CvTerm t = findCvTermByAccessionOrThrowRuntimeException(ac);
 			path.add(t);
 			List<String> parents = t.getAncestorAccession();
 			if (parents==null || parents.size()==0) break;

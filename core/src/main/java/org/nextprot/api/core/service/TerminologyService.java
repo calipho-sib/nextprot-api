@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
@@ -14,9 +15,18 @@ import java.util.stream.Collectors;
 public interface TerminologyService {
 
 	/**
-	 * @return a {@code CvTerm} by accession
+	 * @return a {@code CvTerm} given an accession else return null
 	 */
 	CvTerm findCvTermByAccession(String accession);
+
+    /**
+     * @return a {@code CvTerm} given an accession else throw a runtime exception
+     */
+	default CvTerm findCvTermByAccessionOrThrowRuntimeException(String term) {
+
+        return Optional.ofNullable(findCvTermByAccession(term))
+                .orElseThrow(() -> new ResourceNotFoundException("There is no cv term information available in neXtProt for " +  term + ". Suggestions for updates are welcome! Please contact us."));
+    }
 
 	/**
 	 * @return a list of all {@code CvTerm}s of a given ontology
@@ -56,7 +66,7 @@ public interface TerminologyService {
 
 		Preconditions.checkNotNull(cvTermAccession);
 
-		CvTerm term = findCvTermByAccession(cvTermAccession);
+		CvTerm term = findCvTermByAccessionOrThrowRuntimeException(cvTermAccession);
 
 		List<String> accessions = new ArrayList<>();
 
