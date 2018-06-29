@@ -8,6 +8,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
@@ -147,7 +148,14 @@ public class TermController {
 		//Mapping equals /term/{term:.+} because for some terms like (1.1.1.1), the last .1 was seen as the extension
 		//The regex .+ allows to consume everything but JSON is included therefore we remove it if the user uses it
 		term = term.replace(".json", "").replace(".JSON", "");
-		return terminologyService.findCvTermByAccession(term);
+		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+
+		if(cvTerm == null){
+			//This returns a nice message to the user and a 404 code
+			throw new ResourceNotFoundException("There is no cv term information available in neXtProt for " +  term + ". Suggestions for updates are welcome! Please contact us.");
+		}else {
+			return cvTerm;
+		}
 	}
 
     @ApiMethod(path = "/term/{term}/descendant-graph", verb = ApiVerb.GET, description = "Get the descendant graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
