@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.graph.DirectedGraph;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -178,18 +177,6 @@ class TerminologyServiceImpl implements TerminologyService {
 		}
 		return path;
 	}
-
-    @Override
-    @Cacheable("terminology-graph-is-hierarchical")
-    public boolean isHierarchical(TerminologyCv terminologyCv) {
-
-        try {
-            return cvTermGraphService.findCvTermGraph(terminologyCv).calcHeight() > 0;
-        } catch (DirectedGraph.NotATreeException e) {
-            LOGGER.warning(e.getMessage()+": "+terminologyCv);
-        }
-        return false;
-    }
 
     private Optional<String> findTermName(BufferedReader br) throws IOException {
 
