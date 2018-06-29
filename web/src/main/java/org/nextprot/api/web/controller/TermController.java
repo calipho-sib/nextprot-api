@@ -96,7 +96,7 @@ public class TermController {
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
-        return Collections.singletonMap("is-hierarchical-terminology", terminologyService.isHierarchical(TerminologyCv.getTerminologyOf(cvTerm.getOntology())));
+        return Collections.singletonMap("is-hierarchical-terminology", TerminologyCv.getTerminologyOf(cvTerm.getOntology()).isHierarchical());
     }
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
