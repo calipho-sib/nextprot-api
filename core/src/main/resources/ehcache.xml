@@ -383,7 +383,7 @@
 		statistics="true" >
 	</cache>
 
-    <cache name="entry-reports-stats" overflowToOffHeap="false" overflowToDisk="true"
+    <cache name="entry-report-stats" overflowToOffHeap="false" overflowToDisk="true"
            diskPersistent="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="2200000"
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
