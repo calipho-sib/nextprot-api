@@ -150,7 +150,7 @@ public class SolrServiceTest  {
 		Query q = service.buildQueryForSearchIndexes("entry", "simple", qr);
 		SearchResult result = service.executeIdQuery(q);
 		List<Map<String, Object>> found = result.getFoundFacets("id");
-		assertEquals(7, found.size());
+		assertEquals(6, found.size());
 	}
 	
     @Test
