@@ -122,7 +122,7 @@ public class SequencePageView extends PageViewBase {
 				ELM,
 				
 				// SEQUENCE DATABASES
-				CCDS, EMBL, PIR, REF_SEQ, UNI_PROT,
+				CCDS, EMBL, PIR, REF_SEQ, UNIPROT,
 				
 				// PROTOCOLS AND MATERIALS DATABASES
 				DNASU
