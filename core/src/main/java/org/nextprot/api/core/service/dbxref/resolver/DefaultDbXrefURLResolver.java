@@ -53,6 +53,7 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
         xref.setLinkUrl(template);
 
+        // resolve link with %u uniprot placeholder
         if (xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
             Optional<DbXrefURLResolverSupplier> optionalSupplier = DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
@@ -84,10 +85,11 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
             return resolved.replaceFirst("%s", xref.getAccession());
         }
 
+        // resolve link with %s stamp placeholder
         return resolveTemplateURL(template, getAccessionNumber(xref));
     }
 
-    private String resolveTemplateURL(String templateURL, String accession) {
+    protected String resolveTemplateURL(String templateURL, String accession) {
 
         templateURL = templateURL.replaceAll("\"", "");
 

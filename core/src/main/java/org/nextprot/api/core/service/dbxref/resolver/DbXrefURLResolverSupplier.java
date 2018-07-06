@@ -58,6 +58,7 @@ public enum DbXrefURLResolverSupplier {
     UNIPATHWAY(XrefDatabase.UNIPATHWAY,             new UnresolvedXrefURLResolver()),
     UNI_GENE(XrefDatabase.UNI_GENE,                 new UnigeneXrefURLResolver()),
     UNIPROT_CV(XrefDatabase.UNIPROT_CONTROL_VOC,    new UniprotControlVocabularyXrefURLResolver()),
+    UNIPROT_DOMAIN(XrefDatabase.UNIPROT_DOMAIN,     new UniprotDomainXrefURLResolver()),
     WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver())
     ;
 
