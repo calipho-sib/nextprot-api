@@ -18,35 +18,35 @@ class UnigeneXrefURLResolver extends DefaultDbXrefURLResolver {
         return xref.getAccession().split("\\.")[1];
     }
 
-    private static class StampDResolver extends StampBaseResolver {
+    private static class PlaceHolderD extends Placeholder {
 
-        public StampDResolver() {
+        public PlaceHolderD() {
             super("d");
         }
 
         @Override
-        public String resolve(String templateURL, String accession) {
+        public String replacePlaceholderWithAccession(String templateURL, String accession) {
 
-            return templateURL.replaceFirst(getStamp(), "Hs");
+            return templateURL.replaceFirst(getPlaceholderText(), "Hs");
         }
     }
 
-    private static class StampSResolver extends StampBaseResolver {
+    private static class PlaceHolderS extends Placeholder {
 
-        public StampSResolver() {
+        public PlaceHolderS() {
             super("s");
         }
     }
 
-    private static class ResolverFactoryImpl implements DefaultDbXrefURLResolver.StampResolverFactory {
+    private static class ResolverFactoryImpl implements PlaceholderFactory {
 
         @Override
-        public Set<StampBaseResolver> createStampResolvers() {
+        public Set<Placeholder> createPlaceholders() {
 
-            Set<StampBaseResolver> stampResolvers = new HashSet<>(2);
+            Set<Placeholder> stampResolvers = new HashSet<>(2);
 
-            stampResolvers.add(new StampDResolver());
-            stampResolvers.add(new StampSResolver());
+            stampResolvers.add(new PlaceHolderD());
+            stampResolvers.add(new PlaceHolderS());
 
             return stampResolvers;
         }

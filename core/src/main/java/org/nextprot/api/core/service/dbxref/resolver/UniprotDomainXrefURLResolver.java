@@ -17,7 +17,7 @@ class UniprotDomainXrefURLResolver extends DefaultDbXrefURLResolver {
     }
 
     @Override
-    protected String resolveTemplateURL(String templateURL, String accession) {
+    protected String resolveURL(String templateURL, String accession) {
 
         String domainAccession = accession;
 
@@ -28,6 +28,6 @@ class UniprotDomainXrefURLResolver extends DefaultDbXrefURLResolver {
             domainAccession = matcher.group(1);
         }
 
-        return super.resolveTemplateURL(templateURL, domainAccession);
+        return super.resolveURL(templateURL, domainAccession);
     }
 }

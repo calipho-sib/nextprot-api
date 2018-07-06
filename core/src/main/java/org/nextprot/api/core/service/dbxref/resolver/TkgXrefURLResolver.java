@@ -7,12 +7,12 @@ class TkgXrefURLResolver extends DefaultDbXrefURLResolver {
 
     TkgXrefURLResolver() {
 
-        super(new ResolverFactoryImpl());
+        super(new PlaceholderFactoryImpl());
     }
 
-    private static class StampNResolver extends StampBaseResolver {
+    private static class PlaceholderN extends Placeholder {
 
-        public StampNResolver() {
+        public PlaceholderN() {
             super("n");
         }
 
@@ -20,21 +20,21 @@ class TkgXrefURLResolver extends DefaultDbXrefURLResolver {
         //	  Note: n% is the second digit of the cell line AC and %s is the cell line AC without the 'TKG'
         //	  Example: for "DR   TKG; TKG 0377": n%=3 s%=0377
         @Override
-        public String resolve(String templateURL, String accession) {
+        public String replacePlaceholderWithAccession(String templateURL, String accession) {
 
-            return templateURL.replaceFirst(getStamp(), String.valueOf(accession.charAt(1)));
+            return templateURL.replaceFirst(getPlaceholderText(), String.valueOf(accession.charAt(1)));
         }
     }
 
-    private static class ResolverFactoryImpl implements StampResolverFactory {
+    private static class PlaceholderFactoryImpl implements PlaceholderFactory {
 
         @Override
-        public Set<StampBaseResolver> createStampResolvers() {
+        public Set<Placeholder> createPlaceholders() {
 
-            Set<StampBaseResolver> stampResolvers = new HashSet<>(2);
+            Set<Placeholder> stampResolvers = new HashSet<>(2);
 
-            stampResolvers.add(new StampNResolver());
-            stampResolvers.add(new DefaultDbXrefURLResolver.DefaultStampSResolver());
+            stampResolvers.add(new PlaceholderN());
+            stampResolvers.add(new DefaultPlaceholderS());
 
             return stampResolvers;
         }
