@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 @Service
 public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
+    private static final String DIRECT_LINK_LABEL_MS = "MASS SPECTROMETRY";
+    private static final String DIRECT_LINK_LABEL_CHARACTERIZATION_OF_VARIANT = "CHARACTERIZATION OF VARIANT";
+
     @Autowired
     private IsoformService isoformService;
 
@@ -50,6 +53,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
         setEntryDescription(entryAccession, ers);
         setProteinExistence(entryAccession, ers);
         setIsProteomics(entryAccession, xrefs, annotations, ers);
+        setIsMutagenesis(entryAccession, annotations, ers);
         setIsAntibody(xrefs, annotations, ers);
         setIs3D(annotations, ers);
         setIsDisease(xrefs, annotations, ers);
@@ -81,16 +85,27 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     private void setIsProteomics(String entryAccession, List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
 
     	boolean result = xrefs.stream().anyMatch(this::isPeptideAtlasOrMassSpecXref) ||
-                publicationService.findPublicationsByEntryName(entryAccession).stream().anyMatch(pub -> hasMassSpecScope(entryAccession, pub.getPublicationId())) ||
+                publicationService.findPublicationsByEntryName(entryAccession).stream().anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_MS)) ||
                 annotations.stream().anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a));
 
     	report.setPropertyTest(EntryReportStats.IS_PROTEOMICS, result);
     }
-    
-    private boolean hasMassSpecScope(String entryAccession, long pubId) {
 
-    	return entryPublicationService.findEntryPublications(entryAccession).getEntryPublication(pubId).getDirectLinks(PublicationProperty.SCOPE).stream()
-                .anyMatch(p -> p.getLabel().contains("MASS SPECTROMETRY"));
+    private void setIsMutagenesis(String entryAccession, List<Annotation> annotations, EntryReportStats report) {
+
+        boolean result =
+                annotations.stream()
+                        .anyMatch(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS) ||
+                publicationService.findPublicationsByEntryName(entryAccession).stream()
+                        .anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_CHARACTERIZATION_OF_VARIANT));
+
+        report.setPropertyTest(EntryReportStats.IS_MUTAGENESIS, result);
+    }
+
+    private boolean hasScope(String entryAccession, long pubId, String expectedDirectLinkLabel) {
+
+        return entryPublicationService.findEntryPublications(entryAccession).getEntryPublication(pubId).getDirectLinks(PublicationProperty.SCOPE).stream()
+                .anyMatch(p -> p.getLabel().contains(expectedDirectLinkLabel));
     }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
