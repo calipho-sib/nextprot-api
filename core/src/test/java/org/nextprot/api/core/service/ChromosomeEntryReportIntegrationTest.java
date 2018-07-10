@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.nextprot.api.core.domain.EntryReport.*;
+import static org.nextprot.api.core.domain.EntryReportStats.*;
 
 
 public class ChromosomeEntryReportIntegrationTest {
@@ -454,7 +455,7 @@ public class ChromosomeEntryReportIntegrationTest {
 		map.put(GENE_END_POSITION, EntryReport::getGeneEndPosition);
 		map.put(ENTRY_ACCESSION, EntryReport::getAccession);
 		map.put(ENTRY_DESCRIPTION, EntryReport::getDescription);
-		map.put(PROTEIN_EXISTENCE_LEVEL, EntryReport::getProteinExistence);
+		map.put(PROTEIN_EXISTENCE, EntryReport::getProteinExistence);
 		map.put(IS_PROTEOMICS, er -> String.valueOf(er.isProteomics()));
 		map.put(IS_ANTIBODY, er -> String.valueOf(er.isAntibody()));
 		map.put(IS_DISEASE, er -> String.valueOf(er.isDisease()));
@@ -469,7 +470,7 @@ public class ChromosomeEntryReportIntegrationTest {
 	private static Collection<String> allProperties() {
 
 		return Arrays.asList(GENE_NAME, CODING_STRAND, CHROMOSOMAL_LOCATION, GENE_START_POSITION, GENE_END_POSITION,
-				ENTRY_ACCESSION, ENTRY_DESCRIPTION, PROTEIN_EXISTENCE_LEVEL, IS_PROTEOMICS, IS_ANTIBODY, IS_DISEASE,
+				ENTRY_ACCESSION, ENTRY_DESCRIPTION, PROTEIN_EXISTENCE, IS_PROTEOMICS, IS_ANTIBODY, IS_DISEASE,
 				IS_3D, ISOFORM_COUNT, VARIANT_COUNT, PTM_COUNT
 		);
 	}

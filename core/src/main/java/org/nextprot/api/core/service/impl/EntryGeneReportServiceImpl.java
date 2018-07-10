@@ -35,18 +35,18 @@ public class EntryGeneReportServiceImpl implements EntryGeneReportService {
         report.setAccession(entryAccession);
         report.setDescription(ers.getDescription());
         report.setProteinExistence(ers.getProteinExistence());
-        report.setPropertyTest(EntryReport.IS_PROTEOMICS, ers.isProteomics());
-        report.setPropertyTest(EntryReport.IS_ANTIBODY, ers.isAntibody());
-        report.setPropertyTest(EntryReport.IS_3D, ers.is3D());
-        report.setPropertyTest(EntryReport.IS_DISEASE, ers.isDisease());
-        report.setPropertyCount(EntryReport.ISOFORM_COUNT, ers.countIsoforms());
-        report.setPropertyCount(EntryReport.VARIANT_COUNT, ers.countVariants());
-        report.setPropertyCount(EntryReport.PTM_COUNT, ers.countPTMs());
-        report.setPropertyCount(EntryReport.CURATED_PUBLICATION_COUNT, ers.countCuratedPublications());
-        report.setPropertyCount(EntryReport.ADDITIONAL_PUBLICATION_COUNT, ers.countAdditionalPublications());
-        report.setPropertyCount(EntryReport.PATENT_COUNT, ers.countPatents());
-        report.setPropertyCount(EntryReport.SUBMISSION_COUNT, ers.countSubmissions());
-        report.setPropertyCount(EntryReport.WEB_RESOURCE_COUNT, ers.countWebResources());
+        report.setPropertyTest(EntryReportStats.IS_PROTEOMICS, ers.isProteomics());
+        report.setPropertyTest(EntryReportStats.IS_ANTIBODY, ers.isAntibody());
+        report.setPropertyTest(EntryReportStats.IS_3D, ers.is3D());
+        report.setPropertyTest(EntryReportStats.IS_DISEASE, ers.isDisease());
+        report.setPropertyCount(EntryReportStats.ISOFORM_COUNT, ers.countIsoforms());
+        report.setPropertyCount(EntryReportStats.VARIANT_COUNT, ers.countVariants());
+        report.setPropertyCount(EntryReportStats.PTM_COUNT, ers.countPTMs());
+        report.setPropertyCount(EntryReportStats.CURATED_PUBLICATION_COUNT, ers.countCuratedPublications());
+        report.setPropertyCount(EntryReportStats.ADDITIONAL_PUBLICATION_COUNT, ers.countAdditionalPublications());
+        report.setPropertyCount(EntryReportStats.PATENT_COUNT, ers.countPatents());
+        report.setPropertyCount(EntryReportStats.SUBMISSION_COUNT, ers.countSubmissions());
+        report.setPropertyCount(EntryReportStats.WEB_RESOURCE_COUNT, ers.countWebResources());
 
         return duplicateReportForEachGene(entryAccession, report);
     }

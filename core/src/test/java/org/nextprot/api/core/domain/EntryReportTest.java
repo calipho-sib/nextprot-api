@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.nextprot.api.core.domain.EntryReport.*;
+import static org.nextprot.api.core.domain.EntryReportStats.*;
 
 public class EntryReportTest {
 
@@ -144,13 +144,13 @@ public class EntryReportTest {
         entryReport.setAccession(ac);
         entryReport.setChromosomalLocation(cl);
         entryReport.setProteinExistence(protExistence);
-        entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, isProteomics);
-        entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, isAntibody);
-        entryReport.setPropertyTest(EntryReport.IS_3D, is3D);
-        entryReport.setPropertyTest(EntryReport.IS_DISEASE, isDisease);
-        entryReport.setPropertyCount(EntryReport.ISOFORM_COUNT, isoformCount);
-        entryReport.setPropertyCount(EntryReport.VARIANT_COUNT, variantCount);
-        entryReport.setPropertyCount(EntryReport.PTM_COUNT, ptmCount);
+        entryReport.setPropertyTest(IS_PROTEOMICS, isProteomics);
+        entryReport.setPropertyTest(IS_ANTIBODY, isAntibody);
+        entryReport.setPropertyTest(IS_3D, is3D);
+        entryReport.setPropertyTest(IS_DISEASE, isDisease);
+        entryReport.setPropertyCount(ISOFORM_COUNT, isoformCount);
+        entryReport.setPropertyCount(VARIANT_COUNT, variantCount);
+        entryReport.setPropertyCount(PTM_COUNT, ptmCount);
         entryReport.setDescription(description);
 
         return entryReport;

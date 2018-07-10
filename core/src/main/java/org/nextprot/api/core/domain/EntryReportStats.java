@@ -8,14 +8,15 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.nextprot.api.core.domain.EntryReport.*;
+import static org.nextprot.api.core.domain.EntryReportStats.*;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         ENTRY_ACCESSION,
-        PROTEIN_EXISTENCE_LEVEL,
+        PROTEIN_EXISTENCE,
         IS_PROTEOMICS,
+        IS_MUTAGENESIS,
         IS_ANTIBODY,
         IS_3D,
         IS_DISEASE,
@@ -31,12 +32,13 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 })
 public class EntryReportStats implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public static final String ENTRY_ACCESSION = "entryAccession";
     public static final String ENTRY_DESCRIPTION = "entryDescription";
     public static final String PROTEIN_EXISTENCE = "proteinExistence";
     public static final String IS_PROTEOMICS = "proteomics";
+    public static final String IS_MUTAGENESIS = "mutagenesis";
     public static final String IS_ANTIBODY = "antibody";
     public static final String IS_3D = "3D";
     public static final String IS_DISEASE = "disease";
@@ -75,6 +77,12 @@ public class EntryReportStats implements Serializable {
     public boolean isProteomics() {
 
         return testProperty(IS_PROTEOMICS);
+    }
+
+    @JsonProperty(IS_MUTAGENESIS)
+    public boolean isMutagenesis() {
+
+        return testProperty(IS_MUTAGENESIS);
     }
 
     @JsonProperty(IS_ANTIBODY)
@@ -143,7 +151,7 @@ public class EntryReportStats implements Serializable {
         return propertyCounts.get(WEB_RESOURCE_COUNT);
     }
 
-    public boolean testProperty(String testName) {
+    private boolean testProperty(String testName) {
 
         return propertyTests.containsKey(testName) && propertyTests.get(testName);
     }
