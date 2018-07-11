@@ -1,10 +1,7 @@
 package org.nextprot.api.core.service.export.io;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.ChromosomeReport;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.export.ChromosomeReportReader;
 
 import java.io.IOException;
@@ -148,13 +145,13 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             entryReport.setAccession(matcher.group(2));
             entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? summary.getChromosome() : matcher.group(3)), matcher.group(4), matcher.group(5)));
             entryReport.setProteinExistence(ProteinExistence.valueOfKey(matcher.group(6)));
-            entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
-            entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, "yes".equals(matcher.group(8)));
-            entryReport.setPropertyTest(EntryReport.IS_3D, "yes".equals(matcher.group(9)));
-            entryReport.setPropertyTest(EntryReport.IS_DISEASE, "yes".equals(matcher.group(10)));
-            entryReport.setPropertyCount(EntryReport.ISOFORM_COUNT, Integer.parseInt(matcher.group(11)));
-            entryReport.setPropertyCount(EntryReport.VARIANT_COUNT, Integer.parseInt(matcher.group(12)));
-            entryReport.setPropertyCount(EntryReport.PTM_COUNT, Integer.parseInt(matcher.group(13)));
+            entryReport.setPropertyTest(EntryReportStats.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
+            entryReport.setPropertyTest(EntryReportStats.IS_ANTIBODY, "yes".equals(matcher.group(8)));
+            entryReport.setPropertyTest(EntryReportStats.IS_3D, "yes".equals(matcher.group(9)));
+            entryReport.setPropertyTest(EntryReportStats.IS_DISEASE, "yes".equals(matcher.group(10)));
+            entryReport.setPropertyCount(EntryReportStats.ISOFORM_COUNT, Integer.parseInt(matcher.group(11)));
+            entryReport.setPropertyCount(EntryReportStats.VARIANT_COUNT, Integer.parseInt(matcher.group(12)));
+            entryReport.setPropertyCount(EntryReportStats.PTM_COUNT, Integer.parseInt(matcher.group(13)));
             entryReport.setDescription(matcher.group(14));
 
             entryReports.add(entryReport);

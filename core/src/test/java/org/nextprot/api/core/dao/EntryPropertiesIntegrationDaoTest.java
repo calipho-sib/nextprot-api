@@ -18,10 +18,8 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 		EntryProperties props = this.entryPropertieDao.findEntryProperties("NX_P51659");
 		assertTrue(props.getMaxSeqLen() > 760);
 		assertTrue(props.getInteractionCount() > 17);
-		assertTrue(props.getFiltermutagenesis());
 		assertTrue(props.getFilterstructure());
 		assertTrue(props.getFilterdisease());
-		assertTrue(props.getFilterproteomics());
 		assertTrue(props.getFilterexpressionprofile());
 	}
 }
