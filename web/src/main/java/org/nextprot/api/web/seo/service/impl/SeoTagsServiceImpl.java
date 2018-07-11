@@ -137,7 +137,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		String subpage = "proteins"; // default subpage
 		if (urlElements.length>2) subpage=urlElements[2]; 
 		String prettySubpage = getPrettyName(subpage);
-		CvTerm term = terminologyService.findCvTermByAccession(ac);
+		CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ac);
 		String title = term.getAccession() + " - " + getPrettyName(term.getName()) + " - " + prettySubpage;
 		String h1 = title;
 		// TODO: NullPointerException below

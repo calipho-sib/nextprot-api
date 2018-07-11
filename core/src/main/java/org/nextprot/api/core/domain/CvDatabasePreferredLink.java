@@ -5,6 +5,7 @@ public enum CvDatabasePreferredLink {
 
 	BRENDA("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u"),
 	BRENDA_BTO("http://purl.obolibrary.org/obo/%s"),
+	CELLOSAURUS("https://web.expasy.org/cellosaurus/%s"),
 	CHITARS("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&human=1"),
 	CLINVAR_MUTATION( "http://www.ncbi.nlm.nih.gov/clinvar/%s"),
 	CLINVAR_GENE( "http://www.ncbi.nlm.nih.gov/clinvar/?term=%s"),
@@ -41,6 +42,7 @@ public enum CvDatabasePreferredLink {
 	SIGNOR("http://signor.uniroma2.it/relation_result.php?id=%u&organism=human"),
 	UCSC("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u"),
 	UNIPROT_DISEASES("http://www.uniprot.org/diseases/%s"),
+	UNIPROT_DOMAIN("https://www.uniprot.org/uniprot/?query=annotation%3A%28type%3Apositional+%s%29"),
 	UNIPROT_KEYWORDS("http://www.uniprot.org/keywords/%s"),
 	UNIPROT_LOCATIONS("http://www.uniprot.org/locations/%s"),
 	;

@@ -53,7 +53,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
 					  cv_tissues_final.add(ancestorac);  
-					  cv_tissues_final.add(terminologyservice.findCvTermByAccession(ancestorac).getName());  
+					  cv_tissues_final.add(terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 

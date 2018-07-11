@@ -22,25 +22,25 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
     private static final String UNRESOLVED_URL_REGEXP = "^.+%[a-zA-Z].*$";
 
-    private final Map<String, StampBaseResolver> stampResolvers;
+    private final Map<String, Placeholder> placeholders;
 
-    public interface StampResolverFactory {
+    public interface PlaceholderFactory {
 
-        Set<StampBaseResolver> createStampResolvers();
+        Set<Placeholder> createPlaceholders();
     }
 
     public DefaultDbXrefURLResolver() {
 
-        this(new DefaultStampResolverFactory());
+        this(new DefaultPlaceholderFactory());
     }
 
-    public DefaultDbXrefURLResolver(StampResolverFactory factory) {
+    public DefaultDbXrefURLResolver(PlaceholderFactory factory) {
 
-        stampResolvers = new HashMap<>();
+        placeholders = new HashMap<>();
 
-        for (StampBaseResolver resolver : factory.createStampResolvers()) {
+        for (Placeholder placeholder : factory.createPlaceholders()) {
 
-            stampResolvers.put(resolver.getStamp(), resolver);
+            placeholders.put(placeholder.getPlaceholderText(), placeholder);
         }
     }
 
@@ -53,6 +53,7 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
         xref.setLinkUrl(template);
 
+        // resolve link with %u uniprot placeholder
         if (xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
             Optional<DbXrefURLResolverSupplier> optionalSupplier = DbXrefURLResolverSupplier.fromDbName(xref.getDatabaseName());
@@ -84,25 +85,26 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
             return resolved.replaceFirst("%s", xref.getAccession());
         }
 
-        return resolveTemplateURL(template, getAccessionNumber(xref));
+        return resolveURL(template, getAccessionNumber(xref));
     }
 
-    private String resolveTemplateURL(String templateURL, String accession) {
+    /**
+     * Resolve url from template by replacing placeholders with accession value
+     * @param templateURL the url to resolve
+     * @param accession the accession to replace placeholder
+     * @return a resolved url string
+     */
+    protected String resolveURL(String templateURL, String accession) {
 
-        templateURL = templateURL.replaceAll("\"", "");
+        String resolvedUrl = templateURL.replaceAll("\"", "");
 
-        for (Map.Entry<String, StampBaseResolver> entry : stampResolvers.entrySet()) {
+        for (Placeholder placeholder : placeholders.values()) {
 
-            String stamp = entry.getKey();
-            StampBaseResolver stampResolver = entry.getValue();
-
-            if (templateURL.contains(stamp)) {
-
-                templateURL = stampResolver.resolve(templateURL, accession);
+            if (resolvedUrl.contains(placeholder.getPlaceholderText())) {
+                resolvedUrl = placeholder.replacePlaceholderWithAccession(resolvedUrl, accession);
             }
             else {
-
-                throw new UnresolvedXrefURLException("stamp '"+stamp+"' is missing: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+                throw new UnresolvedXrefURLException("placeholder '"+placeholder.getPlaceholderText()+"' is missing: could not resolve template URL '" + resolvedUrl + "' with accession number '" + accession + "'");
             }
         }
 
@@ -111,34 +113,33 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
         // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
         // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
 
-        if (templateURL.matches(UNRESOLVED_URL_REGEXP)) {
-
-            handleNonResolvedUrl(templateURL, accession);
+        if (resolvedUrl.matches(UNRESOLVED_URL_REGEXP)) {
+            handleNonResolvedUrl(resolvedUrl, accession);
         }
 
-        return templateURL;
+        return resolvedUrl;
     }
 
-    private void handleNonResolvedUrl(String templateURL, String accession) {
+    private void handleNonResolvedUrl(String unresolvedUrl, String accession) {
 
         // the resolver should not throw an exception for URL-encoding character:
         //   ex: http://en.wikipedia.org/wiki/Thymosin_%CE%B11 -> http://en.wikipedia.org/wiki/Thymosin_α1
         // solution:
         //   decode URL-encoding character first as it match the following predicate
         try {
-            String decoded = URLDecoder.decode(templateURL, "UTF-8");
+            String decoded = URLDecoder.decode(unresolvedUrl, "UTF-8");
 
             if (decoded.matches(UNRESOLVED_URL_REGEXP))
-                throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+                throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + unresolvedUrl + "' with accession number '" + accession + "'");
         }
         // TODO: URLDecoder gives me no choice of catching RuntimeException, a URL matcher would have been great here
         catch (IllegalArgumentException e) {
 
-            throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'", e);
+            throw new UnresolvedXrefURLException("unresolved placeholder: could not resolve template URL '" + unresolvedUrl + "' with accession number '" + accession + "'", e);
         }
         catch (UnsupportedEncodingException e) {
 
-            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'", e);
+            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + unresolvedUrl + "' with accession number '" + accession + "'", e);
         }
     }
 
@@ -168,26 +169,26 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
         return url;
     }
 
-    public static class DefaultStampSResolver extends StampBaseResolver {
+    public static class DefaultPlaceholderS extends Placeholder {
 
-        public DefaultStampSResolver() {
+        public DefaultPlaceholderS() {
             super("s");
         }
 
         @Override
-        public String resolve(String templateURL, String accession) {
-            return templateURL.replaceAll(getStamp(), accession);
+        public String replacePlaceholderWithAccession(String templateURL, String accession) {
+            return templateURL.replaceAll(getPlaceholderText(), accession);
         }
     }
 
-    private static class DefaultStampResolverFactory implements StampResolverFactory {
+    private static class DefaultPlaceholderFactory implements PlaceholderFactory {
 
         @Override
-        public Set<StampBaseResolver> createStampResolvers() {
+        public Set<Placeholder> createPlaceholders() {
 
-            Set<StampBaseResolver> stampResolvers = new HashSet<>(1);
+            Set<Placeholder> stampResolvers = new HashSet<>(1);
 
-            stampResolvers.add(new DefaultStampSResolver());
+            stampResolvers.add(new DefaultPlaceholderS());
 
             return stampResolvers;
         }

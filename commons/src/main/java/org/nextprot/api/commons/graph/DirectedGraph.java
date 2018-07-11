@@ -1,5 +1,10 @@
 package org.nextprot.api.commons.graph;
 
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
+import java.util.Arrays;
+
 /**
  * A graph with a set of vertices connected by edges, where the edges have a direction associated with them.
  * All nodes and edges are ints.
@@ -213,5 +218,100 @@ public interface DirectedGraph {
 
     default boolean isSink(int node) {
         return getInDegree(node) > 0 && getOutDegree(node) == 0;
+    }
+
+    /**
+     * The height of a rooted tree is the length of the longest downward path to a leaf from the root.
+     *
+     * @return the longest path from the root or -1 if it is not a tree
+     */
+    default int calcHeight() throws NotATreeException {
+
+        int[] roots = getSources();
+
+        if (roots.length == 0) {
+            throw new NotATreeException();
+        }
+
+        class WrappedCalcLongestPath {
+            private int calcLongestPath(int node, TIntList path) throws CycleDetectedException {
+
+                if (!containsNode(node)) {
+                    throw new IllegalArgumentException("node "+ node + " was not found");
+                }
+
+                if (isSink(node)) {
+                    return path.size()-1;
+                }
+
+                TIntList lengths = new TIntArrayList();
+                for (int edge : getOutEdges(node)) {
+
+                    int nextNode = getHeadNode(edge);
+
+                    TIntList newPath = new TIntArrayList(path);
+                    newPath.add(nextNode);
+
+                    if (path.contains(nextNode)) {
+                        throw new CycleDetectedException(newPath);
+                    }
+
+                    lengths.add(calcLongestPath(nextNode, newPath));
+                }
+
+                return lengths.max();
+            }
+        }
+
+        // it is ok if there are multiple roots (see example of enzyme-classification-cv where it misses the root that
+        // connect children EC 1.-.-.-, EC 2.-.-.-, ..., EC 6.-.-.-)
+        /*if (roots.length > 1) {
+            throw new NotATreeMultipleRootsException(roots);
+        }*/
+
+        return new WrappedCalcLongestPath().calcLongestPath(roots[0], new TIntArrayList(new int[] {roots[0]}));
+    }
+
+    class NotATreeException extends Exception {
+
+        public NotATreeException() {
+
+            super("not a tree");
+        }
+    }
+
+    class NotATreeMultipleRootsException extends NotATreeException {
+
+        private final int[] roots;
+
+        public NotATreeMultipleRootsException(int[]  roots) {
+
+            super();
+            this.roots = roots;
+        }
+
+        @Override
+        public String getMessage() {
+
+            return super.getMessage() + ", roots=" + Arrays.toString(this.roots);
+        }
+    }
+
+    class CycleDetectedException extends NotATreeException {
+
+        private final TIntList path;
+
+        public CycleDetectedException(TIntList path) {
+
+            super();
+
+            this.path = path;
+        }
+
+        @Override
+        public String getMessage() {
+
+            return super.getMessage() + ", path=" + this.path;
+        }
     }
 }

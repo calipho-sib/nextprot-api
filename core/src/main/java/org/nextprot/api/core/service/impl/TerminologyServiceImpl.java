@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 class TerminologyServiceImpl implements TerminologyService {
 
-	@Autowired
+    @Autowired
 	private TerminologyDao terminologyDao;
 	@Autowired
 	private CvTermGraphService cvTermGraphService;
@@ -166,7 +166,7 @@ class TerminologyServiceImpl implements TerminologyService {
 		List<CvTerm> path = new ArrayList<>();
 		String ac = cvTermAccession;
 		while (true) {
-			CvTerm t = findCvTermByAccession(ac);
+			CvTerm t = findCvTermByAccessionOrThrowRuntimeException(ac);
 			path.add(t);
 			List<String> parents = t.getAncestorAccession();
 			if (parents==null || parents.size()==0) break;
@@ -175,7 +175,7 @@ class TerminologyServiceImpl implements TerminologyService {
 		return path;
 	}
 
-	private Optional<String> findTermName(BufferedReader br) throws IOException {
+    private Optional<String> findTermName(BufferedReader br) throws IOException {
 
 		String line;
 

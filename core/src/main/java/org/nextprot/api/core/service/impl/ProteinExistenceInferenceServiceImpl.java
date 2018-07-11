@@ -143,7 +143,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
 
 		CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
-		int termId = terminologyService.findCvTermByAccession(evidenceCodeAC).getId().intValue();
+		int termId = terminologyService.findCvTermByAccessionOrThrowRuntimeException(evidenceCodeAC).getId().intValue();
 
 		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
 	}

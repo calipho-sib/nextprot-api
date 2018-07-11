@@ -198,7 +198,7 @@ public class OntologyDAGAnalyserTask extends SpringBasedTask<OntologyDAGAnalyser
         t = Instant.now();
         for (String cvTerm : allCvTerms) {
 
-            terminologyService.findCvTermByAccession(cvTerm);
+            terminologyService.findCvTermByAccessionOrThrowRuntimeException(cvTerm);
             pb.incrementValue();
         }
         pb.stop();

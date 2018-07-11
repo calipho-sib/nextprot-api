@@ -144,7 +144,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		for (Annotation annot: annotations) {
 			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
-				CvTerm t = terminologyService.findCvTermByAccession(annot.getCvTermAccessionCode());
+				CvTerm t = terminologyService.findCvTermByAccessionOrThrowRuntimeException(annot.getCvTermAccessionCode());
 				List<CvTerm> terms = terminologyService.getOnePathToRootTerm(t.getAccession());
 				String longName = AnnotationUtils.getTermNameWithAncestors(annot, terms);
 				AnnotationProperty prop = new AnnotationProperty();
@@ -302,7 +302,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Override
 	public Predicate<Annotation> createDescendantTermPredicate(String ancestorAccession) {
 
-		return new BaseCvTermAncestorPredicate<Annotation>(terminologyService.findCvTermByAccession(ancestorAccession)) {
+		return new BaseCvTermAncestorPredicate<Annotation>(terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorAccession)) {
 
 			@Override
 			public boolean test(Annotation annotation) {
@@ -320,7 +320,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Override
 	public Predicate<AnnotationEvidence> createDescendantEvidenceTermPredicate(String ancestorEvidenceCode) {
 
-		return new BaseCvTermAncestorPredicate<AnnotationEvidence>(terminologyService.findCvTermByAccession(ancestorEvidenceCode)) {
+		return new BaseCvTermAncestorPredicate<AnnotationEvidence>(terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorEvidenceCode)) {
 
 			@Override
 			public boolean test(AnnotationEvidence annotationEvidence) {

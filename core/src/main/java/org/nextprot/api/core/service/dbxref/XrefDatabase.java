@@ -14,7 +14,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
     BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
-    CAZY("CAZy"), CCDS, CDD, CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"),
+    CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"),
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CTD,
     DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"),
     ECO, EGG_NOG("eggNOG"), ELM, EMBL, ENSEMBL("Ensembl"), ENSG, EPD, ESTHER, EU_PATH_DB("EuPathDB"),
@@ -39,7 +39,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     SUPFAM, SWISS_2DPAGE("SWISS-2DPAGE"), SWISS_LIPIDS("SwissLipids"), SWISS_PALM("SwissPalm"),
     TIGRFAMS("TIGRFAMs"), TKG, TOP_DOWN_PROTEOMICS("TopDownProteomics"), TREE_FAM("TreeFam"),
     UCSC, UCD_2DPAGE("UCD-2DPAGE"), UNIPATHWAY("UniPathway"), UNI_GENE("UniGene"), UNI_CARB_KB("UniCarbKB"), 
-    UNI_PROT("UniProt"), UNIPROT_CONTROL_VOC("UniProt control vocabulary"),
+    UNIPROT("UniProt"), UNIPROT_CONTROL_VOC("UniProt control vocabulary"), UNIPROT_DOMAIN("UniProt domain"),
     PSIMOD("PSI-MOD"),
     WEBINFO
     ;

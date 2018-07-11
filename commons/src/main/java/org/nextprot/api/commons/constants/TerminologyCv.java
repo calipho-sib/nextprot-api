@@ -20,27 +20,43 @@ public enum TerminologyCv {
 	NextprotAnatomyCv,
 	NextprotAnnotationCv,
 	NextprotCellosaurusCv,
-	NextprotDomainCv,
+	NextprotDomainCv(false),
 	NextprotFamilyCv,
 	NextprotIcepoCv,
-	NextprotMetalCv,
+	NextprotMetalCv(false),
 	NextprotModificationEffectCv,
-	NextprotProteinPropertyCv,
-	NextprotTopologyCv,
-	NonStandardAminoAcidCv,
-	OmimCv,
-	OrganelleCv,
-	SequenceOntologyCv,
+	NextprotProteinPropertyCv(false),
+	NextprotTopologyCv(false),
+	NonStandardAminoAcidCv(false),
+	OmimCv(false),
+	OrganelleCv(false),
+	SequenceOntologyCv(false),
 	UnipathwayCv,
-	UniprotDiseaseCv,
+	UniprotDiseaseCv(false),
 	UniprotFamilyCv,
 	UniprotKeywordCv,
-	UniprotPtmCv,
+	UniprotPtmCv(false),
 	UniprotSubcellularLocationCv,
-	UniprotSubcellularOrientationCv,
-	UniprotSubcellularTopologyCv;
+	UniprotSubcellularOrientationCv(false),
+	UniprotSubcellularTopologyCv
+    ;
 
-	
+	private final boolean isHierarchical;
+
+    TerminologyCv() {
+
+        this(true);
+    }
+
+    TerminologyCv(boolean isHierarchical) {
+
+        this.isHierarchical = isHierarchical;
+    }
+
+    public boolean isHierarchical() {
+
+        return isHierarchical;
+    }
 
 	public static TerminologyCv getTerminologyOf(String terminology){
 		

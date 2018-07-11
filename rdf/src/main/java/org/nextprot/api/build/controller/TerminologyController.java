@@ -23,7 +23,7 @@ public class TerminologyController {
 	@RequestMapping("/rdf/terminology/{term}")
 	public String findOneTerm(
 			@PathVariable("term") String accession, Model model) {
-		model.addAttribute("terminology", this.terminologyService.findCvTermByAccession(accession));
+		model.addAttribute("terminology", this.terminologyService.findCvTermByAccessionOrThrowRuntimeException(accession));
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term";
 	}

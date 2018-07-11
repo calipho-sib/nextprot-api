@@ -1,15 +1,14 @@
 package org.nextprot.api.web.controller;
 import org.flywaydb.core.internal.util.StringUtils;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
 
@@ -37,6 +36,32 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
         Assert.assertTrue(content.contains("\"description\" : \"Alcohol dehydrogenase\""));
     }
 
+    @Autowired
+    TerminologyService terminologyService;
+
+    @Test
+    @Ignore
+    public void shouldAllowToQueryEvEvenIfNotTrimmedInDatabase() throws Exception {
+
+        //This EV was not trimmed in the database (either space before or after...)
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/term/EV:0300156").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"accession\" : \"EV:0300156\""));
+    }
+
+    @Test
+    public void shouldReturnA404WhenTermIsNotFoundInDatabase() throws Exception {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/term/whatever").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        Assert.assertEquals(404, result.getResponse().getStatus());
+
+    }
 
     @Test
     public void shouldAllowToQueryTissues() throws Exception {
@@ -56,7 +81,6 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                 .get("/term/TS-2178/descendant-graph.json?includeRelevantFor=true&depth=1").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-
         String content = result.getResponse().getContentAsString();
 
         int count = StringUtils.countOccurrencesOf(content, "accession");

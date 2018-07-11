@@ -3,7 +3,6 @@ package org.nextprot.api.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.exception.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
