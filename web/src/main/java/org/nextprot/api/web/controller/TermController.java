@@ -130,7 +130,7 @@ public class TermController {
             // EC number
             if (termAccession.matches("\\d+\\..+")) {
 
-                termAccession = "EC+"+termAccession;
+                termAccession = "\"EC "+termAccession+"\"";
             }
 
             qr.setQuery(termAccession);
