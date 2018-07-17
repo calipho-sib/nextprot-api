@@ -48,12 +48,13 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
         List<DbXref> xrefs = dbXrefService.findDbXrefsByMaster(entryAccession);
         List<Annotation> annotations = annotationService.findAnnotations(entryAccession);
+        List<Publication> publis = publicationService.findPublicationsByEntryName(entryAccession);
 
         ers.setAccession(entryAccession);
         setEntryDescription(entryAccession, ers);
         setProteinExistence(entryAccession, ers);
-        setIsProteomics(entryAccession, xrefs, annotations, ers);
-        setIsMutagenesis(entryAccession, annotations, ers);
+        setIsProteomics(entryAccession, annotations, xrefs, publis, ers);
+        setIsMutagenesis(entryAccession, annotations, publis, ers);
         setIsAntibody(xrefs, annotations, ers);
         setIs3D(annotations, ers);
         setIsDisease(xrefs, annotations, ers);
@@ -82,22 +83,19 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
         report.setDescription(overviewService.findOverviewByEntry(entryAccession).getRecommendedProteinName().getName());
     }
 
-    private void setIsProteomics(String entryAccession, List<DbXref> xrefs, List<Annotation> annotations, EntryReportStats report) {
+    private void setIsProteomics(String entryAccession, List<Annotation> annotations, List<DbXref> xrefs, List<Publication> publis, EntryReportStats report) {
 
     	boolean result = xrefs.stream().anyMatch(this::isPeptideAtlasOrMassSpecXref) ||
-                publicationService.findPublicationsByEntryName(entryAccession).stream().anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_MS)) ||
+                publis.stream().anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_MS)) ||
                 annotations.stream().anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a));
 
     	report.setPropertyTest(EntryReportStats.IS_PROTEOMICS, result);
     }
 
-    private void setIsMutagenesis(String entryAccession, List<Annotation> annotations, EntryReportStats report) {
+    private void setIsMutagenesis(String entryAccession, List<Annotation> annotations, List<Publication> publis, EntryReportStats report) {
 
-        boolean result =
-                annotations.stream()
-                        .anyMatch(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS) ||
-                publicationService.findPublicationsByEntryName(entryAccession).stream()
-                        .anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_CHARACTERIZATION_OF_VARIANT));
+        boolean result = annotations.stream().anyMatch(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS) ||
+                publis.stream().anyMatch(pub -> hasScope(entryAccession, pub.getPublicationId(), DIRECT_LINK_LABEL_CHARACTERIZATION_OF_VARIANT));
 
         report.setPropertyTest(EntryReportStats.IS_MUTAGENESIS, result);
     }
