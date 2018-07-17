@@ -125,7 +125,15 @@ public class TermController {
 		subgraphView.getNodes().forEach(node -> {
 
 			QueryRequest qr = new QueryRequest();
-			qr.setQuery(node.getAccession());
+            String termAccession = node.getAccession();
+
+            // EC number
+            if (termAccession.matches("\\d+\\..+")) {
+
+                termAccession = "EC+"+termAccession;
+            }
+
+            qr.setQuery(termAccession);
 
 			if(includeSilver){
 				qr.setQuality("gold-and-silver");
