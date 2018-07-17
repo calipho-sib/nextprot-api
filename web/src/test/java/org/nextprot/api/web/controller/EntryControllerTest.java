@@ -153,4 +153,48 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         String content = result.getResponse().getContentAsString();
         Assert.assertTrue(content.matches("\\d+"));
     }
+
+    @Test
+    public void checkNX_P01574IsMutagenesis() throws Exception {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/entry/NX_P01574/stats").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
+    }
+
+    @Test
+    public void checkNX_O15498IsMutagenesis() throws Exception {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/entry/NX_O15498/stats").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
+    }
+
+    @Test
+    public void checkNX_Q9UBP0IsMutagenesis() throws Exception {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/entry/NX_Q9UBP0/stats").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
+    }
+
+    @Test
+    public void checkNX_Q9UJT9IsNotMutagenesis() throws Exception {
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/entry/NX_Q9UJT9/stats").accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        Assert.assertTrue(content.contains("\"mutagenesis\" : false"));
+    }
 }
