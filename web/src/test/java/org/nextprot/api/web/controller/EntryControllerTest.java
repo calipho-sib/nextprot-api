@@ -1,7 +1,6 @@
 package org.nextprot.api.web.controller;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
 import org.springframework.http.MediaType;
@@ -155,7 +154,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         Assert.assertTrue(content.matches("\\d+"));
     }
 
-    @Ignore
     @Test
     public void checkNX_P01574IsMutagenesis() throws Exception {
 
@@ -167,7 +165,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
     }
 
-    @Ignore
     @Test
     public void checkNX_O15498IsMutagenesis() throws Exception {
 
@@ -179,7 +176,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
     }
 
-    @Ignore
     @Test
     public void checkNX_Q9UBP0IsMutagenesis() throws Exception {
 
@@ -191,7 +187,6 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
         Assert.assertTrue(content.contains("\"mutagenesis\" : true"));
     }
 
-    @Ignore
     @Test
     public void checkNX_Q9UJT9IsNotMutagenesis() throws Exception {
 
