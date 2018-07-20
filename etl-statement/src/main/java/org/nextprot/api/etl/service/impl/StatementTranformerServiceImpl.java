@@ -13,7 +13,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.*;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,86 +27,114 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 	private static final Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
 
 	@Autowired private IsoformService isoformService;
-	@Autowired	private IsoformMappingService isoformMappingService;
-	
+	@Autowired private IsoformMappingService isoformMappingService;
 
 	@Override
 	public Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
-		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
+        Set<Statement> mappedStatementsToLoad = transformComposedStatements(rawStatements, report);
+		Set<Statement> simpleRawStatements = getSimpleRawStatements(rawStatements);
 
-		Set<Statement> mappedStatementsToLoad = new HashSet<>();
+        LOGGER.info("Composed statement categories are " +  mappedStatementsToLoad.stream()
+                .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
+                .distinct()
+                .collect(Collectors.toSet()));
 
-		for (Statement originalStatement : rawStatements) {
+		Set<String> simpleStatementCategories = simpleRawStatements.stream()
+                .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
+                .distinct()
+                .collect(Collectors.toSet());
 
-			//If statements are complex with subject
-			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
-
-				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
-				Set<Statement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
-
-				subjectStatements.forEach(s -> s.processed());
-				originalStatement.processed();
-
-				String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
-
-				boolean isIsoSpecific = false;
-				String isoformName = validateSubject(subjectStatements);
-				String isoformSpecificAccession = null;
-
-				if (isSubjectIsoSpecific(subjectStatements)) {
-					if(isoformName != null){
-						isIsoSpecific = true;
-						String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
-						isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
-					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
-				}
-				
-				mappedStatementsToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
-			}
-		}
-
-		//Currently only includes cases where we have the reciprocal binary interactions 
-		Set<Statement> remainingRawStatements = getRemainingRawStatements (rawStatements);
-		
-		Set<String> distinctCategories = remainingRawStatements.stream().map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY)).distinct().collect(Collectors.toSet());
-		
-		if(distinctCategories.contains(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())){
+        LOGGER.info("Simple statement categories are " + simpleStatementCategories);
+        if (simpleStatementCategories.contains(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
 			throw new NextProtException("Not expecting phenotypic variation at this stage.");
 		}
-		LOGGER.info("Remaining categories are " + distinctCategories);
-		
-		Set<Statement> remainingMappedStatements = transformRemainingRawStatementsToMappedStatements (remainingRawStatements);
-		mappedStatementsToLoad.addAll(remainingMappedStatements);	
+
+		mappedStatementsToLoad.addAll(transformSimpleRawStatementsToMappedStatements(simpleRawStatements));
 		
 		return mappedStatementsToLoad;
-	
 	}
 
-	private Set<Statement> transformRemainingRawStatementsToMappedStatements (Set<Statement> remainingRawStatements){
+	/**
+	 * <h3> What is a composed stmt ?</h3>
+     *     1. reference (via fields SUBJECT_STATEMENT_IDS or OBJECT_STATEMENT_IDS) a subject that is other(s) stmt(s) (ex: variant)
+     *     2. (optionally) refers to an object that is another stmt
+     *
+     * <h3>Example</h3>
+     * MSH6-p.Ser144Ile decreases mismatch repair (BED CAVA-VP011468)
+     *
+     * The sentence above has 3 stmts:
+     * 1. stmt VARIANT: MSH6-p.Ser144Ile
+     * 2. stmt GO: mismatch repair
+     * 3. complex stmt: decreases (refers stmt 1 and object 2)
+     **/
+	private Set<Statement> transformComposedStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
-		return remainingRawStatements.stream().map(statement -> {
+        Set<Statement> composedStatements = new HashSet<>();
 
-			String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
-			Optional isoSpecificAccession = Optional.empty();
-			if(accession != null && accession.contains("-")){ //It is iso specific for example NX_P19544-4 means only specifc to iso 4
-				isoSpecificAccession = Optional.of(accession);
-			}
+        Map<String, Statement> sourceStatementsById = rawStatements.stream()
+                .collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
-			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
-			
-			return StatementBuilder.createNew().addMap(statement)
-					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
-					.removeField(StatementField.STATEMENT_ID)
-					.removeField(StatementField.NEXTPROT_ACCESSION)
-					.buildWithAnnotationHash(AnnotationType.ENTRY);
-			
-		}).collect(Collectors.toSet());
+        for (Statement originalStatement : rawStatements) {
 
+            if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
+
+                String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
+                Set<Statement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
+
+                subjectStatements.forEach(s -> s.processed());
+                originalStatement.processed();
+
+                String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
+
+                boolean isIsoSpecific = false;
+                String isoformName = validateSubject(subjectStatements);
+                String isoformSpecificAccession = null;
+
+                if (isSubjectIsoSpecific(subjectStatements)) {
+                    if (isoformName != null) {
+                        isIsoSpecific = true;
+                        String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
+                        isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
+                    }
+                    else {
+                        throw new NextProtException("Something wrong occured when checking for iso specificity");
+                    }
+                }
+
+                composedStatements.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
+            }
+        }
+        return composedStatements;
+    }
+
+    private Set<Statement> transformSimpleRawStatementsToMappedStatements (Set<Statement> simpleRawStatements){
+
+		return simpleRawStatements.stream()
+                .map(statement -> {
+                    String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
+                    Optional isoSpecificAccession = Optional.empty();
+
+                    if (accession != null && accession.contains("-")){ //It is iso specific for example NX_P19544-4 means only specifc to iso 4
+                        isoSpecificAccession = Optional.of(accession);
+                    }
+
+                    TargetIsoformSet targetIsoformForNormalAnnotation =
+                            StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
+
+                    return StatementBuilder.createNew().addMap(statement)
+                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
+                            .removeField(StatementField.STATEMENT_ID)
+                            .removeField(StatementField.NEXTPROT_ACCESSION)
+                            .buildWithAnnotationHash();
+
+                })
+                .collect(Collectors.toSet());
 	}
 
 
-	private Set<Statement> getRemainingRawStatements (Set<Statement> rawStatements){
+	private Set<Statement> getSimpleRawStatements (Set<Statement> rawStatements) {
+
 		return rawStatements.stream().filter(s -> !s.isProcessed()).collect(Collectors.toSet());
 	}
 	
@@ -191,7 +218,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					objectStatement.processed();
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype)
@@ -199,7 +226,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 							.removeField(StatementField.STATEMENT_ID) 
 							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
 							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 
 				} else {
 					
@@ -209,7 +236,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 							.removeField(StatementField.STATEMENT_ID) 
 							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
 							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 
 				}
 
