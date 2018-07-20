@@ -24,9 +24,15 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for a Gene. Example for msh2:
 	// http://kant.isb-sib.ch:9000/bioeditor/gene/msh2/statements
-	public Set<Statement> getStatementsForSourceForGeneNameAndEnvironment(NextProtSource source, String release, String geneNameAndEnvironment) {
+	public Set<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName) {
 
-		String urlString = source.getStatementsUrl() + "/" + release + "/" + geneNameAndEnvironment + ".json";
+		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
+
+		if (!jsonFileName.endsWith(".json")) {
+
+            urlString += ".json";
+        }
+
 		return deserialize(getInputStreamFromUrl(urlString));
 	}
 
@@ -35,32 +41,33 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 	public Set<Statement> getStatementsForSource(NextProtSource source, String release) {
 
 		Set<Statement> statements = new LinkedHashSet<>();
-		getGeneNamesAndEnvironmentForRelease(source, release).forEach(geneNameAndEnvironment -> {
-			statements.addAll(getStatementsForSourceForGeneNameAndEnvironment(source, release, geneNameAndEnvironment));
-		});
+        getJsonFilenamesForRelease(source, release)
+                .forEach(jsonFilename -> statements.addAll(getStatementsFromJsonFile(source, release, jsonFilename)));
 		return statements;
 	}
 
-
-	Set<String> getGeneNamesAndEnvironmentForRelease(NextProtSource source, String release) {
+	Set<String> getJsonFilenamesForRelease(NextProtSource source, String release) {
 		Set<String> genes = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
 		LOGGER.info("Requesting " +  urlString );
-		try {
 
-			String content = IOUtils.toString(getInputStreamFromUrl(urlString), "UTF8");
-			Pattern pattern = Pattern.compile("href\\=\\\"(.*).json\\\"",Pattern.MULTILINE);
-			Matcher matcher = pattern.matcher(content);
-			while(matcher.find()) {
-				genes.add(matcher.group(1));
-			}
+        try (InputStream is = getInputStreamFromUrl(urlString)) {
 
-		} catch (IOException e) {
-			throw new NextProtException("Not possible to return gene names " + e.getLocalizedMessage());
+            if (is != null) {
 
-		}
+                String content = IOUtils.toString(is, "UTF8");
+                Pattern pattern = Pattern.compile("href\\=\\\"(.*.json)\\\"", Pattern.MULTILINE);
+                Matcher matcher = pattern.matcher(content);
+                while (matcher.find()) {
+                    genes.add(matcher.group(1));
+                }
+            }
+        }
+        catch (IOException e) {
+            throw new NextProtException("Cannot find json filenames for source "+ source.getSourceName() + ":" + e.getLocalizedMessage());
+        }
+
 		return genes;
-
 	}
 
 	private InputStream getInputStreamFromUrl(String urlString) {
