@@ -24,7 +24,7 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 	public void rawStatementsShouldBeWellConvertedToMappedStatements() {
 
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneNameAndEnvironment(null, null, "msh2-multiple-mutant");
+		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "msh2-multiple-mutant");
 
 		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());
 

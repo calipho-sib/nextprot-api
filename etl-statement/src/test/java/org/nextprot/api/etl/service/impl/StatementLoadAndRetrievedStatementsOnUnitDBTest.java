@@ -1,10 +1,9 @@
 package org.nextprot.api.etl.service.impl;
 
-import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"unit", "unit-schema-nxflat", "build"})
 @DirtiesContext
@@ -39,7 +37,7 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 	public void shouldExtractLoadAndRetriveStatements() {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = extractor.getStatementsForSourceForGeneNameAndEnvironment(null, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
+		Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(null, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 		
 		statementETLService.setStatementExtractorService(extractor);
 		statementETLService.setStatementTransformerService(transformerMockedService);
