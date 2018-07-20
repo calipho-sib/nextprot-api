@@ -34,12 +34,11 @@ public class StatementETLController {
 			HttpServletRequest request) {
 
 		boolean load = true;
-		if("true".equalsIgnoreCase(request.getParameter("skipLoad"))){
+
+		if ("true".equalsIgnoreCase(request.getParameter("skipLoad"))){
 			load = false;
 		}
-				return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
 
+		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
 	}
-
-
 }

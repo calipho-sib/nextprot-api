@@ -1,9 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.StatementETLService;
@@ -14,6 +10,10 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -115,6 +115,13 @@ public class StatementETLServiceImpl implements StatementETLService {
 		
 		Set<Statement> rawStatements = extractStatements(source, release, report);
 		report.addInfoWithElapsedTime("Finished extraction");
+
+        if (rawStatements.isEmpty()) {
+            report.addWarning("ETL interruption: Could not extract raw statements from " + source.name()
+                    + " (release " + release + ")");
+            return report.toString();
+        }
+
 		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
 		report.addInfoWithElapsedTime("Finished transformation");
 		loadStatements(rawStatements, mappedStatements, load, report);
