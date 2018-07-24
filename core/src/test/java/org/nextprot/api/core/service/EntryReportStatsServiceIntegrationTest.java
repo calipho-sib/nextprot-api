@@ -63,7 +63,7 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
         Assert.assertEquals(4, reports.get(0).countSubmissions());
         Assert.assertEquals(0, reports.get(0).countPatents());
         Assert.assertEquals(653, reports.get(0).countAdditionalPublications());
-        Assert.assertTrue(reports.get(0).countCuratedPublications() > 85);
+        Assert.assertEquals(92, reports.get(0).countCuratedPublications());
     }
 
 	@Ignore 
