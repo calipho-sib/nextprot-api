@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.core.dao.StatementDao;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"unit", "unit-schema-nxflat", "build"})
 @DirtiesContext
