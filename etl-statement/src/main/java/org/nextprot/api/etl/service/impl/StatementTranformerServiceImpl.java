@@ -32,14 +32,15 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 	@Override
 	public Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
-        Set<Statement> mappedStatementsToLoad = transformComposedStatements(rawStatements, report);
-		Set<Statement> simpleRawStatements = getSimpleRawStatements(rawStatements);
+        rawStatements = statementsWithGeneratedIdsHACK(rawStatements, report);
 
+        Set<Statement> mappedStatementsToLoad = transformComposedStatements(rawStatements, report);
         LOGGER.info("Composed statement categories are " +  mappedStatementsToLoad.stream()
                 .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
                 .distinct()
                 .collect(Collectors.toSet()));
 
+        Set<Statement> simpleRawStatements = getSimpleRawStatements(rawStatements);
 		Set<String> simpleStatementCategories = simpleRawStatements.stream()
                 .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
                 .distinct()
@@ -54,6 +55,18 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 		
 		return mappedStatementsToLoad;
 	}
+
+    // TODO: StatementIds should be generated outside nextprot-api
+    private Set<Statement> statementsWithGeneratedIdsHACK(Set<Statement> statements, ReportBuilder report) {
+
+        Set<Statement> statementSet = new HashSet<>();
+
+        statements.forEach(rs -> statementSet.add(new StatementBuilder().addMap(rs).build()));
+
+        report.addInfo("Created " + statements.size() + " statements with generated id");
+
+        return statementSet;
+    }
 
 	/**
 	 * <h3> What is a composed stmt ?</h3>
@@ -119,15 +132,20 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                         isoSpecificAccession = Optional.of(accession);
                     }
 
-                    TargetIsoformSet targetIsoformForNormalAnnotation =
-                            StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
+                    StatementBuilder builder = StatementBuilder.createNew().addMap(statement);
 
-                    return StatementBuilder.createNew().addMap(statement)
-                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
+                    if (statement.getValue(StatementField.ENTRY_ACCESSION) != null) {
+
+                        TargetIsoformSet targetIsoformForNormalAnnotation =
+                                StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
+
+                        builder.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString());
+                    }
+
+                    return builder
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.NEXTPROT_ACCESSION)
                             .buildWithAnnotationHash();
-
                 })
                 .collect(Collectors.toSet());
 	}
