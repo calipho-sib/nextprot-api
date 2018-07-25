@@ -144,7 +144,7 @@ public class SparqlQueryRunnerController {
     }
     
     /* 
-     * This method directly acces the sparql endpoint.
+     * This method directly access the sparql endpoint.
      * Using this method won't use nor build the API cache for sparql queries,
      */
     private Map<String,String> runQueryViaSparqlEndPoint(String query, Map<String,String> result) {

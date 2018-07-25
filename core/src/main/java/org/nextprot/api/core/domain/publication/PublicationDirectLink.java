@@ -166,6 +166,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		resolver = new DbXrefURLResolverDelegate();
 		db2link = new HashMap<>();
 		db2link.put("BioCyc", "http://biocyc.org/getid?id=%s");
+		db2link.put("BioMuta", "https://hive.biochemistry.gwu.edu/tools/biomuta/biomuta.php?gene=%s"); 
 		// the one below is modified because the site is not maintained any more, this is a fake template which links to the only home page
 		db2link.put("GAD", "https://geneticassociationdb.nih.gov/?id=%s");
 		db2link.put("GeneRif", "http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&report=GeneRif&term=%s");
@@ -187,6 +188,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 	}
 
 	private static String getLinkFor(String dbName, String accession) {
+		//System.out.println("getLinkFor: " + dbName + " | " + accession);
 		DbXref xref = new DbXref();
 		xref.setAccession(accession);
 		xref.setDatabaseName(dbName);
