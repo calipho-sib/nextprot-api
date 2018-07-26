@@ -61,13 +61,25 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
     private Set<Statement> copyRawStatementsAddStatementIdAndEntryAccessionFieldsHACK(Set<Statement> statements, ReportBuilder report) {
 
         Set<Statement> statementSet = new HashSet<>();
+        Set<Statement> invalidStatements = new HashSet<>();
 
-        statements.forEach(rs -> statementSet.add(new StatementBuilder()
-                .addMap(rs)
-                .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
-                .build()));
+        statements.forEach(rs -> {
+            if (rs.getValue(StatementField.NEXTPROT_ACCESSION) != null) {
+                statementSet.add(new StatementBuilder()
+                        .addMap(rs)
+                        .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
+                        .build());
+            }
+            else {
+                invalidStatements.add(rs);
+            }
+        });
 
-        report.addInfo("Created " + statements.size() + " statements with generated id");
+        if (!invalidStatements.isEmpty()) {
+            report.addWarning("Undefined neXtProt accessions: skipping " + invalidStatements.size() +" statements");
+        }
+
+        report.addInfo("Created " + statementSet.size() + "/"+ (statements.size()) +" statements with additionnal fields (ENTRY_ACCESSION, STATEMENT_ID)");
 
         return statementSet;
     }
