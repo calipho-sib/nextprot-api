@@ -78,30 +78,29 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	}
 	
-
-	void loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
+	void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
 		try {
 			
 			if(load){
 				
-				report.addInfo("Loading raw statements: " + rawStatements.size());
+				report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
 				long start = System.currentTimeMillis();
-				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
-				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
+				report.addInfo("Finish load raw statements for source "+ source +" in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 		
 				report.addInfo("Loading entry statements: " + mappedStatements.size());
 				start = System.currentTimeMillis();
-				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
-				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source);
+				report.addInfo("Finish load mapped statements for source "+ source + " in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 
 			}else {
-				report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
+				report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source "+ source);
 			}
 
 
 		}catch (SQLException e){
-			throw new NextProtException("Failed to load " + e);
+			throw new NextProtException("Failed to load in source " + source + ":" + e);
 		}
 		
 	}
@@ -124,7 +123,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
 		report.addInfoWithElapsedTime("Finished transformation");
-		loadStatements(rawStatements, mappedStatements, load, report);
+		loadStatements(source, rawStatements, mappedStatements, load, report);
 		report.addInfoWithElapsedTime("Finished load");
 
 		return report.toString();
