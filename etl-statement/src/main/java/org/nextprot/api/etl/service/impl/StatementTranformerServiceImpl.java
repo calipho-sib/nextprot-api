@@ -13,6 +13,7 @@ import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.*;
+import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,12 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 	@Autowired private IsoformMappingService isoformMappingService;
 
 	@Override
-	public Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
+	public Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 
         // TODO: additionnal field should be defined outside nextprot-api
-        rawStatements = copyRawStatementsAddStatementIdAndEntryAccessionFieldsHACK(rawStatements, report);
+        if (source == NextProtSource.GlyConnect) {
+            rawStatements = copyRawStatementsAddStatementIdAndEntryAccessionFieldsHACK(rawStatements, report);
+        }
 
         Set<Statement> mappedStatementsToLoad = transformComposedStatements(rawStatements, report);
         LOGGER.info("Composed statement categories are " +  mappedStatementsToLoad.stream()
@@ -68,9 +71,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 statementSet.add(new StatementBuilder()
                         .addMap(rs)
                         .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
+                        .addField(StatementField.RESOURCE_TYPE, "database")
                         .build());
-            }
-            else {
+            } else {
                 invalidStatements.add(rs);
             }
         });
