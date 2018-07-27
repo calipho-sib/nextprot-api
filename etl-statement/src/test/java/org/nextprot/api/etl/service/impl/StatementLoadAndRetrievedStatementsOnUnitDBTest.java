@@ -35,15 +35,15 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 
 	
 	@Test
-	public void shouldExtractLoadAndRetrieveStatements() {
+	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(null, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
+		Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 		
 		statementETLService.setStatementExtractorService(extractor);
 		statementETLService.setStatementTransformerService(transformerMockedService);
 
-		Set<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(rawStatements, new ReportBuilder());
+		Set<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		
 		 ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
@@ -54,5 +54,23 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 		
 	}
 
+    @Test
+    public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() {
 
+        StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
+        Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
+
+        statementETLService.setStatementExtractorService(extractor);
+        statementETLService.setStatementTransformerService(transformerMockedService);
+
+        Set<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
+
+        ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+
+        List<Statement> dbStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, "NX_P52701");
+        dbStatements.addAll(statementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_P52701"));
+
+        Assert.assertEquals(dbStatements.size(), mappedStatements.size());
+
+    }
 }
