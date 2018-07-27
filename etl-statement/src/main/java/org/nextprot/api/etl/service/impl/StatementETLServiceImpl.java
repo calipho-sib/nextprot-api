@@ -70,9 +70,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 
 
-	Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
+	Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 		
-		Set<Statement> statements =  statementTransformerService.transformStatements(rawStatements, report);
+		Set<Statement> statements =  statementTransformerService.transformStatements(source, rawStatements, report);
 		report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 		return statements;
 
@@ -121,7 +121,7 @@ public class StatementETLServiceImpl implements StatementETLService {
             return report.toString();
         }
 
-		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
+		Set<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 		report.addInfoWithElapsedTime("Finished transformation");
 		loadStatements(source, rawStatements, mappedStatements, load, report);
 		report.addInfoWithElapsedTime("Finished load");

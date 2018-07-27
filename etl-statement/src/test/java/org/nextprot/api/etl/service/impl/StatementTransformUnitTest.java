@@ -5,6 +5,7 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.NextProtSource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,7 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "msh2-multiple-mutant");
 
-		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());
+		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 
 		int statementsCount = rawStatements.stream().map(s -> s.getValue(StatementField.STATEMENT_ID)).distinct().collect(Collectors.toList()).size();
 		int annotationsCount = mappedStatements.stream().map(s -> s.getValue(StatementField.ANNOTATION_ID)).distinct().collect(Collectors.toList()).size();
