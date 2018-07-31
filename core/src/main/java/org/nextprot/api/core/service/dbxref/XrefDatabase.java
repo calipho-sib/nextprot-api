@@ -13,7 +13,7 @@ import java.util.Map;
 public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
-    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
+    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_EDITOR("BioEditor"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
     CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"),
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CTD,
     DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"),
