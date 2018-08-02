@@ -6,23 +6,24 @@ import org.nextprot.commons.algo.MD5Algo;
 import java.math.BigInteger;
 
 /**
- * A xref protocol id is encoded on 64 bits that consists on 3 fields:
+ * Build from DbXref, the xref protocol id is encoded on 64 bits and consists on 3 fields:
  *
- * ~3  bits (7) for statement flag
+ * ~3  bits (7) for the xref protocol flag
  * ~10 bits for xref database id
  * ~50 bits for xref accession id (truncated MD5)
  *
- *  organised on the following format:
+ *  Here is the decimal format:
  *  7_DDD_AAA_AAA_AAA_AAA_AAA
  *
- *  7                   (7: nxflat statement static reserved number)
+ *  7                   (7: xref protocol reserved number)
  *  DDD                 (D: database id [3 digits])
  *  AAA_AAA_AAA_AAA_AAA (A: xref accession id [15 digits])
  *
  *  The class also provides static operations to extract informations encoded into a long such as:
- *  the database id
- *  the database accession id
- *  a boolean that tells if it is a statement xref id
+ *  1. the database id
+ *  2. the database accession id
+ *  3. the xref accession id
+ *  a boolean that tells if it is a xref protocol id
  */
 public class XRefProtocolId {
 
