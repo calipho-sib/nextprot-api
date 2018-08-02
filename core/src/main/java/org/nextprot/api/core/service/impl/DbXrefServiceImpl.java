@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StatementXRefId;
+import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
@@ -313,14 +313,14 @@ public class DbXrefServiceImpl implements DbXrefService {
     @Override
     public long findXrefId(String database, String accession) {
 
-        return dbXRefDao.findXrefId(database, accession).orElse(generateStatementXrefId(database, accession));
+        return dbXRefDao.findXrefId(database, accession).orElse(generateXrefProtocolId(database, accession));
     }
 
-    private long generateStatementXrefId(String database, String accession) {
+    private long generateXrefProtocolId(String database, String accession) {
 
         // xref type statement: generate a xref id
         return dbXRefDao.findDatabaseId(database)
-                .map(dbId -> new StatementXRefId(dbId, accession).id())
+                .map(dbId -> new XRefProtocolId(dbId, accession).id())
                 .orElseThrow(() -> new NextProtException("Missing database "+ database+ " in table nextprot.cv_databases"));
     }
 }
