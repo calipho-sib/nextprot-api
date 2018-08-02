@@ -19,8 +19,10 @@ import java.math.BigInteger;
  *  DDD                 (D: database id [3 digits])
  *  AAA_AAA_AAA_AAA_AAA (A: xref accession id [15 digits])
  *
- *  The class also provides static operations to extract informations encoded into the long such as:
- *  the database id and a boolean that tells if it is a statement xref id
+ *  The class also provides static operations to extract informations encoded into a long such as:
+ *  the database id
+ *  the database accession id
+ *  a boolean that tells if it is a statement xref id
  */
 public class StatementXRefId {
 
@@ -57,12 +59,17 @@ public class StatementXRefId {
         return new BigInteger(md5Truncated48bits, 16).longValue();
     }
 
+    public static boolean isStatementXrefId(long statementXrefId) {
+
+        return statementXrefId > STATEMENT_XREF_OFFSET;
+    }
+
     /**
      * Get the database id encoded into this given xref id or -1 if not a statement
      * @param xrefId the xref id
      * @return the database id or -1 if not a statement
      */
-    public static long getXrefDatabaseId(long xrefId) {
+    public static long calcXrefDatabaseId(long xrefId) {
 
         if (isStatementXrefId(xrefId)) {
             return (xrefId - STATEMENT_XREF_OFFSET) / STATEMENT_XREF_DATABASE_OFFSET;
@@ -70,8 +77,17 @@ public class StatementXRefId {
         return -1;
     }
 
-    public static boolean isStatementXrefId(long statementXrefId) {
+    /**
+     * Get the accession id in the database encoded into this given xref id or -1 if not a statement
+     * @param xrefId the xref id
+     * @return the accession id or -1 if not a statement
+     */
+    public static long calcTruncatedXrefAccessionId(long xrefId) {
 
-        return statementXrefId > STATEMENT_XREF_OFFSET;
+        if (isStatementXrefId(xrefId)) {
+
+            return xrefId - (xrefId / STATEMENT_XREF_DATABASE_OFFSET) * STATEMENT_XREF_DATABASE_OFFSET;
+        }
+        return -1;
     }
 }
