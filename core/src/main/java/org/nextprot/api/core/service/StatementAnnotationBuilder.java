@@ -6,6 +6,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
@@ -25,16 +26,18 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 
 	protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
 
-	protected TerminologyService terminologyService = null;
-	protected PublicationService publicationService = null;
-	protected MainNamesService mainNamesService = null;
+	protected TerminologyService terminologyService;
+	protected PublicationService publicationService;
+	protected MainNamesService mainNamesService;
+	protected DbXrefService dbXrefService;
 
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
-	protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
+	protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService){
 		this.terminologyService = terminologyService;
 		this.publicationService = publicationService;
 		this.mainNamesService = mainNamesService;
+		this.dbXrefService= dbXrefService;
 	}
 	
 	
@@ -101,11 +104,11 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
                 .map(s -> {
                     AnnotationEvidence evidence = new AnnotationEvidence();
 
-                    evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
-
+                    evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
                     evidence.setResourceAssociationType("evidence");
                     evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
-                    evidence.setResourceId(findPublicationId(s));
+
+                    setResourceId(s, evidence);
 
                     AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
                     AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
@@ -124,7 +127,6 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
                      evidence.setEvidenceCodeAC(statementEvidenceCode);
                      evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
                      evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
-                     evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
                      evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
                      evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
 
@@ -159,8 +161,24 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 
 	}
 
+    private String setResourceId(Statement s, AnnotationEvidence evidence) {
 
-	abstract void setIsoformName(T annotation, String statement);
+        String resourceType = evidence.getResourceType();
+
+        if (resourceType.equals("publication")) {
+            evidence.setResourceId(findPublicationId(s));
+        }
+        else if (resourceType.equals("database")) {
+            evidence.setResourceId(findXrefId(s));
+        }
+        else {
+            throw new NextProtException("resource type "+ resourceType + " not supported");
+        }
+        return resourceType;
+    }
+
+
+    abstract void setIsoformName(T annotation, String statement);
 
 	abstract void setIsoformTargeting(T annotation, Statement statement);
 
@@ -180,7 +198,7 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 
         Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
 		if (publication == null) {
-            String message = "can 't find publication db:" + referenceDB + " id:" + referenceAC;
+            String message = "can 't find publication db:" + referenceDB + " acc:" + referenceAC;
 
             LOGGER.error(message);
 
@@ -189,6 +207,30 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 
         return publication.getPublicationId();
 	}
+
+    long findXrefId(Statement statement) {
+
+        String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
+        String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
+
+        long referenceDatabaseId = dbXrefService.findXrefId(referenceDB, referenceAC);
+
+        if (referenceDatabaseId == -1) {
+            String message = "can 't find db:" + referenceDB;
+            LOGGER.error(message);
+            throw new NextProtException(message);
+        }
+
+        else if (!XRefProtocolId.isXrefProtocolId(referenceDatabaseId)) {
+            String message = "can 't find xref db:" + referenceDB + " id:" + referenceDatabaseId;
+            LOGGER.error(message);
+            throw new NextProtException(message);
+        }
+        else {
+            XRefProtocolId xrefId = new XRefProtocolId(referenceDatabaseId, referenceAC);
+            return xrefId.id();
+        }
+    }
 
 	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
 		List<T> annotations = buildAnnotationList(isoformName, flatStatements);
