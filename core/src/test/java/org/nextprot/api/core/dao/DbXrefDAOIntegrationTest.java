@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 @ActiveProfiles({ "dev" })
@@ -56,7 +57,22 @@ limit 100
 		));
 	}
 
-	private static DbXref mockDbXref(long id, String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
+    @Test
+    public void shouldFindNextprotDb() {
+
+        Optional<Integer> id = xrefdao.findDatabaseId("neXtProt");
+        Assert.assertTrue(id.isPresent());
+        Assert.assertEquals(175, id.get().intValue());
+    }
+
+    @Test
+    public void shouldNotFindRoudoudouDb() {
+
+        Optional<Integer> id = xrefdao.findDatabaseId("roudoudou");
+        Assert.assertFalse(id.isPresent());
+    }
+
+    private static DbXref mockDbXref(long id, String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
 
 		DbXref dbxref = Mockito.mock(DbXref.class);
 
