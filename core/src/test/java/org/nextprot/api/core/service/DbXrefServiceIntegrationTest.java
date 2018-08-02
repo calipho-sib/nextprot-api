@@ -3,6 +3,7 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -250,6 +251,26 @@ having sum(a.cnt)=1
 		Assert.assertEquals(1, props.size());
 		Assert.assertEquals("the major facilitator superfamily (mfs)", props.get(0).getValue());
 	}
+
+    @Test
+    public void shouldFindExistingXrefId()  {
+
+        long id = xrefService.findXrefId("UniProt", "Q8WV60-1");
+        Assert.assertEquals(1537966, id);
+    }
+
+    @Test(expected = NextProtException.class)
+    public void shouldNotFindXrefId()  {
+
+        xrefService.findXrefId("roudoudou", "Q8WV60-1");
+    }
+
+    @Test
+    public void shouldGenerateNonExistingXrefId()  {
+
+        long id = xrefService.findXrefId("UniProt", "Q8WV60-4");
+        Assert.assertEquals(7143053370951092528L, id);
+    }
 
 	private void assertEmptyProperties(String entryName, long propertyId) {
 
