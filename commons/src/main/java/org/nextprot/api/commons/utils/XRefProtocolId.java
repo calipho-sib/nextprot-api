@@ -6,7 +6,7 @@ import org.nextprot.commons.algo.MD5Algo;
 import java.math.BigInteger;
 
 /**
- * A statement xref id is immutable and encoded on 64 bits that consists on 3 fields:
+ * A xref protocol id is encoded on 64 bits that consists on 3 fields:
  *
  * ~3  bits (7) for statement flag
  * ~10 bits for xref database id
@@ -24,7 +24,7 @@ import java.math.BigInteger;
  *  the database accession id
  *  a boolean that tells if it is a statement xref id
  */
-public class StatementXRefId {
+public class XRefProtocolId {
 
     //                                                7_DDD_AAA_AAA_AAA_AAA_AAA
     private final static long STATEMENT_XREF_OFFSET = 7_000_000_000_000_000_000L;
@@ -32,20 +32,18 @@ public class StatementXRefId {
 
     private final long databaseId;
     private final String accession;
+    private final long id;
 
-    public StatementXRefId(long databaseId, String accession) {
+    public XRefProtocolId(long databaseId, String accession) {
 
         this.databaseId = databaseId;
         this.accession = accession.trim();
+        this.id = STATEMENT_XREF_OFFSET + databaseXrefOffset() + truncatedMD5Accession48bits();
     }
 
-    /**
-     * Builds the long number based on StatementXRefId mixed protocol
-     * @return the xref id
-     */
     public long id() {
 
-        return STATEMENT_XREF_OFFSET + databaseXrefOffset() + truncatedMD5Accession48bits();
+        return id;
     }
 
     private long databaseXrefOffset() {
@@ -59,7 +57,7 @@ public class StatementXRefId {
         return new BigInteger(md5Truncated48bits, 16).longValue();
     }
 
-    public static boolean isStatementXrefId(long statementXrefId) {
+    public static boolean isXrefProtocolId(long statementXrefId) {
 
         return statementXrefId > STATEMENT_XREF_OFFSET;
     }
@@ -71,7 +69,7 @@ public class StatementXRefId {
      */
     public static long calcXrefDatabaseId(long xrefId) {
 
-        if (isStatementXrefId(xrefId)) {
+        if (isXrefProtocolId(xrefId)) {
             return (xrefId - STATEMENT_XREF_OFFSET) / STATEMENT_XREF_DATABASE_OFFSET;
         }
         return -1;
@@ -84,7 +82,7 @@ public class StatementXRefId {
      */
     public static long calcTruncatedXrefAccessionId(long xrefId) {
 
-        if (isStatementXrefId(xrefId)) {
+        if (isXrefProtocolId(xrefId)) {
 
             return xrefId - (xrefId / STATEMENT_XREF_DATABASE_OFFSET) * STATEMENT_XREF_DATABASE_OFFSET;
         }
