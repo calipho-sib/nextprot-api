@@ -12,9 +12,9 @@ public class StatementXRefIdTest {
         long xrefid = new StatementXRefId(125, "560/sites/51").id();
         String stringid = Long.toString(xrefid);
         Assert.assertEquals(stringid.length(), 19);
-        Assert.assertTrue(stringid.startsWith("701250"));
+        Assert.assertTrue(stringid.startsWith("7125"));
         Assert.assertTrue(StatementXRefId.isStatementXrefId(xrefid));
-        Assert.assertEquals(125L, StatementXRefId.calcXrefDatabaseId(xrefid));
+        Assert.assertEquals(125L, StatementXRefId.getXrefDatabaseId(xrefid));
     }
 
     @Test
@@ -22,9 +22,9 @@ public class StatementXRefIdTest {
         long xrefid = new StatementXRefId(125, " 560/sites/51").id();
         String stringid = Long.toString(xrefid);
         Assert.assertEquals(stringid.length(), 19);
-        Assert.assertTrue(stringid.startsWith("701250"));
+        Assert.assertTrue(stringid.startsWith("7125"));
         Assert.assertTrue(StatementXRefId.isStatementXrefId(xrefid));
-        Assert.assertEquals(125L, StatementXRefId.calcXrefDatabaseId(xrefid));
+        Assert.assertEquals(125L, StatementXRefId.getXrefDatabaseId(xrefid));
     }
 
     @Test
@@ -36,9 +36,9 @@ public class StatementXRefIdTest {
             long xrefid = new StatementXRefId(123, s).id();
             String stringid = Long.toString(xrefid);
             Assert.assertEquals(stringid.length(), 19);
-            Assert.assertTrue(stringid.startsWith("701230"));
+            Assert.assertTrue(stringid.startsWith("7123"));
             Assert.assertTrue(StatementXRefId.isStatementXrefId(xrefid));
-            Assert.assertEquals(123L, StatementXRefId.calcXrefDatabaseId(xrefid));
+            Assert.assertEquals(123L, StatementXRefId.getXrefDatabaseId(xrefid));
         }
     }
 }
