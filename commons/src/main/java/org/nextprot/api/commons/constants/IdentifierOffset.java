@@ -34,7 +34,4 @@ public class IdentifierOffset {
 	public final static long XREF_ENSEMBL_PROTEIN_PROPERTY_OFFSET = 1_500_000_000_000L;
 	
 	public final static AtomicLong EVIDENCE_ID_COUNTER_FOR_STATEMENTS = new AtomicLong(2_000_000_000_000L);
-
-    ////////////////////////////////////////////// 7_0_DDD_0_A_AAA_AAA_AAA_AAA [D=database (3 digits), A=accession (13)
-    public final static long STATEMENT_XREF_OFFSET = 7_0_000_0_0_000_000_000_000L;
 }
