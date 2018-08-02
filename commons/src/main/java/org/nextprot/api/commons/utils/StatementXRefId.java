@@ -16,7 +16,7 @@ public class StatementXRefId {
     public StatementXRefId(long databaseId, String accession) {
 
         this.databaseId= databaseId;
-        this.accession = accession;
+        this.accession = accession.trim();
     }
 
     private long databaseXrefOffset() {

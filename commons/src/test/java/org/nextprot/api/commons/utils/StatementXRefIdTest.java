@@ -9,8 +9,17 @@ public class StatementXRefIdTest {
 
     @Test
     public void shouldGetASizeOf19And125ForGlyconnect() throws Exception {
-        //long xrefid = new StatementXRefId("GlyConnect", 125, "560/sites/51").id();
         long xrefid = new StatementXRefId(125, "560/sites/51").id();
+        String stringid = Long.toString(xrefid);
+        Assert.assertEquals(stringid.length(), 19);
+        Assert.assertTrue(stringid.startsWith("701250"));
+        Assert.assertTrue(StatementXRefId.isStatementXrefId(xrefid));
+        Assert.assertEquals(125L, StatementXRefId.calcXrefDatabaseId(xrefid));
+    }
+
+    @Test
+    public void shouldGetSameSizeOf19And125ForGlyconnectWithLeadingWhitespaceAccession() throws Exception {
+        long xrefid = new StatementXRefId(125, " 560/sites/51").id();
         String stringid = Long.toString(xrefid);
         Assert.assertEquals(stringid.length(), 19);
         Assert.assertTrue(stringid.startsWith("701250"));
