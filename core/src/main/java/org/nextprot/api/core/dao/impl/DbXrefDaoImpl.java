@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -21,8 +22,10 @@ import java.util.*;
 
 @Repository
 public class DbXrefDaoImpl implements DbXrefDao {
-	
-	@Autowired private SQLDictionary sqlDictionary;
+
+    private static final Logger LOGGER = Logger.getLogger(DbXrefDaoImpl.class);
+
+    @Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
@@ -311,10 +314,13 @@ public class DbXrefDaoImpl implements DbXrefDao {
                 .queryForList(sqlDictionary.getSQLQuery("cvid-by-cvname"), params, Integer.class);
 
         if (list.isEmpty()) {
+            LOGGER.error("Missing database: "+ databaseName+ " does not exist in table nextprot.cv_databases");
             return Optional.empty();
         }
         else if (list.size() > 1) {
-            throw new NextProtException("Multiple db ids ("+list+"): should obtain a single db id for db "+databaseName);
+            String message = "Multiple db ids ("+list+"): should find a single db id for db "+databaseName;
+            LOGGER.error(message);
+            throw new NextProtException(message);
         }
         return Optional.of(list.get(0));
     }
