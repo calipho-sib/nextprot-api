@@ -6,7 +6,6 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
@@ -16,6 +15,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
@@ -213,22 +213,12 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
         String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
         String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
 
-        long referenceDatabaseId = dbXrefService.findXrefId(referenceDB, referenceAC);
+        try {
+            return dbXrefService.findXrefId(referenceDB, referenceAC);
+        } catch (DbXrefServiceImpl.MissingCvDatabaseException e) {
 
-        if (referenceDatabaseId == -1) {
-            String message = "can 't find db:" + referenceDB;
-            LOGGER.error(message);
-            throw new NextProtException(message);
-        }
-
-        else if (!XRefProtocolId.isXrefProtocolId(referenceDatabaseId)) {
-            String message = "can 't find xref db:" + referenceDB + " id:" + referenceDatabaseId;
-            LOGGER.error(message);
-            throw new NextProtException(message);
-        }
-        else {
-            XRefProtocolId xrefId = new XRefProtocolId(referenceDatabaseId, referenceAC);
-            return xrefId.id();
+            LOGGER.error(e.getMessage());
+            throw new NextProtException(e.getMessage());
         }
     }
 

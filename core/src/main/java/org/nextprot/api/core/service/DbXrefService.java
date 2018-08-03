@@ -1,10 +1,10 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public interface DbXrefService {
      * @param database the database name
      * @param accession the xref accession number
      * @return a xref id (generated for non existing statement xrefs)
-     * @throws NextProtException if database does not exist in table nextprot.cv_databases
+     * @throws DbXrefServiceImpl.MissingCvDatabaseException if database does not exist in table nextprot.cv_databases
      */
-    long findXrefId(String database, String accession);
+    long findXrefId(String database, String accession) throws DbXrefServiceImpl.MissingCvDatabaseException;
 }

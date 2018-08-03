@@ -3,11 +3,11 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -253,20 +253,20 @@ having sum(a.cnt)=1
 	}
 
     @Test
-    public void shouldFindExistingXrefId()  {
+    public void shouldFindExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
 
         long id = xrefService.findXrefId("UniProt", "Q8WV60-1");
         Assert.assertEquals(1537966, id);
     }
 
-    @Test(expected = NextProtException.class)
-    public void shouldNotFindXrefIdMissingDb()  {
+    @Test(expected = DbXrefServiceImpl.MissingCvDatabaseException.class)
+    public void shouldNotFindXrefIdMissingDb() throws DbXrefServiceImpl.MissingCvDatabaseException {
 
         xrefService.findXrefId("roudoudou", "Q8WV60-1");
     }
 
     @Test
-    public void shouldGenerateNonExistingXrefId()  {
+    public void shouldGenerateNonExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
 
         long id = xrefService.findXrefId("UniProt", "Q8WV60-4");
         Assert.assertEquals(7143053370951092528L, id);
