@@ -226,7 +226,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 				List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 				
-				TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
+				TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
 				targetIsoformsForPhenotype = targetIsoformsForPhenotypeSet.serializeToJsonString();
 				
 				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
