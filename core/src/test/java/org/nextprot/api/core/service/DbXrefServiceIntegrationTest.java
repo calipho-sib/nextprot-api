@@ -260,7 +260,7 @@ having sum(a.cnt)=1
     }
 
     @Test(expected = NextProtException.class)
-    public void shouldNotFindXrefId()  {
+    public void shouldNotFindXrefIdMissingDb()  {
 
         xrefService.findXrefId("roudoudou", "Q8WV60-1");
     }
