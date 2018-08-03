@@ -13,7 +13,7 @@ import java.util.Map;
 public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
-    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_EDITOR("BioEditor"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
+    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
     CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"),
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CTD,
     DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"),
@@ -21,7 +21,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     EVOLUTIONARY_TRACE("EvolutionaryTrace"), EXPRESSION_ATLAS("ExpressionAtlas"), EVOC("eVOC"),
     GENE_3D("Gene3D"), GENE_CARDS("GeneCards"), GENE_ID("GeneID"), GENE_REVIEWS("GeneReviews"), GENE_TREE("GeneTree"),
     GENEVESTIGATOR("Genevestigator"), GENEVISIBLE("Genevisible"), GENE_WIKI("GeneWiki"), GENOME_RNA_I("GenomeRNAi"),
-    GERM_ONLINE("GermOnline"), GUIDETO_PHARMOCOLOGY("GuidetoPHARMACOLOGY"),
+    GERM_ONLINE("GermOnline"), GLY_CONNECT("GlyConnect"), GUIDETO_PHARMOCOLOGY("GuidetoPHARMACOLOGY"),
     HAMAP, HAMAP_RULE("HAMAP-Rule"), HGNC, H_INV_DB("H-InvDB"), HOGENOM, HOVERGEN, HPA, HPRD, HSSP,
     IFO, IMGT_GENE_DB("IMGT_GENE-DB"), IN_PARANOID("InParanoid"), INT_ACT("IntAct"), INTER_PRO("InterPro"), I_PTM_NET("iPTMnet"),
     JCRB,
