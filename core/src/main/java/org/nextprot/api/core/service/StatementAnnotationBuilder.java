@@ -168,7 +168,7 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
         if (resourceType.equals("publication")) {
             evidence.setResourceId(findPublicationId(s));
         }
-        else if (resourceType.equals("database")) {
+        else if (resourceType.equals("xref")) {
             evidence.setResourceId(findXrefId(s));
         }
         else {
