@@ -320,7 +320,7 @@ public class DbXrefServiceImpl implements DbXrefService {
         // xref type statement: generate a xref id
         return dbXRefDao.findDatabaseId(database)
                 .map(dbId -> new XRefProtocolId(dbId, accession).id())
-                .orElseThrow(() -> new MissingCvDatabaseException("Missing database "+ database+ " in table nextprot.cv_databases"));
+                .orElseThrow(() -> new MissingCvDatabaseException(database));
     }
 
     public static class MissingCvDatabaseException extends Exception {
