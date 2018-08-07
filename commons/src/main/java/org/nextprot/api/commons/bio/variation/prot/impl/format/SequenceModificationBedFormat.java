@@ -5,7 +5,6 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.AminoAcidModification;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Glycosylation;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SingleGenericModificationBEDFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.AminoAcidModificationBEDFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
@@ -47,7 +46,7 @@ public class SequenceModificationBedFormat extends SequenceVariationFormat {
 
         StringBuilder sb = new StringBuilder();
 
-        if (variation.getSequenceChange() instanceof Glycosylation) {
+        if (variation.getSequenceChange() instanceof AminoAcidModification) {
             changeFormat.format(sb, (AminoAcidModification) variation.getSequenceChange(), type);
             aminoAcidModificationFormatter.format(variation, type, sb);
 
