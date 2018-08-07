@@ -12,7 +12,7 @@ import java.text.ParseException;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface SequenceChangeHGVSFormat<C extends SequenceChange> extends SequenceChangeFormat<C> {
+public interface SequenceChangeHGVSFormat<C extends SequenceChange<?>> extends SequenceChangeFormat<C> {
 
     /**
      * Parse the source and build ProteinSequenceVariation with given builder

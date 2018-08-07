@@ -5,4 +5,4 @@ package org.nextprot.api.commons.bio.variation.prot.seqchange;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface SequenceChangeFormat<C extends SequenceChange> extends SequenceChangeFormatter<C>, SequenceChangeParser { }
+public interface SequenceChangeFormat<C extends SequenceChange<?>> extends SequenceChangeFormatter<C>, SequenceChangeParser { }

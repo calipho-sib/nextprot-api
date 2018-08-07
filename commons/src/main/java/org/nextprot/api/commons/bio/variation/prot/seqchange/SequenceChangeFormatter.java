@@ -7,7 +7,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface SequenceChangeFormatter<C extends SequenceChange> {
+public interface SequenceChangeFormatter<C extends SequenceChange<?>> {
 
     /**
      * Format the specified change C as String
