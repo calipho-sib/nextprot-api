@@ -129,7 +129,7 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            public SequenceVariationBuilder thenAddModification(AminoAcidModification mod) {
+            public SequenceVariationBuilder thenAddModification(SequenceChange<AminoAcidModification> mod) {
                 return new AminoAcidModificationBuilder(dataCollector, mod);
             }
 
@@ -261,15 +261,15 @@ public class SequenceVariationImpl implements SequenceVariation {
 
         class AminoAcidModificationBuilder extends SequenceVariationBuilderImpl {
 
-            private final AminoAcidModification mod;
+            private final SequenceChange<AminoAcidModification> mod;
 
-            AminoAcidModificationBuilder(DataCollector dataCollector, AminoAcidModification mod) {
+            AminoAcidModificationBuilder(DataCollector dataCollector, SequenceChange<AminoAcidModification> mod) {
                 super(dataCollector);
                 this.mod = mod;
             }
 
             @Override
-            protected SequenceChange getProteinSequenceChange() {
+            protected SequenceChange<AminoAcidModification> getProteinSequenceChange() {
                 return mod;
             }
         }

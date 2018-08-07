@@ -38,7 +38,7 @@ public interface SequenceVariationBuilder {
         SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
 
         /** modifies affected amino-acid with modification */
-        SequenceVariationBuilder thenAddModification(AminoAcidModification modification);
+        SequenceVariationBuilder thenAddModification(SequenceChange<AminoAcidModification> modification);
 
         /** change translation initiation (start of stop codon) extending the normal translational reading frame at the
          * N- or C-terminal end with one or more amino acids */
