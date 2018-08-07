@@ -4,7 +4,6 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.AminoAcidModification;
-import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeFormat;
 
 import java.text.ParseException;
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
  * Parse single PTM with the format:
  * MOD-AApos (example: P-Tyr223 represents a phosphorylation of tyrosine at position 223)
  */
-public class SingleGenericModificationBEDFormat implements SequenceChangeFormat<SequenceChange<AminoAcidModification>> {
+public class SingleGenericModificationBEDFormat implements SequenceChangeFormat<AminoAcidModification> {
 
     private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)$");
 
@@ -43,10 +42,10 @@ public class SingleGenericModificationBEDFormat implements SequenceChangeFormat<
     }
 
     @Override
-    public void format(StringBuilder sb, SequenceChange<AminoAcidModification> change, AminoAcidCode.CodeType type) {
+    public void format(StringBuilder sb, AminoAcidModification change, AminoAcidCode.CodeType type) {
 
         sb
-                .append(change.getValue().getName())
+                .append(change.getName())
                 .append("-");
     }
 }

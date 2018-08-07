@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Glycosylation;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SingleGlycosylationBEDFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.AminoAcidModificationBEDFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
@@ -14,7 +15,7 @@ import java.util.Collection;
 public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
 
     private final AminoAcidModificationBEDFormatter aminoAcidModificationFormatter;
-    private final SequenceChangeFormat glycoFormat;
+    private final SingleGlycosylationBEDFormat glycoFormat;
 
     public SequenceGlycosylationBedFormat() {
 
@@ -45,9 +46,14 @@ public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
 
         StringBuilder sb = new StringBuilder();
 
-        glycoFormat.format(sb, variation.getSequenceChange(), type);
-        aminoAcidModificationFormatter.format(variation, type, sb);
+        if (variation.getSequenceChange() instanceof Glycosylation) {
 
-        return sb.toString();
+            glycoFormat.format(sb, (Glycosylation) variation.getSequenceChange(), type);
+            aminoAcidModificationFormatter.format(variation, type, sb);
+
+            return sb.toString();
+        }
+
+        throw new IllegalArgumentException("Not a glycosylation: cannot format variation "+variation.getSequenceChange());
     }
 }

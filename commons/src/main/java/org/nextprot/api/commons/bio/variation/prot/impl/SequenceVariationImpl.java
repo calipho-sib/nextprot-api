@@ -22,7 +22,7 @@ import java.util.Objects;
 public class SequenceVariationImpl implements SequenceVariation {
 
     private final VaryingSequence varyingSequence;
-    private final SequenceChange sequenceChange;
+    private final SequenceChange<?> sequenceChange;
 
     private SequenceVariationImpl(SequenceVariationBuilder builder) {
 
@@ -39,7 +39,7 @@ public class SequenceVariationImpl implements SequenceVariation {
         return varyingSequence;
     }
 
-    public SequenceChange getSequenceChange() {
+    public SequenceChange<?> getSequenceChange() {
         return sequenceChange;
     }
 
