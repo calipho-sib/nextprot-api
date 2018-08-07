@@ -62,7 +62,7 @@ public class VaryingSequenceImpl implements VaryingSequence {
 
     @Override
     public String toString() {
-        return "ChangingSequenceImpl{" +
+        return "VaryingSequenceImpl{" +
                 "firstChangingAminoAcid=" + firstChangingAminoAcid +
                 ", firstChangingAminoAcidPos=" + firstChangingAminoAcidPos +
                 ", lastChangingAminoAcid=" + lastChangingAminoAcid +
