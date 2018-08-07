@@ -22,7 +22,7 @@ import org.nextprot.commons.statements.StatementField;
 import java.util.*;
 import java.util.stream.Collectors;
 
-abstract class StatementAnnotationBuilder<T extends Annotation> implements Supplier<T> {
+abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
 	protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
 
@@ -51,9 +51,9 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 		return null;
 	}
 
-	public List<T> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements){
+	public List<Annotation> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements){
 		
-		List<T> annotations = new ArrayList<>();
+		List<Annotation> annotations = new ArrayList<>();
 
 		Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
@@ -62,12 +62,7 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 			
 			String[] subjectComponentsIdentifiersArray = subjectComponentsIdentifiers.split(",");
-			Set<T> subjectVariants = new TreeSet<T>(new Comparator<T>(){
-				@Override
-				public int compare(T o1, T o2) {
-					return o1.getAnnotationName().compareTo(o2.getAnnotationName());
-				}
-			});
+			Set<Annotation> subjectVariants = new TreeSet<>(Comparator.comparing(Annotation::getAnnotationName));
 
 			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
 
@@ -76,13 +71,13 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 				if((subjectVariant == null) || (subjectVariant.isEmpty())){
 					throw new NextProtException("Not found any subject  identifier:" + subjectComponentIdentifier);
 				}
-				T variant = buildAnnotation(accession, subjectVariant);
+                Annotation variant = buildAnnotation(accession, subjectVariant);
 				subjectVariants.add(variant);
 			}
 
 			// Impact annotations
 			List<Statement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
-			List<T> impactAnnotations = buildAnnotationList(accession, impactStatements);
+			List<Annotation> impactAnnotations = buildAnnotationList(accession, impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
@@ -161,28 +156,26 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
 
 	}
 
-    private String setResourceId(Statement s, AnnotationEvidence evidence) {
+    private void setResourceId(Statement s, AnnotationEvidence evidence) {
 
         String resourceType = evidence.getResourceType();
 
         if (resourceType.equals("publication")) {
             evidence.setResourceId(findPublicationId(s));
         }
-        else if (resourceType.equals("xref")) {
+        else if (resourceType.equals("database")) {
             evidence.setResourceId(findXrefId(s));
         }
         else {
             throw new NextProtException("resource type "+ resourceType + " not supported");
         }
-        return resourceType;
     }
 
+    abstract void setIsoformName(Annotation annotation, String statement);
 
-    abstract void setIsoformName(T annotation, String statement);
+	abstract void setIsoformTargeting(Annotation annotation, Statement statement);
 
-	abstract void setIsoformTargeting(T annotation, Statement statement);
-
-	protected void setVariantAttributes(T annotation, Statement variantStatement) {
+	protected void setVariantAttributes(Annotation annotation, Statement variantStatement) {
 
 		String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
 		String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
@@ -222,22 +215,22 @@ abstract class StatementAnnotationBuilder<T extends Annotation> implements Suppl
         }
     }
 
-	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
-		List<T> annotations = buildAnnotationList(isoformName, flatStatements);
+	protected Annotation buildAnnotation(String isoformName, List<Statement> flatStatements) {
+		List<Annotation> annotations = buildAnnotationList(isoformName, flatStatements);
 		if(annotations.isEmpty() || annotations.size() > 1){
 			throw new NextProtException("Expecting 1 annotation but found " + annotations.size() + " from " + flatStatements.size());
 		}
 		return annotations.get(0);
 	}
 	
-	public List<T> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
+	public List<Annotation> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
 
-		List<T> annotations = new ArrayList<>();
+		List<Annotation> annotations = new ArrayList<>();
 		Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
 		flatStatementsByAnnotationHash.forEach((key, statements) -> {
 
-            T annotation = get();
+            Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
 

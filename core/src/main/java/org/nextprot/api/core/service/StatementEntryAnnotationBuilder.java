@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder<Annotation> {
+public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder {
 
 	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
 		super(terminologyService, publicationService,mainNamesService, dbXrefService);
@@ -30,7 +30,7 @@ public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder<
 	@Override
 	void setIsoformTargeting(Annotation annotation, Statement statement) {
 		
-		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<AnnotationIsoformSpecificity>();
+		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<>();
 		Set<TargetIsoformStatementPosition> tispSet = TargetIsoformSet.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
 
 		for (TargetIsoformStatementPosition tisp : tispSet) {
