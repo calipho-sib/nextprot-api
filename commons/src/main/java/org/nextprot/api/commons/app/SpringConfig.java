@@ -2,6 +2,7 @@ package org.nextprot.api.commons.app;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.logging.Logger;
 
@@ -14,7 +15,8 @@ public class SpringConfig {
 
     // To disable the cache remove 'cache' from the "spring.profiles.active" properties
     private CacheManager cacheManager = null;
-    private final SpringBeanProvider springBeanProvider;
+    private ClassPathXmlApplicationContext ctx = null;
+
     private final String profiles;
 
     public SpringConfig() {
@@ -25,15 +27,25 @@ public class SpringConfig {
     public SpringConfig(String profiles) {
 
         this.profiles = profiles;
-        this.springBeanProvider = new SpringBeanProvider();
+    }
+
+    /**
+     * @return array of Spring resource locations
+     */
+    protected String[] getXmlConfigResourceLocations() {
+        return new String[] {
+                "classpath:spring/commons-context.xml",
+                "classpath:spring/core-context.xml"
+        };
     }
 
     public void startApplicationContext() {
 
         System.setProperty("spring.profiles.active", profiles);
+        ctx = new ClassPathXmlApplicationContext(getXmlConfigResourceLocations());
 
         if (profiles.contains("cache")) {
-            cacheManager = springBeanProvider.getBean(CacheManager.class);
+            cacheManager = ctx.getBean(CacheManager.class);
             LOGGER.info("cache manager startup");
         }
     }
@@ -47,7 +59,7 @@ public class SpringConfig {
     }
 
     public <T> T getBean(Class<T> requiredType) {
-        return springBeanProvider.getBean(requiredType);
+        return ctx.getBean(requiredType);
     }
 
     public String getProfiles() {
