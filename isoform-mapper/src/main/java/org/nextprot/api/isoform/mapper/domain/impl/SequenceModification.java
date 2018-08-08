@@ -1,7 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceModificationBedFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceGlycosylationBedFormat;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
@@ -17,15 +16,15 @@ public class SequenceModification extends SequenceFeatureBase {
 
     // TODO: Implement this method properly
     @Override
-    protected int getPivotPoint(String feature) throws ParseException {
+    protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException {
 
-        return feature.indexOf("-");
+        return feature.indexOf("+");
     }
 
     @Override
-    public SequenceVariationFormat newParser() {
+    public SequenceGlycosylationBedFormat newParser() {
 
-        return new SequenceModificationBedFormat();
+        return new SequenceGlycosylationBedFormat();
     }
 
     @Override

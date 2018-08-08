@@ -36,10 +36,10 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
         feature = feature.trim();
 
-        int pivotPoint = getPivotPoint(feature);
+        int position = getDelimitingPositionBetweenIsoformAndVariation(feature);
 
-        String genePlusIso = feature.substring(0, pivotPoint);
-        formattedVariation = feature.substring(pivotPoint+1);
+        String genePlusIso = feature.substring(0, position);
+        formattedVariation = feature.substring(position+1);
 
         geneName = parseGeneName(genePlusIso);
         isoformName = parseIsoformName(genePlusIso);
@@ -48,7 +48,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         variation = parser.parse(formattedVariation);
     }
 
-    protected abstract int getPivotPoint(String feature) throws ParseException;
+    protected abstract int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException;
 
     public static SequenceFeature newFeature(SingleFeatureQuery query) throws FeatureQueryException {
 
