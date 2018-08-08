@@ -1,20 +1,22 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.ChromosomalLocation;
+import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.GeneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 @Service
 class GeneServiceImpl implements GeneService {
 
 	@Autowired private GeneDAO geneDAO;
+	@Autowired
+    private GeneIdentifierService geneIdentifierService;
 
 	@Override
 	@Cacheable("chromosomal-locations")
@@ -24,4 +26,9 @@ class GeneServiceImpl implements GeneService {
 		return new ImmutableList.Builder<ChromosomalLocation>().addAll(chroms).build();
 	}
 
+    @Override
+    public boolean isValidGeneName(String accession, String geneName) {
+
+        return geneIdentifierService.findGeneNamesByEntryAccession(accession).contains(geneName);
+    }
 }
