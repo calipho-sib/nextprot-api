@@ -11,6 +11,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -34,7 +35,7 @@ public class IsoformPEFFHeaderBuilderTest extends CoreUnitBaseTest {
 
     private IsoformPEFFHeaderBuilder newIsoformPEFFHeaderBuilder(String isoName) {
 
-        String entryAccession = isoformService.findEntryAccessionFromIsoformAccession(isoName);
+        String entryAccession = IsoformUtils.findEntryAccessionFromIsoformAccession(isoName);
 
         Isoform isoform = isoformService.findIsoform(isoName);
         List<Annotation> isoformAnnotations = annotationService.findAnnotations(entryAccession).stream()
