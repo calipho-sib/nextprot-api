@@ -1,17 +1,19 @@
 package org.nextprot.api.isoform.mapper.service;
 
-import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 
 import java.util.stream.Collectors;
 
@@ -35,7 +37,10 @@ public class SequenceFeatureValidator {
      */
     public BaseFeatureQueryResult validate(SequenceFeature sequenceFeature) throws FeatureQueryException {
 
-        checkFeatureGeneName(sequenceFeature);
+        // TODO: should probably put that code in a SequenceVariantValidator
+        if (sequenceFeature instanceof SequenceVariant) {
+            checkFeatureGeneName((SequenceVariant) sequenceFeature);
+        }
         checkIsoformExistence(sequenceFeature);
         checkFeatureChangingAminoAcids(sequenceFeature);
 
@@ -46,9 +51,10 @@ public class SequenceFeatureValidator {
 
     private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {
 
-        if (!sequenceFeature.isValidIsoform(entry)) {
-
-            throw new UnknownFeatureIsoformException(entry, query, sequenceFeature.getIsoformName());
+        try {
+            sequenceFeature.getIsoform();
+        } catch (UnknownIsoformException e) {
+            throw new UnknownFeatureIsoformException(entry, query, query.getAccession());
         }
     }
 
@@ -65,13 +71,12 @@ public class SequenceFeatureValidator {
      * Check that gene name is compatible with protein name
      * Part of the contract a validator should implement to validate a feature on an isoform sequence
      */
-    private void checkFeatureGeneName(SequenceFeature sequenceFeature) throws IncompatibleGeneAndProteinNameException {
+    private void checkFeatureGeneName(SequenceVariant sequenceFeature) throws IncompatibleGeneAndProteinNameException {
 
-        if (!sequenceFeature.isValidGeneName(entry)) {
+        if (!SequenceVariant.isValidGeneName(entry, sequenceFeature.getGeneName())) {
 
             throw new IncompatibleGeneAndProteinNameException(query, sequenceFeature.getGeneName(),
                     entry.getOverview().getGeneNames().stream().map(EntityName::getName).collect(Collectors.toList()));
-
         }
     }
 
@@ -83,7 +88,13 @@ public class SequenceFeatureValidator {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        Isoform isoform = sequenceFeature.getIsoform(entry);
+        Isoform isoform;
+        try {
+            isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.getIsoform().getIsoformAccession());
+        } catch (UnknownIsoformException e) {
+
+            throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());
+        }
 
         // do check only position for STOP code
         if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {
