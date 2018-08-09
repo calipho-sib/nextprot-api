@@ -147,6 +147,6 @@ class IsoformServiceImpl implements IsoformService {
             return IsoformUtils.getCanonicalIsoform(entry);
         }
 
-        return  IsoformUtils.getIsoformByName(entry, entryNameOrIsoformName);
+        return IsoformUtils.getIsoformByName(entry, entryNameOrIsoformName);
     }
 }
