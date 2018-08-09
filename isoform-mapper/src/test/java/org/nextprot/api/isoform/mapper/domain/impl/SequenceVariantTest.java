@@ -217,7 +217,7 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         SequenceModification ptm = new SequenceModification("NX_Q06187+PTM-0253_Asn21", beanService);
 
         Assert.assertEquals("PTM-0253_Asn21", ptm.parseVariationPart());
-        Assert.assertEquals("NX_Q06187-1", ptm.getIsoform().getIsoformAccession());
+        Assert.assertEquals("NX_Q06187-1", ptm.buildIsoform().getIsoformAccession());
         SequenceVariation pv = ptm.getProteinVariation();
         Assert.assertEquals(AminoAcidCode.ASPARAGINE, pv.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(21, pv.getVaryingSequence().getFirstAminoAcidPos());
@@ -233,7 +233,7 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         SequenceModification ptm = new SequenceModification("NX_Q06187-2+PTM-0253_Asn21", beanService);
 
         Assert.assertEquals("PTM-0253_Asn21", ptm.parseVariationPart());
-        Assert.assertEquals("NX_Q06187-2", ptm.getIsoform().getIsoformAccession());
+        Assert.assertEquals("NX_Q06187-2", ptm.buildIsoform().getIsoformAccession());
     }
 
     public static Entry mockEntry(String accession, Isoform... isoforms) {

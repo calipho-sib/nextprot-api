@@ -38,7 +38,7 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
 
         preChecks(sequenceFeature);
         checkIsoformExistence(sequenceFeature);
-        checkFeatureChangingAminoAcids(sequenceFeature);
+        checkVaryingAminoAcids(sequenceFeature);
         postChecks(sequenceFeature);
 
         return new SingleFeatureQuerySuccessImpl(entry, query, sequenceFeature);
@@ -47,7 +47,7 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
     protected void checkIsoformExistence(SF sequenceFeature) throws UnknownFeatureIsoformException {
 
         try {
-            sequenceFeature.getIsoform();
+            sequenceFeature.buildIsoform();
         } catch (UnknownIsoformException e) {
             throw new UnknownFeatureIsoformException(entry, query, query.getAccession());
         }
@@ -73,13 +73,13 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
      * Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
      * Part of the contract a validator should implement to validate a feature on an isoform sequence.
      */
-    protected void checkFeatureChangingAminoAcids(SF sequenceFeature) throws FeatureQueryException {
+    private void checkVaryingAminoAcids(SF sequenceFeature) throws FeatureQueryException {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
         Isoform isoform;
         try {
-            isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.getIsoform().getIsoformAccession());
+            isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.buildIsoform().getIsoformAccession());
         } catch (UnknownIsoformException e) {
 
             throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());

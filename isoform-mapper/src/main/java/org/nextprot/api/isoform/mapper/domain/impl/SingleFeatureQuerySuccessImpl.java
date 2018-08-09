@@ -40,7 +40,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
         this.feature = feature;
 
         try {
-            addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.getIsoform().getIsoformAccession()),
+            addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.buildIsoform().getIsoformAccession()),
                     feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
                     feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
         } catch (UnknownIsoformException e) {
