@@ -26,7 +26,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFo
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureIsoformException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,9 +72,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             Entry entry = entryBuilderService.build(EntryConfig.newConfig(query.getAccession())
                     .withTargetIsoforms().withOverview());
 
-            SequenceFeatureValidator validator = new SequenceFeatureValidator(entry, query);
-
-            return validator.validate(sequenceFeature);
+            return sequenceFeature.newValidator(entry, query).validate(sequenceFeature);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailureImpl(e);
