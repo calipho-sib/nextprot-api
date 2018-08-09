@@ -4,13 +4,11 @@ import com.google.common.base.Strings;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
@@ -55,24 +53,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         try {
             SequenceFeature sequenceFeature = SequenceFeatureFactory.newSequenceFeature(query, beanService);
+            setEntryAccession(query, sequenceFeature);
 
-            if (Strings.isNullOrEmpty(query.getAccession())) {
-
-                try {
-                    query.setAccession(entryService.findEntryAccessionFromIsoformAccession(sequenceFeature.getIsoform().getIsoformAccession()));
-                }
-                catch (SequenceVariant.UnknownGeneNameException e) {
-                    throw new EntryAccessionNotFoundForGeneException(query, e.getGeneName());
-                }
-                catch (UnknownIsoformException e) {
-                    throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());
-                }
-            }
-
-            Entry entry = entryBuilderService.build(EntryConfig.newConfig(query.getAccession())
-                    .withTargetIsoforms().withOverview());
-
-            return sequenceFeature.newValidator(entry, query).validate(sequenceFeature);
+            return sequenceFeature.newValidator(query).validate(sequenceFeature);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailureImpl(e);
@@ -95,6 +78,22 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return results;
     }
 
+    private void setEntryAccession(SingleFeatureQuery query, SequenceFeature sequenceFeature ) throws FeatureQueryException {
+
+        if (Strings.isNullOrEmpty(query.getAccession())) {
+
+            try {
+                query.setAccession(entryService.findEntryAccessionFromIsoformAccession(sequenceFeature.buildIsoform().getIsoformAccession()));
+            }
+            catch (SequenceVariant.UnknownGeneNameException e) {
+                throw new EntryAccessionNotFoundForGeneException(query, e.getGeneName());
+            }
+            catch (UnknownIsoformException e) {
+                throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());
+            }
+        }
+    }
+
     // TODO: refactor this method, it is too complex (probably a propagator object with strategy pattern for the mapping)
     private void propagate(SingleFeatureQuerySuccessImpl successResults) throws ParseException {
 
@@ -104,7 +103,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
         try {
-            Isoform featureIsoform = IsoformUtils.getIsoformByNameOrCanonical(successResults.getEntry(), isoFeature.getIsoform().getIsoformAccession());
+            Isoform featureIsoform = IsoformUtils.getIsoformByNameOrCanonical(successResults.getEntry(), isoFeature.buildIsoform().getIsoformAccession());
             SequenceVariation variation = isoFeature.getProteinVariation();
 
             OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
