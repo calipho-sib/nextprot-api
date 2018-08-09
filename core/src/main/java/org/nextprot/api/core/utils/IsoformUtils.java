@@ -57,8 +57,15 @@ public class IsoformUtils {
     public static List<Isoform> getOtherIsoforms(Entry entry, String isoformUniqueName) {
 
         return entry.getIsoforms().stream()
-                .filter(iso -> !iso.getUniqueName().equals(isoformUniqueName))
+                .filter(iso -> !iso.getIsoformAccession().equals(isoformUniqueName))
                 .collect(Collectors.toList());
+    }
+
+    public static Isoform getIsoformByNameOrCanonical(Entry entry, String isoformName) {
+
+        return  (isoformName != null) ?
+                IsoformUtils.getIsoformByName(entry, isoformName) :
+                IsoformUtils.getCanonicalIsoform(entry);
     }
 
     public static Isoform getIsoformByName(Entry entry, String name) {
@@ -69,7 +76,7 @@ public class IsoformUtils {
 
         if (name==null) return null;
         for (Isoform iso: isoforms) {
-            if (name.equals(iso.getUniqueName())) return iso;
+            if (name.equals(iso.getIsoformAccession())) return iso;
             EntityName mainEname = iso.getMainEntityName();
             if (mainEname!=null && name.equalsIgnoreCase(mainEname.getName())) return iso;
             for (EntityName syn: iso.getSynonyms()) {
@@ -77,6 +84,15 @@ public class IsoformUtils {
             }
         }
         return null;
+    }
+
+    public static String findEntryAccessionFromIsoformAccession(String isoformAccession) {
+
+        if (!isoformAccession.contains("-")) {
+            return null;
+        }
+
+        return isoformAccession.split("-")[0];
     }
 
 	/**
