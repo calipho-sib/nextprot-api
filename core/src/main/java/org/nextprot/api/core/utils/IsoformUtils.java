@@ -74,13 +74,21 @@ public class IsoformUtils {
 
     public static Isoform getIsoformByName(List<Isoform> isoforms, String name) {
 
-        if (name==null) return null;
+        if (name == null) {
+            return null;
+        }
         for (Isoform iso: isoforms) {
-            if (name.equals(iso.getIsoformAccession())) return iso;
+            if (name.equals(iso.getIsoformAccession())) {
+                return iso;
+            }
             EntityName mainEname = iso.getMainEntityName();
-            if (mainEname!=null && name.equalsIgnoreCase(mainEname.getName())) return iso;
+            if (mainEname != null && name.equalsIgnoreCase(mainEname.getName())) {
+                return iso;
+            }
             for (EntityName syn: iso.getSynonyms()) {
-                if (name.equalsIgnoreCase(syn.getName())) return iso;
+                if (name.equalsIgnoreCase(syn.getName())) {
+                    return iso;
+                }
             }
         }
         return null;
