@@ -1,22 +1,57 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
-import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.EntityName;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 
 import java.text.ParseException;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SequenceVariant extends SequenceFeatureBase {
 
-    public SequenceVariant(String feature) throws ParseException {
-        super(feature);
+    private final String geneName;
+    private final String isoformName;
+
+    private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException {
+        super(feature, type, beanService);
+
+        this.geneName = parseGeneName();
+        this.isoformName = extractIsoformName();
+    }
+
+    public static SequenceVariant variant(String feature, BeanService beanService) throws ParseException {
+
+        return new SequenceVariant(feature, AnnotationCategory.VARIANT, beanService);
+    }
+
+    public static SequenceVariant mutagenesis(String feature, BeanService beanService) throws ParseException {
+
+        return new SequenceVariant(feature, AnnotationCategory.MUTAGENESIS, beanService);
+    }
+
+    private String parseGeneName() {
+
+        if (sequenceIdPart.contains("-"))
+            return sequenceIdPart.substring(0, sequenceIdPart.indexOf("-"));
+
+        return sequenceIdPart;
     }
 
     @Override
-    protected int getPivotPoint(String feature) throws ParseException {
+    protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException {
 
         int index = feature.indexOf("-p.");
 
@@ -28,6 +63,7 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     @Override
     public SequenceVariationFormat newParser() {
+
         return new SequenceVariantHGVSFormat();
     }
 
@@ -40,10 +76,9 @@ public class SequenceVariant extends SequenceFeatureBase {
      *
      *   @return null if canonical
      */
-    @Override
-    protected String parseIsoformName(String geneAndIso) throws ParseException {
+    private String extractIsoformName() throws ParseException {
 
-        String featureIsoname = extractIsoName(geneAndIso);
+        String featureIsoname = parseIsoformName();
 
         // canonical
         if (featureIsoname == null) {
@@ -78,29 +113,28 @@ public class SequenceVariant extends SequenceFeatureBase {
     /**
      * @return the isoform part from feature string (null if canonical)
      */
-    private String extractIsoName(String feature) {
+    private String parseIsoformName() {
 
-        Preconditions.checkNotNull(feature);
-
-        int indexOfDash = feature.indexOf("-");
+        int indexOfDash = sequenceIdPart.indexOf("-");
 
         if (indexOfDash >= 0) {
-            return feature.substring(indexOfDash+1);
+            return sequenceIdPart.substring(indexOfDash+1);
         }
 
         return null;
     }
 
-    /*
-        Short   -> isoShort
-        Long    -> isoLong
-        Iso 5   -> iso5
-        Delta 6 -> isoDelta6
-        GTBP-N  -> isoGTBP-N
-        Chain XP32 -> isoChain_XP32
-     */
     @Override
-    protected String formatIsoformFeatureName(Isoform isoform) {
+    protected String formatSequenceIdPart(Isoform isoform) {
+
+        StringBuilder sb = new StringBuilder(geneName);
+        sb.append("-");
+        sb.append(formatIsoformName(isoform));
+
+        return sb.toString();
+    }
+
+    String formatIsoformName(Isoform isoform) {
 
         String name = isoform.getMainEntityName().getName();
         StringBuilder sb = new StringBuilder();
@@ -111,5 +145,67 @@ public class SequenceVariant extends SequenceFeatureBase {
             sb.append("iso").append(name.replace(" ", "_"));
 
         return sb.toString();
+    }
+
+    public String getIsoformName() {
+        return isoformName;
+    }
+
+    public String getGeneName() {
+        return geneName;
+    }
+
+
+    // TODO: this method should be called after isoformName has been set by getIsoformName(seqId)
+    @Override
+    public Isoform getIsoform() throws UnknownGeneNameException {
+
+        Set<String> entries = beanService.getBean(MasterIdentifierService.class).findEntryAccessionByGeneName(geneName, false);
+
+        if (entries != null && !entries.isEmpty()) {
+
+            IsoformService isoformService = beanService.getBean(IsoformService.class);
+
+            // 1. get entry from gene name
+            String entry = entries.iterator().next();
+
+            // 2. get isoform accession from iso name and entry
+            return (isoformName != null) ? isoformService.findIsoformByName(entry, isoformName) : IsoformUtils.getCanonicalIsoform(beanService.getBean(EntryBuilderService.class)
+                    .build(EntryConfig.newConfig(entry).withTargetIsoforms()));
+        }
+
+        throw new UnknownGeneNameException(geneName);
+    }
+
+    public static boolean isValidGeneName(Entry entry, String geneName) {
+
+        if (geneName != null) {
+
+            List<EntityName> geneNames = entry.getOverview().getGeneNames();
+
+            for (EntityName name : geneNames) {
+
+                if (geneName.startsWith(name.getName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public class UnknownGeneNameException extends UnknownIsoformException {
+
+        private final String geneName;
+
+        public UnknownGeneNameException(String geneName) {
+
+            super("Cannot find a neXtProt entry associated with gene name "+ geneName);
+            this.geneName = geneName;
+        }
+
+        public String getGeneName() {
+            return geneName;
+        }
     }
 }

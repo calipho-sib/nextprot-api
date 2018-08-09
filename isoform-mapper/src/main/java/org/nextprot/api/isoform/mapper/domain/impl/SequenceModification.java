@@ -1,7 +1,11 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceGlycosylationBedFormat;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 
 import java.text.ParseException;
 
@@ -10,13 +14,13 @@ import java.text.ParseException;
  */
 public class SequenceModification extends SequenceFeatureBase {
 
-    public SequenceModification(String feature) throws ParseException {
-        super(feature);
+    public SequenceModification(String feature, BeanService beanService) throws ParseException {
+
+        super(feature, AnnotationCategory.GENERIC_PTM, beanService);
     }
 
-    // TODO: Implement this method properly
     @Override
-    protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException {
+    protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) {
 
         return feature.indexOf("+");
     }
@@ -28,12 +32,13 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
-    protected String parseIsoformName(String feature) throws ParseException {
+    protected String formatSequenceIdPart(Isoform isoform) {
         return null;
     }
 
     @Override
-    protected String formatIsoformFeatureName(Isoform isoform) {
-        return null;
+    public Isoform getIsoform() throws UnknownIsoformException {
+
+        return beanService.getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
     }
 }

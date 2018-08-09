@@ -5,129 +5,48 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformRuntimeException;
 
 import java.text.ParseException;
-import java.util.List;
 
 /**
- * Parse and provide gene name and protein sequence variation
+ * Parse and isoform name and protein sequence variation
  */
 public abstract class SequenceFeatureBase implements SequenceFeature {
 
-    private final String geneName;
-    private final String isoformName;
-    private final String formattedVariation;
+    private final String feature;
+    private final AnnotationCategory type;
+    protected final String sequenceIdPart;
+    private final String variationPart;
     private final SequenceVariation variation;
     private final SequenceVariationFormat parser;
+    protected final BeanService beanService;
 
-    SequenceFeatureBase(String feature) throws ParseException {
+    SequenceFeatureBase(String feature, AnnotationCategory type, BeanService beanService) throws ParseException {
 
         Preconditions.checkNotNull(feature);
+        Preconditions.checkNotNull(type);
 
-        feature = feature.trim();
+        this.type = type;
+        this.feature = feature.trim();
 
-        int position = getDelimitingPositionBetweenIsoformAndVariation(feature);
-
-        String genePlusIso = feature.substring(0, position);
-        formattedVariation = feature.substring(position+1);
-
-        geneName = parseGeneName(genePlusIso);
-        isoformName = parseIsoformName(genePlusIso);
+        sequenceIdPart = parseSequenceIdPart();
+        variationPart = parseVariationPart();
 
         parser = newParser();
-        variation = parser.parse(formattedVariation);
-    }
+        variation = parser.parse(variationPart);
 
-    protected abstract int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException;
-
-    public static SequenceFeature newFeature(SingleFeatureQuery query) throws FeatureQueryException {
-
-        // throw exception if invalid query
-        query.checkFeatureQuery();
-
-        AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(query.getFeatureType());
-
-        try {
-            switch (annotationCategory) {
-                case MUTAGENESIS:
-                case VARIANT:
-                    return new SequenceVariant(query.getFeature());
-                case GENERIC_PTM:
-                    return new SequenceModification(query.getFeature());
-                default:
-                    throw new InvalidFeatureQueryTypeException(query);
-            }
-        }
-        catch (ParseException e) {
-            throw new InvalidFeatureQueryFormatException(query, e);
-        }
-    }
-
-    protected abstract String formatIsoformFeatureName(Isoform isoform);
-
-    /** Parse isoform name or null if not found */
-    protected abstract String parseIsoformName(String feature) throws ParseException;
-
-    protected abstract SequenceVariationFormat newParser();
-
-    @Override
-    public boolean isValidGeneName(Entry entry) {
-
-        if (geneName != null) {
-
-            List<EntityName> geneNames = entry.getOverview().getGeneNames();
-
-            for (EntityName name : geneNames) {
-
-                if (geneName.startsWith(name.getName())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        this.beanService = beanService;
     }
 
     @Override
-    public Isoform getIsoform(Entry entry) throws UnknownIsoformRuntimeException {
-
-        Isoform isoform = (isoformName != null) ?
-                IsoformUtils.getIsoformByName(entry, isoformName) :
-                IsoformUtils.getCanonicalIsoform(entry);
-
-        if (isoform == null) {
-            throw new UnknownIsoformRuntimeException(isoformName, entry);
-        }
-
-        return isoform;
+    public AnnotationCategory getType() {
+        return type;
     }
 
-    @Override
-    public boolean isValidIsoform(Entry entry) {
-
-        Isoform isoform = (isoformName != null) ?
-                IsoformUtils.getIsoformByName(entry, isoformName) :
-                IsoformUtils.getCanonicalIsoform(entry);
-
-        return isoform != null;
-    }
-
-    @Override
-    public String getFormattedVariation() {
-
-        return formattedVariation;
-    }
-
+    // TODO: does this method reside in the correct object ?
     @Override
     public String formatIsoSpecificFeature(Isoform isoform, int firstPos, int lastPos) {
 
@@ -135,7 +54,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         SequenceVariationMutable isoVariation = new SequenceVariationMutable();
 
         VaryingSequenceMutable changingSequence = new VaryingSequenceMutable();
-
         changingSequence.setFirst(variation.getVaryingSequence().getFirstAminoAcid());
         changingSequence.setLast(variation.getVaryingSequence().getLastAminoAcid());
         changingSequence.setFirstPos(firstPos);
@@ -145,37 +63,49 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         isoVariation.setSequenceChange(variation.getSequenceChange());
 
         StringBuilder sb = new StringBuilder()
-                .append(geneName)
+                .append(formatSequenceIdPart(isoform))
                 .append("-")
-                .append(formatIsoformFeatureName(isoform))
-                .append("-")
-                .append(parser.format(isoVariation, AminoAcidCode.CodeType.THREE_LETTER));
+                .append(formatFeaturePart(isoVariation));
 
         return sb.toString();
-    }
-
-    private String parseGeneName(String geneAndIso) {
-
-        Preconditions.checkNotNull(geneAndIso);
-
-        if (geneAndIso.contains("-"))
-            return geneAndIso.substring(0, geneAndIso.indexOf("-"));
-
-        return geneAndIso;
-    }
-
-    @Override
-    public String getGeneName() {
-        return geneName;
-    }
-
-    @Override
-    public String getIsoformName() {
-        return isoformName;
     }
 
     @Override
     public SequenceVariation getProteinVariation() {
         return variation;
+    }
+
+    /**
+     * @return the position in the feature string between the isoform part and the variation part
+     * @throws ParseException
+     */
+    protected abstract int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException;
+    protected abstract SequenceVariationFormat newParser();
+    protected abstract String formatSequenceIdPart(Isoform isoform);
+
+    /**
+     * @return the sequence id part from the feature string
+     * @throws ParseException if invalid format
+     */
+    private String parseSequenceIdPart() throws ParseException {
+
+        return feature.substring(0, getDelimitingPositionBetweenIsoformAndVariation(feature));
+    }
+
+    /**
+     * @return the variation part from the feature string
+     * @throws ParseException if invalid format
+     */
+    String parseVariationPart() throws ParseException {
+
+        return feature.substring(getDelimitingPositionBetweenIsoformAndVariation(feature)+1);
+    }
+
+    /**
+     * @return the formatted feature part string
+     */
+    private String formatFeaturePart(SequenceVariation sequenceVariation) {
+
+        return parser.format(sequenceVariation, AminoAcidCode.CodeType.THREE_LETTER);
     }
 }
