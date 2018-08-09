@@ -6,7 +6,6 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -38,9 +37,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     @Autowired
     public MasterIsoformMappingService masterIsoformMappingService;
-
-    @Autowired
-    private EntryBuilderService entryBuilderService;
 
     @Autowired
     private EntryService entryService;
