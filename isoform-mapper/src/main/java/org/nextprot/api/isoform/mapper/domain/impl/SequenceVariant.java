@@ -12,13 +12,18 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SequenceVariant extends SequenceFeatureBase {
 
@@ -177,6 +182,12 @@ public class SequenceVariant extends SequenceFeatureBase {
         throw new UnknownGeneNameException(geneName);
     }
 
+    @Override
+    public SequenceFeatureValidator newValidator(Entry entry, SingleFeatureQuery query) {
+
+        return new SequenceVariantValidator(entry, query);
+    }
+
     public static boolean isValidGeneName(Entry entry, String geneName) {
 
         if (geneName != null) {
@@ -206,6 +217,32 @@ public class SequenceVariant extends SequenceFeatureBase {
 
         public String getGeneName() {
             return geneName;
+        }
+    }
+
+    public static class SequenceVariantValidator extends SequenceFeatureValidator<SequenceVariant> {
+
+        public SequenceVariantValidator(Entry entry, SingleFeatureQuery query) {
+            super(entry, query);
+        }
+
+        @Override
+        protected void preChecks(SequenceVariant sequenceVariant) throws FeatureQueryException {
+
+            checkFeatureGeneName(sequenceVariant);
+        }
+
+        /**
+         * Check that gene name is compatible with protein name
+         * Part of the contract a validator should implement to validate a feature on an isoform sequence
+         */
+        private void checkFeatureGeneName(SequenceVariant sequenceFeature) throws IncompatibleGeneAndProteinNameException {
+
+            if (!SequenceVariant.isValidGeneName(entry, sequenceFeature.getGeneName())) {
+
+                throw new IncompatibleGeneAndProteinNameException(query, sequenceFeature.getGeneName(),
+                        entry.getOverview().getGeneNames().stream().map(EntityName::getName).collect(Collectors.toList()));
+            }
         }
     }
 }

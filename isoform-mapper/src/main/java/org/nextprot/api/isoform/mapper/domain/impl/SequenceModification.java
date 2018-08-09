@@ -2,10 +2,14 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceGlycosylationBedFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
 
@@ -40,5 +44,23 @@ public class SequenceModification extends SequenceFeatureBase {
     public Isoform getIsoform() throws UnknownIsoformException {
 
         return beanService.getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
+    }
+
+    @Override
+    public SequenceModificationValidator newValidator(Entry entry, SingleFeatureQuery query) {
+
+        return new SequenceModificationValidator(entry, query);
+    }
+
+    public static class SequenceModificationValidator extends SequenceFeatureValidator<SequenceModification> {
+
+        public SequenceModificationValidator(Entry entry, SingleFeatureQuery query) {
+            super(entry, query);
+        }
+
+        @Override
+        protected void preChecks(SequenceModification sequenceModification) throws FeatureQueryException {
+
+        }
     }
 }
