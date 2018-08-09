@@ -5,10 +5,11 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
@@ -41,13 +42,16 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
-    public Isoform getIsoform() throws UnknownIsoformException {
+    public Isoform buildIsoform() {
 
         return beanService.getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
     }
 
     @Override
-    public SequenceModificationValidator newValidator(Entry entry, SingleFeatureQuery query) {
+    public SequenceModificationValidator newValidator(SingleFeatureQuery query) {
+
+        Entry entry = beanService.getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
+                .withTargetIsoforms().withOverview());
 
         return new SequenceModificationValidator(entry, query);
     }

@@ -2,7 +2,6 @@ package org.nextprot.api.isoform.mapper.domain;
 
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
@@ -11,9 +10,6 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
  * A sequence feature on an isoform sequence on a specific gene
  */
 public interface SequenceFeature {
-
-    /** @return isoform */
-    Isoform getIsoform() throws UnknownIsoformException;
 
     /**
      * Format a feature specifically to isoform
@@ -30,6 +26,9 @@ public interface SequenceFeature {
     /** @return the feature type */
     AnnotationCategory getType();
 
+    /** @return an instance of isoform */
+    Isoform buildIsoform() throws UnknownIsoformException;
+
     /** @return a new instance of validator specific to this sequence feature */
-    <SF extends SequenceFeature> SequenceFeatureValidator<SF> newValidator(Entry entry, SingleFeatureQuery query);
+    <SF extends SequenceFeature> SequenceFeatureValidator<SF> newValidator(SingleFeatureQuery query);
 }

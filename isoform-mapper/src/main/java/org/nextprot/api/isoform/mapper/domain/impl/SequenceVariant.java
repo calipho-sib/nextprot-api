@@ -163,7 +163,7 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     // TODO: this method should be called after isoformName has been set by getIsoformName(seqId)
     @Override
-    public Isoform getIsoform() throws UnknownGeneNameException {
+    public Isoform buildIsoform() throws UnknownGeneNameException {
 
         Set<String> entries = beanService.getBean(MasterIdentifierService.class).findEntryAccessionByGeneName(geneName, false);
 
@@ -183,7 +183,10 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     @Override
-    public SequenceFeatureValidator newValidator(Entry entry, SingleFeatureQuery query) {
+    public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
+
+        Entry entry = beanService.getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
+                .withTargetIsoforms().withOverview());
 
         return new SequenceVariantValidator(entry, query);
     }
