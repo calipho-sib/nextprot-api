@@ -5,6 +5,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementTransformerService;
@@ -26,11 +27,16 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 	
 	private static final Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
 
-	@Autowired private IsoformService isoformService;
-	@Autowired	private IsoformMappingService isoformMappingService;
-	
+	@Autowired
+    private IsoformService isoformService;
 
-	@Override
+	@Autowired
+    private IsoformMappingService isoformMappingService;
+
+    @Autowired
+    private BeanService beanService;
+
+    @Override
 	public Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
 		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
@@ -110,11 +116,11 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 		return rawStatements.stream().filter(s -> !s.isProcessed()).collect(Collectors.toSet());
 	}
 	
-	private String getIsoAccession (String featureName, String entryAccession){
+	private String getIsoAccession(String featureName, String entryAccession) {
 		
 		SequenceVariant sv;
 		try {	
-			sv = new SequenceVariant(featureName); 
+			sv = SequenceVariant.variant(featureName, beanService);
 		} catch (ParseException e) {
 			throw new NextProtException(e);
 		}

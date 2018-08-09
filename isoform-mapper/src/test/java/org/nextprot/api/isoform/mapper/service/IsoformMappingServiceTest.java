@@ -133,14 +133,6 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
-    public void shouldValidatePtmOnCanonicalIsoform() throws Exception {
-
-    	FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("BRCA1-P-Ser988", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "NX_P38398"));
-
-        assertIsoformFeatureValid(result, "NX_P38398-1", 988, 988, true);
-    }
-
-    @Test
     public void shouldValidateInsertionVariantOnCanonicalIsoform() throws Exception {
 
     	FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("MLH1-p.Lys722_Ala723insTyrLys", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P40692"));
@@ -388,6 +380,26 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValidOnMaster(result, "NX_Q99728-2", 1162, 1182);
         assertIsoformFeatureValidOnMaster(result, "NX_Q99728-3", 1162, 1182);
         assertIsoformFeatureValidOnMaster(result, "NX_Q99728-4", null, null);
+    }
+
+    @Test
+    public void shouldValidateGlycoOnCanonicalIsoform() throws Exception {
+
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187+PTM-0253_Ser21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(sfq);
+
+        assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
+    }
+
+    @Test
+    public void shouldValidateGlycoOnSpecificIsoform() throws Exception {
+
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_Ser21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(sfq);
+
+        assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

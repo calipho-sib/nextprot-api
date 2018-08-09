@@ -16,4 +16,15 @@ public class SingleFeatureQueryTest {
         Assert.assertEquals("Variant", query.getFeatureType());
         Assert.assertTrue(!query.isFeaturePropagable());
     }
+
+    @Test
+    public void testPTMQuery() throws FeatureQueryException {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187.PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "NX_Q06187");
+
+        Assert.assertEquals("NX_Q06187", query.getAccession());
+        Assert.assertEquals("NX_Q06187.PTM-0253_21", query.getFeature());
+        Assert.assertEquals("Ptm", query.getFeatureType());
+        Assert.assertTrue(!query.isFeaturePropagable());
+    }
 }

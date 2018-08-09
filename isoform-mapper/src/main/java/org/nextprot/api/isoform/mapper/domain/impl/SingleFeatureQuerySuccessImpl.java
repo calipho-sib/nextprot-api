@@ -3,13 +3,16 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -36,9 +39,13 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
 
         this.feature = feature;
 
-        addMappedFeature(feature.getIsoform(entry),
-                feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
-                feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
+        try {
+            addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.getIsoform().getIsoformAccession()),
+                    feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
+                    feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
+        } catch (UnknownIsoformException e) {
+            throw new NextProtException(e);
+        }
     }
 
     @JsonIgnore
@@ -50,7 +57,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
 
         IsoformFeatureResult result = new IsoformFeatureResult();
 
-        result.setIsoformAccession(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getIsoformAccession());
         result.setIsoformName(isoform.getMainEntityName().getName());
         result.setBeginIsoformPosition(firstIsoPosition);
         result.setEndIsoformPosition(lastIsoPosition);
@@ -115,7 +122,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
     public void addUnmappedFeature(Isoform isoform) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
-        result.setIsoformAccession(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getIsoformAccession());
         result.setCanonical(isoform.isCanonicalIsoform());
 
         data.put(result.getIsoformAccession(), result);
