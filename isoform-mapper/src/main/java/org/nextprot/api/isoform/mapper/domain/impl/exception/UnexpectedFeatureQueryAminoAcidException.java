@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 
 public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryException {
 
@@ -10,14 +10,14 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
     private static final String FEATURE_AAS = "featureAminoAcids";
 
     public UnexpectedFeatureQueryAminoAcidException(SingleFeatureQuery query, int sequencePosition,
-                                                    AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
+                                                    AminoAcidCode[] expectedAAs, AminoAcidCode[] featureAminoAcidCodes) {
         super(query);
 
-        getReason().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, sequenceAminoAcidCodes));
+        getReason().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, expectedAAs));
         getReason().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, featureAminoAcidCodes));
         getReason().addCause(OutOfBoundSequencePositionException.SEQUENCE_POS, sequencePosition);
 
-        getReason().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
+        getReason().setMessage(buildErrorMessage(expectedAAs));
     }
 
     private String buildErrorMessage(AminoAcidCode[] sequenceAminoAcidCodes) {
