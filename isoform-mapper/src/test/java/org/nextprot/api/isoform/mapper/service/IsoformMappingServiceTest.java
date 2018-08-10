@@ -402,6 +402,27 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
     }
 
+    /*@Test
+    public void shouldValidateGlycoOnNX_A1L4H1() {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0253_Asn168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_A1L4H1-1", 168, 168, true);
+    }
+
+    @Test
+    public void shouldNotValidatePhosphoOnNX_A1L4H1() {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0254_Asn168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(query);
+
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new UnexpectedFeatureQueryAminoAcidException(query, 168,
+                new AminoAcidCode[] { AminoAcidCode.SERINE, AminoAcidCode.TYROSINE, AminoAcidCode.THREONINE  }, new AminoAcidCode[] { AminoAcidCode.ASPARAGINE}));
+    }*/
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());

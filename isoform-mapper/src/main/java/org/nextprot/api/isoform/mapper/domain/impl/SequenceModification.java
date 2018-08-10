@@ -63,8 +63,44 @@ public class SequenceModification extends SequenceFeatureBase {
         }
 
         @Override
-        protected void preChecks(SequenceModification sequenceModification) throws FeatureQueryException {
+        protected void postChecks(SequenceModification sequenceModification) throws FeatureQueryException {
 
+            checkModificationSite(sequenceModification);
+        }
+
+        /*
+        According to the ptm, we check here that the site is ptmable through a residue regular expression.
+
+        Example (N-Glycosylation): (see https://swissprot.isb-sib.ch/wiki/pages/viewpage.action?pageId=72192562)
+            Residue pattern:
+            N-{P}-[STC]-{P} -> GOLD
+            N-{P}-[STC]  -> SILVER, unless from Swiss-Prot -> GOLD
+
+        [Add keyword Glycoprotein [KW-0325] if needed]
+         */
+        private void checkModificationSite(SequenceModification sequenceModification) {
+
+            /*
+            String aas = sequenceModification.buildIsoform().getSequence();
+
+            int site = sequenceModification.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos()-1;
+
+            if (aas.charAt(site+1) == 'P') {
+                throw new IllegalStateException("P should not be found at pos "+(site+1));
+            }
+
+            if (aas.charAt(site+2) != 'S' && aas.charAt(site+2) != 'T' && aas.charAt(site+2) != 'C') {
+                throw new IllegalStateException("Missing ST or C at pos "+(site+2));
+            }
+
+            throw new UnexpectedFeatureQueryAminoAcidException(query, site,
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aasOnSequence),
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aas));
+
+            System.out.println(sequenceModification);
+
+            // ptmid -> rule
+            */
         }
     }
 }
