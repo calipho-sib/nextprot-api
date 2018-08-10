@@ -14,24 +14,23 @@ import java.util.regex.Pattern;
 /**
  * Parse single glycosylation with the format:
  *
- * PTM-id_pos (example: PTM-0253_Asn21 represents a glycosylation of an asparagine at position 21)
+ * PTM-id_pos (example: PTM-0253_21 represents a glycosylation at position 21)
  */
-public class SingleGlycosylationBEDFormat implements SequenceChangeFormat<Glycosylation> {
+public class SingleGlycosylationBEDFormat implements SequenceChangeFormat<SequenceVariationBuilder.StartBuildingFromAAs, Glycosylation> {
 
-    private static final Pattern PATTERN = Pattern.compile("^(PTM-\\d{4})_([A-Z])([a-z]{2})?(\\d+)$");
+    private static final Pattern PATTERN = Pattern.compile("^(PTM-\\d{4})_(\\d+)$");
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.StartBuildingFromAAs builder) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 
         if (m.matches()) {
 
             Glycosylation aaChange = new Glycosylation(m.group(1));
-            AminoAcidCode affectedAA = AminoAcidCode.parseAminoAcidCode(m.group(2) + ((m.group(3) != null) ? m.group(3) : ""));
-            int affectedAAPos = Integer.parseInt(m.group(4));
+            int affectedAAPos = Integer.parseInt(m.group(2));
 
-            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
+            return builder.selectAminoAcid(affectedAAPos).thenAddModification(aaChange).build();
         }
 
         return null;

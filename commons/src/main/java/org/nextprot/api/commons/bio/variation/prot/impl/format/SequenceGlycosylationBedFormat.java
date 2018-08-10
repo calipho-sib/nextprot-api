@@ -4,13 +4,16 @@ import com.google.common.collect.Lists;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Glycosylation;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SingleGlycosylationBEDFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.AminoAcidModificationBEDFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeFormat;
 
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Objects;
 
 public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
 
@@ -55,5 +58,12 @@ public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
         }
 
         throw new IllegalArgumentException("Not a glycosylation: cannot format variation "+variation.getSequenceChange());
+    }
+
+    public SequenceVariation parse(String source, String aas) throws ParseException {
+
+        Objects.requireNonNull(source);
+
+        return parse(source, new SequenceVariationImpl.StartBuilding().fromAAs(aas));
     }
 }

@@ -19,7 +19,7 @@ public class SequenceModificationBedFormatTest {
     @Test
     public void testFormatWith3LetterCodeAAMod() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
 
         Assert.assertEquals("SNO-Cys54", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
@@ -27,7 +27,7 @@ public class SequenceModificationBedFormatTest {
     @Test
     public void testFormatWith1LetterCodeAAMod() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
 
         Assert.assertEquals("SNO-C54", format.format(pm, AminoAcidCode.CodeType.ONE_LETTER));
     }
@@ -69,7 +69,7 @@ public class SequenceModificationBedFormatTest {
 
         format = new SequenceGlycosylationBedFormat();
 
-        SequenceVariation glycosylation = new SequenceVariationImpl.FluentBuilding()
+        SequenceVariation glycosylation = new SequenceVariationImpl.StartBuilding()
                 .selectAminoAcid(AminoAcidCode.ASPARAGINE, 21)
                 .thenAddModification(new Glycosylation("PTM-0528"))
                 .build();
@@ -80,9 +80,9 @@ public class SequenceModificationBedFormatTest {
     @Test
     public void testParsingSingleGlyco() throws ParseException {
 
-        format = new SequenceGlycosylationBedFormat();
+        SequenceGlycosylationBedFormat format = new SequenceGlycosylationBedFormat();
 
-        SequenceVariation pm = format.parse("PTM-0528_Asn21");
+        SequenceVariation pm = format.parse("PTM-0528_21", "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
         Assert.assertEquals(AminoAcidCode.ASPARAGINE, pm.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(21, pm.getVaryingSequence().getFirstAminoAcidPos());
 

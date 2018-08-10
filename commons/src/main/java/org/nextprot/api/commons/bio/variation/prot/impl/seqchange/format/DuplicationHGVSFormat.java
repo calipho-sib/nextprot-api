@@ -23,7 +23,7 @@ public class DuplicationHGVSFormat implements SequenceChangeHGVSFormat<Duplicati
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder, ParsingMode mode) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 

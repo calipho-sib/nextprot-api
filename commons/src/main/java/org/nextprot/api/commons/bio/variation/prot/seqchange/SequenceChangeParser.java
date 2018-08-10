@@ -10,7 +10,7 @@ import java.text.ParseException;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface SequenceChangeParser {
+public interface SequenceChangeParser<B extends SequenceVariationBuilder.Start> {
 
     /**
      * Parse the source and build ProteinSequenceVariation with given builder
@@ -19,7 +19,7 @@ public interface SequenceChangeParser {
      * @return an instance of ProteinSequenceVariation
      * @throws ParseException if parsing error occurs
      */
-    SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException;
+    SequenceVariation parse(String source, B builder) throws ParseException;
 
     /**
      * Attempts to match the source.

@@ -17,7 +17,7 @@ public class FrameshiftHGVSFormat implements SequenceChangeHGVSFormat<Frameshift
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)([A-Z])([a-z]{2})?fs(?:\\*|Ter)(\\d+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder, ParsingMode mode) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 

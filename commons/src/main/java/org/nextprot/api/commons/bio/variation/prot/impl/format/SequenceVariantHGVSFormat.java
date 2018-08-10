@@ -73,14 +73,14 @@ public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
     }
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException {
 
         for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
 
             SequenceChangeHGVSFormat format = getSequenceChangeFormat(changeType);
 
             if (format.matchesWithMode(source, parsingMode))
-                return format.parseWithMode(source, builder, parsingMode);
+                return format.parseWithMode(source, (SequenceVariationBuilder.StartBuilding) builder, parsingMode);
         }
 
         throw new ParseException(source + ": not a valid protein sequence variant", 0);

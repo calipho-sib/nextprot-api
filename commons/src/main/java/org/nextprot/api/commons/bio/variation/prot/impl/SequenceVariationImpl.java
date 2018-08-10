@@ -65,12 +65,18 @@ public class SequenceVariationImpl implements SequenceVariation {
                 '}';
     }
 
-    public static class FluentBuilding implements SequenceVariationBuilder.FluentBuilding {
+    public static class StartBuilding implements SequenceVariationBuilder.StartBuilding {
 
         private final SequenceVariationBuilder.DataCollector dataCollector;
 
-        public FluentBuilding() {
+        public StartBuilding() {
             dataCollector = new SequenceVariationBuilder.DataCollector();
+        }
+
+        @Override
+        public SequenceVariationBuilder.StartBuildingFromAAs fromAAs(String aas) {
+
+            return new StartBuildingFromAAsImpl(aas);
         }
 
         @Override
@@ -91,6 +97,46 @@ public class SequenceVariationImpl implements SequenceVariation {
             dataCollector.setLastChangingAminoAcid(lastAffectedAminoAcid, lastAffectedAminoAcidPos);
 
             return new AAMutationActionImpl();
+        }
+
+        class StartBuildingFromAAsImpl implements SequenceVariationBuilder.StartBuildingFromAAs {
+
+            private final String aas;
+
+            StartBuildingFromAAsImpl(String aas) {
+
+                this.aas = aas;
+            }
+
+            @Override
+            public SequenceVariationBuilder.ChangingAminoAcid selectAminoAcid(int affectedAAPos) {
+
+                Preconditions.checkArgument(affectedAAPos <= aas.length());
+
+                AminoAcidCode firstAffectedAminoAcid = AminoAcidCode.valueOfAminoAcid(String.valueOf(aas.charAt(affectedAAPos-1)));
+
+                dataCollector.setFirstChangingAminoAcid(firstAffectedAminoAcid, affectedAAPos);
+                dataCollector.setLastChangingAminoAcid(firstAffectedAminoAcid, affectedAAPos);
+
+                return new AAMutationActionImpl();
+            }
+
+            @Override
+            public SequenceVariationBuilder.ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos) {
+
+                Preconditions.checkArgument(firstAffectedAAPos <= aas.length());
+                Preconditions.checkArgument(lastAffectedAAPos <= aas.length());
+                Preconditions.checkArgument(firstAffectedAAPos < lastAffectedAAPos);
+
+                AminoAcidCode firstAffectedAminoAcid = AminoAcidCode.valueOfAminoAcid(String.valueOf(aas.charAt(firstAffectedAAPos-1)));
+                AminoAcidCode lastAffectedAminoAcid = AminoAcidCode.valueOfAminoAcid(String.valueOf(aas.charAt(lastAffectedAAPos-1)));
+
+
+                dataCollector.setFirstChangingAminoAcid(firstAffectedAminoAcid, firstAffectedAAPos);
+                dataCollector.setLastChangingAminoAcid(lastAffectedAminoAcid, lastAffectedAAPos);
+
+                return new AAMutationActionImpl();
+            }
         }
 
         class MutationActionImpl implements SequenceVariationBuilder.ChangingAminoAcidRange {

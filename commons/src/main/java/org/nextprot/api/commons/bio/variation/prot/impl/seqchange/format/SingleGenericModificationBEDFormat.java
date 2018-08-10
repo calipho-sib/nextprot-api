@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
  * Parse single PTM with the format:
  * MOD-AApos (example: P-Tyr223 represents a phosphorylation of tyrosine at position 223)
  */
-public class SingleGenericModificationBEDFormat implements SequenceChangeFormat<AminoAcidModification> {
+public class SingleGenericModificationBEDFormat implements SequenceChangeFormat<SequenceVariationBuilder.StartBuilding, AminoAcidModification> {
 
     private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)$");
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.StartBuilding builder) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 

@@ -20,7 +20,7 @@ public class ExtensionTerminationHGVSFormat implements SequenceChangeHGVSFormat<
     private static final Pattern PATTERN = Pattern.compile("^p\\.(?:Ter|\\*)(\\d+)((?:[A-Z])(?:[a-z]{2})?)ext\\*(\\d+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder, ParsingMode mode) throws ParseException {
 
         Matcher m =  PATTERN.matcher(source);
 

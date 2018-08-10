@@ -18,14 +18,29 @@ public interface SequenceVariationBuilder {
     /** collect data through the process */
     DataCollector getDataCollector();
 
+    interface Start { }
+
     /** start fluent building */
-    interface FluentBuilding {
+    interface StartBuilding extends Start {
+
+        /** give a amino-acid sequence to build from */
+        StartBuildingFromAAs fromAAs(String aas);
 
         /** select a single affected amino-acid residue */
         ChangingAminoAcid selectAminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
 
         /** select a range of affected amino-acid residues */
         ChangingAminoAcidRange selectAminoAcidRange(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+    }
+
+    /** with sequence branch building */
+    interface StartBuildingFromAAs extends Start {
+
+        /** select a single affected amino-acid residue */
+        ChangingAminoAcid selectAminoAcid(int affectedAAPos);
+
+        /** select a range of affected amino-acid residues */
+        ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos);
     }
 
     /** mutations affecting only one amino-acid */

@@ -18,7 +18,7 @@ public class DeletionHGVSFormat implements SequenceChangeHGVSFormat<Deletion> {
     private static final Pattern PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del(?!ins).*$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder, ParsingMode mode) throws ParseException {
 
         Matcher m = (mode == ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
 
