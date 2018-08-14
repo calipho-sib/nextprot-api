@@ -4,7 +4,7 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceGlycosylationBedFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.SequencePtmBioEditorFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -24,11 +24,11 @@ import java.text.ParseException;
  */
 public class SequenceModification extends SequenceFeatureBase {
 
-    private static final SequenceGlycosylationBedFormat GLYCO_FORMAT = new SequenceGlycosylationBedFormat();
+    private static final SequencePtmBioEditorFormat PTM_FORMAT = new SequencePtmBioEditorFormat();
 
     public SequenceModification(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
 
-        super(feature, AnnotationCategory.GENERIC_PTM, GLYCO_FORMAT, beanService);
+        super(feature, AnnotationCategory.GENERIC_PTM, PTM_FORMAT, beanService);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SequenceModification extends SequenceFeatureBase {
     @Override
     protected SequenceVariationFormatter<String> getSequenceVariationFormatter() {
 
-        return GLYCO_FORMAT;
+        return PTM_FORMAT;
     }
 
     @Override

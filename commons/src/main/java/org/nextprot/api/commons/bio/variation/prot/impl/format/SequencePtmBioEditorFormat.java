@@ -5,8 +5,8 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Glycosylation;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SingleGlycosylationBEDFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SinglePtmBioEditorFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.AminoAcidModificationBEDFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeFormat;
@@ -15,15 +15,15 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Objects;
 
-public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
+public class SequencePtmBioEditorFormat extends SequenceVariationFormat {
 
     private final AminoAcidModificationBEDFormatter aminoAcidModificationFormatter;
-    private final SingleGlycosylationBEDFormat glycoFormat;
+    private final SinglePtmBioEditorFormat ptmFormat;
 
-    public SequenceGlycosylationBedFormat() {
+    public SequencePtmBioEditorFormat() {
 
         aminoAcidModificationFormatter = new AminoAcidModificationBEDFormatter();
-        glycoFormat = new SingleGlycosylationBEDFormat();
+        ptmFormat = new SinglePtmBioEditorFormat();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
     @Override
     protected SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType) {
 
-        return glycoFormat;
+        return ptmFormat;
     }
 
     @Override
@@ -49,9 +49,9 @@ public class SequenceGlycosylationBedFormat extends SequenceVariationFormat {
 
         StringBuilder sb = new StringBuilder();
 
-        if (variation.getSequenceChange() instanceof Glycosylation) {
+        if (variation.getSequenceChange() instanceof PTM) {
 
-            glycoFormat.format(sb, (Glycosylation) variation.getSequenceChange(), type);
+            ptmFormat.format(sb, (PTM) variation.getSequenceChange(), type);
             aminoAcidModificationFormatter.format(variation, type, sb);
 
             return sb.toString();
