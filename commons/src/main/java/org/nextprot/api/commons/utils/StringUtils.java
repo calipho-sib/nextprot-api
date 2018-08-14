@@ -110,12 +110,6 @@ public class StringUtils {
 		if (s.length()==0) return "";
 		return s.substring(0,1).toLowerCase() + s.substring(1);
 	}
-	
-	static public String upperFirstChar(String s) {
-		if (null==s) return null;
-		if (s.length()==0) return "";
-		return s.substring(0,1).toUpperCase() + s.substring(1);
-	}
 
 	/**
 	 * Remove the <+> characters from a string
@@ -128,7 +122,11 @@ public class StringUtils {
     	return s.replace("+", "");
     }
 
-	static public String capitalizeFirstLetter(String input){
+	static public String uppercaseFirstLetter(String input){
+        if (null == input || input.isEmpty()) {
+            return input;
+        }
+
 		return input.substring(0, 1).toUpperCase() + input.substring(1);
 	}
 	

@@ -343,7 +343,7 @@ public enum AnnotationCategory implements Serializable {
 	}
 
 	public String getApiTypeName() {
-		return StringUtils.upperFirstChar(this.apiName);
+		return StringUtils.uppercaseFirstLetter(this.apiName);
 	}
 
 	/**
@@ -351,14 +351,14 @@ public enum AnnotationCategory implements Serializable {
 	 */
 	@Deprecated
 	public String getRdfLabel() {
-		return StringUtils.upperFirstChar(this.label);
+		return StringUtils.uppercaseFirstLetter(this.label);
 	}
 
 	/*
 	 * For display in feature viewer, etc. as well as as rdf:label object !
 	 */
 	public String getLabel() {
-		return StringUtils.upperFirstChar(this.label);
+		return StringUtils.uppercaseFirstLetter(this.label);
 	}
 
 	public AnnotationCategory getParent() {
