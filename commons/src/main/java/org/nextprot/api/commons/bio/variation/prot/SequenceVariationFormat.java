@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * Created by fnikitin on 07/09/15.
  */
-public abstract class SequenceVariationFormat<B extends SequenceVariationBuilder.Start> implements SequenceVariationFormatter<String>, SequenceVariationParser {
+public abstract class SequenceVariationFormat implements SequenceVariationFormatter<String>, SequenceVariationParser {
 
     @Override
     public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
