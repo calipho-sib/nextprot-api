@@ -3,42 +3,52 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
 
 import java.text.ParseException;
 
 /**
  * Parse and isoform name and protein sequence variation
  */
-public abstract class SequenceFeatureBase implements SequenceFeature {
+abstract class SequenceFeatureBase implements SequenceFeature {
 
     private final String feature;
     private final AnnotationCategory type;
-    protected final String sequenceIdPart;
-    private final String variationPart;
     private final SequenceVariation variation;
-    private final SequenceVariationFormat parser;
-    protected final BeanService beanService;
+    private final Isoform isoform;
+    private final BeanService beanService;
 
-    SequenceFeatureBase(String feature, AnnotationCategory type, BeanService beanService) throws ParseException {
+    SequenceFeatureBase(String feature, AnnotationCategory type, SequenceVariationParser parser, BeanService beanService) throws ParseException, PreIsoformParsingException {
 
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(parser);
+        Preconditions.checkNotNull(beanService);
+
+        this.beanService = beanService;
 
         this.type = type;
         this.feature = feature.trim();
 
-        sequenceIdPart = parseSequenceIdPart();
-        variationPart = parseVariationPart();
+        String sequenceIdPart = parseSequenceIdPart();
 
-        parser = newParser();
-        variation = parser.parse(variationPart);
+        preIsoformParsing(sequenceIdPart);
+        isoform = parseIsoform(sequenceIdPart);
 
-        this.beanService = beanService;
+        variation = parseVariation(parser, parseVariationPart());
+    }
+
+    protected void preIsoformParsing(String sequenceIdPart) throws ParseException, PreIsoformParsingException {}
+
+    protected SequenceVariation parseVariation(SequenceVariationParser parser, String variationPart) throws ParseException {
+
+        return parser.parse(variationPart);
     }
 
     @Override
@@ -65,7 +75,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         StringBuilder sb = new StringBuilder()
                 .append(formatSequenceIdPart(isoform))
                 .append("-")
-                .append(formatFeaturePart(isoVariation));
+                .append(formatFeaturePart(getSequenceVariationFormatter(), isoVariation));
 
         return sb.toString();
     }
@@ -75,13 +85,24 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return variation;
     }
 
+    @Override
+    public Isoform getIsoform() {
+
+        return isoform;
+    }
+
+    BeanService getBeanService() {
+        return beanService;
+    }
+
     /**
      * @return the position in the feature string between the isoform part and the variation part
      * @throws ParseException
      */
     protected abstract int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException;
-    protected abstract SequenceVariationFormat newParser();
+    protected abstract SequenceVariationFormatter<String> getSequenceVariationFormatter();
     protected abstract String formatSequenceIdPart(Isoform isoform);
+    protected abstract Isoform parseIsoform(String sequenceIdPart) throws ParseException;
 
     /**
      * @return the sequence id part from the feature string
@@ -96,7 +117,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
      * @return the variation part from the feature string
      * @throws ParseException if invalid format
      */
-    String parseVariationPart() throws ParseException {
+    private String parseVariationPart() throws ParseException {
 
         return feature.substring(getDelimitingPositionBetweenIsoformAndVariation(feature)+1);
     }
@@ -104,8 +125,8 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     /**
      * @return the formatted feature part string
      */
-    private String formatFeaturePart(SequenceVariation sequenceVariation) {
+    private String formatFeaturePart(SequenceVariationFormatter<String> formatter, SequenceVariation sequenceVariation) {
 
-        return parser.format(sequenceVariation, AminoAcidCode.CodeType.THREE_LETTER);
+        return formatter.format(sequenceVariation, AminoAcidCode.CodeType.THREE_LETTER);
     }
 }

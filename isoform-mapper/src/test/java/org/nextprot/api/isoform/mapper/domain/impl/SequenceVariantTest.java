@@ -5,12 +5,13 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.AminoAcidModification;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Glycosylation;
+import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +32,6 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         Assert.assertEquals("SCN11A", variant.getGeneName());
         SequenceVariation variation = variant.getProteinVariation();
-        Assert.assertEquals("p.Lys1710Thr", variant.parseVariationPart());
 
         Assert.assertEquals(AminoAcidCode.LYSINE, variation.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(1710, variation.getVaryingSequence().getFirstAminoAcidPos());
@@ -44,7 +44,6 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         Assert.assertEquals("WT1", variant.getGeneName());
         SequenceVariation variation = variant.getProteinVariation();
-        Assert.assertEquals("p.Phe154Ser", variant.parseVariationPart());
 
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(154, variation.getVaryingSequence().getFirstAminoAcidPos());
@@ -75,13 +74,8 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         SequenceVariant variant = SequenceVariant.variant("SCN11A-iso2-p.Leu1158Pro", beanService);
 
-        Entry entry = mockEntry("NX_P06213",
-                mockIsoform("NX_Q9UI33-1", "Iso 1", true),
-                mockIsoform("NX_Q9UI33-2", "Iso 2", false),
-                mockIsoform("NX_Q9UI33-3", "Iso 3", false));
-
-        Assert.assertEquals("NX_Q9UI33-2", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
-        Assert.assertEquals("Iso 2", variant.getIsoformName());
+        Assert.assertEquals("NX_Q9UI33-2", variant.getIsoform().getIsoformAccession());
+        Assert.assertEquals("Iso 2", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
@@ -89,13 +83,8 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         SequenceVariant variant = SequenceVariant.variant("SCN11A-p.Leu1158Pro", beanService);
 
-        Entry entry = mockEntry("NX_P06213",
-                mockIsoform("NX_Q9UI33-1", "Iso 1", true),
-                mockIsoform("NX_Q9UI33-2", "Iso 2", false),
-                mockIsoform("NX_Q9UI33-3", "Iso 3", false));
-
-        Assert.assertEquals("NX_Q9UI33-1", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
-        Assert.assertNull(variant.getIsoformName());
+        Assert.assertEquals("NX_Q9UI33-1", variant.getIsoform().getIsoformAccession());
+        Assert.assertEquals("Iso 1", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
@@ -103,12 +92,8 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         SequenceVariant variant = SequenceVariant.variant("INSR-isoshort-p.Arg113Pro", beanService);
 
-        Entry entry = mockEntry("NX_P06213",
-                mockIsoform("NX_P06213-1", "Long", true),
-                mockIsoform("NX_P06213-2", "Short", false));
-
-        Assert.assertEquals("NX_P06213-2", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
-        Assert.assertEquals("short", variant.getIsoformName());
+        Assert.assertEquals("NX_P06213-2", variant.getIsoform().getIsoformAccession());
+        Assert.assertEquals("Short", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
@@ -120,21 +105,17 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
                 mockIsoform("NX_P06213-1", "Long", true),
                 mockIsoform("NX_P06213-2", "Short", false));
 
-        Assert.assertEquals("NX_P06213-2", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
-        Assert.assertEquals("Short", variant.getIsoformName());
+        Assert.assertEquals("NX_P06213-2", variant.getIsoform().getIsoformAccession());
+        Assert.assertEquals("Short", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
-    public void testGetIsoformNonIsoCanonical() throws Exception {
+    public void testGetIsoformCanonicalNonIsoType() throws Exception {
 
         SequenceVariant variant = SequenceVariant.variant("INSR-p.Arg113Pro", beanService);
 
-        Entry entry = mockEntry("NX_P06213",
-                mockIsoform("NX_P06213-1", "Long", true),
-                mockIsoform("NX_P06213-2", "Short", false));
-
-        Assert.assertEquals("NX_P06213-1", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
-        Assert.assertNull(variant.getIsoformName());
+        Assert.assertEquals("NX_P06213-1", variant.getIsoform().getIsoformAccession());
+        Assert.assertEquals("Long", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
@@ -142,11 +123,7 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         SequenceVariant variant = SequenceVariant.variant("ABL1-isoib-p.Ser439Gly", beanService);
 
-        Entry entry = mockEntry("NX_P00519",
-                mockIsoform("NX_P00519-1", "IA", true),
-                mockIsoform("NX_P00519-2", "IB", false));
-
-        Assert.assertEquals("NX_P00519-2", IsoformUtils.getIsoformByNameOrCanonical(entry, variant.getIsoformName()).getIsoformAccession());
+        Assert.assertEquals("NX_P00519-2", variant.getIsoform().getIsoformAccession());
     }
 
     @Test(expected = ParseException.class)
@@ -198,7 +175,10 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
 
         SequenceVariant variant = SequenceVariant.variant("SCN11A-p.Leu1158Pro          ", beanService);
 
-        Assert.assertEquals("p.Leu1158Pro", variant.parseVariationPart());
+        SequenceVariation variation = variant.getProteinVariation();
+
+        Assert.assertEquals(AminoAcidCode.LEUCINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1158, variation.getVaryingSequence().getFirstAminoAcidPos());
     }
 
     @Test
@@ -207,21 +187,19 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         SequenceVariant variant = SequenceVariant.variant("GTF2A1-iso37_kDa-p.Gln13Thr", beanService);
 
         Assert.assertEquals("GTF2A1", variant.getGeneName());
-        Assert.assertEquals("p.Gln13Thr", variant.parseVariationPart());
-        Assert.assertEquals("37 kDa", variant.getIsoformName());
+        Assert.assertEquals("37 kDa", variant.getIsoform().getMainEntityName().getName());
     }
 
     @Test
     public void testPTMWithCanonicalIsoform() throws Exception {
 
-        SequenceModification ptm = new SequenceModification("NX_Q06187+PTM-0253_Asn21", beanService);
+        SequenceModification ptm = new SequenceModification("NX_Q06187+PTM-0253_21", beanService);
 
-        Assert.assertEquals("PTM-0253_Asn21", ptm.parseVariationPart());
-        Assert.assertEquals("NX_Q06187-1", ptm.buildIsoform().getIsoformAccession());
+        Assert.assertEquals("NX_Q06187-1", ptm.getIsoform().getIsoformAccession());
         SequenceVariation pv = ptm.getProteinVariation();
-        Assert.assertEquals(AminoAcidCode.ASPARAGINE, pv.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(AminoAcidCode.SERINE, pv.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(21, pv.getVaryingSequence().getFirstAminoAcidPos());
-        Assert.assertEquals(AminoAcidCode.ASPARAGINE, pv.getVaryingSequence().getLastAminoAcid());
+        Assert.assertEquals(AminoAcidCode.SERINE, pv.getVaryingSequence().getLastAminoAcid());
         Assert.assertEquals(21, pv.getVaryingSequence().getLastAminoAcidPos());
         Assert.assertTrue(pv.getSequenceChange() instanceof Glycosylation);
         Assert.assertEquals("PTM-0253", ((Glycosylation)pv.getSequenceChange()).getPTMId());
@@ -230,10 +208,13 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
     @Test
     public void testPTMWithSpecifiedIsoform() throws Exception {
 
-        SequenceModification ptm = new SequenceModification("NX_Q06187-2+PTM-0253_Asn21", beanService);
-
-        Assert.assertEquals("PTM-0253_Asn21", ptm.parseVariationPart());
-        Assert.assertEquals("NX_Q06187-2", ptm.buildIsoform().getIsoformAccession());
+        SequenceModification ptm = new SequenceModification("NX_Q06187-2+PTM-0253_21", beanService);
+        SequenceVariation variation = ptm.getProteinVariation();
+        SequenceChange<?> seqChange = variation.getSequenceChange();
+        Assert.assertTrue(seqChange instanceof Glycosylation);
+        Assert.assertEquals("PTM-0253", ((Glycosylation)seqChange).getPTMId());
+        Assert.assertEquals(AminoAcidModification.GLYCOSYLATION, ((Glycosylation)seqChange).getValue());
+        Assert.assertEquals("NX_Q06187-2", ptm.getIsoform().getIsoformAccession());
     }
 
     public static Entry mockEntry(String accession, Isoform... isoforms) {

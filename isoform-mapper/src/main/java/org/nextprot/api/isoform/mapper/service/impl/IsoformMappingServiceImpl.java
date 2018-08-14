@@ -17,11 +17,7 @@ import org.nextprot.api.isoform.mapper.domain.SequenceFeatureFactory;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureIsoformException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,15 +74,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         if (Strings.isNullOrEmpty(query.getAccession())) {
 
-            try {
-                query.setAccession(entryService.findEntryAccessionFromIsoformAccession(sequenceFeature.buildIsoform().getIsoformAccession()));
-            }
-            catch (SequenceVariant.UnknownGeneNameException e) {
-                throw new EntryAccessionNotFoundForGeneException(query, e.getGeneName());
-            }
-            catch (UnknownIsoformException e) {
-                throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());
-            }
+            query.setAccession(entryService.findEntryAccessionFromIsoformAccession(sequenceFeature.getIsoform().getIsoformAccession()));
         }
     }
 
@@ -98,60 +86,55 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
-        try {
-            Isoform featureIsoform = IsoformUtils.getIsoformByNameOrCanonical(successResults.getEntry(), isoFeature.buildIsoform().getIsoformAccession());
-            SequenceVariation variation = isoFeature.getProteinVariation();
+        Isoform featureIsoform = IsoformUtils.getIsoformByNameOrCanonical(successResults.getEntry(), isoFeature.getIsoform().getIsoformAccession());
+        SequenceVariation variation = isoFeature.getProteinVariation();
 
-            OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
+        OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
 
-            GeneMasterCodonPosition originalFirstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getFirstAAPos(), featureIsoform);
-            GeneMasterCodonPosition originalLastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getLastAAPos(), featureIsoform);
+        GeneMasterCodonPosition originalFirstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getFirstAAPos(), featureIsoform);
+        GeneMasterCodonPosition originalLastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getLastAAPos(), featureIsoform);
 
-            // try to propagate the feature to other isoforms
-            for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
+        // try to propagate the feature to other isoforms
+        for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
 
-                Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getFirstAAPos(), otherIsoform);
-                Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
+            Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getFirstAAPos(), otherIsoform);
+            Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
 
-                boolean propagable = false;
+            boolean propagable = false;
 
-                if (firstIsoPos != null && lastIsoPos != null) {
+            if (firstIsoPos != null && lastIsoPos != null) {
 
-                    if (variation.getVaryingSequence().isMultipleAminoAcids()) {
+                if (variation.getVaryingSequence().isMultipleAminoAcids()) {
 
-                        int originalSequenceLength = lastIsoPos - firstIsoPos + 1;
-                        int isoformSequenceLength = originalAminoAcids.getAas().length();
+                    int originalSequenceLength = lastIsoPos - firstIsoPos + 1;
+                    int isoformSequenceLength = originalAminoAcids.getAas().length();
 
-                        if (originalSequenceLength == isoformSequenceLength) {
+                    if (originalSequenceLength == isoformSequenceLength) {
 
-                            String isoformSequence = otherIsoform.getSequence().substring(firstIsoPos-1, lastIsoPos);
+                        String isoformSequence = otherIsoform.getSequence().substring(firstIsoPos-1, lastIsoPos);
 
-                            if (isoformSequence.equals(originalAminoAcids.getAas())) {
+                        if (isoformSequence.equals(originalAminoAcids.getAas())) {
 
-                                GeneMasterCodonPosition firstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPos, otherIsoform);
-                                GeneMasterCodonPosition lastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(lastIsoPos, otherIsoform);
+                            GeneMasterCodonPosition firstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPos, otherIsoform);
+                            GeneMasterCodonPosition lastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(lastIsoPos, otherIsoform);
 
-                                propagable = firstMasterCodonPos.getNucleotidePosition(0).intValue() == originalFirstMasterCodonPos.getNucleotidePosition(0)
-                                        && lastMasterCodonPos.getNucleotidePosition(2).intValue() == originalLastMasterCodonPos.getNucleotidePosition(2);
-                            }
+                            propagable = firstMasterCodonPos.getNucleotidePosition(0).intValue() == originalFirstMasterCodonPos.getNucleotidePosition(0)
+                                    && lastMasterCodonPos.getNucleotidePosition(2).intValue() == originalLastMasterCodonPos.getNucleotidePosition(2);
                         }
                     }
-                    // check a single amino-acid
-                    else {
-                        propagable = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas());
-                    }
                 }
-
-                if (propagable) {
-                    addPropagation(otherIsoform, firstIsoPos, lastIsoPos, originalAminoAcids.isExtensionTerminal(), successResults);
-                }
+                // check a single amino-acid
                 else {
-                    successResults.addUnmappedFeature(otherIsoform);
+                    propagable = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas());
                 }
             }
-        } catch (UnknownIsoformException e) {
 
-            throw new NextProtException(e);
+            if (propagable) {
+                addPropagation(otherIsoform, firstIsoPos, lastIsoPos, originalAminoAcids.isExtensionTerminal(), successResults);
+            }
+            else {
+                successResults.addUnmappedFeature(otherIsoform);
+            }
         }
     }
 

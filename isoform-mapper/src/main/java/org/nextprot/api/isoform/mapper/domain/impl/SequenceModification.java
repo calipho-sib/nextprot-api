@@ -1,5 +1,9 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
+import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceGlycosylationBedFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
@@ -10,6 +14,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
@@ -19,9 +24,11 @@ import java.text.ParseException;
  */
 public class SequenceModification extends SequenceFeatureBase {
 
-    public SequenceModification(String feature, BeanService beanService) throws ParseException {
+    private static final SequenceGlycosylationBedFormat GLYCO_FORMAT = new SequenceGlycosylationBedFormat();
 
-        super(feature, AnnotationCategory.GENERIC_PTM, beanService);
+    public SequenceModification(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
+
+        super(feature, AnnotationCategory.GENERIC_PTM, GLYCO_FORMAT, beanService);
     }
 
     @Override
@@ -31,9 +38,9 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
-    public SequenceGlycosylationBedFormat newParser() {
+    protected SequenceVariationFormatter<String> getSequenceVariationFormatter() {
 
-        return new SequenceGlycosylationBedFormat();
+        return GLYCO_FORMAT;
     }
 
     @Override
@@ -42,15 +49,29 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
-    public Isoform buildIsoform() {
+    public Isoform parseIsoform(String sequenceIdPart) throws ParseException {
 
-        return beanService.getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
+        Isoform isoform = getBeanService().getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
+
+        if (isoform == null) {
+            throw new ParseException(sequenceIdPart, 0);
+        }
+
+        return isoform;
+    }
+
+    @Override
+    protected SequenceVariation parseVariation(SequenceVariationParser parser, String variationPart) throws ParseException {
+
+        SequenceVariationImpl.StartBuilding builder = new SequenceVariationImpl.StartBuilding();
+
+        return parser.parse(variationPart, builder.fromAAs(getIsoform().getSequence()));
     }
 
     @Override
     public SequenceModificationValidator newValidator(SingleFeatureQuery query) {
 
-        Entry entry = beanService.getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
+        Entry entry = getBeanService().getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
                 .withTargetIsoforms().withOverview());
 
         return new SequenceModificationValidator(entry, query);
@@ -81,7 +102,7 @@ public class SequenceModification extends SequenceFeatureBase {
         private void checkModificationSite(SequenceModification sequenceModification) {
 
             /*
-            String aas = sequenceModification.buildIsoform().getSequence();
+            String aas = sequenceModification.getIsoform().getSequence();
 
             int site = sequenceModification.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos()-1;
 

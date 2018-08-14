@@ -14,14 +14,12 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 
-import java.text.ParseException;
-
 import static org.mockito.Matchers.any;
 
 public class FeatureQuerySuccessTest {
 
     @Test
-    public void testOnSuccess() throws ParseException {
+    public void testOnSuccess() throws Exception {
 
         SingleFeatureQuery query = new SingleFeatureQuery("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 

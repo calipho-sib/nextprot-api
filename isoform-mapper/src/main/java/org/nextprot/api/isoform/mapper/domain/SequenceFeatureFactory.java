@@ -7,8 +7,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 
-import java.text.ParseException;
-
 /**
  * A sequence feature on an isoform sequence on a specific gene
  */
@@ -33,7 +31,7 @@ public interface SequenceFeatureFactory {
                     throw new InvalidFeatureQueryTypeException(query);
             }
         }
-        catch (ParseException e) {
+        catch (Exception e) {
             throw new InvalidFeatureQueryFormatException(query, e);
         }
     }

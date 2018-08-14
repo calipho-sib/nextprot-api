@@ -198,12 +198,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldNotValidateWithGeneNoAccession() throws Exception {
 
-    	FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("SCN14A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), ""));
+        SingleFeatureQuery query = new SingleFeatureQuery("SCN14A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "");
 
-        SingleFeatureQuery query = Mockito.mock(SingleFeatureQuery.class);
-        when(query.getAccession()).thenReturn("");
+    	FeatureQueryResult result = service.validateFeature(query);
 
-        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new EntryAccessionNotFoundForGeneException(query, "SCN14A"));
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryFormatException(query, new UnknownGeneNameException("SCN14A")));
     }
 
     // no more multiple accessions for gene GCNT2
@@ -385,7 +384,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidateGlycoOnCanonicalIsoform() throws Exception {
 
-        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187+PTM-0253_Ser21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(sfq);
 
@@ -395,7 +394,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidateGlycoOnSpecificIsoform() throws Exception {
 
-        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_Ser21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(sfq);
 

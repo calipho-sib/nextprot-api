@@ -7,7 +7,6 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
@@ -17,7 +16,6 @@ import org.nextprot.commons.statements.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -121,15 +119,11 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 		SequenceVariant sv;
 		try {	
 			sv = SequenceVariant.variant(featureName, beanService);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			throw new NextProtException(e);
 		}
 
-		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-		Isoform isoSpecific = IsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
-		return isoSpecific.getIsoformAccession();
-		
-
+		return sv.getIsoform().getIsoformAccession();
 	}
 	
 	private Map<String, List<Statement>> getSubjectsTransformed(Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {

@@ -1,6 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.EntityName;
@@ -15,7 +15,8 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownGeneNameException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
@@ -27,32 +28,52 @@ import java.util.stream.Collectors;
 
 public class SequenceVariant extends SequenceFeatureBase {
 
-    private final String geneName;
-    private final String isoformName;
+    private static final SequenceVariantHGVSFormat HGVS_FORMAT = new SequenceVariantHGVSFormat();
 
-    private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException {
-        super(feature, type, beanService);
+    private String geneName;
+    private String entryAccession;
+    private String isoformName;
 
-        this.geneName = parseGeneName();
-        this.isoformName = extractIsoformName();
+    private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException, PreIsoformParsingException {
+
+        super(feature, type, HGVS_FORMAT, beanService);
     }
 
-    public static SequenceVariant variant(String feature, BeanService beanService) throws ParseException {
+    public static SequenceVariant variant(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
 
         return new SequenceVariant(feature, AnnotationCategory.VARIANT, beanService);
     }
 
-    public static SequenceVariant mutagenesis(String feature, BeanService beanService) throws ParseException {
+    public static SequenceVariant mutagenesis(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
 
         return new SequenceVariant(feature, AnnotationCategory.MUTAGENESIS, beanService);
     }
 
-    private String parseGeneName() {
+    @Override
+    protected void preIsoformParsing(String sequenceIdPart) throws PreIsoformParsingException {
+
+        this.geneName = parseGeneName(sequenceIdPart);
+        this.entryAccession = findEntryAccessionFromGeneName();
+        this.isoformName = extractIsoformName(sequenceIdPart);
+    }
+
+    private String parseGeneName(String sequenceIdPart) {
 
         if (sequenceIdPart.contains("-"))
             return sequenceIdPart.substring(0, sequenceIdPart.indexOf("-"));
 
         return sequenceIdPart;
+    }
+
+    private String findEntryAccessionFromGeneName() throws UnknownGeneNameException {
+
+        Set<String> entries = getBeanService().getBean(MasterIdentifierService.class).findEntryAccessionByGeneName(geneName, false);
+
+        if (entries == null || entries.isEmpty()) {
+            throw new UnknownGeneNameException(geneName);
+        }
+
+        return entries.iterator().next();
     }
 
     @Override
@@ -67,13 +88,13 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     @Override
-    public SequenceVariationFormat newParser() {
+    protected SequenceVariationFormatter<String> getSequenceVariationFormatter() {
 
-        return new SequenceVariantHGVSFormat();
+        return HGVS_FORMAT;
     }
 
+
     /**
-     *
      *   isoshort  -> Short
      *   isolong   -> Long
      *   iso5      -> Iso 5
@@ -81,9 +102,9 @@ public class SequenceVariant extends SequenceFeatureBase {
      *
      *   @return null if canonical
      */
-    private String extractIsoformName() throws ParseException {
+    private String extractIsoformName(String sequenceIdPart) throws PreIsoformParsingException {
 
-        String featureIsoname = parseIsoformName();
+        String featureIsoname = parseIsoformName(sequenceIdPart);
 
         // canonical
         if (featureIsoname == null) {
@@ -112,13 +133,13 @@ public class SequenceVariant extends SequenceFeatureBase {
             }
         }
 
-        throw new ParseException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')", 0);
+        throw new PreIsoformParsingException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')");
     }
 
     /**
      * @return the isoform part from feature string (null if canonical)
      */
-    private String parseIsoformName() {
+    private String parseIsoformName(String sequenceIdPart) {
 
         int indexOfDash = sequenceIdPart.indexOf("-");
 
@@ -152,40 +173,30 @@ public class SequenceVariant extends SequenceFeatureBase {
         return sb.toString();
     }
 
-    public String getIsoformName() {
-        return isoformName;
-    }
-
     public String getGeneName() {
         return geneName;
     }
 
-
-    // TODO: this method should be called after isoformName has been set by getIsoformName(seqId)
     @Override
-    public Isoform buildIsoform() throws UnknownGeneNameException {
+    protected Isoform parseIsoform(String sequenceIdPart) throws ParseException {
 
-        Set<String> entries = beanService.getBean(MasterIdentifierService.class).findEntryAccessionByGeneName(geneName, false);
+        BeanService beanService = getBeanService();
+        IsoformService isoformService = beanService.getBean(IsoformService.class);
 
-        if (entries != null && !entries.isEmpty()) {
+        // 2. get isoform accession from iso name and entry
+        Isoform isoform = (isoformName != null) ? isoformService.findIsoformByName(entryAccession, isoformName) : IsoformUtils.getCanonicalIsoform(beanService.getBean(EntryBuilderService.class)
+                .build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()));
 
-            IsoformService isoformService = beanService.getBean(IsoformService.class);
-
-            // 1. get entry from gene name
-            String entry = entries.iterator().next();
-
-            // 2. get isoform accession from iso name and entry
-            return (isoformName != null) ? isoformService.findIsoformByName(entry, isoformName) : IsoformUtils.getCanonicalIsoform(beanService.getBean(EntryBuilderService.class)
-                    .build(EntryConfig.newConfig(entry).withTargetIsoforms()));
+        if (isoform == null) {
+            throw new ParseException("Cannot find isoform "+ isoformName+" from entry accession "+entryAccession, 0);
         }
-
-        throw new UnknownGeneNameException(geneName);
+        return isoform;
     }
 
     @Override
     public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
 
-        Entry entry = beanService.getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
+        Entry entry = getBeanService().getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
                 .withTargetIsoforms().withOverview());
 
         return new SequenceVariantValidator(entry, query);
@@ -206,21 +217,6 @@ public class SequenceVariant extends SequenceFeatureBase {
         }
 
         return false;
-    }
-
-    public class UnknownGeneNameException extends UnknownIsoformException {
-
-        private final String geneName;
-
-        public UnknownGeneNameException(String geneName) {
-
-            super("Cannot find a neXtProt entry associated with gene name "+ geneName);
-            this.geneName = geneName;
-        }
-
-        public String getGeneName() {
-            return geneName;
-        }
     }
 
     public static class SequenceVariantValidator extends SequenceFeatureValidator<SequenceVariant> {

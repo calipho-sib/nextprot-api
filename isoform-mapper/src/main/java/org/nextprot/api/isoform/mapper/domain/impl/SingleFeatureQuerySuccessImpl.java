@@ -3,7 +3,6 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -12,7 +11,6 @@ import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -39,13 +37,9 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
 
         this.feature = feature;
 
-        try {
-            addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.buildIsoform().getIsoformAccession()),
-                    feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
-                    feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
-        } catch (UnknownIsoformException e) {
-            throw new NextProtException(e);
-        }
+        addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.getIsoform().getIsoformAccession()),
+                feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
+                feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
     }
 
     @JsonIgnore
@@ -63,8 +57,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
         result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
         result.setIsoSpecificFeature(
-                feature.formatIsoSpecificFeature(isoform,
-                        firstIsoPosition, lastIsoPosition));
+                feature.formatIsoSpecificFeature(isoform, firstIsoPosition, lastIsoPosition));
 
         GeneMasterCodonPosition firstCodonOnMaster =
                 IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPosition, isoform);

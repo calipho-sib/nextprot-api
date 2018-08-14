@@ -13,8 +13,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.OutOfBoundSequencePositionException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnexpectedFeatureQueryAminoAcidException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureIsoformException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 
 /**
  * Validate sequence feature type features on isoform sequence
@@ -37,20 +35,10 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
     public BaseFeatureQueryResult validate(SF sequenceFeature) throws FeatureQueryException {
 
         preChecks(sequenceFeature);
-        checkIsoformExistence(sequenceFeature);
         checkVaryingAminoAcids(sequenceFeature);
         postChecks(sequenceFeature);
 
         return new SingleFeatureQuerySuccessImpl(entry, query, sequenceFeature);
-    }
-
-    protected void checkIsoformExistence(SF sequenceFeature) throws UnknownFeatureIsoformException {
-
-        try {
-            sequenceFeature.buildIsoform();
-        } catch (UnknownIsoformException e) {
-            throw new UnknownFeatureIsoformException(entry, query, query.getAccession());
-        }
     }
 
     /**
@@ -77,13 +65,7 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        Isoform isoform;
-        try {
-            isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.buildIsoform().getIsoformAccession());
-        } catch (UnknownIsoformException e) {
-
-            throw new UnknownFeatureIsoformException(query, e.getUnknownIsoformAccession());
-        }
+        Isoform isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.getIsoform().getIsoformAccession());
 
         // do check only position for STOP code
         if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {
