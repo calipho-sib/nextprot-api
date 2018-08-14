@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
+import java.util.Objects;
+
 /**
  * A PTM defined with a descriptor defined in UniProt control vocabulary
  */
@@ -77,6 +79,25 @@ public class PTM implements SequenceChange<String> {
         return new PTM("");
     }
 
+    public static PTM N_GLYCATION(AminoAcidCode aminoAcidCode) {
+        switch (aminoAcidCode) {
+            case ARGININE:
+                return new PTM("PTM-0515");
+            case ASPARAGINE:
+                return new PTM("PTM-0517");
+            case HISTIDINE:
+                return new PTM("PTM-0507");
+            case ISOLEUCINE:
+                return new PTM("PTM-0508");
+            case LYSINE:
+                return new PTM("PTM-0509");
+            case VALINE:
+                return new PTM("PTM-0510");
+            default:
+                throw new IllegalArgumentException(aminoAcidCode + " cannot be N-glycated");
+        }
+    }
+
     // TODO
     public static PTM FARNESYLATION(AminoAcidCode aminoAcidCode) {
         return new PTM("");
@@ -148,5 +169,18 @@ public class PTM implements SequenceChange<String> {
     public Type getType() {
 
         return Type.PTM;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PTM ptm = (PTM) o;
+        return Objects.equals(ptmId, ptm.ptmId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ptmId);
     }
 }
