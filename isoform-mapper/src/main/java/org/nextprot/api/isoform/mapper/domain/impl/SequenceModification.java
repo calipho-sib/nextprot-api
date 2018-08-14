@@ -5,6 +5,7 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequencePtmBioEditorFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -12,12 +13,17 @@ import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A post translational modification on an isoform sequence
@@ -79,8 +85,21 @@ public class SequenceModification extends SequenceFeatureBase {
 
     public static class SequenceModificationValidator extends SequenceFeatureValidator<SequenceModification> {
 
+        // see https://swissprot.isb-sib.ch/wiki/pages/viewpage.action?pageId=72192562
+        private final Map<String, Rule> rules;
+
         public SequenceModificationValidator(Entry entry, SingleFeatureQuery query) {
             super(entry, query);
+
+            rules = new HashMap<>();
+
+            rules.put("PTM-0528", new Rule("N[^P][STC]"));
+            rules.put("PTM-0250", new Rule("R"));
+            rules.put("PTM-0251", new Rule("C"));
+            rules.put("PTM-0252", new Rule("H"));
+            rules.put("PTM-0253", new Rule("S"));
+            rules.put("PTM-0254", new Rule("T"));
+            rules.put("PTM-0255", new Rule("Y"));
         }
 
         @Override
@@ -89,39 +108,58 @@ public class SequenceModification extends SequenceFeatureBase {
             checkModificationSite(sequenceModification);
         }
 
-        /*
-        According to the ptm, we check here that the site is ptmable through a residue regular expression.
+        private void checkModificationSite(SequenceModification sequenceModification) throws NonMatchingRuleException {
 
-        Example (N-Glycosylation): (see https://swissprot.isb-sib.ch/wiki/pages/viewpage.action?pageId=72192562)
-            Residue pattern:
-            N-{P}-[STC]-{P} -> GOLD
-            N-{P}-[STC]  -> SILVER, unless from Swiss-Prot -> GOLD
+            SequenceVariation variation = sequenceModification.getProteinVariation();
 
-        [Add keyword Glycoprotein [KW-0325] if needed]
-         */
-        private void checkModificationSite(SequenceModification sequenceModification) {
+            PTM ptm = (PTM)variation.getSequenceChange();
 
-            /*
-            String aas = sequenceModification.getIsoform().getSequence();
+            if (!rules.containsKey(ptm.getValue())) {
 
-            int site = sequenceModification.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos()-1;
-
-            if (aas.charAt(site+1) == 'P') {
-                throw new IllegalStateException("P should not be found at pos "+(site+1));
+                throw new IllegalStateException("Internal error: no rule found for "+ptm.getValue());
             }
 
-            if (aas.charAt(site+2) != 'S' && aas.charAt(site+2) != 'T' && aas.charAt(site+2) != 'C') {
-                throw new IllegalStateException("Missing ST or C at pos "+(site+2));
+            Rule rule = rules.get(ptm.getValue());
+            if (!rule.apply(sequenceModification.getIsoform().getSequence(),
+                    variation.getVaryingSequence().getFirstAminoAcidPos() - 1)) {
+
+                throw new NonMatchingRuleException(query, ptm, rule.getAminoAcidSite(sequenceModification.getIsoform().getSequence(),
+                        variation.getVaryingSequence().getFirstAminoAcidPos() - 1));
+            }
+        }
+
+        private static class Rule {
+
+            private final Pattern pattern;
+            private final int window = 10;
+
+            public Rule(String regexp) {
+
+                this.pattern = Pattern.compile("^"+regexp+".*$");
             }
 
-            throw new UnexpectedFeatureQueryAminoAcidException(query, site,
-                    AminoAcidCode.valueOfAminoAcidCodeSequence(aasOnSequence),
-                    AminoAcidCode.valueOfAminoAcidCodeSequence(aas));
+            public boolean apply(String aas, int modifiedAminoAcid) {
 
-            System.out.println(sequenceModification);
+                Matcher matcher = pattern.matcher(getAminoAcidSite(aas, modifiedAminoAcid));
 
-            // ptmid -> rule
-            */
+                return matcher.matches();
+            }
+
+            public String getAminoAcidSite(String aas, int modifiedAminoAcid) {
+
+                return aas.substring(modifiedAminoAcid, modifiedAminoAcid + window);
+            }
+        }
+
+        public static class NonMatchingRuleException extends FeatureQueryException {
+
+            public NonMatchingRuleException(FeatureQuery query, PTM ptm, String aas) {
+
+                super(query);
+
+                getReason().addCause("PTM", ptm.getValue());
+                getReason().setMessage("could not match PTM rule on aas " + aas);
+            }
         }
     }
 }

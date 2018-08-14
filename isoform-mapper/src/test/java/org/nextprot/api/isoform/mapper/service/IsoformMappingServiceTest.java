@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.OverviewService;
@@ -17,6 +18,7 @@ import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.SequenceModification;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -401,10 +403,10 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
     }
 
-    /*@Test
+    @Test
     public void shouldValidateGlycoOnNX_A1L4H1() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0253_Asn168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(query);
 
@@ -414,13 +416,12 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldNotValidatePhosphoOnNX_A1L4H1() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0254_Asn168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_167", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(query);
 
-        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new UnexpectedFeatureQueryAminoAcidException(query, 168,
-                new AminoAcidCode[] { AminoAcidCode.SERINE, AminoAcidCode.TYROSINE, AminoAcidCode.THREONINE  }, new AminoAcidCode[] { AminoAcidCode.ASPARAGINE}));
-    }*/
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query, new PTM("PTM-0528"), "QNASRKKSPR"));
+    }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
