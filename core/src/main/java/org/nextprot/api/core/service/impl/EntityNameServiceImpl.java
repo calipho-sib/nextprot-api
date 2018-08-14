@@ -10,29 +10,29 @@ import org.springframework.stereotype.Service;
 class EntityNameServiceImpl implements EntityNameService {
 
 	@Override
-	public boolean hasName(EntityName entityName, String name) {
+	public boolean hasNameIgnoreCase(EntityName entityName, String name) {
 
 		if (entityName != null) {
 
-			if (name.equals(entityName.getName())) {
+			if (name.equalsIgnoreCase(entityName.getName())) {
 				return true;
 			}
 
-			else if (name.equals(entityName.getMainEntityName())) {
+			else if (name.equalsIgnoreCase(entityName.getMainEntityName())) {
 				return true;
 			}
 
-			else if (name.equals(entityName.getId())) {
+			else if (name.equalsIgnoreCase(entityName.getId())) {
 				return true;
 			}
 
 			else if (StreamUtils.nullableListToStream(entityName.getOtherRecommendedEntityNames())
-					.anyMatch(rn -> name.equals(rn.getName()))) {
+					.anyMatch(rn -> name.equalsIgnoreCase(rn.getName()))) {
 				return true;
 			}
 
 			else if (StreamUtils.nullableListToStream(entityName.getSynonyms())
-					.anyMatch(s -> name.equals(s.getName()))) {
+					.anyMatch(s -> name.equalsIgnoreCase(s.getName()))) {
 				return true;
 			}
 		}

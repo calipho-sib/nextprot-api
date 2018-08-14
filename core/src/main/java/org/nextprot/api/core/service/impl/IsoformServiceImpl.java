@@ -87,7 +87,7 @@ class IsoformServiceImpl implements IsoformService {
 			if (isoform.getIsoformAccession().equals(name)) {
 				return isoform;
 			}
-			else if (entityNameService.hasName(isoform.getMainEntityName(), name)) {
+			else if (entityNameService.hasNameIgnoreCase(isoform.getMainEntityName(), name)) {
 				return isoform;
 			}
 		}
