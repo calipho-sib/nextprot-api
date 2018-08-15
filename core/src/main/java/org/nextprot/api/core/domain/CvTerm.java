@@ -1,14 +1,14 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.utils.TerminologyUtils;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CvTerm implements Serializable {
 
@@ -73,6 +73,18 @@ public class CvTerm implements Serializable {
 	public List<TermProperty> getProperties() {
 		return properties;
 	}
+
+    /**
+     * Get the property value
+     * @param propertyName the property name
+     * @return a value or empty if not found
+     */
+    public Optional<TermProperty> getProperty(String propertyName) {
+
+	    return properties.stream()
+                .filter(p -> p.getPropertyName().equals(propertyName))
+                .findFirst();
+    }
 
 	public void setProperties(List<TermProperty> properties) {
 		this.properties = properties;
