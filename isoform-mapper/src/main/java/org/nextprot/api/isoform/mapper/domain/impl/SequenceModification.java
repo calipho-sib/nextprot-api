@@ -1,5 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
@@ -7,12 +8,9 @@ import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequencePtmBioEditorFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
@@ -22,7 +20,6 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -77,10 +74,7 @@ public class SequenceModification extends SequenceFeatureBase {
     @Override
     public SequenceModificationValidator newValidator(SingleFeatureQuery query) {
 
-        Entry entry = getBeanService().getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
-                .withTargetIsoforms().withOverview());
-
-        return new SequenceModificationValidator(entry, query);
+        return new SequenceModificationValidator(query);
     }
 
     public static class SequenceModificationValidator extends SequenceFeatureValidator<SequenceModification> {
@@ -88,18 +82,19 @@ public class SequenceModification extends SequenceFeatureBase {
         // see https://swissprot.isb-sib.ch/wiki/pages/viewpage.action?pageId=72192562
         private final Map<String, Rule> rules;
 
-        public SequenceModificationValidator(Entry entry, SingleFeatureQuery query) {
-            super(entry, query);
+        public SequenceModificationValidator(SingleFeatureQuery query) {
+            super(query);
 
             rules = new HashMap<>();
 
-            rules.put("PTM-0528", new Rule("N[^P][STC]"));
-            rules.put("PTM-0250", new Rule("R"));
-            rules.put("PTM-0251", new Rule("C"));
-            rules.put("PTM-0252", new Rule("H"));
-            rules.put("PTM-0253", new Rule("S"));
-            rules.put("PTM-0254", new Rule("T"));
-            rules.put("PTM-0255", new Rule("Y"));
+            rules.put("PTM-0528", new Rule(AminoAcidCode.ASPARAGINE, "N[^P][STC]"));
+            rules.put("PTM-0250", new Rule(AminoAcidCode.ARGININE));
+            rules.put("PTM-0251", new Rule(AminoAcidCode.CYSTEINE));
+            rules.put("PTM-0252", new Rule(AminoAcidCode.HISTIDINE));
+            rules.put("PTM-0253", new Rule(AminoAcidCode.SERINE));
+            rules.put("PTM-0254", new Rule(AminoAcidCode.THREONINE));
+            rules.put("PTM-0255", new Rule(AminoAcidCode.TYROSINE));
+            //TODO: we could add all other PTM-ids given the target supplied by ProteinModificationService
         }
 
         @Override
@@ -130,19 +125,32 @@ public class SequenceModification extends SequenceFeatureBase {
 
         private static class Rule {
 
+            private final AminoAcidCode modifiedAminoAcid;
             private final Pattern pattern;
             private final int window = 10;
 
-            public Rule(String regexp) {
+            public Rule(AminoAcidCode modifiedAminoAcid) {
 
-                this.pattern = Pattern.compile("^"+regexp+".*$");
+                this(modifiedAminoAcid, null);
             }
 
-            public boolean apply(String aas, int modifiedAminoAcid) {
+            public Rule(AminoAcidCode modifiedAminoAcid, String regionRegexp) {
 
-                Matcher matcher = pattern.matcher(getAminoAcidSite(aas, modifiedAminoAcid));
+                this.modifiedAminoAcid = modifiedAminoAcid;
+                this.pattern = (regionRegexp != null) ? Pattern.compile("^"+regionRegexp+".*$") : null;
+            }
 
-                return matcher.matches();
+            public boolean apply(String aas, int modifiedAminoAcidIndex) {
+
+                if (modifiedAminoAcid.get1LetterCode().charAt(0) == aas.charAt(0)) {
+
+                    if (pattern != null) {
+                        return pattern.matcher(getAminoAcidSite(aas, modifiedAminoAcidIndex)).matches();
+                    }
+                    return true;
+                }
+
+                return false;
             }
 
             public String getAminoAcidSite(String aas, int modifiedAminoAcid) {

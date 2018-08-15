@@ -221,8 +221,12 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     public static class SequenceVariantValidator extends SequenceFeatureValidator<SequenceVariant> {
 
+        private final Entry entry;
+
         public SequenceVariantValidator(Entry entry, SingleFeatureQuery query) {
-            super(entry, query);
+            super(query);
+
+            this.entry = entry;
         }
 
         @Override

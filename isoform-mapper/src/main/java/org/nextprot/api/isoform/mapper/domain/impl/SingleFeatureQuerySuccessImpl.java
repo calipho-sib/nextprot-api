@@ -3,9 +3,7 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
@@ -23,28 +21,20 @@ import java.util.TreeMap;
  */
 public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<SingleFeatureQuery> implements FeatureQuerySuccess {
 
-	private static final long serialVersionUID = 20161117L;
+	private static final long serialVersionUID = 20180815L;
 	private final Map<String, IsoformFeatureResult> data;
     private final transient SequenceFeature feature;
-    private final transient Entry entry;
-    
-    public SingleFeatureQuerySuccessImpl(Entry entry, SingleFeatureQuery query, SequenceFeature feature) {
-        super(query);
 
-        this.entry = entry;
+    public SingleFeatureQuerySuccessImpl(SingleFeatureQuery query, SequenceFeature feature) {
+        super(query);
 
         data = new TreeMap<>();
 
         this.feature = feature;
 
-        addMappedFeature(IsoformUtils.getIsoformByNameOrCanonical(entry, feature.getIsoform().getIsoformAccession()),
+        addMappedFeature(feature.getIsoform(),
                 feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
                 feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
-    }
-
-    @JsonIgnore
-    public Entry getEntry() {
-        return entry;
     }
 
     public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {

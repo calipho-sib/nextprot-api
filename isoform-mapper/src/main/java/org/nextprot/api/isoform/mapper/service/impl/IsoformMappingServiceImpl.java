@@ -7,8 +7,8 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
@@ -36,6 +36,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     @Autowired
     private EntryService entryService;
+
+    @Autowired
+    private IsoformService isoformService;
 
     @Autowired
     private BeanService beanService;
@@ -86,7 +89,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
-        Isoform featureIsoform = IsoformUtils.getIsoformByNameOrCanonical(successResults.getEntry(), isoFeature.getIsoform().getIsoformAccession());
+        Isoform featureIsoform = isoFeature.getIsoform();
         SequenceVariation variation = isoFeature.getProteinVariation();
 
         OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
@@ -95,7 +98,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         GeneMasterCodonPosition originalLastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getLastAAPos(), featureIsoform);
 
         // try to propagate the feature to other isoforms
-        for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
+        for (Isoform otherIsoform : isoformService.getOtherIsoforms(featureIsoform.getIsoformAccession())) {
 
             Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getFirstAAPos(), otherIsoform);
             Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);

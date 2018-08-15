@@ -2,9 +2,7 @@ package org.nextprot.api.isoform.mapper.service;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
@@ -21,11 +19,9 @@ import org.nextprot.api.isoform.mapper.domain.impl.exception.UnexpectedFeatureQu
  */
 public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
 
-    protected final Entry entry;
     protected final SingleFeatureQuery query;
 
-    public SequenceFeatureValidator(Entry entry, SingleFeatureQuery query) {
-        this.entry = entry;
+    public SequenceFeatureValidator(SingleFeatureQuery query) {
         this.query = query;
     }
 
@@ -38,7 +34,7 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
         checkVaryingAminoAcids(sequenceFeature);
         postChecks(sequenceFeature);
 
-        return new SingleFeatureQuerySuccessImpl(entry, query, sequenceFeature);
+        return new SingleFeatureQuerySuccessImpl(query, sequenceFeature);
     }
 
     /**
@@ -65,7 +61,7 @@ public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        Isoform isoform = IsoformUtils.getIsoformByNameOrCanonical(entry, sequenceFeature.getIsoform().getIsoformAccession());
+        Isoform isoform = sequenceFeature.getIsoform();
 
         // do check only position for STOP code
         if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {

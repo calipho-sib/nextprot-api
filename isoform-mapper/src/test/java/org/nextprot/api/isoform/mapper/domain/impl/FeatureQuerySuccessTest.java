@@ -27,7 +27,7 @@ public class FeatureQuerySuccessTest {
 
         SequenceVariant sequenceVariant = SequenceVariant.variant("SCN11A-p.Leu1158Pro", mockBeanService("SCN11A", entry));
 
-        SingleFeatureQuerySuccessImpl result = new SingleFeatureQuerySuccessImpl(entry, query, sequenceVariant);
+        SingleFeatureQuerySuccessImpl result = new SingleFeatureQuerySuccessImpl(query, sequenceVariant);
         result.addMappedFeature(entry.getIsoforms().get(0), 1158, 1158);
         result.addMappedFeature(entry.getIsoforms().get(1), 1158, 1158);
         result.addMappedFeature(entry.getIsoforms().get(2), 1120, 1120);
