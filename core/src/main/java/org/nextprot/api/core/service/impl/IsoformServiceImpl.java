@@ -95,7 +95,21 @@ class IsoformServiceImpl implements IsoformService {
 		return null;
 	}
 
-	@Override
+    @Override
+    public List<Isoform> getOtherIsoforms(String isoformUniqueName) {
+
+        if (!isoformUniqueName.contains("-")) {
+
+            return new ArrayList<>();
+        }
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(isoformUniqueName.split("-")[0])
+                .withTargetIsoforms());
+
+        return IsoformUtils.getOtherIsoforms(entry, isoformUniqueName);
+    }
+
+    @Override
 	@Cacheable("peff-by-isoform")
 	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 

@@ -27,6 +27,8 @@ public interface IsoformService {
 	 */
 	Isoform findIsoformByName(String entryAccession, String name);
 
+	List<Isoform> getOtherIsoforms(String isoformUniqueName);
+
 	/**
 	 * Extract and format in PEFF header all isoform required information
 	 * @param isoformAccession the isoform accession to format as PEFF
