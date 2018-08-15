@@ -192,7 +192,7 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
     @Test
     public void testPTMWithCanonicalIsoform() throws Exception {
 
-        SequenceModification ptm = new SequenceModification("NX_Q06187+PTM-0253_21", beanService);
+        SequenceModification ptm = new SequenceModification("NX_Q06187.PTM-0253_21", beanService);
 
         Assert.assertEquals("NX_Q06187-1", ptm.getIsoform().getIsoformAccession());
         SequenceVariation pv = ptm.getProteinVariation();
@@ -207,7 +207,7 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
     @Test
     public void testPTMWithSpecifiedIsoform() throws Exception {
 
-        SequenceModification ptm = new SequenceModification("NX_Q06187-2+PTM-0253_21", beanService);
+        SequenceModification ptm = new SequenceModification("NX_Q06187-2.PTM-0253_21", beanService);
         SequenceVariation variation = ptm.getProteinVariation();
         SequenceChange<?> seqChange = variation.getSequenceChange();
         Assert.assertTrue(seqChange instanceof UniProtPTM);

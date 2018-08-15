@@ -387,7 +387,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidateGlycoOnCanonicalIsoform() throws Exception {
 
-        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187.PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(sfq);
 
@@ -397,7 +397,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidatePhosphoOnSpecificIsoform() throws Exception {
 
-        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1.PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(sfq);
 
@@ -411,7 +411,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidateGlycoOnNX_A1L4H1() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1.PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(query);
 
@@ -421,7 +421,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldNotValidatePhosphoOnNX_A1L4H1() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_167", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1.PTM-0528_167", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(query);
 
@@ -431,7 +431,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldPropagateGlycoOnNX_A1L4H1isoforms() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1.PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.propagateFeature(query);
 
@@ -445,7 +445,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldPropagateOnNX_Q06187isoform2() throws Exception {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-1.PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.propagateFeature(query);
 
@@ -456,7 +456,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldPropagateOnNX_Q06187isoforms2() throws Exception {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-2+PTM-0253_55", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-2.PTM-0253_55", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.propagateFeature(query);
 
@@ -467,7 +467,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldNotPropagateOnAllIsoforms() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_P52701-1+PTM-0253_144", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_P52701-1.PTM-0253_144", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.propagateFeature(query);
 
