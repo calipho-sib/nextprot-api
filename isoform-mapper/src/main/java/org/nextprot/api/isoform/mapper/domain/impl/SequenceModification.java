@@ -115,11 +115,12 @@ public class SequenceModification extends SequenceFeatureBase {
             }
 
             Rule rule = rules.get(ptm.getValue());
-            if (!rule.apply(sequenceModification.getIsoform().getSequence(),
-                    variation.getVaryingSequence().getFirstAminoAcidPos() - 1)) {
+            String aas = sequenceModification.getIsoform().getSequence();
+            int aaIndex = variation.getVaryingSequence().getFirstAminoAcidPos() - 1;
 
-                throw new NonMatchingRuleException(query, ptm, rule.getAminoAcidSite(sequenceModification.getIsoform().getSequence(),
-                        variation.getVaryingSequence().getFirstAminoAcidPos() - 1));
+            if (!rule.matches(aas, aaIndex)) {
+
+                throw new NonMatchingRuleException(query, ptm, rule.getAminoAcidSite(aas, aaIndex));
             }
         }
 
@@ -140,9 +141,9 @@ public class SequenceModification extends SequenceFeatureBase {
                 this.pattern = (regionRegexp != null) ? Pattern.compile("^"+regionRegexp+".*$") : null;
             }
 
-            public boolean apply(String aas, int modifiedAminoAcidIndex) {
+            public boolean matches(String aas, int modifiedAminoAcidIndex) {
 
-                if (modifiedAminoAcid.get1LetterCode().charAt(0) == aas.charAt(0)) {
+                if (modifiedAminoAcid.get1LetterCode().charAt(0) == aas.charAt(modifiedAminoAcidIndex)) {
 
                     if (pattern != null) {
                         return pattern.matcher(getAminoAcidSite(aas, modifiedAminoAcidIndex)).matches();
