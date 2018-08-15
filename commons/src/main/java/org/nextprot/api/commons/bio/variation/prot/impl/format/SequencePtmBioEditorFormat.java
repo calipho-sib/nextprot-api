@@ -47,17 +47,17 @@ public class SequencePtmBioEditorFormat extends SequenceVariationFormat {
     @Override
     public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
 
-        StringBuilder sb = new StringBuilder();
+        if (variation.getSequenceChange().getType() != SequenceChange.Type.PTM) {
 
-        if (variation.getSequenceChange() instanceof UniProtPTM) {
-
-            ptmFormat.format(sb, (UniProtPTM) variation.getSequenceChange(), type);
-            aminoAcidModificationFormatter.format(variation, type, sb);
-
-            return sb.toString();
+            throw new IllegalArgumentException("Internal error: Not a PTM, cannot format variation "+variation.getSequenceChange());
         }
 
-        throw new IllegalArgumentException("Not a glycosylation: cannot format variation "+variation.getSequenceChange());
+        StringBuilder sb = new StringBuilder();
+
+        ptmFormat.format(sb, (UniProtPTM) variation.getSequenceChange(), type);
+        aminoAcidModificationFormatter.format(variation, type, sb);
+
+        return sb.toString();
     }
 
     public SequenceVariation parse(String source, String aas) throws ParseException {
