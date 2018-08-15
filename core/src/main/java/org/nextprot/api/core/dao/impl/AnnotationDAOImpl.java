@@ -2,7 +2,7 @@ package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -28,7 +28,7 @@ import java.util.List;
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
 
-	private static SequenceVariantHGVSFormat MUTATION_HGV_FORMAT = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+	private static VariantHGVSFormat MUTATION_HGV_FORMAT = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
 
 	@Autowired private SQLDictionary sqlDictionary;
 

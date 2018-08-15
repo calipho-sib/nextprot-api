@@ -13,7 +13,7 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseFrameshiftTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
     public void testParseFrameshift() throws Exception {
@@ -43,7 +43,7 @@ public class SequenceVariantHGVSParseFrameshiftTest {
     @Test
     public void testParseAANonStandardFrameshift() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.S1476fs*>9");
 
         Assert.assertEquals(AminoAcidCode.SERINE, pm.getVaryingSequence().getFirstAminoAcid());
@@ -55,7 +55,7 @@ public class SequenceVariantHGVSParseFrameshiftTest {
     @Test(expected = ParseException.class)
     public void testParseFs1ShouldFailed() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.Met682AlafsTer1");
     }
 
@@ -63,7 +63,7 @@ public class SequenceVariantHGVSParseFrameshiftTest {
     @Test
     public void testParseAAFsFix() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.E61fs");
     }
 

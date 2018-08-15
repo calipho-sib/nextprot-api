@@ -12,7 +12,7 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseSubstitutionTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
 
     @Test(expected = ParseException.class)
@@ -70,7 +70,7 @@ public class SequenceVariantHGVSParseSubstitutionTest {
     @Test
     public void testPermissiveParserCorrectlyParseStandardSubstitution() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.R54C");
 
         Assert.assertEquals(AminoAcidCode.ARGININE, pm.getVaryingSequence().getFirstAminoAcid());
@@ -84,7 +84,7 @@ public class SequenceVariantHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFixCode1() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.*104E");
 
         Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getFirstAminoAcid());
@@ -97,7 +97,7 @@ public class SequenceVariantHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFixCode3() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Ter104Glu");
 
         Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getFirstAminoAcid());
@@ -111,7 +111,7 @@ public class SequenceVariantHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFix5() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Y553_K558>");
     }
 }

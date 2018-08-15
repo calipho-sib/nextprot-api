@@ -12,12 +12,12 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseInsertionTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
     public void testParseInsertion() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.C136_A137insGM");
 
         assertProteinSequenceVariation(pm, AminoAcidCode.CYSTEINE, AminoAcidCode.ALANINE, 136);
@@ -29,28 +29,28 @@ public class SequenceVariantHGVSParseInsertionTest {
     @Test(expected = ParseException.class)
     public void shouldContain2FlankingResidues() throws Exception {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.C136_A138insGM");
     }
 
     @Test(expected = ParseException.class)
     public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore() throws ParseException {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.Met1875-Glu1876insMet");
     }
 
     @Test(expected = ParseException.class)
     public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore2() throws ParseException {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.Lys722-Ala723insTyrLys");
     }
 
     @Test
     public void testParseInsertionsVariants() throws ParseException {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Met1875_Glu1876insMet");
 
         assertProteinSequenceVariation(pm, AminoAcidCode.METHIONINE, AminoAcidCode.GLUTAMIC_ACID, 1875);
@@ -62,7 +62,7 @@ public class SequenceVariantHGVSParseInsertionTest {
     @Test
     public void testParseInsertionsVariants2() throws ParseException {
 
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Lys722_Ala723insTyrLys");
 
         assertProteinSequenceVariation(pm, AminoAcidCode.LYSINE, AminoAcidCode.ALANINE, 722);

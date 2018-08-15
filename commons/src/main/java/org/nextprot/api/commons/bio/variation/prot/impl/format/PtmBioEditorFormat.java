@@ -15,12 +15,12 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Objects;
 
-public class SequencePtmBioEditorFormat extends SequenceVariationFormat {
+public class PtmBioEditorFormat extends SequenceVariationFormat {
 
     private final AminoAcidModificationBEDFormatter aminoAcidModificationFormatter;
     private final SinglePtmBioEditorFormat ptmFormat;
 
-    public SequencePtmBioEditorFormat() {
+    public PtmBioEditorFormat() {
 
         aminoAcidModificationFormatter = new AminoAcidModificationBEDFormatter();
         ptmFormat = new SinglePtmBioEditorFormat();

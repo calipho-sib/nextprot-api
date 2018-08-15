@@ -8,7 +8,7 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseMultiTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Ignore
     @Test
@@ -17,7 +17,7 @@ public class SequenceVariantHGVSParseMultiTest {
 MULTIS:
 p.(=,Ile411_Gly426del)
          */
-        format = new SequenceVariantHGVSFormat(ParsingMode.PERMISSIVE);
+        format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.(=,Ile411_Gly426del)");
     }
 }

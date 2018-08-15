@@ -21,18 +21,18 @@ import java.util.Map;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
+public class VariantHGVSFormat extends SequenceVariationFormat {
 
     private final SequenceVariantHGVSFormatter sequenceVariantFormatter;
     private final Map<SequenceChange.Type, SequenceChangeHGVSFormat> changeFormats;
     private final ParsingMode parsingMode;
 
-    public SequenceVariantHGVSFormat() {
+    public VariantHGVSFormat() {
 
         this(ParsingMode.STRICT);
     }
 
-    public SequenceVariantHGVSFormat(ParsingMode parsingMode) {
+    public VariantHGVSFormat(ParsingMode parsingMode) {
 
         this.parsingMode = parsingMode;
 

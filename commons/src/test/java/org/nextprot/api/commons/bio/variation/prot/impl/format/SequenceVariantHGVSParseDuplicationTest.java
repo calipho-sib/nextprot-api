@@ -10,7 +10,7 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseDuplicationTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
     public void testParseSimpleDuplication() throws ParseException {

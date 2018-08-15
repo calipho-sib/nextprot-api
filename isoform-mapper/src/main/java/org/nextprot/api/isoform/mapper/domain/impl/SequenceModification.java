@@ -5,7 +5,7 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequencePtmBioEditorFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.PtmBioEditorFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class SequenceModification extends SequenceFeatureBase {
 
-    private static final SequencePtmBioEditorFormat PTM_FORMAT = new SequencePtmBioEditorFormat();
+    private static final PtmBioEditorFormat PTM_FORMAT = new PtmBioEditorFormat();
 
     public SequenceModification(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
 

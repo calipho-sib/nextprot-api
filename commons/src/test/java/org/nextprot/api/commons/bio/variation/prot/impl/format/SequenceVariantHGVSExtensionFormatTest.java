@@ -11,7 +11,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 public class SequenceVariantHGVSExtensionFormatTest {
 
-    private SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    private VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
     public void testParseInitiationExtensionCode3() throws Exception {

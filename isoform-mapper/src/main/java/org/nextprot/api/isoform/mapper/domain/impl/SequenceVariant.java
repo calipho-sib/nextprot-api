@@ -1,7 +1,7 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class SequenceVariant extends SequenceFeatureBase {
 
-    private static final SequenceVariantHGVSFormat HGVS_FORMAT = new SequenceVariantHGVSFormat();
+    private static final VariantHGVSFormat HGVS_FORMAT = new VariantHGVSFormat();
 
     private String geneName;
     private String entryAccession;
