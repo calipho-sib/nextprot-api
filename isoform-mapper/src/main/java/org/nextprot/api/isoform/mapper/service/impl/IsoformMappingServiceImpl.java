@@ -85,7 +85,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     private void propagate(SingleFeatureQuerySuccessImpl successResults) throws ParseException {
 
         SingleFeatureQuery query = successResults.getQuery();
-        query.setPropagableFeature(true);
+        query.setTryToMapOnOtherIsoforms(true);
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
