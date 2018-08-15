@@ -5,7 +5,7 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.SequencePtmBioEditorFormat;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -112,7 +112,7 @@ public class SequenceModification extends SequenceFeatureBase {
 
             SequenceVariation variation = sequenceModification.getProteinVariation();
 
-            PTM ptm = (PTM)variation.getSequenceChange();
+            UniProtPTM ptm = (UniProtPTM)variation.getSequenceChange();
 
             if (!rules.containsKey(ptm.getValue())) {
 
@@ -153,7 +153,7 @@ public class SequenceModification extends SequenceFeatureBase {
 
         public static class NonMatchingRuleException extends FeatureQueryException {
 
-            public NonMatchingRuleException(FeatureQuery query, PTM ptm, String aas) {
+            public NonMatchingRuleException(FeatureQuery query, UniProtPTM ptm, String aas) {
 
                 super(query);
 

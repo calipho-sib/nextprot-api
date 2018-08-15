@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
@@ -200,8 +200,8 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         Assert.assertEquals(21, pv.getVaryingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(AminoAcidCode.SERINE, pv.getVaryingSequence().getLastAminoAcid());
         Assert.assertEquals(21, pv.getVaryingSequence().getLastAminoAcidPos());
-        Assert.assertTrue(pv.getSequenceChange() instanceof PTM);
-        Assert.assertEquals("PTM-0253", ((PTM)pv.getSequenceChange()).getValue());
+        Assert.assertTrue(pv.getSequenceChange() instanceof UniProtPTM);
+        Assert.assertEquals("PTM-0253", ((UniProtPTM)pv.getSequenceChange()).getValue());
     }
 
     @Test
@@ -210,8 +210,8 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         SequenceModification ptm = new SequenceModification("NX_Q06187-2+PTM-0253_21", beanService);
         SequenceVariation variation = ptm.getProteinVariation();
         SequenceChange<?> seqChange = variation.getSequenceChange();
-        Assert.assertTrue(seqChange instanceof PTM);
-        Assert.assertEquals("PTM-0253", ((PTM)seqChange).getValue());
+        Assert.assertTrue(seqChange instanceof UniProtPTM);
+        Assert.assertEquals("PTM-0253", ((UniProtPTM)seqChange).getValue());
         Assert.assertEquals("NX_Q06187-2", ptm.getIsoform().getIsoformAccession());
     }
 

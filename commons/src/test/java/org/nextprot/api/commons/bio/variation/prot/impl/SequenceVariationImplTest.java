@@ -162,7 +162,7 @@ public class SequenceVariationImplTest {
     public void testBuildPtm() throws Exception {
 
         SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 123)
-                .thenAddModification(PTM.S_NITROSYLATION()).build();
+                .thenAddModification(UniProtPTM.S_NITROSYLATION()).build();
 
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getVaryingSequence().getFirstAminoAcid());
         Assert.assertEquals(123, pm.getVaryingSequence().getFirstAminoAcidPos());
@@ -240,7 +240,7 @@ public class SequenceVariationImplTest {
         SequenceVariation pm = new SequenceVariationImpl.StartBuilding()
                 .fromAAs("WC")
                 .selectAminoAcid(2)
-                .thenAddModification(PTM.S_NITROSYLATION())
+                .thenAddModification(UniProtPTM.S_NITROSYLATION())
                 .build();
 
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getVaryingSequence().getFirstAminoAcid());

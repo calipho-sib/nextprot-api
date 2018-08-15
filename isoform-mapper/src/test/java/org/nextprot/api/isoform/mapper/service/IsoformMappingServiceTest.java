@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.OverviewService;
@@ -420,7 +420,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         FeatureQueryResult result = service.validateFeature(query);
 
-        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query, new PTM("PTM-0528"), "QNASRKKSPR"));
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query, new UniProtPTM("PTM-0528"), "QNASRKKSPR"));
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

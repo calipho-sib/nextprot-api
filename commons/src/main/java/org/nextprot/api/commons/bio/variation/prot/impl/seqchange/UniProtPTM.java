@@ -9,11 +9,11 @@ import java.util.Objects;
 /**
  * A PTM defined with a descriptor defined in UniProt control vocabulary
  */
-public class PTM implements SequenceChange<String> {
+public class UniProtPTM implements SequenceChange<String> {
 
     private final String ptmId;
 
-    public PTM(String ptmId) {
+    public UniProtPTM(String ptmId) {
 
         Preconditions.checkNotNull(ptmId);
         Preconditions.checkArgument(ptmId.matches("PTM-\\d{4}"));
@@ -21,129 +21,129 @@ public class PTM implements SequenceChange<String> {
         this.ptmId = ptmId;
     }
 
-    public static PTM N_ACETYLATION(AminoAcidCode aminoAcidCode) {
+    public static UniProtPTM N_ACETYLATION(AminoAcidCode aminoAcidCode) {
 
         switch (aminoAcidCode) {
             case ARGININE:
-                return new PTM("PTM-0180");
+                return new UniProtPTM("PTM-0180");
             case LYSINE:
-                return new PTM("PTM-0190");
+                return new UniProtPTM("PTM-0190");
             case ALANINE:
-                return new PTM("PTM-0199");
+                return new UniProtPTM("PTM-0199");
             case ASPARTIC_ACID:
-                return new PTM("PTM-0200");
+                return new UniProtPTM("PTM-0200");
             case CYSTEINE:
-                return new PTM("PTM-0201");
+                return new UniProtPTM("PTM-0201");
             case GLUTAMIC_ACID:
-                return new PTM("PTM-0202");
+                return new UniProtPTM("PTM-0202");
             case GLYCINE:
-                return new PTM("PTM-0203");
+                return new UniProtPTM("PTM-0203");
             case ISOLEUCINE:
-                return new PTM("PTM-0204");
+                return new UniProtPTM("PTM-0204");
             case METHIONINE:
-                return new PTM("PTM-0205");
+                return new UniProtPTM("PTM-0205");
             case PROLINE:
-                return new PTM("PTM-0206");
+                return new UniProtPTM("PTM-0206");
             case SERINE:
-                return new PTM("PTM-0207");
+                return new UniProtPTM("PTM-0207");
             case THREONINE:
-                return new PTM("PTM-0208");
+                return new UniProtPTM("PTM-0208");
             case TYROSINE:
-                return new PTM("PTM-0209");
+                return new UniProtPTM("PTM-0209");
             case VALINE:
-                return new PTM("PTM-0210");
+                return new UniProtPTM("PTM-0210");
             default:
                 throw new IllegalArgumentException(aminoAcidCode + " cannot be N-acetylated");
         }
     }
 
-    public static PTM O_ACETYLATION(AminoAcidCode aminoAcidCode) {
+    public static UniProtPTM O_ACETYLATION(AminoAcidCode aminoAcidCode) {
 
         switch (aminoAcidCode) {
             case SERINE:
-                return new PTM("PTM-0232");
+                return new UniProtPTM("PTM-0232");
             case THREONINE:
-                return new PTM("PTM-0233");
+                return new UniProtPTM("PTM-0233");
             default:
                 throw new IllegalArgumentException(aminoAcidCode + " cannot be O-acetylated");
         }
     }
 
     // TODO
-    public static PTM DIMETHYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM DIMETHYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
     // TODO
-    public static PTM GERANYLGERANYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM GERANYLGERANYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
-    public static PTM N_GLYCATION(AminoAcidCode aminoAcidCode) {
+    public static UniProtPTM N_GLYCATION(AminoAcidCode aminoAcidCode) {
         switch (aminoAcidCode) {
             case ARGININE:
-                return new PTM("PTM-0515");
+                return new UniProtPTM("PTM-0515");
             case ASPARAGINE:
-                return new PTM("PTM-0517");
+                return new UniProtPTM("PTM-0517");
             case HISTIDINE:
-                return new PTM("PTM-0507");
+                return new UniProtPTM("PTM-0507");
             case ISOLEUCINE:
-                return new PTM("PTM-0508");
+                return new UniProtPTM("PTM-0508");
             case LYSINE:
-                return new PTM("PTM-0509");
+                return new UniProtPTM("PTM-0509");
             case VALINE:
-                return new PTM("PTM-0510");
+                return new UniProtPTM("PTM-0510");
             default:
                 throw new IllegalArgumentException(aminoAcidCode + " cannot be N-glycated");
         }
     }
 
     // TODO
-    public static PTM FARNESYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM FARNESYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
     // TODO
-    public static PTM MYRISTOYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM MYRISTOYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
     // TODO
-    public static PTM NITRATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM NITRATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
-    public static PTM PHOSPHORYLATION(AminoAcidCode aminoAcidCode) {
+    public static UniProtPTM PHOSPHORYLATION(AminoAcidCode aminoAcidCode) {
         switch (aminoAcidCode) {
             case ARGININE:
-                return new PTM("PTM-0250");
+                return new UniProtPTM("PTM-0250");
             case CYSTEINE:
-                return new PTM("PTM-0251");
+                return new UniProtPTM("PTM-0251");
             case HISTIDINE:
-                return new PTM("PTM-0252");
+                return new UniProtPTM("PTM-0252");
             case SERINE:
-                return new PTM("PTM-0253");
+                return new UniProtPTM("PTM-0253");
             case THREONINE:
-                return new PTM("PTM-0254");
+                return new UniProtPTM("PTM-0254");
             case TYROSINE:
-                return new PTM("PTM-0255");
+                return new UniProtPTM("PTM-0255");
             default:
                 throw new IllegalArgumentException(aminoAcidCode + " cannot be phosphorylated");
         }
     }
 
     // TODO
-    public static PTM PALMITOYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM PALMITOYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
     // TODO
-    public static PTM POLY_ADP_RIBOSYLATION(AminoAcidCode aminoAcidCode) {
-        return new PTM("");
+    public static UniProtPTM POLY_ADP_RIBOSYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
     }
 
-    public static PTM S_NITROSYLATION() {
-        return new PTM("PTM-0280");
+    public static UniProtPTM S_NITROSYLATION() {
+        return new UniProtPTM("PTM-0280");
     }
 
     // TODO
@@ -175,7 +175,7 @@ public class PTM implements SequenceChange<String> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PTM ptm = (PTM) o;
+        UniProtPTM ptm = (UniProtPTM) o;
         return Objects.equals(ptmId, ptm.ptmId);
     }
 

@@ -5,7 +5,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.SinglePtmBioEditorFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.AminoAcidModificationBEDFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
@@ -49,9 +49,9 @@ public class SequencePtmBioEditorFormat extends SequenceVariationFormat {
 
         StringBuilder sb = new StringBuilder();
 
-        if (variation.getSequenceChange() instanceof PTM) {
+        if (variation.getSequenceChange() instanceof UniProtPTM) {
 
-            ptmFormat.format(sb, (PTM) variation.getSequenceChange(), type);
+            ptmFormat.format(sb, (UniProtPTM) variation.getSequenceChange(), type);
             aminoAcidModificationFormatter.format(variation, type, sb);
 
             return sb.toString();

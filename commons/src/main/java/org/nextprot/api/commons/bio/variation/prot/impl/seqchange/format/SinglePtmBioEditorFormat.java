@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeFormat;
 
 import java.text.ParseException;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  *
  * PTM-id_pos (example: PTM-0253_21 represents a glycosylation at position 21)
  */
-public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVariationBuilder.StartBuildingFromAAs, PTM> {
+public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVariationBuilder.StartBuildingFromAAs, UniProtPTM> {
 
     private static final Pattern PATTERN = Pattern.compile("^(PTM-\\d{4})_(\\d+)$");
 
@@ -27,7 +27,7 @@ public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVa
 
         if (m.matches()) {
 
-            PTM aaChange = new PTM(m.group(1));
+            UniProtPTM aaChange = new UniProtPTM(m.group(1));
             int affectedAAPos = Integer.parseInt(m.group(2));
 
             return builder.selectAminoAcid(affectedAAPos).thenAddModification(aaChange).build();
@@ -42,7 +42,7 @@ public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVa
     }
 
     @Override
-    public void format(StringBuilder sb, PTM change, AminoAcidCode.CodeType type) {
+    public void format(StringBuilder sb, UniProtPTM change, AminoAcidCode.CodeType type) {
 
         sb
                 .append(change.getValue())

@@ -2,7 +2,7 @@ package org.nextprot.api.commons.bio.variation.prot;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.PTM;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 /**
@@ -53,7 +53,7 @@ public interface SequenceVariationBuilder {
         SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
 
         /** modifies affected amino-acid with modification */
-        SequenceVariationBuilder thenAddModification(PTM modification);
+        SequenceVariationBuilder thenAddModification(UniProtPTM modification);
 
         /** change translation initiation (start of stop codon) extending the normal translational reading frame at the
          * N- or C-terminal end with one or more amino acids */
