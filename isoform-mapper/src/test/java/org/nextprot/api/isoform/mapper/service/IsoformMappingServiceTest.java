@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -394,13 +395,17 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
-    public void shouldValidateGlycoOnSpecificIsoform() throws Exception {
+    public void shouldValidatePhosphoOnSpecificIsoform() throws Exception {
 
         SingleFeatureQuery sfq = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(sfq);
 
         assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
+        Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> data = ((SingleFeatureQuerySuccessImpl) result).getData();
+
+        Assert.assertTrue(data.containsKey("NX_Q06187-1"));
+        Assert.assertEquals("NX_Q06187-1-PTM-0253_Ser21", data.get("NX_Q06187-1").getIsoSpecificFeature());
     }
 
     @Test
@@ -421,6 +426,26 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQueryResult result = service.validateFeature(query);
 
         assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query, new UniProtPTM("PTM-0528"), "QNASRKKSPR"));
+    }
+
+    @Test
+    public void shouldPropagateGlycoOnNX_A1L4H1isoforms() {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_A1L4H1-1", 168, 168, true);
+
+        assertIsoformFeatureValid(result, "NX_Q99728-1", 358, 364, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-2", 339, 345, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-3", 261, 267, true);
+        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-1", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-2", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-3", 1162, 1182);
+        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-4", null, null);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

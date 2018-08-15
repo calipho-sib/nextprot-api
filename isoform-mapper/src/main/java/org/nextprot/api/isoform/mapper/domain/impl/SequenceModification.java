@@ -48,7 +48,8 @@ public class SequenceModification extends SequenceFeatureBase {
 
     @Override
     protected String formatSequenceIdPart(Isoform isoform) {
-        return null;
+
+        return isoform.getIsoformAccession();
     }
 
     @Override
