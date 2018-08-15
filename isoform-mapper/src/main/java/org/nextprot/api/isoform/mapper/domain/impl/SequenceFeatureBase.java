@@ -74,7 +74,7 @@ abstract class SequenceFeatureBase implements SequenceFeature {
 
         StringBuilder sb = new StringBuilder()
                 .append(formatSequenceIdPart(isoform))
-                .append("-")
+                .append(getDelimitorBetweenIsoformAndVariation())
                 .append(formatFeaturePart(getSequenceVariationFormatter(), isoVariation));
 
         return sb.toString();
@@ -100,6 +100,7 @@ abstract class SequenceFeatureBase implements SequenceFeature {
      * @throws ParseException
      */
     protected abstract int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException;
+    protected abstract String getDelimitorBetweenIsoformAndVariation();
     protected abstract SequenceVariationFormatter<String> getSequenceVariationFormatter();
     protected abstract String formatSequenceIdPart(Isoform isoform);
     protected abstract Isoform parseIsoform(String sequenceIdPart) throws ParseException;

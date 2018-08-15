@@ -405,7 +405,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> data = ((SingleFeatureQuerySuccessImpl) result).getData();
 
         Assert.assertTrue(data.containsKey("NX_Q06187-1"));
-        Assert.assertEquals("NX_Q06187-1-PTM-0253_Ser21", data.get("NX_Q06187-1").getIsoSpecificFeature());
+        Assert.assertEquals("NX_Q06187-1.PTM-0253_Ser21", data.get("NX_Q06187-1").getIsoSpecificFeature());
     }
 
     @Test

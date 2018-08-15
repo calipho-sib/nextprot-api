@@ -35,9 +35,15 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
+    protected String getDelimitorBetweenIsoformAndVariation() {
+
+        return ".";
+    }
+
+    @Override
     protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) {
 
-        return feature.indexOf(".");
+        return feature.indexOf(getDelimitorBetweenIsoformAndVariation());
     }
 
     @Override

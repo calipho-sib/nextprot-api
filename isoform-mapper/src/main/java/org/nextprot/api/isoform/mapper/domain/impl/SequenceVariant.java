@@ -77,6 +77,12 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     @Override
+    protected String getDelimitorBetweenIsoformAndVariation() {
+
+        return "-";
+    }
+
+    @Override
     protected int getDelimitingPositionBetweenIsoformAndVariation(String feature) throws ParseException {
 
         int index = feature.indexOf("-p.");
