@@ -69,16 +69,6 @@ public class UniProtPTM implements SequenceChange<String> {
         }
     }
 
-    // TODO
-    public static UniProtPTM DIMETHYLATION(AminoAcidCode aminoAcidCode) {
-        return new UniProtPTM("");
-    }
-
-    // TODO
-    public static UniProtPTM GERANYLGERANYLATION(AminoAcidCode aminoAcidCode) {
-        return new UniProtPTM("");
-    }
-
     public static UniProtPTM N_GLYCATION(AminoAcidCode aminoAcidCode) {
         switch (aminoAcidCode) {
             case ARGININE:
@@ -96,21 +86,6 @@ public class UniProtPTM implements SequenceChange<String> {
             default:
                 throw new IllegalArgumentException(aminoAcidCode + " cannot be N-glycated");
         }
-    }
-
-    // TODO
-    public static UniProtPTM FARNESYLATION(AminoAcidCode aminoAcidCode) {
-        return new UniProtPTM("");
-    }
-
-    // TODO
-    public static UniProtPTM MYRISTOYLATION(AminoAcidCode aminoAcidCode) {
-        return new UniProtPTM("");
-    }
-
-    // TODO
-    public static UniProtPTM NITRATION(AminoAcidCode aminoAcidCode) {
-        return new UniProtPTM("");
     }
 
     public static UniProtPTM PHOSPHORYLATION(AminoAcidCode aminoAcidCode) {
@@ -132,26 +107,45 @@ public class UniProtPTM implements SequenceChange<String> {
         }
     }
 
-    // TODO
+    public static UniProtPTM S_NITROSYLATION() {
+
+        return new UniProtPTM("PTM-0280");
+    }
+
+    // TODO depending on the use cases
+    /*
+    public static UniProtPTM DIMETHYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
+    }
+
+    public static UniProtPTM GERANYLGERANYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
+    }
+
+    public static UniProtPTM FARNESYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
+    }
+
+    public static UniProtPTM MYRISTOYLATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
+    }
+
+    public static UniProtPTM NITRATION(AminoAcidCode aminoAcidCode) {
+        return new UniProtPTM("");
+    }
+
     public static UniProtPTM PALMITOYLATION(AminoAcidCode aminoAcidCode) {
         return new UniProtPTM("");
     }
 
-    // TODO
     public static UniProtPTM POLY_ADP_RIBOSYLATION(AminoAcidCode aminoAcidCode) {
         return new UniProtPTM("");
     }
 
-    public static UniProtPTM S_NITROSYLATION() {
-        return new UniProtPTM("PTM-0280");
-    }
-
-    // TODO
-    /*public static PTM SUMOYLATION() {
+    public static PTM SUMOYLATION() {
         return new PTM("");
     }
 
-    // TODO
     public static PTM UBIQUITINATION() {
         return new PTM("");
     }*/
