@@ -35,7 +35,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev" })
 public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
@@ -431,21 +431,50 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldPropagateGlycoOnNX_A1L4H1isoforms() {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1-1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_A1L4H1+PTM-0528_168", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
 
         FeatureQueryResult result = service.propagateFeature(query);
 
         assertIsoformFeatureValid(result, "NX_A1L4H1-1", 168, 168, true);
+        assertIsoformFeatureValid(result, "NX_A1L4H1-2", 168, 168, true);
 
-        assertIsoformFeatureValid(result, "NX_Q99728-1", 358, 364, true);
-        assertIsoformFeatureValid(result, "NX_Q99728-2", 339, 345, true);
-        assertIsoformFeatureValid(result, "NX_Q99728-3", 261, 267, true);
-        assertIsoformFeatureValid(result, "NX_Q99728-4", null, null, false);
+        assertIsoformFeatureValidOnMaster(result, "NX_A1L4H1-1", 1921, 1923);
+        assertIsoformFeatureValidOnMaster(result, "NX_A1L4H1-2", 1921, 1923);
+    }
 
-        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-1", 1162, 1182);
-        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-2", 1162, 1182);
-        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-3", 1162, 1182);
-        assertIsoformFeatureValidOnMaster(result, "NX_Q99728-4", null, null);
+    @Test
+    public void shouldPropagateOnNX_Q06187isoform2() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-1+PTM-0253_21", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
+        assertIsoformFeatureValid(result, "NX_Q06187-2", 55, 55, true);
+    }
+
+    @Test
+    public void shouldPropagateOnNX_Q06187isoforms2() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_Q06187-2+PTM-0253_55", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_Q06187-1", 21, 21, true);
+        assertIsoformFeatureValid(result, "NX_Q06187-2", 55, 55, true);
+    }
+
+    @Test
+    public void shouldNotPropagateOnAllIsoforms() {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_P52701-1+PTM-0253_144", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_P52701-1", 144, 144, true);
+        assertIsoformFeatureValid(result, "NX_P52701-2", 144, 144, true);
+        assertIsoformFeatureValid(result, "NX_P52701-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_P52701-4", null, null, false);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
