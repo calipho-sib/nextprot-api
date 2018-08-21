@@ -28,10 +28,11 @@ public class StatementTransformationUtil {
 	 *
 	 * @param statement
 	 * @param isoformService
-	 * @param isoSpecific
 	 * @return
 	 */
-	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService, IsoformMappingService isoformMappingService, Optional<String> isoSpecific) {
+	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService, IsoformMappingService isoformMappingService) {
+
+        Optional<String> isoSpecificAccession = getOptionalIsoformAccession(statement);
 
         // Currently we don't create normal annotations (not associated with variant) in the bioeditor
         Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
@@ -45,7 +46,7 @@ public class StatementTransformationUtil {
             FeatureQueryResult result;
             IsoTargetSpecificity isoTargetSpecificity;
 
-            if (!isoSpecific.isPresent()) {
+            if (!isoSpecificAccession.isPresent()) {
                 result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
                 isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
             }
@@ -67,11 +68,10 @@ public class StatementTransformationUtil {
         else {
             for (String isoAccession : isoformAccessions) {
 
-                if (!isoSpecific.isPresent()) { //If not present add for them all
+                if (!isoSpecificAccession.isPresent()) { //If not present add for them all
                     targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
                 } else {
-                    String specificIsoformAccession = isoSpecific.get();
-                    if (isoAccession.equals(specificIsoformAccession)) {
+                    if (isoAccession.equals(isoSpecificAccession.get())) {
                         targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
                     }
                 }
@@ -80,6 +80,17 @@ public class StatementTransformationUtil {
 
         return new TargetIsoformSet(targetIsoforms);
 	}
+
+	private static Optional<String> getOptionalIsoformAccession(Statement statement) {
+
+        String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
+
+        if (accession != null && accession.contains("-")) { //It is iso specific for example NX_P19544-4 means only specifc to iso 4
+            return Optional.of(accession);
+        }
+
+        return Optional.empty();
+    }
 
 	private static List<String> getIsoformAccessionsForEntryAccession(String entryAccession, IsoformService isoformService) {
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);

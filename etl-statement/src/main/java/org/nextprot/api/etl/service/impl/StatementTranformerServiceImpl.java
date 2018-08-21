@@ -46,13 +46,11 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         Set<Statement> mappedStatementsToLoad = transformComposedStatements(rawStatements, report);
         LOGGER.info("Composed statement categories are " + mappedStatementsToLoad.stream()
                 .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
-                .distinct()
                 .collect(Collectors.toSet()));
 
         Set<Statement> simpleRawStatements = getSimpleRawStatements(rawStatements);
         Set<String> simpleStatementCategories = simpleRawStatements.stream()
                 .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
-                .distinct()
                 .collect(Collectors.toSet());
 
         LOGGER.info("Simple statement categories are " + simpleStatementCategories);
@@ -148,15 +146,8 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
         return simpleRawStatements.stream()
                 .map(statement -> {
-                    String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
-                    Optional isoSpecificAccession = Optional.empty();
-
-                    if (accession != null && accession.contains("-")) { //It is iso specific for example NX_P19544-4 means only specifc to iso 4
-                        isoSpecificAccession = Optional.of(accession);
-                    }
-
                     TargetIsoformSet targetIsoformForNormalAnnotation =
-                            StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService, isoSpecificAccession);
+                            StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService);
 
                     return StatementBuilder.createNew().addMap(statement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
@@ -183,7 +174,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         return sv.getIsoform().getIsoformAccession();
     }
 
-    private Map<String, List<Statement>> getSubjectsTransformed(Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
+    private Map<String, List<Statement>> getSubjectsTransformed(Set<Statement> subjectStatements, String nextprotAcession) {
 
         //In case of entry variants have the target isoform property filled
         Map<String, List<Statement>> variantsOnIsoform = new HashMap<>();
@@ -199,7 +190,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         Set<Statement> statementsToLoad = new HashSet<>();
 
         //In case of entry variants have the target isoform property filled
-        Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(sourceStatementsById, subjectStatements, nextprotAcession, isIsoSpecific);
+        Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(subjectStatements, nextprotAcession);
 
         for (Map.Entry<String, List<Statement>> entry : subjectsTransformedByEntryOrIsoform.entrySet()) {
 
@@ -236,7 +227,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 }
                 targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
             } else {
-                targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService, Optional.empty()).serializeToJsonString();
+                targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService).serializeToJsonString();
             }
 
             if (objectStatement != null) {
