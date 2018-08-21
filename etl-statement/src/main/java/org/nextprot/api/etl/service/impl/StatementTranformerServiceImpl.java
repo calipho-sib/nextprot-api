@@ -97,7 +97,8 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				isoSpecificAccession = Optional.of(accession);
 			}
 
-			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService, isoSpecificAccession);
+			TargetIsoformSet targetIsoformForNormalAnnotation =
+                    StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService, isoSpecificAccession);
 			
 			return StatementBuilder.createNew().addMap(statement)
 					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
@@ -182,7 +183,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					}
 					targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
 				}else {
-					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService, Optional.empty()).serializeToJsonString();
+					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService, Optional.empty()).serializeToJsonString();
 				}
 
 				if(objectStatement != null){

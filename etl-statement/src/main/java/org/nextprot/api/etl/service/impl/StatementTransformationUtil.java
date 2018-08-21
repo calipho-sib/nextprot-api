@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
@@ -9,6 +10,7 @@ import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
@@ -24,31 +26,59 @@ public class StatementTransformationUtil {
 
 	/**
 	 *
-	 * @param entryAccession
+	 * @param statement
 	 * @param isoformService
 	 * @param isoSpecific
 	 * @return
 	 */
-	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(String entryAccession, IsoformService isoformService, Optional<String> isoSpecific) {
+	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService, IsoformMappingService isoformMappingService, Optional<String> isoSpecific) {
 
-		List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(entryAccession, isoformService);
+        // Currently we don't create normal annotations (not associated with variant) in the bioeditor
+        Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
 
-		// Currently we don't create normal annotations (not associated with vvariant) in the bioeditor
-		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
-		for (String isoAccession : isoformAccessions) {
+        List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
 
-			if(!isoSpecific.isPresent()) { //If not present add for them all
-				targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
-			}else {
-				String specificIsoformAccession = isoSpecific.get();
-				if(isoAccession.equals(specificIsoformAccession)){
-					targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
-				}
+        // TODO: better check position status
+	    if (AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY)).isChildOf(AnnotationCategory.GENERIC_PTM)) {
 
-			}
-		}
-		return new TargetIsoformSet(targetIsoforms);
+            String featureName = statement.getValue(StatementField.ANNOTATION_NAME);
+            FeatureQueryResult result;
+            IsoTargetSpecificity isoTargetSpecificity;
 
+            if (!isoSpecific.isPresent()) {
+                result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+                isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
+            }
+            else {
+                result = isoformMappingService.validateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+                isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
+            }
+
+            if (result.isSuccess()) {
+                targetIsoforms.addAll(((SingleFeatureQuerySuccessImpl)result).getData().values().stream()
+                        .filter(sr -> sr.isMapped())
+                        .map(sr -> new TargetIsoformStatementPosition(sr.getIsoformAccession(), isoTargetSpecificity.name(), sr.getIsoSpecificFeature()))
+                        .collect(Collectors.toList()));
+            }
+            else {
+                throw new NextProtException(((FeatureQueryFailure)result).getError().getMessage());
+            }
+        }
+        else {
+            for (String isoAccession : isoformAccessions) {
+
+                if (!isoSpecific.isPresent()) { //If not present add for them all
+                    targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
+                } else {
+                    String specificIsoformAccession = isoSpecific.get();
+                    if (isoAccession.equals(specificIsoformAccession)) {
+                        targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
+                    }
+                }
+            }
+        }
+
+        return new TargetIsoformSet(targetIsoforms);
 	}
 
 	private static List<String> getIsoformAccessionsForEntryAccession(String entryAccession, IsoformService isoformService) {
