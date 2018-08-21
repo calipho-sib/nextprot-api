@@ -1,9 +1,5 @@
 package org.nextprot.api.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.commons.statements.Statement;
@@ -11,15 +7,19 @@ import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
-public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder<Annotation> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
-		super(terminologyService, publicationService,mainNamesService);
+public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder {
+
+	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
+		super(terminologyService, publicationService,mainNamesService, dbXrefService);
 	}
 
 	
-	public static StatementEntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService) {
-		return new StatementEntryAnnotationBuilder(terminologyService, publicationService, mainNamesService);
+	public static StatementEntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
+		return new StatementEntryAnnotationBuilder(terminologyService, publicationService, mainNamesService, dbXrefService);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder<
 	@Override
 	void setIsoformTargeting(Annotation annotation, Statement statement) {
 		
-		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<AnnotationIsoformSpecificity>();
+		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<>();
 		Set<TargetIsoformStatementPosition> tispSet = TargetIsoformSet.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
 
 		for (TargetIsoformStatementPosition tisp : tispSet) {

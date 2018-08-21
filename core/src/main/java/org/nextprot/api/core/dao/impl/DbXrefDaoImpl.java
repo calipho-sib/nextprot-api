@@ -1,5 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.apache.log4j.Logger;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.DbXrefDao;
@@ -20,12 +22,14 @@ import java.util.*;
 
 @Repository
 public class DbXrefDaoImpl implements DbXrefDao {
-	
-	@Autowired private SQLDictionary sqlDictionary;
+
+    private static final Logger LOGGER = Logger.getLogger(DbXrefDaoImpl.class);
+
+    @Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
-	
+
 	@Override
 	public List<PublicationDbXref> findDbXRefsByPublicationId(Long publicationId) {
 		Map<String, Object> params = new HashMap<>();
@@ -33,7 +37,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 
         return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new PublicationDbXRefRowMapper());
 	}
-	
+
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {
 
@@ -51,20 +55,20 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		params.put("resourceIds", resourceIds);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-resource-ids"), params, new DbXRefRowMapper());
 	}
-	
+
 	@Override
 	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper(uniqueName));
 	}
 
-	
+
 	@Override
 	public List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper(uniqueName));
 	}
-	
+
 	// helper function to split a list
 	private List<List> splitList(List list) {
 		List<List> result = new ArrayList<>();
@@ -76,23 +80,23 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		}	
 		return result;
 	}
-	
-	
+
+
 	@Override
 	public List<DbXrefProperty> findDbXrefsProperties(String entryName, List<Long> resourceIds) {
-		
+
 		List<DbXrefProperty> result = new ArrayList<>();
 		// we must split the query into multiple queries otherwise we get an SQL error:
 		// the number of parameters (list of resource id) cannot exceed 32767 and miss titin has now 43012 xrefs !
 		List<List> paramsList = splitList(resourceIds);
 		for (List l: paramsList) {
-			
+
 			Map<String,Object> params = new HashMap<>();
-			
+
 			params.put("resourceIds", l);
 			List<DbXrefProperty> someProps = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-props-by-resource-ids"), params, new DbXrefPropertyRowMapper());
 			result.addAll(someProps);
-			
+
 			params.put("entryName", entryName);
 			List<DbXrefProperty> someOtherProps = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-entry-link-props-by-entry-and-resource-ids"), params, new DbXrefPropertyRowMapper());
 			result.addAll(someOtherProps);
@@ -119,7 +123,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 
 	@Override
 	public List<Long> getAllDbXrefsIds() {
-		// warning: doean't work: too many rows, memory error... should simply return a jdbc resultset 
+		// warning: doean't work: too many rows, memory error... should simply return a jdbc resultset
 		Map<String, Object> params = new HashMap<>();
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-all-ids"), params, new RowMapper<Long>() {
 			@Override
@@ -228,10 +232,10 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-resource-id"), namedParams, new DbXRefRowMapper());
 	}
 
-	// - - - - - - 
+	// - - - - - -
 	// new stuff
-	// - - - - - - 
-	
+	// - - - - - -
+
 	@Override
 	public Set<DbXref> findEntryAnnotationsEvidenceXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
@@ -283,4 +287,41 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new HashSet<>(xrefs);
 	}
 
+    @Override
+    public Optional<Long> findXrefId(String database, String accession) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("dbName", database);
+        params.put("accession", accession);
+
+        List<DbXref> list = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+                .query(sqlDictionary.getSQLQuery("dbxref-by-accession-and-dbname"), params, new DbXRefRowMapper());
+
+        if (list.isEmpty()) {
+            return Optional.empty();
+        }
+        else if (list.size() > 1) {
+            throw new NextProtException("Multiple xref ids ("+list+"): should obtain a single xref id for db "+database+ " and accession "+ accession);
+        }
+        return Optional.of(list.get(0).getDbXrefId());
+    }
+
+    @Override
+    public Optional<Integer> findDatabaseId(String databaseName) {
+
+        SqlParameterSource params = new MapSqlParameterSource("cvName", databaseName);
+        List<Integer> list = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+                .queryForList(sqlDictionary.getSQLQuery("cvid-by-cvname"), params, Integer.class);
+
+        if (list.isEmpty()) {
+            LOGGER.error("Missing database: "+ databaseName+ " does not exist in table nextprot.cv_databases");
+            return Optional.empty();
+        }
+        else if (list.size() > 1) {
+            String message = "Multiple db ids ("+list+"): should find a single db id for db "+databaseName;
+            LOGGER.error(message);
+            throw new NextProtException(message);
+        }
+        return Optional.of(list.get(0));
+    }
 }

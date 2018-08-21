@@ -1,12 +1,8 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
 import org.nextprot.api.core.dao.StatementDao;
-import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
@@ -34,6 +30,9 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public MainNamesService mainNamesService;
 
+    @Autowired
+    public DbXrefService dbXrefService;
+
 
 	private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
 
@@ -46,14 +45,14 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
-		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
 	}
 
 
 	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
+		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildAnnotationList(entryAccession, normalStatements);
 	}
 
 

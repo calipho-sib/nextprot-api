@@ -87,8 +87,7 @@ public class StatementTransformationUtil {
 		return isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 	}
 
-	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(Statement proteoformStatement, IsoformMappingService isoformMappingService,
-			List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
+	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
 
 		List<String> isoformsToBeConsidered = new ArrayList<>();
 

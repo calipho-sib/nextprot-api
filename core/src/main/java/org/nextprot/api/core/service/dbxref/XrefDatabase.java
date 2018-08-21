@@ -21,7 +21,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     EVOLUTIONARY_TRACE("EvolutionaryTrace"), EXPRESSION_ATLAS("ExpressionAtlas"), EVOC("eVOC"),
     GENE_3D("Gene3D"), GENE_CARDS("GeneCards"), GENE_ID("GeneID"), GENE_REVIEWS("GeneReviews"), GENE_TREE("GeneTree"),
     GENEVESTIGATOR("Genevestigator"), GENEVISIBLE("Genevisible"), GENE_WIKI("GeneWiki"), GENOME_RNA_I("GenomeRNAi"),
-    GERM_ONLINE("GermOnline"), GUIDETO_PHARMOCOLOGY("GuidetoPHARMACOLOGY"),
+    GERM_ONLINE("GermOnline"), GLY_CONNECT("GlyConnect"), GUIDETO_PHARMOCOLOGY("GuidetoPHARMACOLOGY"),
     HAMAP, HAMAP_RULE("HAMAP-Rule"), HGNC, H_INV_DB("H-InvDB"), HOGENOM, HOVERGEN, HPA, HPRD, HSSP,
     IFO, IMGT_GENE_DB("IMGT_GENE-DB"), IN_PARANOID("InParanoid"), INT_ACT("IntAct"), INTER_PRO("InterPro"), I_PTM_NET("iPTMnet"),
     JCRB,

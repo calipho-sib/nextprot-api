@@ -7,6 +7,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
+import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
@@ -160,7 +161,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return new ImmutableList.Builder<Annotation>().addAll(xrefAnnotations).build();
 	}
 
-	/**
+    /**
 	 * Find dbxrefs convertible into Annotations (of type XrefAnnotationMapping)
 	 * @param uniqueName the entry name
 	 * @return a list of DbXref convertible to Annotation
@@ -307,4 +308,26 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		return dbXRefDao.getAllDbXrefsIds();
 	}
+
+    @Override
+    public long findXrefId(String database, String accession) throws MissingCvDatabaseException {
+
+        return dbXRefDao.findXrefId(database, accession).orElse(generateXrefProtocolId(database, accession));
+    }
+
+    private long generateXrefProtocolId(String database, String accession) throws MissingCvDatabaseException {
+
+        // xref type statement: generate a xref id
+        return dbXRefDao.findDatabaseId(database)
+                .map(dbId -> new XRefProtocolId(dbId, accession).id())
+                .orElseThrow(() -> new MissingCvDatabaseException(database));
+    }
+
+    public static class MissingCvDatabaseException extends Exception {
+
+	    MissingCvDatabaseException(String database) {
+
+	        super("Missing cv database "+ database+ " in table nextprot.cv_databases");
+        }
+    }
 }

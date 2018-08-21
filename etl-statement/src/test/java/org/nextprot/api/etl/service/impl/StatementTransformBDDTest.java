@@ -11,6 +11,7 @@ import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
+import org.nextprot.commons.statements.constants.NextProtSource;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -32,7 +33,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 			Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
-			statementETLServiceMocked.transformStatements(rawStatements, null);
+			statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, null);
 			
 			fail();
 			
@@ -78,7 +79,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
-		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());
+		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		
 		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(VARIANT)).findFirst().orElseThrow(RuntimeException::new);
 		
@@ -118,7 +119,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "scn9a-variant-iso-spec");
 
 		//Variant 
-		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements, new ReportBuilder());
+		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT)).findFirst().orElseThrow(RuntimeException::new);
 		String variantMappedStatementIsoformJson = variantMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
 		
