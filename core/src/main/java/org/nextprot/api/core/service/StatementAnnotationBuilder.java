@@ -160,14 +160,19 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         String resourceType = evidence.getResourceType();
 
-        if (resourceType.equals("publication")) {
-            evidence.setResourceId(findPublicationId(s));
-        }
-        else if (resourceType.equals("database")) {
-            evidence.setResourceId(findXrefId(s));
+        if (resourceType != null) {
+            if (resourceType.equals("publication")) {
+                evidence.setResourceId(findPublicationId(s));
+            }
+            else if (resourceType.equals("database")) {
+                evidence.setResourceId(findXrefId(s));
+            }
+            else {
+                throw new NextProtException("resource type "+ resourceType + " not supported");
+            }
         }
         else {
-            throw new NextProtException("resource type "+ resourceType + " not supported");
+            throw new NextProtException("resource type undefined");
         }
     }
 
