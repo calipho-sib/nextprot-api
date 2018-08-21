@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -108,6 +109,8 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	/**
 	 * When one receive a phenotypic variation whereby the subject is specific,
 	 */
+	// TODO: see with daniel
+	@Ignore
 	@Test
 	public void shouldPropagateVariantButNotPhenotypicVariationOnIsoSpecificVPAnnotations() {
 		
