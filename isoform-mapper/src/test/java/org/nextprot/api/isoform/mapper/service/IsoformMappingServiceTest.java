@@ -32,7 +32,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev","cache" })
+@ActiveProfiles({ "dev" })
 public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
