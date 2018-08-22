@@ -9,7 +9,7 @@ import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeatureFactory;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.*;
@@ -99,9 +99,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
      * MSH6-p.Ser144Ile decreases mismatch repair (BED CAVA-VP011468)
      * <p>
      * The sentence above has 3 stmts:
-     * 1. stmt VARIANT: MSH6-p.Ser144Ile
-     * 2. stmt GO: mismatch repair
-     * 3. complex stmt: decreases (refers stmt 1 and object 2)
+     * 1. stmt SUBJECT (ex: VARIANT: MSH6-p.Ser144Ile)
+     * 2. stmt OBJECT (ex: GO: mismatch repair)
+     * 3. complex stmt VERB (ex: stmt 1. decreases stmt 2.)
      **/
     private Set<Statement> transformComposedStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
@@ -127,10 +127,13 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 String isoformSpecificAccession = null;
 
                 if (isSubjectIsoSpecific(subjectStatements)) {
+
                     if (isoformName != null) {
                         isIsoSpecific = true;
-                        String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
-                        isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
+                        Statement subject = subjectStatements.iterator().next();
+                        String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
+                        String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
+                        isoformSpecificAccession = getIsoAccession(featureName, featureType);
                     } else {
                         throw new NextProtException("Something wrong occured when checking for iso specificity");
                     }
@@ -162,16 +165,13 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         return rawStatements.stream().filter(s -> !s.isProcessed()).collect(Collectors.toSet());
     }
 
-    private String getIsoAccession(String featureName, String entryAccession) {
+    private String getIsoAccession(String featureName, String featureType) {
 
-        SequenceVariant sv;
         try {
-            sv = SequenceVariant.variant(featureName, beanService);
+            return SequenceFeatureFactory.newSequenceFeature(featureName, featureType, beanService).getIsoform().getIsoformAccession();
         } catch (Exception e) {
             throw new NextProtException(e);
         }
-
-        return sv.getIsoform().getIsoformAccession();
     }
 
     private Map<String, List<Statement>> getSubjectsTransformed(Set<Statement> subjectStatements, String nextprotAcession) {
@@ -185,7 +185,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         return variantsOnIsoform;
     }
 
-    Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession, ReportBuilder report) {
+    Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById,
+                                       Set<Statement> subjectStatements, String nextprotAcession,
+                                       boolean isIsoSpecific, String isoSpecificAccession, ReportBuilder report) {
 
         Set<Statement> statementsToLoad = new HashSet<>();
 
@@ -344,5 +346,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
     public void setIsoformService(IsoformService isoformService) {
         this.isoformService = isoformService;
+    }
+
+    public void setBeanService(BeanService beanService) {
+        this.beanService = beanService;
     }
 }
