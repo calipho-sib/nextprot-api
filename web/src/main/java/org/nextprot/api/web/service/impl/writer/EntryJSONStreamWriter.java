@@ -29,6 +29,7 @@ public class EntryJSONStreamWriter extends EntryOutputStreamWriter {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         generator = factory.createGenerator(os);
+        generator.writeStartArray();
 
         this.viewName = viewName;
     }
@@ -43,6 +44,7 @@ public class EntryJSONStreamWriter extends EntryOutputStreamWriter {
     @Override
     public void close() throws IOException {
 
+        generator.writeEndArray();
         generator.close();
     }
 }
