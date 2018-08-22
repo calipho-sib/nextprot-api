@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.etl.service.impl.BeanServiceMockImpl;
 import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementTranformerServiceImpl;
@@ -56,6 +57,7 @@ public abstract class StatementETLBaseUnitTest {
 		transformerMockedService = new StatementTranformerServiceImpl();
 		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
 		transformerMockedService.setIsoformService(isoformService);
+		transformerMockedService.setBeanService(new BeanServiceMockImpl());
 		
 		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
 	}
@@ -112,7 +114,7 @@ public abstract class StatementETLBaseUnitTest {
 
 	}
 
-	private Isoform mockIsoform(String accession, String name, boolean canonical) {
+	public static Isoform mockIsoform(String accession, String name, boolean canonical) {
 
 		Isoform isoform = Mockito.mock(Isoform.class);
 		when(isoform.getUniqueName()).thenReturn(accession);

@@ -1,7 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -110,8 +109,6 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	/**
 	 * When one receive a phenotypic variation whereby the subject is specific,
 	 */
-	// TODO: see with daniel
-	@Ignore
 	@Test
 	public void shouldPropagateVariantButNotPhenotypicVariationOnIsoSpecificVPAnnotations() {
 		
@@ -119,26 +116,28 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "scn9a-variant-iso-spec");
 
 		//Variant 
-		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
-		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT)).findFirst().orElseThrow(RuntimeException::new);
+		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Statement variantMappedStatement = mappedStatements.stream()
+                .filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
 		String variantMappedStatementIsoformJson = variantMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
-		
 
-		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(variantMappedStatementIsoformJson).size(), 4);
-	
+		Assert.assertEquals(4, TargetIsoformSet.deSerializeFromJsonString(variantMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-1\",\"specificity\":\"UNKNOWN\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso1-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-2\",\"specificity\":\"UNKNOWN\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso2-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"UNKNOWN\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso3-p.Phe1449Val\"},{\"isoformAccession\":\"NX_Q15858-4\",\"specificity\":\"UNKNOWN\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso4-p.Phe1449Val\"}]", variantMappedStatementIsoformJson);
-
 		
 		//Phenotypic variation
-		Statement phentypicMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.PHENOTYPIC_VARIATION)).findFirst().orElseThrow(RuntimeException::new);
-		String phenotypicMappedStatementIsoformJson = phentypicMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
+		Statement phenotypicMappedStatement = mappedStatements.stream()
+                .filter(new AnnotationCategoryPredicate(AnnotationCategory.PHENOTYPIC_VARIATION))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
 
-		Assert.assertEquals(TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size(), 1);
+		String phenotypicMappedStatementIsoformJson = phenotypicMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
+
+		Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
-			
 	}
 
-	
 	@Test
 	public void shouldThrowAnExceptionIfFeatureNameDoesNotCorrespondToNextprotAccession() {
 		
