@@ -44,6 +44,9 @@ public interface SequenceFeatureFactory {
     static SequenceFeature newSequenceFeature(SingleFeatureQuery query, BeanService beanService) throws FeatureQueryException {
         AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(query.getFeatureType());
 
+        // throw exception if invalid query
+        query.checkFeatureQuery();
+
         try {
             switch (annotationCategory) {
                 case MUTAGENESIS:
