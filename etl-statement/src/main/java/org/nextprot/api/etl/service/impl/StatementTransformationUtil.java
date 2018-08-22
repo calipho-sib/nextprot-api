@@ -13,7 +13,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.*;
-import org.nextprot.commons.statements.constants.AnnotationType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -226,7 +225,7 @@ public class StatementTransformationUtil {
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
 				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical).addField(StatementField.TARGET_ISOFORMS, targetIsoforms.serializeToJsonString())
-				.buildWithAnnotationHash(AnnotationType.ENTRY);
+				.buildWithAnnotationHash();
 
 		return rs;
 	}

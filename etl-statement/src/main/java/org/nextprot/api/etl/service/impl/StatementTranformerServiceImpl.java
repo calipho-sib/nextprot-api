@@ -13,7 +13,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.*;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,7 +99,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
 					.removeField(StatementField.STATEMENT_ID)
 					.removeField(StatementField.NEXTPROT_ACCESSION)
-					.buildWithAnnotationHash(AnnotationType.ENTRY);
+					.buildWithAnnotationHash();
 			
 		}).collect(Collectors.toSet());
 
@@ -191,7 +190,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					objectStatement.processed();
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype)
@@ -199,7 +198,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 							.removeField(StatementField.STATEMENT_ID) 
 							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
 							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 
 				} else {
 					
@@ -209,7 +208,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 							.removeField(StatementField.STATEMENT_ID) 
 							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
 							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
+							.buildWithAnnotationHash();
 
 				}
 
