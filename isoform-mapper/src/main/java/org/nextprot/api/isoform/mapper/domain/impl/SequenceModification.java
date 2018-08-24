@@ -1,7 +1,9 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
@@ -14,7 +16,6 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
@@ -29,7 +30,7 @@ public class SequenceModification extends SequenceFeatureBase {
 
     private static final PtmBioEditorFormat PTM_FORMAT = new PtmBioEditorFormat();
 
-    public SequenceModification(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
+    public SequenceModification(String feature, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
         super(feature, AnnotationCategory.GENERIC_PTM, PTM_FORMAT, beanService);
     }
@@ -71,7 +72,7 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
-    protected SequenceVariation parseVariation(SequenceVariationParser parser, String variationPart) throws ParseException {
+    protected SequenceVariation parseVariation(SequenceVariationParser parser, String variationPart) throws ParseException, SequenceVariationBuildException {
 
         SequenceVariationImpl.StartBuilding builder = new SequenceVariationImpl.StartBuilding();
 
@@ -161,9 +162,13 @@ public class SequenceModification extends SequenceFeatureBase {
                 return false;
             }
 
-            public String getAminoAcidSite(String aas, int modifiedAminoAcid) {
+            private String getAminoAcidSite(String aas, int modifiedAminoAcid) {
 
-                return aas.substring(modifiedAminoAcid, modifiedAminoAcid + window);
+                Preconditions.checkElementIndex(modifiedAminoAcid, aas.length());
+
+                int lastIndex = (modifiedAminoAcid + window > aas.length()) ? modifiedAminoAcid : aas.length();
+
+                return aas.substring(modifiedAminoAcid, lastIndex);
             }
         }
 

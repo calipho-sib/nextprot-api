@@ -1,5 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -15,7 +16,7 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParsingException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParseException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownGeneNameException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
@@ -34,23 +35,23 @@ public class SequenceVariant extends SequenceFeatureBase {
     private String entryAccession;
     private String isoformName;
 
-    private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException, PreIsoformParsingException {
+    private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
         super(feature, type, HGVS_FORMAT, beanService);
     }
 
-    public static SequenceVariant variant(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
+    public static SequenceVariant variant(String feature, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
         return new SequenceVariant(feature, AnnotationCategory.VARIANT, beanService);
     }
 
-    public static SequenceVariant mutagenesis(String feature, BeanService beanService) throws ParseException, PreIsoformParsingException {
+    public static SequenceVariant mutagenesis(String feature, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
         return new SequenceVariant(feature, AnnotationCategory.MUTAGENESIS, beanService);
     }
 
     @Override
-    protected void preIsoformParsing(String sequenceIdPart) throws PreIsoformParsingException {
+    protected void preIsoformParsing(String sequenceIdPart) throws PreIsoformParseException {
 
         this.geneName = parseGeneName(sequenceIdPart);
         this.entryAccession = findEntryAccessionFromGeneName();
@@ -108,7 +109,7 @@ public class SequenceVariant extends SequenceFeatureBase {
      *
      *   @return null if canonical
      */
-    private String extractIsoformName(String sequenceIdPart) throws PreIsoformParsingException {
+    private String extractIsoformName(String sequenceIdPart) throws PreIsoformParseException {
 
         String featureIsoname = parseIsoformName(sequenceIdPart);
 
@@ -139,7 +140,7 @@ public class SequenceVariant extends SequenceFeatureBase {
             }
         }
 
-        throw new PreIsoformParsingException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')");
+        throw new PreIsoformParseException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')");
     }
 
     /**
