@@ -314,6 +314,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
             String bot = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
 
+            // TODO: Prevoir le cas d'une interaction avec un isoform specifique (BioType.PROTEIN_ISOFORM)
+
             if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
 
                 BioObject bioObject;
