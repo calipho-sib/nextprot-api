@@ -1,6 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
-public class UnknownGeneNameException extends PreIsoformParsingException {
+public class UnknownGeneNameException extends PreIsoformParseException {
 
     private final String geneName;
 
