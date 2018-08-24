@@ -63,7 +63,7 @@ public class StatementTransformationUtil {
             if (result.isSuccess()) {
                 targetIsoforms.addAll(((SingleFeatureQuerySuccessImpl)result).getData().values().stream()
                         .filter(sr -> sr.isMapped())
-                        .map(sr -> new TargetIsoformStatementPosition(sr.getIsoformAccession(), isoTargetSpecificity.name(), sr.getIsoSpecificFeature()))
+                        .map(sr -> new TargetIsoformStatementPosition(sr.getIsoformAccession(), sr.getBeginIsoformPosition(), sr.getEndIsoformPosition(), isoTargetSpecificity.name(), sr.getIsoSpecificFeature()))
                         .collect(Collectors.toList()));
             }
             else {
