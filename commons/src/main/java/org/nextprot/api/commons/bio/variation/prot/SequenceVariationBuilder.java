@@ -37,10 +37,10 @@ public interface SequenceVariationBuilder {
     interface StartBuildingFromAAs extends Start {
 
         /** select a single affected amino-acid residue */
-        ChangingAminoAcid selectAminoAcid(int affectedAAPos);
+        ChangingAminoAcid selectAminoAcid(int affectedAAPos) throws VariationOutOfSequenceBoundException;
 
         /** select a range of affected amino-acid residues */
-        ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos);
+        ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos) throws VariationOutOfSequenceBoundException;
     }
 
     /** mutations affecting only one amino-acid */

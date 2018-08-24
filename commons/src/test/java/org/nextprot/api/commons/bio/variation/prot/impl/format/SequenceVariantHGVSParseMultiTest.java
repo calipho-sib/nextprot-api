@@ -2,6 +2,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl.format;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 
 import java.text.ParseException;
@@ -12,7 +13,7 @@ public class SequenceVariantHGVSParseMultiTest {
 
     @Ignore
     @Test
-    public void testParseMultisVariants() throws ParseException {
+    public void testParseMultisVariants() throws ParseException, SequenceVariationBuildException {
         /*
 MULTIS:
 p.(=,Ile411_Gly426del)

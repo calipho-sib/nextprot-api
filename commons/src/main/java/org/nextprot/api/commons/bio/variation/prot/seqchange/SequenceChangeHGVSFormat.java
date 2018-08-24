@@ -1,9 +1,7 @@
 package org.nextprot.api.commons.bio.variation.prot.seqchange;
 
 
-import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
+import org.nextprot.api.commons.bio.variation.prot.*;
 
 import java.text.ParseException;
 
@@ -24,14 +22,14 @@ public interface SequenceChangeHGVSFormat<C extends SequenceChange<?>>
      * @throws ParseException if parsing error occurs
      */
     SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder,
-                                    ParsingMode mode) throws ParseException;
+                                    ParsingMode mode) throws ParseException, SequenceVariationBuildException;
     /**
      * Attempts to match the source.
      * @return  <tt>true</tt> if matches the source
      */
     boolean matchesWithMode(String source, ParsingMode mode);
 
-    default SequenceVariation parse(String source, SequenceVariationBuilder.StartBuilding builder) throws ParseException {
+    default SequenceVariation parse(String source, SequenceVariationBuilder.StartBuilding builder) throws ParseException, SequenceVariationBuildException {
 
         return parseWithMode(source, builder, ParsingMode.STRICT);
     }

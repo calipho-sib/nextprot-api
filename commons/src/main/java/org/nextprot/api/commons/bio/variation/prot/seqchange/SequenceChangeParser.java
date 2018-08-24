@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio.variation.prot.seqchange;
 
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
 
@@ -17,9 +18,10 @@ public interface SequenceChangeParser<B extends SequenceVariationBuilder.Start> 
      * @param source the formatted change
      * @param builder the builder to build ProteinSequenceVariation
      * @return an instance of ProteinSequenceVariation
-     * @throws ParseException if parsing error occurs
+     * @throws ParseException if error occurs while parsing source
+     * @throws SequenceVariationBuildException if error occurs while building SequenceVariation
      */
-    SequenceVariation parse(String source, B builder) throws ParseException;
+    SequenceVariation parse(String source, B builder) throws ParseException, SequenceVariationBuildException;
 
     /**
      * Attempts to match the source.

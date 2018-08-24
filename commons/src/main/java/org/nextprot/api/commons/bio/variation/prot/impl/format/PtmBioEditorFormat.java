@@ -2,6 +2,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl.format;
 
 import com.google.common.collect.Lists;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.prot.impl.SequenceVariationImpl;
@@ -60,7 +61,7 @@ public class PtmBioEditorFormat extends SequenceVariationFormat {
         return sb.toString();
     }
 
-    public SequenceVariation parse(String source, String aas) throws ParseException {
+    public SequenceVariation parse(String source, String aas) throws ParseException, SequenceVariationBuildException {
 
         Objects.requireNonNull(source);
 

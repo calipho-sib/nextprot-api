@@ -1,12 +1,10 @@
 package org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
+import org.nextprot.api.commons.bio.variation.prot.*;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeFormat;
 
-import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +19,7 @@ public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVa
     private static final Pattern PATTERN = Pattern.compile("^(PTM-\\d{4})_(\\d+)$");
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.StartBuildingFromAAs builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.StartBuildingFromAAs builder) throws SequenceVariationBuildException {
 
         Matcher m = PATTERN.matcher(source);
 
@@ -30,7 +28,12 @@ public class SinglePtmBioEditorFormat implements SequenceChangeFormat<SequenceVa
             UniProtPTM aaChange = new UniProtPTM(m.group(1));
             int affectedAAPos = Integer.parseInt(m.group(2));
 
-            return builder.selectAminoAcid(affectedAAPos).thenAddModification(aaChange).build();
+            try {
+                return builder.selectAminoAcid(affectedAAPos).thenAddModification(aaChange).build();
+            } catch (VariationOutOfSequenceBoundException e) {
+
+                throw new SequenceVariationBuildException(e);
+            }
         }
 
         return null;

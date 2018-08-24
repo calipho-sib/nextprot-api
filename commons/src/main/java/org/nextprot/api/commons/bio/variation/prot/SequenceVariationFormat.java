@@ -33,7 +33,7 @@ public abstract class SequenceVariationFormat implements SequenceVariationFormat
     }
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException, SequenceVariationBuildException {
 
         for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
 

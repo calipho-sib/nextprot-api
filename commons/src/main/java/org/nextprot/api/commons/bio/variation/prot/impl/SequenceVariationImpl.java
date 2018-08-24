@@ -2,6 +2,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.VariationOutOfSequenceBoundException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.*;
@@ -109,7 +110,11 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            public SequenceVariationBuilder.ChangingAminoAcid selectAminoAcid(int affectedAAPos) {
+            public SequenceVariationBuilder.ChangingAminoAcid selectAminoAcid(int affectedAAPos) throws VariationOutOfSequenceBoundException {
+
+                if (affectedAAPos > aas.length()) {
+                    throw new VariationOutOfSequenceBoundException(affectedAAPos, aas.length());
+                }
 
                 Preconditions.checkArgument(affectedAAPos <= aas.length());
 
@@ -122,10 +127,16 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            public SequenceVariationBuilder.ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos) {
+            public SequenceVariationBuilder.ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos) throws VariationOutOfSequenceBoundException {
 
-                Preconditions.checkArgument(firstAffectedAAPos <= aas.length());
-                Preconditions.checkArgument(lastAffectedAAPos <= aas.length());
+                if (firstAffectedAAPos > aas.length()) {
+                    throw new VariationOutOfSequenceBoundException(firstAffectedAAPos, aas.length());
+                }
+
+                if (lastAffectedAAPos > aas.length()) {
+                    throw new VariationOutOfSequenceBoundException(lastAffectedAAPos, aas.length());
+                }
+
                 Preconditions.checkArgument(firstAffectedAAPos < lastAffectedAAPos);
 
                 AminoAcidCode firstAffectedAminoAcid = AminoAcidCode.valueOfAminoAcid(String.valueOf(aas.charAt(firstAffectedAAPos-1)));

@@ -3,6 +3,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl.format;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Insertion;
@@ -34,21 +35,21 @@ public class SequenceVariantHGVSParseInsertionTest {
     }
 
     @Test(expected = ParseException.class)
-    public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore() throws ParseException {
+    public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore() throws ParseException, SequenceVariationBuildException {
 
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.Met1875-Glu1876insMet");
     }
 
     @Test(expected = ParseException.class)
-    public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore2() throws ParseException {
+    public void testParseInsertionsVariantsInvalidColonInsteadOfUnderscore2() throws ParseException, SequenceVariationBuildException {
 
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         format.parse("p.Lys722-Ala723insTyrLys");
     }
 
     @Test
-    public void testParseInsertionsVariants() throws ParseException {
+    public void testParseInsertionsVariants() throws ParseException, SequenceVariationBuildException {
 
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Met1875_Glu1876insMet");
@@ -60,7 +61,7 @@ public class SequenceVariantHGVSParseInsertionTest {
     }
 
     @Test
-    public void testParseInsertionsVariants2() throws ParseException {
+    public void testParseInsertionsVariants2() throws ParseException, SequenceVariationBuildException {
 
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.Lys722_Ala723insTyrLys");

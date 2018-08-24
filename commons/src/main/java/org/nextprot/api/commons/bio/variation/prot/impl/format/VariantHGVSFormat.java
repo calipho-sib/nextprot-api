@@ -1,9 +1,6 @@
 package org.nextprot.api.commons.bio.variation.prot.impl.format;
 
-import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.*;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.format.*;
 import org.nextprot.api.commons.bio.variation.prot.impl.varseq.format.SequenceVariantHGVSFormatter;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
@@ -73,7 +70,7 @@ public class VariantHGVSFormat extends SequenceVariationFormat {
     }
 
     @Override
-    public SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException, SequenceVariationBuildException {
 
         for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
 

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Frameshift;
@@ -68,7 +69,7 @@ public class SequenceVariantHGVSParseFrameshiftTest {
     }
 
     @Test
-    public void testParseFrameshiftsVariants() throws ParseException {
+    public void testParseFrameshiftsVariants() throws ParseException, SequenceVariationBuildException {
 
         String[] variants = new String[]{
                 "p.Gly173Serfs*19",

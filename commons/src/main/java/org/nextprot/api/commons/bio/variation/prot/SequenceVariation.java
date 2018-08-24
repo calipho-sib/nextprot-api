@@ -20,4 +20,5 @@ public interface SequenceVariation {
 
     /** @return the protein sequence change itself */
     SequenceChange<?> getSequenceChange();
+
 }

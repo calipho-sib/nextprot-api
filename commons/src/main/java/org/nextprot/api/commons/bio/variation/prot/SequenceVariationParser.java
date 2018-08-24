@@ -17,7 +17,7 @@ public interface SequenceVariationParser {
      * @return a SequenceVariation
      * @throws ParseException
      */
-    SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException;
+    SequenceVariation parse(String source, SequenceVariationBuilder.Start builder) throws ParseException, SequenceVariationBuildException;
 
     /**
      * Parses text from the beginning of the given string to produce a ProteinMutation in permissive or strict mode
@@ -26,10 +26,11 @@ public interface SequenceVariationParser {
      * @return A <code>SequenceVariation</code> parsed from the string.
      * @exception ParseException if the specified string cannot be parsed.
      */
-    default SequenceVariation parse(String source) throws ParseException {
+    default SequenceVariation parse(String source) throws ParseException, SequenceVariationBuildException {
 
         Objects.requireNonNull(source);
 
         return parse(source, new SequenceVariationImpl.StartBuilding());
     }
+
 }
