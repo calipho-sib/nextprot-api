@@ -166,7 +166,7 @@ public class SequenceModification extends SequenceFeatureBase {
 
                 Preconditions.checkElementIndex(modifiedAminoAcid, aas.length());
 
-                int lastIndex = (modifiedAminoAcid + window > aas.length()) ? modifiedAminoAcid : aas.length();
+                int lastIndex = (modifiedAminoAcid + window < aas.length()) ? modifiedAminoAcid + window : aas.length();
 
                 return aas.substring(modifiedAminoAcid, lastIndex);
             }
