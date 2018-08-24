@@ -8,9 +8,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
+import org.nextprot.api.commons.bio.variation.prot.VariationOutOfSequenceBoundException;
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
@@ -74,7 +77,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertFalse(result.isSuccess());
         Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((FeatureQueryFailureImpl)result).getError().getMessage());
         Assert.assertEquals(1, ((FeatureQueryFailureImpl)result).getError().getCauses().size());
-        Assert.assertEquals("Cannot separate gene name from variation (missing '-p.')", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals("Cannot separate gene name from variation (missing '-p.')", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.ERROR_MESSAGE));
     }
 
     @Test
@@ -88,7 +91,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertFalse(result.isSuccess());
         Assert.assertEquals("invalid feature format: SCN11A-p.Let1158Pro", ((FeatureQueryFailureImpl)result).getError().getMessage());
         Assert.assertEquals(1, ((FeatureQueryFailureImpl)result).getError().getCauses().size());
-        Assert.assertEquals("Let: invalid AminoAcidCode", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals("Let: invalid AminoAcidCode", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.ERROR_MESSAGE));
     }
 
     @Test
@@ -477,6 +480,16 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_P52701-4", null, null, false);
     }
 
+    @Test
+    public void shouldNotValidateOutOfBoundPTM() {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("NX_O43602.PTM-0253_408", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(query);
+
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryException(query, new SequenceVariationBuildException(new VariationOutOfSequenceBoundException(408, 365))));
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());
@@ -500,7 +513,10 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
 
         Assert.assertTrue(!result.isSuccess());
-        Assert.assertEquals(expectedException.getReason(), result.getError());
+        ExceptionWithReason.Reason reason = result.getError();
+        ExceptionWithReason.Reason expectedReason = expectedException.getReason();
+
+        Assert.assertEquals(expectedReason, reason);
     }
 
     private static void validateList(String filename, boolean tabSep, IsoformMappingService service) throws Exception {
