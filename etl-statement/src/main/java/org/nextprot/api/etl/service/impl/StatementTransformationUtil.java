@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
@@ -18,6 +19,8 @@ import org.nextprot.commons.statements.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.StatementField.*;
 
 
 public class StatementTransformationUtil {
@@ -39,10 +42,12 @@ public class StatementTransformationUtil {
 
         List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
 
-        // TODO: better check position status
-	    if (AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY)).isChildOf(AnnotationCategory.GENERIC_PTM)) {
+        AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY));
 
-            String featureName = statement.getValue(StatementField.ANNOTATION_NAME);
+        // TODO: better check position status
+	    if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
+
+            String featureName = statement.getValue(ANNOTATION_NAME);
             FeatureQueryResult result;
             IsoTargetSpecificity isoTargetSpecificity;
 
@@ -62,7 +67,15 @@ public class StatementTransformationUtil {
                         .collect(Collectors.toList()));
             }
             else {
-                throw new NextProtException(((FeatureQueryFailure)result).getError().getMessage());
+                ExceptionWithReason.Reason error = ((FeatureQueryFailure) result).getError();
+
+                String errorMessage = "ERROR: cannot compute target isoforms: isoform="+statement.getValue(NEXTPROT_ACCESSION)+", statement=" +
+                        statement.getValue(GENE_NAME)+" | "+statement.getValue(ANNOT_SOURCE_ACCESSION)+" | "+statement.getValue(ANNOTATION_NAME) +
+                        "(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error="+error.getMessage() + "("+ error.getCauses().values()+ ")";
+
+                LOGGER.error(errorMessage);
+
+                throw new NextProtException(errorMessage);
             }
         }
         else {
@@ -83,7 +96,7 @@ public class StatementTransformationUtil {
 
 	private static Optional<String> getOptionalIsoformAccession(Statement statement) {
 
-        String accession = statement.getValue(StatementField.NEXTPROT_ACCESSION);
+        String accession = statement.getValue(NEXTPROT_ACCESSION);
 
         if (accession != null && accession.contains("-")) { //It is iso specific for example NX_P19544-4 means only specifc to iso 4
             return Optional.of(accession);
@@ -148,10 +161,6 @@ public class StatementTransformationUtil {
 			}
 		}
 
-		// targetIsoformsForObject =
-		// TargetIsoformUtils.getTargetIsoformForObjectSerialized(subject,
-		// isoformNames);
-
 		return new TargetIsoformSet(result);
 
 	}
@@ -163,7 +172,7 @@ public class StatementTransformationUtil {
 		for (Statement subject : multipleSubjects) {
 
 			FeatureQueryResult featureQueryResult;
-			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession));
+			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
 			if (featureQueryResult.isSuccess()) {
 				result.add(mapVariationStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
 			} else {
