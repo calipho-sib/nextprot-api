@@ -1,11 +1,11 @@
 package org.nextprot.api.etl.app;
 
+import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.StatementTableNames;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.StatementTableNames;
 
 public class GenerateNXFlatStatementDDLApp {
 
@@ -22,7 +22,7 @@ public class GenerateNXFlatStatementDDLApp {
 		sb.append("DROP TABLE IF EXISTS nxflat." + tableName + ";\n");
 		sb.append("CREATE TABLE nxflat." + tableName + " (\n");
 		for (int i = 0; i < StatementField.values().length; i++) {
-			sb.append("\t" + StatementField.values()[i].name() + " VARCHAR(4000)");
+			sb.append("\t" + StatementField.values()[i].name() + " VARCHAR(10000)");
 			if (i + 1 < StatementField.values().length) {
 				sb.append(",");
 			}
