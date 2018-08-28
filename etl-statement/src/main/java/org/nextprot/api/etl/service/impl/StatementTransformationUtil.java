@@ -22,17 +22,11 @@ import java.util.stream.Collectors;
 
 import static org.nextprot.commons.statements.StatementField.*;
 
-
+// TODO: This statics methods smell bad and should be refactored as a meaningful class
 public class StatementTransformationUtil {
 
 	private static Logger LOGGER = Logger.getLogger(StatementTransformationUtil.class);
 
-	/**
-	 *
-	 * @param statement
-	 * @param isoformService
-	 * @return
-	 */
 	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService, IsoformMappingService isoformMappingService) {
 
         Optional<String> isoSpecificAccession = getOptionalIsoformAccession(statement);
@@ -42,50 +36,50 @@ public class StatementTransformationUtil {
 
         List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
 
-        AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY));
+        if (!isoformAccessions.isEmpty()) {
+            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY));
 
-        // TODO: better check position status
-	    if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
+            if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
 
-            String featureName = statement.getValue(ANNOTATION_NAME);
-            FeatureQueryResult result;
-            IsoTargetSpecificity isoTargetSpecificity;
+                String featureName = statement.getValue(ANNOTATION_NAME);
+                FeatureQueryResult result;
+                IsoTargetSpecificity isoTargetSpecificity;
 
-            if (!isoSpecificAccession.isPresent()) {
-                result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
-                isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
+                if (!isoSpecificAccession.isPresent()) {
+                    result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+                    isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
+                }
+                else {
+                    result = isoformMappingService.validateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+                    isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
+                }
+
+                if (result.isSuccess()) {
+                    targetIsoforms.addAll(((SingleFeatureQuerySuccessImpl) result).getData().values().stream()
+                            .filter(sr -> sr.isMapped())
+                            .map(sr -> new TargetIsoformStatementPosition(sr.getIsoformAccession(), sr.getBeginIsoformPosition(), sr.getEndIsoformPosition(), isoTargetSpecificity.name(), sr.getIsoSpecificFeature()))
+                            .collect(Collectors.toList()));
+                }
+                else {
+                    ExceptionWithReason.Reason error = ((FeatureQueryFailure) result).getError();
+
+                    String errorMessage = "ERROR: cannot compute target isoforms: isoform=" + statement.getValue(NEXTPROT_ACCESSION) + ", statement=" +
+                            statement.getValue(GENE_NAME) + " | " + statement.getValue(ANNOT_SOURCE_ACCESSION) + " | " + statement.getValue(ANNOTATION_NAME) +
+                            "(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error=" + error.getMessage() + "(" + error.getCauses().values() + ")";
+
+                    LOGGER.error(errorMessage);
+                    //throw new NextProtException(errorMessage);
+                }
             }
             else {
-                result = isoformMappingService.validateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
-                isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
-            }
+                for (String isoAccession : isoformAccessions) {
 
-            if (result.isSuccess()) {
-                targetIsoforms.addAll(((SingleFeatureQuerySuccessImpl)result).getData().values().stream()
-                        .filter(sr -> sr.isMapped())
-                        .map(sr -> new TargetIsoformStatementPosition(sr.getIsoformAccession(), sr.getBeginIsoformPosition(), sr.getEndIsoformPosition(), isoTargetSpecificity.name(), sr.getIsoSpecificFeature()))
-                        .collect(Collectors.toList()));
-            }
-            else {
-                ExceptionWithReason.Reason error = ((FeatureQueryFailure) result).getError();
-
-                String errorMessage = "ERROR: cannot compute target isoforms: isoform="+statement.getValue(NEXTPROT_ACCESSION)+", statement=" +
-                        statement.getValue(GENE_NAME)+" | "+statement.getValue(ANNOT_SOURCE_ACCESSION)+" | "+statement.getValue(ANNOTATION_NAME) +
-                        "(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error="+error.getMessage() + "("+ error.getCauses().values()+ ")";
-
-                LOGGER.error(errorMessage);
-
-                throw new NextProtException(errorMessage);
-            }
-        }
-        else {
-            for (String isoAccession : isoformAccessions) {
-
-                if (!isoSpecificAccession.isPresent()) { //If not present add for them all
-                    targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
-                } else {
-                    if (isoAccession.equals(isoSpecificAccession.get())) {
-                        targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
+                    if (!isoSpecificAccession.isPresent()) { //If not present add for them all
+                        targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.UNKNOWN.name(), null));
+                    } else {
+                        if (isoAccession.equals(isoSpecificAccession.get())) {
+                            targetIsoforms.add(new TargetIsoformStatementPosition(isoAccession, IsoTargetSpecificity.SPECIFIC.name(), null));
+                        }
                     }
                 }
             }
