@@ -148,16 +148,13 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
     private Set<Statement> transformSimpleRawStatementsToMappedStatements(Set<Statement> simpleRawStatements) {
 
         return simpleRawStatements.stream()
-                .map(statement -> {
-                    TargetIsoformSet targetIsoformForNormalAnnotation =
-                            StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService);
-
-                    return StatementBuilder.createNew().addMap(statement)
-                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
+                .map(statement -> StatementBuilder.createNew().addMap(statement)
+                            .addField(StatementField.TARGET_ISOFORMS, StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService).serializeToJsonString())
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.NEXTPROT_ACCESSION)
-                            .buildWithAnnotationHash();
-                })
+                            .buildWithAnnotationHash()
+                )
+                .filter(statement -> !statement.getValue(StatementField.TARGET_ISOFORMS).equals("{}"))
                 .collect(Collectors.toSet());
     }
 
