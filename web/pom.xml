@@ -184,7 +184,7 @@
 			<plugin>
  			    <groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.14.v20161028</version>
+				<version>9.4.12.RC2</version>
 				<configuration>
 					<!-- <jettyXml>src/etc/jetty-jmx.xml</jettyXml> -->
 					<!-- <scanIntervalSeconds>10</scanIntervalSeconds> -->
