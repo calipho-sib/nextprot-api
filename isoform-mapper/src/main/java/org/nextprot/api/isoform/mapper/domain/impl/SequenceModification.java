@@ -102,6 +102,7 @@ public class SequenceModification extends SequenceFeatureBase {
             rules.put("PTM-0253", new Rule(AminoAcidCode.SERINE));
             rules.put("PTM-0254", new Rule(AminoAcidCode.THREONINE));
             rules.put("PTM-0255", new Rule(AminoAcidCode.TYROSINE));
+            rules.put("PTM-0237", new Rule(AminoAcidCode.ARGININE));
             //TODO: we could add all other PTM-ids given the target supplied by ProteinModificationService
         }
 
@@ -111,7 +112,7 @@ public class SequenceModification extends SequenceFeatureBase {
             checkModificationSite(sequenceModification);
         }
 
-        private void checkModificationSite(SequenceModification sequenceModification) throws NonMatchingRuleException {
+        private void checkModificationSite(SequenceModification sequenceModification) throws NonMatchingRuleException, MissingRuleException {
 
             SequenceVariation variation = sequenceModification.getProteinVariation();
 
@@ -119,7 +120,7 @@ public class SequenceModification extends SequenceFeatureBase {
 
             if (!rules.containsKey(ptm.getValue())) {
 
-                throw new IllegalStateException("Internal error: no rule found for "+ptm.getValue());
+                throw new MissingRuleException(query, ptm);
             }
 
             Rule rule = rules.get(ptm.getValue());
@@ -180,6 +181,17 @@ public class SequenceModification extends SequenceFeatureBase {
 
                 getReason().addCause("PTM", ptm.getValue());
                 getReason().setMessage("could not match PTM rule on aas " + aas);
+            }
+        }
+
+        public static class MissingRuleException extends FeatureQueryException {
+
+            public MissingRuleException(FeatureQuery query, UniProtPTM ptm) {
+
+                super(query);
+
+                getReason().addCause("PTM", ptm.getValue());
+                getReason().setMessage("PTM rule validation is missing");
             }
         }
     }
