@@ -29,88 +29,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired private StatementTransformerService statementTransformerService;
 	@Autowired private StatementLoaderService statementLoadService;
 
-	/**
-	 * Adds synchronisation to StringBuilder
-	 */
-	public static class ReportBuilder {
-
-		private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
-		long start;
-		private StringBuilder builder; //Needs to use buffer to guarantee synchronisation
-		
-		public ReportBuilder (){
-			
-			start = System.currentTimeMillis();
-			builder = new StringBuilder();
-
-		}
-		
-		public synchronized void addInfo(String message){
-			if(builder != null){
-				LOGGER.info(message);
-				builder.append(message + "\n");
-			}
-		}
-		
-		public synchronized void addInfoWithElapsedTime(String message){
-			String messageWithElapsedTime = message + " " + ((System.currentTimeMillis() - start)/1000) + " seconds from the start of ETL process.";
-			addInfo(messageWithElapsedTime);
-		}
-		
-		@Override
-		public synchronized String toString(){
-			return builder.toString();
-		}
-
-		public synchronized void addWarning(String string) {
-			addInfo("WARNING - " + string);
-		}
-	
-		
-	}
-
-	Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) {
-		
-		Set<Statement> statements =  statementExtractorService.getStatementsForSource(source, release);
-		report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
-		return statements;
-	}
-
-	Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
-		
-		Set<Statement> statements =  statementTransformerService.transformStatements(source, rawStatements, report);
-		report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
-		return statements;
-
-	}
-
-	void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
-
-		try {
-			
-			if(load){
-				
-				report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
-				long start = System.currentTimeMillis();
-				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
-				report.addInfo("Finish load raw statements for source "+ source +" in " + (System.currentTimeMillis() - start)/1000 + " seconds");
-		
-				report.addInfo("Loading entry statements: " + mappedStatements.size());
-				start = System.currentTimeMillis();
-				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source);
-				report.addInfo("Finish load mapped statements for source "+ source + " in " + (System.currentTimeMillis() - start)/1000 + " seconds");
-
-			}else {
-				report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source "+ source);
-			}
-
-
-		}catch (SQLException e){
-			throw new NextProtException("Failed to load in source " + source + ":" + e);
-		}
-		
-	}
-
 	@Override
 	public String etlStatements(NextProtSource source, String release, boolean load) {
 
@@ -136,6 +54,48 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return report.toString();
 		
 	}
+
+    Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) {
+
+        Set<Statement> statements =  statementExtractorService.getStatementsForSource(source, release);
+        report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+        return statements;
+    }
+
+    Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
+
+        Set<Statement> statements =  statementTransformerService.transformStatements(source, rawStatements, report);
+        report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
+        return statements;
+
+    }
+
+    void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
+
+        try {
+
+            if(load){
+
+                report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
+                long start = System.currentTimeMillis();
+                statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
+                report.addInfo("Finish load raw statements for source "+ source +" in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+
+                report.addInfo("Loading entry statements: " + mappedStatements.size());
+                start = System.currentTimeMillis();
+                statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source);
+                report.addInfo("Finish load mapped statements for source "+ source + " in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+
+            }else {
+                report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source "+ source);
+            }
+
+
+        }catch (SQLException e){
+            throw new NextProtException("Failed to load in source " + source + ":" + e);
+        }
+
+    }
 
     private Set<Statement> extractValidStatements(ReportBuilder report, Set<Statement> rawStatements) {
 
@@ -197,7 +157,42 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public void setStatementLoadService(StatementLoaderService statementLoadService) {
 		this.statementLoadService = statementLoadService;
 	}
-	
 
+    /**
+     * Adds synchronisation to StringBuilder
+     */
+    public static class ReportBuilder {
 
+        private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
+        long start;
+        private StringBuilder builder; //Needs to use buffer to guarantee synchronisation
+
+        public ReportBuilder (){
+
+            start = System.currentTimeMillis();
+            builder = new StringBuilder();
+
+        }
+
+        public synchronized void addInfo(String message){
+            if(builder != null){
+                LOGGER.info(message);
+                builder.append(message + "\n");
+            }
+        }
+
+        public synchronized void addInfoWithElapsedTime(String message){
+            String messageWithElapsedTime = message + " " + ((System.currentTimeMillis() - start)/1000) + " seconds from the start of ETL process.";
+            addInfo(messageWithElapsedTime);
+        }
+
+        @Override
+        public synchronized String toString(){
+            return builder.toString();
+        }
+
+        public synchronized void addWarning(String string) {
+            addInfo("WARNING - " + string);
+        }
+    }
 }

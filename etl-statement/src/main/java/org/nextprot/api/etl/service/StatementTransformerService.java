@@ -9,5 +9,4 @@ import java.util.Set;
 public interface StatementTransformerService {
 
 	Set<Statement> transformStatements(NextProtSource nextProtSource, Set<Statement> rawStatements, ReportBuilder report);
-
 }
