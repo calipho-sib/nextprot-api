@@ -94,13 +94,36 @@ public class IsoformUtils {
         return null;
     }
 
+    /**
+     * Find the entry accession from an isoform accession
+     * @param isoformAccession the given isoform accession
+     * @return an isoform accession or throw exception if invalid isoform accession format
+     */
     public static String findEntryAccessionFromIsoformAccession(String isoformAccession) {
 
         if (!isoformAccession.contains("-")) {
-            return null;
+            throw new NextProtException("Invalid neXtProt isoform accession: "+isoformAccession);
         }
 
         return isoformAccession.split("-")[0];
+    }
+
+    /**
+     * Find the entry accession from an entry or isoform accession
+     * @param entryOrIsoformAccession the given neXtProt accession
+     * @return an entry accession or throw exception if invalid neXtProt accession format (entry or isoform)
+     */
+    public static String findEntryAccessionFromEntryOrIsoformAccession(String entryOrIsoformAccession) {
+
+        if (!entryOrIsoformAccession.startsWith("NX_")) {
+            throw new NextProtException("Invalid neXtProt accession: "+entryOrIsoformAccession);
+        }
+
+        if (!entryOrIsoformAccession.contains("-")) {
+            return entryOrIsoformAccession;
+        }
+
+        return entryOrIsoformAccession.split("-")[0];
     }
 
 	/**
