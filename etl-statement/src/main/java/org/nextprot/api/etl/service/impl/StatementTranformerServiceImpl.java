@@ -149,35 +149,44 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
                 if (isTripletStatement(originalStatement)) {
 
-                    String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
-                    Set<Statement> subjectStatements = getSubjects(subjectStatemendIds);
-
-                    subjectStatements.forEach(s -> s.processed());
-                    originalStatement.processed();
-
-                    String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
-
-                    boolean isIsoSpecific = false;
-                    String isoformName = validateSubject(subjectStatements);
-                    String isoformSpecificAccession = null;
-
-                    if (isSubjectIsoSpecific(subjectStatements)) {
-
-                        if (isoformName != null) {
-                            isIsoSpecific = true;
-                            Statement subject = subjectStatements.iterator().next();
-                            String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
-                            String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
-                            isoformSpecificAccession = getIsoAccession(featureName, featureType);
-                        } else {
-                            throw new NextProtException("Something wrong occured when checking for iso specificity");
-                        }
-                    }
-
-                    composedStatements.addAll(transformStatements(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession));
+                    composedStatements.addAll(transformTripletStatement(originalStatement));
                 }
             }
             return composedStatements;
+        }
+
+        private Set<Statement> transformTripletStatement(Statement originalStatement) {
+
+            if (!isTripletStatement(originalStatement)) {
+                throw new IllegalStateException("should be a triplet type statement: " + originalStatement);
+            }
+
+            String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
+            Set<Statement> subjectStatements = getSubjects(subjectStatemendIds);
+
+            subjectStatements.forEach(s -> s.processed());
+            originalStatement.processed();
+
+            String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
+
+            boolean isIsoSpecific = false;
+            String isoformName = validateSubject(subjectStatements);
+            String isoformSpecificAccession = null;
+
+            if (isSubjectIsoSpecific(subjectStatements)) {
+
+                if (isoformName != null) {
+                    isIsoSpecific = true;
+                    Statement subject = subjectStatements.iterator().next();
+                    String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
+                    String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
+                    isoformSpecificAccession = getIsoAccession(featureName, featureType);
+                } else {
+                    throw new NextProtException("Something wrong occured when checking for iso specificity");
+                }
+            }
+
+            return transformStatements(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
         }
 
         private Set<Statement> getSimpleRawStatements(Set<Statement> rawStatements) {
