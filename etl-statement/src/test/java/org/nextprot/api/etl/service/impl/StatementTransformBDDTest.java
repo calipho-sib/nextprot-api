@@ -32,7 +32,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 			Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
-			statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, null);
+			statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 			
 			fail();
 			
@@ -137,11 +137,4 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
 	}
-
-	@Test
-	public void shouldThrowAnExceptionIfFeatureNameDoesNotCorrespondToNextprotAccession() {
-		
-		
-	}
-
 }
