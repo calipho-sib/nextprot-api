@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession;
+
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
 
@@ -26,7 +28,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired private StatementExtractorService statementExtractorService;
 	@Autowired private StatementTransformerService statementTransformerService;
 	@Autowired private StatementLoaderService statementLoadService;
-	
+
 	/**
 	 * Adds synchronisation to StringBuilder
 	 */
@@ -74,7 +76,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return statements;
 	}
 
-
 	Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 		
 		Set<Statement> statements =  statementTransformerService.transformStatements(source, rawStatements, report);
@@ -82,7 +83,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return statements;
 
 	}
-	
+
 	void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
 		try {
@@ -110,8 +111,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		
 	}
 
-	
-	
 	@Override
 	public String etlStatements(NextProtSource source, String release, boolean load) {
 
@@ -144,7 +143,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
         Set<String> validEntryAccessions = masterIdentifierService.findUniqueNames();
         Set<String> statementEntryAccessions = rawStatements.stream()
-                .map(statement -> statement.getValue(StatementField.ENTRY_ACCESSION))
+                .map(statement -> extractEntryAccession(statement))
                 .collect(Collectors.toSet());
 
         Sets.SetView<String> diff = Sets.difference(statementEntryAccessions, validEntryAccessions);
@@ -152,7 +151,7 @@ public class StatementETLServiceImpl implements StatementETLService {
         if (!diff.isEmpty()) {
 
             validStatements = rawStatements.stream()
-                    .filter(statement -> validEntryAccessions.contains(statement.getValue(StatementField.ENTRY_ACCESSION)))
+                    .filter(statement -> validEntryAccessions.contains(extractEntryAccession(statement)))
                     .collect(Collectors.toSet());
             report.addWarning("Error: skipping statements with invalid entry accessions "+diff);
         }
@@ -160,6 +159,12 @@ public class StatementETLServiceImpl implements StatementETLService {
         return validStatements;
     }
 
+    private String extractEntryAccession(Statement statement) {
+
+	    return (statement.getValue(StatementField.ENTRY_ACCESSION) != null) ?
+                statement.getValue(StatementField.ENTRY_ACCESSION) :
+                findEntryAccessionFromEntryOrIsoformAccession(statement.getValue(StatementField.NEXTPROT_ACCESSION));
+    }
 
     public StatementExtractorService getStatementExtractorService() {
 		return statementExtractorService;
