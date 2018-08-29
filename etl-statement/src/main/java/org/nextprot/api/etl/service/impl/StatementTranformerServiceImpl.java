@@ -106,26 +106,24 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                     .collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
         }
 
-        Set<Statement> transform() {
+        public Set<Statement> transform() {
 
-            Set<Statement> mappedStatementsToLoad = transformTripletStatements();
-            LOGGER.info("Triplet statement categories are " + mappedStatementsToLoad.stream()
-                    .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
-                    .collect(Collectors.toSet()));
+            Set<Statement> mappedStatements = new HashSet<>();
+            Set<String> trackedStatementIds = new HashSet<>();
 
-            Set<Statement> simpleRawStatements = getSimpleRawStatements(rawStatements);
-            Set<String> simpleStatementCategories = simpleRawStatements.stream()
-                    .map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY))
-                    .collect(Collectors.toSet());
+            for (Statement statement : rawStatements) {
 
-            LOGGER.info("Simple statement categories are " + simpleStatementCategories);
-            if (simpleStatementCategories.contains(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
-                throw new NextProtException("Not expecting phenotypic variation at this stage.");
+                if (isTripletStatement(statement)) {
+
+                    mappedStatements.addAll(transformTripletStatement(statement, trackedStatementIds));
+                }
+                else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
+
+                    transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
+                }
             }
 
-            mappedStatementsToLoad.addAll(transformSimpleRawStatementsToMappedStatements(simpleRawStatements));
-
-            return mappedStatementsToLoad;
+            return mappedStatements;
         }
 
         /**
@@ -141,31 +139,15 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
          * 2. stmt OBJECT (ex: GO: mismatch repair)
          * 3. a stmt VERB (ex: stmt 1. decreases stmt 2.)
          **/
-        private Set<Statement> transformTripletStatements() {
-
-            Set<Statement> composedStatements = new HashSet<>();
-
-            for (Statement originalStatement : rawStatements) {
-
-                if (isTripletStatement(originalStatement)) {
-
-                    composedStatements.addAll(transformTripletStatement(originalStatement));
-                }
-            }
-            return composedStatements;
-        }
-
-        private Set<Statement> transformTripletStatement(Statement originalStatement) {
+        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<String> trackedStatementIds) {
 
             if (!isTripletStatement(originalStatement)) {
                 throw new IllegalStateException("should be a triplet type statement: " + originalStatement);
             }
 
-            String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
-            Set<Statement> subjectStatements = getSubjects(subjectStatemendIds);
-
-            subjectStatements.forEach(s -> s.processed());
-            originalStatement.processed();
+            Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
+            trackedStatementIds.addAll(subjectStatements.stream().map(statement -> statement.getValue(StatementField.STATEMENT_ID)).collect(Collectors.toList()));
+            trackedStatementIds.add(originalStatement.getValue(StatementField.STATEMENT_ID));
 
             String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
@@ -182,17 +164,33 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                     String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
                     isoformSpecificAccession = getIsoAccession(featureName, featureType);
                 } else {
-                    throw new NextProtException("Something wrong occured when checking for iso specificity");
+                    throw new NextProtException("Something wrong occurred when checking for iso specificity");
                 }
             }
 
             return transformStatements(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
         }
 
-        private Set<Statement> getSimpleRawStatements(Set<Statement> rawStatements) {
-            return rawStatements.stream()
-                    .filter(s -> !s.isProcessed())
-                    .collect(Collectors.toSet());
+        private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
+
+            String category = simpleStatement.getValue(StatementField.ANNOTATION_CATEGORY);
+
+            if (category.equals(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
+                throw new NextProtException("Not expecting phenotypic variation at this stage.");
+            }
+
+            TargetIsoformSet tis = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
+
+            if (tis.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(StatementBuilder.createNew()
+                    .addMap(simpleStatement)
+                    .addField(StatementField.TARGET_ISOFORMS, tis.serializeToJsonString())
+                    .removeField(StatementField.STATEMENT_ID)
+                    .removeField(StatementField.NEXTPROT_ACCESSION)
+                    .buildWithAnnotationHash());
         }
 
         private Set<Statement> getSubjects(String[] subjectIds) {
@@ -220,19 +218,6 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             } catch (Exception e) {
                 throw new NextProtException(e);
             }
-        }
-
-        private Set<Statement> transformSimpleRawStatementsToMappedStatements(Set<Statement> simpleRawStatements) {
-
-            return simpleRawStatements.stream()
-                    .map(statement -> StatementBuilder.createNew().addMap(statement)
-                            .addField(StatementField.TARGET_ISOFORMS, StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService, isoformMappingService).serializeToJsonString())
-                            .removeField(StatementField.STATEMENT_ID)
-                            .removeField(StatementField.NEXTPROT_ACCESSION)
-                            .buildWithAnnotationHash()
-                    )
-                    .filter(statement -> !statement.getValue(StatementField.TARGET_ISOFORMS).equals("{}"))
-                    .collect(Collectors.toSet());
         }
 
         private Map<String, List<Statement>> getSubjectsTransformed(Set<Statement> subjectStatements, String nextprotAccession) {
