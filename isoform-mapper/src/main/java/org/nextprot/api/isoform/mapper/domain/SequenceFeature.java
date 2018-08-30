@@ -30,4 +30,7 @@ public interface SequenceFeature {
 
     /** @return a new instance of validator specific to this sequence feature */
     <SF extends SequenceFeature> SequenceFeatureValidator<SF> newValidator(SingleFeatureQuery query);
+
+    /** @return true if an isoform is explicitly specificied */
+    boolean isIsoformSpecific();
 }

@@ -72,6 +72,12 @@ public class SequenceModification extends SequenceFeatureBase {
     }
 
     @Override
+    protected boolean isIsoformSpecific(String sequenceIdPart) {
+
+        return sequenceIdPart.contains("-");
+    }
+
+    @Override
     protected SequenceVariation parseVariation(SequenceVariationParser parser, String variationPart) throws ParseException, SequenceVariationBuildException {
 
         SequenceVariationImpl.StartBuilding builder = new SequenceVariationImpl.StartBuilding();

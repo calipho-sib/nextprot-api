@@ -24,6 +24,7 @@ abstract class SequenceFeatureBase implements SequenceFeature {
     private final SequenceVariation variation;
     private final Isoform isoform;
     private final BeanService beanService;
+    private final boolean isIsoformSpecific;
 
     SequenceFeatureBase(String feature, AnnotationCategory type, SequenceVariationParser parser, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
@@ -40,6 +41,7 @@ abstract class SequenceFeatureBase implements SequenceFeature {
         String sequenceIdPart = parseSequenceIdPart();
 
         preIsoformParsing(sequenceIdPart);
+        isIsoformSpecific = isIsoformSpecific(sequenceIdPart);
         isoform = parseIsoform(sequenceIdPart);
 
         variation = parseVariation(parser, parseVariationPart());
@@ -60,6 +62,8 @@ abstract class SequenceFeatureBase implements SequenceFeature {
     // TODO: does this method reside in the correct object ?
     @Override
     public String formatIsoSpecificFeature(Isoform isoform, int firstPos, int lastPos) {
+
+        // TODO: check entry names of isoform and this.isoform
 
         // create a new variation specific to the isoform
         SequenceVariationMutable isoVariation = new SequenceVariationMutable();
@@ -92,6 +96,12 @@ abstract class SequenceFeatureBase implements SequenceFeature {
         return isoform;
     }
 
+    @Override
+    public boolean isIsoformSpecific() {
+
+        return isIsoformSpecific;
+    }
+
     BeanService getBeanService() {
         return beanService;
     }
@@ -105,6 +115,7 @@ abstract class SequenceFeatureBase implements SequenceFeature {
     protected abstract SequenceVariationFormatter<String> getSequenceVariationFormatter();
     protected abstract String formatSequenceIdPart(Isoform isoform);
     protected abstract Isoform parseIsoform(String sequenceIdPart) throws ParseException;
+    protected abstract boolean isIsoformSpecific(String sequenceIdPart);
 
     /**
      * @return the sequence id part from the feature string

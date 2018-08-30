@@ -22,6 +22,7 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +34,6 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     private String geneName;
     private String entryAccession;
-    private String isoformName;
 
     private SequenceVariant(String feature, AnnotationCategory type, BeanService beanService) throws ParseException, SequenceVariationBuildException {
 
@@ -55,7 +55,6 @@ public class SequenceVariant extends SequenceFeatureBase {
 
         this.geneName = parseGeneName(sequenceIdPart);
         this.entryAccession = findEntryAccessionFromGeneName();
-        this.isoformName = extractIsoformName(sequenceIdPart);
     }
 
     private String parseGeneName(String sequenceIdPart) {
@@ -107,54 +106,46 @@ public class SequenceVariant extends SequenceFeatureBase {
      *   iso5      -> Iso 5
      *   isodelta6 -> Delta 6
      *
-     *   @return null if canonical
+     *   @return empty if implicit (canonical)
      */
-    private String extractIsoformName(String sequenceIdPart) throws PreIsoformParseException {
+    private Optional<String> extractExplicitIsoformName(String sequenceIdPart) throws PreIsoformParseException {
 
-        String featureIsoname = parseIsoformName(sequenceIdPart);
-
-        // canonical
-        if (featureIsoname == null) {
-            return null;
+        if (!sequenceIdPart.contains("-")) {
+            return Optional.empty();
         }
-        else if (featureIsoname.startsWith("iso")) {
-
-            String name = featureIsoname.substring(3);
-            if (name.matches("\\d+")) {
-                return "Iso "+name;
-            }
-            else {
-                // replace back space from underscore: some isoform names contain spaces that were replaced by underscore
-                // see also method formatIsoformFeatureName()
-                name = name.replace("_", " ");
-
-                // Delta6 -> Delta 6
-                Pattern pat = Pattern.compile("(\\s+)(\\d+)");
-                Matcher matcher = pat.matcher(name);
-
-                if (matcher.find()) {
-
-                    return matcher.group(1)+" "+matcher.group(2);
-                }
-                return name;
-            }
-        }
-
-        throw new PreIsoformParseException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')");
-    }
-
-    /**
-     * @return the isoform part from feature string (null if canonical)
-     */
-    private String parseIsoformName(String sequenceIdPart) {
 
         int indexOfDash = sequenceIdPart.indexOf("-");
 
         if (indexOfDash >= 0) {
-            return sequenceIdPart.substring(indexOfDash+1);
+            String featureIsoname = sequenceIdPart.substring(indexOfDash + 1);
+
+            if (featureIsoname.startsWith("iso")) {
+
+                String name = featureIsoname.substring(3);
+                if (name.matches("\\d+")) {
+                    return Optional.of("Iso " + name);
+                } else {
+                    // replace back space from underscore: some isoform names contain spaces that were replaced by underscore
+                    // see also method formatIsoformFeatureName()
+                    name = name.replace("_", " ");
+
+                    // Delta6 -> Delta 6
+                    Pattern pat = Pattern.compile("(\\s+)(\\d+)");
+                    Matcher matcher = pat.matcher(name);
+
+                    if (matcher.find()) {
+
+                        return Optional.of(matcher.group(1) + " " + matcher.group(2));
+                    }
+
+                    return Optional.of(name);
+                }
+            }
+
+            throw new PreIsoformParseException("invalid isoform name: " + featureIsoname + " (isoform name should starts with prefix 'iso')");
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -187,17 +178,25 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     protected Isoform parseIsoform(String sequenceIdPart) throws ParseException {
 
+        Optional<String> isoSpecificName = extractExplicitIsoformName(sequenceIdPart);
+
         BeanService beanService = getBeanService();
         IsoformService isoformService = beanService.getBean(IsoformService.class);
 
         // 2. get isoform accession from iso name and entry
-        Isoform isoform = (isoformName != null) ? isoformService.findIsoformByName(entryAccession, isoformName) : IsoformUtils.getCanonicalIsoform(beanService.getBean(EntryBuilderService.class)
+        Isoform isoform = (isoSpecificName.isPresent()) ? isoformService.findIsoformByName(entryAccession, isoSpecificName.get()) : IsoformUtils.getCanonicalIsoform(beanService.getBean(EntryBuilderService.class)
                 .build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()));
 
         if (isoform == null) {
-            throw new ParseException("Cannot find isoform "+ isoformName+" from entry accession "+entryAccession, 0);
+            throw new ParseException("Cannot find isoform from sequence part "+ sequenceIdPart+" (entry accession="+entryAccession+")", 0);
         }
         return isoform;
+    }
+
+    @Override
+    protected boolean isIsoformSpecific(String sequenceIdPart) {
+
+        return sequenceIdPart.contains("-iso");
     }
 
     @Override
