@@ -1,23 +1,32 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.service.impl;
 
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceModification;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 
-/**
- * A sequence feature on an isoform sequence on a specific gene
- */
-public interface SequenceFeatureFactory {
 
-    static SequenceFeature newSequenceFeature(String featureName, String featureType, BeanService beanService) throws Exception {
+@Service
+public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactoryService {
+
+    @Autowired
+    private BeanService beanService;
+
+    @Override
+    public SequenceFeature newSequenceFeature(String featureName, String featureType) throws ParseException, SequenceVariationBuildException {
 
         AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(featureType);
 
@@ -33,19 +42,9 @@ public interface SequenceFeatureFactory {
         }
     }
 
-    /*static SequenceFeature newSequenceFeature(SingleFeatureQuery query, BeanService beanService) throws FeatureQueryException {
+    @Override
+    public SequenceFeature newSequenceFeature(SingleFeatureQuery query) throws FeatureQueryException {
 
-        // throw exception if invalid query
-        query.checkFeatureQuery();
-
-        try {
-            return newSequenceFeature(query.getFeature(), query.getFeatureType(), beanService);
-        } catch (Exception e) {
-            throw new InvalidFeatureQueryTypeException(query);
-        }
-    }*/
-
-    static SequenceFeature newSequenceFeature(SingleFeatureQuery query, BeanService beanService) throws FeatureQueryException {
         AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(query.getFeatureType());
 
         // throw exception if invalid query

@@ -1,17 +1,15 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
-import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeatureFactory;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.*;
 import org.nextprot.commons.statements.constants.NextProtSource;
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
 
-    private static final Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
-
     @Autowired
     private IsoformService isoformService;
 
@@ -34,7 +30,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
     private IsoformMappingService isoformMappingService;
 
     @Autowired
-    private BeanService beanService;
+    private SequenceFeatureFactoryService sequenceFeatureFactoryService;
 
     @Override
     public Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
@@ -82,8 +78,8 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         this.isoformService = isoformService;
     }
 
-    public void setBeanService(BeanService beanService) {
-        this.beanService = beanService;
+    public void setSequenceFeatureFactoryService(SequenceFeatureFactoryService sequenceFeatureFactoryService) {
+        this.sequenceFeatureFactoryService = sequenceFeatureFactoryService;
     }
 
     class StatementTransformer {
@@ -213,7 +209,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         private String getIsoAccession(String featureName, String featureType) {
 
             try {
-                return SequenceFeatureFactory.newSequenceFeature(featureName, featureType, beanService).getIsoform().getIsoformAccession();
+                return sequenceFeatureFactoryService.newSequenceFeature(featureName, featureType).getIsoform().getIsoformAccession();
             } catch (Exception e) {
                 throw new NextProtException(e);
             }

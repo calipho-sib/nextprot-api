@@ -5,7 +5,6 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
@@ -13,12 +12,12 @@ import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeatureFactory;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,13 +40,13 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     private IsoformService isoformService;
 
     @Autowired
-    private BeanService beanService;
+    private SequenceFeatureFactoryService sequenceFeatureFactoryService;
 
     @Override
     public BaseFeatureQueryResult validateFeature(SingleFeatureQuery query) {
 
         try {
-            SequenceFeature sequenceFeature = SequenceFeatureFactory.newSequenceFeature(query, beanService);
+            SequenceFeature sequenceFeature = sequenceFeatureFactoryService.newSequenceFeature(query);
             setEntryAccession(query, sequenceFeature);
 
             return sequenceFeature.newValidator(query).validate(sequenceFeature);
