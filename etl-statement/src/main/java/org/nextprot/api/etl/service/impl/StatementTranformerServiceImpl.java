@@ -151,24 +151,23 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
             String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
-            boolean isIsoSpecific = false;
-            String isoformName = validateSubject(subjectStatements);
-            String isoformSpecificAccession = null;
-
-            if (isSubjectIsoSpecific(subjectStatements)) {
-
-                if (isoformName != null) {
-                    isIsoSpecific = true;
-                    Statement subject = subjectStatements.iterator().next();
-                    String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
-                    String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
-                    isoformSpecificAccession = getIsoAccession(featureName, featureType);
-                } else {
-                    throw new NextProtException("Something wrong occurred when checking for iso specificity");
-                }
+            String isoformName = getSubjectIsoformName(subjectStatements);
+            if (isoformName == null) {
+                throw new NextProtException("Isoform name is not defined, something wrong occurred when checking for iso specificity");
             }
 
-            return transformStatements(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
+            String isoformSpecificAccession = null;
+            boolean isIsoSpecific = isSubjectIsoSpecific(subjectStatements);
+
+            if (isIsoSpecific) {
+
+                Statement subject = subjectStatements.iterator().next();
+                String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
+                String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
+                isoformSpecificAccession = getIsoAccession(featureName, featureType);
+            }
+
+            return transformTripletStatement(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
         }
 
         private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
@@ -231,7 +230,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             return variantsOnIsoform;
         }
 
-        private Set<Statement> transformStatements(Statement originalStatement, Set<Statement> subjectStatements, String nextprotAccession,
+        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<Statement> subjectStatements, String nextprotAccession,
                                            boolean isIsoSpecific, String isoSpecificAccession) {
 
             Set<Statement> statementsToLoad = new HashSet<>();
@@ -317,14 +316,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             return statementsToLoad;
         }
 
-
-        /**
-         * Returns an exception if there are mixes between subjects
-         *
-         * @param subjects
-         * @return
-         */
-        private String validateSubject(Set<Statement> subjects) {
+        private String getSubjectIsoformName(Set<Statement> subjects) {
 
             Set<String> isoforms = subjects.stream()
                     .map(s -> s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME)))
