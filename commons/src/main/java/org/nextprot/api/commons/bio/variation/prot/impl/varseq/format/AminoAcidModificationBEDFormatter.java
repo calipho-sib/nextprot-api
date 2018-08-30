@@ -9,8 +9,7 @@ public class AminoAcidModificationBEDFormatter implements VaryingSequenceFormatt
     @Override
     public void format(SequenceVariation sequenceVariation, AminoAcidCode.CodeType type, StringBuilder sb) {
 
-        // Tyr223
-        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getVaryingSequence().getFirstAminoAcid()));
+        // 223
         sb.append(sequenceVariation.getVaryingSequence().getFirstAminoAcidPos());
     }
 }

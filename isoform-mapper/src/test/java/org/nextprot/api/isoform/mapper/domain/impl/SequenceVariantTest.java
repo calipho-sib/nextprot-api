@@ -228,6 +228,22 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         Assert.assertTrue(ptm.isIsoformSpecific());
     }
 
+    @Test
+    public void testFormatPTM() throws Exception {
+
+        SequenceModification ptm = new SequenceModification("NX_P10070.PTM-0253_388", beanService);
+        SequenceVariation variation = ptm.getProteinVariation();
+        SequenceChange<?> seqChange = variation.getSequenceChange();
+        Assert.assertTrue(seqChange instanceof UniProtPTM);
+        Assert.assertEquals("PTM-0253", ((UniProtPTM)seqChange).getValue());
+        Assert.assertEquals("NX_P10070-5", ptm.getIsoform().getIsoformAccession());
+        Assert.assertFalse(ptm.isIsoformSpecific());
+
+        Isoform isoform = mockIsoform("NX_P10070-1", "Iso 1", false);
+
+        Assert.assertEquals("NX_P10070-1.PTM-0253_60", ptm.formatIsoSpecificFeature(isoform, 60, 60));
+    }
+
     public static Entry mockEntry(String accession, Isoform... isoforms) {
 
         Entry entry = Mockito.mock(Entry.class);
