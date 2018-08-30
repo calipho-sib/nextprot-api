@@ -57,7 +57,7 @@ public abstract class StatementETLBaseUnitTest {
 		transformerMockedService = new StatementTranformerServiceImpl();
 		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
 		transformerMockedService.setIsoformService(isoformService);
-		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl());
+		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
 		
 		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
 	}
