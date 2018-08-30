@@ -159,6 +159,7 @@ public class StatementTransformationUtil {
 
 	}
 
+	// TODO: handle ptm type features propagation
 	static List<Statement> getPropagatedStatementsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
 
 		List<Statement> result = new ArrayList<>();
