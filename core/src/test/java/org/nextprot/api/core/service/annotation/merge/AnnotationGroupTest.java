@@ -8,12 +8,12 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 import static org.mockito.Mockito.when;
 
-public class AnnotationClusterTest {
+public class AnnotationGroupTest {
 
     @Test
     public void testAddAnnotation() throws Exception {
 
-        AnnotationCluster cluster = new AnnotationCluster(AnnotationCategory.VARIANT);
+        AnnotationGroup cluster = new AnnotationGroup(AnnotationCategory.VARIANT);
 
         Annotation annotation = mockAnnotation(AnnotationCategory.VARIANT);
         cluster.add(annotation);
@@ -22,10 +22,10 @@ public class AnnotationClusterTest {
         Assert.assertEquals(AnnotationCategory.VARIANT, cluster.getCategory());
     }
 
-    @Test(expected = AnnotationCluster.InvalidAnnotationClusterCategoryException.class)
+    @Test(expected = AnnotationGroup.InvalidAnnotationGroupCategoryException.class)
     public void addAnnotationFailedIfOfDifferentCategory() throws Exception {
 
-        AnnotationCluster cluster = new AnnotationCluster(AnnotationCategory.VARIANT);
+        AnnotationGroup cluster = new AnnotationGroup(AnnotationCategory.VARIANT);
 
         Annotation annotation = mockAnnotation(AnnotationCategory.MUTAGENESIS);
         cluster.add(annotation);
