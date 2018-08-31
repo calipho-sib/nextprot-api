@@ -3,11 +3,11 @@ package org.nextprot.api.core.service.annotation.merge;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 /**
- * Merge annotations in one
+ * Reduce two annotations in one
  *
  * Created by fnikitin on 02/08/16.
  */
-public interface AnnotationMerger {
+public interface AnnotationPairReduction {
 
-    Annotation merge(Annotation annotation1, Annotation annotation2);
+    Annotation reduce(Annotation annotation1, Annotation annotation2);
 }

@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.annotation.merge.AnnotationMerger;
+import org.nextprot.api.core.service.annotation.merge.AnnotationPairReduction;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 /**
  * Merge annotations by updating and returning target annotation with source annotations
  */
-public class AnnotationUpdater implements AnnotationMerger {
+public class AnnotationUpdater implements AnnotationPairReduction {
 
     private static final Logger LOGGER = Logger.getLogger(AnnotationUpdater.class.getName());
 
     @Override
-    public Annotation merge(Annotation dest, Annotation source) {
+    public Annotation reduce(Annotation dest, Annotation source) {
 
         updateDestEvidences(dest, source);
         if (dest.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE) {
