@@ -39,7 +39,7 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
 
         Assert.assertEquals(1, list1.size());
         Assert.assertEquals(1, mergedList.size());
-        Assert.assertEquals(2, mergedList.get(0).getEvidences().size());
+        Assert.assertEquals(1, mergedList.get(0).getEvidences().size());
     }
 
     @Test

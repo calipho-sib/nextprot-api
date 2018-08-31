@@ -16,7 +16,7 @@ import static org.nextprot.api.core.service.annotation.merge.impl.ObjectAnnotati
 public class AnnotationFinderTest {
 
     @Test
-    public void shouldNotFindAnnotInEmptyList() throws Exception {
+    public void shouldNotFindAnnotInEmptyList() {
 
         AnnotationFinder finder = new AnnotationFinder();
 
@@ -29,12 +29,12 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldFindSameAnnot() throws Exception {
+    public void shouldFindSameAnnot() {
 
         AnnotationFinder finder = new AnnotationFinder() {
             @Override
-            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
-                return Optional.of(newApiCatCriteria());
+            protected AnnotationSimilarityPredicate newPredicate(Annotation annotation) {
+                return newApiCatCriteria();
             }
         };
 
@@ -48,7 +48,7 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldNotFindDiffAnnot() throws Exception {
+    public void shouldNotFindDiffAnnot() {
 
         AnnotationFinder finder = new AnnotationFinder();
 
@@ -61,12 +61,12 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldFindOneAnnotIfMultipleMatches() throws Exception {
+    public void shouldFindOneAnnotIfMultipleMatches() {
 
         AnnotationFinder finder = new AnnotationFinder() {
             @Override
-            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
-                return Optional.of(newApiCatCriteria());
+            protected AnnotationSimilarityPredicate newPredicate(Annotation annotation) {
+                return newApiCatCriteria();
             }
         };
 

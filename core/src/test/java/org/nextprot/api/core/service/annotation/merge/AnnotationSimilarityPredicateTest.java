@@ -7,60 +7,38 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.Optional;
-
 public class AnnotationSimilarityPredicateTest {
 
     @Test
-    public void newSimilarityPredicateShouldReturnNewInstanceIfDefinedCategory() throws Exception {
+    public void annotationsShouldBeSimilar() {
 
-        Assert.assertTrue(AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.VARIANT).isPresent());
+        AnnotationSimilarityPredicate predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+
+        Assert.assertTrue(predicate.isSimilar(mockAnnotation("NX_P43246", "neXtProt"), mockAnnotation("NX_P43246", "neXtProt")));
     }
 
     @Test
-    public void newSimilarityPredicateShouldReturnNullIfNotDefinedForCategory() throws Exception {
+    public void annotationsShouldNotBeSimilarAccessionDiffer() {
 
-        Assert.assertTrue(!AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.ANTIBODY_MAPPING).isPresent());
+        AnnotationSimilarityPredicate predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+
+        Assert.assertFalse(predicate.isSimilar(mockAnnotation("NX_P43247", "neXtProt"), mockAnnotation("NX_P43246", "neXtProt")));
     }
 
     @Test
-    public void annotationsShouldBeSimilar() throws Exception {
+    public void annotationsShouldNotBeSimilarDatabaseDiffer() {
 
-        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        AnnotationSimilarityPredicate predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
-        Assert.assertTrue(predicate.isPresent());
-
-        Assert.assertTrue(predicate.get().isSimilar(mockAnnotation("NX_P43246", "neXtProt"), mockAnnotation("NX_P43246", "neXtProt")));
+        Assert.assertFalse(predicate.isSimilar(mockAnnotation("NX_P43246", "neXtProut"), mockAnnotation("NX_P43246", "neXtProt")));
     }
 
     @Test
-    public void annotationsShouldNotBeSimilarAccessionDiffer() throws Exception {
+    public void annotationsShouldBeSimilarWithDifferentDatabaseCases() {
 
-        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        AnnotationSimilarityPredicate predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
-        Assert.assertTrue(predicate.isPresent());
-
-        Assert.assertFalse(predicate.get().isSimilar(mockAnnotation("NX_P43247", "neXtProt"), mockAnnotation("NX_P43246", "neXtProt")));
-    }
-
-    @Test
-    public void annotationsShouldNotBeSimilarDatabaseDiffer() throws Exception {
-
-        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
-
-        Assert.assertTrue(predicate.isPresent());
-
-        Assert.assertFalse(predicate.get().isSimilar(mockAnnotation("NX_P43246", "neXtProut"), mockAnnotation("NX_P43246", "neXtProt")));
-    }
-
-    @Test
-    public void annotationsShouldBeSimilarWithDifferentDatabaseCases() throws Exception {
-
-        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
-
-        Assert.assertTrue(predicate.isPresent());
-
-        Assert.assertTrue(predicate.get().isSimilar(mockAnnotation("NX_P43246", "nextprot"), mockAnnotation("NX_P43246", "neXtProt")));
+        Assert.assertTrue(predicate.isSimilar(mockAnnotation("NX_P43246", "nextprot"), mockAnnotation("NX_P43246", "neXtProt")));
     }
 
     private static Annotation mockAnnotation(String accession, String database) {

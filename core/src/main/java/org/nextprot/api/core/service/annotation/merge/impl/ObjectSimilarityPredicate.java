@@ -44,7 +44,6 @@ public class ObjectSimilarityPredicate<T> implements AnnotationSimilarityPredica
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1 == annotation2 || ( annotation1.getAPICategory() == annotation2.getAPICategory() &&
-                        matcher.match(accessor.getObject(annotation1), accessor.getObject(annotation2)) );
+        return matcher.match(accessor.getObject(annotation1), accessor.getObject(annotation2));
     }
 }
