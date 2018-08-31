@@ -18,5 +18,5 @@ public interface AnnotationContainerFinder<T> {
      * @param objects the objects to find annotation in
      * @return optional container object
      */
-    Optional<T> find(Annotation searchedAnnotation, Collection<T> objects);
+    Optional<T> findAnnotationContainer(Annotation searchedAnnotation, Collection<T> objects);
 }

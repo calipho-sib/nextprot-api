@@ -17,10 +17,10 @@ public class AnnotationClusterFinder implements AnnotationContainerFinder<Annota
     private final AnnotationFinder annotationFinder = new AnnotationFinder();
 
     @Override
-    public Optional<AnnotationCluster> find(Annotation searchedAnnotation, Collection<AnnotationCluster> annotationClusters) {
+    public Optional<AnnotationCluster> findAnnotationContainer(Annotation searchedAnnotation, Collection<AnnotationCluster> annotationClusters) {
 
         for (AnnotationCluster annotationCluster : annotationClusters) {
-            if (annotationFinder.find(searchedAnnotation, annotationCluster.getAnnotations()).isPresent())
+            if (annotationFinder.findAnnotationContainer(searchedAnnotation, annotationCluster.getAnnotations()).isPresent())
                 return Optional.of(annotationCluster);
         }
 

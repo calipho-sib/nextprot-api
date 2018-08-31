@@ -15,7 +15,7 @@ import java.util.Optional;
 public class AnnotationFinder implements AnnotationContainerFinder<Annotation> {
 
     @Override
-    public Optional<Annotation> find(Annotation searchedAnnotation, Collection<Annotation> annotations) {
+    public Optional<Annotation> findAnnotationContainer(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
         AnnotationSimilarityPredicate predicate = newPredicate(searchedAnnotation);
 

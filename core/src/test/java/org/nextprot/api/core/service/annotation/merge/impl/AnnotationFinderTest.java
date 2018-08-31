@@ -20,7 +20,7 @@ public class AnnotationFinderTest {
 
         AnnotationFinder finder = new AnnotationFinder();
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotationContainer(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 new ArrayList<>()
         );
@@ -38,7 +38,7 @@ public class AnnotationFinderTest {
             }
         };
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotationContainer(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.VARIANT))
         );
@@ -52,7 +52,7 @@ public class AnnotationFinderTest {
 
         AnnotationFinder finder = new AnnotationFinder();
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotationContainer(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.MUTAGENESIS))
         );
@@ -74,7 +74,7 @@ public class AnnotationFinderTest {
         annot.setAnnotationName("joe");
         annot.setAnnotationCategory(AnnotationCategory.VARIANT);
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotationContainer(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Arrays.asList(annot, mockAnnotation(AnnotationCategory.VARIANT))
         );

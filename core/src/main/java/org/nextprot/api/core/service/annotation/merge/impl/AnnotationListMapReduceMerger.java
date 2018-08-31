@@ -78,7 +78,7 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
 
         for (Annotation annotation : annotations) {
 
-            Optional<AnnotationCluster> foundAnnotationCluster = finder.find(annotation, annotationClusters);
+            Optional<AnnotationCluster> foundAnnotationCluster = finder.findAnnotationContainer(annotation, annotationClusters);
 
             if (foundAnnotationCluster.isPresent()) {
                 try {

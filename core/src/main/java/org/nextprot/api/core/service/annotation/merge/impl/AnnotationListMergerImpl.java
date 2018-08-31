@@ -27,7 +27,7 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
         for (Annotation srcAnnotation : srcAnnotationList) {
 
-            Optional<Annotation> foundAnnotation = annotationFinder.find(srcAnnotation, destAnnotationList);
+            Optional<Annotation> foundAnnotation = annotationFinder.findAnnotationContainer(srcAnnotation, destAnnotationList);
 
             // not found -> add new annotation
             if (!foundAnnotation.isPresent()) {
