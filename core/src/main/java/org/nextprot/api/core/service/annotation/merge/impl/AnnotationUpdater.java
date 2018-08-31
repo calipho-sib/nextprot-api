@@ -6,45 +6,59 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.annotation.merge.AnnotationMerger;
+import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Merge annotations by updating and returning target annotation with source annotations
  */
-public class AnnotationUpdater extends AnnotationBaseMerger {
+public class AnnotationUpdater implements AnnotationMerger {
 
     private static final Logger LOGGER = Logger.getLogger(AnnotationUpdater.class.getName());
 
     @Override
-    protected Annotation getDestAnnotation(Annotation annotation1, Annotation annotation2) {
+    public Annotation merge(Annotation dest, Annotation source) {
 
-        return annotation1;
+        updateDestEvidences(dest, source);
+        if (dest.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE) {
+            updateDestDescription(dest, source);
+        }
+        updateDestAnnotationHash(dest, source);
+        updateDestIsoformSpecificityName(dest, source);
+        updateDestQualityQualifier(dest, source);
+        updateDestBioObject(dest, source);
+
+        return dest;
     }
 
-    @Override
-    protected Annotation getSourceAnnotation(Annotation annotation1, Annotation annotation2) {
-
-        return annotation2;
-    }
-
-    @Override
-    protected void updateDestEvidences(Annotation dest, Annotation source) {
+    /** Update dest evidences with sources evidences */
+    private void updateDestEvidences(Annotation dest, Annotation source) {
 
         List<AnnotationEvidence> all = new ArrayList<>(dest.getEvidences());
 
-        // According to Daniel, all evidences are different
-        all.addAll(source.getEvidences()); //.stream().filter(e -> !dest.getEvidences().contains(e)).collect(Collectors.toList()));
+        // TODO
+        all.addAll(source.getEvidences().stream()
+                .filter(e -> !dest.getEvidences().contains(e))
+                .collect(Collectors.toList()));
 
         dest.setEvidences(all);
     }
 
-    @Override
-    protected void updateDestAnnotationHash(Annotation dest, Annotation source) {
+    /** Update dest description with source */
+    private void updateDestDescription(Annotation dest, Annotation source) {
+
+        // TODO
+    }
+
+    /** Update dest annotation hash */
+    private void updateDestAnnotationHash(Annotation dest, Annotation source) {
 
         String annotationHash = source.getAnnotationHash();
 
@@ -54,8 +68,8 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
         dest.setAnnotationHash(annotationHash);
     }
 
-    @Override
-    protected void updateDestIsoformSpecificityName(Annotation dest, Annotation source) {
+    /** Update dest isoform specificity name (variant name) */
+    private void updateDestIsoformSpecificityName(Annotation dest, Annotation source) {
 
         Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
 
@@ -77,8 +91,18 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
         }
     }
 
-    @Override
-    protected void updateDestBioObject(Annotation dest, Annotation source) {
+    /** Reset dest qualityqualifier to gold if there is at least one gold source */
+    private void updateDestQualityQualifier(Annotation dest, Annotation source) {
+
+        if (dest.getQualityQualifier() == null || QualityQualifier.valueOf(dest.getQualityQualifier()) != QualityQualifier.GOLD) {
+
+            if (source.getQualityQualifier() != null && source.getQualityQualifier().equals(QualityQualifier.GOLD.name())) {
+                dest.setQualityQualifier(QualityQualifier.GOLD.name());
+            }
+        }
+    }
+
+    private void updateDestBioObject(Annotation dest, Annotation source) {
 
         BioObject destBioObject = dest.getBioObject();
 

@@ -48,10 +48,10 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
             return annotations1;
         }
 
-        List<AnnotationCluster> clusters = clusterSimilarAnnotations(annotations1, annotations2);
-
         // Reduce clusters into merged annotations
-        return clusters.stream().map(this::doMerge).collect(Collectors.toList());
+        return clusterSimilarAnnotations(annotations1, annotations2).stream()
+                .map(this::doMerge)
+                .collect(Collectors.toList());
     }
 
     /**
