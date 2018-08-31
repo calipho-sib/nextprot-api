@@ -63,6 +63,10 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
+        if (promotedAccordingToRule7(entryAccession)) {
+
+            return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_07);
+        }
 
 		return ProteinExistenceInferred.noInferenceFound(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT));
 	}
@@ -115,7 +119,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                     .flatMap(annot -> annot.getEvidences().stream())
                     .filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
                     .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-                    .filter(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
+                    .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
                     .anyMatch(evidence -> evidence.isExpressionLevelDetected(Arrays.asList("high", "medium")));
         }
 
@@ -140,21 +144,33 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.BINARY_INTERACTION));
 	}
 
-	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
+    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and AND ECO experimental evidence (or child thereof)
+    // other than mass spectrometry evidence (ECO:0001096)
+    @Override
+    public boolean promotedAccordingToRule7(String entryAccession) {
 
-		CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
-		int termId = terminologyService.findCvTermByAccessionOrThrowRuntimeException(evidenceCodeAC).getId().intValue();
+        return annotationService.findAnnotations(entryAccession).stream()
+                .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE)
+                .flatMap(annot -> annot.getEvidences().stream())
+                .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877))
+                .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
+    }
 
-		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
-	}
-
-	private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Stream<Annotation> stream) {
+	// Term "experimental evidence": AC=ECO:0000006, ID=84877
+    private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Stream<Annotation> stream) {
 
 		return stream.flatMap(annot -> annot.getEvidences().stream())
 				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
 				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
-
-		// { "id" : 84877, "accession" : "ECO:0000006", "name" : "experimental evidence" }
+				.anyMatch(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
 	}
+
+    private boolean isChildOfEvidenceTerm(String evidenceCodeAC, int evidenceCodeIdAncestor) {
+
+        CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+        int termId = terminologyService.findCvTermByAccessionOrThrowRuntimeException(evidenceCodeAC).getId().intValue();
+
+        return evidenceCodeIdAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeIdAncestor);
+    }
 }

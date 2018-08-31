@@ -94,6 +94,12 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule6("NX_Q9Y6N5"));
 	}
 
+    /*@Test
+    public void shouldMatchRule7() {
+
+        Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule7("NX_Q9Y6N5"));
+    }*/
+
 	@Test
 	public void shouldInferFromRule1() {
 
@@ -163,4 +169,12 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		Assert.assertFalse(proteinExistenceInferenceService.inferProteinExistence("NX_A0A087WXM9").isInferenceFound());
 	}
+
+    @Test
+    public void shouldInferFromRule7() {
+
+        ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q6V0L0");
+
+        Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+    }
 }
