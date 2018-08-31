@@ -39,9 +39,16 @@ public interface AnnotationSimilarityPredicate {
             case VARIANT:
             case MUTAGENESIS:
                 return Optional.of(new SimilarityPredicateChain(Arrays.asList(
-                        (a1, a2) -> a1.getAPICategory() == a2.getAPICategory(),
                         new ObjectSimilarityPredicate<>(Annotation::getVariant,
                                 (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())),
+                        new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap,
+                                new FeaturePositionMatcher()
+                        )
+                )));
+            case MODIFIED_RESIDUE:
+                return Optional.of(new SimilarityPredicateChain(Arrays.asList(
+                        new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode,
+                                (cv1, cv2) -> cv1.equals(cv2)),
                         new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap,
                                 new FeaturePositionMatcher()
                         )
