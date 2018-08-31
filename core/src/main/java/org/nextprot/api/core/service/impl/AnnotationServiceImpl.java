@@ -17,6 +17,7 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.merge.impl.EnrichedAnnotationList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -125,7 +126,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
-		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+		if (!ignoreStatements) {
+            EnrichedAnnotationList enrichedAnnotations = new EnrichedAnnotationList(annotations);
+            enrichedAnnotations.merge(statementService.getAnnotations(entryName));
+            annotations = enrichedAnnotations.getAnnotations();
+        }
 
 		// post-processing of annotations
 		updateIsoformsDisplayedAsSpecific(annotations, entryName);
