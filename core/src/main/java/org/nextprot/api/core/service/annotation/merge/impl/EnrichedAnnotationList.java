@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.merge.AnnotationGroup;
-import org.nextprot.api.core.service.annotation.merge.AnnotationPairReduction;
+import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
 import org.nextprot.api.core.service.annotation.merge.EnrichableAnnotationList;
 
 import java.util.ArrayList;
@@ -25,22 +25,22 @@ import java.util.stream.Collectors;
  */
 public class EnrichedAnnotationList implements EnrichableAnnotationList {
 
-    private final AnnotationPairReduction annotationPairReduction;
+    private final AnnotationListReduction annotationListReduction;
     private List<Annotation> annotations;
 
     public EnrichedAnnotationList(List<Annotation> annotations) {
 
-        this(annotations, new AnnotationUpdater());
+        this(annotations, new ReducedAnnotation(annotations));
     }
 
-    private EnrichedAnnotationList(List<Annotation> originalAnnotations, AnnotationPairReduction annotationPairReduction) {
+    private EnrichedAnnotationList(List<Annotation> originalAnnotations, AnnotationListReduction annotationListReduction) {
 
         Preconditions.checkNotNull(originalAnnotations);
         Preconditions.checkArgument(!originalAnnotations.isEmpty());
-        Preconditions.checkNotNull(annotationPairReduction);
+        Preconditions.checkNotNull(annotationListReduction);
 
         this.annotations = new ArrayList<>(originalAnnotations);
-        this.annotationPairReduction = annotationPairReduction;
+        this.annotationListReduction = annotationListReduction;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class EnrichedAnnotationList implements EnrichableAnnotationList {
         }
 
         annotations = groupSimilarAnnotations(externalAnnotations).stream()
-                .map(this::reduceClusterAnnotations)
+                .map(annotationGroup -> new ReducedAnnotation(annotationGroup.getAnnotations()).reduce())
                 .collect(Collectors.toList());
 
         return true;
@@ -95,20 +95,5 @@ public class EnrichedAnnotationList implements EnrichableAnnotationList {
         }
 
         return annotationGroups;
-    }
-
-    private Annotation reduceClusterAnnotations(AnnotationGroup group) {
-
-        if (group.size() == 0)
-            throw new IllegalStateException("cluster "+ group.getCategory()+" should not be empty");
-        else if (group.size() == 1)
-            return group.getAnnotations().get(0);
-        else if (group.size() == 2)
-            // the first annotation is the original one
-            return annotationPairReduction.reduce(group.getAnnotations().get(0), group.getAnnotations().get(1));
-        else {
-            // TODO
-            throw new NextProtException("TODO: no yet able to reduce more than 2 annotations from group "+group.getAnnotations());
-        }
     }
 }
