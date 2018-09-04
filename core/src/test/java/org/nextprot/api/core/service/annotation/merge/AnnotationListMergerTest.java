@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.Collections;
@@ -13,9 +14,7 @@ import java.util.List;
 /**
  * Tests that should run on all implementations of AnnotationListMerger
  */
-public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnotationList> {
-
-    protected abstract T createEnrichableAnnotationList(List<Annotation> original);
+public class AnnotationListMergerTest {
 
     @Test
     public void testMergeTwoIdenticalList()  {
@@ -26,11 +25,9 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
         List<Annotation> original = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
                 Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
 
-        T enrichableAnnotationList = createEnrichableAnnotationList(original);
-        boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
+        AnnotationListMerger merger = new AnnotationListMerger(original);
+        List<Annotation> mergedList = merger.merge(external);
 
-        Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
         Assert.assertEquals(1, mergedList.get(0).getEvidences().size());
     }
@@ -43,11 +40,9 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
         List<Annotation> original = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
                 Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
 
-        T enrichableAnnotationList = createEnrichableAnnotationList(original);
-        boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
+        AnnotationListMerger merger = new AnnotationListMerger(original);
+        List<Annotation> mergedList = merger.merge(external);
 
-        Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
         Assert.assertEquals(2, mergedList.get(0).getEvidences().size());
         Assert.assertEquals(QualityQualifier.GOLD.toString(), mergedList.get(0).getQualityQualifier());
@@ -61,11 +56,9 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
         List<Annotation> original = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.SILVER,
                 Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
 
-        T enrichableAnnotationList = createEnrichableAnnotationList(original);
-        boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
+        AnnotationListMerger merger = new AnnotationListMerger(original);
+        List<Annotation> mergedList = merger.merge(external);
 
-        Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
         Assert.assertEquals(2, mergedList.get(0).getEvidences().size());
         Assert.assertEquals(QualityQualifier.SILVER.name(), mergedList.get(0).getQualityQualifier());
@@ -79,11 +72,9 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
         List<Annotation> original = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
                 Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
 
-        T enrichableAnnotationList = createEnrichableAnnotationList(original);
-        boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
+        AnnotationListMerger merger = new AnnotationListMerger(original);
+        List<Annotation> mergedList = merger.merge(external);
 
-        Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
         Assert.assertEquals(2, mergedList.get(0).getEvidences().size());
         Assert.assertEquals(QualityQualifier.GOLD.toString(), mergedList.get(0).getQualityQualifier());

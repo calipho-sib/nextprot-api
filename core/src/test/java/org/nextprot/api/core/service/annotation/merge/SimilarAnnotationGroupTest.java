@@ -8,27 +8,24 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 import static org.mockito.Mockito.when;
 
-public class AnnotationGroupTest {
+public class SimilarAnnotationGroupTest {
 
     @Test
-    public void testAddAnnotation() throws Exception {
+    public void testAddAnnotation() {
 
-        AnnotationGroup cluster = new AnnotationGroup(AnnotationCategory.VARIANT);
-
-        Annotation annotation = mockAnnotation(AnnotationCategory.VARIANT);
-        cluster.add(annotation);
+        SimilarGroupBuilder.SimilarAnnotationGroup cluster =
+                new SimilarGroupBuilder.SimilarAnnotationGroup(mockAnnotation(AnnotationCategory.VARIANT));
 
         Assert.assertEquals(1, cluster.size());
         Assert.assertEquals(AnnotationCategory.VARIANT, cluster.getCategory());
     }
 
-    @Test(expected = AnnotationGroup.InvalidAnnotationGroupCategoryException.class)
+    @Test(expected = SimilarGroupBuilder.SimilarAnnotationGroup.InvalidAnnotationGroupCategoryException.class)
     public void addAnnotationFailedIfOfDifferentCategory() throws Exception {
 
-        AnnotationGroup cluster = new AnnotationGroup(AnnotationCategory.VARIANT);
-
-        Annotation annotation = mockAnnotation(AnnotationCategory.MUTAGENESIS);
-        cluster.add(annotation);
+        SimilarGroupBuilder.SimilarAnnotationGroup cluster =
+                new SimilarGroupBuilder.SimilarAnnotationGroup(mockAnnotation(AnnotationCategory.VARIANT));
+        cluster.add(mockAnnotation(AnnotationCategory.MUTAGENESIS));
     }
 
     private static Annotation mockAnnotation(AnnotationCategory cat) {
