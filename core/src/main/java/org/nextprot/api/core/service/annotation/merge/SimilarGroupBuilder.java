@@ -14,41 +14,47 @@ public class SimilarGroupBuilder {
 
     public SimilarGroupBuilder(List<Annotation> uniqueAnnotations) {
 
+        checkUnicity(uniqueAnnotations);
         this.uniqueAnnotations = new ArrayList<>(uniqueAnnotations);
+    }
+
+    // TODO: should we check the unicity of annotations ?
+    private static void checkUnicity(List<Annotation> uniqueAnnotations) {
+
     }
 
     /**
      * Group similar annotations in cluster
      *
-     * @param externalAnnotations supplementary annotations
+     * @param otherAnnotations supplementary annotations
      * @return a list of clusters
      */
-    public List<SimilarAnnotationGroup> groupBySimilarity(List<Annotation> externalAnnotations) {
+    public List<SimilarAnnotationGroup> groupBySimilarity(List<Annotation> otherAnnotations) {
 
         List<SimilarAnnotationGroup> similarAnnotationGroups =
                 SimilarAnnotationGroup.fromAnnotationList(uniqueAnnotations);
 
-        if (externalAnnotations == null || externalAnnotations.isEmpty()) {
+        if (otherAnnotations == null || otherAnnotations.isEmpty()) {
 
             return similarAnnotationGroups;
         }
 
         AnnotationGroupFinder finder = new AnnotationGroupFinder();
 
-        for (Annotation externalAnnotation : externalAnnotations) {
+        for (Annotation otherAnnotation : otherAnnotations) {
 
             Optional<SimilarAnnotationGroup> foundAnnotationGroup =
-                    finder.findSimilarAnnotationGroup(externalAnnotation, similarAnnotationGroups);
+                    finder.findSimilarAnnotationGroup(otherAnnotation, similarAnnotationGroups);
 
             if (foundAnnotationGroup.isPresent()) {
                 try {
-                    foundAnnotationGroup.get().add(externalAnnotation);
+                    foundAnnotationGroup.get().add(otherAnnotation);
                 } catch (SimilarAnnotationGroup.InvalidAnnotationGroupCategoryException e) {
                     throw new NextProtException(e);
                 }
             }
             else {
-                similarAnnotationGroups.add(new SimilarAnnotationGroup(externalAnnotation));
+                similarAnnotationGroups.add(new SimilarAnnotationGroup(otherAnnotation));
             }
         }
 
@@ -133,6 +139,11 @@ public class SimilarGroupBuilder {
         public int size() {
 
             return group.size();
+        }
+
+        public boolean isEmpty() {
+
+            return group.isEmpty();
         }
 
         public List<Annotation> getAnnotations() {

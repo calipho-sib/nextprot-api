@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
+import org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
@@ -29,12 +30,12 @@ public class ReducedAnnotation implements AnnotationListReduction {
     private final Annotation destAnnotation;
     private final List<Annotation> sourceAnnotations;
 
-    public ReducedAnnotation(List<Annotation> annotations) {
+    public ReducedAnnotation(SimilarGroupBuilder.SimilarAnnotationGroup annotationGroup) {
 
-        Preconditions.checkNotNull(annotations);
-        Preconditions.checkArgument(!annotations.isEmpty());
+        Preconditions.checkNotNull(annotationGroup);
+        Preconditions.checkArgument(!annotationGroup.isEmpty());
 
-        this.annotations = annotations;
+        this.annotations = annotationGroup.getAnnotations();
 
         if (annotations.size() == 1) {
             this.destAnnotation = annotations.get(0);
