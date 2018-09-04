@@ -9,7 +9,14 @@ import java.util.List;
  */
 public interface EnrichableAnnotationList {
 
-    List<Annotation> getAnnotations();
+    /**
+     * @return the merged annotations
+     */
+    List<Annotation> getMergedAnnotations();
 
+    /**
+     * Merge given annotations to internal annotations
+     * @return true if merge has been correctly done
+     **/
     boolean merge(List<Annotation> moreAnnotations);
 }

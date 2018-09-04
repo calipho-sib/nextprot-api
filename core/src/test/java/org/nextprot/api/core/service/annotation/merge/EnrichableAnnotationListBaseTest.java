@@ -28,7 +28,7 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
 
         T enrichableAnnotationList = createEnrichableAnnotationList(original);
         boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getAnnotations();
+        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
 
         Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
@@ -45,7 +45,7 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
 
         T enrichableAnnotationList = createEnrichableAnnotationList(original);
         boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getAnnotations();
+        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
 
         Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
@@ -63,7 +63,7 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
 
         T enrichableAnnotationList = createEnrichableAnnotationList(original);
         boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getAnnotations();
+        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
 
         Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());
@@ -81,7 +81,7 @@ public abstract class EnrichableAnnotationListBaseTest<T extends EnrichableAnnot
 
         T enrichableAnnotationList = createEnrichableAnnotationList(original);
         boolean hasMerged = enrichableAnnotationList.merge(external);
-        List<Annotation> mergedList = enrichableAnnotationList.getAnnotations();
+        List<Annotation> mergedList = enrichableAnnotationList.getMergedAnnotations();
 
         Assert.assertTrue(hasMerged);
         Assert.assertEquals(1, mergedList.size());

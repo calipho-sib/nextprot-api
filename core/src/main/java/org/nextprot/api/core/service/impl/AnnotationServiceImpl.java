@@ -123,13 +123,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
 		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
-
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		if (!ignoreStatements) {
+
             EnrichedAnnotationList enrichedAnnotations = new EnrichedAnnotationList(annotations);
             enrichedAnnotations.merge(statementService.getAnnotations(entryName));
-            annotations = enrichedAnnotations.getAnnotations();
+            annotations = enrichedAnnotations.getMergedAnnotations();
         }
 
 		// post-processing of annotations

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.merge.AnnotationGroup;
-import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
 import org.nextprot.api.core.service.annotation.merge.EnrichableAnnotationList;
 
 import java.util.ArrayList;
@@ -25,31 +24,22 @@ import java.util.stream.Collectors;
  */
 public class EnrichedAnnotationList implements EnrichableAnnotationList {
 
-    private final AnnotationListReduction annotationListReduction;
     private List<Annotation> annotations;
 
     public EnrichedAnnotationList(List<Annotation> annotations) {
 
-        this(annotations, new ReducedAnnotation(annotations));
-    }
+        Preconditions.checkNotNull(annotations);
+        Preconditions.checkArgument(!annotations.isEmpty());
 
-    private EnrichedAnnotationList(List<Annotation> originalAnnotations, AnnotationListReduction annotationListReduction) {
-
-        Preconditions.checkNotNull(originalAnnotations);
-        Preconditions.checkArgument(!originalAnnotations.isEmpty());
-        Preconditions.checkNotNull(annotationListReduction);
-
-        this.annotations = new ArrayList<>(originalAnnotations);
-        this.annotationListReduction = annotationListReduction;
+        this.annotations = new ArrayList<>(annotations);
     }
 
     @Override
-    public List<Annotation> getAnnotations() {
+    public List<Annotation> getMergedAnnotations() {
 
         return Collections.unmodifiableList(annotations);
     }
 
-    /** @return merged annotations */
     @Override
     public boolean merge(List<Annotation> externalAnnotations) {
 
