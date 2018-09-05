@@ -14,7 +14,7 @@ public class AnnotationDescriptionCombinerTest {
         AnnotationDescriptionCombiner.Description desc = parser.parse("phosphotyrosine; by ABL1");
         Assert.assertEquals("Phosphotyrosine", desc.getPtm());
         Assert.assertEquals(Sets.newHashSet("ABL1"), desc.getEnzymes());
-        Assert.assertEquals("phosphotyrosine; by ABL1", desc.format());
+        Assert.assertEquals("Phosphotyrosine; by ABL1", desc.format());
     }
 
     @Test
@@ -23,7 +23,7 @@ public class AnnotationDescriptionCombinerTest {
         AnnotationDescriptionCombiner combiner = new AnnotationDescriptionCombiner();
 
         String desc = combiner.combine("Phosphotyrosine", "phosphotyrosine; by ABL1");
-        Assert.assertEquals("phosphotyrosine; by ABL1", desc);
+        Assert.assertEquals("Phosphotyrosine; by ABL1", desc);
     }
 
     @Test
