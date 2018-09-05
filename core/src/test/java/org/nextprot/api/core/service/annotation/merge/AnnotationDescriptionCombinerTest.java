@@ -1,31 +1,10 @@
 package org.nextprot.api.core.service.annotation.merge;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
-
 public class AnnotationDescriptionCombinerTest {
-
-    @Test
-    public void test() {
-        List<String> enzymes =  Lists.newArrayList(Splitter
-                .onPattern("([,]|and|by)")
-                .trimResults()
-                .omitEmptyStrings()
-                .split("by AURKB, AURKC and RPS6KA5"));
-        System.out.println(enzymes);
-
-        enzymes =  Lists.newArrayList(Splitter
-                .onPattern("([,]|and|by)")
-                .trimResults()
-                .omitEmptyStrings()
-                .split("by ABL1"));
-        System.out.println(enzymes);
-    }
 
     @Test
     public void testParser() {
