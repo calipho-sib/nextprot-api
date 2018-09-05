@@ -7,14 +7,12 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionCombiner;
 import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
 import org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder;
 import org.nextprot.commons.constants.QualityQualifier;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,15 +38,16 @@ public class ReducedAnnotation implements AnnotationListReduction {
         if (annotations.size() == 1) {
             this.destAnnotation = annotations.get(0);
             this.sourceAnnotations = new ArrayList<>();
-        }
-        else {
+        } else {
             DestAnnotAndOtherSources destAnnotAndOtherSources = splitAnnotations(annotations);
             this.destAnnotation = destAnnotAndOtherSources.getDestAnnotation();
             this.sourceAnnotations = destAnnotAndOtherSources.getSourceAnnotations();
         }
     }
 
-    /** Find annotation coming from nextprot db */
+    /**
+     * Find annotation coming from nextprot db
+     */
     private static DestAnnotAndOtherSources splitAnnotations(List<Annotation> annotations) {
 
         int[] npAnnotIndices = IntStream.range(0, annotations.size())
@@ -57,13 +56,13 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
         if (npAnnotIndices.length == 0) {
             return new DestAnnotAndOtherSources(annotations.get(0), annotations.subList(1, annotations.size()));
-        }
-        else if (npAnnotIndices.length == 1) {
+        } else if (npAnnotIndices.length == 1) {
             return new DestAnnotAndOtherSources(annotations.get(npAnnotIndices[0]), annotations.stream()
                     .filter(annotation -> !annotation.getUniqueName().startsWith("AN_"))
                     .collect(Collectors.toList()));
         }
-        throw new NextProtException("Multiple neXtProt annotations error: indices="+npAnnotIndices+", annots="+annotations);
+        throw new NextProtException("Multiple neXtProt annotations error: indices=" + Arrays.toString(npAnnotIndices)
+                + ", annots=" + annotations);
     }
 
     @Override
@@ -87,7 +86,9 @@ public class ReducedAnnotation implements AnnotationListReduction {
         return destAnnotation;
     }
 
-    /** Update dest evidences with sources evidences */
+    /**
+     * Update dest evidences with sources evidences
+     */
     private void updateDestEvidences() {
 
         List<AnnotationEvidence> all = new ArrayList<>(destAnnotation.getEvidences());
@@ -103,13 +104,24 @@ public class ReducedAnnotation implements AnnotationListReduction {
         destAnnotation.setEvidences(all);
     }
 
-    /** Update dest description with source */
+    /**
+     * Update dest description with source
+     */
     private void updateDestDescription() {
 
-        // TODO
+        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner();
+
+        String destDescription = destAnnotation.getDescription();
+
+        for (Annotation sourceAnnotation : sourceAnnotations) {
+
+            destDescription = annotationDescriptionCombiner.combine(destDescription, sourceAnnotation.getDescription());
+        }
     }
 
-    /** Update dest annotation hash */
+    /**
+     * Update dest annotation hash
+     */
     private void updateDestAnnotationHash() {
 
         if (destAnnotation.getAnnotationHash() == null) {
@@ -119,13 +131,15 @@ public class ReducedAnnotation implements AnnotationListReduction {
             String annotationHash = firstSource.getAnnotationHash();
 
             if (annotationHash == null || annotationHash.isEmpty())
-                throw new NextProtException("annotation hash was not computed for source "+firstSource.getUniqueName());
+                throw new NextProtException("annotation hash was not computed for source " + firstSource.getUniqueName());
 
             destAnnotation.setAnnotationHash(annotationHash);
         }
     }
 
-    /** Update dest isoform specificity name (variant name) */
+    /**
+     * Update dest isoform specificity name (variant name)
+     */
     private void updateDestIsoformSpecificityName() {
 
         Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = destAnnotation.getTargetingIsoformsMap();
@@ -144,14 +158,15 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
                     mergeAnnotationIsoformSpecificities(destTargetingIsoMap.get(isoformName), sourceIsoformSpecificityEntry.getValue());
                 }
-            }
-            else {
+            } else {
                 destTargetingIsoMap.put(isoformName, sourceIsoformSpecificityEntry.getValue());
             }
         }
     }
 
-    /** Reset dest qualityqualifier to gold if there is at least one gold source */
+    /**
+     * Reset dest qualityqualifier to gold if there is at least one gold source
+     */
     private void updateDestQualityQualifier() {
 
         if (destAnnotation.getQualityQualifier() == null || QualityQualifier.valueOf(destAnnotation.getQualityQualifier()) != QualityQualifier.GOLD) {
@@ -185,10 +200,9 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
             if (!destProperties.containsKey(srcKeyValue.getKey())) {
                 destBioObject.putPropertyNameValue(srcKeyValue.getKey(), srcKeyValue.getValue());
-            }
-            else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
-                throw new NextProtException("unexpected value "+destBioObject.getPropertyValue(srcKeyValue.getKey())
-                        + " for property "+srcKeyValue.getKey() +" (expected: "+srcKeyValue.getValue()+")");
+            } else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
+                throw new NextProtException("unexpected value " + destBioObject.getPropertyValue(srcKeyValue.getKey())
+                        + " for property " + srcKeyValue.getKey() + " (expected: " + srcKeyValue.getValue() + ")");
             }
         }
     }
