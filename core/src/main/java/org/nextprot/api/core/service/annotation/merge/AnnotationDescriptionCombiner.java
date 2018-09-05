@@ -55,7 +55,7 @@ public class AnnotationDescriptionCombiner {
             return desc1.combine(desc2).format();
         } catch (ParseException e) {
 
-            LOGGER.warning("Could not combine description "+firstDescription+" with description "+secondDescription);
+            LOGGER.warning("keeping description "+firstDescription+": could not combine it with description "+secondDescription);
             return firstDescription;
         }
     }
