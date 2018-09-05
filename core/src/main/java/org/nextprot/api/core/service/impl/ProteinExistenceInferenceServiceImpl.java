@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,7 +101,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     // with evidence assigned by neXtProt of quality GOLD AND ECO experimental evidence (or child thereof)
 	public boolean promotedAccordingToRule3(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.EXPRESSION_INFO)
 				.filter(ei -> ei.getDescription().contains("(at protein level)")));
 	}
@@ -131,7 +132,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule5(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS));
 	}
 
@@ -140,7 +141,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule6(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.BINARY_INTERACTION));
 	}
 
@@ -158,9 +159,9 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     }
 
 	// Term "experimental evidence": AC=ECO:0000006, ID=84877
-    private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Stream<Annotation> stream) {
+    private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Supplier<Stream<Annotation>> streamSupplier) {
 
-		return stream.flatMap(annot -> annot.getEvidences().stream())
+		return streamSupplier.get().flatMap(annot -> annot.getEvidences().stream())
 				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
 				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
 				.anyMatch(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
