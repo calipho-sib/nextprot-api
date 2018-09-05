@@ -1,9 +1,11 @@
 package org.nextprot.api.core.service.annotation.merge;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.nextprot.api.commons.utils.StringUtils;
 
+import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -31,23 +33,31 @@ public class AnnotationDescriptionCombiner {
 
     private static final Logger LOGGER = Logger.getLogger(AnnotationDescriptionCombiner.class.getName());
 
-    private final Parser parser;
+    private final DescriptionParser parser;
 
     public AnnotationDescriptionCombiner() {
 
-        parser = new Parser();
+        parser = new DescriptionParser();
     }
 
+    /**
+     * Combine descriptions together and format
+     * @param firstDescription the first description
+     * @param secondDescription the second description
+     * @return a formatted combination of both descriptions or the first one if not possible
+     */
     public String combine(String firstDescription, String secondDescription) {
 
-        Description desc1 = parser.parse(firstDescription);
-        Description desc2 = parser.parse(secondDescription);
+        try {
+            Description desc1 = parser.parse(firstDescription);
+            Description desc2 = parser.parse(secondDescription);
 
-        if (desc1 != null && desc2 != null) {
             return desc1.combine(desc2).format();
+        } catch (ParseException e) {
+
+            LOGGER.warning("Could not combine description "+firstDescription+" with description "+secondDescription);
+            return firstDescription;
         }
-        LOGGER.warning("Could not find rule to modify description "+firstDescription+" with description "+secondDescription + " (appending ; by enzyme name)");
-        return firstDescription;
     }
 
     static class Description {
@@ -111,7 +121,8 @@ public class AnnotationDescriptionCombiner {
                 combinedDescription.setAlternate(true);
             }
 
-            if (inVitro) {
+            // TODO: not sure about '|| description.isInVitro()'
+            if (inVitro || description.isInVitro()) {
 
                 combinedDescription.setInVitro(true);
             }
@@ -122,7 +133,6 @@ public class AnnotationDescriptionCombiner {
             return combinedDescription;
         }
 
-        // TODO
         public String format() {
 
             StringBuilder sb = new StringBuilder();
@@ -163,46 +173,114 @@ public class AnnotationDescriptionCombiner {
 
     }
 
-    static class Parser {
+    static class DescriptionParser {
 
-        public Description parse(String description) {
+        public Description parse(String description) throws ParseException {
+
+            TokenList tokenList = new TokenList(description);
 
             Description desc = new Description();
 
-            LinkedList<String> fields = new LinkedList<>();
-            Splitter
-                    .onPattern(";")
-                    .trimResults()
-                    .omitEmptyStrings()
-                    .split(description)
-                    .forEach(field -> fields.add(field));
+            desc.setPtm(tokenList.consumeNextToken());
+            desc.setAlternate(tokenList.consumeNextTokenIfMatch(new TokenList.Equals("alternate")).isPresent());
+            desc.addAllEnzymes(buildEnzymeList(tokenList.consumeNextTokenIfMatch(new TokenList.StartsWith("by")).orElse("")));
+            desc.setInVitro(tokenList.consumeNextTokenIfMatch(new TokenList.Equals("in vitro")).isPresent());
 
+            if (!tokenList.isEmpty()) {
 
-            // the ptm name: consume the first field
-            desc.setPtm(fields.remove());
-
-            if (!fields.isEmpty()) {
-
-                // optionally consume for alternate field
-                if (fields.get(0).matches("alternate")) {
-                    desc.setAlternate(true);
-                    fields.remove();
-                }
-
-                if (!fields.isEmpty()) {
-                    // the enzymes
-                    List<String> enzymes = Lists.newArrayList(Splitter
-                            .onPattern("([,]|and|by)")
-                            .trimResults()
-                            .omitEmptyStrings()
-                            .split(fields.get(0)));
-
-                    desc.addAllEnzymes(enzymes);
-                    fields.remove();
-                }
+                String warning = "all description tokens have not been totally consumed: "+ tokenList.getTokens();
+                LOGGER.warning(warning);
+                //throw new ParseException(warning, -1);
             }
 
             return desc;
+        }
+
+        private List<String> buildEnzymeList(String byEnzymes) {
+
+            return Lists.newArrayList(Splitter
+                    .onPattern("([,]|and|by)")
+                    .trimResults()
+                    .omitEmptyStrings()
+                    .split(byEnzymes));
+        }
+
+        private static class TokenList {
+
+            private final LinkedList<String> tokens;
+
+            private TokenList(String description) {
+
+                Preconditions.checkNotNull(description);
+
+                this.tokens = new LinkedList<>();
+                Splitter.onPattern(";")
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(description)
+                        .forEach(field -> tokens.add(field));
+            }
+
+            private boolean isEmpty() {
+
+                return tokens.isEmpty();
+            }
+
+            private List<String> getTokens() {
+
+                return Collections.unmodifiableList(tokens);
+            }
+
+            private String consumeNextToken() throws ParseException {
+
+                if (tokens.isEmpty()) {
+                    throw new ParseException("No more tokens: cannot consume more element", -1);
+                }
+
+                return tokens.remove();
+            }
+
+            private Optional<String> consumeNextTokenIfMatch(Operator operator) {
+
+                if (!tokens.isEmpty() && operator.matches(tokens.get(0))) {
+                    return Optional.of(tokens.remove());
+                }
+
+                return Optional.empty();
+            }
+
+            private interface Operator {
+
+                boolean matches(String token);
+            }
+
+            private static class Equals implements Operator {
+
+                private final String expectedValue;
+
+                Equals(String expectedValue) {
+                    this.expectedValue = expectedValue;
+                }
+
+                @Override
+                public boolean matches(String token) {
+                    return token.equals(expectedValue);
+                }
+            }
+
+            private static class StartsWith implements Operator {
+
+                private final String startedValue;
+
+                StartsWith(String startedValue) {
+                    this.startedValue = startedValue;
+                }
+
+                @Override
+                public boolean matches(String token) {
+                    return token.startsWith(startedValue);
+                }
+            }
         }
     }
 }
