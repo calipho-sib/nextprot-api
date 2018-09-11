@@ -270,7 +270,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             } else {
 
                 //Case of Protein propert and mammalian phenotypes
-                annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+                annotation.setEvidences(new ArrayList<>());
 
                 boolean foundGold = statements.stream().anyMatch(s -> s.getValue(StatementField.EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
                 if (foundGold) {
@@ -312,65 +312,11 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
             String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
-            String bot = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
 
-            // TODO: Prevoir le cas d'une interaction avec un isoform specifique (BioType.PROTEIN_ISOFORM)
+            if ( (bioObjectAnnotationHash != null && !bioObjectAnnotationHash.isEmpty()) ||
+                 (bioObjectAccession != null && !bioObjectAccession.isEmpty())) {
 
-            if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
-
-                BioObject bioObject;
-
-                if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
-
-                    if (bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)) {
-
-                        // note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
-                        // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
-                        bioObject = BioObject.internal(BioType.PROTEIN);
-
-                        //// TODO: REMOVE THIS HACK WHEN ISSUE https://issues.isb-sib.ch/browse/NEXTPROT-1513 will be fixed
-                        //// NX_P62158 was split in 3 accessions: NX_P0DP23/CALM1, NX_P0DP24/CALM2 and NX_P0DP25/CALM3
-                        //// BEGIN DIRTY HACK
-						/*
-                        if (bioObjectAccession.equals("NX_P62158")) {
-                            switch (isoformName) {
-                                case "NX_P35499":
-                                    bioObjectAccession = "NX_P0DP23";
-                                    break;
-                                case "NX_Q99250":
-                                    bioObjectAccession = "NX_P0DP23";
-                                    break;
-                                case "NX_Q9UQD0":
-                                    bioObjectAccession = "NX_P0DP23";
-                                    break;
-                                case "NX_Q9Y5Y9":
-                                    bioObjectAccession = "NX_P0DP23";
-                                    break;
-                            }
-                        }
-                        */
-                        ///// END OF HACK
-
-                        bioObject.setAccession(bioObjectAccession);
-                        bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
-
-                        String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                                .orElseThrow(() -> new NextProtException("Cannot create a binary interaction with " + isoformName + ": unknown protein accession " + bioObject.getAccession()))
-                                .getName();
-
-                        bioObject.putPropertyNameValue("proteinName", proteinName);
-                        bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
-                    } else {
-                        throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
-                    }
-                } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
-                    bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
-                    bioObject.setAnnotationHash(bioObjectAnnotationHash);
-                } else {
-                    throw new NextProtException("Category not expected for bioobject " + annotation.getAPICategory());
-                }
-
-                annotation.setBioObject(bioObject);
+                annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
             }
 
             annotations.add(annotation);
@@ -378,4 +324,56 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
 		return annotations;
 	}
+
+	private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
+
+        String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
+        String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+        String bioObjectType = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
+        String bioObjectName = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME);
+
+        BioObject bioObject;
+
+        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory)) {
+
+            if (!bioObjectAccession.startsWith("NX_")) {
+
+                throw new NextProtException("Binary Interaction only expects to be a nextprot entry starting with NX_ but found " + bioObjectAccession + " with type " + bioObjectType);
+            }
+
+            if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+
+                bioObject = BioObject.internal(BioType.PROTEIN);
+
+                String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown protein accession " + bioObjectAccession))
+                        .getName();
+
+                bioObject.putPropertyNameValue("proteinName", proteinName);
+            }
+            // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
+            else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
+
+                bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
+                bioObject.putPropertyNameValue("isoformName", bioObjectAccession);
+            }
+            else {
+                throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
+            }
+
+            bioObject.setAccession(bioObjectAccession);
+            bioObject.putPropertyNameValue("geneName", bioObjectName);
+            bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
+        }
+        else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
+
+            bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
+            bioObject.setAnnotationHash(bioObjectAnnotationHash);
+        }
+        else {
+            throw new NextProtException("Category not expected for bioobject " + annotationCategory);
+        }
+
+        return bioObject;
+    }
 }
