@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A complex variation located on an isoform
@@ -13,6 +14,8 @@ import java.util.List;
  * Created by fnikitin on 05/05/15.
  */
 public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
+
+    private static final Logger LOGGER = Logger.getLogger(PEFFVariantComplex.class.getName());
 
     public PEFFVariantComplex(String isoformAccession, List<Annotation> isoformAnnotations) {
 
@@ -30,12 +33,11 @@ public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
     @Override
     protected boolean selectAnnotation(Annotation annotation) {
 
-        return super.selectAnnotation(annotation) &&
-                (
-                    annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
-                    annotation.getVariant().getVariant().length() == 0 || // deletion
-                    annotation.getVariant().getVariant().length() > 1     // insertion
-                );
+        return super.selectAnnotation(annotation) && isPositional(annotation) &&
+                annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
+                annotation.getVariant().getVariant().length() == 0 || // deletion
+                annotation.getVariant().getVariant().length() > 1     // insertion
+                ;
     }
 
     @Override

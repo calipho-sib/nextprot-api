@@ -92,4 +92,10 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
 
         return annots;
     }
+
+    boolean isPositional(Annotation annotation) {
+
+        return annotation.getStartPositionForIsoform(isoformAccession) != null &&
+                annotation.getEndPositionForIsoform(isoformAccession) != null;
+    }
 }

@@ -32,21 +32,8 @@ public class PEFFVariantSimple extends AnnotationBasedPEFFInformation {
     @Override
     protected boolean selectAnnotation(Annotation annotation) {
 
-        if (!super.selectAnnotation(annotation)) {
-            return false;
-        }
-        else if (annotation.getStartPositionForIsoform(isoformAccession) == null) {
-
-            LOGGER.warning("missing start position, annotation="+annotation.getUniqueName()+", isoform="+isoformAccession);
-            return false;
-        }
-        else if (annotation.getEndPositionForIsoform(isoformAccession) == null) {
-
-            LOGGER.warning("missing end position, annotation="+annotation.getUniqueName()+", isoform="+isoformAccession);
-            return false;
-        }
-
-        return annotation.getStartPositionForIsoform(isoformAccession).intValue() == annotation.getEndPositionForIsoform(isoformAccession).intValue() &&
+        return super.selectAnnotation(annotation) && isPositional(annotation) &&
+                annotation.getStartPositionForIsoform(isoformAccession).intValue() == annotation.getEndPositionForIsoform(isoformAccession).intValue() &&
                 annotation.getVariant().getVariant().length() == 1 && !annotation.getVariant().getVariant().equals("-");
 
     }
