@@ -207,21 +207,22 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
     private boolean doAnnotationIsoformSpecificitiesMergeable(AnnotationIsoformSpecificity dest, AnnotationIsoformSpecificity source, AnnotationCategory category) {
 
-        boolean ret = true;
+        boolean mergeable = true;
 
         if (!Objects.equals(source.getFirstPosition(), dest.getFirstPosition())) {
             LOGGER.severe("Category " + category + ": different first pos dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", pos: src=" + source.getFirstPosition() + ", dest=" + dest.getFirstPosition());
-            ret = false;
+            mergeable = false;
         }
         if (!Objects.equals(source.getLastPosition(), dest.getLastPosition())) {
             LOGGER.severe("Category " + category + ": different last pos dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", pos: src=" + source.getLastPosition() + ", dest=" + dest.getLastPosition());
-            ret = false;
+            mergeable = false;
         }
+        // Mergeable anyway
         if (!Objects.equals(source.getSpecificity(), dest.getSpecificity())) {
-            LOGGER.warning("Category " + category + ": different specificity dest=" + dest.getIsoformAccession() + ", src=" + source.getIsoformAccession() + ", spec: src=" + source.getSpecificity() + ", dest=" + dest.getSpecificity());
+            LOGGER.warning("Category " + category + ": do not reset mapping specificity for isoform " + dest.getIsoformAccession() + ", keeping specificity " + dest.getSpecificity() + " (ignoring src specificity " + source.getSpecificity() + ")");
         }
 
-        return ret;
+        return mergeable;
     }
 
     private void mergeAnnotationIsoformSpecificities(AnnotationIsoformSpecificity dest, AnnotationIsoformSpecificity source) {
