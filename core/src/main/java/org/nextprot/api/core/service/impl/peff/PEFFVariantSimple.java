@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * A variation located on an isoform
@@ -14,8 +13,6 @@ import java.util.logging.Logger;
  * Created by fnikitin on 05/05/15.
  */
 public class PEFFVariantSimple extends AnnotationBasedPEFFInformation {
-
-    private static final Logger LOGGER = Logger.getLogger(PEFFVariantSimple.class.getName());
 
     public PEFFVariantSimple(String isoformAccession, List<Annotation> isoformAnnotations) {
 
@@ -32,7 +29,8 @@ public class PEFFVariantSimple extends AnnotationBasedPEFFInformation {
     @Override
     protected boolean selectAnnotation(Annotation annotation) {
 
-        return super.selectAnnotation(annotation) && isPositional(annotation) &&
+        return super.selectAnnotation(annotation) &&
+                isPositional(annotation) &&
                 annotation.getStartPositionForIsoform(isoformAccession).intValue() == annotation.getEndPositionForIsoform(isoformAccession).intValue() &&
                 annotation.getVariant().getVariant().length() == 1 && !annotation.getVariant().getVariant().equals("-");
 
