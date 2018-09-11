@@ -111,11 +111,9 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
         AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner();
 
-        String destDescription = destAnnotation.getDescription();
-
         for (Annotation sourceAnnotation : sourceAnnotations) {
 
-            destDescription = annotationDescriptionCombiner.combine(destDescription, sourceAnnotation.getDescription());
+            destAnnotation.setDescription(annotationDescriptionCombiner.combine(destAnnotation.getDescription(), sourceAnnotation.getDescription()));
         }
     }
 
