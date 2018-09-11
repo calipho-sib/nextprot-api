@@ -65,7 +65,7 @@ abstract class AnnotationBasedPEFFInformation extends PEFFInformation {
     @Override
     protected String formatValue() {
 
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
 
         List<Annotation> annots = filterAnnotation(isoformAccession);
         annots.sort(createAnnotationComparator(isoformAccession));
