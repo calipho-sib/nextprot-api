@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
@@ -127,7 +128,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	);
     }    
 
-    
+    // TODO: unignore this test
+    @Ignore
     @Test
     public void testSinglePeptideWithUnicityNonUnique() throws Exception {
 
