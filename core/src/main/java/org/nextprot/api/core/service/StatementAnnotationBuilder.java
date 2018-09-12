@@ -345,17 +345,18 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
                 bioObject = BioObject.internal(BioType.PROTEIN);
 
-                String proteinName = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                bioObject.putPropertyNameValue("proteinName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
                         .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown protein accession " + bioObjectAccession))
-                        .getName();
-
-                bioObject.putPropertyNameValue("proteinName", proteinName);
+                        .getName());
             }
             // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
             else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
 
                 bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
-                bioObject.putPropertyNameValue("isoformName", bioObjectAccession);
+
+                bioObject.putPropertyNameValue("isoformName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown isoform accession " + bioObjectAccession))
+                        .getName());
             }
             else {
                 throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
