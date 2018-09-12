@@ -1,12 +1,12 @@
 package org.nextprot.api.core.service.annotation.merge.impl;
 
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.annotation.merge.ObjectMatcher;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class FeaturePositionMatcher implements ObjectMatcher<Map<String, AnnotationIsoformSpecificity>> {
 
@@ -21,24 +21,25 @@ public class FeaturePositionMatcher implements ObjectMatcher<Map<String, Annotat
 
             if (m1.containsKey(name) && m2.containsKey(name) && m1.get(name).hasSameIsoformPositions(m2.get(name))) {
 
-                isoNames.stream()
+                // test other isoforms positions
+                for (String isoName : isoNames.stream()
                         .filter(isoName -> !isoName.equals(name))
                         .filter(isoName -> m1.containsKey(isoName) && m2.containsKey(isoName))
-                        .forEach(isoName -> {
-                            // throw exception if other isoforms do not have same variant at same locations
-                            if (!m1.get(isoName).hasSameIsoformPositions(m2.get(isoName))) {
+                        .collect(Collectors.toList())) {
 
-                                String message = "conflicting positions for " + isoName + ": first map: " +
-                                        m1.get(isoName).getFirstPosition() + "-" + m1.get(isoName).getLastPosition() + " vs second map: " +
-                                        m2.get(isoName).getFirstPosition() + "-" + m2.get(isoName).getLastPosition();
-                                LOGGER.warning(message);
-                                throw new NextProtException(message);
-                        }});
+                    if (!m1.get(isoName).hasSameIsoformPositions(m2.get(isoName))) {
 
-                return true;
+                        String message = "Conflicting positions in other isoform mapping " + isoName + ": first map=" +
+                                m1.get(isoName).getFirstPosition() + "-" + m1.get(isoName).getLastPosition() + ", second map=" +
+                                m2.get(isoName).getFirstPosition() + "-" + m2.get(isoName).getLastPosition();
+                        LOGGER.severe(message);
+
+                        return false;
+                    }
+                }
             }
         }
 
-        return false;
+        return true;
     }
 }
