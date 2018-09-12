@@ -199,8 +199,8 @@ public class ReducedAnnotation implements AnnotationListReduction {
             if (!destProperties.containsKey(srcKeyValue.getKey())) {
                 destBioObject.putPropertyNameValue(srcKeyValue.getKey(), srcKeyValue.getValue());
             } else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
-                throw new NextProtException("unexpected value " + destBioObject.getPropertyValue(srcKeyValue.getKey())
-                        + " for property " + srcKeyValue.getKey() + " (expected: " + srcKeyValue.getValue() + ")");
+                LOGGER.severe("Could not reset BioObject property '" + srcKeyValue.getKey() + "' for isoform "+ destBioObject.getAccession() +
+                        ", keeping value '" + srcKeyValue.getValue() + "' (ignoring src value '" + destBioObject.getPropertyValue(srcKeyValue.getKey()) + "')");
             }
         }
     }
@@ -219,7 +219,7 @@ public class ReducedAnnotation implements AnnotationListReduction {
         }
         // Mergeable anyway
         if (!Objects.equals(source.getSpecificity(), dest.getSpecificity())) {
-            LOGGER.warning("Category " + category + ": do not reset mapping specificity for isoform " + dest.getIsoformAccession() + ", keeping specificity " + dest.getSpecificity() + " (ignoring src specificity " + source.getSpecificity() + ")");
+            LOGGER.warning("Category " + category + ": could not reset mapping specificity for isoform " + dest.getIsoformAccession() + ", keeping specificity '" + dest.getSpecificity() + "' (ignoring src specificity '" + source.getSpecificity() + "')");
         }
 
         return mergeable;
