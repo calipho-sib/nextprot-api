@@ -109,9 +109,9 @@ public class AnnotationDescriptionCombiner {
 
             Description combinedDescription = new Description();
 
-            if (!ptm.equals(description.getPtm())) {
+            if (!ptm.equalsIgnoreCase(description.getPtm())) {
 
-                throw new IllegalStateException("Different ptms to combine: cannot combine description object '"+this.format()+ "' with '"+ description.format() + "' ("+ptm +" != "+description.getPtm()+")");
+                LOGGER.warning("Cannot combine description object '"+this.format()+ "' with '"+ description.format() + "' because of different ptm names: ("+ptm +" != "+description.getPtm()+")");
             }
 
             combinedDescription.setPtm(ptm);
@@ -188,9 +188,7 @@ public class AnnotationDescriptionCombiner {
 
             if (!tokenList.isEmpty()) {
 
-                String warning = "all description tokens have not been totally consumed: "+ tokenList.getTokens();
-                LOGGER.warning(warning);
-                //throw new ParseException(warning, -1);
+                LOGGER.warning("all description tokens have not been totally consumed: "+ tokenList.getTokens());
             }
 
             return desc;
