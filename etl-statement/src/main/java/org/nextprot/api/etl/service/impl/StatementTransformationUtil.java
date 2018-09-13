@@ -65,7 +65,7 @@ public class StatementTransformationUtil {
 
                     String errorMessage = "ERROR: cannot compute target isoforms: isoform=" + statement.getValue(NEXTPROT_ACCESSION) + ", statement=" +
                             statement.getValue(GENE_NAME) + " | " + statement.getValue(ANNOT_SOURCE_ACCESSION) + " | " + statement.getValue(ANNOTATION_NAME) +
-                            "(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error=" + error.getMessage() + "(" + error.getCauses().values() + ")";
+                            "(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error=" + error.getMessage();
 
                     LOGGER.error(errorMessage);
                     //throw new NextProtException(errorMessage);

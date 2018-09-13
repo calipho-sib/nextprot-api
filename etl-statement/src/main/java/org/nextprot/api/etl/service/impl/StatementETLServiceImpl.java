@@ -99,24 +99,21 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     private Set<Statement> extractValidStatements(ReportBuilder report, Set<Statement> rawStatements) {
 
-        Set<Statement> validStatements = new HashSet<>();
-
-        Set<String> validEntryAccessions = masterIdentifierService.findUniqueNames();
+        Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
         Set<String> statementEntryAccessions = rawStatements.stream()
                 .map(statement -> extractEntryAccession(statement))
                 .collect(Collectors.toSet());
 
-        Sets.SetView<String> diff = Sets.difference(statementEntryAccessions, validEntryAccessions);
+        Sets.SetView<String> invalidStatementEntryAccessions = Sets.difference(statementEntryAccessions, allValidEntryAccessions);
 
-        if (!diff.isEmpty()) {
+        if (!invalidStatementEntryAccessions.isEmpty()) {
 
-            validStatements = rawStatements.stream()
-                    .filter(statement -> validEntryAccessions.contains(extractEntryAccession(statement)))
-                    .collect(Collectors.toSet());
-            report.addWarning("Error: skipping statements with invalid entry accessions "+diff);
+            report.addWarning("Error: skipping statements with invalid entry accessions "+invalidStatementEntryAccessions);
         }
 
-        return validStatements;
+        return rawStatements.stream()
+                .filter(statement -> allValidEntryAccessions.contains(extractEntryAccession(statement)))
+                .collect(Collectors.toSet());
     }
 
     private String extractEntryAccession(Statement statement) {

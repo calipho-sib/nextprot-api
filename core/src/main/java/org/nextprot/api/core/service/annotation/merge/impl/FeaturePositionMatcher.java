@@ -1,12 +1,13 @@
 package org.nextprot.api.core.service.annotation.merge.impl;
 
+import com.google.common.collect.Sets;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.annotation.merge.ObjectMatcher;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class FeaturePositionMatcher implements ObjectMatcher<Map<String, AnnotationIsoformSpecificity>> {
 
@@ -15,31 +16,31 @@ public class FeaturePositionMatcher implements ObjectMatcher<Map<String, Annotat
     @Override
     public boolean match(Map<String, AnnotationIsoformSpecificity> m1, Map<String, AnnotationIsoformSpecificity> m2) {
 
-        Set<String> isoNames = (m1.size() > m2.size()) ? m1.keySet() : m2.keySet();
+        Set<String> commonIsoMaps = Sets.intersection(m1.keySet(), m2.keySet());
+        Set<String> sameIsoMaps = new HashSet<>();
 
-        for (String name : isoNames) {
+        for (String isoformName : commonIsoMaps) {
 
-            if (m1.containsKey(name) && m2.containsKey(name) && m1.get(name).hasSameIsoformPositions(m2.get(name))) {
+            if (m1.get(isoformName).hasSameIsoformPositions(m2.get(isoformName))) {
 
-                // test other isoforms positions
-                for (String isoName : isoNames.stream()
-                        .filter(isoName -> !isoName.equals(name))
-                        .filter(isoName -> m1.containsKey(isoName) && m2.containsKey(isoName))
-                        .collect(Collectors.toList())) {
-
-                    if (!m1.get(isoName).hasSameIsoformPositions(m2.get(isoName))) {
-
-                        String message = "Conflicting positions in other isoform mapping " + isoName + ": first map=" +
-                                m1.get(isoName).getFirstPosition() + "-" + m1.get(isoName).getLastPosition() + ", second map=" +
-                                m2.get(isoName).getFirstPosition() + "-" + m2.get(isoName).getLastPosition();
-                        LOGGER.severe(message);
-
-                        return false;
-                    }
-                }
+                sameIsoMaps.add(isoformName);
             }
         }
 
-        return true;
+        if (!sameIsoMaps.isEmpty()) {
+
+            if (sameIsoMaps.size() == commonIsoMaps.size()) {
+                return true;
+            }
+
+            Sets.difference(commonIsoMaps, sameIsoMaps).forEach(isoName -> {
+                String message = "Conflicting positions in other isoform mapping " + isoName + ": first map=" +
+                        m1.get(isoName).getFirstPosition() + "-" + m1.get(isoName).getLastPosition() + ", second map=" +
+                        m2.get(isoName).getFirstPosition() + "-" + m2.get(isoName).getLastPosition();
+                LOGGER.severe(message);
+            });
+        }
+
+        return false;
     }
 }

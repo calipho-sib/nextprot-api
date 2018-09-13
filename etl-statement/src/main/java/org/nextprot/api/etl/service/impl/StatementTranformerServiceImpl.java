@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
 
+    private static Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
+
     @Autowired
     private IsoformService isoformService;
 
@@ -37,14 +40,14 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
         // TODO: additionnal field should be defined outside nextprot-api
         if (source == NextProtSource.GlyConnect) {
-            rawStatements = copyRawStatementsAddStatementIdAndEntryAccessionFieldsHACK(rawStatements, report);
+            rawStatements = setAdditionalFieldsForGlyConnectStatementsHACK(rawStatements, report);
         }
 
         return new StatementTransformer(rawStatements, report).transform();
     }
 
     // TODO: additionnal field should be defined outside nextprot-api
-    private Set<Statement> copyRawStatementsAddStatementIdAndEntryAccessionFieldsHACK(Set<Statement> statements, ReportBuilder report) {
+    private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements, ReportBuilder report) {
 
         Set<Statement> statementSet = new HashSet<>();
         Set<Statement> invalidStatements = new HashSet<>();
@@ -55,6 +58,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                         .addMap(rs)
                         .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
                         .addField(StatementField.RESOURCE_TYPE, "database")
+                        .addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
                         .build());
             } else {
                 invalidStatements.add(rs);
@@ -69,6 +73,14 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
         return statementSet;
     }
+
+    private String buildAnnotationNameForGlyConnect(Statement statement) {
+
+        return statement.getValue(StatementField.NEXTPROT_ACCESSION) +
+                "." + statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) +
+                "_" + statement.getValue(StatementField.LOCATION_BEGIN);
+    }
+    ////// END TODO
 
     public void setIsoformMappingService(IsoformMappingService isoformMappingService) {
         this.isoformMappingService = isoformMappingService;
@@ -177,6 +189,8 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             TargetIsoformSet tis = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
 
             if (tis.isEmpty()) {
+
+                LOGGER.warn("Skipping statement "+simpleStatement.getValue(StatementField.ANNOTATION_NAME) + " (source="+simpleStatement.getValue(StatementField.ASSIGNED_BY)+")");
                 return Optional.empty();
             }
 
