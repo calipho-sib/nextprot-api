@@ -166,6 +166,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             }
             else if (resourceType.equals("database")) {
                 evidence.setResourceId(findXrefId(s));
+                evidence.setResourceAccession(s.getValue(StatementField.REFERENCE_ACCESSION));
+                evidence.setResourceDb(s.getValue(StatementField.REFERENCE_DATABASE));
             }
             else {
                 throw new NextProtException("resource type "+ resourceType + " not supported");
