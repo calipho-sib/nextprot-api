@@ -49,6 +49,7 @@ public interface AnnotationSimilarityPredicate {
                 conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getVariant, (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())));
                 conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new FeaturePositionMatcher()));
                 break;
+            case GLYCOSYLATION_SITE:
             case MODIFIED_RESIDUE:
                 conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode, (cv1, cv2) -> cv1.equals(cv2)));
                 conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new FeaturePositionMatcher()));
