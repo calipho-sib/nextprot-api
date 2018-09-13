@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
+
+    private static Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
 
     @Autowired
     private IsoformService isoformService;
@@ -186,6 +189,8 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             TargetIsoformSet tis = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
 
             if (tis.isEmpty()) {
+
+                LOGGER.warn("Skipping statement "+simpleStatement.getValue(StatementField.ANNOTATION_NAME) + " (source="+simpleStatement.getValue(StatementField.ASSIGNED_BY)+")");
                 return Optional.empty();
             }
 
