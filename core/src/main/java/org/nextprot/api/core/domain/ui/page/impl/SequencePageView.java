@@ -116,7 +116,7 @@ public class SequencePageView extends PageViewBase {
 				BIO_MUTA,
 				
 				// PROTEIN FAMILY/GROUP DATABASES
-				IMGT_GENE_DB,
+				IMGT_GENE_DB, UNILECTIN,
 				
 				// PROTEIN-PROTEIN INTERACTION DATABASES
 				ELM,
