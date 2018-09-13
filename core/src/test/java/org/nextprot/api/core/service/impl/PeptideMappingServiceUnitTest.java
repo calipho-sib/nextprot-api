@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtilsTest;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -116,8 +116,8 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		
 		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
 		List<Annotation> annotations = new ArrayList<>(annotationMap.values());
-		Map<String,PeptideUnicity> pepNameUnicityMap = new HashMap<>();
-		pepNameUnicityMap.put("NX_PEPT00113713", PeptideUnicity.createPeptideUnicityUnique());
+		Map<String, SequenceUnicity> pepNameUnicityMap = new HashMap<>();
+		pepNameUnicityMap.put("NX_PEPT00113713", SequenceUnicity.createSequenceUnicityUnique());
 		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, pepNameUnicityMap);
 		
 		assertTrue(annotationMap.size()==2);
@@ -213,9 +213,9 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		evMap.put(pep2, evidences);
 		
 
-		Map<String,PeptideUnicity> pepNameUnicityMap = new HashMap<>();
-		pepNameUnicityMap.put("NX_PEPT00113713", PeptideUnicity.createPeptideUnicityUnique());
-		pepNameUnicityMap.put("NX_PEPT00000033", PeptideUnicity.createPeptideUnicityNonUnique(null));
+		Map<String, SequenceUnicity> pepNameUnicityMap = new HashMap<>();
+		pepNameUnicityMap.put("NX_PEPT00113713", SequenceUnicity.createSequenceUnicityUnique());
+		pepNameUnicityMap.put("NX_PEPT00000033", SequenceUnicity.createSequenceUnicityNonUnique(null));
 
 		
 		// apply same mechanism as service: should probably mock the DAO methods and call the service but...

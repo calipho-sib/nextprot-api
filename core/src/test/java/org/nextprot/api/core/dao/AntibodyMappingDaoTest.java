@@ -7,7 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -70,6 +72,12 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-1").getLastPosition().intValue());
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-2").getLastPosition().intValue());
 
+		Assert.assertEquals(1, annotation.getProperties().size());
+		AnnotationProperty property = annotation.getProperties().iterator().next();
+		Assert.assertEquals(annotId, property.getAnnotationId());
+		Assert.assertEquals(PropertyApiModel.NAME_ANTIBODY_NAME, property.getName());
+		Assert.assertEquals("HPA036302", property.getValue());
+
 		tmpId = 9547085;
 		annotId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_OFFSET;
 		evidenceId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET;
@@ -89,6 +97,12 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		Assert.assertEquals("evidence", annotation.getEvidences().get(0).getResourceAssociationType());
 		Assert.assertEquals("ECO:0000154", annotation.getEvidences().get(0).getEvidenceCodeAC());
 		Assert.assertTrue(!annotation.getEvidences().get(0).isNegativeEvidence());
+
+		Assert.assertEquals(1, annotation.getProperties().size());
+		property = annotation.getProperties().iterator().next();
+		Assert.assertEquals(annotId, property.getAnnotationId());
+		Assert.assertEquals(PropertyApiModel.NAME_ANTIBODY_NAME, property.getName());
+		Assert.assertEquals("HPA036303", property.getValue());
 
 		Assert.assertEquals(2, annotation.getTargetingIsoformsMap().size());
 		Assert.assertTrue(annotation.getTargetingIsoformsMap().containsKey("NX_P06213-1"));

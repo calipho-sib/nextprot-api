@@ -2,7 +2,6 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,36 +9,36 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PeptideUnicityService;
+import org.nextprot.api.core.service.SequenceUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
-
-
 @Service
-class PeptideUnicityServiceImpl implements PeptideUnicityService {
+class SequenceUnicityServiceImpl implements SequenceUnicityService {
 
 	@Autowired private IsoformService isoService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
-	
-    private static final Logger LOGGER = Logger.getLogger(PeptideUnicityServiceImpl.class);
+	@Autowired private AntibodyMappingDao antibodyMappingDao;
+
+	private static final Logger LOGGER = Logger.getLogger(SequenceUnicityServiceImpl.class);
 	
 	@Override
-	public PeptideUnicity getPeptideUnicityFromMappingIsoforms(Set<String> mappingIsoforms) {
+	public SequenceUnicity getSequenceUnicityFromMappingIsoforms(Set<String> mappingIsoforms) {
 		
 		Set<String> entryAcs = new TreeSet<>();
-		mappingIsoforms.stream().forEach(ac -> entryAcs.add(ac.split("-")[0]));
+		mappingIsoforms.forEach(ac -> entryAcs.add(ac.split("-")[0]));
 		
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// CASE 1 - matches isoform(s) of a single entry
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 		
 		if (entryAcs.size()==1) {
-			return PeptideUnicity.createPeptideUnicityUnique();  
+			return SequenceUnicity.createSequenceUnicityUnique();
 		} 
 		
 		else {
@@ -57,45 +56,64 @@ class PeptideUnicityServiceImpl implements PeptideUnicityService {
 			// CASE 2 - matches isoforms of entries sharing an equivalent isoform
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 			if (isoService.getSetsOfEntriesHavingAnEquivalentIsoform().stream().anyMatch(s -> s.equals(entryAcs))) {
-				return PeptideUnicity.createPeptideUnicityPseudoUnique(equivalentIsoSet);					
+				return SequenceUnicity.createSequenceUnicityPseudoUnique(equivalentIsoSet);
 			}	
 			
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 			// CASE 3 - matches isoforms of entries not all sharing an equivalent isoform	
 			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 			else {
-				return PeptideUnicity.createPeptideUnicityNonUnique(equivalentIsoSet);
+				return SequenceUnicity.createSequenceUnicityNonUnique(equivalentIsoSet);
 			}
 		}
 	}
 
 	@Override
 	@Cacheable("peptide-name-unicity-map")
-	public Map<String,PeptideUnicity> getPeptideNameUnicityMap() {
+	public Map<String, SequenceUnicity> getPeptideNameUnicityMap() {
 
 		LOGGER.info("Starting, thread: " + Thread.currentThread().getId());
 
-		Map<String,PeptideUnicity> result = new HashMap<>();
 		List<String> list = peptideMappingDao.findPeptideIsoformMappingsList();
 
 		LOGGER.info("Got mapping iso-pep from db, size: " + list.size() + " , thread: " + Thread.currentThread().getId());
 
-		for (int i=0;i<list.size();i++) {
-			String row = list.get(i);
-			String[] fields = row.split(":");
-			String pep = fields[0];
-			String[] isolist = fields[1].split(",");
-			Set<String> mappedIsoSet = new HashSet<>(Arrays.asList(isolist));
-			PeptideUnicity pu = getPeptideUnicityFromMappingIsoforms(mappedIsoSet);
-			result.put(pep, pu);
-		}
-		
-		LOGGER.info("Computed uncity for peptides, size: " + result.size() + " , thread: " + Thread.currentThread().getId());
+		Map<String, SequenceUnicity> result = getUnicityMap(list);
+
+		LOGGER.info("Computed unicity for peptides, size: " + result.size() + " , thread: " + Thread.currentThread().getId());
 		LOGGER.info("Done" + " , thread: " + Thread.currentThread().getId());
 		
 		return result;
 	}
-	
 
-	
+	@Override
+	@Cacheable("antibody-name-unicity-map")
+	public Map<String, SequenceUnicity> getAntibodyNameUnicityMap() {
+		LOGGER.info("Starting, thread: " + Thread.currentThread().getId());
+
+		List<String> list = antibodyMappingDao.findAntibodyIsoformMappingsList();
+
+		LOGGER.info("Got mapping iso-ab from db, size: " + list.size() + " , thread: " + Thread.currentThread().getId());
+
+		Map<String, SequenceUnicity> result = getUnicityMap(list);
+
+		LOGGER.info("Computed unicity for antibodies, size: " + result.size() + " , thread: " + Thread.currentThread().getId());
+		LOGGER.info("Done" + " , thread: " + Thread.currentThread().getId());
+
+		return result;
+	}
+
+	private Map<String, SequenceUnicity> getUnicityMap(List<String> list) {
+		Map<String, SequenceUnicity> result = new HashMap<>();
+
+		for (String row : list) {
+			String[] fields = row.split(":");
+			String pep = fields[0];
+			String[] isolist = fields[1].split(",");
+			Set<String> mappedIsoSet = Arrays.stream(isolist).collect(Collectors.toSet());
+			SequenceUnicity pu = getSequenceUnicityFromMappingIsoforms(mappedIsoSet);
+			result.put(pep, pu);
+		}
+		return result;
+	}
 }

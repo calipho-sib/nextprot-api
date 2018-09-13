@@ -5,12 +5,12 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
-import org.nextprot.api.core.service.PeptideUnicityService;
+import org.nextprot.api.core.service.SequenceUnicityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	@Autowired private PeptideNamesService peptideNamesService;
-    @Autowired private PeptideUnicityService peptideUnicityService;
+    @Autowired private SequenceUnicityService sequenceUnicityService;
 
 
 	@Override
@@ -50,7 +50,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		List<Annotation> annotations = new ArrayList<>(annotationMap.values());
 		if (annotations.isEmpty()) return annotations;
 		
-		attachPeptidePropertiesToAnnotations(annotations, peptideUnicityService.getPeptideNameUnicityMap());
+		attachPeptidePropertiesToAnnotations(annotations, sequenceUnicityService.getPeptideNameUnicityMap());
 		
 		List<String> pepNames = this.peptideNamesService.findAllPeptideNamesByMasterId(uniqueName);
 		Map<String,List<AnnotationEvidence>> evidences = this.peptideMappingDao.findPeptideAnnotationEvidencesMap(pepNames, withNatural); // nat=true,synth=false
@@ -73,11 +73,11 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return pepNameProperty.getValue();
 	}
 	
-	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String,PeptideUnicity> pepNamePuMap) {
+	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String, SequenceUnicity> pepNamePuMap) {
 		for (Annotation annot: annotations) {
 			String pepName = getMappingAnnotationPeptideName(annot);
-			PeptideUnicity pu = pepNamePuMap.get(pepName);
-			String proteotypicValue = pu.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE) ? "N" : "Y";
+			SequenceUnicity pu = pepNamePuMap.get(pepName);
+			String proteotypicValue = pu.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE) ? "N" : "Y";
 			String unicityValue = pu.getValue().name();
 			annot.addProperty(createAnnotationProperty(annot.getAnnotationId(), pepName, PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, proteotypicValue));
 			annot.addProperty(createAnnotationProperty(annot.getAnnotationId(), pepName, PropertyApiModel.NAME_PEPTIDE_UNICITY, unicityValue));

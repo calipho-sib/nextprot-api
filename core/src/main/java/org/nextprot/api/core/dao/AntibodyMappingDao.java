@@ -7,4 +7,6 @@ import java.util.List;
 public interface AntibodyMappingDao {
 
 	List<Annotation> findAntibodyMappingAnnotationsById(long masterId);
+
+	List<String> findAntibodyIsoformMappingsList();
 }

@@ -362,6 +362,11 @@
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
 	
+	<cache name="antibody-name-unicity-map" overflowToOffHeap="false"
+		   overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		   memoryStoreEvictionPolicy="LRU">
+	</cache>
+
 	<cache name="isoforms-md5" overflowToOffHeap="false" overflowToDisk="true"
            diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
