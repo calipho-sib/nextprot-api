@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.annotation.merge.AnnotationSimilarityPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,12 +31,7 @@ public class AnnotationFinderTest {
     @Test
     public void shouldFindSameAnnot() {
 
-        AnnotationFinder finder = new AnnotationFinder() {
-            @Override
-            protected AnnotationSimilarityPredicate newPredicate(Annotation annotation) {
-                return newApiCatCriteria();
-            }
-        };
+        AnnotationFinder finder = new AnnotationFinder((c)-> (a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
 
         Optional<Annotation> optAnnotation = finder.findAnnotation(
                 mockAnnotation(AnnotationCategory.VARIANT),
@@ -64,12 +58,7 @@ public class AnnotationFinderTest {
     @Test
     public void shouldFindOneAnnotIfMultipleMatches() {
 
-        AnnotationFinder finder = new AnnotationFinder() {
-            @Override
-            protected AnnotationSimilarityPredicate newPredicate(Annotation annotation) {
-                return newApiCatCriteria();
-            }
-        };
+        AnnotationFinder finder = new AnnotationFinder((c)-> (a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
 
         Annotation annot = new Annotation();
         annot.setAnnotationName("joe");
@@ -83,10 +72,5 @@ public class AnnotationFinderTest {
         Assert.assertTrue(optAnnotation.isPresent());
         Assert.assertEquals(AnnotationCategory.VARIANT, optAnnotation.get().getAPICategory());
         Assert.assertEquals("joe", optAnnotation.get().getAnnotationName());
-    }
-
-    private static AnnotationSimilarityPredicate newApiCatCriteria() {
-
-        return (a1, a2) -> a1.getAPICategory() == a2.getAPICategory();
     }
 }

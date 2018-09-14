@@ -4,18 +4,25 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.annotation.merge.impl.FeaturePositionMatcher;
+import org.nextprot.api.core.service.annotation.merge.impl.ObjectSimilarityPredicate;
+import org.nextprot.api.core.service.annotation.merge.impl.SimilarityPredicateAlternative;
+import org.nextprot.api.core.service.annotation.merge.impl.SimilarityPredicateConjunctive;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SimilarGroupBuilder {
 
     private final List<Annotation> uniqueAnnotations;
+    private final AnnotationGroupFinder groupFinder;
 
     public SimilarGroupBuilder(List<Annotation> uniqueAnnotations) {
 
         checkUnicity(uniqueAnnotations);
         this.uniqueAnnotations = new ArrayList<>(uniqueAnnotations);
+        this.groupFinder = new AnnotationGroupFinder();
     }
 
     // TODO: should we check the unicity of annotations ?
@@ -39,12 +46,10 @@ public class SimilarGroupBuilder {
             return similarAnnotationGroups;
         }
 
-        AnnotationGroupFinder finder = new AnnotationGroupFinder();
-
         for (Annotation otherAnnotation : otherAnnotations) {
 
             Optional<SimilarAnnotationGroup> foundAnnotationGroup =
-                    finder.findSimilarAnnotationGroup(otherAnnotation, similarAnnotationGroups);
+                    groupFinder.findSimilarAnnotationGroup(otherAnnotation, similarAnnotationGroups);
 
             if (foundAnnotationGroup.isPresent()) {
                 try {
@@ -68,7 +73,11 @@ public class SimilarGroupBuilder {
      */
     private static class AnnotationGroupFinder {
 
-        private final AnnotationFinder annotationFinder = new AnnotationFinder();
+        private final AnnotationFinder annotationFinder;
+
+        public AnnotationGroupFinder() {
+            this.annotationFinder = new AnnotationFinder();
+        }
 
         private Optional<SimilarAnnotationGroup> findSimilarAnnotationGroup(Annotation searchedAnnotation, Collection<SimilarAnnotationGroup> similarAnnotationGroups) {
 
@@ -83,21 +92,73 @@ public class SimilarGroupBuilder {
 
     public static class AnnotationFinder {
 
+        private final Function<AnnotationCategory, AnnotationSimilarityPredicate> predicateFunc;
+
+        public AnnotationFinder() {
+
+            this((c) -> newSimilarityPredicate(c));
+        }
+
+        public AnnotationFinder(Function<AnnotationCategory, AnnotationSimilarityPredicate> predicateFunc) {
+
+            Preconditions.checkNotNull(predicateFunc);
+            this.predicateFunc = predicateFunc;
+        }
+
         public Optional<Annotation> findAnnotation(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
-            AnnotationSimilarityPredicate predicate = newPredicate(searchedAnnotation);
-
             for (Annotation annotation : annotations) {
-                if (predicate.isSimilar(searchedAnnotation, annotation))
+                if (predicateFunc.apply(searchedAnnotation.getAPICategory()).isSimilar(searchedAnnotation, annotation))
                     return Optional.of(annotation);
             }
 
             return Optional.empty();
         }
 
-        protected AnnotationSimilarityPredicate newPredicate(Annotation annotation) {
+        /**
+         * Static factory method that return a default predicate specific of the given category
+         * @param category the annotation category to estimate similarity
+         */
+        static AnnotationSimilarityPredicate newSimilarityPredicate(AnnotationCategory category) {
 
-            return AnnotationSimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory());
+            Preconditions.checkNotNull(category);
+
+            List<AnnotationSimilarityPredicate> conjunctivePredicates = new ArrayList<>();
+            conjunctivePredicates.add((a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
+
+            switch (category) {
+                case GO_BIOLOGICAL_PROCESS:
+                case GO_CELLULAR_COMPONENT:
+                case GO_MOLECULAR_FUNCTION:
+                    // TODO: there is a 'is_negative' field to consider in the future
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode));
+                    break;
+                case VARIANT:
+                case MUTAGENESIS:
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getVariant, (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())));
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new FeaturePositionMatcher()));
+                    break;
+                case GLYCOSYLATION_SITE:
+                case MODIFIED_RESIDUE:
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode, (cv1, cv2) -> cv1.equals(cv2)));
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new FeaturePositionMatcher()));
+                    break;
+                case BINARY_INTERACTION:
+                case SMALL_MOLECULE_INTERACTION:
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getBioObject, (bo1, bo2) -> bo1.getAccession().equals(bo2.getAccession()) && bo1.getDatabase().equalsIgnoreCase(bo2.getDatabase())));
+                    break;
+                case PTM_INFO:
+                    conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getDescription, (d1, d2) -> Objects.equals(d1, d2)));
+                    break;
+                default:
+                    return (a1, a2) -> false;
+            }
+
+            List<AnnotationSimilarityPredicate> alternativePredicates = new ArrayList<>();
+            alternativePredicates.add((a1, a2) -> a1 == a2);
+            alternativePredicates.add(new SimilarityPredicateConjunctive(conjunctivePredicates));
+
+            return new SimilarityPredicateAlternative(alternativePredicates);
         }
     }
 
