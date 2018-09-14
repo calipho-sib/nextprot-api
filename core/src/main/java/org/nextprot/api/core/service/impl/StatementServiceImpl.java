@@ -58,9 +58,9 @@ public class StatementServiceImpl implements StatementService {
     }
 
 
-	@Cacheable("statement-entry-annotations")
-	@Override
-	public List<Annotation> getAnnotations(String entryAccession) {
+    @Cacheable("statement-entry-annotations")
+    @Override
+    public List<Annotation> getAnnotations(String entryAccession) {
 
         List<Annotation> list = getProteoformEntryAnnotations(entryAccession);
         list.addAll(getNormalEntryAnnotations(entryAccession));
