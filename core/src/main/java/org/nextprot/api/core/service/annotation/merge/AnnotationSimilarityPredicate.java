@@ -10,6 +10,7 @@ import org.nextprot.api.core.service.annotation.merge.impl.SimilarityPredicateCo
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Defines the contract to evaluate similarity between 2 annotations
@@ -30,9 +31,6 @@ public interface AnnotationSimilarityPredicate {
     static AnnotationSimilarityPredicate newSimilarityPredicate(AnnotationCategory category) {
 
         Preconditions.checkNotNull(category);
-
-        List<AnnotationSimilarityPredicate> alternativePredicates = new ArrayList<>();
-        alternativePredicates.add((a1, a2) -> a1 == a2);
 
         List<AnnotationSimilarityPredicate> conjunctivePredicates = new ArrayList<>();
         conjunctivePredicates.add((a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
@@ -58,10 +56,15 @@ public interface AnnotationSimilarityPredicate {
             case SMALL_MOLECULE_INTERACTION:
                 conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getBioObject, (bo1, bo2) -> bo1.getAccession().equals(bo2.getAccession()) && bo1.getDatabase().equalsIgnoreCase(bo2.getDatabase())));
                 break;
+            case PTM_INFO:
+                conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getDescription, (d1, d2) -> Objects.equals(d1, d2)));
+                break;
             default:
                 return (a1, a2) -> false;
         }
 
+        List<AnnotationSimilarityPredicate> alternativePredicates = new ArrayList<>();
+        alternativePredicates.add((a1, a2) -> a1 == a2);
         alternativePredicates.add(new SimilarityPredicateConjunctive(conjunctivePredicates));
 
         return new SimilarityPredicateAlternative(alternativePredicates);
