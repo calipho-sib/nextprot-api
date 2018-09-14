@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StatementServiceImpl implements StatementService {
@@ -72,7 +73,8 @@ public class StatementServiceImpl implements StatementService {
     public Set<DbXref> findDbXrefs(String entryAccession) {
 
         return statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession).stream()
-                .map(statement -> createDbXref(statement))
+                .map(statement -> Optional.ofNullable(createDbXref(statement)))
+                .flatMap(xref -> xref.map(Stream::of).orElseGet(Stream::empty))
                 .collect(Collectors.toSet());
     }
 
