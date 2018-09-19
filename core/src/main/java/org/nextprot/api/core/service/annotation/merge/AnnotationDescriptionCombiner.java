@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.text.ParseException;
 import java.util.*;
@@ -33,10 +34,14 @@ public class AnnotationDescriptionCombiner {
 
     private static final Logger LOGGER = Logger.getLogger(AnnotationDescriptionCombiner.class.getName());
 
+    private final Annotation annotation;
     private final DescriptionParser parser;
 
-    public AnnotationDescriptionCombiner() {
+    public AnnotationDescriptionCombiner(Annotation annotation) {
 
+        Preconditions.checkNotNull(annotation);
+
+        this.annotation = annotation;
         parser = new DescriptionParser();
     }
 
@@ -53,9 +58,9 @@ public class AnnotationDescriptionCombiner {
             Description desc2 = parser.parse(secondDescription);
 
             return desc1.combine(desc2).format();
-        } catch (ParseException e) {
+        } catch (ParseException | CombineException e) {
 
-            LOGGER.warning("keeping description "+firstDescription+": could not combine it with description "+secondDescription);
+            LOGGER.warning("Warning for annotation "+annotation.getUniqueName()+": keeping description "+firstDescription+": "+ e.getMessage());
             return firstDescription;
         }
     }
@@ -105,13 +110,13 @@ public class AnnotationDescriptionCombiner {
             this.inVitro = inVitro;
         }
 
-        public Description combine(Description description) {
+        public Description combine(Description description) throws CombineException {
 
             Description combinedDescription = new Description();
 
             if (!ptm.equalsIgnoreCase(description.getPtm())) {
 
-                LOGGER.warning("Cannot combine description object '"+this.format()+ "' with '"+ description.format() + "' because of different ptm names: ("+ptm +" != "+description.getPtm()+")");
+                throw new CombineException(this, description);
             }
 
             combinedDescription.setPtm(ptm);
@@ -177,18 +182,18 @@ public class AnnotationDescriptionCombiner {
 
         public Description parse(String description) throws ParseException {
 
-            TokenList tokenList = new TokenList(description);
+            TokenListParser tokenListParser = new TokenListParser(description);
 
             Description desc = new Description();
 
-            desc.setPtm(tokenList.consumeNextToken());
-            desc.setAlternate(tokenList.consumeNextTokenIfMatch(new TokenList.Equals("alternate")).isPresent());
-            desc.addAllEnzymes(buildEnzymeList(tokenList.consumeNextTokenIfMatch(new TokenList.StartsWith("by")).orElse("")));
-            desc.setInVitro(tokenList.consumeNextTokenIfMatch(new TokenList.Equals("in vitro")).isPresent());
+            desc.setPtm(tokenListParser.consumeNextToken());
+            desc.setAlternate(tokenListParser.consumeNextTokenIfMatch(new TokenListParser.Equals("alternate")).isPresent());
+            desc.addAllEnzymes(buildEnzymeList(tokenListParser.consumeNextTokenIfMatch(new TokenListParser.StartsWith("by")).orElse("")));
+            desc.setInVitro(tokenListParser.consumeNextTokenIfMatch(new TokenListParser.Equals("in vitro")).isPresent());
 
-            if (!tokenList.isEmpty()) {
+            if (!tokenListParser.isEmpty()) {
 
-                LOGGER.warning("all description tokens have not been totally consumed: "+ tokenList.getTokens());
+                LOGGER.warning("all description tokens have not been totally consumed: "+ tokenListParser.getTokens());
             }
 
             return desc;
@@ -203,11 +208,11 @@ public class AnnotationDescriptionCombiner {
                     .split(byEnzymes));
         }
 
-        private static class TokenList {
+        private static class TokenListParser {
 
             private final LinkedList<String> tokens;
 
-            private TokenList(String description) {
+            private TokenListParser(String description) {
 
                 Preconditions.checkNotNull(description);
 
@@ -279,6 +284,14 @@ public class AnnotationDescriptionCombiner {
                     return token.startsWith(startedValue);
                 }
             }
+        }
+    }
+
+    static class CombineException extends Exception {
+
+        CombineException(Description desc, Description other) {
+
+            super("Cannot combine description object '"+desc.format()+ "' with '"+ other.format() + "' because of different ptm names: ("+desc.getPtm() +" != "+other.getPtm()+")");
         }
     }
 }

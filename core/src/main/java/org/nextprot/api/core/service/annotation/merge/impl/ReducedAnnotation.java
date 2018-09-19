@@ -109,7 +109,7 @@ public class ReducedAnnotation implements AnnotationListReduction {
      */
     private void updateDestDescription() {
 
-        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner();
+        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner(destAnnotation);
 
         for (Annotation sourceAnnotation : sourceAnnotations) {
 
