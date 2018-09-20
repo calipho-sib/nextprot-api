@@ -16,197 +16,182 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
-	protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
+    protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
 
-	protected TerminologyService terminologyService;
-	protected PublicationService publicationService;
-	protected MainNamesService mainNamesService;
-	protected DbXrefService dbXrefService;
+    protected TerminologyService terminologyService;
+    protected PublicationService publicationService;
+    protected MainNamesService mainNamesService;
+    protected DbXrefService dbXrefService;
 
-	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
-	
-	protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService){
-		this.terminologyService = terminologyService;
-		this.publicationService = publicationService;
-		this.mainNamesService = mainNamesService;
-		this.dbXrefService= dbXrefService;
-	}
-	
-	
-	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
-		if (propertyValue != null) {
-			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
-			prop.setPropertyName(propertyName);
-			prop.setPropertyValue(propertyValue);
-			return prop;
-		}
-		return null;
-	}
+    private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 
-	public List<Annotation> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements){
-		
-		List<Annotation> annotations = new ArrayList<>();
+    protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
+        this.terminologyService = terminologyService;
+        this.publicationService = publicationService;
+        this.mainNamesService = mainNamesService;
+        this.dbXrefService = dbXrefService;
+    }
 
-		Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
-		Map<String, List<Statement>> impactStatementsBySubject = proteoformStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOTATION_IDS)));
+    private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
+        if (propertyValue != null) {
+            AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+            prop.setPropertyName(propertyName);
+            prop.setPropertyValue(propertyValue);
+            return prop;
+        }
+        return null;
+    }
 
-		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
-			
-			String[] subjectComponentsIdentifiersArray = subjectComponentsIdentifiers.split(",");
-			Set<Annotation> subjectVariants = new TreeSet<>(Comparator.comparing(Annotation::getAnnotationName));
+    public List<Annotation> buildProteoformIsoformAnnotations(String accession, List<Statement> subjects, List<Statement> proteoformStatements) {
 
-			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
+        List<Annotation> annotations = new ArrayList<>();
 
-				List<Statement> subjectVariant = subjectsByAnnotationId.get(subjectComponentIdentifier);
-				
-				if((subjectVariant == null) || (subjectVariant.isEmpty())){
-					throw new NextProtException("Not found any subject  identifier:" + subjectComponentIdentifier);
-				}
+        Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
+
+        Map<String, List<Statement>> impactStatementsBySubject = proteoformStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOTATION_IDS)));
+
+        impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
+
+            String[] subjectComponentsIdentifiersArray = subjectComponentsIdentifiers.split(",");
+            Set<Annotation> subjectVariants = new TreeSet<>(Comparator.comparing(Annotation::getAnnotationName));
+
+            for (String subjectComponentIdentifier : subjectComponentsIdentifiersArray) {
+
+                List<Statement> subjectVariant = subjectsByAnnotationId.get(subjectComponentIdentifier);
+
+                if ((subjectVariant == null) || (subjectVariant.isEmpty())) {
+                    throw new NextProtException("Not found any subject  identifier:" + subjectComponentIdentifier);
+                }
                 Annotation variant = buildAnnotation(accession, subjectVariant);
-				subjectVariants.add(variant);
-			}
+                subjectVariants.add(variant);
+            }
 
-			// Impact annotations
-			List<Statement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
-			List<Annotation> impactAnnotations = buildAnnotationList(accession, impactStatements);
-			impactAnnotations.stream().forEach(ia -> {
-				
-				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
-				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
-			});
+            // Impact annotations
+            List<Statement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
+            List<Annotation> impactAnnotations = buildAnnotationList(accession, impactStatements);
+            impactAnnotations.stream().forEach(ia -> {
 
-			annotations.addAll(impactAnnotations);
+                String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
+                ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
+            });
 
-		});
-		
-		return annotations;
-		
-	}
+            annotations.addAll(impactAnnotations);
 
-	protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
+        });
 
-		//Ensures there is no repeated evidence!
-		Set<AnnotationEvidence> evidencesSet = Statements.stream()
-                .map(s -> {
-                    AnnotationEvidence evidence = new AnnotationEvidence();
+        return annotations;
 
-                    evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
-                    evidence.setResourceAssociationType("evidence");
-                    evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
+    }
 
-                    setResourceId(s, evidence);
+    protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
 
-                    AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-                    AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
-                    AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+        Map<Long, AnnotationEvidence> evidencesMap = Statements.stream()
+                .map(s -> buildAnnotationEvidence(s))
+                .filter(e -> e.getResourceId() != -2)
+                .collect(Collectors.toMap(ev -> ev.getResourceId(),
+                        ev -> ev,
+                        (ev1, ev2) -> (ev1.getQualityQualifier().equals(QualityQualifier.GOLD.name())) ? ev1 : ev2));
 
-                    //Set properties which are not null
-                    evidence.setProperties(
-                            Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
-                                .stream().filter(p -> p != null)
-                                .collect(Collectors.toList())
-                                );
+        return evidencesMap.values().stream()
+                .peek(e -> e.setEvidenceId(IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet()))
+                .collect(Collectors.toList());
+    }
 
+    private AnnotationEvidence buildAnnotationEvidence(Statement s) {
 
+        AnnotationEvidence evidence = new AnnotationEvidence();
 
-                     String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
-                     evidence.setEvidenceCodeAC(statementEvidenceCode);
-                     evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
-                     evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
-                     evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
-                     evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
+        if (s.getValue(StatementField.RESOURCE_TYPE) == null) {
+            throw new NextProtException("resource type undefined");
+        }
+        evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
+        evidence.setResourceAssociationType("evidence");
+        evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
 
-                     if(statementEvidenceCode != null){
-                         CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
-                         evidence.setEvidenceCodeName(term.getName());
-                     }
+        setResourceId(s, evidence);
 
-                     evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
+        AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
+        AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+        AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 
-                    //TODO create experimental contexts!
+        //Set properties which are not null
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
+                .filter(p -> p != null)
+                .collect(Collectors.toList())
+        );
 
-                    return evidence;
-                })
-                .collect(Collectors.toSet());
-		
+        String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+        evidence.setEvidenceCodeAC(statementEvidenceCode);
+        if (statementEvidenceCode != null) {
+            CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
+            evidence.setEvidenceCodeName(term.getName());
+        }
+        evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
+        evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
+        evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+        evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
+        evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
 
-		//Ensures there is no repeated evidence!
-		evidencesSet.forEach(e -> {
-			long generatedEvidenceId = IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet();
-			e.setEvidenceId(generatedEvidenceId);
-		});
-		
-		List<AnnotationEvidence> evidencesFiltered = evidencesSet.stream().filter(e -> e.getResourceId() != -2).collect(Collectors.toList());
-		if(evidencesFiltered.size() < evidencesSet.size()){
-			int total = evidencesSet.size();
-			int removed = total - evidencesFiltered.size();
-			LOGGER.debug("Removed " + removed + " evidence because no resource id from a total of " + total);
-		}
-		
-		return new ArrayList<>(evidencesFiltered);
+        //TODO create experimental contexts!
 
-	}
+        return evidence;
+    }
 
     private void setResourceId(Statement s, AnnotationEvidence evidence) {
 
         String resourceType = evidence.getResourceType();
 
-        if (resourceType != null) {
-            if (resourceType.equals("publication")) {
-                evidence.setResourceId(findPublicationId(s));
-            }
-            else if (resourceType.equals("database")) {
-                evidence.setResourceId(findXrefId(s));
-                evidence.setResourceAccession(s.getValue(StatementField.REFERENCE_ACCESSION));
-                evidence.setResourceDb(s.getValue(StatementField.REFERENCE_DATABASE));
-            }
-            else {
-                throw new NextProtException("resource type "+ resourceType + " not supported");
-            }
-        }
-        else {
-            throw new NextProtException("resource type undefined");
+        if (resourceType.equals("publication")) {
+            evidence.setResourceId(findPublicationId(s));
+        } else if (resourceType.equals("database")) {
+            evidence.setResourceId(findXrefId(s));
+            evidence.setResourceAccession(s.getValue(StatementField.REFERENCE_ACCESSION));
+            evidence.setResourceDb(s.getValue(StatementField.REFERENCE_DATABASE));
+        } else {
+            throw new NextProtException("Cannot set resource id: resource type " + resourceType + " is not supported");
         }
     }
 
     abstract void setIsoformName(Annotation annotation, String statement);
 
-	abstract void setIsoformTargeting(Annotation annotation, Statement statement);
+    abstract void setIsoformTargeting(Annotation annotation, Statement statement);
 
-	protected void setVariantAttributes(Annotation annotation, Statement variantStatement) {
+    protected void setVariantAttributes(Annotation annotation, Statement variantStatement) {
 
-		String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
-		String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
-		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
-		annotation.setVariant(annotationVariant);
+        String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
+        String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
+        AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
+        annotation.setVariant(annotationVariant);
 
-	}
+    }
 
     long findPublicationId(Statement statement) {
 
-		String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
-		String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
+        String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
+        String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
 
         Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
-		if (publication == null) {
+        if (publication == null) {
             String message = "can 't find publication db:" + referenceDB + " acc:" + referenceAC;
 
             LOGGER.error(message);
 
             throw new NextProtException(message);
-		}
+        }
 
         return publication.getPublicationId();
-	}
+    }
 
     long findXrefId(Statement statement) {
 
@@ -222,20 +207,20 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         }
     }
 
-	protected Annotation buildAnnotation(String isoformName, List<Statement> flatStatements) {
-		List<Annotation> annotations = buildAnnotationList(isoformName, flatStatements);
-		if(annotations.isEmpty() || annotations.size() > 1){
-			throw new NextProtException("Expecting 1 annotation but found " + annotations.size() + " from " + flatStatements.size());
-		}
-		return annotations.get(0);
-	}
-	
-	public List<Annotation> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
+    protected Annotation buildAnnotation(String isoformName, List<Statement> flatStatements) {
+        List<Annotation> annotations = buildAnnotationList(isoformName, flatStatements);
+        if (annotations.isEmpty() || annotations.size() > 1) {
+            throw new NextProtException("Expecting 1 annotation but found " + annotations.size() + " from " + flatStatements.size());
+        }
+        return annotations.get(0);
+    }
 
-		List<Annotation> annotations = new ArrayList<>();
-		Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
+    public List<Annotation> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
 
-		flatStatementsByAnnotationHash.forEach((key, statements) -> {
+        List<Annotation> annotations = new ArrayList<>();
+        Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
+
+        flatStatementsByAnnotationHash.forEach((key, statements) -> {
 
             Annotation annotation = get();
 
@@ -315,8 +300,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
             String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
 
-            if ( (bioObjectAnnotationHash != null && !bioObjectAnnotationHash.isEmpty()) ||
-                 (bioObjectAccession != null && !bioObjectAccession.isEmpty())) {
+            if ((bioObjectAnnotationHash != null && !bioObjectAnnotationHash.isEmpty()) ||
+                    (bioObjectAccession != null && !bioObjectAccession.isEmpty())) {
 
                 annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
             }
@@ -324,10 +309,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             annotations.add(annotation);
         });
 
-		return annotations;
-	}
+        return annotations;
+    }
 
-	private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
+    private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
 
         String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
         String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
@@ -359,21 +344,18 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 bioObject.putPropertyNameValue("isoformName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
                         .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown isoform accession " + bioObjectAccession))
                         .getName());
-            }
-            else {
+            } else {
                 throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
             }
 
             bioObject.setAccession(bioObjectAccession);
             bioObject.putPropertyNameValue("geneName", bioObjectName);
             bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
-        }
-        else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
+        } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);
-        }
-        else {
+        } else {
             throw new NextProtException("Category not expected for bioobject " + annotationCategory);
         }
 
