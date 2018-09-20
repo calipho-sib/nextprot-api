@@ -3,7 +3,7 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 import java.util.Set;
 
-public class PeptideUnicity implements Serializable {
+public class SequenceUnicity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -12,35 +12,35 @@ public class PeptideUnicity implements Serializable {
 	private Set<String> equivalentIsoforms;
 	
 	
-	public static PeptideUnicity createPeptideUnicityUnique() {
-		return new PeptideUnicity(Value.UNIQUE);
+	public static SequenceUnicity createSequenceUnicityUnique() {
+		return new SequenceUnicity(Value.UNIQUE);
 	}
 
 	/**
-	 * Creates a non unique PeptideUnicity
+	 * Creates a non unique SequenceUnicity
 	 * 
 	 * @param equivalentIsoforms optional set of equivalent isoforms if among the matching isoforms some are equivalent (same sequence)
-	 * @return a new PeptideUnicity
+	 * @return a new SequenceUnicity
 	 */
-	public static PeptideUnicity createPeptideUnicityNonUnique(Set<String> equivalentIsoforms) {
-		PeptideUnicity inst = new PeptideUnicity(Value.NOT_UNIQUE);
+	public static SequenceUnicity createSequenceUnicityNonUnique(Set<String> equivalentIsoforms) {
+		SequenceUnicity inst = new SequenceUnicity(Value.NOT_UNIQUE);
 		if (equivalentIsoforms !=null && equivalentIsoforms.size()>0) inst.equivalentIsoforms=equivalentIsoforms;
 		return inst;
 	}
 
 	/**
-	 * Creates a non unique PeptideUnicity
+	 * Creates a pseudo unique SequenceUnicity
 	 * 
 	 * @param equivalentIsoforms the set of equivalent isoforms (same sequence) among the matching isoforms, the set should not be null nor empty
-	 * @return a new PeptideUnicity
+	 * @return a new SequenceUnicity
 	 */
-	public static PeptideUnicity createPeptideUnicityPseudoUnique(Set<String> equivalentIsoforms) {
-		PeptideUnicity inst = new PeptideUnicity(Value.PSEUDO_UNIQUE);
+	public static SequenceUnicity createSequenceUnicityPseudoUnique(Set<String> equivalentIsoforms) {
+		SequenceUnicity inst = new SequenceUnicity(Value.PSEUDO_UNIQUE);
 		inst.equivalentIsoforms=equivalentIsoforms;
 		return inst;
 	}
 	
-	private PeptideUnicity(Value value) {
+	private SequenceUnicity(Value value) {
 		this.value=value;
 	}
 

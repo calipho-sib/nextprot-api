@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.SequenceUnicityService;
 
 import java.io.FileNotFoundException;
 
@@ -25,6 +26,9 @@ public class AntibodyMappingServiceTest {
 
     @Mock
     private AntibodyMappingDao antibodyMappingDao;
+
+    @Mock
+    private SequenceUnicityService sequenceUnicityService;
 
     @Before
     public void init() throws FileNotFoundException, DataSetException {

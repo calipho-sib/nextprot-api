@@ -7,13 +7,13 @@ import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.PeptideUnicityService;
+import org.nextprot.api.core.service.SequenceUnicityService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -40,7 +40,7 @@ public class PepXServiceImpl implements PepXService {
 	private static final Log LOGGER = LogFactory.getLog(PepXServiceImpl.class);
 
 	@Autowired private EntryBuilderService entryBuilderService;
-	@Autowired private PeptideUnicityService peptideUnicityService;
+	@Autowired private SequenceUnicityService sequenceUnicityService;
 
 	private String pepXUrl;
 
@@ -97,15 +97,15 @@ public class PepXServiceImpl implements PepXService {
 
 	private void updateAnnotationsWithPeptideProperties(List<Entry> entries) {
 
-		Map<String,PeptideUnicity> puMap = computePeptideUnicityStatus(entries, false);    // peptide unicity over wildtype isoforms
-		Map<String,PeptideUnicity> puVarMap = computePeptideUnicityStatus(entries, true);  // peptide unicity over variant isoforms
+		Map<String, SequenceUnicity> puMap = computePeptideUnicityStatus(entries, false);    // peptide unicity over wildtype isoforms
+		Map<String, SequenceUnicity> puVarMap = computePeptideUnicityStatus(entries, true);  // peptide unicity over variant isoforms
 		entries.forEach(e -> {
 			e.getAnnotations().forEach(a -> {
 				String pep = a.getCvTermName();
-				PeptideUnicity pu = puMap.get(pep);
+				SequenceUnicity pu = puMap.get(pep);
 				if (pu!=null) {
 					// store peptide proteotypicity (Y/N) & unicity (UNIQUE,PSEUDO_UNIQUE,NON_UNIQUE) over wildtype isoforms
-					String proteotypicValue = pu.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE) ? "N" : "Y";
+					String proteotypicValue = pu.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE) ? "N" : "Y";
 					a.addProperty(buildAnnotationProperty(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY, proteotypicValue));					
 					a.addProperty(buildAnnotationProperty(PropertyApiModel.NAME_PEPTIDE_UNICITY, pu.getValue().name()));
 					// store the set of equivalent isoforms (if any) matched by the peptide 
@@ -113,7 +113,7 @@ public class PepXServiceImpl implements PepXService {
 						a.setSynonyms(new ArrayList<String>(pu.getEquivalentIsoforms()));
 					}
 				}
-				PeptideUnicity puVar = puVarMap.get(pep);
+				SequenceUnicity puVar = puVarMap.get(pep);
 				if (puVar!=null) {
 					// store peptide unicity over variant isoforms
 					a.addProperty(buildAnnotationProperty(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS, puVar.getValue().name()));
@@ -160,12 +160,12 @@ public class PepXServiceImpl implements PepXService {
 	/** 
 	 * Computes a unicity value for each peptide: UNIQUE, PSEUDO_UNIQUE, NON_UNIQUE
 	 * based on the response returned by pepx (a list of peptide - isoform matches)
-	 * by using the PeptideUnicityService
+	 * by using the SequenceUnicityService
 	 * @param entries
 	 * @param withVariants
 	 * @return a map with key = peptide sequence, value = unicity value
 	 */
-	private Map<String,PeptideUnicity> computePeptideUnicityStatus(List<Entry> entries, boolean withVariants) {
+	private Map<String, SequenceUnicity> computePeptideUnicityStatus(List<Entry> entries, boolean withVariants) {
 		Map<String,Set<String>> pepIsoSetMap = new HashMap<>();
 		entries.forEach(e -> {
 			e.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream()
@@ -178,10 +178,10 @@ public class PepXServiceImpl implements PepXService {
 				});				
 			});
 		});
-		Map<String,PeptideUnicity> pepUnicityMap = new HashMap<>();
+		Map<String, SequenceUnicity> pepUnicityMap = new HashMap<>();
 		pepIsoSetMap.entrySet().forEach(e -> {
 			String pep = e.getKey();
-			PeptideUnicity pu = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(e.getValue());
+			SequenceUnicity pu = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(e.getValue());
 			pepUnicityMap.put(pep, pu);
 		});
 		return pepUnicityMap;

@@ -22,7 +22,7 @@
 		<level value="WARN" />
 	</logger>
 
-	<logger name="org.nextprot.api.core.service.impl.PeptideUnicityServiceImpl">
+	<logger name="org.nextprot.api.core.service.impl.SequenceUnicityServiceImpl">
 		<level value="INFO" />
 	</logger>
 

@@ -1,21 +1,20 @@
 package org.nextprot.api.core.service;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({ "dev","cache" })
-public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
+public class SequenceUnicityServiceIntegrationTest extends CoreUnitBaseTest{
         
-    @Autowired private PeptideUnicityService peptideUnicityService;
+    @Autowired private SequenceUnicityService sequenceUnicityService;
 	@Autowired private CacheManager cacheManager;
 
 
@@ -31,15 +30,15 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     @Test
     public void testUniqueCase1() {
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1"));
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.UNIQUE, result.getValue());
    }
 
     @Test
     public void testUniqueCase2() {
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY1-2"));
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.UNIQUE, result.getValue());
    }
 
 /* 
@@ -52,15 +51,15 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     @Test
     public void testNonUniqueCase1() {
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY2-1"));
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.NOT_UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.NOT_UNIQUE, result.getValue());
    }
     
     @Test
     public void testNonUniqueCase2() {
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_ENTRY1-1","NX_ENTRY2-1","NX_ENTRY2-2"));
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.NOT_UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.NOT_UNIQUE, result.getValue());
    }
     
 /* 
@@ -85,8 +84,8 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     public void testPseudoUniqueCase1() {
     	// the 2 isoform have same sequence (same md5) => PSEUDO UNIQUE
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1"));  
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.PSEUDO_UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.PSEUDO_UNIQUE, result.getValue());
     	Assert.assertEquals(isoset, result.getEquivalentIsoforms());
    }
     
@@ -94,8 +93,8 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     public void testPseudoUniqueCase2() {
     	// first 2 isoforms have same sequence (same md5) and other isoforms belong to same entry => PSEUDO UNIQUE
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1","NX_P35520-2","NX_P35520-3"));  
-    	PeptideUnicity result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.PSEUDO_UNIQUE, result.getValue());
+    	SequenceUnicity result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.PSEUDO_UNIQUE, result.getValue());
     	Set<String> expEquivSet = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1")); 
     	Assert.assertEquals(expEquivSet, result.getEquivalentIsoforms());
    }
@@ -111,13 +110,13 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     public void testMultiPseudoUnique() {
     	// the 2 isoform have same sequence (same md5) => PSEUDO UNIQUE
     	long t0;
-    	PeptideUnicity result;
+    	SequenceUnicity result;
     	
     	// first call
     	t0 = System.currentTimeMillis();
     	Set<String> isoset = new TreeSet<String>(Arrays.asList("NX_P0DN79-1","NX_P35520-1")); 
-    	result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-    	Assert.assertEquals(PeptideUnicity.Value.PSEUDO_UNIQUE, result.getValue());
+    	result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+    	Assert.assertEquals(SequenceUnicity.Value.PSEUDO_UNIQUE, result.getValue());
     	long tFirst = System.currentTimeMillis()-t0;
     	
     	// loop on 100 calls 
@@ -125,8 +124,8 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	for (int i=0;i<100;i++) {
     		String iso = "NX_P35520-" + (i+2);
     		isoset.add(iso);
-        	result = peptideUnicityService.getPeptideUnicityFromMappingIsoforms(isoset);
-        	Assert.assertEquals(PeptideUnicity.Value.PSEUDO_UNIQUE, result.getValue());
+        	result = sequenceUnicityService.getSequenceUnicityFromMappingIsoforms(isoset);
+        	Assert.assertEquals(SequenceUnicity.Value.PSEUDO_UNIQUE, result.getValue());
     	}
     	long tNext100 = System.currentTimeMillis()-t0;
 
@@ -147,40 +146,40 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     @Test
     public void tesUnicityOfSomeKnownPeptides() {
 
-    	// clear related cache to make sure we have no PeptideUnicity serialization version conflict
+    	// clear related cache to make sure we have no SequenceUnicity serialization version conflict
     	cacheManager.getCache("peptide-name-unicity-map").clear();
     	
-    	PeptideUnicity pu;
+    	SequenceUnicity pu;
     	Set<String> expectedEquivalentIsoSet;
     	long t0;
     	
     	// first call
     	t0 = System.currentTimeMillis();
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01668698"); // [NX_P02771-1]
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.UNIQUE);
+    	pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01668698"); // [NX_P02771-1]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.UNIQUE);
     	long tFirst = System.currentTimeMillis()-t0;
     	    	
     	// subsequent calls should use cache
     	t0 = System.currentTimeMillis();
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01410369"); // maps [NX_P02679-1, NX_P02679-2] 
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.UNIQUE);
+    	pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01410369"); // maps [NX_P02679-1, NX_P02679-2]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.UNIQUE);
     	
     	
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT00361176"); // maps [NX_O14815-1, NX_O14815-2, NX_P07384-1, NX_P17655-1, NX_P17655-2]  
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.NOT_UNIQUE);
+    	pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT00361176"); // maps [NX_O14815-1, NX_O14815-2, NX_P07384-1, NX_P17655-1, NX_P17655-2]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.NOT_UNIQUE);
     	
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT00000054"); // maps [NX_B9A064-1, NX_P0CF74-1, NX_P0CG04-1, NX_P0DOY2-1, NX_P0DOY3-1]
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.NOT_UNIQUE);
+    	pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT00000054"); // maps [NX_B9A064-1, NX_P0CF74-1, NX_P0CG04-1, NX_P0DOY2-1, NX_P0DOY3-1]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.NOT_UNIQUE);
     	
     	
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01978634"); // maps [NX_P0DMV8-1, NX_P0DMV8-2, NX_P0DMV9-1] 
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.PSEUDO_UNIQUE);
+    	pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01978634"); // maps [NX_P0DMV8-1, NX_P0DMV8-2, NX_P0DMV9-1]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.PSEUDO_UNIQUE);
     	// SOME mapped isoforms are equivalent: [NX_P0DMV8-1, NX_P0DMV9-1]
     	expectedEquivalentIsoSet = new TreeSet<>(Arrays.asList("NX_P0DMV8-1", "NX_P0DMV9-1"));
     	Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
-    	
-    	pu = peptideUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01888037"); // maps [NX_P0DP23-1, NX_P0DP24-1, NX_P0DP25-1] 
-    	Assert.assertEquals(pu.getValue(), PeptideUnicity.Value.PSEUDO_UNIQUE);
+
+		pu = sequenceUnicityService.getPeptideNameUnicityMap().get("NX_PEPT01888037"); // maps [NX_P0DP23-1, NX_P0DP24-1, NX_P0DP25-1]
+    	Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.PSEUDO_UNIQUE);
     	// equivalent isoforms: ALL mapped isoforms are equivalent: [NX_P0DP23-1, NX_P0DP24-1, NX_P0DP25-1]
     	expectedEquivalentIsoSet = new TreeSet<>(Arrays.asList("NX_P0DP23-1", "NX_P0DP24-1", "NX_P0DP25-1"));
     	Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
@@ -192,6 +191,50 @@ public class PeptideUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	//Assert.assertTrue(tFirst > tNext);
     	
     }
-    
-    
+
+	@Test
+	public void tesUnicityOfSomeKnownAntibodies() {
+
+		// clear related cache to make sure we have no SequenceUnicity serialization version conflict
+		cacheManager.getCache("antibody-name-unicity-map").clear();
+
+		SequenceUnicity pu;
+		Set<String> expectedEquivalentIsoSet;
+		long t0;
+
+		// first call
+		t0 = System.currentTimeMillis();
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA004810"); // [NX_P13164-1]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.UNIQUE);
+		long tFirst = System.currentTimeMillis()-t0;
+
+		// subsequent calls should use cache
+		t0 = System.currentTimeMillis();
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA027529"); // maps [NX_P02679-1, NX_P02679-2]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.UNIQUE);
+
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA000162"); // maps [NX_Q99865-1, NX_Q9BPZ2-1, NX_Q9Y657-1]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.NOT_UNIQUE);
+
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA000387"); // maps [NX_P62760-1, NX_Q9UM19-1]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.NOT_UNIQUE);
+
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA063308"); // maps [NX_P0DI81-1,NX_P0DI81-2,NX_P0DI81-3,NX_P0DI82-1]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.PSEUDO_UNIQUE);
+		// SOME mapped isoforms are equivalent: [NX_P0DI81-1,NX_P0DI82-1]
+		expectedEquivalentIsoSet = new TreeSet<>(Arrays.asList("NX_P0DI81-1", "NX_P0DI82-1"));
+		Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
+
+		pu = sequenceUnicityService.getAntibodyNameUnicityMap().get("NX_HPA050006"); // maps [NX_P86790-1,NX_P86791-1]
+		Assert.assertEquals(pu.getValue(), SequenceUnicity.Value.PSEUDO_UNIQUE);
+		// equivalent isoforms: ALL mapped isoforms are equivalent: [NX_P86790-1,NX_P86791-1]
+		expectedEquivalentIsoSet = new TreeSet<>(Arrays.asList("NX_P86790-1", "NX_P86791-1"));
+		Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
+		long tNext = System.currentTimeMillis()-t0;
+
+		System.out.println("time for very first call: " + tFirst + "[ms]");
+		System.out.println("time for next      calls: " + tNext + "[ms]");
+		// line below ok only if cache is cleared before starting the test
+		Assert.assertTrue(tFirst > tNext);
+	}
 }

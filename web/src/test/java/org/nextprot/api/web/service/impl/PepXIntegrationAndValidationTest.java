@@ -6,7 +6,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.PeptideUnicity;
+import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.PepXService;
@@ -101,8 +101,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	Annotation a = annots.get(0);
     	Assert.assertEquals("DICQAQGVAIQTMK", a.getCvTermName());
     	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")));
-    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())));
-    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())));
+    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.UNIQUE.name())));
+    	assertTrue(a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.UNIQUE.name())));
     	
     }    
     
@@ -121,8 +121,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     		.allMatch(a -> 
     			a.getCvTermName().equals(peptide)  && 
     	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.PSEUDO_UNIQUE.name())) && 
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.PSEUDO_UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.PSEUDO_UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.PSEUDO_UNIQUE.name())) &&
     			new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet))
     	);
     }    
@@ -139,8 +139,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
     		.allMatch(a -> a.getCvTermName().equals(peptide) &&
         	    a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("N")) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) && 
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name()))
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE.name()))
     		)
     	);
     	
@@ -160,8 +160,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
     		.allMatch(a -> a.getCvTermName().equals(peptide) &&
         	    a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())) && 
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name()))
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE.name()))
     		)
     	);
     	
@@ -183,8 +183,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
     		.allMatch(a -> a.getCvTermName().equals(peptide) &&
        	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("N")) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) && 
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.NOT_UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.NOT_UNIQUE.name())) &&
     			new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet)
     		)
     	);
@@ -205,7 +205,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     		.allMatch(a -> a.getCvTermName().equals(peptide) &&
        	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).size()==0 &&
     			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).size()==0 && 
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(PeptideUnicity.Value.UNIQUE.name())) &&
+    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.UNIQUE.name())) &&
     			a.getSynonyms()==null
     		)
     	);

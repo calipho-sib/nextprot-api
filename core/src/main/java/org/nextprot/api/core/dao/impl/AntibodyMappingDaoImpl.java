@@ -3,12 +3,14 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.AnnotationMapping2Annotation;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -36,6 +38,16 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		return rowMapper.getAnnotations();
 	}
 
+	@Override
+	public List<String> findAntibodyIsoformMappingsList() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("antibody-isoform-mappings"),new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int row) throws SQLException {
+				return rs.getString("ab_unique_name") + ":" + rs.getString("iso_names");
+			}
+		});
+	}
+
 	private static class AntibodyRowMapper implements RowMapper<Annotation>{
 		
 		Map<Long, Annotation> annotationsMap = new HashMap<>();
@@ -61,7 +73,16 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
                 annotation.setQualityQualifier("GOLD"); // TODO: IS THIS KIND OF INFO ACCESSIBLE ?
 				annotation.addTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 
-                AnnotationEvidence evidence = new AnnotationEvidence();
+				// Add property "antibody name"
+				List<AnnotationProperty> props = new ArrayList<>();
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annotation.getAnnotationId());
+				prop.setName(PropertyApiModel.NAME_ANTIBODY_NAME);
+				prop.setValue(resultSet.getString("antibody_unique_name"));
+				props.add(prop);
+				annotation.addProperties(props);
+
+				AnnotationEvidence evidence = new AnnotationEvidence();
                 evidence.setAnnotationId(annotId);
                 evidence.setNegativeEvidence(false);
 				evidence.setAssignmentMethod(amam.getAssignmentMethod());
