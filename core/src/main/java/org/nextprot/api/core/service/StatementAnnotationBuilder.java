@@ -94,18 +94,29 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     }
 
-    protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
+    private List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
 
-        Map<Long, AnnotationEvidence> evidencesMap = Statements.stream()
+        Map<String, AnnotationEvidence> evidencesMap = Statements.stream()
                 .map(s -> buildAnnotationEvidence(s))
                 .filter(e -> e.getResourceId() != -2)
-                .collect(Collectors.toMap(ev -> ev.getResourceId(),
+                .collect(Collectors.toMap(ev -> buildAnnotationEvidenceKey(ev),
                         ev -> ev,
                         (ev1, ev2) -> (ev1.getQualityQualifier().equals(QualityQualifier.GOLD.name())) ? ev1 : ev2));
 
         return evidencesMap.values().stream()
                 .peek(e -> e.setEvidenceId(IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet()))
                 .collect(Collectors.toList());
+    }
+
+    private String buildAnnotationEvidenceKey(AnnotationEvidence evidence) {
+
+        return new StringBuilder()
+                .append(String.valueOf(evidence.getResourceId())).append(".")
+                .append(String.valueOf(evidence.getExperimentalContextId())).append(".")
+                .append(String.valueOf(evidence.isNegativeEvidence())).append(".")
+                .append(evidence.getAssignedBy()).append(".")
+                .append(evidence.getEvidenceCodeAC())
+                .toString();
     }
 
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
