@@ -158,10 +158,11 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
             trackStatementIds(originalStatement, subjectStatements);
 
-            String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
+            Statement subjectStatement = subjectStatements.iterator().next();
+            String firstSubjectEntryAccession = subjectStatement.getValue(StatementField.ENTRY_ACCESSION);
+            String firstSubjectIsoformName = getFirstSubjectIsoformName(subjectStatements);
 
-            String isoformName = getSubjectIsoformName(subjectStatements);
-            if (isoformName == null) {
+            if (firstSubjectIsoformName == null) {
                 throw new NextProtException("Isoform name is not defined, something wrong occurred when checking for iso specificity");
             }
 
@@ -170,13 +171,10 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
             if (isIsoSpecific) {
 
-                Statement subject = subjectStatements.iterator().next();
-                String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
-                String featureType = subject.getValue(StatementField.ANNOTATION_CATEGORY);
-                isoformSpecificAccession = getIsoAccession(featureName, featureType);
+                isoformSpecificAccession = getIsoAccession(subjectStatement);
             }
 
-            return transformTripletStatement(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
+            return transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
         }
 
         private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
@@ -230,7 +228,10 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             return statement.getSubjectStatementIds() != null && !statement.getSubjectStatementIds().isEmpty();
         }
 
-        private String getIsoAccession(String featureName, String featureType) {
+        private String getIsoAccession(Statement statement) {
+
+            String featureName = statement.getValue(StatementField.ANNOTATION_NAME);
+            String featureType = statement.getValue(StatementField.ANNOTATION_CATEGORY);
 
             try {
                 return sequenceFeatureFactoryService.newSequenceFeature(featureName, featureType).getIsoform().getIsoformAccession();
@@ -239,30 +240,28 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             }
         }
 
+        // TODO: WTF ??? do we really need a map to store just a key -> value ??? NO!!!
         private Map<String, List<Statement>> getSubjectsTransformed(Set<Statement> subjectStatements, String nextprotAccession) {
 
-            //In case of entry variants have the target isoform property filled
             Map<String, List<Statement>> variantsOnIsoform = new HashMap<>();
 
-            List<Statement> result = StatementTransformationUtil.getPropagatedStatementsForEntry(isoformMappingService, subjectStatements, nextprotAccession);
+            List<Statement> result = StatementTransformationUtil.getPropagatedStatementVariantsForEntry(isoformMappingService, subjectStatements, nextprotAccession);
             variantsOnIsoform.put(nextprotAccession, result);
 
             return variantsOnIsoform;
         }
 
-        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<Statement> subjectStatements, String nextprotAccession,
+        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<Statement> subjectStatementSet, String nextprotAccession,
                                            boolean isIsoSpecific, String isoSpecificAccession) {
 
             Set<Statement> statementsToLoad = new HashSet<>();
 
             //In case of entry variants have the target isoform property filled
-            Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(subjectStatements, nextprotAccession);
+            for (Map.Entry<String, List<Statement>> entry : getSubjectsTransformed(subjectStatementSet, nextprotAccession).entrySet()) {
 
-            for (Map.Entry<String, List<Statement>> entry : subjectsTransformedByEntryOrIsoform.entrySet()) {
+                List<Statement> subjectStatements = entry.getValue();
 
-                List<Statement> subjects = entry.getValue();
-
-                if (subjects.isEmpty()) {
+                if (subjectStatements.isEmpty()) {
                     report.addWarning("Empty subjects are not allowed for " + entry.getKey() + " skipping... case for 1 variant");
                     continue;
                 }
@@ -270,14 +269,14 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 String targetIsoformsForObject;
                 String targetIsoformsForPhenotype;
 
-                String entryAccession = subjects.get(0).getValue(StatementField.ENTRY_ACCESSION);
+                String entryAccession = subjectStatements.get(0).getValue(StatementField.ENTRY_ACCESSION);
 
                 List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
                 NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
 
                 List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 
-                TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
+                TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, isIsoSpecific, isoSpecificAccession, isoformNames);
                 targetIsoformsForPhenotype = targetIsoformsForPhenotypeSet.serializeToJsonString();
 
                 Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
@@ -305,7 +304,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
                     phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype)
-                            .addSubjects(subjects).addObject(objectIsoStatement)
+                            .addSubjects(subjectStatements).addObject(objectIsoStatement)
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
@@ -314,7 +313,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
                     phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-                            .addSubjects(subjects)
+                            .addSubjects(subjectStatements)
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
@@ -322,7 +321,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 }
 
                 //Load subjects
-                statementsToLoad.addAll(subjects);
+                statementsToLoad.addAll(subjectStatements);
 
                 //Load VPs
                 statementsToLoad.add(phenotypeIsoStatement);
@@ -336,7 +335,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             return statementsToLoad;
         }
 
-        private String getSubjectIsoformName(Set<Statement> subjects) {
+        private String getFirstSubjectIsoformName(Set<Statement> subjects) {
 
             Set<String> isoforms = subjects.stream()
                     .map(s -> s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME)))

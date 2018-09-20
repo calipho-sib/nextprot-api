@@ -24,7 +24,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 				.build()));
 		
 		List<Statement> variantOnEntry = 
-				StatementTransformationUtil.getPropagatedStatementsForEntry(
+				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
 						isoformMappingServiceMocked, subjectStatements, "NX_Q15858");
 
 
@@ -58,7 +58,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		
 		List<Statement> subjectStatements = 
-				StatementTransformationUtil.getPropagatedStatementsForEntry(
+				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
 						isoformMappingServiceMocked, rawSubjectStatements, "NX_Q15858");
 
 		Statement proteoformStatement = StatementBuilder.createNew()

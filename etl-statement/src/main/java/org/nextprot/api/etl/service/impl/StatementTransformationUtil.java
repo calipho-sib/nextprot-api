@@ -104,7 +104,10 @@ public class StatementTransformationUtil {
 	private static List<String> getIsoformAccessionsForEntryAccession(String entryAccession, IsoformService isoformService) {
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
 		NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
-		return isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
+
+		return isoforms.stream()
+                .map(Isoform::getIsoformAccession)
+                .collect(Collectors.toList());
 	}
 
 	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
@@ -162,7 +165,7 @@ public class StatementTransformationUtil {
 	}
 
 	// TODO: handle ptm type features propagation
-	static List<Statement> getPropagatedStatementsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
+	static List<Statement> getPropagatedStatementVariantsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
 
 		List<Statement> result = new ArrayList<>();
 
