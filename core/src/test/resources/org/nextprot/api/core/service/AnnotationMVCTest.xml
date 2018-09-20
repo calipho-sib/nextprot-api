@@ -23,6 +23,8 @@
 	<cv_datasources cv_id="1" cv_name="NextProt" /> 
 	<cv_datasources cv_id="2" cv_name="Uniprot" /> 
 -->
+
+	<antibody_iso_mapping_view ab_unique_name="NX_HPA12345" iso_names="NX_P12345-1" />
 	
 <!-- test xxx ends here -->
 

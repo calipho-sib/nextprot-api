@@ -76,7 +76,7 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		AnnotationProperty property = annotation.getProperties().iterator().next();
 		Assert.assertEquals(annotId, property.getAnnotationId());
 		Assert.assertEquals(PropertyApiModel.NAME_ANTIBODY_NAME, property.getName());
-		Assert.assertEquals("HPA036302", property.getValue());
+		Assert.assertEquals("NX_HPA036302", property.getValue());
 
 		tmpId = 9547085;
 		annotId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_OFFSET;
@@ -102,7 +102,7 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		property = annotation.getProperties().iterator().next();
 		Assert.assertEquals(annotId, property.getAnnotationId());
 		Assert.assertEquals(PropertyApiModel.NAME_ANTIBODY_NAME, property.getName());
-		Assert.assertEquals("HPA036303", property.getValue());
+		Assert.assertEquals("NX_HPA036303", property.getValue());
 
 		Assert.assertEquals(2, annotation.getTargetingIsoformsMap().size());
 		Assert.assertTrue(annotation.getTargetingIsoformsMap().containsKey("NX_P06213-1"));
