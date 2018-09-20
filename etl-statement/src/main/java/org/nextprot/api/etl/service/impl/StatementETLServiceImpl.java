@@ -38,17 +38,17 @@ public class StatementETLServiceImpl implements StatementETLService {
 		report.addInfoWithElapsedTime("Finished extraction");
 
         if (rawStatements.isEmpty()) {
+
             report.addWarning("ETL interruption: could not extract raw statements from " + source.name()
                     + " (release " + release + ")");
+
             return report.toString();
         }
 
-        Set<Statement> validStatements = extractValidStatements(report, rawStatements);
-
-        Set<Statement> mappedStatements = transformStatements(source, validStatements, report);
+        Set<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 		report.addInfoWithElapsedTime("Finished transformation");
 
-		loadStatements(source, validStatements, mappedStatements, load, report);
+		loadStatements(source, rawStatements, mappedStatements, load, report);
 		report.addInfoWithElapsedTime("Finished load");
 
 		return report.toString();
@@ -57,8 +57,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) {
 
-        Set<Statement> statements =  statementExtractorService.getStatementsForSource(source, release);
+        Set<Statement> statements = filterValidStatements(statementExtractorService.getStatementsForSource(source, release), report);
         report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+
         return statements;
     }
 
@@ -66,8 +67,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
         Set<Statement> statements =  statementTransformerService.transformStatements(source, rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
-        return statements;
 
+        return statements;
     }
 
     void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
@@ -97,7 +98,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     }
 
-    private Set<Statement> extractValidStatements(ReportBuilder report, Set<Statement> rawStatements) {
+    private Set<Statement> filterValidStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
         Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
         Set<String> statementEntryAccessions = rawStatements.stream()
@@ -123,32 +124,15 @@ public class StatementETLServiceImpl implements StatementETLService {
                 findEntryAccessionFromEntryOrIsoformAccession(statement.getValue(StatementField.NEXTPROT_ACCESSION));
     }
 
-    public StatementExtractorService getStatementExtractorService() {
-		return statementExtractorService;
-	}
-
-
 	@Override
 	public void setStatementExtractorService(StatementExtractorService statementExtractorService) {
 		this.statementExtractorService = statementExtractorService;
 	}
 
-
-	public StatementTransformerService getStatementTransformerService() {
-		return statementTransformerService;
-	}
-
-
 	@Override
 	public void setStatementTransformerService(StatementTransformerService statementTransformerService) {
 		this.statementTransformerService = statementTransformerService;
 	}
-
-
-	public StatementLoaderService getStatementLoadService() {
-		return statementLoadService;
-	}
-
 
 	@Override
 	public void setStatementLoadService(StatementLoaderService statementLoadService) {

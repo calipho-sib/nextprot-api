@@ -99,6 +99,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         private final Set<Statement> rawStatements;
         private final ReportBuilder report;
         private final Map<String, Statement> sourceStatementsById;
+        private final Set<String> trackedStatementIds;
 
         StatementTransformer(Set<Statement> rawStatements, ReportBuilder report) {
 
@@ -112,18 +113,19 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             this.report = report;
             this.sourceStatementsById = rawStatements.stream()
                     .collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
+            trackedStatementIds = new HashSet<>();
         }
 
-        public Set<Statement> transform() {
+        private Set<Statement> transform() {
 
             Set<Statement> mappedStatements = new HashSet<>();
-            Set<String> trackedStatementIds = new HashSet<>();
+            trackedStatementIds.clear();
 
             for (Statement statement : rawStatements) {
 
                 if (isTripletStatement(statement)) {
 
-                    mappedStatements.addAll(transformTripletStatement(statement, trackedStatementIds));
+                    mappedStatements.addAll(transformTripletStatement(statement));
                 }
                 else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
 
@@ -147,15 +149,14 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
          * 2. stmt OBJECT (ex: GO: mismatch repair)
          * 3. a stmt VERB (ex: stmt 1. decreases stmt 2.)
          **/
-        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<String> trackedStatementIds) {
+        private Set<Statement> transformTripletStatement(Statement originalStatement) {
 
             if (!isTripletStatement(originalStatement)) {
                 throw new IllegalStateException("should be a triplet type statement: " + originalStatement);
             }
 
             Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
-            trackedStatementIds.addAll(subjectStatements.stream().map(statement -> statement.getValue(StatementField.STATEMENT_ID)).collect(Collectors.toList()));
-            trackedStatementIds.add(originalStatement.getValue(StatementField.STATEMENT_ID));
+            trackStatementIds(originalStatement, subjectStatements);
 
             String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
@@ -178,6 +179,14 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             return transformTripletStatement(originalStatement, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession);
         }
 
+        private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
+
+            trackedStatementIds.addAll(subjectStatements.stream()
+                    .map(statement -> statement.getValue(StatementField.STATEMENT_ID))
+                    .collect(Collectors.toList()));
+            trackedStatementIds.add(originalStatement.getValue(StatementField.STATEMENT_ID));
+        }
+
         private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
 
             String category = simpleStatement.getValue(StatementField.ANNOTATION_CATEGORY);
@@ -186,6 +195,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 throw new NextProtException("Not expecting phenotypic variation at this stage.");
             }
 
+            // TODO: begin and end master positions are missing
             TargetIsoformSet tis = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
 
             if (tis.isEmpty()) {
