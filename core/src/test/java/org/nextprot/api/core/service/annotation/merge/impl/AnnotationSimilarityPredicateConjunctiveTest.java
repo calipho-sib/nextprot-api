@@ -9,12 +9,12 @@ import org.nextprot.api.core.service.annotation.merge.AnnotationSimilarityPredic
 import java.util.Arrays;
 import java.util.Collections;
 
-public class AnnotationSimilarityPredicateChainTest {
+public class AnnotationSimilarityPredicateConjunctiveTest {
 
     @Test
     public void shouldBeSimilarWhenAllPredicateTrue() throws Exception {
 
-        AnnotationSimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
+        AnnotationSimilarityPredicate predicate = new SimilarityPredicateConjunctive(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true
@@ -26,13 +26,13 @@ public class AnnotationSimilarityPredicateChainTest {
     @Test(expected = IllegalArgumentException.class)
     public void constrShouldThrowExceptionIfEmpty() throws Exception {
 
-        new SimilarityPredicateChain(Collections.emptyList());
+        new SimilarityPredicateConjunctive(Collections.emptyList());
     }
 
     @Test
     public void shouldNotBeSimilarWhenAtLeastOnePredicateFalse() throws Exception {
 
-        AnnotationSimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
+        AnnotationSimilarityPredicate predicate = new SimilarityPredicateConjunctive(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> false,
                 (annotation1, annotation2) -> true

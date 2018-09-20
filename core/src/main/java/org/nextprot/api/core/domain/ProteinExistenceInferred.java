@@ -15,7 +15,8 @@ public class ProteinExistenceInferred implements Serializable {
         SP_PER_03("Promote to PE1 based on expression data"),
         SP_PER_04("Promote PE3 or PE4 to PE2 based on expression data"),
         SP_PER_05("Promote to PE1 based on mutagenesis data"),
-        SP_PER_06("Promote to PE1 based on interaction data");
+        SP_PER_06("Promote to PE1 based on interaction data"),
+        SP_PER_07("Promote to PE1 based on PTM data");
 
         private final String title;
 

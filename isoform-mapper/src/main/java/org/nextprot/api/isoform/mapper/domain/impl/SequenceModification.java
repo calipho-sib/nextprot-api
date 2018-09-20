@@ -101,14 +101,17 @@ public class SequenceModification extends SequenceFeatureBase {
 
             rules = new HashMap<>();
 
-            rules.put("PTM-0528", new Rule(AminoAcidCode.ASPARAGINE, "N[^P][STC]"));
-            rules.put("PTM-0250", new Rule(AminoAcidCode.ARGININE));
-            rules.put("PTM-0251", new Rule(AminoAcidCode.CYSTEINE));
-            rules.put("PTM-0252", new Rule(AminoAcidCode.HISTIDINE));
-            rules.put("PTM-0253", new Rule(AminoAcidCode.SERINE));
-            rules.put("PTM-0254", new Rule(AminoAcidCode.THREONINE));
-            rules.put("PTM-0255", new Rule(AminoAcidCode.TYROSINE));
-            rules.put("PTM-0237", new Rule(AminoAcidCode.ARGININE));
+            rules.put("PTM-0528", new Rule("PTM-0528", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1 (NX_Q14624.PTM-0528_274)
+            rules.put("PTM-0568", new Rule("PTM-0568",AminoAcidCode.THREONINE));
+            rules.put("PTM-0250", new Rule("PTM-0250",AminoAcidCode.ARGININE));
+            rules.put("PTM-0251", new Rule("PTM-0251",AminoAcidCode.CYSTEINE));
+            rules.put("PTM-0252", new Rule("PTM-0252",AminoAcidCode.HISTIDINE));
+            rules.put("PTM-0253", new Rule("PTM-0253",AminoAcidCode.SERINE));
+            rules.put("PTM-0254", new Rule("PTM-0254",AminoAcidCode.THREONINE));
+            rules.put("PTM-0255", new Rule("PTM-0255",AminoAcidCode.TYROSINE));
+            rules.put("PTM-0237", new Rule("PTM-0237",AminoAcidCode.ARGININE));
+            rules.put("PTM-0565", new Rule("PTM-0565",AminoAcidCode.SERINE));
+            rules.put("PTM-0551", new Rule("PTM-0551",AminoAcidCode.SERINE));
             //TODO: we could add all other PTM-ids given the target supplied by ProteinModificationService
         }
 
@@ -135,23 +138,25 @@ public class SequenceModification extends SequenceFeatureBase {
 
             if (!rule.matches(aas, aaIndex)) {
 
-                throw new NonMatchingRuleException(query, ptm, rule.getAminoAcidSite(aas, aaIndex));
+                throw new NonMatchingRuleException(query, ptm, rule, rule.getAminoAcidSite(aas, aaIndex));
             }
         }
 
-        private static class Rule {
+        public static class Rule {
 
+            private final String name;
             private final AminoAcidCode modifiedAminoAcid;
             private final Pattern pattern;
             private final int window = 10;
 
-            public Rule(AminoAcidCode modifiedAminoAcid) {
+            public Rule(String name, AminoAcidCode modifiedAminoAcid) {
 
-                this(modifiedAminoAcid, null);
+                this(name, modifiedAminoAcid, null);
             }
 
-            public Rule(AminoAcidCode modifiedAminoAcid, String regionRegexp) {
+            public Rule(String name, AminoAcidCode modifiedAminoAcid, String regionRegexp) {
 
+                this.name = name;
                 this.modifiedAminoAcid = modifiedAminoAcid;
                 this.pattern = (regionRegexp != null) ? Pattern.compile("^"+regionRegexp+".*$") : null;
             }
@@ -169,6 +174,14 @@ public class SequenceModification extends SequenceFeatureBase {
                 return false;
             }
 
+            public String getName() {
+                return name;
+            }
+
+            public Pattern getPattern() {
+                return pattern;
+            }
+
             private String getAminoAcidSite(String aas, int modifiedAminoAcid) {
 
                 Preconditions.checkElementIndex(modifiedAminoAcid, aas.length());
@@ -177,16 +190,24 @@ public class SequenceModification extends SequenceFeatureBase {
 
                 return aas.substring(modifiedAminoAcid, lastIndex);
             }
+
+            @Override
+            public String toString() {
+                return "Rule{" +
+                        "name='" + name + '\'' +
+                        ", pattern=" + pattern +
+                        '}';
+            }
         }
 
         public static class NonMatchingRuleException extends FeatureQueryException {
 
-            public NonMatchingRuleException(FeatureQuery query, UniProtPTM ptm, String aas) {
+            public NonMatchingRuleException(FeatureQuery query, UniProtPTM ptm, Rule rule, String aas) {
 
                 super(query);
 
                 getReason().addCause("PTM", ptm.getValue());
-                getReason().setMessage("could not match PTM rule on aas " + aas);
+                getReason().setMessage("Could not match PTM rule "+ rule.getName() +": pattern="+rule.getPattern()+", target amino-acids=" + aas);
             }
         }
 

@@ -127,7 +127,6 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	);
     }    
 
-    
     @Test
     public void testSinglePeptideWithUnicityNonUnique() throws Exception {
 

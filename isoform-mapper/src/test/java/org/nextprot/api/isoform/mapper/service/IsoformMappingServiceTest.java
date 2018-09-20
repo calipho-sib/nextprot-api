@@ -408,7 +408,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> data = ((SingleFeatureQuerySuccessImpl) result).getData();
 
         Assert.assertTrue(data.containsKey("NX_Q06187-1"));
-        Assert.assertEquals("NX_Q06187-1.PTM-0253_Ser21", data.get("NX_Q06187-1").getIsoSpecificFeature());
+        Assert.assertEquals("NX_Q06187-1.PTM-0253_21", data.get("NX_Q06187-1").getIsoSpecificFeature());
     }
 
     @Test
@@ -428,7 +428,10 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         FeatureQueryResult result = service.validateFeature(query);
 
-        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query, new UniProtPTM("PTM-0528"), "QNASRKKSPR"));
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result,
+                new SequenceModification.SequenceModificationValidator.NonMatchingRuleException(query,
+                        new UniProtPTM("PTM-0528"),
+                        new SequenceModification.SequenceModificationValidator.Rule("PTM-0528", AminoAcidCode.ASPARAGINE, "N[^P][STC]"), "QNASRKKSPR"));
     }
 
     @Test

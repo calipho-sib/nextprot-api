@@ -39,6 +39,9 @@ public class DbXrefServiceTest {
 	@Mock
 	private AntibodyResourceIdsService antibodyResourceIdsService;
 
+    @Mock
+    private StatementService statementService;
+
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {
 

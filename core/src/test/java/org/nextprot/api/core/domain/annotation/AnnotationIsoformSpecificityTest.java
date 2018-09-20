@@ -80,7 +80,7 @@ public class AnnotationIsoformSpecificityTest {
         return specs;
     }
 
-    private AnnotationIsoformSpecificity mockAnnotationIsoformSpecificity(String name, Integer first, Integer last) {
+    public static AnnotationIsoformSpecificity mockAnnotationIsoformSpecificity(String name, Integer first, Integer last) {
 
         AnnotationIsoformSpecificity specificity = new AnnotationIsoformSpecificity();
         specificity.setIsoformAccession(name);

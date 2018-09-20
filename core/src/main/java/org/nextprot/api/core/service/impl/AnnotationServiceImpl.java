@@ -17,6 +17,7 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -122,10 +123,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
 		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
-
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
-		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+		if (!ignoreStatements) {
+            annotations = new AnnotationListMerger(annotations).merge(statementService.getAnnotations(entryName));
+        }
 
 		// post-processing of annotations
 		updateIsoformsDisplayedAsSpecific(annotations, entryName);
