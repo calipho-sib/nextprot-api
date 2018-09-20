@@ -130,6 +130,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
 
                     transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
+                    //trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
                 }
             }
 
@@ -193,18 +194,31 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 throw new NextProtException("Not expecting phenotypic variation at this stage.");
             }
 
-            // TODO: begin and end master positions are missing
-            TargetIsoformSet tis = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
+            StatementTransformationUtil.IsoformPositions isoformPositions =
+                    StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
 
-            if (tis.isEmpty()) {
+            if (!isoformPositions.hasTargetIsoforms()) {
 
                 LOGGER.warn("Skipping statement "+simpleStatement.getValue(StatementField.ANNOTATION_NAME) + " (source="+simpleStatement.getValue(StatementField.ASSIGNED_BY)+")");
                 return Optional.empty();
             }
 
-            return Optional.of(StatementBuilder.createNew()
+            /*return Optional.of(StatementBuilder.createNew()
                     .addMap(simpleStatement)
                     .addField(StatementField.TARGET_ISOFORMS, tis.serializeToJsonString())
+                    .removeField(StatementField.STATEMENT_ID)
+                    .removeField(StatementField.NEXTPROT_ACCESSION)
+                    .buildWithAnnotationHash());
+            */
+
+            return Optional.of(StatementBuilder.createNew()
+                    .addMap(simpleStatement)
+                    .addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
+                    .addField(StatementField.LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
+                    .addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
+                    .addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()))
+                    .addField(StatementField.ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
+                    .addField(StatementField.TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
                     .removeField(StatementField.STATEMENT_ID)
                     .removeField(StatementField.NEXTPROT_ACCESSION)
                     .buildWithAnnotationHash());
@@ -292,12 +306,13 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                     }
                     targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
                 } else {
-                    targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService).serializeToJsonString();
+                    targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService)
+                            .getTargetIsoformSet().serializeToJsonString();
                 }
 
                 if (objectStatement != null) {
 
-                    objectStatement.processed();
+                    trackedStatementIds.add(objectStatement.getValue(StatementField.STATEMENT_ID));
                     objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
                             .buildWithAnnotationHash();
