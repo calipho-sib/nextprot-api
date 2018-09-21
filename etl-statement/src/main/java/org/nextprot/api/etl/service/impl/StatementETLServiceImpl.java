@@ -38,11 +38,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		Set<Statement> rawStatements = extractStatements(source, release, report);
 		report.addInfoWithElapsedTime("Finished extraction");
 
-		/*// TODO: remove the line below
-        rawStatements = rawStatements.stream()
-                .filter(s->s.getValue(StatementField.ENTRY_ACCESSION).equals("NX_Q13936"))
-                .collect(Collectors.toSet()); */
-
         if (rawStatements.isEmpty()) {
 
             report.addWarning("ETL interruption: could not extract raw statements from " + source.name()
@@ -78,16 +73,6 @@ public class StatementETLServiceImpl implements StatementETLService {
     }
 
     void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
-
-	    // TODO: to fix
-        mappedStatements = mappedStatements.stream()
-                .peek(s -> {
-                    if (s.getValue(StatementField.TARGET_ISOFORMS).length() > 4000) {
-                        report.addWarning("Skipping statement with ANNOTATION_NAME "+s.getValue(StatementField.ANNOTATION_NAME)+": target_isoforms value exceed maximum VARCHAR(4000): "+s.getValue(StatementField.TARGET_ISOFORMS).length());
-                    }
-                })
-                .filter(s -> s.getValue(StatementField.TARGET_ISOFORMS).length() <= 4000)
-                .collect(Collectors.toSet());
 
         try {
 
