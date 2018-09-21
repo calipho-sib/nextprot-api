@@ -130,7 +130,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
 
                     transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
-                    //trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
+                    trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
                 }
             }
 
