@@ -345,6 +345,11 @@ public class StatementTransformationUtil {
             return targetIsoformSet != null && !targetIsoformSet.isEmpty();
         }
 
+        public boolean hasExactPositions() {
+            return beginPositionOfCanonicalOrIsoSpec != null && endPositionOfCanonicalOrIsoSpec != null
+                    && masterBeginPosition != null && masterEndPosition != null;
+        }
+
         public TargetIsoformSet getTargetIsoformSet() {
             return targetIsoformSet;
         }
