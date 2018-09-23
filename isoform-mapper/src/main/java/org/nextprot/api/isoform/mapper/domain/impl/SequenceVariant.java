@@ -4,13 +4,11 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildExcepti
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
@@ -22,6 +20,7 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -202,17 +201,19 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
 
-        Entry entry = getBeanService().getBean(EntryBuilderService.class).build(EntryConfig.newConfig(query.getAccession())
-                .withTargetIsoforms().withOverview());
+        Map<Overview.EntityNameClass, List<EntityName>> entityNames =
+                getBeanService().getBean(EntityNameService.class).findNamesByEntityNameClass(query.getAccession());
 
-        return new SequenceVariantValidator(entry, query);
+        if (!entityNames.containsKey(Overview.EntityNameClass.GENE_NAMES)) {
+            throw new NextProtException("missing gene names for entry accession "+ query.getAccession());
+        }
+
+        return new SequenceVariantValidator(entityNames.get(Overview.EntityNameClass.GENE_NAMES), query);
     }
 
-    public static boolean isValidGeneName(Entry entry, String geneName) {
+    public static boolean isValidGeneName(List<EntityName> geneNames, String geneName) {
 
         if (geneName != null) {
-
-            List<EntityName> geneNames = entry.getOverview().getGeneNames();
 
             for (EntityName name : geneNames) {
 
@@ -227,12 +228,12 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     public static class SequenceVariantValidator extends SequenceFeatureValidator<SequenceVariant> {
 
-        private final Entry entry;
+        private final List<EntityName> geneNames;
 
-        public SequenceVariantValidator(Entry entry, SingleFeatureQuery query) {
+        public SequenceVariantValidator(List<EntityName> geneNames, SingleFeatureQuery query) {
             super(query);
 
-            this.entry = entry;
+            this.geneNames = geneNames;
         }
 
         @Override
@@ -247,10 +248,10 @@ public class SequenceVariant extends SequenceFeatureBase {
          */
         private void checkFeatureGeneName(SequenceVariant sequenceFeature) throws IncompatibleGeneAndProteinNameException {
 
-            if (!SequenceVariant.isValidGeneName(entry, sequenceFeature.getGeneName())) {
+            if (!SequenceVariant.isValidGeneName(geneNames, sequenceFeature.getGeneName())) {
 
                 throw new IncompatibleGeneAndProteinNameException(query, sequenceFeature.getGeneName(),
-                        entry.getOverview().getGeneNames().stream().map(EntityName::getName).collect(Collectors.toList()));
+                        geneNames.stream().map(EntityName::getName).collect(Collectors.toList()));
             }
         }
     }

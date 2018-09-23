@@ -130,7 +130,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
 
                     transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
-                    //trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
+                    trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
                 }
             }
 
@@ -211,16 +211,21 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                     .buildWithAnnotationHash());
             */
 
-            return Optional.of(StatementBuilder.createNew()
+            StatementBuilder builder = StatementBuilder.createNew()
                     .addMap(simpleStatement)
-                    .addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
-                    .addField(StatementField.LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
-                    .addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
-                    .addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()))
+                    .removeField(StatementField.STATEMENT_ID)
+                    .removeField(StatementField.NEXTPROT_ACCESSION);
+
+            if (isoformPositions.hasExactPositions()) {
+                builder.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
+                        .addField(StatementField.LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
+                        .addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
+                        .addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
+            }
+
+            return Optional.of(builder
                     .addField(StatementField.ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
                     .addField(StatementField.TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
-                    .removeField(StatementField.STATEMENT_ID)
-                    .removeField(StatementField.NEXTPROT_ACCESSION)
                     .buildWithAnnotationHash());
         }
 

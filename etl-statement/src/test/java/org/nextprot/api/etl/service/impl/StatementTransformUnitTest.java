@@ -1,6 +1,5 @@
 package org.nextprot.api.etl.service.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
@@ -23,7 +22,6 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 	}
 
 	// TODO: try to understand why it failed
-	@Ignore
 	@Test
 	public void rawStatementsShouldBeWellConvertedToMappedStatements() {
 

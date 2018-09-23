@@ -14,6 +14,7 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -90,12 +91,13 @@ public class StatementETLServiceImpl implements StatementETLService {
             }else {
                 report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source "+ source);
             }
-
-
-        }catch (SQLException e){
+        }
+        catch (BatchUpdateException e) {
+            throw new NextProtException("Failed to load in source " + source + ":" + e + ", cause=" + e.getNextException());
+        }
+        catch (SQLException e) {
             throw new NextProtException("Failed to load in source " + source + ":" + e);
         }
-
     }
 
     private Set<Statement> filterValidStatements(Set<Statement> rawStatements, ReportBuilder report) {
