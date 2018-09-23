@@ -79,7 +79,7 @@ public class QuickAndDirtyKeywordProcessor {
 		long annotId = IdentifierOffset.KEYWORD_ANNOTATION_ID_COUNTER.incrementAndGet();
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
-		annot.setCategory(AnnotationCategory.KEYWORD.getDbAnnotationTypeName());
+		annot.setCategory(AnnotationCategory.UNIPROT_KEYWORD.getDbAnnotationTypeName());
 		annot.setCvTermAccessionCode(kwAccession);
 		annot.setCvTermName(kwName);
 		annot.setCvTermType("PTM");         // should be read from property of term category
@@ -88,7 +88,7 @@ public class QuickAndDirtyKeywordProcessor {
 		annot.setParentXref(null);
 		annot.setQualityQualifier("GOLD");  // like in NP1 processor
 		annot.setSynonym(null);
-		annot.setUniqueName("AN"+ entryName.substring(3) + "_KW_" + annotId);
+		annot.setUniqueName("AN_"+ entryName.substring(3) + "_KW_" + annotId);
 		annot.setVariant(null);		
 
 		System.out.println("Creating NEW KEYWORD annotation " + annot.getUniqueName() + " with keyword " + kwAccession + ":" + kwName);
