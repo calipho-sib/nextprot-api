@@ -33,5 +33,7 @@ public class IdentifierOffset {
 	public final static long XREF_ENSEMBL_GENE_PROPERTY_OFFSET = 1_400_000_000_000L;
 	public final static long XREF_ENSEMBL_PROTEIN_PROPERTY_OFFSET = 1_500_000_000_000L;
 	
+	// note: AtomicLong is thread safe !
 	public final static AtomicLong EVIDENCE_ID_COUNTER_FOR_STATEMENTS = new AtomicLong(2_000_000_000_000L);
+	public final static AtomicLong KEYWORD_ANNOTATION_ID_COUNTER = new AtomicLong(2_100_000_000_000L);
 }
