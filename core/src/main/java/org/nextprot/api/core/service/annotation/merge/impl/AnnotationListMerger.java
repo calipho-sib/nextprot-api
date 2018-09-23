@@ -33,8 +33,8 @@ public class AnnotationListMerger {
 
     public List<Annotation> merge(List<Annotation> otherAnnotations) {
 
-        return Collections.unmodifiableList(similarGroupBuilder.groupBySimilarity(otherAnnotations).stream()
+        return similarGroupBuilder.groupBySimilarity(otherAnnotations).stream()
                 .map(annotationGroup -> new ReducedAnnotation(annotationGroup).reduce())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 }

@@ -43,7 +43,7 @@ public class QuickAndDirtyKeywordProcessor {
 				if ("PTM-0253".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
 				if ("PTM-0254".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
 				if ("PTM-0255".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;				
-			} else if (a.getAPICategory() == AnnotationCategory.KEYWORD) {
+			} else if (a.getAPICategory() == AnnotationCategory.UNIPROT_KEYWORD) {
 				if ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
 				if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
 				if ("KW-0597".equals(a.getCvTermAccessionCode())) hasKW_0597 = true;								
@@ -52,23 +52,23 @@ public class QuickAndDirtyKeywordProcessor {
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
 		if (shouldHaveKW_0325) {
 			if (! hasKW_0325) {
-				annotations.add(createKeywordAnnotation("KW_0325", "Glycoprotein", entryName,  isoforms));
+				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", entryName,  isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW_0325 - Glycoprotein");
+				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
 			}
 		}
 		if (shouldHaveKW_0488) {
 			if (! hasKW_0488) {
-				annotations.add(createKeywordAnnotation("KW_0488", "Methylation", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", entryName, isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW_0488 - Methylation");				
+				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
 			}
 		}
 		if (shouldHaveKW_0597) {
 			if (! hasKW_0597) {
-				annotations.add(createKeywordAnnotation("KW_0597", "Phosphoprotein", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", entryName, isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW_0597 - Phosphoprotein");				
+				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
 		}
 		
