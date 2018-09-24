@@ -27,12 +27,8 @@ public class QuickAndDirtyKeywordProcessor {
 		boolean hasKW_0325 = false;
 		boolean hasKW_0488 = false;
 		boolean hasKW_0597 = false;
-		long maxAnnotId = 0L;
-		long maxEvidenceId = 0L;
 		for (Annotation a:annotations) {
-			
-			if (a.getAnnotationId() > maxAnnotId) maxAnnotId = a.getAnnotationId();
-			
+						
 			if (a.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE) {
 				if ("PTM-0528".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
 				if ("PTM-0551".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
@@ -54,21 +50,21 @@ public class QuickAndDirtyKeywordProcessor {
 			if (! hasKW_0325) {
 				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", entryName,  isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
+				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
 			}
 		}
 		if (shouldHaveKW_0488) {
 			if (! hasKW_0488) {
 				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", entryName, isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
+				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
 			}
 		}
 		if (shouldHaveKW_0597) {
 			if (! hasKW_0597) {
 				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", entryName, isoforms));
 			} else {
-				System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
+				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
 		}
 		
