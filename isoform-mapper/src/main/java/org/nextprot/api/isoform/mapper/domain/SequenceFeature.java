@@ -33,4 +33,7 @@ public interface SequenceFeature {
 
     /** @return true if an isoform is explicitly specificied */
     boolean isIsoformSpecific();
+
+    /** @return the feature as string */
+    String asString();
 }
