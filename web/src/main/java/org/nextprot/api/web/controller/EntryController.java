@@ -82,7 +82,7 @@ public class EntryController {
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
+	@RequestMapping(value = "/entry/{entry}/{blockOrSubpart}", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public String getSubPart(
 			@PathVariable("entry") String entryName,
 			@PathVariable("blockOrSubpart") String blockOrSubpart,
