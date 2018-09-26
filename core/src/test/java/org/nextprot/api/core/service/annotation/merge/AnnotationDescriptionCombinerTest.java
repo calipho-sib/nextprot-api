@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.core.domain.StatementAnnotDescription;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.text.ParseException;
@@ -14,9 +15,9 @@ public class AnnotationDescriptionCombinerTest {
     @Test
     public void testParser() throws ParseException {
 
-        AnnotationDescriptionCombiner.DescriptionParser parser = new AnnotationDescriptionCombiner.DescriptionParser();
+        AnnotationDescriptionParser parser = new AnnotationDescriptionParser();
 
-        AnnotationDescriptionCombiner.Description desc = parser.parse("phosphotyrosine; by ABL1");
+        StatementAnnotDescription desc = parser.parse("phosphotyrosine; by ABL1");
         Assert.assertEquals("Phosphotyrosine", desc.getPtm());
         Assert.assertEquals(Sets.newHashSet("ABL1"), desc.getEnzymes());
         Assert.assertEquals("Phosphotyrosine; by ABL1", desc.format());
