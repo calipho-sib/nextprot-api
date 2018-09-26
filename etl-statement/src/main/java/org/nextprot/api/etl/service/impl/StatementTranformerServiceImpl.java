@@ -5,8 +5,10 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -35,6 +37,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
     @Autowired
     private SequenceFeatureFactoryService sequenceFeatureFactoryService;
 
+    @Autowired
+    private TerminologyService terminologyService;
+
     @Override
     public Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 
@@ -54,11 +59,19 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
         statements.forEach(rs -> {
             if (rs.getValue(StatementField.NEXTPROT_ACCESSION) != null) {
+                CvTerm cvterm = terminologyService.findCvTermByAccession(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
+
+                if (cvterm == null) {
+                    throw new NextProtException("invalid cv term "+ rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) + ", accession=" +
+                            rs.getValue(StatementField.NEXTPROT_ACCESSION) + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+                }
+
                 statementSet.add(new StatementBuilder()
                         .addMap(rs)
                         .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
                         .addField(StatementField.RESOURCE_TYPE, "database")
                         .addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
+                        .addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
                         .build());
             } else {
                 invalidStatements.add(rs);

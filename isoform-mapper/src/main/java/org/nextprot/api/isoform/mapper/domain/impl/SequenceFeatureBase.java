@@ -102,6 +102,12 @@ abstract class SequenceFeatureBase implements SequenceFeature {
         return isIsoformSpecific;
     }
 
+    @Override
+    public String asString() {
+
+        return feature;
+    }
+
     BeanService getBeanService() {
         return beanService;
     }
