@@ -2,9 +2,9 @@ package org.nextprot.api.core.service.annotation.merge.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,20 +21,23 @@ import java.util.stream.Collectors;
 public class AnnotationListMerger {
 
     private final SimilarGroupBuilder similarGroupBuilder;
+    private final EntityNameService entityNameService;
 
     // TODO: we should check the unicity of the given annotations
-    public AnnotationListMerger(List<Annotation> uniqueAnnotations) {
+    public AnnotationListMerger(List<Annotation> uniqueAnnotations, EntityNameService entityNameService) {
 
         Preconditions.checkNotNull(uniqueAnnotations);
+        Preconditions.checkNotNull(entityNameService);
         Preconditions.checkArgument(!uniqueAnnotations.isEmpty());
 
+        this.entityNameService = entityNameService;
         this.similarGroupBuilder = new SimilarGroupBuilder(uniqueAnnotations);
     }
 
     public List<Annotation> merge(List<Annotation> otherAnnotations) {
 
         return similarGroupBuilder.groupBySimilarity(otherAnnotations).stream()
-                .map(annotationGroup -> new ReducedAnnotation(annotationGroup).reduce())
+                .map(annotationGroup -> new ReducedAnnotation(annotationGroup, entityNameService).reduce())
                 .collect(Collectors.toList());
     }
 }
