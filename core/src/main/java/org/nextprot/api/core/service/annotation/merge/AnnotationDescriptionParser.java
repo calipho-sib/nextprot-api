@@ -16,11 +16,18 @@ public class AnnotationDescriptionParser {
 
     private static final Logger LOGGER = Logger.getLogger(AnnotationDescriptionParser.class.getName());
 
-    public StatementAnnotDescription parse(String description) throws ParseException {
+    private final String geneName;
 
-        TokenListParser tokenListParser = new TokenListParser(description);
+    public AnnotationDescriptionParser(String geneName) {
 
-        StatementAnnotDescription desc = new StatementAnnotDescription();
+        this.geneName = geneName;
+    }
+
+    public StatementAnnotDescription parse(String annotationDescription) throws ParseException {
+
+        TokenListParser tokenListParser = new TokenListParser(annotationDescription);
+
+        StatementAnnotDescription desc = new StatementAnnotDescription(geneName);
 
         desc.setPtm(tokenListParser.consumeNextToken());
         desc.setAlternate(tokenListParser.consumeNextTokenIfMatch(new TokenListParser.Equals("alternate")).isPresent());
