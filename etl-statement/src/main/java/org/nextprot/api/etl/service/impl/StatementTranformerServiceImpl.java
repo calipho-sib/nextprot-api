@@ -82,7 +82,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             }
         });
 
-        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: set additional field (ANNOT_DESCRIPTION)");
+        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: reformat field ANNOT_DESCRIPTION");
 
         return statementSet;
     }
