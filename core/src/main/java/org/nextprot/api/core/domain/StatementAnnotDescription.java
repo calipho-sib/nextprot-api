@@ -4,17 +4,20 @@ import com.google.common.collect.Lists;
 import org.nextprot.api.commons.utils.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StatementAnnotDescription {
 
+    private String geneName;
     private String ptm;
-    private Set<String> enzymes;
+    private Set<String> enzymeGeneNames;
     private boolean alternate;
     private boolean inVitro;
 
-    public StatementAnnotDescription() {
+    public StatementAnnotDescription(String geneName) {
 
-        this.enzymes = new TreeSet<>();
+        this.enzymeGeneNames = new TreeSet<>();
+        this.geneName = geneName;
     }
 
     public String getPtm() {
@@ -26,12 +29,14 @@ public class StatementAnnotDescription {
     }
 
     public void addAllEnzymes(Collection<String> enzymes) {
-        this.enzymes.addAll(enzymes);
+        this.enzymeGeneNames.addAll(enzymes.stream()
+                .map(e -> (e.equals("autocatalysis")) ? geneName : e)
+                .collect(Collectors.toList()));
     }
 
-    public Set<String> getEnzymes() {
+    public Set<String> getEnzymeGeneNames() {
 
-        return Collections.unmodifiableSet(this.enzymes);
+        return Collections.unmodifiableSet(this.enzymeGeneNames);
     }
 
     public boolean isAlternate() {
@@ -52,7 +57,7 @@ public class StatementAnnotDescription {
 
     public StatementAnnotDescription combine(StatementAnnotDescription description) throws CombineException {
 
-        StatementAnnotDescription combinedDescription = new StatementAnnotDescription();
+        StatementAnnotDescription combinedDescription = new StatementAnnotDescription(geneName);
 
         if (!ptm.equalsIgnoreCase(description.getPtm())) {
 
@@ -72,10 +77,14 @@ public class StatementAnnotDescription {
             combinedDescription.setInVitro(true);
         }
 
-        combinedDescription.addAllEnzymes(enzymes);
-        combinedDescription.addAllEnzymes(description.getEnzymes());
+        combinedDescription.addAllEnzymes(enzymeGeneNames);
+        combinedDescription.addAllEnzymes(description.getEnzymeGeneNames());
 
         return combinedDescription;
+    }
+
+    public String getGeneName() {
+        return geneName;
     }
 
     public String format() {
@@ -90,29 +99,34 @@ public class StatementAnnotDescription {
         if (alternate) {
             sb.append("; alternate");
         }
-        if (!enzymes.isEmpty()) {
-            List<String> enzymeList = Lists.newArrayList(enzymes.iterator());
+        if (!enzymeGeneNames.isEmpty()) {
+            List<String> enzymeList = Lists.newArrayList(enzymeGeneNames.iterator());
 
             sb.append("; by ");
-            if (enzymes.size() == 1) {
-                sb.append(enzymeList.get(0));
+            if (enzymeGeneNames.size() == 1) {
+                sb.append(byWhichEnzyme(enzymeList.get(0)));
             }
-            else if (enzymes.size() >= 2) {
+            else if (enzymeGeneNames.size() >= 2) {
 
                 sb.append(enzymeList.get(0));
 
-                for (int i=1; i<enzymes.size()-1 ; i++) {
+                for (int i = 1; i< enzymeGeneNames.size()-1 ; i++) {
                     sb.append(", ");
-                    sb.append(enzymeList.get(i));
+                    sb.append(byWhichEnzyme(enzymeList.get(i)));
                 }
                 sb.append(" and ");
-                sb.append(enzymeList.get(enzymes.size()-1));
+                sb.append(byWhichEnzyme(enzymeList.get(enzymeGeneNames.size()-1)));
             }
         }
         if (inVitro) {
             sb.append("; in vitro");
         }
         return sb.toString();
+    }
+
+    private String byWhichEnzyme(String enzymeGeneName) {
+
+        return (enzymeGeneName.equals(geneName)) ? "autocatalysis" : enzymeGeneName;
     }
 
     public static class CombineException extends Exception {
