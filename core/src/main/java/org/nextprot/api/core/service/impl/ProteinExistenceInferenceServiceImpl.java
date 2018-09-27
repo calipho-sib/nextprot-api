@@ -22,6 +22,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * See specifications on https://calipho.isb-sib.ch/wiki/display/cal/Protein+existence+%28PE%29+upgrade+rules
+ */
 @Service
 class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
 
