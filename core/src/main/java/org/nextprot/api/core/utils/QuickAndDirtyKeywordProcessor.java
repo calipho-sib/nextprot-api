@@ -78,6 +78,7 @@ public class QuickAndDirtyKeywordProcessor {
 		annot.setCategory(AnnotationCategory.UNIPROT_KEYWORD.getDbAnnotationTypeName());
 		annot.setCvTermAccessionCode(kwAccession);
 		annot.setCvTermName(kwName);
+		annot.setCvApiName("UniprotKeywordCv");
 		annot.setCvTermType("PTM");         // should be read from property of term category
 		annot.setCvTermDescription(kwName); // should be read from property of term 
 		annot.setDescription(kwName);
