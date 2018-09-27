@@ -52,7 +52,20 @@ class EntityNameServiceImpl implements EntityNameService {
 	}
 
     @Override
-    public Map<Overview.EntityNameClass, List<EntityName>> findNamesByEntityNameClass(String uniqueName) {
+    public List<EntityName> findNamesByEntityNameClass(String uniqueName, Overview.EntityNameClass entityNameClass) {
+
+        Map<Overview.EntityNameClass, List<EntityName>> map = findNamesByEntityNameClass(uniqueName);
+
+        if (!map.containsKey(entityNameClass)) {
+
+            return new ArrayList<>();
+        }
+
+	    return map.get(entityNameClass);
+    }
+
+    // TODO: refactor this not efficient code
+    private Map<Overview.EntityNameClass, List<EntityName>> findNamesByEntityNameClass(String uniqueName) {
 
         List<EntityName> entityNames = entryNameDao.findNames(uniqueName);
         entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));

@@ -3,7 +3,6 @@ package org.nextprot.api.core.service.annotation.merge;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.StatementAnnotDescription;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntityNameService;
@@ -11,8 +10,9 @@ import org.nextprot.api.core.utils.IsoformUtils;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
+
+import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
 /*
 Regles pour les différents cas:
@@ -40,7 +40,6 @@ public class AnnotationDescriptionCombiner {
 
     private final Annotation annotation;
     private final AnnotationDescriptionParser parser;
-    private final Map<Overview.EntityNameClass, List<EntityName>> entityNames;
 
     public AnnotationDescriptionCombiner(Annotation annotation, EntityNameService entityNameService) {
 
@@ -56,15 +55,19 @@ public class AnnotationDescriptionCombiner {
 
         String entryAccession = IsoformUtils.findEntryAccessionFromIsoformAccession(annotation.getTargetingIsoformsMap().keySet().iterator().next());
 
-        entityNames = entityNameService.findNamesByEntityNameClass(entryAccession);
+        List<EntityName> geneNames = entityNameService.findNamesByEntityNameClass(entryAccession, GENE_NAMES);
 
-        if (!entityNames.containsKey(Overview.EntityNameClass.GENE_NAMES)) {
+        if (geneNames.isEmpty()) {
 
             throw new NextProtException("Cannot combine description: missing gene names for annotation "+annotation.getAnnotationId()
                     +", entry accession="+entryAccession);
         }
 
-        parser = new AnnotationDescriptionParser(entityNames.get(Overview.EntityNameClass.GENE_NAMES));
+        parser = new AnnotationDescriptionParser(geneNames.stream()
+                        .filter(entityName -> entityName.isMain())
+                        .map(entityName -> entityName.getName())
+                        .findFirst().orElseThrow(() -> new NextProtException("Cannot combine description for annotation "+annotation.getAnnotationId()
+                            +", entry accession=" + entryAccession+": missing main gene name")));
     }
 
     /**

@@ -20,7 +20,6 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -201,14 +200,14 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
 
-        Map<Overview.EntityNameClass, List<EntityName>> entityNames =
-                getBeanService().getBean(EntityNameService.class).findNamesByEntityNameClass(query.getAccession());
+        List<EntityName> geneNames = getBeanService().getBean(EntityNameService.class)
+                .findNamesByEntityNameClass(query.getAccession(), Overview.EntityNameClass.GENE_NAMES);
 
-        if (!entityNames.containsKey(Overview.EntityNameClass.GENE_NAMES)) {
+        if (geneNames.isEmpty()) {
             throw new NextProtException("missing gene names for entry accession "+ query.getAccession());
         }
 
-        return new SequenceVariantValidator(entityNames.get(Overview.EntityNameClass.GENE_NAMES), query);
+        return new SequenceVariantValidator(geneNames, query);
     }
 
     public static boolean isValidGeneName(List<EntityName> geneNames, String geneName) {
