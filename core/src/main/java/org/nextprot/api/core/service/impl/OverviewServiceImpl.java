@@ -4,7 +4,6 @@ import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
 import org.nextprot.api.core.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+
+import static org.nextprot.api.core.domain.Overview.EntityNameClass.*;
 
 
 @Service
@@ -35,9 +35,11 @@ class OverviewServiceImpl implements OverviewService {
 		if (history != null && history.size() != 0)
 			overview.setHistory(history.get(0));
 
-		Map<EntityNameClass, List<EntityName>> entityNames = entityNameService.findNamesByEntityNameClass(uniqueName);
-		setNamesInOverview(entityNames, overview);
-
+		overview.setProteinNames(entityNameService.findNamesByEntityNameClass(uniqueName, PROTEIN_NAMES));
+        overview.setGeneNames(entityNameService.findNamesByEntityNameClass(uniqueName, GENE_NAMES));
+        overview.setCleavedRegionNames(entityNameService.findNamesByEntityNameClass(uniqueName, CLEAVED_REGION_NAMES));
+        overview.setAdditionalNames(entityNameService.findNamesByEntityNameClass(uniqueName, ADDITIONAL_NAMES));
+        overview.setFunctionalRegionNames(entityNameService.findNamesByEntityNameClass(uniqueName, FUNCTIONAL_REGION_NAMES));
 		overview.setFamilies(this.familyService.findFamilies(uniqueName));
 		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
 		overview.setProteinExistences(proteinExistenceService.getProteinExistences(uniqueName));
@@ -72,34 +74,5 @@ class OverviewServiceImpl implements OverviewService {
 		}
 		
 		return isoNames;
-	}
-	
-	private void setNamesInOverview(Map<EntityNameClass, List<EntityName>> entityNames, Overview overview){
-
-		for (EntityNameClass en : entityNames.keySet()) {
-
-			switch (en) {
-				case PROTEIN_NAMES: {
-					overview.setProteinNames(entityNames.get(en));
-					break;
-				}
-				case GENE_NAMES: {
-					overview.setGeneNames(entityNames.get(en));
-					break;
-				}
-				case CLEAVED_REGION_NAMES: {
-					overview.setCleavedRegionNames(entityNames.get(en));
-					break;
-				}
-				case ADDITIONAL_NAMES: {
-					overview.setAdditionalNames(entityNames.get(en));
-					break;
-				}
-				case FUNCTIONAL_REGION_NAMES: {
-					overview.setFunctionalRegionNames(entityNames.get(en));
-					break;
-				}
-			}
-		}
 	}
 }

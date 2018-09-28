@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -19,6 +20,7 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,11 +49,44 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
         if (source == NextProtSource.GlyConnect) {
             rawStatements = setAdditionalFieldsForGlyConnectStatementsHACK(rawStatements, report);
         }
+        else if (source == NextProtSource.BioEditor) {
+            rawStatements = updateAnnotDescriptionFieldForBioEditorStatementsHACK(rawStatements, report);
+        }
 
         return new StatementTransformer(rawStatements, report).transform();
     }
 
-    // TODO: additionnal field should be defined outside nextprot-api
+    private Set<Statement> updateAnnotDescriptionFieldForBioEditorStatementsHACK(Set<Statement> statements, ReportBuilder report) {
+
+        Set<Statement> statementSet = new HashSet<>();
+
+        statements.forEach(rs -> {
+            if (rs.getValue(StatementField.ANNOT_DESCRIPTION) != null) {
+
+                String annotDescription = rs.getValue(StatementField.ANNOT_DESCRIPTION);
+
+                AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(StatementField.GENE_NAME));
+
+                try {
+                    statementSet.add(new StatementBuilder()
+                            .addMap(rs)
+                            .addField(StatementField.ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
+                            .build());
+                } catch (ParseException e) {
+
+                    throw new NextProtException("cannot update description for statement "+rs, e);
+                }
+            } else {
+
+                statementSet.add(rs);
+            }
+        });
+
+        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: reformat field ANNOT_DESCRIPTION");
+
+        return statementSet;
+    }
+
     private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements, ReportBuilder report) {
 
         Set<Statement> statementSet = new HashSet<>();
@@ -82,7 +117,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             report.addWarning("Undefined neXtProt accessions: skipping " + invalidStatements.size() + " statements");
         }
 
-        report.addInfo("Created " + statementSet.size() + "/" + (statements.size()) + " statements with additionnal fields (ENTRY_ACCESSION, STATEMENT_ID)");
+        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (ENTRY_ACCESSION, RESOURCE_TYPE, ANNOTATION_NAME, ANNOT_DESCRIPTION and STATEMENT_ID)");
 
         return statementSet;
     }
@@ -216,18 +251,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 return Optional.empty();
             }
 
-            /*return Optional.of(StatementBuilder.createNew()
-                    .addMap(simpleStatement)
-                    .addField(StatementField.TARGET_ISOFORMS, tis.serializeToJsonString())
-                    .removeField(StatementField.STATEMENT_ID)
-                    .removeField(StatementField.NEXTPROT_ACCESSION)
-                    .buildWithAnnotationHash());
-            */
-
             StatementBuilder builder = StatementBuilder.createNew()
                     .addMap(simpleStatement)
-                    .removeField(StatementField.STATEMENT_ID)
-                    .removeField(StatementField.NEXTPROT_ACCESSION);
+                    .addField(StatementField.RAW_STATEMENT_ID, simpleStatement.getStatementId());
 
             if (isoformPositions.hasExactPositions()) {
                 builder.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
@@ -341,6 +367,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
+                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
                             .buildWithAnnotationHash();
                 } else {
 
@@ -350,6 +377,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
+                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
                             .buildWithAnnotationHash();
                 }
 

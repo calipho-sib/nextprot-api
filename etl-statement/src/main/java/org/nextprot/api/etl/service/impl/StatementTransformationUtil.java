@@ -38,10 +38,11 @@ public class StatementTransformationUtil {
             AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY));
 
             // POSITIONAL ANNOTATIONS
-            if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
+            if (category.isChildOf(AnnotationCategory.POSITIONAL_ANNOTATION) && category != AnnotationCategory.PTM_INFO) {
 
-                isoformPositions = buildTargetIsoformStatementPositions(statement, isoformMappingService, isoSpecificAccession);
+                isoformPositions = buildTargetIsoformStatementPositions(category, statement, isoformMappingService, isoSpecificAccession);
             }
+
             // NON-POSITIONAL ANNOTATIONS
             else {
 
@@ -65,8 +66,25 @@ public class StatementTransformationUtil {
         return isoformPositions;
 	}
 
-    private static IsoformPositions buildTargetIsoformStatementPositions(Statement statement, IsoformMappingService isoformMappingService,
+	private static String deduceFeatureType(AnnotationCategory category) {
+
+	    if (category == AnnotationCategory.VARIANT || category  == AnnotationCategory.MUTAGENESIS) {
+	        return "variant";
+        }
+        else if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
+            return "ptm";
+        }
+        return null;
+    }
+
+    private static IsoformPositions buildTargetIsoformStatementPositions(AnnotationCategory category, Statement statement, IsoformMappingService isoformMappingService,
                                                                                             Optional<String> isoSpecificAccession) {
+	    String featureType = deduceFeatureType(category);
+
+	    if (featureType == null) {
+            throw new NextProtException("Cannot build target isoform for statement "+ statement);
+        }
+
         IsoformPositions isoformPositions = new IsoformPositions();
 
 	    String featureName = statement.getValue(ANNOTATION_NAME);
@@ -74,11 +92,11 @@ public class StatementTransformationUtil {
         IsoTargetSpecificity isoTargetSpecificity;
 
         if (!isoSpecificAccession.isPresent()) {
-            result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+            result = isoformMappingService.propagateFeature(new SingleFeatureQuery(featureName, featureType, ""));
             isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
         }
         else {
-            result = isoformMappingService.validateFeature(new SingleFeatureQuery(featureName, "ptm", ""));
+            result = isoformMappingService.validateFeature(new SingleFeatureQuery(featureName, featureType, ""));
             isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
         }
 

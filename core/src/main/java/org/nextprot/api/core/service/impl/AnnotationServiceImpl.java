@@ -47,6 +47,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
+	@Autowired private EntityNameService entityNameService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -130,7 +131,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		if (!ignoreStatements) {
-            annotations = new AnnotationListMerger(annotations).merge(statementService.getAnnotations(entryName));
+            annotations = new AnnotationListMerger(annotations, entityNameService).merge(statementService.getAnnotations(entryName));
         }
 
 		// post-processing of annotations

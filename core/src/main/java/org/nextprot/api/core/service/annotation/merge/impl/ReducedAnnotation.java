@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionCombiner;
 import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
 import org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder;
@@ -27,12 +28,15 @@ public class ReducedAnnotation implements AnnotationListReduction {
     private final List<Annotation> annotations;
     private final Annotation destAnnotation;
     private final List<Annotation> sourceAnnotations;
+    private final EntityNameService entityNameService;
 
-    public ReducedAnnotation(SimilarGroupBuilder.SimilarAnnotationGroup annotationGroup) {
+    public ReducedAnnotation(SimilarGroupBuilder.SimilarAnnotationGroup annotationGroup, EntityNameService entityNameService) {
 
         Preconditions.checkNotNull(annotationGroup);
+        Preconditions.checkNotNull(entityNameService);
         Preconditions.checkArgument(!annotationGroup.isEmpty());
 
+        this.entityNameService = entityNameService;
         this.annotations = annotationGroup.getAnnotations();
 
         if (annotations.size() == 1) {
@@ -109,7 +113,7 @@ public class ReducedAnnotation implements AnnotationListReduction {
      */
     private void updateDestDescription() {
 
-        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner(destAnnotation);
+        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner(destAnnotation, entityNameService);
 
         for (Annotation sourceAnnotation : sourceAnnotations) {
 
