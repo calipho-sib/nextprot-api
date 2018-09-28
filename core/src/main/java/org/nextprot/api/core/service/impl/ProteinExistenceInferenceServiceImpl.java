@@ -80,7 +80,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
 		}
 		
-		LOGGER.info("ProteinExistence: noPromotionRule: " + entryAccession);
+		LOGGER.info("ProteinExistence: promotedByNoRule: " + entryAccession);
 		return ProteinExistenceInferred.noInferenceFound(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT));
 	}
 
@@ -166,6 +166,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE)
                 .flatMap(annot -> annot.getEvidences().stream())
                 .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                .filter(evidence -> ! "Uniprot".equals(evidence.getAssignedBy()))
                 .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877))
                 .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
     }
