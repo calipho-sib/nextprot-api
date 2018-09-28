@@ -251,18 +251,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                 return Optional.empty();
             }
 
-            /*return Optional.of(StatementBuilder.createNew()
-                    .addMap(simpleStatement)
-                    .addField(StatementField.TARGET_ISOFORMS, tis.serializeToJsonString())
-                    .removeField(StatementField.STATEMENT_ID)
-                    .removeField(StatementField.NEXTPROT_ACCESSION)
-                    .buildWithAnnotationHash());
-            */
-
             StatementBuilder builder = StatementBuilder.createNew()
                     .addMap(simpleStatement)
-                    .removeField(StatementField.STATEMENT_ID)
-                    .removeField(StatementField.NEXTPROT_ACCESSION);
+                    .addField(StatementField.RAW_STATEMENT_ID, simpleStatement.getStatementId());
 
             if (isoformPositions.hasExactPositions()) {
                 builder.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
@@ -376,6 +367,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
+                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
                             .buildWithAnnotationHash();
                 } else {
 
@@ -385,6 +377,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
                             .removeField(StatementField.STATEMENT_ID)
                             .removeField(StatementField.SUBJECT_STATEMENT_IDS)
                             .removeField(StatementField.OBJECT_STATEMENT_IDS)
+                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
                             .buildWithAnnotationHash();
                 }
 
