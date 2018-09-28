@@ -12,6 +12,7 @@ import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.merge.impl.FeaturePositionMatcher;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,16 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
 
+    private static final Logger LOGGER = Logger.getLogger(ProteinExistenceInferenceServiceImpl.class.getName());
+
+	
 	@Autowired
 	private ProteinExistenceDao proteinExistenceDao;
 
@@ -40,35 +45,39 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
 
-		if (cannotBePromotedAccordingToRule1(entryAccession)) {
+		if (cannotBePromotedAccordingToRule1(entryAccession)) {			
+			LOGGER.info("ProteinExistence: cannotBePromotedAccordingToRule1:" + entryAccession);
 			return new ProteinExistenceInferred(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
 					ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
 		}
 		if (promotedAccordingToRule2(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule2: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02);
 		}
 		if (promotedAccordingToRule3(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule3: " + entryAccession  + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03);
 		}
-		if (promotedAccordingToRule4(entryAccession)) {
-
-			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
-		}
 		if (promotedAccordingToRule5(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule5: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05);
 		}
 		if (promotedAccordingToRule6(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule6: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
         if (promotedAccordingToRule7(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule7: " + entryAccession + " to PE1");
             return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_07);
         }
-
+        
+        // WARNING: this rule must be after rules promoting to PE1, they have precedence
+		if (promotedAccordingToRule4(entryAccession)) {
+			LOGGER.info("ProteinExistence: promotedAccordingToRule4: " + entryAccession + " to PE2");
+			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
+		}
+		
+		LOGGER.info("ProteinExistence: noPromotionRule: " + entryAccession);
 		return ProteinExistenceInferred.noInferenceFound(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT));
 	}
 
