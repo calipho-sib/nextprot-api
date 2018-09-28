@@ -158,7 +158,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                 .flatMap(annot -> annot.getEvidences().stream())
                 .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
                 .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877))
-                .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
+                .noneMatch(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
     }
 
 	// Term "experimental evidence": AC=ECO:0000006, ID=84877
