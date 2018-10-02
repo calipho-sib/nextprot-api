@@ -76,6 +76,12 @@
 			<version>LATEST</version>
 		</dependency>
 
+        <dependency>
+            <groupId>org.nextprot</groupId>
+            <artifactId>nextprot-queries</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
 		<!--
 			Third party libraries
 		-->

@@ -15,17 +15,6 @@
         <!--
 			External neXtProt projects
 		-->
-        <dependency>
-            <groupId>org.nextprot</groupId>
-            <artifactId>nextprot-commons</artifactId>
-            <version>LATEST</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.nextprot</groupId>
-            <artifactId>nextprot-queries</artifactId>
-            <version>LATEST</version>
-        </dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-security</artifactId>
