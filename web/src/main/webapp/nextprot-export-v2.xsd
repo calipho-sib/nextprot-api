@@ -267,7 +267,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="chain" maxOccurs="unbounded"/>
+                <xs:element ref="chain" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
@@ -294,7 +294,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="region" maxOccurs="unbounded"/>
+                <xs:element ref="region" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
@@ -714,7 +714,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="transcript-protein"/>
+                <xs:element ref="transcript-protein" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="exon-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute ref="accession" use="required"/>
