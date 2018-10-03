@@ -12,6 +12,9 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
+        <!--
+			External neXtProt projects
+		-->
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-security</artifactId>
