@@ -3,8 +3,7 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 
 public class Family implements Serializable{
-
-
+	
 	private static final long serialVersionUID = -2044466405961942191L;
 
 	private Long familyId;
@@ -78,6 +77,7 @@ public class Family implements Serializable{
 			this.name = name.substring(0,name.length() - 14);
 		}
 		else {
+			System.out.println("ERROR: cannot determine level for family name <" + name + ">");
 			this.level = "";					//  0 case, but who knows...
 			this.name = name;
 		}
