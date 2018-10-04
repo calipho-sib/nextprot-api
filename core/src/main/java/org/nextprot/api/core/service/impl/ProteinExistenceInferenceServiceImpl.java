@@ -12,7 +12,6 @@ import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.core.service.annotation.merge.impl.FeaturePositionMatcher;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,8 +156,9 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.BINARY_INTERACTION));
 	}
 
-    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and AND ECO experimental evidence (or child thereof)
+    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and ECO experimental evidence (or child thereof)
     // other than mass spectrometry evidence (ECO:0001096)
+    // Note: Term "experimental evidence": ECO:0000006 (ID=84877), Term "mass spectrometry evidence": ECO:0001096 (ID=154119)
     @Override
     public boolean promotedAccordingToRule7(String entryAccession) {
 
@@ -171,7 +171,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                 .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
     }
 
-	// Term "experimental evidence": AC=ECO:0000006, ID=84877
+	// Note: Term "experimental evidence": ECO:0000006 (ID=84877)
     private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Supplier<Stream<Annotation>> streamSupplier) {
 
 		return streamSupplier.get().flatMap(annot -> annot.getEvidences().stream())

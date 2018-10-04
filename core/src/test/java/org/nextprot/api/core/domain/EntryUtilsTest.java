@@ -27,6 +27,6 @@ public class EntryUtilsTest extends CoreUnitBaseTest{
 
         testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P19367").withAnnotations());
         FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
-        Assert.assertEquals("cellular glucose homeostasis",FunctionInfoWithCanonicalFirst.get(0));
+        Assert.assertTrue(FunctionInfoWithCanonicalFirst.contains("cellular glucose homeostasis"));
     }
 }

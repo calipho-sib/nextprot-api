@@ -73,10 +73,10 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         Assert.assertEquals("Iso 2", gml.get(0).getIsoformGeneMappings().get(1).getIsoformMainName());
         Assert.assertEquals("SILVER", gml.get(0).getIsoformGeneMappings().get(1).getQuality());
         Assert.assertEquals(13, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().size());
-        Assert.assertEquals(1, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getFirstPositionOnGene());
-        Assert.assertEquals(153, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getLastPositionOnGene());
-        Assert.assertEquals(38813, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getFirstPositionOnGene());
-        Assert.assertEquals(39503, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getLastPositionOnGene());
+        Assert.assertEquals(7034, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getFirstPositionOnGene());
+        Assert.assertEquals(7175, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getLastPositionOnGene());
+        Assert.assertEquals(45835, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getFirstPositionOnGene());
+        Assert.assertEquals(46525, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getLastPositionOnGene());
     }
 
     @Test
@@ -125,23 +125,37 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
 
         List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_P17405");
 
-        Assert.assertEquals(2, gml.get(0).getIsoformGeneMappings().size());
+        Assert.assertEquals(3, gml.get(0).getIsoformGeneMappings().size());
 
         GenomicMapping gm = gml.get(0);
 
         List<CategorizedExon> exonsForIso1 = gm.getIsoformGeneMappings().get(0).getTranscriptGeneMappings().get(0).getExons();
-        List<CategorizedExon> exonsForIso4 = gm.getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons();
+        List<CategorizedExon> exonsForIso3 = gm.getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons();
+        List<CategorizedExon> exonsForIso4 = gm.getIsoformGeneMappings().get(2).getTranscriptGeneMappings().get(0).getExons();
 
-        Assert.assertEquals(7, exonsForIso1.size());
-        Assert.assertEquals(7, exonsForIso4.size());
+        Assert.assertEquals(6, exonsForIso1.size());
+        Assert.assertEquals(7, exonsForIso3.size());
+        Assert.assertEquals(6, exonsForIso4.size());
 
-        Assert.assertEquals(108, exonsForIso1.get(0).getGeneRegion().getLength());
-        Assert.assertEquals(204, exonsForIso1.get(1).getGeneRegion().getLength());
-        Assert.assertEquals(798, exonsForIso1.get(6).getGeneRegion().getLength());
+        Assert.assertEquals(486, exonsForIso1.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(773, exonsForIso1.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(798, exonsForIso1.get(5).getGeneRegion().getLength());
 
-        Assert.assertEquals(108, exonsForIso4.get(0).getGeneRegion().getLength());
-        Assert.assertEquals(204, exonsForIso4.get(1).getGeneRegion().getLength());
-        Assert.assertEquals(581, exonsForIso4.get(6).getGeneRegion().getLength());
+        Assert.assertEquals(486, exonsForIso3.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(773, exonsForIso3.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(798, exonsForIso3.get(6).getGeneRegion().getLength());
+
+        Assert.assertEquals(442, exonsForIso4.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(770, exonsForIso4.get(1).getGeneRegion().getLength());
+        Assert.assertEquals(581, exonsForIso4.get(5).getGeneRegion().getLength());
+    }
+
+    @Test
+    public void testIsoformNX_O95084HasOneIsoformGeneMapping() {
+
+        List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_O95084");
+
+        Assert.assertEquals(1, gml.get(0).getIsoformGeneMappings().size());
     }
 
     private void assertExonStructures(List<IsoformGeneMapping> iml, String isoName, String expEnsg, String expEnst, String expIsoPosOnRefGene, String expExonPosOnRefGene) {

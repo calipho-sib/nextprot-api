@@ -102,8 +102,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 			}
 		}
 		assertTrue(numberOfTermsHavingRelatedTerms > 44000);
-		System.out.println(tac + " has " + maxSizeOfRelatedTerms + " related terms");
-		assertTrue(maxSizeOfRelatedTerms > 4000 && maxSizeOfRelatedTerms < 5000);
+		assertTrue(maxSizeOfRelatedTerms > 4000 && maxSizeOfRelatedTerms < 6000);
 	}
 
 	

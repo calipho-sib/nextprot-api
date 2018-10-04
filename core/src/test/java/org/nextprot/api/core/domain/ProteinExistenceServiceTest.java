@@ -99,7 +99,13 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     @Test
     public void shouldMatchRule7() {
 
-        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule7("NX_Q9Y6N5"));
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule7("NX_O96004"));
+    }
+
+    @Test
+    public void shouldAlsoMatchRule7() {
+
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule7("NX_Q9NZH5"));
     }
 
     @Test
