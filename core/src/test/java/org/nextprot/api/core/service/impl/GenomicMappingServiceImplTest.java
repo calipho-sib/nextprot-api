@@ -13,6 +13,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -151,7 +152,39 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void testIsoformNX_O95084HasOneIsoformGeneMapping() {
+    public void testThatAllGivenIsoformsDoesNotMap() {
+
+        List<String> isoformAccessions = Arrays.asList("NX_O43521-15",
+                "NX_O95084-2",
+                "NX_P0DMV8-2",
+                "NX_P31947-2",
+                "NX_P51522-2",
+                "NX_P80723-2",
+                "NX_Q6ZMV5-2",
+                "NX_Q8IXZ3-2",
+                "NX_Q8IYU4-2",
+                "NX_Q8N6I1-2",
+                "NX_Q8TCT1-2",
+                "NX_Q8WZ71-2",
+                "NX_Q96CX3-2",
+                "NX_Q9BRL6-2",
+                "NX_Q9UKF2-2",
+                "NX_Q9Y6B2-2",
+                "NX_Q9Y6Z5-2");
+
+        for (String isoformAccession : isoformAccessions) {
+
+            String entryAccession = isoformAccession.split("-")[0];
+
+            GenomicMapping gm = genomicMappingService.findGenomicMappingsByEntryName(entryAccession).get(0);
+
+            Assert.assertTrue(gm.getIsoformGeneMappings().stream()
+                    .noneMatch(igm -> igm.getIsoformAccession().equals(isoformAccession)));
+        }
+    }
+
+    @Test
+    public void testIsoformsGeneMapping() {
 
         List<GenomicMapping> gml = genomicMappingService.findGenomicMappingsByEntryName("NX_O95084");
 
