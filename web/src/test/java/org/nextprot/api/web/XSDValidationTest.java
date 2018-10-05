@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.fail;
 
@@ -45,40 +46,18 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 	}
 
 	@Test
-	public void shouldValidateXMLFilewithXSD() {
+	public void shouldValidateNX_Q15858XMLFilewithXSD() {
 
-		Schema schema;
-		try {
-
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v2.xsd")));
-
-			File f = new File("tmp.xml");
-			StreamSource xmlFile = new StreamSource(f);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-			streamEntryService.streamEntries(Collections.singletonList("NX_Q15858"), NextprotMediaType.XML, "entry", baos, "");
-
-			XMLPrettyPrinter prettyPrinter = new XMLPrettyPrinter();
-
-			String prettyXml = prettyPrinter.prettify(baos.toString());
-			PrintWriter out = new PrintWriter(f);
-			out.print(prettyXml);
-			out.close();
-			
-			// instance document
-			Validator validator = schema.newValidator();
-			// validate the DOM tree
-			validator.validate(xmlFile);
-
-			f.delete();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail();
-			
-		}
+        shouldValidateXMLFilewithXSD("NX_Q15858");
 	}
+
+    @Test
+    public void shouldValidateMultipleEntriesXMLFilewithXSD() {
+
+        Stream.of("NX_O43521", "NX_O95084", "NX_P0DMV8", "NX_P31947", "NX_P51522", "NX_P80723", "NX_Q6ZMV5",
+                "NX_Q8IXZ3", "NX_Q8IYU4", "NX_Q8N6I1", "NX_Q8TCT1", "NX_Q8WZ71", "NX_Q96CX3", "NX_Q9BRL6",
+                "NX_Q9UKF2", "NX_Q9Y6B2", "NX_Q9Y6Z5").forEach(entryAccession -> shouldValidateXMLFilewithXSD(entryAccession));
+    }
 
 	@Test
 	public void mostOfAnnotationCategoriesShouldBePresentInXSD() throws IOException {
@@ -99,4 +78,39 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 			}
 		}
 	}
+
+    private void shouldValidateXMLFilewithXSD(String entryAccession) {
+
+        Schema schema;
+        try {
+
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v2.xsd")));
+
+            File f = new File("tmp.xml");
+            StreamSource xmlFile = new StreamSource(f);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            streamEntryService.streamEntries(Collections.singletonList(entryAccession), NextprotMediaType.XML, "entry", baos, "");
+
+            XMLPrettyPrinter prettyPrinter = new XMLPrettyPrinter();
+
+            String prettyXml = prettyPrinter.prettify(baos.toString());
+            PrintWriter out = new PrintWriter(f);
+            out.print(prettyXml);
+            out.close();
+
+            // instance document
+            Validator validator = schema.newValidator();
+            // validate the DOM tree
+            validator.validate(xmlFile);
+
+            f.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+
+        }
+    }
 }
