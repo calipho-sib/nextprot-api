@@ -35,17 +35,13 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		public EntryProperties mapRow(ResultSet resultSet, int row) throws SQLException {
 			int res;
 			EntryProperties properties = new EntryProperties();
-			res = resultSet.getInt("mutcnt");
-			properties.setFiltermutagenesis(res == -1? 0:res);
 			res = resultSet.getInt("intcnt");
 			properties.setInteractionCount(res == -1? 0:res);
 			properties.setMaxSeqLen(resultSet.getInt("maxlen"));
 			properties.setFilterstructure(resultSet.getInt("structure") != -1);
 			properties.setFilterdisease(resultSet.getInt("disease") != -1);
-			properties.setFilterproteomics(resultSet.getInt("proteomic") != -1);
 			properties.setFilterexpressionprofile(resultSet.getInt("expression") != -1);
 			return properties;
 		}
-		
 	}
 }

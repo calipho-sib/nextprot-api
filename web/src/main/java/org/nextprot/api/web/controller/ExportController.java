@@ -59,8 +59,8 @@ public class ExportController {
     @Autowired
     private OverviewService overviewService;
 
-    @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Export all isoforms sequences from neXtProt entries", produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
-    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET}, produces = { NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
+    @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Export all isoforms sequences from neXtProt entries", produces = {MediaType.APPLICATION_XML_VALUE, NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET}, produces = { MediaType.APPLICATION_XML_VALUE, NextprotMediaType.PEFF_MEDIATYPE_VALUE, NextprotMediaType.FASTA_MEDIATYPE_VALUE })
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response) {
 
         streamEntryService.streamAllEntries(NextprotMediaType.valueOf(request), response);

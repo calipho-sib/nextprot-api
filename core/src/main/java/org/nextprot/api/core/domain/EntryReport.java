@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static org.nextprot.api.core.domain.ChromosomalLocation.comparePosition;
 import static org.nextprot.api.core.domain.EntryReport.*;
+import static org.nextprot.api.core.domain.EntryReportStats.*;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +25,7 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 	GENE_END_POSITION,
 	CODING_STRAND,
 	ENTRY_ACCESSION,
-	PROTEIN_EXISTENCE_LEVEL,
+	PROTEIN_EXISTENCE,
 	IS_PROTEOMICS,
 	IS_ANTIBODY,
 	IS_3D,
@@ -46,28 +47,12 @@ public class EntryReport implements Serializable {
 	private static final String SENSE_CODING_STRAND = "forward";
 	private static final String ANTISENSE_CODING_STRAND = "reverse";
 	private static final String UNKNOWN_CODING_STRAND = "-"; // unknown
-	
 
 	public static final String GENE_NAME = "geneName";
 	public static final String CODING_STRAND = "codingStrand";
 	public static final String CHROMOSOMAL_LOCATION = "chromosomalLocation";
 	public static final String GENE_START_POSITION = "geneStartPosition";
 	public static final String GENE_END_POSITION = "geneEndPosition";
-	public static final String ENTRY_ACCESSION = "entryAccession";
-	public static final String ENTRY_DESCRIPTION = "entryDescription";
-	public static final String PROTEIN_EXISTENCE_LEVEL = "proteinExistence";
-	public static final String IS_PROTEOMICS = "proteomics";
-	public static final String IS_ANTIBODY = "antibody";
-	public static final String IS_3D = "3D";
-	public static final String IS_DISEASE = "disease";
-	public static final String ISOFORM_COUNT = "isoforms";
-	public static final String VARIANT_COUNT = "variants";
-	public static final String PTM_COUNT = "ptms";
-	public static final String CURATED_PUBLICATION_COUNT = "curatedPublicationCount";
-	public static final String ADDITIONAL_PUBLICATION_COUNT = "additionalPublicationCount";
-	public static final String PATENT_COUNT = "patentCount";
-	public static final String SUBMISSION_COUNT = "submissionCount";
-	public static final String WEB_RESOURCE_COUNT = "webResourceCount";
 
 	private String accession;
 	private String description;
@@ -143,7 +128,7 @@ public class EntryReport implements Serializable {
 		return (pos > 0) ? String.valueOf(pos) : "-";
 	}
 
-	@JsonProperty(PROTEIN_EXISTENCE_LEVEL)
+	@JsonProperty(PROTEIN_EXISTENCE)
 	public String getProteinExistence() {
 		return proteinExistence.getName();
 	}

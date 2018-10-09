@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -17,11 +18,15 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
+import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
+import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
+
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -42,6 +47,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
+	@Autowired private EntityNameService entityNameService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -122,10 +128,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
 		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
-
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
-		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+		if (!ignoreStatements) {
+            annotations = new AnnotationListMerger(annotations, entityNameService).merge(statementService.getAnnotations(entryName));
+        }
 
 		// post-processing of annotations
 		updateIsoformsDisplayedAsSpecific(annotations, entryName);
@@ -134,10 +141,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 		updateMiscRegionsRelatedToInteractions(annotations);
 		updatePtmAndPeptideMappingWithMdata(annotations, entryName);
 		
+		QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
+		
 		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
+	
 	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
 		
 		//long t0 = System.currentTimeMillis(); System.out.println("updateSubcellularLocationTermNameWithAncestors...");

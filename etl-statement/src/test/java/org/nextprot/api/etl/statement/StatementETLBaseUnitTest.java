@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
+import org.nextprot.api.etl.service.impl.SequenceFeatureFactoryServiceMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementTranformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
@@ -42,20 +43,23 @@ public abstract class StatementETLBaseUnitTest {
 		List<Isoform> isoformsNX_P43246 = Arrays.asList(mockIsoform("NX_P43246-1", "Iso 1", true), mockIsoform("NX_P43246-2", "Iso 2", true));
 		List<Isoform> isoformsNX_P52701 = Arrays.asList(mockIsoform("NX_P52701-1", "GTBP-N", true), mockIsoform("NX_P52701-2", "GTBP-alt", false), mockIsoform("NX_P52701-3", "Iso 3", false), mockIsoform("NX_P52701-4", "Iso 4", false));
 		List<Isoform> isoformsNX_Q15858 = Arrays.asList(mockIsoform("NX_Q15858-1", "Iso 1", true), mockIsoform("NX_Q15858-2", "Iso 2", false), mockIsoform("NX_Q15858-3", "Iso 3", false), mockIsoform("NX_Q15858-4", "Iso 4", false));
+		List<Isoform> isoformsNX_P12111 = Arrays.asList(mockIsoform("NX_P12111-1", "Iso 1", true), mockIsoform("NX_P12111-2", "Iso 2", false), mockIsoform("NX_P12111-3", "Iso 3", false), mockIsoform("NX_P12111-4", "Iso 4", false));
+		List<Isoform> isoformsNX_Q9Y4L1 = Arrays.asList(mockIsoform("NX_Q9Y4L1-1", "Iso 1", true), mockIsoform("NX_Q9Y4L1-2", "Iso 2", false));
 
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoformsNX_P43246);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P52701")).thenReturn(isoformsNX_P52701);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q15858")).thenReturn(isoformsNX_Q15858);
+		Mockito.when(isoformService.findIsoformsByEntryName("NX_P12111")).thenReturn(isoformsNX_P12111);
+		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q9Y4L1")).thenReturn(isoformsNX_Q9Y4L1);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
 		
 		transformerMockedService = new StatementTranformerServiceImpl();
 		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
 		transformerMockedService.setIsoformService(isoformService);
+		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
 		
 		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
-
-
 	}
 
 	private void mockIsoMapperService() {
@@ -110,7 +114,7 @@ public abstract class StatementETLBaseUnitTest {
 
 	}
 
-	private Isoform mockIsoform(String accession, String name, boolean canonical) {
+	public static Isoform mockIsoform(String accession, String name, boolean canonical) {
 
 		Isoform isoform = Mockito.mock(Isoform.class);
 		when(isoform.getUniqueName()).thenReturn(accession);

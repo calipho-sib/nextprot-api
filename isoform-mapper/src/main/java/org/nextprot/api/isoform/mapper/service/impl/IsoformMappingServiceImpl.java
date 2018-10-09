@@ -4,13 +4,10 @@ import com.google.common.base.Strings;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
@@ -18,17 +15,13 @@ import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.Set;
 
 
 /**
@@ -41,26 +34,22 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public MasterIsoformMappingService masterIsoformMappingService;
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
+    private EntryService entryService;
 
     @Autowired
-    private MasterIdentifierService masterIdentifierService;
+    private IsoformService isoformService;
+
+    @Autowired
+    private SequenceFeatureFactoryService sequenceFeatureFactoryService;
 
     @Override
     public BaseFeatureQueryResult validateFeature(SingleFeatureQuery query) {
 
         try {
-            SequenceFeature sequenceFeature = SequenceFeatureBase.newFeature(query);
+            SequenceFeature sequenceFeature = sequenceFeatureFactoryService.newSequenceFeature(query);
+            setEntryAccession(query, sequenceFeature);
 
-            if (Strings.isNullOrEmpty(query.getAccession()))
-                query.setAccession(findAccessionFromGeneName(query, sequenceFeature.getGeneName()));
-
-            Entry entry = entryBuilderService.build(EntryConfig.newConfig(query.getAccession())
-                    .withTargetIsoforms().withOverview());
-
-            SequenceFeatureValidator validator = new SequenceFeatureValidator(entry, query);
-
-            return validator.validate(sequenceFeature);
+            return sequenceFeature.newValidator(query).validate(sequenceFeature);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailureImpl(e);
@@ -83,15 +72,23 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return results;
     }
 
+    private void setEntryAccession(SingleFeatureQuery query, SequenceFeature sequenceFeature ) throws FeatureQueryException {
+
+        if (Strings.isNullOrEmpty(query.getAccession())) {
+
+            query.setAccession(entryService.findEntryAccessionFromIsoformAccession(sequenceFeature.getIsoform().getIsoformAccession()));
+        }
+    }
+
     // TODO: refactor this method, it is too complex (probably a propagator object with strategy pattern for the mapping)
     private void propagate(SingleFeatureQuerySuccessImpl successResults) throws ParseException {
 
         SingleFeatureQuery query = successResults.getQuery();
-        query.setPropagableFeature(true);
+        query.setTryToMapOnOtherIsoforms(true);
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
-        Isoform featureIsoform = isoFeature.getIsoform(successResults.getEntry());
+        Isoform featureIsoform = isoFeature.getIsoform();
         SequenceVariation variation = isoFeature.getProteinVariation();
 
         OriginalAminoAcids originalAminoAcids = getOriginalAminoAcids(featureIsoform.getSequence(), variation);
@@ -100,12 +97,12 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         GeneMasterCodonPosition originalLastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(originalAminoAcids.getLastAAPos(), featureIsoform);
 
         // try to propagate the feature to other isoforms
-        for (Isoform otherIsoform : IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getIsoformAccession())) {
+        for (Isoform otherIsoform : isoformService.getOtherIsoforms(featureIsoform.getIsoformAccession())) {
 
             Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getFirstAAPos(), otherIsoform);
             Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
 
-            boolean propagable = false;
+            boolean propageable = false;
 
             if (firstIsoPos != null && lastIsoPos != null) {
 
@@ -123,19 +120,18 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                             GeneMasterCodonPosition firstMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPos, otherIsoform);
                             GeneMasterCodonPosition lastMasterCodonPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(lastIsoPos, otherIsoform);
 
-                            propagable = firstMasterCodonPos.getNucleotidePosition(0).intValue() == originalFirstMasterCodonPos.getNucleotidePosition(0)
-                                && lastMasterCodonPos.getNucleotidePosition(2).intValue() == originalLastMasterCodonPos.getNucleotidePosition(2);
+                            propageable = firstMasterCodonPos.getNucleotidePosition(0).intValue() == originalFirstMasterCodonPos.getNucleotidePosition(0)
+                                    && lastMasterCodonPos.getNucleotidePosition(2).intValue() == originalLastMasterCodonPos.getNucleotidePosition(2);
                         }
                     }
                 }
                 // check a single amino-acid
                 else {
-
-                    propagable = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas());
+                    propageable = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas());
                 }
             }
 
-            if (propagable) {
+            if (propageable) {
                 addPropagation(otherIsoform, firstIsoPos, lastIsoPos, originalAminoAcids.isExtensionTerminal(), successResults);
             }
             else {
@@ -168,22 +164,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             isTerminalExtension = true;
         }
         return new OriginalAminoAcids(sequence, firstPos, lastPos, isTerminalExtension);
-    }
-
-    /**
-     * Find entry accession from geneName
-     */
-    private String findAccessionFromGeneName(SingleFeatureQuery query, String geneName) throws FeatureQueryException {
-
-        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName, false);
-
-        if (accessions.isEmpty()) {
-            throw new EntryAccessionNotFoundForGeneException(query, geneName);
-        } else if (accessions.size() > 1) {
-            throw new MultipleEntryAccessionForGeneException(query, geneName, accessions);
-        }
-        // found one single entry accession
-        return accessions.iterator().next();
     }
 
     private static class OriginalAminoAcids {

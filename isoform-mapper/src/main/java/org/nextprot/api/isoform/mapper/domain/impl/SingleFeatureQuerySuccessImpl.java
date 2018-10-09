@@ -3,7 +3,6 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
@@ -22,42 +21,33 @@ import java.util.TreeMap;
  */
 public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<SingleFeatureQuery> implements FeatureQuerySuccess {
 
-	private static final long serialVersionUID = 20161117L;
+	private static final long serialVersionUID = 20180815L;
 	private final Map<String, IsoformFeatureResult> data;
     private final transient SequenceFeature feature;
-    private final transient Entry entry;
-    
-    public SingleFeatureQuerySuccessImpl(Entry entry, SingleFeatureQuery query, SequenceFeature feature) {
-        super(query);
 
-        this.entry = entry;
+    public SingleFeatureQuerySuccessImpl(SingleFeatureQuery query, SequenceFeature feature) {
+        super(query);
 
         data = new TreeMap<>();
 
         this.feature = feature;
 
-        addMappedFeature(feature.getIsoform(entry),
+        addMappedFeature(feature.getIsoform(),
                 feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
                 feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
-    }
-
-    @JsonIgnore
-    public Entry getEntry() {
-        return entry;
     }
 
     public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
 
-        result.setIsoformAccession(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getIsoformAccession());
         result.setIsoformName(isoform.getMainEntityName().getName());
         result.setBeginIsoformPosition(firstIsoPosition);
         result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
         result.setIsoSpecificFeature(
-                feature.formatIsoSpecificFeature(isoform,
-                        firstIsoPosition, lastIsoPosition));
+                feature.formatIsoSpecificFeature(isoform, firstIsoPosition, lastIsoPosition));
 
         GeneMasterCodonPosition firstCodonOnMaster =
                 IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPosition, isoform);
@@ -115,7 +105,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
     public void addUnmappedFeature(Isoform isoform) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
-        result.setIsoformAccession(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getIsoformAccession());
         result.setCanonical(isoform.isCanonicalIsoform());
 
         data.put(result.getIsoformAccession(), result);

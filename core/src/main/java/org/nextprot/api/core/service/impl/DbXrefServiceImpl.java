@@ -7,6 +7,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
+import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
@@ -15,10 +16,7 @@ import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.AntibodyResourceIdsService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
@@ -40,6 +38,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private PeptideNamesService peptideNamesService;
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
+	@Autowired private StatementService statementService;
 
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
@@ -160,7 +159,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return new ImmutableList.Builder<Annotation>().addAll(xrefAnnotations).build();
 	}
 
-	/**
+    /**
 	 * Find dbxrefs convertible into Annotations (of type XrefAnnotationMapping)
 	 * @param uniqueName the entry name
 	 * @return a list of DbXref convertible to Annotation
@@ -191,7 +190,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		
+		xrefs.addAll(statementService.findDbXrefs(entryName));
+
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
@@ -307,4 +307,26 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		return dbXRefDao.getAllDbXrefsIds();
 	}
+
+    @Override
+    public long findXrefId(String database, String accession) throws MissingCvDatabaseException {
+
+        return dbXRefDao.findXrefId(database, accession).orElse(generateXrefProtocolId(database, accession));
+    }
+
+    private long generateXrefProtocolId(String database, String accession) throws MissingCvDatabaseException {
+
+        // xref type statement: generate a xref id
+        return dbXRefDao.findDatabaseId(database)
+                .map(dbId -> new XRefProtocolId(dbId, accession).id())
+                .orElseThrow(() -> new MissingCvDatabaseException(database));
+    }
+
+    public static class MissingCvDatabaseException extends Exception {
+
+	    MissingCvDatabaseException(String database) {
+
+	        super("Missing cv database "+ database+ " in table nextprot.cv_databases");
+        }
+    }
 }

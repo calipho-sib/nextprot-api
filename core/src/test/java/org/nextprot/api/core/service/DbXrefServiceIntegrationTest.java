@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,6 +251,26 @@ having sum(a.cnt)=1
 		Assert.assertEquals(1, props.size());
 		Assert.assertEquals("the major facilitator superfamily (mfs)", props.get(0).getValue());
 	}
+
+    @Test
+    public void shouldFindExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
+
+        long id = xrefService.findXrefId("UniProt", "Q8WV60-1");
+        Assert.assertEquals(1537966, id);
+    }
+
+    @Test(expected = DbXrefServiceImpl.MissingCvDatabaseException.class)
+    public void shouldNotFindXrefIdMissingDb() throws DbXrefServiceImpl.MissingCvDatabaseException {
+
+        xrefService.findXrefId("roudoudou", "Q8WV60-1");
+    }
+
+    @Test
+    public void shouldGenerateNonExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
+
+        long id = xrefService.findXrefId("UniProt", "Q8WV60-4");
+        Assert.assertEquals(7143053370951092528L, id);
+    }
 
 	private void assertEmptyProperties(String entryName, long propertyId) {
 

@@ -5,15 +5,13 @@ import java.io.Serializable;
 
 public class EntryProperties  implements Serializable {
 	
-	private static final long serialVersionUID = 9L;
+	private static final long serialVersionUID = 10L;
 
 	private int interactionCount;
 
 	private int maxSeqLen;
 	private boolean filterstructure;
 	private boolean filterdisease;
-	private boolean filtermutagenesis;
-	private boolean filterproteomics;
 	private boolean filterexpressionprofile;
 
 	public boolean getFilterexpressionprofile() {
@@ -22,18 +20,6 @@ public class EntryProperties  implements Serializable {
 
 	public void setFilterexpressionprofile(boolean filterexpressionprofile) {
 		this.filterexpressionprofile = filterexpressionprofile;
-	}
-
-	public boolean getFilterproteomics() {
-		return filterproteomics;
-	}
-
-	public void setFilterproteomics(boolean filterproteomics) {
-		this.filterproteomics = filterproteomics;
-	}
-
-	public boolean getFiltermutagenesis() {
-		return filtermutagenesis;
 	}
 
 	public boolean getFilterdisease() {
@@ -58,11 +44,6 @@ public class EntryProperties  implements Serializable {
 
 	public void setInteractionCount(int interactionCount) {
 		this.interactionCount = interactionCount;
-	}
-
-	public void setFiltermutagenesis(int mutagenesisCount) {
-		// a value > 0 means we have mutagenesis otherwise 0 means we don't have any
-		this.filtermutagenesis = mutagenesisCount > 0? true:false;
 	}
 
 	public int getMaxSeqLen() {

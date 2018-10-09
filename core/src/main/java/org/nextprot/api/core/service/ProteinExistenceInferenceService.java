@@ -17,4 +17,6 @@ public interface ProteinExistenceInferenceService {
 	boolean promotedAccordingToRule5(String entryAccession);
 
 	boolean promotedAccordingToRule6(String entryAccession);
+
+    boolean promotedAccordingToRule7(String entryAccession);
 }

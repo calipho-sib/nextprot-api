@@ -1,89 +1,67 @@
 package org.nextprot.api.isoform.mapper.service;
 
-import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-
-import java.util.stream.Collectors;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.OutOfBoundSequencePositionException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.UnexpectedFeatureQueryAminoAcidException;
 
 /**
- * Validate variant type features on isoform sequence
+ * Validate sequence feature type features on isoform sequence
  *
  * Created by fnikitin on 05/07/16.
  */
-public class SequenceFeatureValidator {
+public abstract class SequenceFeatureValidator<SF extends SequenceFeature> {
 
-    private final Entry entry;
-    private final SingleFeatureQuery query;
+    protected final SingleFeatureQuery query;
 
-    public SequenceFeatureValidator(Entry entry, SingleFeatureQuery query) {
-        this.entry = entry;
+    public SequenceFeatureValidator(SingleFeatureQuery query) {
         this.query = query;
     }
 
     /**
      * Coordinate validation process in the multiple steps defined in protected methods.
      */
-    public BaseFeatureQueryResult validate(SequenceFeature sequenceFeature) throws FeatureQueryException {
+    public BaseFeatureQueryResult validate(SF sequenceFeature) throws FeatureQueryException {
 
-        checkFeatureGeneName(sequenceFeature);
-        checkIsoformExistence(sequenceFeature);
-        checkFeatureChangingAminoAcids(sequenceFeature);
+        preChecks(sequenceFeature);
+        checkVaryingAminoAcids(sequenceFeature);
+        postChecks(sequenceFeature);
 
-        doMoreChecks(sequenceFeature.getProteinVariation());
-
-        return new SingleFeatureQuerySuccessImpl(entry, query, sequenceFeature);
-    }
-
-    private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {
-
-        if (!sequenceFeature.isValidIsoform(entry)) {
-
-            throw new UnknownFeatureIsoformException(entry, query, sequenceFeature.getIsoformName());
-        }
+        return new SingleFeatureQuerySuccessImpl(query, sequenceFeature);
     }
 
     /**
-     * Do more feature validation (nothing by default). It is supposed to be overiden by validators that need to
-     * do more validations.
+     * nothing by default. It is supposed to be overridden by validators that need to do pre-check validations.
      *
-     * @param sequenceVariation the sequence variation
+     * @param sequenceFeature the sequence feature
      * @throws FeatureQueryException if invalid
      */
-    protected void doMoreChecks(SequenceVariation sequenceVariation) throws FeatureQueryException { }
+    protected void preChecks(SF sequenceFeature) throws FeatureQueryException { }
 
     /**
-     * Check that gene name is compatible with protein name
-     * Part of the contract a validator should implement to validate a feature on an isoform sequence
+     * nothing by default. It is supposed to be overridden by validators that need to do post-check validations.
+     *
+     * @param sequenceFeature the sequence feature
+     * @throws FeatureQueryException if invalid
      */
-    private void checkFeatureGeneName(SequenceFeature sequenceFeature) throws IncompatibleGeneAndProteinNameException {
-
-        if (!sequenceFeature.isValidGeneName(entry)) {
-
-            throw new IncompatibleGeneAndProteinNameException(query, sequenceFeature.getGeneName(),
-                    entry.getOverview().getGeneNames().stream().map(EntityName::getName).collect(Collectors.toList()));
-
-        }
-    }
+    protected void postChecks(SF sequenceFeature) throws FeatureQueryException { }
 
     /**
      * Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
      * Part of the contract a validator should implement to validate a feature on an isoform sequence.
      */
-    private void checkFeatureChangingAminoAcids(SequenceFeature sequenceFeature) throws FeatureQueryException {
+    private void checkVaryingAminoAcids(SF sequenceFeature) throws FeatureQueryException {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        Isoform isoform = sequenceFeature.getIsoform(entry);
+        Isoform isoform = sequenceFeature.getIsoform();
 
         // do check only position for STOP code
         if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {

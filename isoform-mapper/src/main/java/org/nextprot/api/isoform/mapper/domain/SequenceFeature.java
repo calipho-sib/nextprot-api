@@ -1,23 +1,14 @@
 package org.nextprot.api.isoform.mapper.domain;
 
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformRuntimeException;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 /**
- * A sequence feature on an isoform sequence on a specific gene
+ * A sequence feature is a variation on an isoform sequence
  */
 public interface SequenceFeature {
-
-    /** @return the gene name */
-    String getGeneName();
-
-    /** @return isoform name or null if canonical */
-    String getIsoformName();
-
-    /** @return the variation as a string */
-    String getFormattedVariation();
 
     /**
      * Format a feature specifically to isoform
@@ -28,27 +19,21 @@ public interface SequenceFeature {
      */
     String formatIsoSpecificFeature(Isoform isoform, int firstAAPos, int lastAAPos);
 
+    /** @return the feature type */
+    AnnotationCategory getType();
+
     /** @return the protein sequence variation */
     SequenceVariation getProteinVariation();
 
-    /**
-     * @param entry entry to validate gene name
-     * @return true if gene name is referenced in entry
-     */
-    boolean isValidGeneName(Entry entry);
+    /** @return an instance of isoform */
+    Isoform getIsoform();
 
-    /**
-     * Check that current entry has isoform named getIsoformName()
-     * @param entry entry to validate isoform
-     * @return true if isoform is valid
-     */
-    boolean isValidIsoform(Entry entry);
+    /** @return a new instance of validator specific to this sequence feature */
+    <SF extends SequenceFeature> SequenceFeatureValidator<SF> newValidator(SingleFeatureQuery query);
 
-    /**
-     * Get specific entry isoform where lies the feature
-     * @param entry entry from which isoform is accessed
-     * @return the entry isoform
-     * @throws UnknownIsoformRuntimeException
-     */
-    Isoform getIsoform(Entry entry) throws UnknownIsoformRuntimeException;
+    /** @return true if an isoform is explicitly specificied */
+    boolean isIsoformSpecific();
+
+    /** @return the feature as string */
+    String asString();
 }

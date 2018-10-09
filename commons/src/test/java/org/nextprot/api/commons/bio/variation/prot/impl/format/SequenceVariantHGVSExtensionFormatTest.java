@@ -11,7 +11,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 public class SequenceVariantHGVSExtensionFormatTest {
 
-    private SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    private VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
     public void testParseInitiationExtensionCode3() throws Exception {
@@ -70,7 +70,7 @@ public class SequenceVariantHGVSExtensionFormatTest {
     @Test
     public void testFormatExtensionCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
                 .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
 
         Assert.assertEquals("p.M1Vext-12", format.format(pm));
@@ -79,7 +79,7 @@ public class SequenceVariantHGVSExtensionFormatTest {
     @Test
     public void testFormatExtensionCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
                 .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
 
         Assert.assertEquals("p.Met1Valext-12", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
@@ -88,7 +88,7 @@ public class SequenceVariantHGVSExtensionFormatTest {
     @Test
     public void testFormatExtensionTermCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
                 .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
 
         Assert.assertEquals("p.*110Qext*17", format.format(pm));
@@ -97,7 +97,7 @@ public class SequenceVariantHGVSExtensionFormatTest {
     @Test
     public void testFormatExtensionTermCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+        SequenceVariation pm = new SequenceVariationImpl.StartBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
                 .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
 
         Assert.assertEquals("p.Ter110Glnext*17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));

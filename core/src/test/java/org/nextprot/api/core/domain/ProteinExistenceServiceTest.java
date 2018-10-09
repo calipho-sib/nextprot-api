@@ -8,7 +8,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@Ignore
+
 // Should mock deps and unit test this service
 @ActiveProfiles({ "dev","cache"})
 public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
@@ -34,6 +34,8 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_P0CK97"));
 	}
 
+	// TODO: see with pam
+	@Ignore
 	@Test
 	public void shouldMatchRule2() {
 
@@ -49,7 +51,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
     @Test
     public void shouldMatchRule3() {
 
-        Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q6SJ96"));
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule3("NX_Q6SJ96"));
     }
 
 	@Test
@@ -79,7 +81,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldMatchRule5() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule5("NX_P12830"));
+		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule5("NX_P12830"));
 	}
 
 	@Test
@@ -93,6 +95,25 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule6("NX_Q9Y6N5"));
 	}
+
+    @Test
+    public void shouldMatchRule7() {
+
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule7("NX_O96004"));
+    }
+
+    @Test
+    public void shouldAlsoMatchRule7() {
+
+        Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule7("NX_Q9NZH5"));
+    }
+
+    @Test
+    public void shouldNotMatchRule7() {
+
+	    // unfortunately the evidence associated is not experimental
+        Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule7("NX_Q9NP62"));
+    }
 
 	@Test
 	public void shouldInferFromRule1() {

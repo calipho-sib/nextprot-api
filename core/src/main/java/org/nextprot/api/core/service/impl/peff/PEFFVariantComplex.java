@@ -23,16 +23,16 @@ public class PEFFVariantComplex extends AnnotationBasedPEFFInformation {
     protected Comparator<Annotation> createAnnotationComparator(String isoformAccession) {
 
         return super.createAnnotationComparator(isoformAccession)
-                .thenComparing(Comparator.comparingInt(a -> a.getEndPositionForIsoform(isoformAccession)))
-                .thenComparing(Comparator.comparing(a -> a.getVariant().getVariant()));
+                .thenComparingInt(a -> a.getEndPositionForIsoform(isoformAccession))
+                .thenComparing(a -> a.getVariant().getVariant());
     }
 
     @Override
     protected boolean selectAnnotation(Annotation annotation) {
 
         return super.selectAnnotation(annotation) &&
-                (
-                    annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
+                isPositional(annotation) &&
+                (annotation.getStartPositionForIsoform(isoformAccession) < annotation.getEndPositionForIsoform(isoformAccession) ||
                     annotation.getVariant().getVariant().length() == 0 || // deletion
                     annotation.getVariant().getVariant().length() > 1     // insertion
                 );

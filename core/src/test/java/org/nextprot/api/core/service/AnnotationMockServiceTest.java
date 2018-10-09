@@ -75,6 +75,9 @@ public class AnnotationMockServiceTest {
 	@Mock
 	private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 
+	@Mock
+	private EntityNameService entityNameService;
+
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {
 

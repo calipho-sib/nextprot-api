@@ -127,8 +127,8 @@ public class TermController {
 			QueryRequest qr = new QueryRequest();
             String termAccession = node.getAccession();
 
-            // EC number
-            if (termAccession.matches("\\d+\\..+")) {
+            // Treatment specific to EC numbers
+            if (termAccession.matches("^[1-7]\\.[1-9-][0-9]?\\.[1-9-][0-9]?\\.n?[1-9-][0-9]{0,2}$")) {
 
                 termAccession = "\"EC "+termAccession+"\"";
             }

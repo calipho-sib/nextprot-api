@@ -1,14 +1,5 @@
 package org.nextprot.api.core.aop;
 
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,6 +20,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Aspect responsible to instrument the actions of the users
@@ -369,7 +368,7 @@ public class InstrumentationAspect {
 			if (a.getDetails() instanceof Map) {
 				Map<?,?> userDetails = (Map<?,?>) a.getDetails();
 				for(Object o : userDetails.keySet()){
-					map.put("auth0" + StringUtils.capitalizeFirstLetter(o.toString()), StringUtils.quote(userDetails.get(o).toString()));
+					map.put("auth0" + StringUtils.uppercaseFirstLetter(o.toString()), StringUtils.quote(userDetails.get(o).toString()));
 				}
 
 			}

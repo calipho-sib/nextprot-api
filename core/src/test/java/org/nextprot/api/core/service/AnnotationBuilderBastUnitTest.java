@@ -16,6 +16,8 @@ public abstract class AnnotationBuilderBastUnitTest {
 	protected PublicationService publicationService;
 	@Mock
 	protected MainNamesService mainNamesService;
+    @Mock
+    protected DbXrefService dbXrefService;
 
 	@Before
 	public void init() {

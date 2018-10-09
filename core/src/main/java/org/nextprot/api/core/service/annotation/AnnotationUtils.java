@@ -12,8 +12,6 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.comp.AnnotationComparators;
-import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMapReduceMerger;
-import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.commons.constants.QualityQualifier;
 
@@ -324,16 +322,6 @@ public class AnnotationUtils {
 		String chemicalName = evi.getPropertyValue("name");
 		if (chemicalName!=null) bo.getProperties().put("chemical name", chemicalName);
 		return bo;
-	}
-
-	public static List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
-
-		return new AnnotationListMergerImpl().merge(srcAnnotationList, destAnnotationList);
-	}
-
-	public static List<Annotation> mapReduceMerge(List<Annotation> statementAnnotations, List<Annotation> standardAnnotations) {
-
-		return new AnnotationListMapReduceMerger().merge(statementAnnotations, standardAnnotations);
 	}
 
 	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {

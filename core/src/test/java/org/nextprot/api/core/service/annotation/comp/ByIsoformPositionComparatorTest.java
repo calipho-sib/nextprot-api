@@ -150,7 +150,7 @@ public class ByIsoformPositionComparatorTest {
         return isoform;
     }
 
-    private static Annotation mockAnnotation(long id, AnnotationCategory cat, TargetIsoform... targets) {
+    public static Annotation mockAnnotation(long id, AnnotationCategory cat, TargetIsoform... targets) {
 
         Annotation mock = Mockito.mock(Annotation.class);
 
@@ -194,7 +194,7 @@ public class ByIsoformPositionComparatorTest {
         private final Integer start;
         private final Integer end;
 
-        TargetIsoform(String isoformAccession, Integer start, Integer end) {
+        public TargetIsoform(String isoformAccession, Integer start, Integer end) {
 
             this.isoformAccession = isoformAccession;
             this.start = start;

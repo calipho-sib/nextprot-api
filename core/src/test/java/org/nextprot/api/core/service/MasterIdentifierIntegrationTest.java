@@ -53,15 +53,15 @@ public class MasterIdentifierIntegrationTest extends CoreUnitBaseTest {
 
         MultithreadedStressTester stressTester = new MultithreadedStressTester(10, 1000000);
 
-        stressTester.stress(() -> assertMainNamesMapValid());
+        stressTester.stress(() -> assertMainNamesMapValid(62471));
         stressTester.shutdown();
 
-        assertMainNamesMapValid();
+        assertMainNamesMapValid(62471);
     }
 
-    private void assertMainNamesMapValid() {
+    private void assertMainNamesMapValid(int expected) {
 
-        Assert.assertEquals(62471, mainNamesService.findIsoformOrEntryMainName().size());
+        Assert.assertTrue(mainNamesService.findIsoformOrEntryMainName().size() >= expected);
         Assert.assertTrue(mainNamesService.findIsoformOrEntryMainName("NX_P52701").isPresent());
         Assert.assertTrue(mainNamesService.findIsoformOrEntryMainName("NX_P01308").isPresent());
         Assert.assertEquals("Insulin", mainNamesService.findIsoformOrEntryMainName("NX_P01308").get().getName());

@@ -55,6 +55,11 @@ public class GenomicMapping implements Serializable {
 		return isoformGeneMappings.addAll(mappings);
 	}
 
+    public void setIsoformGeneMappings(List<IsoformGeneMapping> isoformGeneMappings) {
+
+        this.isoformGeneMappings = isoformGeneMappings;
+    }
+
 	public boolean isChosenForAlignment() {
 		return chosenForAlignment;
 	}

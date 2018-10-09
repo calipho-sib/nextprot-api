@@ -31,7 +31,7 @@
 
 	<db_xrefs accession="HPA036303" resource_id="39235676" cv_database_id="60"/>
 	<db_xrefs accession="HPA036302" resource_id="17201575" cv_database_id="60"/>
-	<cv_databases cv_id="60" cv_name="HPA" description="Human Protein Atlas" url="http://www.proteinatlas.org/" db_code="DB-0046" link_url="http://www.proteinatlas.org/tissue_profile.php?antibody_id=%s" cv_category_id="31"/>
+	<cv_databases cv_id="60" cv_name="HPA" description="Human Protein Atlas" url="https://v18.proteinatlas.org/" db_code="DB-0046" link_url="http://www.proteinatlas.org/tissue_profile.php?antibody_id=%s" cv_category_id="31"/>
 
 	<sequence_identifiers identifier_id="636535" cv_type_id="1" unique_name="NX_P06213" db_xref_id="3434634"  datasource_id="0" />
 

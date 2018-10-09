@@ -8,6 +8,8 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
 import java.util.List;
 import java.util.Set;
 
+import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromIsoformAccession;
+
 /**
  * Extracts information related to the isoforms
  * 
@@ -24,6 +26,8 @@ public interface IsoformService {
 	 * @return the found isoform or null if not found
 	 */
 	Isoform findIsoformByName(String entryAccession, String name);
+
+	List<Isoform> getOtherIsoforms(String isoformUniqueName);
 
 	/**
 	 * Extract and format in PEFF header all isoform required information
@@ -50,14 +54,7 @@ public interface IsoformService {
 
 	List<SlimIsoform> findListOfIsoformAcMd5Sequence();
 
-	default String findEntryAccessionFromIsoformAccession(String isoformAccession) {
-
-		if (!isoformAccession.contains("-")) {
-			return null;
-		}
-
-		return isoformAccession.split("-")[0];
-	}
+    Isoform getIsoformByNameOrCanonical(String entryNameOrIsoformName);
 
 	default Isoform findIsoform(String isoformAccession) {
 

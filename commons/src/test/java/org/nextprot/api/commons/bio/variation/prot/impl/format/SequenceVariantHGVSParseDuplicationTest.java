@@ -3,6 +3,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl.format;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
@@ -10,10 +11,10 @@ import java.text.ParseException;
 
 public class SequenceVariantHGVSParseDuplicationTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    VariantHGVSFormat format = new VariantHGVSFormat();
 
     @Test
-    public void testParseSimpleDuplication() throws ParseException {
+    public void testParseSimpleDuplication() throws ParseException, SequenceVariationBuildException {
 
         SequenceVariation duplication = format.parse("p.Val417dup");
 

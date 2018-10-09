@@ -10,6 +10,7 @@ import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromIsoformAccession;
 
 @Service
 class IsoformServiceImpl implements IsoformService {
@@ -42,6 +45,9 @@ class IsoformServiceImpl implements IsoformService {
 
 	@Autowired
     private OverviewService overviewService;
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
 
 	@Override
 	@Cacheable("isoforms")
@@ -81,7 +87,7 @@ class IsoformServiceImpl implements IsoformService {
 			if (isoform.getIsoformAccession().equals(name)) {
 				return isoform;
 			}
-			else if (entityNameService.hasName(isoform.getMainEntityName(), name)) {
+			else if (entityNameService.hasNameIgnoreCase(isoform.getMainEntityName(), name)) {
 				return isoform;
 			}
 		}
@@ -89,7 +95,21 @@ class IsoformServiceImpl implements IsoformService {
 		return null;
 	}
 
-	@Override
+    @Override
+    public List<Isoform> getOtherIsoforms(String isoformUniqueName) {
+
+        if (!isoformUniqueName.contains("-")) {
+
+            return new ArrayList<>();
+        }
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(isoformUniqueName.split("-")[0])
+                .withTargetIsoforms());
+
+        return IsoformUtils.getOtherIsoforms(entry, isoformUniqueName);
+    }
+
+    @Override
 	@Cacheable("peff-by-isoform")
 	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 
@@ -130,4 +150,17 @@ class IsoformServiceImpl implements IsoformService {
 	public List<SlimIsoform> findListOfIsoformAcMd5Sequence() {
 		return isoformDAO.findOrderedListOfIsoformAcMd5SequenceFieldMap();
 	}
+
+    @Override
+    public Isoform getIsoformByNameOrCanonical(String entryNameOrIsoformName) {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryNameOrIsoformName).withTargetIsoforms());
+
+        if (!entryNameOrIsoformName.contains("-")) {
+
+            return IsoformUtils.getCanonicalIsoform(entry);
+        }
+
+        return IsoformUtils.getIsoformByName(entry, entryNameOrIsoformName);
+    }
 }

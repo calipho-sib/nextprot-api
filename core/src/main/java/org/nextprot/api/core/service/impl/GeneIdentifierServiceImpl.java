@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.GeneIdentifierDao;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -41,12 +44,21 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	@Cacheable("gene-names-by-accession")
 	public List<String> findGeneNamesByEntryAccession(String entryAccession) {
 
-		List<EntityName> geneNames = overviewService.findOverviewByEntry(entryAccession).getGeneNames();
+        List<String> geneNames = new ArrayList<>();
 
-		if (geneNames == null)
-			return new ArrayList<>();
+		List<EntityName> entityNames = overviewService.findOverviewByEntry(entryAccession).getGeneNames();
 
-		return geneNames.stream().map(EntityName::getName).collect(Collectors.toList());
+		if (entityNames == null)
+			return geneNames;
+
+
+		for (EntityName entityName : entityNames) {
+
+            geneNames.add(entityName.getName());
+            geneNames.addAll(entityName.getSynonyms().stream().map(syn -> syn.getName()).collect(Collectors.toList()));
+        }
+
+		return geneNames;
 	}
 
 	@Override

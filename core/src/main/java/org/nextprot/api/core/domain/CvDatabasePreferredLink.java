@@ -1,6 +1,8 @@
 package org.nextprot.api.core.domain;
 
 
+import org.nextprot.api.core.domain.release.ReleaseDataSources;
+
 public enum CvDatabasePreferredLink {
 
 	BRENDA("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u"),
@@ -22,9 +24,10 @@ public enum CvDatabasePreferredLink {
 	EXPRESSION_ATLAS("http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s"),
 	GENEVESTIGATOR("http://genevisible.com/tissues/HS/UniProt/%s"),
 	GERMONLINE("http://www.germonline.org/Homo_sapiens/geneview?gene=%s"),
-	HPA_GENE("http://www.proteinatlas.org/%s"),
-	HPA_SUBCELL("http://www.proteinatlas.org/%s"),
-	HPA_ANTIBODY("http://www.proteinatlas.org/search/%s"),
+	GLY_CONNECT("https://glyconnect.expasy.org/protein/%s"),
+	HPA_GENE(ReleaseDataSources.HPA.getUrl()+"%s"),
+	HPA_SUBCELL(ReleaseDataSources.HPA.getUrl()+"%s"),
+	HPA_ANTIBODY(ReleaseDataSources.HPA.getUrl()+ "search/%s"),
 	IFO("http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s"),
 	INTACT_BINARY("http://www.ebi.ac.uk/intact/search/do/search?binary=%s"),
 	JCRB("http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s"),

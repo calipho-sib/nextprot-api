@@ -12,7 +12,6 @@ import org.nextprot.api.core.service.exon.ExonsAnalysisWithLogging;
 import org.nextprot.api.core.service.exon.TranscriptExonsCategorizer;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,7 +30,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private final Comparator<Isoform> isoformComparator = new IsoformUtils.IsoformComparator();
 
 	@Override
-	@Cacheable("genomic-mappings")
+	//@Cacheable("genomic-mappings")
 	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
 		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");
@@ -60,6 +59,20 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 					genomicMapping.setLowQualityMappings(finder.isLowQualityMappings());
 				})
 				.collect(Collectors.toList());
+
+		// Cleaning: removing TranscriptGeneMappings with no exons and IsoformGeneMappings with no TranscriptGeneMappings
+		for (GenomicMapping genomicMapping : genomicMappings) {
+		    for (IsoformGeneMapping isoformGeneMapping : genomicMapping.getIsoformGeneMappings()) {
+                isoformGeneMapping.setTranscriptGeneMappings(
+                        isoformGeneMapping.getTranscriptGeneMappings().stream()
+                            .filter(tm -> !tm.getExons().isEmpty())
+                            .collect(Collectors.toList())
+                );
+            }
+            genomicMapping.setIsoformGeneMappings(genomicMapping.getIsoformGeneMappings().stream()
+                    .filter(igm -> !igm.getTranscriptGeneMappings().isEmpty())
+                    .collect(Collectors.toList()));
+        }
 
 		return Collections.unmodifiableList(genomicMappings);
 	}
@@ -104,8 +117,14 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 					// exons provided by ensembl can conflict with isoform to gene mappings and are solved here
 					isoformGeneMapping.setTranscriptGeneMappings(StreamUtils.nullableListToStream(transcriptGeneMappingsByIsoformName.get(isoformName))
 							.filter(tm -> tm.getReferenceGeneId() == isoformGeneMapping.getReferenceGeneId())
-							.peek(tm -> uncategorizedExons.put(buildKey(tm),
-									buildExonListFromTranscriptAndIsoformGeneMapping(tm, isoformGeneMapping.getIsoformGeneRegionMappings())))
+							.peek(tm -> {
+                                List<SimpleExon> exons = buildExonListFromTranscriptAndIsoformGeneMapping(tm,
+                                        isoformGeneMapping.getIsoformGeneRegionMappings());
+
+                                if (!exons.isEmpty()) {
+                                    uncategorizedExons.put(buildKey(tm), exons);
+                                }
+                            })
 							.sorted(Comparator.comparingInt(TranscriptGeneMapping::getNucleotideSequenceLength))
 							.collect(Collectors.toList()));
 				}

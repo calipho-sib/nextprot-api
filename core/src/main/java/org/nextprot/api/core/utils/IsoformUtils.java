@@ -57,8 +57,15 @@ public class IsoformUtils {
     public static List<Isoform> getOtherIsoforms(Entry entry, String isoformUniqueName) {
 
         return entry.getIsoforms().stream()
-                .filter(iso -> !iso.getUniqueName().equals(isoformUniqueName))
+                .filter(iso -> !iso.getIsoformAccession().equals(isoformUniqueName))
                 .collect(Collectors.toList());
+    }
+
+    public static Isoform getIsoformByNameOrCanonical(Entry entry, String isoformName) {
+
+        return  (isoformName != null) ?
+                IsoformUtils.getIsoformByName(entry, isoformName) :
+                IsoformUtils.getCanonicalIsoform(entry);
     }
 
     public static Isoform getIsoformByName(Entry entry, String name) {
@@ -67,16 +74,56 @@ public class IsoformUtils {
 
     public static Isoform getIsoformByName(List<Isoform> isoforms, String name) {
 
-        if (name==null) return null;
+        if (name == null) {
+            return null;
+        }
         for (Isoform iso: isoforms) {
-            if (name.equals(iso.getUniqueName())) return iso;
+            if (name.equals(iso.getIsoformAccession())) {
+                return iso;
+            }
             EntityName mainEname = iso.getMainEntityName();
-            if (mainEname!=null && name.equalsIgnoreCase(mainEname.getName())) return iso;
+            if (mainEname != null && name.equalsIgnoreCase(mainEname.getName())) {
+                return iso;
+            }
             for (EntityName syn: iso.getSynonyms()) {
-                if (name.equalsIgnoreCase(syn.getName())) return iso;
+                if (name.equalsIgnoreCase(syn.getName())) {
+                    return iso;
+                }
             }
         }
         return null;
+    }
+
+    /**
+     * Find the entry accession from an isoform accession
+     * @param isoformAccession the given isoform accession
+     * @return an isoform accession or throw exception if invalid isoform accession format
+     */
+    public static String findEntryAccessionFromIsoformAccession(String isoformAccession) {
+
+        if (!isoformAccession.contains("-")) {
+            throw new NextProtException("Invalid neXtProt isoform accession: "+isoformAccession);
+        }
+
+        return isoformAccession.split("-")[0];
+    }
+
+    /**
+     * Find the entry accession from an entry or isoform accession
+     * @param entryOrIsoformAccession the given neXtProt accession
+     * @return an entry accession or throw exception if invalid neXtProt accession format (entry or isoform)
+     */
+    public static String findEntryAccessionFromEntryOrIsoformAccession(String entryOrIsoformAccession) {
+
+        if (!entryOrIsoformAccession.startsWith("NX_")) {
+            throw new NextProtException("Invalid neXtProt accession: "+entryOrIsoformAccession);
+        }
+
+        if (!entryOrIsoformAccession.contains("-")) {
+            return entryOrIsoformAccession;
+        }
+
+        return entryOrIsoformAccession.split("-")[0];
     }
 
 	/**

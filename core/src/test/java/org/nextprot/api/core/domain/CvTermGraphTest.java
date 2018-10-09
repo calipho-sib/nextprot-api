@@ -34,7 +34,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name()).size(),
                 graph.countNodes());
-        Assert.assertEquals(13736, graph.countEdges());
+        Assert.assertTrue(graph.countEdges() > 13000);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         int cvId = graph.getCvTermIdByAccession("GO:0005488");
 
-        Assert.assertEquals(49, graph.getChildren(cvId).length);
+        Assert.assertTrue(graph.getChildren(cvId).length > 49);
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(graph.getCvTermAccessionById(cvId));
 

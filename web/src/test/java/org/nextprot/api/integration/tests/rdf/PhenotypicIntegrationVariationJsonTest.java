@@ -1,23 +1,25 @@
 package org.nextprot.api.integration.tests.rdf;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTest {
 
 	@Test
 	public void shouldReturnCorrectJsonForPhenotypeViewerPageWithGeneNameInBioObject() throws Exception {
 
-		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
-				.getResponse().getContentAsString();
+		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json"))
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+				.getResponse()
+                .getContentAsString();
 		ObjectMapper om = new ObjectMapper();
 		JsonNode actualObj = om.readTree(content);
 

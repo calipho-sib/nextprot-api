@@ -1,8 +1,14 @@
 package org.nextprot.api.rdf.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryParseException;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import org.nextprot.api.commons.exception.ExceptionUtils;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.SparqlResult;
@@ -15,15 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryParseException;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
-import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SparqlServiceImpl implements SparqlService, InitializingBean {
@@ -155,7 +154,7 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 	@Override
 	public QueryExecution queryExecution(String query) {
 		QueryEngineHTTP qExec = (QueryEngineHTTP) QueryExecutionFactory.sparqlService(sparqlEndpoint.getUrl(), query);
-		qExec.addParam("timeout", sparqlEndpoint.getTimeout());
+		//qExec.addParam("timeout", sparqlEndpoint.getTimeout());
 		return qExec;
 	}
 	

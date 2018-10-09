@@ -1,19 +1,11 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
-import org.nextprot.api.core.service.FamilyService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.ProteinExistenceService;
+import org.nextprot.api.core.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,14 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+
+import static org.nextprot.api.core.domain.Overview.EntityNameClass.*;
 
 
 @Service
 class OverviewServiceImpl implements OverviewService {
 
 	@Autowired private HistoryDao historyDao;
-	@Autowired private EntityNameDao entryNameDao;
+	@Autowired private EntityNameService entityNameService;
 	@Autowired private FamilyService familyService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private ProteinExistenceService proteinExistenceService;
@@ -42,11 +35,11 @@ class OverviewServiceImpl implements OverviewService {
 		if (history != null && history.size() != 0)
 			overview.setHistory(history.get(0));
 
-		List<EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
-		entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
-		
-		setNamesInOverview(entityNames, overview);
-
+		overview.setProteinNames(entityNameService.findNamesByEntityNameClass(uniqueName, PROTEIN_NAMES));
+        overview.setGeneNames(entityNameService.findNamesByEntityNameClass(uniqueName, GENE_NAMES));
+        overview.setCleavedRegionNames(entityNameService.findNamesByEntityNameClass(uniqueName, CLEAVED_REGION_NAMES));
+        overview.setAdditionalNames(entityNameService.findNamesByEntityNameClass(uniqueName, ADDITIONAL_NAMES));
+        overview.setFunctionalRegionNames(entityNameService.findNamesByEntityNameClass(uniqueName, FUNCTIONAL_REGION_NAMES));
 		overview.setFamilies(this.familyService.findFamilies(uniqueName));
 		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
 		overview.setProteinExistences(proteinExistenceService.getProteinExistences(uniqueName));
@@ -81,81 +74,5 @@ class OverviewServiceImpl implements OverviewService {
 		}
 		
 		return isoNames;
-	}
-	
-	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
-
-		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, EntityName::getId);
-
-		Map<String, EntityName> mutableEntityMap = Maps.newHashMap(entityMap);
-		String parentId;
-
-		for (EntityName entityName : entityMap.values()) {
-
-			parentId = entityName.getParentId();
-			if (parentId != null && mutableEntityMap.containsKey(parentId)) {
-
-				if (entityName.isMain()) {
-					mutableEntityMap.get(parentId).addOtherRecommendedEntityName(entityName);
-				}
-				else {
-					mutableEntityMap.get(parentId).addSynonym(entityName);
-				}
-			} else {
-				mutableEntityMap.put(entityName.getId(), entityName);
-			}
-		}
-
-		List<EntityName> mutableEntityNames = new ArrayList<>(mutableEntityMap.values());
-
-		for (EntityName entityName : mutableEntityMap.values())
-			if (entityName.getParentId() != null)
-				mutableEntityNames.remove(entityName);
-
-		Multimap<Overview.EntityNameClass, EntityName> entryNameMap = Multimaps.index(mutableEntityNames, EntityName::getClazz);
-
-		for (EntityNameClass en : entryNameMap.keySet()) {
-
-			switch (en) {
-				case PROTEIN_NAMES: {
-					overview.setProteinNames(getSortedList(entryNameMap, en));
-					break;
-				}
-				case GENE_NAMES: {
-					overview.setGeneNames(getSortedList(entryNameMap, en, Comparator.comparing(EntityName::getName)));
-					break;
-				}
-				case CLEAVED_REGION_NAMES: {
-					overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
-					break;
-				}
-				case ADDITIONAL_NAMES: {
-					overview.setAdditionalNames(getSortedList(entryNameMap, en));
-					break;
-				}
-				case FUNCTIONAL_REGION_NAMES: {
-					overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
-					break;
-				}
-			}
-		}
-	}
-
-	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en) {
-
-		return getSortedList(entryMap, en, EntityName.newDefaultComparator());
-	}
-
-	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en, Comparator<EntityName> comparator) {
-
-		List<EntityName> list = new ArrayList<>(entryMap.get(en));
-		for(EntityName e : list){
-			if(e.getSynonyms() != null){
-				e.getSynonyms().sort(comparator);
-			}
-		}
-		list.sort(comparator);
-
-		return list;
 	}
 }

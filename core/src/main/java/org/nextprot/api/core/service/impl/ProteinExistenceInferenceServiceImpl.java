@@ -18,12 +18,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * See specifications on https://calipho.isb-sib.ch/wiki/display/cal/Protein+existence+%28PE%29+upgrade+rules
+ */
 @Service
 class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceService {
 
+    private static final Logger LOGGER = Logger.getLogger(ProteinExistenceInferenceServiceImpl.class.getName());
+
+	
 	@Autowired
 	private ProteinExistenceDao proteinExistenceDao;
 
@@ -39,31 +47,39 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public ProteinExistenceInferred inferProteinExistence(String entryAccession) {
 
-		if (cannotBePromotedAccordingToRule1(entryAccession)) {
+		if (cannotBePromotedAccordingToRule1(entryAccession)) {			
+			LOGGER.info("ProteinExistence: cannotBePromotedAccordingToRule1:" + entryAccession);
 			return new ProteinExistenceInferred(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT),
 					ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
 		}
 		if (promotedAccordingToRule2(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule2: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_02);
 		}
 		if (promotedAccordingToRule3(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule3: " + entryAccession  + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_03);
 		}
-		if (promotedAccordingToRule4(entryAccession)) {
-
-			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
-		}
 		if (promotedAccordingToRule5(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule5: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_05);
 		}
 		if (promotedAccordingToRule6(entryAccession)) {
-
+			LOGGER.info("ProteinExistence: promotedAccordingToRule6: " + entryAccession + " to PE1");
 			return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06);
 		}
-
+        if (promotedAccordingToRule7(entryAccession)) {
+			LOGGER.info("ProteinExistence: promotedAccordingToRule7: " + entryAccession + " to PE1");
+            return new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_07);
+        }
+        
+        // WARNING: this rule must be after rules promoting to PE1, they have precedence
+		if (promotedAccordingToRule4(entryAccession)) {
+			LOGGER.info("ProteinExistence: promotedAccordingToRule4: " + entryAccession + " to PE2");
+			return new ProteinExistenceInferred(ProteinExistence.TRANSCRIPT_LEVEL, ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04);
+		}
+		
+		LOGGER.info("ProteinExistence: promotedByNoRule: " + entryAccession);
 		return ProteinExistenceInferred.noInferenceFound(proteinExistenceDao.findProteinExistenceUniprot(entryAccession, ProteinExistence.Source.PROTEIN_EXISTENCE_UNIPROT));
 	}
 
@@ -96,7 +112,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
     // with evidence assigned by neXtProt of quality GOLD AND ECO experimental evidence (or child thereof)
 	public boolean promotedAccordingToRule3(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.EXPRESSION_INFO)
 				.filter(ei -> ei.getDescription().contains("(at protein level)")));
 	}
@@ -115,7 +131,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                     .flatMap(annot -> annot.getEvidences().stream())
                     .filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
                     .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-                    .filter(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
+                    .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
                     .anyMatch(evidence -> evidence.isExpressionLevelDetected(Arrays.asList("high", "medium")));
         }
 
@@ -127,7 +143,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule5(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS));
 	}
 
@@ -136,25 +152,39 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule6(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.BINARY_INTERACTION));
 	}
 
-	private boolean isChildOfExperimentalEvidenceTerm(String evidenceCodeAC, int evidenceCodeACAncestor) {
+    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and ECO experimental evidence (or child thereof)
+    // other than mass spectrometry evidence (ECO:0001096)
+    // Note: Term "experimental evidence": ECO:0000006 (ID=84877), Term "mass spectrometry evidence": ECO:0001096 (ID=154119)
+    @Override
+    public boolean promotedAccordingToRule7(String entryAccession) {
 
-		CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
-		int termId = terminologyService.findCvTermByAccessionOrThrowRuntimeException(evidenceCodeAC).getId().intValue();
+        return annotationService.findAnnotations(entryAccession).stream()
+                .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE)
+                .flatMap(annot -> annot.getEvidences().stream())
+                .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+                .filter(evidence -> ! "Uniprot".equals(evidence.getAssignedBy()))
+                .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877))
+                .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
+    }
 
-		return evidenceCodeACAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeACAncestor);
-	}
+	// Note: Term "experimental evidence": ECO:0000006 (ID=84877)
+    private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Supplier<Stream<Annotation>> streamSupplier) {
 
-	private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Stream<Annotation> stream) {
-
-		return stream.flatMap(annot -> annot.getEvidences().stream())
+		return streamSupplier.get().flatMap(annot -> annot.getEvidences().stream())
 				.filter(evidence -> "NextProt".equals(evidence.getAssignedBy()))
 				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-				.anyMatch(evidence -> isChildOfExperimentalEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
-
-		// { "id" : 84877, "accession" : "ECO:0000006", "name" : "experimental evidence" }
+				.anyMatch(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
 	}
+
+    private boolean isChildOfEvidenceTerm(String evidenceCodeAC, int evidenceCodeIdAncestor) {
+
+        CvTermGraph evidenceCodeTermGraph = cvTermGraphService.findCvTermGraph(TerminologyCv.EvidenceCodeOntologyCv);
+        int termId = terminologyService.findCvTermByAccessionOrThrowRuntimeException(evidenceCodeAC).getId().intValue();
+
+        return evidenceCodeIdAncestor == termId || evidenceCodeTermGraph.isDescendantOf(termId, evidenceCodeIdAncestor);
+    }
 }

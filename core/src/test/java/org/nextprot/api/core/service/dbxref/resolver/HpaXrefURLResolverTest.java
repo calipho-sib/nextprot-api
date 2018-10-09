@@ -21,7 +21,7 @@ public class HpaXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
 
-        Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -30,7 +30,7 @@ public class HpaXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
-        Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
+        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -39,6 +39,6 @@ public class HpaXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("HPA018312", "HPA", "whatever");
 
-        Assert.assertEquals("http://www.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+        Assert.assertEquals("https://v18.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
     }
 }

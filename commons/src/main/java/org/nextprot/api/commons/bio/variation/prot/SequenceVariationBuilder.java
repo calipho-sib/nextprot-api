@@ -2,7 +2,7 @@ package org.nextprot.api.commons.bio.variation.prot;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.AminoAcidModification;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 /**
@@ -18,14 +18,29 @@ public interface SequenceVariationBuilder {
     /** collect data through the process */
     DataCollector getDataCollector();
 
+    interface Start { }
+
     /** start fluent building */
-    interface FluentBuilding {
+    interface StartBuilding extends Start {
+
+        /** give a amino-acid sequence to build from */
+        StartBuildingFromAAs fromAAs(String aas);
 
         /** select a single affected amino-acid residue */
         ChangingAminoAcid selectAminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
 
         /** select a range of affected amino-acid residues */
         ChangingAminoAcidRange selectAminoAcidRange(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+    }
+
+    /** with sequence branch building */
+    interface StartBuildingFromAAs extends Start {
+
+        /** select a single affected amino-acid residue */
+        ChangingAminoAcid selectAminoAcid(int affectedAAPos) throws VariationOutOfSequenceBoundException;
+
+        /** select a range of affected amino-acid residues */
+        ChangingAminoAcidRange selectAminoAcidRange(int firstAffectedAAPos, int lastAffectedAAPos) throws VariationOutOfSequenceBoundException;
     }
 
     /** mutations affecting only one amino-acid */
@@ -38,7 +53,7 @@ public interface SequenceVariationBuilder {
         SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
 
         /** modifies affected amino-acid with modification */
-        SequenceVariationBuilder thenAddModification(AminoAcidModification modification);
+        SequenceVariationBuilder thenAddModification(UniProtPTM modification);
 
         /** change translation initiation (start of stop codon) extending the normal translational reading frame at the
          * N- or C-terminal end with one or more amino acids */

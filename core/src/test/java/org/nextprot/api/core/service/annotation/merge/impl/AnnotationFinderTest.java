@@ -4,23 +4,23 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.annotation.merge.AnnotationSimilarityPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder.AnnotationFinder;
 import static org.nextprot.api.core.service.annotation.merge.impl.ObjectAnnotationSimilarityPredicateTest.mockAnnotation;
 
 public class AnnotationFinderTest {
 
     @Test
-    public void shouldNotFindAnnotInEmptyList() throws Exception {
+    public void shouldNotFindAnnotInEmptyList() {
 
         AnnotationFinder finder = new AnnotationFinder();
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotation(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 new ArrayList<>()
         );
@@ -29,16 +29,11 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldFindSameAnnot() throws Exception {
+    public void shouldFindSameAnnot() {
 
-        AnnotationFinder finder = new AnnotationFinder() {
-            @Override
-            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
-                return Optional.of(newApiCatCriteria());
-            }
-        };
+        AnnotationFinder finder = new AnnotationFinder((c)-> (a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotation(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.VARIANT))
         );
@@ -48,11 +43,11 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldNotFindDiffAnnot() throws Exception {
+    public void shouldNotFindDiffAnnot() {
 
         AnnotationFinder finder = new AnnotationFinder();
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotation(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.MUTAGENESIS))
         );
@@ -61,20 +56,15 @@ public class AnnotationFinderTest {
     }
 
     @Test
-    public void shouldFindOneAnnotIfMultipleMatches() throws Exception {
+    public void shouldFindOneAnnotIfMultipleMatches() {
 
-        AnnotationFinder finder = new AnnotationFinder() {
-            @Override
-            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
-                return Optional.of(newApiCatCriteria());
-            }
-        };
+        AnnotationFinder finder = new AnnotationFinder((c)-> (a1, a2) -> a1.getAPICategory() == a2.getAPICategory());
 
         Annotation annot = new Annotation();
         annot.setAnnotationName("joe");
         annot.setAnnotationCategory(AnnotationCategory.VARIANT);
 
-        Optional<Annotation> optAnnotation = finder.find(
+        Optional<Annotation> optAnnotation = finder.findAnnotation(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Arrays.asList(annot, mockAnnotation(AnnotationCategory.VARIANT))
         );
@@ -82,10 +72,5 @@ public class AnnotationFinderTest {
         Assert.assertTrue(optAnnotation.isPresent());
         Assert.assertEquals(AnnotationCategory.VARIANT, optAnnotation.get().getAPICategory());
         Assert.assertEquals("joe", optAnnotation.get().getAnnotationName());
-    }
-
-    private static AnnotationSimilarityPredicate newApiCatCriteria() {
-
-        return (a1, a2) -> a1.getAPICategory() == a2.getAPICategory();
     }
 }

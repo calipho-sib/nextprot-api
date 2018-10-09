@@ -7,7 +7,7 @@ import java.util.Set;
 
 public interface StatementExtractorService {
 
-	Set<Statement> getStatementsForSourceForGeneNameAndEnvironment(NextProtSource source, String release, String geneNameAndEnvironment);
+	Set<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName);
 
 	Set<Statement> getStatementsForSource(NextProtSource source, String release);
 

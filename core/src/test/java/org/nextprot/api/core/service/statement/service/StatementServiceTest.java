@@ -1,10 +1,10 @@
 package org.nextprot.api.core.service.statement.service;
 
-import org.nextprot.api.core.service.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.AnnotationBuilderIntegrationBaseTest;
 import org.nextprot.api.core.service.StatementService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,5 +53,13 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		
 	}
 	*/
+
+    @Test
+    public void findSimpleGlycoAnnotations() {
+
+        List<Annotation> annotations = statementService.getAnnotations("NX_O75503");
+
+        System.out.println(annotations);
+    }
 	
 }

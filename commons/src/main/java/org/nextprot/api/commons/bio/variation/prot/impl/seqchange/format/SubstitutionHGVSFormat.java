@@ -18,7 +18,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeHGVSFormat<Substitu
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder,
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.StartBuilding builder,
                                            ParsingMode mode) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);

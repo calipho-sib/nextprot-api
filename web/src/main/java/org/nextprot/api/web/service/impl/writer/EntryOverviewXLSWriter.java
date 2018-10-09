@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.ChromosomalLocation;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.service.EntryReportStatsService;
@@ -48,13 +48,13 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
             values[1] = entry.getOverview().getMainProteinName();
             values[2] = EntityName.toString(entry.getOverview().getGeneNames());
             values[3] = ChromosomalLocation.toString(entry.getChromosomalLocations());
-            values[4] = booleanToYesNoString(entry.getProperties().getFilterproteomics());
+            values[4] = booleanToYesNoString(entryReport.isProteomics());
             values[5] = booleanToYesNoString(entry.getProperties().getFilterdisease());
             values[6] = booleanToYesNoString(entry.getProperties().getFilterstructure());
             values[7] = entryReport.countIsoforms();
             values[8] = entryReport.countVariants();
             values[9] = entryReport.countPTMs();
-            values[10] = booleanToYesNoString(entry.getProperties().getFiltermutagenesis());
+            values[10] = booleanToYesNoString(entryReport.isMutagenesis());
             values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
             values[12] = entry.getOverview().getProteinExistences().getProteinExistence().getDescription();
 

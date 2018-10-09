@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class SingleFeatureQuery extends BaseFeatureQuery {
 
-	private static final long serialVersionUID = 20161117L;
+	private static final long serialVersionUID = 20180815L;
 
 	private String accession;
     private String feature;
     private String featureType;
-    private boolean propagableFeature;
+    private boolean tryToMapOnOtherIsoforms;
 
     public SingleFeatureQuery(){
     	//because of json
@@ -74,13 +74,13 @@ public class SingleFeatureQuery extends BaseFeatureQuery {
     /**
      * @return true if feature should be propagated to other isoforms
      */
-    public boolean isFeaturePropagable() {
-        return propagableFeature;
+    public boolean tryToMapOnOtherIsoforms() {
+        return tryToMapOnOtherIsoforms;
     }
 
-    public void setPropagableFeature(boolean propagableFeature) {
+    public void setTryToMapOnOtherIsoforms(boolean tryToMapOnOtherIsoforms) {
 
-        this.propagableFeature = propagableFeature;
+        this.tryToMapOnOtherIsoforms = tryToMapOnOtherIsoforms;
     }
 
     @Override

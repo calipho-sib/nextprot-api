@@ -30,6 +30,7 @@ public enum DbXrefURLResolverSupplier {
     GENEVESTIGATOR(XrefDatabase.GENEVESTIGATOR,     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR)),
     GENEVISIBLE(XrefDatabase.GENEVISIBLE,           new GenevisibleXrefURLResolver()),
     GERMONLINE(XrefDatabase.GERM_ONLINE,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
+    GLY_CONNECT(XrefDatabase.GLY_CONNECT,           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GLY_CONNECT)),
     HAMAP_RULE(XrefDatabase.HAMAP_RULE,             new ConstantXrefDatabasebURLResolver("http://hamap.expasy.org/")),
     HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver()),
     HSSP(XrefDatabase.HSSP,                         new HsspXrefURLResolver()),

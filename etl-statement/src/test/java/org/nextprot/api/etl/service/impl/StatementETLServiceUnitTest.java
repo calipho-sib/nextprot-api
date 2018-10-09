@@ -1,20 +1,16 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
+import org.nextprot.commons.constants.IsoTargetSpecificity;
+import org.nextprot.commons.statements.*;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
-import org.nextprot.commons.constants.IsoTargetSpecificity;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformSet;
-import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
 public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 
@@ -28,7 +24,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 				.build()));
 		
 		List<Statement> variantOnEntry = 
-				StatementTransformationUtil.getPropagatedStatementsForEntry(
+				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
 						isoformMappingServiceMocked, subjectStatements, "NX_Q15858");
 
 
@@ -62,7 +58,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		
 		List<Statement> subjectStatements = 
-				StatementTransformationUtil.getPropagatedStatementsForEntry(
+				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
 						isoformMappingServiceMocked, rawSubjectStatements, "NX_Q15858");
 
 		Statement proteoformStatement = StatementBuilder.createNew()
@@ -71,7 +67,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		{
 
-		    Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(proteoformStatement, isoformMappingServiceMocked, subjectStatements, true, "NX_Q15858-3", Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
+		    Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, true, "NX_Q15858-3", Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
 			
 		    Assert.assertTrue(result.size() == 1);
 		    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso3-p.Met932Leu + SCN9A-iso3-p.Val991Leu"));
@@ -82,7 +78,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 
 		{
 
-			Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(proteoformStatement, isoformMappingServiceMocked, subjectStatements, false, null, Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
+			Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, false, null, Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
 		
 		    System.err.println(result.size());
 		    Assert.assertEquals(result.size(), 2); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3

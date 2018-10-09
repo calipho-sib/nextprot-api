@@ -35,8 +35,8 @@ public class FilterAndPropertiesFieldsBuilder extends FieldBuilder{
 		if (props.getFilterstructure()) filters += "filterstructure ";
 		if (props.getFilterdisease()) filters += "filterdisease ";
 		if (props.getFilterexpressionprofile()) filters += "filterexpressionprofile ";
-		if (props.getFiltermutagenesis()) filters += "filtermutagenesis ";
-		if (props.getFilterproteomics()) filters += "filterproteomics ";
+		if (ers.isMutagenesis()) filters += "filtermutagenesis ";
+		if (ers.isProteomics()) filters += "filterproteomics ";
 		if (filters.length() > 0) {
 			addField(Fields.FILTERS, filters.trim());
 		}

@@ -59,7 +59,7 @@ public class FunctionPageView extends PageViewBase {
 		return Arrays.asList(
 				GUIDETO_PHARMOCOLOGY, SWISS_LIPIDS, BIO_CYC, BRENDA, SABIO_RK,
 				CAZY, ESTHER, MEROPS, MOON_PROT, PEROXIBASE, REBASE, SFLD,
-				GENE_WIKI, GENOME_RNA_I, PRO
+				GENE_WIKI, GENOME_RNA_I, PRO, MOON_DB
 			);
 	}
 

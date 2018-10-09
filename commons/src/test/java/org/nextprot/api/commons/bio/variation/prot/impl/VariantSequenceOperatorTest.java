@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 
 import java.util.Optional;
 
@@ -12,35 +12,35 @@ public class VariantSequenceOperatorTest {
     @Test
     public void testBuildSequenceVariantDuplication() throws Exception {
 
-        assertOperation("KPLISMPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Leu3_Met6dup"),
+        assertOperation("KPLISMPEPTIDE", new VariantHGVSFormat().parse("p.Leu3_Met6dup"),
                 6, 6, "M", "MLISM", "KPLISMLISMPEPTIDE");
     }
 
     @Test
     public void testBuildSequenceVariantSubstitution() throws Exception {
 
-        assertOperation("KMLISMPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Leu3Met"),
+        assertOperation("KMLISMPEPTIDE", new VariantHGVSFormat().parse("p.Leu3Met"),
                 3, 3, "L", "M", "KMMISMPEPTIDE");
     }
 
     @Test
     public void testBuildSequenceVariantInsertion() throws Exception {
 
-        assertOperation("KMLISMRSPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Arg7_Ser8insLeuIleSerMet"),
+        assertOperation("KMLISMRSPEPTIDE", new VariantHGVSFormat().parse("p.Arg7_Ser8insLeuIleSerMet"),
                 7, 7, "R", "RLISM", "KMLISMRLISMSPEPTIDE");
     }
 
     @Test
     public void testBuildSequenceVariantDeletion() throws Exception {
 
-        assertOperation("KMLISMRSPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Leu3_Met6del"),
+        assertOperation("KMLISMRSPEPTIDE", new VariantHGVSFormat().parse("p.Leu3_Met6del"),
                 3, 6, "LISM", "", "KMRSPEPTIDE");
     }
 
     @Test
     public void testBuildSequenceVariantDeletionInsertion() throws Exception {
 
-        assertOperation("KMLIMLESMRSPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Met5_Glu7delinsLeuIleSerMet"),
+        assertOperation("KMLIMLESMRSPEPTIDE", new VariantHGVSFormat().parse("p.Met5_Glu7delinsLeuIleSerMet"),
                 5, 7, "MLE", "LISM", "KMLILISMSMRSPEPTIDE");
     }
 

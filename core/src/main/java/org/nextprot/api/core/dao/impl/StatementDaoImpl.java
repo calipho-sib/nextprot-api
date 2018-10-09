@@ -1,13 +1,8 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
@@ -16,7 +11,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import org.nextprot.api.core.dao.StatementDao;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class StatementDaoImpl implements StatementDao {
@@ -41,14 +40,6 @@ public class StatementDaoImpl implements StatementDao {
 		params.put("accession", nextprotAccession);
 
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sql, params, new StatementMapper());
-	}
-
-	@Override
-	public List<Statement> findStatementsByAnnotEntryId(AnnotationType type, String annotHash) {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("annot_hash", annotHash);
-
-		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sqlDictionary.getSQLQuery("statements-by-annot-entry-id"), params, new StatementMapper());
 	}
 
 	@Override

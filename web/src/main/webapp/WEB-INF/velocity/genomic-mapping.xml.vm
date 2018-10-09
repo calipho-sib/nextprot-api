@@ -7,7 +7,9 @@
 			<transcript-mapping-list>
 				#foreach($transcriptGeneMapping in $isoformGeneMapping.transcriptGeneMappings)
 				<transcript-mapping accession='$transcriptGeneMapping.databaseAccession' database='$transcriptGeneMapping.database' quality='$transcriptGeneMapping.quality'>
+					#if($transcriptGeneMapping.proteinId)
 					<transcript-protein accession='$transcriptGeneMapping.proteinId' database='$transcriptGeneMapping.database'/>
+					#end
 					<exon-list>
 						#foreach($exon in $transcriptGeneMapping.exons)
 			   			<exon rank='$exon.rank' #if($exon.exonCategory)coding-status='$exon.exonCategory'#end #if($exon.accession)accession='$exon.accession' database='$transcriptGeneMapping.database'#end>

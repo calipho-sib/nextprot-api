@@ -5,17 +5,14 @@ import java.util.regex.Pattern;
 
 public class SequenceVariantUtils {
 
+    // TODO: It is false as isoform name can be of "non-iso" format (ex: GTBP-N for NX_P52701)
 	public static boolean isIsoSpecific(String featureName) {
 		if(featureName != null){
 			return featureName.toLowerCase().contains("iso");
 		}else return false;
 	}
 
-	/**
-	 * Returns null if not found
-	 * @param name
-	 * @return
-	 */
+    // TODO: Also false for the same reason as above
 	public static String getIsoformName(String featureName) {
 		
 		if(isIsoSpecific(featureName)){

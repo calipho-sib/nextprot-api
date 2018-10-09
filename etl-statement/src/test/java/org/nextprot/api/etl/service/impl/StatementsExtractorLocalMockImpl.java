@@ -12,10 +12,10 @@ import java.util.Set;
 public class StatementsExtractorLocalMockImpl extends StatementExtractorBase {
 
 	@Override
-	public Set<Statement> getStatementsForSourceForGeneNameAndEnvironment(NextProtSource notUsed, String release, String geneNameAndEnvironment) {
+	public Set<Statement> getStatementsFromJsonFile(NextProtSource notUsed, String release, String jsonFilename) {
 
 		StatementDictionary sd = new StatementDictionary();
-		String content = sd.getStatements(geneNameAndEnvironment);
+		String content = sd.getStatements(jsonFilename);
 		String removedComments = content.replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "$1");
 		
 		return deserialize(new ByteArrayInputStream(removedComments.getBytes(StandardCharsets.UTF_8)));

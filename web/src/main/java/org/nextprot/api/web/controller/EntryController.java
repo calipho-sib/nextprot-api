@@ -82,7 +82,7 @@ public class EntryController {
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
+	@RequestMapping(value = "/entry/{entry}/{blockOrSubpart}", method = { RequestMethod.GET })
 	public String getSubPart(
 			@PathVariable("entry") String entryName,
 			@PathVariable("blockOrSubpart") String blockOrSubpart,

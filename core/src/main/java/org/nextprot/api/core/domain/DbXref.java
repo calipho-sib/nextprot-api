@@ -9,6 +9,7 @@ import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
@@ -139,8 +140,21 @@ public class DbXref implements Serializable {
 		}
 		return null;
 	}
-	
-	public void setProperties(List<DbXrefProperty> properties) {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DbXref dbXref = (DbXref) o;
+        return Objects.equals(dbXrefId, dbXref.dbXrefId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dbXrefId);
+    }
+
+    public void setProperties(List<DbXrefProperty> properties) {
 		this.properties = properties;
 	}
 
