@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.nextprot.api.commons.constants.IdentifierOffset.NXFLAT_ANNOTATION_ID_COUNTER;
+
 abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
@@ -238,7 +240,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Statement firstStatement = statements.get(0);
 
             annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
-            //annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
+            annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
             AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
             annotation.setAnnotationCategory(category);
