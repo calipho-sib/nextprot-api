@@ -47,6 +47,10 @@ public class ReducedAnnotation implements AnnotationListReduction {
             this.destAnnotation = destAnnotAndOtherSources.getDestAnnotation();
             this.sourceAnnotations = destAnnotAndOtherSources.getSourceAnnotations();
         }
+
+        if (destAnnotation.getAnnotationId() == 0) {
+            throw new NextProtException("annotation id was not computed for " + destAnnotation.getUniqueName());
+        }
     }
 
     /**
@@ -95,17 +99,15 @@ public class ReducedAnnotation implements AnnotationListReduction {
      */
     private void updateDestEvidences() {
 
-        List<AnnotationEvidence> all = new ArrayList<>(destAnnotation.getEvidences());
+        List<AnnotationEvidence> destEvidences = new ArrayList<>(destAnnotation.getEvidences());
 
-        // TODO: to test
-        for (Annotation other : sourceAnnotations) {
+        destEvidences.addAll(sourceAnnotations.stream()
+                .flatMap(annotation -> annotation.getEvidences().stream())
+                .filter(e -> !destEvidences.contains(e))
+                .peek(e -> e.setAnnotationId(destAnnotation.getAnnotationId()))
+                .collect(Collectors.toList()));
 
-            all.addAll(other.getEvidences().stream()
-                    .filter(e -> !destAnnotation.getEvidences().contains(e))
-                    .collect(Collectors.toList()));
-        }
-
-        destAnnotation.setEvidences(all);
+        destAnnotation.setEvidences(destEvidences);
     }
 
     /**
