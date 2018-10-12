@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.PtmDao;
@@ -30,6 +31,8 @@ import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
+
+import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -131,7 +134,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		if (!ignoreStatements) {
-            annotations = new AnnotationListMerger(annotations, entityNameService).merge(statementService.getAnnotations(entryName));
+
+            String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
+                    .filter(entityName -> entityName.isMain())
+                    .map(entityName -> entityName.getName())
+                    .findFirst().orElseThrow(() -> new NextProtException("Cannot find gene name for entry "+entryName));
+
+            annotations = new AnnotationListMerger(geneName, annotations).merge(statementService.getAnnotations(entryName));
         }
 
 		// post-processing of annotations

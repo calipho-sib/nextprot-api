@@ -7,7 +7,6 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionCombiner;
 import org.nextprot.api.core.service.annotation.merge.AnnotationListReduction;
 import org.nextprot.api.core.service.annotation.merge.SimilarGroupBuilder;
@@ -25,18 +24,18 @@ public class ReducedAnnotation implements AnnotationListReduction {
 
     private static final Logger LOGGER = Logger.getLogger(ReducedAnnotation.class.getName());
 
+    private final String geneName;
     private final List<Annotation> annotations;
     private final Annotation destAnnotation;
     private final List<Annotation> sourceAnnotations;
-    private final EntityNameService entityNameService;
 
-    public ReducedAnnotation(SimilarGroupBuilder.SimilarAnnotationGroup annotationGroup, EntityNameService entityNameService) {
+    public ReducedAnnotation(String geneName, SimilarGroupBuilder.SimilarAnnotationGroup annotationGroup) {
 
         Preconditions.checkNotNull(annotationGroup);
-        Preconditions.checkNotNull(entityNameService);
+        Preconditions.checkNotNull(geneName);
         Preconditions.checkArgument(!annotationGroup.isEmpty());
 
-        this.entityNameService = entityNameService;
+        this.geneName = geneName;
         this.annotations = annotationGroup.getAnnotations();
 
         if (annotations.size() == 1) {
@@ -115,10 +114,10 @@ public class ReducedAnnotation implements AnnotationListReduction {
      */
     private void updateDestDescription() {
 
-        AnnotationDescriptionCombiner annotationDescriptionCombiner = new AnnotationDescriptionCombiner(destAnnotation, entityNameService);
+        AnnotationDescriptionCombiner annotationDescriptionCombiner =
+                new AnnotationDescriptionCombiner(geneName, destAnnotation);
 
         for (Annotation sourceAnnotation : sourceAnnotations) {
-
             destAnnotation.setDescription(annotationDescriptionCombiner.combine(destAnnotation.getDescription(), sourceAnnotation.getDescription()));
         }
     }
