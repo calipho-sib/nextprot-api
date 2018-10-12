@@ -1,7 +1,6 @@
 package org.nextprot.api.core.service.annotation.merge;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.StatementAnnotDescription;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -43,11 +42,6 @@ public class AnnotationDescriptionCombiner {
 
         this.annotation = annotation;
 
-        if (annotation.getTargetingIsoformsMap().isEmpty()) {
-
-            throw new NextProtException("Cannot combine description: missing isoform mapping for annotation "+annotation.getAnnotationId());
-        }
-
         parser = new AnnotationDescriptionParser(geneName);
     }
 
@@ -60,6 +54,12 @@ public class AnnotationDescriptionCombiner {
     public String combine(String firstDescription, String secondDescription) {
 
         try {
+            if (firstDescription == null) {
+                return secondDescription;
+            }
+            if (secondDescription == null) {
+                return firstDescription;
+            }
             StatementAnnotDescription desc1 = parser.parse(firstDescription);
             StatementAnnotDescription desc2 = parser.parse(secondDescription);
 
