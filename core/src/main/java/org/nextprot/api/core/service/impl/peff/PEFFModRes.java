@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl.peff;
 
-import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -21,13 +20,11 @@ public class PEFFModRes extends PEFFPTMInformation {
 
     PEFFModRes(String isoformAccession, List<Annotation> isoformAnnotations, List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(isoformAccession, isoformAnnotations, Sets.union(PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, PEFFDisulfideBond.ANNOTATION_CATEGORIES),
-                Key.MOD_RES);
+        super(isoformAccession, isoformAnnotations, PEFFGlycosylationOrSelenoCysteine.ANNOTATION_CATEGORIES, Key.MOD_RES);
 
         formatterList = new ArrayList<>();
 
         formatterList.add(new PEFFGlycosylationOrSelenoCysteine(isoformAccession, isoformAnnotations));
-        formatterList.add(new PEFFDisulfideBond(isoformAccession, isoformAnnotations));
         formatterList.add(new PEFFNonMappingModResPsi(isoformAccession, isoformAnnotations));
 
         this.unmappedUniprotModAnnotations = unmappedUniprotModAnnotations;
@@ -92,50 +89,6 @@ public class PEFFModRes extends PEFFPTMInformation {
         protected String getModName(Annotation annotation) {
 
             return annotation.getCvTermName();
-        }
-    }
-
-    private static class PEFFDisulfideBond extends PEFFPTMInformation {
-
-        static final Set<AnnotationCategory> ANNOTATION_CATEGORIES = EnumSet.of(AnnotationCategory.DISULFIDE_BOND);
-
-        private PEFFDisulfideBond(String isoformAccession, List<Annotation> isoformAnnotations) {
-
-            super(isoformAccession, isoformAnnotations, ANNOTATION_CATEGORIES, Key.MOD_RES);
-        }
-
-        @Override
-        protected final String getModAccession(Annotation annotation) {
-
-            return "";
-        }
-
-        @Override
-        protected String getModName(Annotation annotation) {
-
-            return "Disulfide";
-        }
-
-
-        // \ModRes=(28||O-linked (GalNAc...))(49||Disulfide)(85||Disulfide)(84||Disulfide)(97||Disulfide)(473||Disulfide)(478||Disulfide)(74||Disulfide)(339||Disulfide)(214||Disulfide)(317||Disulfide)
-        @Override
-        protected void formatAnnotation(Annotation disulfideBondAnnotation, StringBuilder sb) {
-
-            Integer startPos = disulfideBondAnnotation.getStartPositionForIsoform(isoformAccession);
-            Integer endPos = disulfideBondAnnotation.getEndPositionForIsoform(isoformAccession);
-
-            sb
-                    .append("(")
-                    .append((startPos != null) ? startPos : "?")
-                    .append("||")
-                    .append("Disulfide")
-                    .append(")")
-                    .append("(")
-                    .append((endPos != null) ? endPos : "?")
-                    .append("||")
-                    .append("Disulfide")
-                    .append(")")
-            ;
         }
     }
 

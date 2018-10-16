@@ -144,8 +144,17 @@ public class IsoformPEFFHeaderBuilderTest extends CoreUnitBaseTest {
         IsoformPEFFHeader peff = newIsoformPEFFHeaderBuilder("NX_Q15582-1")
                 .withModResFormats().build();
 
-        Assert.assertEquals("\\ModRes=(28||O-linked (GalNAc...) serine)(49||Disulfide)(85||Disulfide)(74||Disulfide)(339||Disulfide)(84||Disulfide)(97||Disulfide)(214||Disulfide)(317||Disulfide)(473||Disulfide)(478||Disulfide)",
-                peff.getModResFormat());
+        Assert.assertEquals("\\ModRes=(28||O-linked (GalNAc...) serine)", peff.getModResFormat());
+    }
+
+    @Test
+    public void testModResPsiFormat2() throws Exception {
+
+        IsoformPEFFHeader peff = newIsoformPEFFHeaderBuilder("NX_Q15582-1")
+                .withModResFormats().build();
+
+        Assert.assertEquals("\\ModResPsi=(37|MOD:00046|O-phospho-L-serine)(49|MOD:00798|half cystine)(85|MOD:00798|half cystine)(65|MOD:00765|cysteinylation (disulfide with free L-cysteine))(74|MOD:00798|half cystine)(339|MOD:00798|half cystine)(84|MOD:00798|half cystine)(97|MOD:00798|half cystine)(214|MOD:00798|half cystine)(317|MOD:00798|half cystine)(473|MOD:00798|half cystine)(478|MOD:00798|half cystine)(649|MOD:00046|O-phospho-L-serine)",
+                peff.getModResPsiFormat());
     }
 
     @Test

@@ -133,14 +133,10 @@ public class IsoformPEFFHeaderBuilder {
         List<Annotation> unmappedUniprotModAnnotations = new ArrayList<>();
 
         peff.setModResPsiFormat(new PEFFModResPsi(isoform.getIsoformAccession(), isoformAnnotations,
-                cvTermToPsiModAccessionFunc,
-                cvTermToPsiModNameFunc,
-                unmappedUniprotModAnnotations
-                ).format()
-        );
+                cvTermToPsiModAccessionFunc, cvTermToPsiModNameFunc, unmappedUniprotModAnnotations).format());
 
-        peff.setModResFormat(new PEFFModRes(isoform.getIsoformAccession(), isoformAnnotations, unmappedUniprotModAnnotations)
-                .format());
+        peff.setModResFormat(new PEFFModRes(isoform.getIsoformAccession(), isoformAnnotations,
+                unmappedUniprotModAnnotations).format());
 
         return this;
     }
