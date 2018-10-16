@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -20,17 +19,16 @@ import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
-import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
-
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
@@ -153,7 +151,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 		QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
 		
 		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
-		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
+		return new ImmutableList.Builder<Annotation>().addAll(
+		        annotations.stream()
+                        // remove ptms on isoform variant
+                        .filter(annotation -> (annotation.getAPICategory() != AnnotationCategory.MODIFIED_RESIDUE) ||
+                                !annotation.getDescription().contains("; in variant "))
+                        .collect(Collectors.toList()))
+                .build();
 	}
 
 	

@@ -531,6 +531,26 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		}
 	}
 
+    @Test
+    public void shouldNotFindVariantModResForNX_O75478() throws Exception {
+
+        List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_O75478")
+                .with("modified-residue")).getAnnotations();
+
+        Assert.assertTrue(annotations.stream()
+                .noneMatch(annotation -> annotation.getDescription().contains("; in variant ")));
+    }
+
+    @Test
+    public void shouldNotFindVariantModResForNX_P02042() throws Exception {
+
+        List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P02042")
+                .with("modified-residue")).getAnnotations();
+
+        Assert.assertTrue(annotations.stream()
+                .noneMatch(annotation -> annotation.getDescription().contains("; in variant ")));
+    }
+
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {
 
 		Isoform canonical = IsoformUtils.getCanonicalIsoform(entry);
