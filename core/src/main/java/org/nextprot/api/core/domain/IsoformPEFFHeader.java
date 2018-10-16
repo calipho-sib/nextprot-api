@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class IsoformPEFFHeader implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public enum PEFF_KEY {
 
