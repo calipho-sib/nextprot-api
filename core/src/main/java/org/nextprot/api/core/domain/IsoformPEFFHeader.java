@@ -222,7 +222,6 @@ public class IsoformPEFFHeader implements Serializable {
     private static List<String> toKeyValueStringList(IsoformPEFFHeader pojo) {
 
         return Arrays.asList(
-                pojo.getIsoformAccessionFormat(),       // \DbUniqueId
                 pojo.getProteinNameFormat(),            // \PName
                 pojo.getGeneNameFormat(),               // \GName
                 pojo.getNcbiTaxonomyIdentifierFormat(), // \Ncbi

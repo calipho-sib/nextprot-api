@@ -44,5 +44,6 @@ public class EntryPEFFStreamWriterTest extends WebIntegrationBaseTest {
                 "CPERVTDLMRMCWQFNPKMRPTFLEIVNLLKDDLHPSFPEVSFFHSEENKAPESEELEME\r\n" +
                 "FEDMENVPLDRSSHCQREEAGGRDGGSSLGFKRSYEEHIPYTHMNGGKKNGRILTLPRSN\r\n" +
                 "PS\r\n"));
+        Assert.assertFalse(out.toString().contains("\\DbUniqueId"));
     }
 }
