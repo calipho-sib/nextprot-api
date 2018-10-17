@@ -6,6 +6,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -18,7 +19,6 @@ import org.springframework.web.servlet.ViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,12 +27,15 @@ import java.util.Map;
 @Api(name = "Publication", description = "Method to retrieve publications", group="Build rdf")
 public class RdfPublicationController {
 
-	
-	@Autowired private PublicationService publicationService;
+    @Autowired
+    private GlobalPublicationService globalPublicationService;
 
-	@Autowired private ViewResolver viewResolver;
+	@Autowired
+    private PublicationService publicationService;
 
-	
+	@Autowired
+    private ViewResolver viewResolver;
+
 	@ApiMethod(path = "/rdf/publication/{md5}", verb = ApiVerb.GET, description = "Exports one neXtProt publication.", produces = {  "text/turtle"})
 	@RequestMapping("/rdf/publication/{md5}")
 	public String findOnePublicationByMd5(
@@ -54,8 +57,7 @@ public class RdfPublicationController {
 	public void findAllPublication(Map<String,Object> model, HttpServletResponse response, HttpServletRequest request) throws Exception {
 		Boolean withPrefix=true;
 		View v = viewResolver.resolveViewName("publication", Locale.ENGLISH);
-		List<Long> publicationIds = this.publicationService.findAllPublicationIds();
-		for(Long pubId :publicationIds){
+		for(long pubId : globalPublicationService.findAllPublicationIds()){
 			Publication publication = this.publicationService.findPublicationById(pubId);
 			model.put("prefix", withPrefix);
 			model.put("StringUtils", StringUtils.class);

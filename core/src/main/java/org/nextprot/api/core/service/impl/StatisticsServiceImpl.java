@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private PublicationService publicationService;
 
+    @Autowired
+    private GlobalPublicationService globalPublicationService;
+
     @Cacheable("global-publication-statistics")
     @Override
     public GlobalPublicationStatistics getGlobalPublicationStatistics() {
 
         GlobalPublicationStatistics globalPublicationStatistics = new GlobalPublicationStatistics();
 
-        publicationService.findAllPublicationIds().forEach(pubId -> {
+        globalPublicationService.findAllPublicationIds().forEach(pubId -> {
 
             List<EntryPublication> entryPublications = publicationService.getEntryPublications(pubId);
 

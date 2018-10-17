@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Lazy
 @Service
@@ -31,6 +32,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private SolrConfiguration configuration;
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private PublicationService publicationService;
+	@Autowired private GlobalPublicationService globalPublicationService;
 	@Autowired private EntryBuilderService entryBuilderService ;
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private EntryReportStatsService entryReportStatsService;
@@ -149,11 +151,10 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 
 		logAndCollect(info,"clearing publication index");
 		SolrIndexer<Publication> indexer = new PublicationSolrindexer(serverUrl, publicationService);
-		List<Long> allpubids;
 		indexer.clearDatabase("");
 
 		logAndCollect(info,"getting publications");
-		allpubids = publicationService.findAllPublicationIds();
+        Set<Long> allpubids = globalPublicationService.findAllPublicationIds();
 
 		logAndCollect(info,"start indexing of " + allpubids.size() + " publications");
 		int pubcnt = 0;

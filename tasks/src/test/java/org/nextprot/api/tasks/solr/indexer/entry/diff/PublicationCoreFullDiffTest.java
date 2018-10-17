@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
+import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.PublicationIndex.PubField;
 import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
@@ -21,9 +21,11 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
 	private SolrIndexer<Publication> pubindexer;
 
-	@Autowired TerminologyService terminologyService;
+	@Autowired
+    private PublicationService publicationService;
 
-	@Autowired PublicationService publicationService;
+    @Autowired
+    private GlobalPublicationService globalPublicationService;
 
 	@Before
     public void setup() {
@@ -32,11 +34,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
 	@Test
 	public void testPublis() {
-		List<Long> allpubids = publicationService.findAllPublicationIds();
-		//System.err.println(allpubids.size() + " publications");
-		for(int i=0; i < 0; i++)
-		  {
-		  Long pubid = allpubids.get(i);
+		for(Long pubid : globalPublicationService.findAllPublicationIds()) {
 		  PublicationType pubtype = publicationService.findPublicationById(pubid).getPublicationType();
 		  if(pubtype.equals(PublicationType.ARTICLE))
 		    testPublicationData(pubid);
