@@ -62,12 +62,11 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		int ecnt=0;
 		for (String id : allentryids) {
 			ecnt++;
-			Entry currentry = entryBuilderService.buildWithEverything(id);
-			indexer.add(currentry);
+			indexer.add(entryBuilderService.buildWithEverything(id));
 			if((ecnt % 300) == 0)
 				logAndCollect(info,ecnt + "/" + allentryids.size() + " entries added to index " + indexName + " for chromosome " + chrName);
 		}
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logAndCollect(info,"committing index " + indexName);
 		indexer.commit();
@@ -129,7 +128,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 			if((termcnt % 3000)==0)
 				logAndCollect(info,termcnt + "/" + allterms.size() + " cv terms done");
 		}
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logAndCollect(info,"comitting");
 		indexer.commit();
@@ -167,7 +166,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 			if((pubcnt % 5000)==0)
 				logAndCollect(info,pubcnt + "/" + allpubids.size() + " publications done");
 		}
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logAndCollect(info,"comitting");
 		indexer.commit();

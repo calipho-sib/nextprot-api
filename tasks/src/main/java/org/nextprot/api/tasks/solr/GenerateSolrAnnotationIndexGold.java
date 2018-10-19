@@ -54,7 +54,7 @@ public class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 				logger.info(ecnt +  " entries GOLD-indexed...");
 		}
 		
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logger.info("comitting");
 		indexer.commit();

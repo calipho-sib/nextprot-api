@@ -49,7 +49,7 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 				logger.info(pubcnt + "/" + allpubids.size() + " publications done");
 		}
 		
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logger.info("comitting");
 		indexer.commit();

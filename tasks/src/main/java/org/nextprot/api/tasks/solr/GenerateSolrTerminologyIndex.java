@@ -50,7 +50,7 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 				logger.info(termcnt + "/" + allterms.size() + " cv terms done");
 		}
 
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logger.info("comitting");
 		indexer.commit();

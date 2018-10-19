@@ -11,53 +11,44 @@ import java.util.List;
 
 public abstract class SolrIndexer<T> {
 
-	private HttpSolrServer solrServer;
-	protected List<SolrInputDocument> docs;
+	private final HttpSolrServer solrServer;
+	private final List<SolrInputDocument> bufferedSolrDocuments;
 
 	private static final int BATCH_SIZE = 150;
 
 	public SolrIndexer(String url) {
 		this.solrServer = new HttpSolrServer(url);
-		this.docs = new ArrayList<>();
+		this.bufferedSolrDocuments = new ArrayList<>();
 	}
 
-    public abstract SolrInputDocument convertToSolrDocument(T documentTypes);
+	public abstract SolrInputDocument convertToSolrDocument(T documentTypes);
 
 	public void add(T t) {
 
-		try {
-			SolrInputDocument doc = this.convertToSolrDocument(t); 
-			if (doc ==null) return;
-			
-			docs.add(doc);
+		SolrInputDocument doc = convertToSolrDocument(t);
+		if (doc == null) return;
 
-			if (docs.size() % BATCH_SIZE == 0) {
-				// System.err.println("sent " +docs.size() + " docs to solr so far");
-				this.solrServer.add(docs);
-				docs.clear();
-
-			}
-
-		} catch (SolrServerException | IOException e) {
-			throw new NextProtException(e);
+		bufferedSolrDocuments.add(doc);
+		if (bufferedSolrDocuments.size() % BATCH_SIZE == 0) {
+			flushBufferedDocsToSolr();
 		}
-
 	}
 
-	public void addRemaing() {
+	public void flushRemainingDocsToSolr() {
+
+		if (!bufferedSolrDocuments.isEmpty()) {
+			flushBufferedDocsToSolr();
+		}
+	}
+
+	private void flushBufferedDocsToSolr() {
+
 		try {
-
-			if (docs.size() > 0)
-			// There are some prepared docs not yet sent to solr server
-			{
-				solrServer.add(docs);
-				docs.clear();
-			}
-
+			this.solrServer.add(bufferedSolrDocuments);
+			bufferedSolrDocuments.clear();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
-
 	}
 
 	public void commit() {

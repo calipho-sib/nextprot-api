@@ -56,7 +56,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 				logger.info(ecnt +  " entries indexed...");
 		}
 		
-		indexer.addRemaing();
+		indexer.flushRemainingDocsToSolr();
 		
 		logger.info("comitting");
 		indexer.commit();
