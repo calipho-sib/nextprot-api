@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.PtmDao;
@@ -21,7 +20,6 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -51,7 +49,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private EntityNameService entityNameService;
 	
 	@Override
-	@Cacheable("annotations")
+	//@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
 		return findAnnotations(entryName,false);
 	}
@@ -136,7 +134,8 @@ public class AnnotationServiceImpl implements AnnotationService {
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
                     .filter(entityName -> entityName.isMain())
                     .map(entityName -> entityName.getName())
-                    .findFirst().orElseThrow(() -> new NextProtException("Cannot find gene name for entry "+entryName));
+                    .findFirst()
+                    .orElse("");
 
             annotations = new AnnotationListMerger(geneName, annotations).merge(statementService.getAnnotations(entryName));
         }
