@@ -4,10 +4,9 @@ import org.nextprot.api.commons.exception.SearchConfigException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class IndexConfiguration implements QueryBuilder {
-	protected final String BOOST_SPEARATOR = "^";
+	protected final String BOOST_SEPARATOR = "^";
 	protected final String PLUS = "+";
 	protected final String WHITESPACE = " ";
 	
@@ -20,9 +19,9 @@ public class IndexConfiguration implements QueryBuilder {
 	
 	public IndexConfiguration(String name) {
 		this.name = name;
-		this.fieldConfigSets = new HashMap<IndexParameter, FieldConfigSet>();
-		this.sortConfigs = new HashMap<String, SortConfig>();
-		this.otherParameters = new HashMap<String, String>();
+		this.fieldConfigSets = new HashMap<>();
+		this.sortConfigs = new HashMap<>();
+		this.otherParameters = new HashMap<>();
 	}
 	
 	public IndexConfiguration(String name, IndexConfiguration originalConfiguration) {
@@ -36,10 +35,6 @@ public class IndexConfiguration implements QueryBuilder {
 
 	public void addConfigSet(FieldConfigSet configSet) {
 		this.fieldConfigSets.put(configSet.getParameter(), configSet);
-	}
-	
-	public FieldConfigSet getConfigSet(IndexParameter parameter) {
-		return this.fieldConfigSets.get(parameter);
 	}
 	
 	public void addSortConfig(SortConfig... sortConfigs) {
@@ -93,9 +88,13 @@ public class IndexConfiguration implements QueryBuilder {
 		if(this.fieldConfigSets.containsKey(parameter)) {
 			configSet = this.fieldConfigSets.get(parameter);
 			
-			for(Entry<IndexField, Integer> e : configSet.getConfigs().entrySet()) {
-				builder.append(e.getKey().getName());
-				if(e.getValue() > 0) builder.append(BOOST_SPEARATOR+e.getValue());
+			for(IndexField field : configSet.getIndexFields()) {
+                int boost = configSet.getBoostFactor(field);
+
+				builder.append(field.getName());
+				if(boost > 0) {
+				    builder.append(BOOST_SEPARATOR +boost);
+                }
 				builder.append(WHITESPACE);
 			}
 		}
@@ -110,17 +109,8 @@ public class IndexConfiguration implements QueryBuilder {
 		return fieldConfigSets;
 	}
 
-	public void setFieldConfigSets(
-			Map<IndexParameter, FieldConfigSet> fieldConfigSets) {
-		this.fieldConfigSets = fieldConfigSets;
-	}
-
 	public Map<String, SortConfig> getSortConfigs() {
 		return sortConfigs;
-	}
-
-	public void setSortConfigs(Map<String, SortConfig> sortConfigs) {
-		this.sortConfigs = sortConfigs;
 	}
 
 	public String getName() {

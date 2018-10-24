@@ -2,13 +2,7 @@ package org.nextprot.api.solr.index;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.AutocompleteConfiguration;
-import org.nextprot.api.solr.FieldConfigSet;
-import org.nextprot.api.solr.IndexConfiguration;
-import org.nextprot.api.solr.IndexField;
-import org.nextprot.api.solr.IndexParameter;
-import org.nextprot.api.solr.IndexTemplate;
-import org.nextprot.api.solr.SortConfig;
+import org.nextprot.api.solr.*;
 
 public class CvIndex extends IndexTemplate {
 	
@@ -18,11 +12,6 @@ public class CvIndex extends IndexTemplate {
 	public CvIndex() {
 		super(CvIndex.NAME, "npcvs1");
 	}
-	
-	public Class<? extends ConfigurationName> getConfigNames() {
-		return Configurations.class;
-	}
-
 
 	public Class<? extends IndexField> getFields() {
 		return CvField.class;
@@ -32,7 +21,7 @@ public class CvIndex extends IndexTemplate {
 	protected void setupConfigurations() {
 		IndexConfiguration defaultConfig = new IndexConfiguration(Configurations.SIMPLE);
 		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
 				.add(CvField.AC)
 				.add(CvField.NAME)
 				.add(CvField.SYNONYMS)
@@ -41,32 +30,22 @@ public class CvIndex extends IndexTemplate {
 				.add(CvField.FILTERS));
 				//.add(CvField.TEXT));
 				
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
-				.add(CvField.AC, 64)
-				.add(CvField.NAME, 32)
-				.add(CvField.SYNONYMS, 32)
-				.add(CvField.DESCRIPTION, 16)
-				.add(CvField.PROPERTIES, 8)
-				.add(CvField.OTHER_XREFS, 8));
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
+				.addWithBoostFactor(CvField.AC, 64)
+				.addWithBoostFactor(CvField.NAME, 32)
+				.addWithBoostFactor(CvField.SYNONYMS, 32)
+				.addWithBoostFactor(CvField.DESCRIPTION, 16)
+				.addWithBoostFactor(CvField.PROPERTIES, 8)
+				.addWithBoostFactor(CvField.OTHER_XREFS, 8));
 		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
-				.add(CvField.AC, 640)
-				.add(CvField.NAME, 320)
-				.add(CvField.SYNONYMS, 320)
-				.add(CvField.DESCRIPTION, 160)
-				.add(CvField.PROPERTIES, 80)
-				.add(CvField.OTHER_XREFS, 80));
-		
-/*		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
-				.add(CvField.NAME, 1)
-				.add(CvField.DESCRIPTION, 1));
-		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.HI)
-				.add(CvField.AC)
-				.add(CvField.NAME)
-				.add(CvField.DESCRIPTION)
-				.add(CvField.PROPERTIES));
-*/		
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
+				.addWithBoostFactor(CvField.AC, 640)
+				.addWithBoostFactor(CvField.NAME, 320)
+				.addWithBoostFactor(CvField.SYNONYMS, 320)
+				.addWithBoostFactor(CvField.DESCRIPTION, 160)
+				.addWithBoostFactor(CvField.PROPERTIES, 80)
+				.addWithBoostFactor(CvField.OTHER_XREFS, 80));
+
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
 			.addOtherParameter("facet.field", "filters")
@@ -110,45 +89,4 @@ public class CvIndex extends IndexTemplate {
 	public IndexField[] getFieldValues() {
 		return CvField.values();
 	}
-	
-	public static enum CvField implements IndexField {
-		ID("id"), 
-		AC("ac"), 
-		NAME("name"), 
-		NAME_S("name_s"), 
-		SYNONYMS("synonyms"), 
-		DESCRIPTION("description"), 
-		PROPERTIES("properties"), 
-		OTHER_XREFS("other_xrefs"), 
-		FILTERS("filters"),
-		SCORE("score"), 
-		TEXT("text");
-		
-		private String name;
-		private String publicName;
-		
-		private CvField(String name) {
-			this.name = name;
-		}
-		private CvField(String name, String publicName) {
-			this.name = name;
-			this.publicName=publicName;
-		}
-
-		public String getName() {
-			return this.name;
-		}
-
-		@Override
-		public String getPublicName() {
-			return this.publicName;
-		}
-
-		@Override
-		public boolean hasPublicName() {
-			return this.publicName!=null && this.publicName.length()>0;
-		}
-	}
-
-	
 }
