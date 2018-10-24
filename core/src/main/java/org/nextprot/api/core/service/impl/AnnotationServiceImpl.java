@@ -20,6 +20,7 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
@@ -49,7 +50,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private EntityNameService entityNameService;
 	
 	@Override
-	//@Cacheable("annotations")
+	@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
 		return findAnnotations(entryName,false);
 	}
