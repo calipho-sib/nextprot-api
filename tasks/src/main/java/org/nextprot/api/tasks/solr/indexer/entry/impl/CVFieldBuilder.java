@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -46,8 +46,8 @@ public class CVFieldBuilder extends FieldBuilder {
 
 
 	@Override
-	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.CV_ANCESTORS_ACS, Fields.CV_ANCESTORS, Fields.CV_SYNONYMS, Fields.CV_NAMES, Fields.CV_ACS, Fields.EC_NAME);
+	public Collection<EntryField> getSupportedFields() {
+		return Arrays.asList(EntryField.CV_ANCESTORS_ACS, EntryField.CV_ANCESTORS, EntryField.CV_SYNONYMS, EntryField.CV_NAMES, EntryField.CV_ACS, EntryField.EC_NAME);
 	}
 
 
@@ -72,8 +72,8 @@ public class CVFieldBuilder extends FieldBuilder {
 
 					//If we are building SILVER index always add, otherwise (we are building GOLD index) we need the annotation need to be GOLD.
 					if(buildingSilverIndex || currannot.getQualityQualifier().equals("GOLD")) {
-						addField(Fields.CV_ACS, term.getAccession());
-						addField(Fields.CV_NAMES,  term.getName());
+						addField(EntryField.CV_ACS, term.getAccession());
+						addField(EntryField.CV_NAMES,  term.getName());
 						cv_acs.add(term.getAccession()); // No duplicates: this is a Set, will be used for synonyms and ancestors
 					}
 				}
@@ -100,7 +100,7 @@ public class CVFieldBuilder extends FieldBuilder {
 			for (CvTerm t : terms) {
 				//Only add accessions in here. The use case is related to the page /term/TERM-NAME and see entries related to the term.
 				//No need to index term name in here
-				addField(Fields.CV_ACS, t.getAccession());
+				addField(EntryField.CV_ACS, t.getAccession());
 			}
 		}
 	}
@@ -111,8 +111,8 @@ public class CVFieldBuilder extends FieldBuilder {
 
 		// Families (why not part of Annotations ?)
 		for (Family family : entry.getOverview().getFamilies()) {
-			addField(Fields.CV_ACS, family.getAccession());
-			addField(Fields.CV_NAMES,  family.getName() + " family");
+			addField(EntryField.CV_ACS, family.getAccession());
+			addField(EntryField.CV_NAMES,  family.getName() + " family");
 			cv_acs.add(family.getAccession());
 		}
 
@@ -151,12 +151,12 @@ public class CVFieldBuilder extends FieldBuilder {
 
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
-			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
-			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
+			addField(EntryField.CV_ANCESTORS_ACS, ancestorac);
+			addField(EntryField.CV_ANCESTORS, this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 		}
 
 		for (String synonym : cv_synonyms) {
-			addField(Fields.CV_SYNONYMS, synonym);
+			addField(EntryField.CV_SYNONYMS, synonym);
 		}
 
 	}
@@ -166,17 +166,17 @@ public class CVFieldBuilder extends FieldBuilder {
 		List<CvTerm> enzymes = entry.getEnzymes();
 		String ec_names = "";
 		for (CvTerm currenzyme : enzymes) {
-			addField(Fields.CV_NAMES, currenzyme.getName());
+			addField(EntryField.CV_NAMES, currenzyme.getName());
 			if(ec_names != "") ec_names += ", ";
 			ec_names += "EC " + currenzyme.getAccession();
 			List <String> synonyms = currenzyme.getSynonyms();
 			if(synonyms != null)
 				for (String synonym : synonyms) {
-					addField(Fields.CV_SYNONYMS, synonym.trim());
+					addField(EntryField.CV_SYNONYMS, synonym.trim());
 				}
 		}
 
-		addField(Fields.EC_NAME, ec_names);
+		addField(EntryField.EC_NAME, ec_names);
 
 	}
 

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.FilterAndPropertiesFieldsBuilder;
 
@@ -32,19 +32,19 @@ public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 		
 		int expectedCount = 0;
 		
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ISOFORM_NUM);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(Fields.ISOFORM_NUM, Integer.class));
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ISOFORM_NUM);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.ISOFORM_NUM, Integer.class));
 		
-		if(getValueForFieldInCurrentSolrImplementation(entryName, Fields.PTM_NUM) != null) {
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PTM_NUM);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(Fields.PTM_NUM, Integer.class));
+		if(getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PTM_NUM) != null) {
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PTM_NUM);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.PTM_NUM, Integer.class));
 		}
 
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.AA_LENGTH);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(Fields.AA_LENGTH, Integer.class));
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.AA_LENGTH);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.AA_LENGTH, Integer.class));
 		
-		String expectedFilters = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.FILTERS);
-		Assert.assertEquals(expectedFilters, ffb.getFieldValue(Fields.FILTERS, String.class));
+		String expectedFilters = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.FILTERS);
+		Assert.assertEquals(expectedFilters, ffb.getFieldValue(EntryField.FILTERS, String.class));
 }
 
 }

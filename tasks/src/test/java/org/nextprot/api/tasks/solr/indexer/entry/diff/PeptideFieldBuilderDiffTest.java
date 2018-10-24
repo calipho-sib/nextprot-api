@@ -1,15 +1,15 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.PeptideFieldBuilder;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 
@@ -33,11 +33,11 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 
 		PeptideFieldBuilder pfb = new PeptideFieldBuilder();
 		pfb.initializeBuilder(entry);
-		List<String> peptideList = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PEPTIDE);
+		List<String> peptideList = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PEPTIDE);
 		if(peptideList == null) return; // No peptides in this entry
 		
 		Set<String> peptideSet = new TreeSet<String>(peptideList);
-		Set<String> expectedPeptideSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PEPTIDE));
+		Set<String> expectedPeptideSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PEPTIDE));
 
 		if (expectedPeptideSet.size() > peptideSet.size()) {
 			expectedPeptideSet.removeAll(peptideSet);

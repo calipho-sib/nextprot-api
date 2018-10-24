@@ -6,7 +6,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 
 import java.util.*;
 
@@ -43,9 +43,9 @@ public abstract class FieldBuilder {
 	}
 
 	boolean initialized = false;
-	private Map<Fields, Object> fields = new HashMap<>();
+	private Map<EntryField, Object> fields = new HashMap<>();
 
-	abstract public Collection<Fields> getSupportedFields();
+	abstract public Collection<EntryField> getSupportedFields();
 
 	public final void initializeBuilder(Entry entry) {
 		if(!initialized){
@@ -56,7 +56,7 @@ public abstract class FieldBuilder {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected void addField(Fields field, Object value) {
+	protected void addField(EntryField field, Object value) {
 		NPreconditions.checkTrue(getSupportedFields().contains(field), "The field " + field.name() + " is not supported in " + getClass().getName());
 
 		if (!fields.containsKey(field) && field.getClazz().equals(List.class)) {
@@ -73,7 +73,7 @@ public abstract class FieldBuilder {
 
 	protected abstract void init(Entry entry);
 
-	public final <T> T getFieldValue(Fields field, Class<T> requiredType) {
+	public final <T> T getFieldValue(EntryField field, Class<T> requiredType) {
 
 		// If it has not been yet initialized
 		NPreconditions.checkTrue(initialized, "The builder has not been yet initialized, invoke 'initializeBuilder' method");

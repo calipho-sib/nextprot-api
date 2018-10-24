@@ -1,17 +1,17 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 
 @EntryFieldBuilder
@@ -41,18 +41,18 @@ public class InteractionFieldBuilder extends FieldBuilder{
 					else // Xeno interaction
 					  recName = "";
 					if(!this.isGold() || currinteraction.getQuality().equals("GOLD")) 
-				      addField(Fields.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
+				      addField(EntryField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
 				}
 				else if(currinteraction.isSelfInteraction() == true)
 					if(!this.isGold() || currinteraction.getQuality().equals("GOLD")) 
-					   addField(Fields.INTERACTIONS,"selfInteraction");
+					   addField(EntryField.INTERACTIONS,"selfInteraction");
 			}
 		}
 		
 		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots)
 			if(currannot.getCategory().equals("subunit")) // Always GOLD
-				addField(Fields.INTERACTIONS, currannot.getDescription());
+				addField(EntryField.INTERACTIONS, currannot.getDescription());
 
 
 		/*
@@ -79,8 +79,8 @@ public class InteractionFieldBuilder extends FieldBuilder{
 	}
 	
 	@Override
-	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.INTERACTIONS);
+	public Collection<EntryField> getSupportedFields() {
+		return Arrays.asList(EntryField.INTERACTIONS);
 	}
 	
 

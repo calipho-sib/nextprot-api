@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -46,31 +46,31 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 				JournalResourceLocator journalLocator = currpubli.getJournalResourceLocator();
 
 				if (journalLocator.hasJournalId())
-					addField(Fields.PUBLICATIONS, journalLocator.getNLMid());
+					addField(EntryField.PUBLICATIONS, journalLocator.getNLMid());
 
 				Jinfo = currpubli.getJournalResourceLocator().getName();
 				if (journalLocator.hasJournalId())
 					Jinfo += " - " + currpubli.getJournalResourceLocator().getMedAbbrev(); // Index name and abbrev in the same token
 
-				addField(Fields.PUBLICATIONS,Jinfo);
+				addField(EntryField.PUBLICATIONS,Jinfo);
 			}
 			String title = currpubli.getTitle();
-			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
+			if(title.length() > 0) addField(EntryField.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
-					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
+					addField(EntryField.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
 				else if(!forename.isEmpty() ) // trim not to add spaces when forename/initials are empty
-					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
+					addField(EntryField.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
 				else
-					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
+					addField(EntryField.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 			}
 		}
 		
-		addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
-		addField(Fields.PUBLI_CURATED_COUNT, publi_curated_count);
-		addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
+		addField(EntryField.PUBLI_COMPUTED_COUNT, publi_computed_count);
+		addField(EntryField.PUBLI_CURATED_COUNT, publi_curated_count);
+		addField(EntryField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
 		int pe_level = entry.getOverview().getProteinExistences().getProteinExistence().getLevel();
@@ -82,14 +82,14 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		else if(pe_level == 5) info_score=5;
 		float coeff = 100*publi_curated_count + 25*publi_computed_count + 10*publi_large_scale_count;
 		info_score = coeff * info_score / 10;
-		addField(Fields.INFORMATIONAL_SCORE, info_score);
+		addField(EntryField.INFORMATIONAL_SCORE, info_score);
 
 	}
 
 
 	@Override
-	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.PUBLICATIONS, Fields.PUBLI_COMPUTED_COUNT, Fields.PUBLI_CURATED_COUNT, Fields.PUBLI_LARGE_SCALE_COUNT, Fields.INFORMATIONAL_SCORE);
+	public Collection<EntryField> getSupportedFields() {
+		return Arrays.asList(EntryField.PUBLICATIONS, EntryField.PUBLI_COMPUTED_COUNT, EntryField.PUBLI_CURATED_COUNT, EntryField.PUBLI_LARGE_SCALE_COUNT, EntryField.INFORMATIONAL_SCORE);
 	}
 
 }

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsFieldBuilder;
 
@@ -37,7 +37,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		PublicationsFieldBuilder pfb = new PublicationsFieldBuilder();
 		pfb.initializeBuilder(entry);
 		
-		Set<String> expectedPublisRaw = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLICATIONS));
+		Set<String> expectedPublisRaw = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PUBLICATIONS));
 		Set<String> expectedValues = new TreeSet<String>();
 
 		for (String s : expectedPublisRaw) {
@@ -71,7 +71,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 			System.out.println(elem);
 		System.err.println(PublicationSet.size() + " elements in the new index"); */
 		
-		Set<String> tmpset = new TreeSet<String>(pfb.getFieldValue(Fields.PUBLICATIONS, List.class));
+		Set<String> tmpset = new TreeSet<String>(pfb.getFieldValue(EntryField.PUBLICATIONS, List.class));
 		TreeSet<String> PublicationSet = new TreeSet<>();
 		for (String s: tmpset) {
 			PublicationSet.add(removeDoubleSpace(s, "new index data"));
@@ -97,23 +97,23 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		}
 		
 		int pubCount, expectedPubCount;
-		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_CURATED_COUNT);
-		pubCount = pfb.getFieldValue(Fields.PUBLI_CURATED_COUNT, Integer.class);
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PUBLI_CURATED_COUNT);
+		pubCount = pfb.getFieldValue(EntryField.PUBLI_CURATED_COUNT, Integer.class);
 		//System.err.println("PUBLI_CURATED_COUNT: " + expectedPubCount + " Now: " + pubCount);
 		Assert.assertEquals(expectedPubCount, pubCount);
 
-		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_COMPUTED_COUNT);
-		pubCount = pfb.getFieldValue(Fields.PUBLI_COMPUTED_COUNT, Integer.class);
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PUBLI_COMPUTED_COUNT);
+		pubCount = pfb.getFieldValue(EntryField.PUBLI_COMPUTED_COUNT, Integer.class);
 		//System.err.println("PUBLI_COMPUTED_COUNT: " + expectedPubCount + " Now: " + pubCount);
 		Assert.assertEquals(expectedPubCount, pubCount);
 
-		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_LARGE_SCALE_COUNT);
-		pubCount = pfb.getFieldValue(Fields.PUBLI_LARGE_SCALE_COUNT, Integer.class);
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PUBLI_LARGE_SCALE_COUNT);
+		pubCount = pfb.getFieldValue(EntryField.PUBLI_LARGE_SCALE_COUNT, Integer.class);
 		//System.err.println("PUBLI_LARGE_SCALE_COUNT: " + expectedPubCount + " Now: " + pubCount);
 		Assert.assertEquals(expectedPubCount, pubCount);
 
-		float expectedScore = (float) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE);
-		float score = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class);
+		float expectedScore = (float) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.INFORMATIONAL_SCORE);
+		float score = pfb.getFieldValue(EntryField.INFORMATIONAL_SCORE, Float.class);
 		//System.err.println("INFORMATIONAL_SCORE: " + expectedScore + " Now: " + score);
 		Assert.assertEquals(expectedScore, score, 0.001);
 	}

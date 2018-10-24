@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +53,8 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
 		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
-		List<String> functionalDescriptions = afb.getFieldValue(Fields.FUNCTION_DESC, List.class);
-		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.FUNCTION_DESC);
+		List<String> functionalDescriptions = afb.getFieldValue(EntryField.FUNCTION_DESC, List.class);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.FUNCTION_DESC);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
 			//System.err.println("exp: " + expectedValues + "\nact: " + functionalDescriptions);
@@ -75,8 +75,8 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 
-		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.ANNOTATIONS);
+		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.ANNOTATIONS);
 		List<String> expectedValues = new ArrayList<String>();
 
 		for (String s : expectedRawValues) {

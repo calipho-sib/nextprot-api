@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.solr.index.PublicationIndex.PubField;
+import org.nextprot.api.solr.index.PubField;
 import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;

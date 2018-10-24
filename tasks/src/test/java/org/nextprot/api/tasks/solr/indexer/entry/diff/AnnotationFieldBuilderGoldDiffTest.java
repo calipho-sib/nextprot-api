@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder;
@@ -60,11 +60,11 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, Fields.ANNOTATIONS);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.ANNOTATIONS);
 		for(String rawAnnot : expectedRawValues)
 			if(rawAnnot.contains(">sequence variant<"))
 				oldgoldvarcnt++;
-		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
+		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
 		for (String s : annotations)
 			if(s.startsWith("Variant"))
 				newgoldvarcnt++;
@@ -75,12 +75,12 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		efb.setTerminologyService(terminologyService);
 		efb.setGold(true);
 		efb.initializeBuilder(entry);
-		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, Fields.EXPRESSION);
+		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.EXPRESSION);
 		Set<String> expectedCVSet = new TreeSet<String>();
 		Set<String> expressionCVSet = new TreeSet<String>();
 		Set<String> exprSet = null;
 		if(explist != null) {
-		  exprSet = new TreeSet<String>(efb.getFieldValue(Fields.EXPRESSION, List.class));
+		  exprSet = new TreeSet<String>(efb.getFieldValue(EntryField.EXPRESSION, List.class));
 		  // Consider only tissue CVs
 		  for (String s : explist) {
 			if(s.startsWith("TS-"))
@@ -104,7 +104,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expectedCVSet.size(), expressionCVSet.size());
 		
 		// Interactions
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, Fields.INTERACTIONS);
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.INTERACTIONS);
 		if(expectedInteractions != null) {
 			Integer oldcnt = 0, newcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
@@ -112,7 +112,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 			ifb.setEntryBuilderService(entryBuilderService);
 			ifb.setGold(true);
 			ifb.initializeBuilder(entry);
-			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(Fields.INTERACTIONS, List.class));
+			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) oldcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newcnt++;
 			// There may be one more interaction in the new index (the subunit annotation)
@@ -120,12 +120,12 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		}
 		
         // CVs
-		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, Fields.CV_ACS));
+		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.CV_ACS));
 		CVFieldBuilder cfb = new CVFieldBuilder();
 		cfb.setTerminologyService(terminologyService);
 		cfb.setGold(true);
 		cfb.initializeBuilder(entry);
-		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(Fields.CV_ACS, List.class));
+		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntryField.CV_ACS, List.class));
         Assert.assertTrue(expectedCVs.size() == CvSet.size());
 	}
 

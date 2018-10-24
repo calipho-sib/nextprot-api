@@ -4,7 +4,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -25,8 +25,8 @@ public class PeptideFieldBuilder extends FieldBuilder{
 				for (AnnotationEvidence currEv : evList) {
 					String db = currEv.getResourceDb();
 					if(!db.equals("neXtProtSubmission")) {
-					   if(db.equals(XrefDatabase.PUB_MED.getName())) addField(Fields.PEPTIDE, db + ":" + currEv.getResourceAccession());
-					   else addField(Fields.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
+					   if(db.equals(XrefDatabase.PUB_MED.getName())) addField(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession());
+					   else addField(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
 					}
 				}
 			}
@@ -34,8 +34,8 @@ public class PeptideFieldBuilder extends FieldBuilder{
 	}
 	
 	@Override
-	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.PEPTIDE);
+	public Collection<EntryField> getSupportedFields() {
+		return Arrays.asList(EntryField.PEPTIDE);
 	}
 	
 }

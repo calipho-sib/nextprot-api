@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
 
@@ -92,7 +92,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	
 	private void testChrLoc(Entry entry) {
 		
-		Fields field = Fields.CHR_LOC;
+		EntryField field = EntryField.CHR_LOC;
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
 		cfb.initializeBuilder(entry);
@@ -130,8 +130,8 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
 		cfb.initializeBuilder(entry);
 
-		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.CHR_LOC_S);
-		Integer actualValue = cfb.getFieldValue(Fields.CHR_LOC_S, Integer.class);
+		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.CHR_LOC_S);
+		Integer actualValue = cfb.getFieldValue(EntryField.CHR_LOC_S, Integer.class);
 
 		assertEquals(expectedValue, actualValue);
 
@@ -141,7 +141,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	private void testGeneBand(Entry entry) {
 		
-		Fields field = Fields.GENE_BAND;
+		EntryField field = EntryField.GENE_BAND;
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
 		cfb.initializeBuilder(entry);

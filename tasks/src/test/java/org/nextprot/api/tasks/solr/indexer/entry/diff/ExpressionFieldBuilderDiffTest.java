@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +46,13 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 		efb.setTerminologyService(terminologyService);
 		efb.initializeBuilder(entry);
 		
-		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.EXPRESSION);
+		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.EXPRESSION);
 		Set<String> expectedExpression = null;
 		Set<String> exprSet = null;
 		if(explist != null)  {
 			//Get expectedExpression as a Set to remove redundancy
 			expectedExpression = new TreeSet<String>(explist);
-		    exprSet = new TreeSet<String>(efb.getFieldValue(Fields.EXPRESSION, List.class));
+		    exprSet = new TreeSet<String>(efb.getFieldValue(EntryField.EXPRESSION, List.class));
 		}
 		
 

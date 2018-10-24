@@ -3,10 +3,9 @@ package org.nextprot.api.tasks.solr.indexer.entry.integration;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		cvfb.setTerminologyService(terminologyService);
 
 		cvfb.initializeBuilder(entry);
-		List<String> cvAvs = cvfb.getFieldValue(Fields.CV_ACS, List.class);
-        List<String> cvNames = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
+		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
+        List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("ECO:0000219"));
 		//The text should not be indexed
@@ -52,8 +51,8 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		cvfb.setTerminologyService(terminologyService);
 
 		cvfb.initializeBuilder(entry);
-		List<String> cvAvs = cvfb.getFieldValue(Fields.CV_ACS, List.class);
-		List<String> cvNames = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
+		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
+		List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("SL-9910"));
 		//The text should not be indexed
@@ -74,10 +73,10 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		cvfb.setTerminologyService(terminologyService);
 		cvfb.initializeBuilder(entry);
 
-		String enzymes = cvfb.getFieldValue(Fields.EC_NAME, String.class);
+		String enzymes = cvfb.getFieldValue(EntryField.EC_NAME, String.class);
 		assertTrue(enzymes.contains("EC 3.4.15.1"));
 
-		List<String> names = cvfb.getFieldValue(Fields.CV_NAMES, List.class);
+		List<String> names = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
 		assertTrue(names.contains("Peptidase M2 family")); //family names
 
 	}

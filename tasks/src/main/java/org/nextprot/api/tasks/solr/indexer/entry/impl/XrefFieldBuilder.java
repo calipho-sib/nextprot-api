@@ -2,7 +2,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -26,10 +26,10 @@ public class XrefFieldBuilder extends FieldBuilder {
             String db = xref.getDatabaseName();
             if (db.equals(NEXTPROT_SUBMISSION.getName())) continue;
             if (db.equals(HPA.getName()) && !acc.contains(ENSG.getName())) { // HPA with ENSG are for expression
-                addField(Fields.ANTIBODY, acc);
+                addField(EntryField.ANTIBODY, acc);
             }
             if (db.equals(ENSEMBL.getName())) {
-                addField(Fields.ENSEMBL, acc);
+                addField(EntryField.ENSEMBL, acc);
             }
             // There is an inconsistency in the way EMBL xref properties are managed: 
             // for genomic sequences EAW78410.1 -> molecule type=protein, the pid appears as an individual xref
@@ -40,21 +40,21 @@ public class XrefFieldBuilder extends FieldBuilder {
                 if (db.equals(EMBL.getName())) {
                     String propvalue = xref.getPropertyValue("protein sequence ID");
                     if (propvalue != null) {
-                        addField(Fields.XREFS, "EMBL:" + propvalue + ", " + propvalue);
-                        addField(Fields.XREFS, "EMBL:" + acc + ", " + acc);
+                        addField(EntryField.XREFS, "EMBL:" + propvalue + ", " + propvalue);
+                        addField(EntryField.XREFS, "EMBL:" + acc + ", " + acc);
                     } else {
                         propvalue = xref.getPropertyValue("genomic sequence ID");
                         if (propvalue != null || !acc.contains(".")) {
-                            addField(Fields.XREFS, "EMBL:" + acc + ", " + acc);
+                            addField(EntryField.XREFS, "EMBL:" + acc + ", " + acc);
                         }
                     }
                 } else {
-                    addField(Fields.XREFS, db + ":" + acc + ", " + acc);
+                    addField(EntryField.XREFS, db + ":" + acc + ", " + acc);
                     for (String category : extraNameCat) {
                         String extraName = xref.getPropertyValue(category);
                         if (extraName != null) { // Can be found for dbs: "InterPro", "Pfam", "PROSITE"), "TIGRFAMs", "SMART", "PRINTS", "HAMAP",
                             // "PeroxiBase", "PIRSF", "PIR", "TCDB", "CAZy", "ESTHER", UniPathway
-                            addField(Fields.XREFS, db + ":" + extraName + ", " + extraName);
+                            addField(EntryField.XREFS, db + ":" + extraName + ", " + extraName);
                             break;
                         }
                     }
@@ -69,15 +69,15 @@ public class XrefFieldBuilder extends FieldBuilder {
             String category = currannot.getCategory();
 
             if ("pathway".equals(category)) {
-                addField(Fields.XREFS, "Pathway:" + currannot.getDescription() + ", " + currannot.getDescription());
+                addField(EntryField.XREFS, "Pathway:" + currannot.getDescription() + ", " + currannot.getDescription());
             } else if ("disease".equals(category)) { // Same remark
                 DbXref parentXref = currannot.getParentXref();
                 if (parentXref != null && parentXref.getDatabaseName().equals(ORPHANET.getName())) {
                     String disName = parentXref.getPropertyValue("disease");
-                    addField(Fields.XREFS, "Disease:" + disName + ", " + disName);
+                    addField(EntryField.XREFS, "Disease:" + disName + ", " + disName);
                 }
             } else if ("SmallMoleculeInteraction".equals(category)) { // Same remark
-                addField(Fields.XREFS, "generic name:" + currannot.getDescription() + ", " + currannot.getDescription());
+                addField(EntryField.XREFS, "generic name:" + currannot.getDescription() + ", " + currannot.getDescription());
             }
         }
 
@@ -85,7 +85,7 @@ public class XrefFieldBuilder extends FieldBuilder {
         List<Isoform> isoforms = entry.getIsoforms();
         for (Isoform iso : isoforms) {
             String isoId = iso.getIsoformAccession().substring(3);
-            addField(Fields.XREFS, "isoform ID:" + isoId + ", " + isoId);
+            addField(EntryField.XREFS, "isoform ID:" + isoId + ", " + isoId);
         }
         // Xrefs to publications (PubMed, DOIs)
         for (Publication currpubli : entry.getPublications()) {
@@ -93,15 +93,15 @@ public class XrefFieldBuilder extends FieldBuilder {
             for (DbXref pubxref : pubxrefs) {
                 String acc = pubxref.getAccession().trim(); // It happens to have a trailing \t (like 10.1080/13547500802063240 in NX_P14635)
                 String db = pubxref.getDatabaseName();
-                addField(Fields.XREFS, db + ":" + acc + ", " + acc);
+                addField(EntryField.XREFS, db + ":" + acc + ", " + acc);
             }
         }
 
     }
 
     @Override
-    public Collection<Fields> getSupportedFields() {
-        return Arrays.asList(Fields.XREFS, Fields.ENSEMBL, Fields.ANTIBODY);
+    public Collection<EntryField> getSupportedFields() {
+        return Arrays.asList(EntryField.XREFS, EntryField.ENSEMBL, EntryField.ANTIBODY);
     }
 
 }

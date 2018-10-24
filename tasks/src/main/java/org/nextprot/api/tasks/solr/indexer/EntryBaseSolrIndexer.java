@@ -7,7 +7,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 import org.reflections.Reflections;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
-	private Map<Fields, FieldBuilder> fieldsBuilderMap = null;
+	private Map<EntryField, FieldBuilder> fieldsBuilderMap = null;
 	private TerminologyService terminologyservice;
 	private EntryBuilderService entryBuilderService;
 	private PublicationService publicationService;
@@ -39,9 +39,9 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
 		SolrInputDocument doc = new SolrInputDocument();
 
-		for (Fields f : Fields.values()) {
+		for (EntryField f : EntryField.values()) {
 			//System.err.println("field: " + f.toString());
-			if(f == Fields.TEXT || f == Fields.SCORE) continue; // Directly computed by SOLR
+			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
 			FieldBuilder fb = fieldsBuilderMap.get(f);
 			fb.setGold(isGold);
 			fb.setTerminologyService(terminologyservice);
@@ -54,8 +54,8 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		}
 
 		//Reset all fields builders
-		for (Fields f : Fields.values()) {
-			if(f == Fields.TEXT || f == Fields.SCORE) continue; // Directly computed by SOLR
+		for (EntryField f : EntryField.values()) {
+			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
 			fieldsBuilderMap.get(f).reset();
 		}
 
@@ -82,7 +82,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		this.entryReportStatsService = entryReportStatsService;
 	}
 
-	static void initializeFieldBuilders(Map<Fields, FieldBuilder> fieldsBuilderMap) {
+	static void initializeFieldBuilders(Map<EntryField, FieldBuilder> fieldsBuilderMap) {
 		Reflections reflections = new Reflections("org.nextprot.api.tasks.solr.indexer.entry.impl");
 		Set<Class<?>> entryFieldBuilderClasses = reflections.getTypesAnnotatedWith(EntryFieldBuilder.class);
 		for (Class<?> c : entryFieldBuilderClasses) {
@@ -90,7 +90,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 				FieldBuilder fb = (FieldBuilder) c.newInstance();
 
 				if(fb.getSupportedFields() != null){
-					for (Fields f : fb.getSupportedFields()) {
+					for (EntryField f : fb.getSupportedFields()) {
 						NPreconditions.checkTrue(!(fieldsBuilderMap.containsKey(f)), "The field " + f.getName() + " is supported by several builders: " + fb.getClass() + ", " + fieldsBuilderMap.get(f));
 						fieldsBuilderMap.put(f, fb);
 					}

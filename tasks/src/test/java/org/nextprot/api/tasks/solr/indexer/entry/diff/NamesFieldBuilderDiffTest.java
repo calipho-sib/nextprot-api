@@ -1,15 +1,13 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.NamesFieldBuilder;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,15 +35,15 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		nfb.initializeBuilder(entry);
 		
 		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
-		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.RECOMMENDED_GENE_NAMES);
-		String nowGenenames = nfb.getFieldValue(Fields.RECOMMENDED_GENE_NAMES, String.class);
+		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.RECOMMENDED_GENE_NAMES);
+		String nowGenenames = nfb.getFieldValue(EntryField.RECOMMENDED_GENE_NAMES, String.class);
 		
-		List<String> altnamelist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ALTERNATIVE_NAMES);
+		List<String> altnamelist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ALTERNATIVE_NAMES);
 		Set<String> expectedAltnames = null;
 		Set<String> AltenameSet = null;
 		if(altnamelist != null)  {
 			expectedAltnames = new TreeSet<String>(altnamelist);
-			AltenameSet = new TreeSet<String>(nfb.getFieldValue(Fields.ALTERNATIVE_NAMES, List.class));
+			AltenameSet = new TreeSet<String>(nfb.getFieldValue(EntryField.ALTERNATIVE_NAMES, List.class));
 			//System.err.println("expected: " + expectedAltnames);
 			//System.err.println(AltenameSet);
 			if(AltenameSet.size() > expectedAltnames.size()) {
@@ -55,54 +53,54 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 			else Assert.assertEquals(expectedAltnames.size(), AltenameSet.size());
 		}
 
-		List<String> altgenlist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ALTERNATIVE_GENE_NAMES);
+		List<String> altgenlist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ALTERNATIVE_GENE_NAMES);
 		Set<String> expectedAltGenename = null;
 		Set<String> AltGenenameSet = null;
 		if(altgenlist != null)  {
 			expectedAltGenename = new TreeSet<String>(altgenlist);
-			AltGenenameSet = new TreeSet<String>(nfb.getFieldValue(Fields.ALTERNATIVE_GENE_NAMES, List.class));
+			AltGenenameSet = new TreeSet<String>(nfb.getFieldValue(EntryField.ALTERNATIVE_GENE_NAMES, List.class));
 			//System.err.println(expectedAltGenename);
 			//System.err.println(AltGenenameSet);
 			Assert.assertEquals(expectedAltGenename.size(), AltGenenameSet.size());
 		}
 
-		List<String>  expectedCD = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CD_ANTIGEN);
+		List<String>  expectedCD = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.CD_ANTIGEN);
 		if(expectedCD != null)  {
-			Assert.assertEquals(expectedCD, nfb.getFieldValue(Fields.CD_ANTIGEN, List.class));
+			Assert.assertEquals(expectedCD, nfb.getFieldValue(EntryField.CD_ANTIGEN, List.class));
 		}
 
-		List<String>  expectedINN = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INTERNATIONAL_NAME);
+		List<String>  expectedINN = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.INTERNATIONAL_NAME);
 		if(expectedINN != null)  {
-			Assert.assertEquals(expectedCD, nfb.getFieldValue(Fields.INTERNATIONAL_NAME, List.class));
+			Assert.assertEquals(expectedCD, nfb.getFieldValue(EntryField.INTERNATIONAL_NAME, List.class));
 		}
 
-		List<String>  expectedRNList = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.REGION_NAME);
+		List<String>  expectedRNList = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.REGION_NAME);
 		Set<String> expectedRNSet = null;
 		Set<String> RNSet = null;
 		if(expectedRNList != null)  {
 			expectedRNSet = new TreeSet<String>(expectedRNList);
-			RNSet = new TreeSet<String>(nfb.getFieldValue(Fields.REGION_NAME, List.class));
+			RNSet = new TreeSet<String>(nfb.getFieldValue(EntryField.REGION_NAME, List.class));
 			Assert.assertEquals(expectedRNSet, RNSet);
 		}
 
-		List<String> orflist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ORF_NAMES);
+		List<String> orflist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ORF_NAMES);
 		Set<String> expectedorfnames = null;
 		Set<String> orfnameSet = null;
 		if(orflist != null)  {
 			expectedorfnames = new TreeSet<String>(orflist);
 			//System.err.println(expectedorfnames);
-			if(nfb.getFieldValue(Fields.ORF_NAMES, List.class) != null)
-			  orfnameSet = new TreeSet<String>(nfb.getFieldValue(Fields.ORF_NAMES, List.class));
+			if(nfb.getFieldValue(EntryField.ORF_NAMES, List.class) != null)
+			  orfnameSet = new TreeSet<String>(nfb.getFieldValue(EntryField.ORF_NAMES, List.class));
 			//System.err.println(expectedorfnames);
 			//System.err.println(orfnameSet);
 			Assert.assertEquals(expectedorfnames, orfnameSet);
 		}
 
-		String expectedfamilies = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.FAMILY_NAMES);
+		String expectedfamilies = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.FAMILY_NAMES);
 		if(expectedfamilies != null)  {
 			//System.err.println(expectedfamilies);
 			Set<String> expectedFamilySet = new TreeSet<String>(Arrays.asList(expectedfamilies.split(" , ")));
-			Set<String> FamilySet = new TreeSet<String>(Arrays.asList(nfb.getFieldValue(Fields.FAMILY_NAMES, String.class).split(" , ")));
+			Set<String> FamilySet = new TreeSet<String>(Arrays.asList(nfb.getFieldValue(EntryField.FAMILY_NAMES, String.class).split(" , ")));
 			Assert.assertEquals(expectedFamilySet, FamilySet);
 		}
 	}

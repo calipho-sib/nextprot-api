@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
@@ -60,15 +60,15 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 			}
 		}
 		for (String cv : cv_tissues_final) {
-			addField(Fields.EXPRESSION, cv.trim());
+			addField(EntryField.EXPRESSION, cv.trim());
 		}
 
 	}
 
 
 	@Override
-	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.EXPRESSION);
+	public Collection<EntryField> getSupportedFields() {
+		return Arrays.asList(EntryField.EXPRESSION);
 	}
 	
 }
