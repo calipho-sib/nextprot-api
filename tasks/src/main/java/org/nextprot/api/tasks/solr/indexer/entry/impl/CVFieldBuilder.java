@@ -25,7 +25,7 @@ public class CVFieldBuilder extends FieldBuilder {
 
 		boolean buildingSilverIndex = !this.isGold();
 
-		Set <String> cvTermsSetForAncestors = new HashSet<>();
+		Set<String> cvTermsSetForAncestors = new HashSet<>();
 
 		//Get cv terms related to normal annotations (except expressions)
 		cvTermsSetForAncestors.addAll(setAndGetCvTermAnnotationsExceptExpression(entry, buildingSilverIndex));
