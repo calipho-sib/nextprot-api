@@ -1,9 +1,9 @@
 package org.nextprot.api.solr;
 
+import org.nextprot.api.commons.exception.SearchConfigException;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.nextprot.api.commons.exception.SearchConfigException;
 
 public abstract class AbstractSolrIndex implements SolrIndex {
 
@@ -42,8 +42,7 @@ public abstract class AbstractSolrIndex implements SolrIndex {
 		else
 			throw new SearchConfigException("Configuration "+configName+" does not exist");
 	}
-	
-	
+
 	public String getName() {
 		return this.name;
 	}
@@ -51,21 +50,4 @@ public abstract class AbstractSolrIndex implements SolrIndex {
 	public String getUrl() {
 		return this.url;
 	}
-	
-	public static class FieldValue {
-		private String name;
-		
-		private FieldValue(String name) {
-			this.name = name;
-		}
-		
-		public static FieldValue create(String name) {
-			return new FieldValue(name);
-		}
-		
-		public String getName() {
-			return this.name;
-		}
-	}
-	
 }
