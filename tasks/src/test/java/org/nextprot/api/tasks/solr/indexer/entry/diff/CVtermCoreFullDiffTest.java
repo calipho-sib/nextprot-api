@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.CvIndex.CvField;
+import org.nextprot.api.solr.index.CvField;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;

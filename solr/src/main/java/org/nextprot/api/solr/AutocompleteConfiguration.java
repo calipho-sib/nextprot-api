@@ -6,10 +6,6 @@ public class AutocompleteConfiguration extends IndexConfiguration {
 	private final char STAR = '*';
 	private final String RANDOM_STRING = "dfjhgdfjh";
 	
-	public AutocompleteConfiguration(String name) {
-		super(name);
-	}
-	
 	public AutocompleteConfiguration(String name, IndexConfiguration parentConfiguration) {
 		super(name, parentConfiguration);
 	}
