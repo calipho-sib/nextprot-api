@@ -3,7 +3,7 @@ package org.nextprot.api.solr;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.nextprot.api.solr.index.EntryIndex;
+import org.nextprot.api.solr.index.GoldAndSilverEntryIndex;
 import org.nextprot.api.solr.index.PublicationIndex;
 
 public class QueryTest {
@@ -68,7 +68,7 @@ public class QueryTest {
     @Test
     public void testEscapingIrrelevantFieldForIndex() {
         Query query = new Query(Mockito.mock(SolrIndex.class));
-        query.setIndex(new EntryIndex());
+        query.setIndex(new GoldAndSilverEntryIndex());
         query.addQuery("author:bairoch");
         System.out.println(query.getQueryString());
         Assert.assertEquals("author\\:bairoch", query.getQueryString(true));
@@ -85,7 +85,7 @@ public class QueryTest {
     @Test
     public void testNotEscapingEntryIdField() {
         Query query = new Query(Mockito.mock(SolrIndex.class));
-        query.setIndex(new EntryIndex());
+        query.setIndex(new GoldAndSilverEntryIndex());
         query.addQuery("id:NX_A0P322");
         Assert.assertEquals("id:NX_A0P322", query.getQueryString(true));
     }
@@ -93,7 +93,7 @@ public class QueryTest {
     @Test
     public void test1() {
         Query query = new Query(Mockito.mock(SolrIndex.class));
-        query.setIndex(new EntryIndex());
+        query.setIndex(new GoldAndSilverEntryIndex());
         query.addQuery("+insulin");
         String result = query.getQueryString(true);
         System.out.println(result);

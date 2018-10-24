@@ -2,15 +2,14 @@ package org.nextprot.api.tasks.service.impl;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
 import org.nextprot.api.solr.index.CvIndex;
-import org.nextprot.api.solr.index.EntryIndex;
-import org.nextprot.api.solr.index.GoldEntryIndex;
+import org.nextprot.api.solr.index.GoldAndSilverEntryIndex;
+import org.nextprot.api.solr.index.GoldOnlyEntryIndex;
 import org.nextprot.api.solr.index.PublicationIndex;
 import org.nextprot.api.tasks.service.SolrIndexingService;
 import org.nextprot.api.tasks.solr.indexer.*;
@@ -43,7 +42,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		long seconds = System.currentTimeMillis() / 1000;
 		StringBuilder info = new StringBuilder();
 		
-		String indexName = isGold ?  GoldEntryIndex.NAME : EntryIndex.NAME;
+		String indexName = isGold ?  GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
 		logAndCollect(info, "adding entries to index " + indexName + " from chromosome " + chrName + "...STARTING at " + new Date());
 
 		String serverUrl = getServerUrl(indexName);
@@ -83,7 +82,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		long seconds = System.currentTimeMillis() / 1000;
 		StringBuilder info = new StringBuilder();
 		
-		String indexName = isGold ?  GoldEntryIndex.NAME : EntryIndex.NAME;
+		String indexName = isGold ?  GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
 		logAndCollect(info, "initializing index " + indexName + "...STARTING at " + new Date());
 
 		String serverUrl = getServerUrl(indexName);
