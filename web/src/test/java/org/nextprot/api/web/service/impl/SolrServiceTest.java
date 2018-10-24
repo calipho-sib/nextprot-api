@@ -158,7 +158,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
         SearchResult result = service.executeQuery(q);
 
-        assertEquals(101, result.getFound());
+        assertTrue(result.getFound() > 100);
     }
 
     @Test

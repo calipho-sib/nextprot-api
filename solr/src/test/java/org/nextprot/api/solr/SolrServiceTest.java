@@ -146,11 +146,10 @@ public class SolrServiceTest  {
 		qr.setQuality("gold");
 		qr.setSort("");
 		qr.setOrder("");
-		qr.setFilter("");
 		Query q = service.buildQueryForSearchIndexes("entry", "simple", qr);
 		SearchResult result = service.executeIdQuery(q);
 		List<Map<String, Object>> found = result.getFoundFacets("id");
-		assertEquals(6, found.size());
+		assertEquals(result.getFound(), found.size());
 	}
 	
     @Test
