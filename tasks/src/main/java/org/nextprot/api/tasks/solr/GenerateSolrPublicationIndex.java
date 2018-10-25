@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
+import org.nextprot.api.tasks.solr.indexer.PublicationSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 
 import java.util.Set;
@@ -30,7 +30,7 @@ class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=http://localhost:8983/solr/nppublications1");
 		logger.info("Solr server: " + solrServer); 
 
-		SolrIndexer<Publication> indexer = new PublicationSolrindexer(solrServer, publicationService);
+		SolrIndexer<Publication> indexer = new PublicationSolrIndexer(solrServer, publicationService);
 		
 		// Remove previous indexes
 		logger.info("removing all solr publication records");

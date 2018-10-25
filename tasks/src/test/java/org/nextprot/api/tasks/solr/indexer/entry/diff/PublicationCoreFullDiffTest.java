@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.index.PubField;
-import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
+import org.nextprot.api.tasks.solr.indexer.PublicationSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
 	@Before
     public void setup() {
-        pubindexer = new PublicationSolrindexer("http://localhost:8983/solr/nppublications1", publicationService);
+        pubindexer = new PublicationSolrIndexer("http://localhost:8983/solr/nppublications1", publicationService);
     }
 
 	@Test

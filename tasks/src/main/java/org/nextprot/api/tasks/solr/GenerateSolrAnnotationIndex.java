@@ -26,7 +26,7 @@ class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		String solrServer = System.getProperty("solr.server");
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1\"");
 		logger.info("Solr server: " + solrServer); 
-		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
+		EntrySolrIndexer indexer = EntrySolrIndexer.GoldOnly(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));

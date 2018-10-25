@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.tasks.solr.indexer.EntryGoldOnlySolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
 
 import java.util.Set;
 
@@ -28,8 +28,8 @@ class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 		
 		String solrServer = System.getProperty("solr.server");
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1gold\"");
-		logger.info("Solr server: " + solrServer); 
-		EntryGoldOnlySolrIndexer indexer = new EntryGoldOnlySolrIndexer(solrServer);
+		logger.info("Solr server: " + solrServer);
+        EntrySolrIndexer indexer = EntrySolrIndexer.GoldOnly(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));

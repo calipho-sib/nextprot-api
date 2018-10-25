@@ -12,7 +12,10 @@ import org.nextprot.api.solr.index.GoldAndSilverEntryIndex;
 import org.nextprot.api.solr.index.GoldOnlyEntryIndex;
 import org.nextprot.api.solr.index.PublicationIndex;
 import org.nextprot.api.tasks.service.SolrIndexingService;
-import org.nextprot.api.tasks.solr.indexer.*;
+import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.PublicationSolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -45,10 +48,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		String indexName = isGold ?  GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
 		logAndCollect(info, "adding entries to index " + indexName + " from chromosome " + chrName + "...STARTING at " + new Date());
 
-		String serverUrl = getServerUrl(indexName);
-		logAndCollect(info,"Solr server: " + serverUrl); 
-
-		EntryBaseSolrIndexer indexer = isGold ? new EntryGoldOnlySolrIndexer(serverUrl) : new EntrySolrIndexer(serverUrl);
+		EntrySolrIndexer indexer = newSolrIndexer(indexName, isGold, info);
 		indexer.setTerminologyservice(terminologyService);
 		indexer.setEntryBuilderService(entryBuilderService);
 		indexer.setPublicationService(publicationService);
@@ -85,11 +85,8 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		String indexName = isGold ?  GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
 		logAndCollect(info, "initializing index " + indexName + "...STARTING at " + new Date());
 
-		String serverUrl = getServerUrl(indexName);
-		logAndCollect(info,"Solr server: " + serverUrl); 		
-
 		logAndCollect(info,"clearing index " + indexName);
-		SolrIndexer indexer = isGold ? new EntryGoldOnlySolrIndexer(serverUrl) : new EntrySolrIndexer(serverUrl);
+		SolrIndexer indexer = newSolrIndexer(indexName, isGold, info);
 		indexer.clearDatabase("");
 		
 		logAndCollect(info,"committing index " + indexName);
@@ -148,7 +145,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		logAndCollect(info,"Solr server: " + serverUrl); 		
 
 		logAndCollect(info,"clearing publication index");
-		SolrIndexer<Publication> indexer = new PublicationSolrindexer(serverUrl, publicationService);
+		SolrIndexer<Publication> indexer = new PublicationSolrIndexer(serverUrl, publicationService);
 		indexer.clearDatabase("");
 
 		logAndCollect(info,"getting publications");
@@ -174,7 +171,15 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 		
 		return info.toString();
 	}
-	
+
+	private EntrySolrIndexer newSolrIndexer(String indexName, boolean isGold, StringBuilder info) {
+
+        String serverUrl = getServerUrl(indexName);
+        logAndCollect(info,"Solr server: " + serverUrl);
+
+        return isGold ? EntrySolrIndexer.GoldOnly(serverUrl) : EntrySolrIndexer.SilverAndGold(serverUrl);
+    }
+
 	private String getServerUrl(String indexName) {
 		String baseUrl = connFactory.getSolrBaseUrl();
 		String indexUrl = configuration.getIndexByName(indexName).getUrl();
