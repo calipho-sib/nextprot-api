@@ -9,7 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @ Generic Solr indexer for the three cores (Annotation, Publications and Terminology)
  */
-public abstract class GenerateSolrIndex {
+@Deprecated
+abstract class GenerateSolrIndex {
     // To disable the cache temporarily: comment-out the cachemanager variable and references, and remove 'cache' from the "spring.profiles.active" properties
 	// The caches are located at /scratch/workspace-luna/nextprot-api/tasks/cache
 	private CacheManager cacheManager = null;

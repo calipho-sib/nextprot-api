@@ -7,7 +7,8 @@ import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
 
 import java.util.Set;
 
-public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
+@Deprecated
+class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 
 	public static void main(String[] args) {
 		GenerateSolrAnnotationIndex i = new GenerateSolrAnnotationIndex();
@@ -50,7 +51,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 			//String id = "NX_Q14524"; // debug (scn5a)
 			logger.info(System.currentTimeMillis() + ": start building " + id);
 			Entry currentry = entryBuilderService.buildWithEverything(id);
-			indexer.add(currentry);
+			indexer.convertAndAddDocsToSolr(currentry);
 			logger.info(id + " done...");
 			if((ecnt % 1000) == 0)
 				logger.info(ecnt +  " entries indexed...");
