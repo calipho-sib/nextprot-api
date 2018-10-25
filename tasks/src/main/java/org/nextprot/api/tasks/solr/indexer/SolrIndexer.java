@@ -23,7 +23,7 @@ public abstract class SolrIndexer<T> {
 
 	public abstract SolrInputDocument convertToSolrDocument(T documentTypes);
 
-	public void add(T t) {
+	public void convertAndAddDocsToSolr(T t) {
 
 		SolrInputDocument doc = convertToSolrDocument(t);
 		if (doc == null) return;

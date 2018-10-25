@@ -5,7 +5,6 @@ import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.fail;
@@ -14,8 +13,7 @@ public class BuildersTest extends AbstractUnitBaseTest {
 	
 	@Test
 	public void shouldCoverAllSolrFields() {
-		Map<EntryField, FieldBuilder> map = new HashMap<>();
-		EntrySolrIndexer.initializeFieldBuilders(map);
+		Map<EntryField, FieldBuilder> map = EntrySolrIndexer.instanciateAllEntryFieldBuilders();
 		
 		StringBuilder sb = new StringBuilder();
 		for(EntryField f : EntryField.values()){

@@ -1,15 +1,15 @@
 package org.nextprot.api.tasks.solr;
 
-import java.util.List;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 
-public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
+import java.util.List;
 
+@Deprecated
+class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 	
 	public static void main(String[] args) {
 		GenerateSolrTerminologyIndex i = new GenerateSolrTerminologyIndex();
@@ -44,7 +44,7 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		}
 
 		for (CvTerm term : allterms) {
-			indexer.add(term);
+			indexer.convertAndAddDocsToSolr(term);
 			termcnt++;
 			if((termcnt % 3000)==0)
 				logger.info(termcnt + "/" + allterms.size() + " cv terms done");

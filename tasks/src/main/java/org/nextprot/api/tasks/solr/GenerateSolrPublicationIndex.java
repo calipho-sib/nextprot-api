@@ -10,7 +10,8 @@ import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 
 import java.util.Set;
 
-public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
+@Deprecated
+class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 
 	public static void main(String[] args) {
 		GenerateSolrPublicationIndex i = new GenerateSolrPublicationIndex();
@@ -42,7 +43,7 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		for (Long id : allpubids) {
 			Publication currpub = publicationService.findPublicationById(id);
 			if(currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
-			  indexer.add(currpub);
+			  indexer.convertAndAddDocsToSolr(currpub);
 			  pubcnt++;
 			  }
 			if((pubcnt % 5000)==0)
