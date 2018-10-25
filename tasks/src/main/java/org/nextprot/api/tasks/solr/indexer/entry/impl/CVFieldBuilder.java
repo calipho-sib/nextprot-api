@@ -51,9 +51,9 @@ public class CVFieldBuilder extends FieldBuilder {
 	}
 
 
-	private Set <String> setAndGetCvTermAnnotationsExceptExpression(Entry entry, boolean buildingSilverIndex){
+	private Set<String> setAndGetCvTermAnnotationsExceptExpression(Entry entry, boolean buildingSilverIndex){
 
-		Set <String> cv_acs = new HashSet<>();
+		Set<String> cv_acs = new HashSet<>();
 
 		// CV accessions
 		List<Annotation> annots = entry.getAnnotations();
@@ -105,9 +105,9 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 	}
 
-	private Set <String> setAndGetFamilyNames(Entry entry){
+	private Set<String> setAndGetFamilyNames(Entry entry){
 
-		Set <String> cv_acs = new HashSet<>();
+		Set<String> cv_acs = new HashSet<>();
 
 		// Families (why not part of Annotations ?)
 		for (Family family : entry.getOverview().getFamilies()) {
@@ -121,13 +121,13 @@ public class CVFieldBuilder extends FieldBuilder {
 	}
 
 
-	private void setAncestorsAndSynonyms(Entry entry, Set <String> cv_acs){
+	private void setAncestorsAndSynonyms(Entry entry, Set<String> cv_acs){
 
 		// top level ancestors (Annotation, feature, and ROI)
-		final Set <String> TOP_ACS = new HashSet<>(Arrays.asList("CVAN_0001","CVAN_0002","CVAN_0011"));
+		final Set<String> TOP_ACS = new HashSet<>(Arrays.asList("CVAN_0001","CVAN_0002","CVAN_0011"));
 
-		Set <String> cv_synonyms = new HashSet<String>();
-		Set <String> cv_ancestors_acs = new HashSet<String>();
+		Set<String> cv_synonyms = new HashSet<>();
+		Set<String> cv_ancestors_acs = new HashSet<>();
 
 		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
