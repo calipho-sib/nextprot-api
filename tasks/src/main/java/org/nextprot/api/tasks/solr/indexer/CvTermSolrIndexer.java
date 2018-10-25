@@ -1,19 +1,24 @@
 package org.nextprot.api.tasks.solr.indexer;
 
-import java.util.List;
-
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.tasks.solr.SimpleHttpSolrServer;
+import org.nextprot.api.tasks.solr.SimpleSolrServer;
+
+import java.util.List;
 
 
 public class CvTermSolrIndexer extends SolrIndexer<CvTerm> {
 	
-
 	public CvTermSolrIndexer(String url) {
-		super(url);
+		this(new SimpleHttpSolrServer(url));
 	}
+
+    public CvTermSolrIndexer(SimpleSolrServer solrServer) {
+        super(solrServer);
+    }
 
 	@Override
 	public SolrInputDocument convertToSolrDocument(CvTerm terminology) {
@@ -52,5 +57,4 @@ public class CvTermSolrIndexer extends SolrIndexer<CvTerm> {
 		
 		return doc;
 	}
-
 }

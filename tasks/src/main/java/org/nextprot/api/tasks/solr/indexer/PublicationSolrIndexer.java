@@ -1,7 +1,5 @@
 package org.nextprot.api.tasks.solr.indexer;
 
-//import java.util.List;
-
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
@@ -10,19 +8,25 @@ import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.tasks.solr.SimpleHttpSolrServer;
+import org.nextprot.api.tasks.solr.SimpleSolrServer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class PublicationSolrindexer extends SolrIndexer<Publication>{
+public class PublicationSolrIndexer extends SolrIndexer<Publication>{
 
     private PublicationService publicationService;
 
-	public PublicationSolrindexer(String url, PublicationService publicationService) {
-		super(url);
+    public PublicationSolrIndexer(String url, PublicationService publicationService) {
+        this(new SimpleHttpSolrServer(url), publicationService);
+    }
+
+    public PublicationSolrIndexer(SimpleSolrServer solrServer, PublicationService publicationService) {
+        super(solrServer);
         this.publicationService = publicationService;
-	}
+    }
 
 	@Override
 	public SolrInputDocument convertToSolrDocument(Publication publi) {
