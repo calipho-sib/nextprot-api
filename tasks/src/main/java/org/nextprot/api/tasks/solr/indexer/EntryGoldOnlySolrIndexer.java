@@ -1,9 +1,9 @@
 package org.nextprot.api.tasks.solr.indexer;
 
 
-public class EntryGoldSolrIndexer extends EntryBaseSolrIndexer {
+public class EntryGoldOnlySolrIndexer extends EntryBaseSolrIndexer {
 
-	public EntryGoldSolrIndexer(String url) {
+	public EntryGoldOnlySolrIndexer(String url) {
 		super(url, true); // isGold=true -> filter annotations for GOLD quality
 	}
 }
