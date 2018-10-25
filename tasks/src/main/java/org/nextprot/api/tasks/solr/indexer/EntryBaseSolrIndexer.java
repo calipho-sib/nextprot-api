@@ -18,7 +18,6 @@ import java.util.Set;
 
 public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
-	private Map<EntryField, FieldBuilder> fieldsBuilderMap = null;
 	private TerminologyService terminologyservice;
 	private EntryBuilderService entryBuilderService;
 	private PublicationService publicationService;
@@ -34,8 +33,7 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 	@Override
 	public SolrInputDocument convertToSolrDocument(Entry entry) {
 
-		fieldsBuilderMap = new HashMap<>();
-		initializeFieldBuilders(fieldsBuilderMap);
+        Map<EntryField, FieldBuilder> fieldsBuilderMap = instanciateAllEntryFieldBuilders();
 
 		SolrInputDocument doc = new SolrInputDocument();
 
@@ -82,8 +80,11 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		this.entryReportStatsService = entryReportStatsService;
 	}
 
-	static void initializeFieldBuilders(Map<EntryField, FieldBuilder> fieldsBuilderMap) {
+	static Map<EntryField, FieldBuilder> instanciateAllEntryFieldBuilders() {
+
+        Map<EntryField, FieldBuilder> fieldsBuilderMap = new HashMap<>();
 		Reflections reflections = new Reflections("org.nextprot.api.tasks.solr.indexer.entry.impl");
+
 		Set<Class<?>> entryFieldBuilderClasses = reflections.getTypesAnnotatedWith(EntryFieldBuilder.class);
 		for (Class<?> c : entryFieldBuilderClasses) {
 			try {
@@ -99,7 +100,6 @@ public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 				e.printStackTrace();
 			}
 		}
+		return fieldsBuilderMap;
 	}
-	
-
 }
