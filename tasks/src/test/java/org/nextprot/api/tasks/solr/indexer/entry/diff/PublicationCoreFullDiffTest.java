@@ -2,35 +2,29 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.DateFormatter;
-import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.index.PubField;
-import org.nextprot.api.tasks.solr.indexer.PublicationSolrIndexer;
-import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.SolrPublication;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PublicationCoreFullDiffTest extends SolrDiffTest {
-
-	private SolrIndexer<Publication> pubindexer;
 
 	@Autowired
     private PublicationService publicationService;
 
     @Autowired
     private GlobalPublicationService globalPublicationService;
-
-	@Before
-    public void setup() {
-        pubindexer = new PublicationSolrIndexer("http://localhost:8983/solr/nppublications1", publicationService);
-    }
 
 	@Test
 	public void testPublis() {
@@ -52,7 +46,9 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		// if(pubid == 6850164 || pubid == 37476626 || pubid == 39173492 || pubid == 42825961 || pubid == 6945504 || pubid == 28036837) return;
 		String entry = Long.toString(pubid);
 		//System.err.println("Testing publi: " + entry);
-		SolrInputDocument solrDoc = pubindexer.convertToSolrDocument(publicationService.findPublicationById(pubid));
+        SolrPublication solrPublication = new SolrPublication(publicationService.findPublicationById(pubid), publicationService);
+
+		SolrInputDocument solrDoc = solrPublication.solrDocument();
 		if(getValueForFieldInCurrentSolrImplementation(entry, PubField.ID) == null)
 		  {
 		  System.err.println(entry + " Not in current kant index, pubmed: " + solrDoc.getFieldValue("ac"));

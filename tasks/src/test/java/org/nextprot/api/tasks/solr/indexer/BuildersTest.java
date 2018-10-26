@@ -13,7 +13,7 @@ public class BuildersTest extends AbstractUnitBaseTest {
 	
 	@Test
 	public void shouldCoverAllSolrFields() {
-		Map<EntryField, FieldBuilder> map = EntrySolrIndexer.instanciateAllEntryFieldBuilders();
+		Map<EntryField, FieldBuilder> map = SolrEntry.instanciateAllEntryFieldBuilders();
 		
 		StringBuilder sb = new StringBuilder();
 		for(EntryField f : EntryField.values()){
@@ -25,8 +25,5 @@ public class BuildersTest extends AbstractUnitBaseTest {
 		if(!sb.toString().isEmpty()){
 			fail("Missing " +  sb.toString().split(",").length  + " fields " + " :" + sb.toString());
 		}
-		
 	}
-
-
 }
