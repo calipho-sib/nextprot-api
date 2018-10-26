@@ -8,8 +8,6 @@ import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.SimpleHttpSolrServer;
-import org.nextprot.api.tasks.solr.SimpleSolrServer;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 import org.reflections.Reflections;
@@ -18,41 +16,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class EntrySolrIndexer extends SolrIndexer<Entry> {
+public class SolrEntry extends SolrObject<Entry> {
 
-	private TerminologyService terminologyservice;
-	private EntryBuilderService entryBuilderService;
-	private PublicationService publicationService;
-	private EntryReportStatsService entryReportStatsService;
+    private TerminologyService terminologyservice;
+    private EntryBuilderService entryBuilderService;
+    private PublicationService publicationService;
+    private EntryReportStatsService entryReportStatsService;
     private boolean isGold;
 
-    private EntrySolrIndexer(SimpleSolrServer solrServer, boolean isGold) {
-        super(solrServer);
+    private SolrEntry(Entry entry, boolean isGold) {
+        super(entry);
         this.isGold = isGold;
     }
 
-    public static EntrySolrIndexer GoldOnly(String url) {
+    public static SolrEntry GoldOnly(Entry entry) {
 
-        return GoldOnly(new SimpleHttpSolrServer(url));
+        return new SolrEntry(entry, true);
     }
 
-    public static EntrySolrIndexer GoldOnly(SimpleSolrServer solrServer) {
+    public static SolrEntry SilverAndGold(Entry entry) {
 
-        return new EntrySolrIndexer(solrServer, true);
-    }
-
-    public static EntrySolrIndexer SilverAndGold(String url) {
-
-        return SilverAndGold(new SimpleHttpSolrServer(url));
-    }
-
-    public static EntrySolrIndexer SilverAndGold(SimpleSolrServer solrServer) {
-
-        return new EntrySolrIndexer(solrServer, false);
+        return new SolrEntry(entry, false);
     }
 
 	@Override
-	public SolrInputDocument convertToSolrDocument(Entry entry) {
+	public SolrInputDocument solrDocument() {
 
         Map<EntryField, FieldBuilder> fieldsBuilderMap = instanciateAllEntryFieldBuilders();
 
@@ -67,7 +55,7 @@ public class EntrySolrIndexer extends SolrIndexer<Entry> {
 			fb.setEntryBuilderService(entryBuilderService);
 			fb.setPublicationService(publicationService);
 			fb.setEntryReportStatsService(entryReportStatsService);
-			fb.initializeBuilder(entry);
+			fb.initializeBuilder(getDocumentType());
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
 		}
@@ -89,6 +77,7 @@ public class EntrySolrIndexer extends SolrIndexer<Entry> {
 		return entryBuilderService;
 	}
 
+	// TODO: UGGLY CODE!!! remove those setters
 	public void setTerminologyservice(TerminologyService terminologyservice) {
 		this.terminologyservice = terminologyservice;
 	}

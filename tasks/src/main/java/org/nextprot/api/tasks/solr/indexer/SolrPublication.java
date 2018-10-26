@@ -8,28 +8,24 @@ import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
-import org.nextprot.api.tasks.solr.SimpleHttpSolrServer;
-import org.nextprot.api.tasks.solr.SimpleSolrServer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class PublicationSolrIndexer extends SolrIndexer<Publication>{
+public class SolrPublication extends SolrObject<Publication>{
 
     private PublicationService publicationService;
 
-    public PublicationSolrIndexer(String url, PublicationService publicationService) {
-        this(new SimpleHttpSolrServer(url), publicationService);
-    }
-
-    public PublicationSolrIndexer(SimpleSolrServer solrServer, PublicationService publicationService) {
-        super(solrServer);
+    public SolrPublication(Publication publi, PublicationService publicationService) {
+        super(publi);
         this.publicationService = publicationService;
     }
 
 	@Override
-	public SolrInputDocument convertToSolrDocument(Publication publi) {
+	public SolrInputDocument solrDocument() {
+
+        Publication publi = getDocumentType();
 
         GlobalPublicationStatistics.PublicationStatistics publicationStats =
                 publicationService.getPublicationStatistics(publi.getPublicationId());
