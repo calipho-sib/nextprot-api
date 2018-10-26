@@ -1,15 +1,22 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -19,6 +26,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private GlobalPublicationService globalPublicationService;
+
+    @Autowired
+    private ReleaseInfoService releaseInfoService;
 
     @Cacheable("global-publication-statistics")
     @Override
@@ -51,6 +61,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         });
 
         return globalPublicationStatistics;
+    }
+
+    @Override
+    public Map<Counter, Integer> getStatsByPlaceholder(Set<Counter> stat) {
+
+        final List<ReleaseStatsTag> releaseStatsTags = releaseInfoService.findReleaseStats().getTagStatistics();
+
+        return stat.stream().collect(Collectors.toMap(Function.identity(), s -> sumTagCounts(releaseStatsTags, s.getDbTags())));
+    }
+
+    private int sumTagCounts(final List<ReleaseStatsTag> releaseStatsTags, final Set<String> statNames) {
+        Set<ReleaseStatsTag> result = releaseStatsTags.stream()
+                                                      .filter(s -> statNames.contains(s.getTag()))
+                                                      .collect(Collectors.toSet());
+        if (result.size() > 0) {
+            return result.stream()
+                         .map(ReleaseStatsTag::getCount)
+                         .mapToInt(Integer::intValue)
+                         .sum();
+        }
+        throw new NextProtException("Found no count for the tags " + statNames);
     }
 
     private static class PublicationStatisticsAnalyser {
