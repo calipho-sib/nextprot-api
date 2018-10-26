@@ -8,7 +8,6 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.CvField;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTerm;
-import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +15,6 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;
 	
-	SolrIndexer cvindexer = new SolrIndexer("http://localhost:8983/solr/npcvs1");
-
 	@Ignore
 	@Test
 	public void testCVs() {

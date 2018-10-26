@@ -18,9 +18,9 @@ import org.nextprot.api.solr.index.GoldAndSilverEntryIndex;
 import org.nextprot.api.solr.index.GoldOnlyEntryIndex;
 import org.nextprot.api.solr.index.PublicationIndex;
 import org.nextprot.api.tasks.service.SolrIndexingService;
+import org.nextprot.api.tasks.solr.indexer.BufferingSolrServer;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTerm;
 import org.nextprot.api.tasks.solr.indexer.SolrEntry;
-import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrPublication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -65,7 +65,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         String serverUrl = getServerUrl(indexName);
         logAndCollect(info, "Solr server: " + serverUrl);
 
-        SolrIndexer indexer = new SolrIndexer(serverUrl);
+        BufferingSolrServer solrServer = new BufferingSolrServer(serverUrl);
 
         logAndCollect(info, "getting entry list of chromosome " + chrName);
         List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
@@ -75,15 +75,14 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         for (String id : allentryids) {
             ecnt++;
 
-            indexer.addToSolr(newSolrEntry(entryBuilderService.buildWithEverything(id), isGold));
+	        solrServer.pushSolrObject(newSolrEntry(entryBuilderService.buildWithEverything(id), isGold));
 
             if ((ecnt % 300) == 0)
                 logAndCollect(info, ecnt + "/" + allentryids.size() + " entries added to index " + indexName + " for chromosome " + chrName);
         }
-        indexer.flushRemainingDocsToSolr();
 
         logAndCollect(info, "committing index " + indexName);
-        indexer.commit();
+	    solrServer.commitIndexation();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, "added entries to index " + indexName + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
@@ -105,11 +104,11 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         String serverUrl = getServerUrl(indexName);
         logAndCollect(info, "Solr server: " + serverUrl);
 
-        SolrIndexer indexer = new SolrIndexer(serverUrl);
-        indexer.clearDatabase("");
+        BufferingSolrServer solrServer = new BufferingSolrServer(serverUrl);
+	    solrServer.clearIndexes();
 
         logAndCollect(info, "committing index " + indexName);
-        indexer.commit();
+	    solrServer.commitIndexation();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, "index " + indexName + " initialized in " + seconds + " seconds ...END at " + new Date());
@@ -128,9 +127,9 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         logAndCollect(info, "Solr server: " + serverUrl);
 
         logAndCollect(info, "clearing term index");
-        SolrIndexer indexer = new SolrIndexer(serverUrl);
+        BufferingSolrServer solrServer = new BufferingSolrServer(serverUrl);
         List<CvTerm> allterms;
-        indexer.clearDatabase("");
+	    solrServer.clearIndexes();
 
         logAndCollect(info, "getting terms for all terminologies");
         allterms = terminologyService.findAllCVTerms();
@@ -138,15 +137,14 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         logAndCollect(info, "start indexing of " + allterms.size() + " terms");
         int termcnt = 0;
         for (CvTerm term : allterms) {
-            indexer.addToSolr(new SolrCvTerm(term));
+	        solrServer.pushSolrObject(new SolrCvTerm(term));
             termcnt++;
             if ((termcnt % 3000) == 0)
                 logAndCollect(info, termcnt + "/" + allterms.size() + " cv terms done");
         }
-        indexer.flushRemainingDocsToSolr();
 
         logAndCollect(info, "committing");
-        indexer.commit();
+	    solrServer.commitIndexation();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, termcnt + " terms indexed in " + seconds + " seconds ...END at " + new Date());
 
@@ -164,8 +162,8 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         logAndCollect(info, "Solr server: " + serverUrl);
 
         logAndCollect(info, "clearing publication index");
-        SolrIndexer indexer = new SolrIndexer(serverUrl);
-        indexer.clearDatabase("");
+        BufferingSolrServer solrServer = new BufferingSolrServer(serverUrl);
+	    solrServer.clearIndexes();
 
         logAndCollect(info, "getting publications");
         Set<Long> allpubids = globalPublicationService.findAllPublicationIds();
@@ -176,16 +174,15 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
             Publication currpub = publicationService.findPublicationById(id);
             if (currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
                 SolrPublication solrPublication = new SolrPublication(currpub, publicationService);
-                indexer.addToSolr(solrPublication);
+	            solrServer.pushSolrObject(solrPublication);
                 pubcnt++;
             }
             if ((pubcnt % 5000) == 0)
                 logAndCollect(info, pubcnt + "/" + allpubids.size() + " publications done");
         }
-        indexer.flushRemainingDocsToSolr();
 
         logAndCollect(info, "committing");
-        indexer.commit();
+	    solrServer.commitIndexation();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, pubcnt + " publications indexed in " + seconds + " seconds ...END at " + new Date());
 
