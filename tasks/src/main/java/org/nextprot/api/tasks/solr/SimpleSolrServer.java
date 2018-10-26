@@ -13,7 +13,6 @@ import java.util.Collection;
 public interface SimpleSolrServer {
 
     UpdateResponse add(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
-    UpdateResponse deleteByQuery(String query) throws SolrServerException, IOException;
+    UpdateResponse deleteIndexes() throws SolrServerException, IOException;
     UpdateResponse commit() throws SolrServerException, IOException;
-    UpdateResponse optimize() throws SolrServerException, IOException;
 }

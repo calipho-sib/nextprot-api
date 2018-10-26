@@ -23,17 +23,13 @@ public class SimpleHttpSolrServer implements SimpleSolrServer {
     }
 
     @Override
-    public final UpdateResponse deleteByQuery(String query) throws SolrServerException, IOException {
-        return solrServer.deleteByQuery(query);
+    public final UpdateResponse deleteIndexes() throws SolrServerException, IOException {
+        return solrServer.deleteByQuery("*:*");
     }
 
     @Override
     public final UpdateResponse commit() throws SolrServerException, IOException {
-        return solrServer.commit();
-    }
-
-    @Override
-    public final UpdateResponse optimize() throws SolrServerException, IOException {
+    	solrServer.commit();
         return solrServer.optimize();
     }
 }

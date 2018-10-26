@@ -51,7 +51,7 @@ public class BufferingSolrServer {
 	/**
 	 * Commit solr document for indexation by solr server
 	 */
-	public void commitIndexation() {
+	public void performIndexation() {
 
 		if (!buffer.isEmpty()) {
 			flushSolrDocumentsToSolr();
@@ -59,7 +59,6 @@ public class BufferingSolrServer {
 
 		try {
             solrServer.commit();
-            solrServer.optimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -70,9 +69,8 @@ public class BufferingSolrServer {
 	 */
 	public void clearIndexes() {
 		try {
-			solrServer.deleteByQuery("*:*");
+			solrServer.deleteIndexes();
             solrServer.commit();
-            solrServer.optimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}

@@ -82,7 +82,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         }
 
         logAndCollect(info, "committing index " + indexName);
-	    solrServer.commitIndexation();
+	    solrServer.performIndexation();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, "added entries to index " + indexName + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
@@ -108,7 +108,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	    solrServer.clearIndexes();
 
         logAndCollect(info, "committing index " + indexName);
-	    solrServer.commitIndexation();
+	    solrServer.performIndexation();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, "index " + indexName + " initialized in " + seconds + " seconds ...END at " + new Date());
@@ -144,7 +144,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         }
 
         logAndCollect(info, "committing");
-	    solrServer.commitIndexation();
+	    solrServer.performIndexation();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, termcnt + " terms indexed in " + seconds + " seconds ...END at " + new Date());
 
@@ -182,7 +182,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         }
 
         logAndCollect(info, "committing");
-	    solrServer.commitIndexation();
+	    solrServer.performIndexation();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, pubcnt + " publications indexed in " + seconds + " seconds ...END at " + new Date());
 
