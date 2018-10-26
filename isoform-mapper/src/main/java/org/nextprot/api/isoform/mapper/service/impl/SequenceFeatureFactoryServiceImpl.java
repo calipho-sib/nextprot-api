@@ -3,7 +3,7 @@ package org.nextprot.api.isoform.mapper.service.impl;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.core.service.BeanDiscoveryService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
@@ -23,7 +23,7 @@ import java.text.ParseException;
 public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactoryService {
 
     @Autowired
-    private BeanService beanService;
+    private BeanDiscoveryService beanDiscoveryService;
 
     @Override
     public SequenceFeature newSequenceFeature(String featureName, String featureType) throws ParseException, SequenceVariationBuildException {
@@ -32,11 +32,11 @@ public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactory
 
         switch (annotationCategory) {
             case MUTAGENESIS:
-                return SequenceVariant.mutagenesis(featureName, beanService);
+                return SequenceVariant.mutagenesis(featureName, beanDiscoveryService);
             case VARIANT:
-                return SequenceVariant.variant(featureName, beanService);
+                return SequenceVariant.variant(featureName, beanDiscoveryService);
             case GENERIC_PTM:
-                return new SequenceModification(featureName, beanService);
+                return new SequenceModification(featureName, beanDiscoveryService);
             default:
                 throw new NextProtException("invalid feature type " + featureType + ", feature name=" + featureName);
         }
@@ -53,11 +53,11 @@ public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactory
         try {
             switch (annotationCategory) {
                 case MUTAGENESIS:
-                    return SequenceVariant.mutagenesis(query.getFeature(), beanService);
+                    return SequenceVariant.mutagenesis(query.getFeature(), beanDiscoveryService);
                 case VARIANT:
-                    return SequenceVariant.variant(query.getFeature(), beanService);
+                    return SequenceVariant.variant(query.getFeature(), beanDiscoveryService);
                 case GENERIC_PTM:
-                    return new SequenceModification(query.getFeature(), beanService);
+                    return new SequenceModification(query.getFeature(), beanDiscoveryService);
                 default:
                     throw new InvalidFeatureQueryTypeException(query);
             }

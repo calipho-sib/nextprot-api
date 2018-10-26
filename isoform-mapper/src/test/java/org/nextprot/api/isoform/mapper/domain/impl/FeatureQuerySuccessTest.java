@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
+import org.nextprot.api.core.service.BeanDiscoveryService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
@@ -53,9 +53,9 @@ public class FeatureQuerySuccessTest {
         return SequenceVariantTest.mockEntry("NX_Q9UI33", iso1, iso2, iso3);
     }
 
-    private static BeanService mockBeanService(String geneName, Entry entry) {
+    private static BeanDiscoveryService mockBeanService(String geneName, Entry entry) {
 
-        BeanService service = Mockito.mock(BeanService.class);
+        BeanDiscoveryService service = Mockito.mock(BeanDiscoveryService.class);
 
         MasterIdentifierService masterIdentifierService = mockMasterIdentifierService(geneName, entry.getUniqueName());
         EntryBuilderService entryBuilderService = mockEntryBuilderService(entry);
