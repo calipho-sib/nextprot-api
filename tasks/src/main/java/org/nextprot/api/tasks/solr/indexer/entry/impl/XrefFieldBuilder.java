@@ -1,10 +1,14 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,7 +16,7 @@ import java.util.List;
 
 import static org.nextprot.api.core.service.dbxref.XrefDatabase.*;
 
-@EntryFieldBuilder
+@Component
 public class XrefFieldBuilder extends FieldBuilder {
 
     @Override

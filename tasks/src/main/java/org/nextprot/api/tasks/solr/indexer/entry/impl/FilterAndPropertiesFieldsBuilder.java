@@ -4,14 +4,14 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 
-@EntryFieldBuilder
+@Component
 public class FilterAndPropertiesFieldsBuilder extends FieldBuilder{
 	
 	@Override

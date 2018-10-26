@@ -12,15 +12,15 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@EntryFieldBuilder
+@Component
 public class AnnotationFieldBuilder extends FieldBuilder {
 
 	protected Logger logger = Logger.getLogger(AnnotationFieldBuilder.class);

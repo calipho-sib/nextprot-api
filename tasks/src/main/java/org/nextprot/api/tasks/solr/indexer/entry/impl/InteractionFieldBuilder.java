@@ -6,15 +6,15 @@ import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 
-@EntryFieldBuilder
+@Component
 public class InteractionFieldBuilder extends FieldBuilder{
 	
 	@Override
