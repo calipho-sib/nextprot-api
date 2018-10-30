@@ -2,7 +2,6 @@ package org.nextprot.api.web.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHTree;
 import org.kohsuke.github.GHTree.GHTreeEntry;
@@ -20,14 +19,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,41 +68,32 @@ public class GitHubServiceImpl implements GitHubService {
 	public String getPage(String folder, String page) {
 		
 		String finalPage = page;
+
 		if("news".equalsIgnoreCase(folder)){
 			finalPage = getCorrespondingPageForNews(page);
 		}
 		
 		try {
-			GitHub github = getGitHubConnection();
-			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
+			GHRepository repo = getGitHubConnection().getRepository("calipho-sib/nextprot-docs");
 
-			String  extension = ".md";
-			if(folder.contains("json")){ //if folder contains json
-				extension = ".json";
+			String filename = folder + "/" + finalPage + (("json-config".equals(folder)) ? ".json" : ".md");
+
+			String gitHubFileContent = repo.getFileContent(filename, githubDocBranch).getContent();
+
+			if (ContentWithPlaceHolders.foundPlaceHolders(gitHubFileContent)) {
+
+				ContentWithPlaceHolders content = new ContentWithPlaceHolders(gitHubFileContent);
+				content.resolveDatePHs();
+				content.resolveStatPHs(statisticsService);
+				return content.resolvedContent();
 			}
-			GHContent content = repo.getFileContent(folder + "/" + finalPage + extension, githubDocBranch);
-			return replacePlaceHolders(content.getContent());
+
+			return gitHubFileContent;
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Documentation not available, sorry for the inconvenience");
 		}
-	}
-
-	private String replacePlaceHolders(String content) {
-
-		Map<StatisticsService.Counter, Integer> counters = statisticsService.getStatsByPlaceholder(
-				EnumSet.allOf(StatisticsService.Counter.class));
-
-		String updatedText = content;
-
-		for (Map.Entry<StatisticsService.Counter, Integer> entry : counters.entrySet()) {
-			DecimalFormat df = new DecimalFormat("#,###");
-			updatedText = updatedText.replaceAll("\\$\\{" + entry.getKey() + "\\}", df.format(entry.getValue()));
-		}
-		String year = String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-		updatedText = updatedText.replaceAll("\\$\\{COPYRIGHT_END_DATE\\}", year);
-		return updatedText;
 	}
 
 	private String getCorrespondingPageForNews(String url) {
