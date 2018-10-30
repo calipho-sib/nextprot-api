@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.nextprot.api.core.service.dbxref.XrefDatabase.*;
 
-@Component
+@Service
 public class XrefFieldBuilder extends EntryFieldBuilder {
 
     @Override

@@ -39,7 +39,6 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.setTerminologyService(terminologyService);
 		cfb.initializeBuilder(entry);
 		
 		// CV_ACS

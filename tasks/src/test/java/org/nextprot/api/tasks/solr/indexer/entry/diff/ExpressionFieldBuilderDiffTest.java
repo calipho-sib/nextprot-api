@@ -43,7 +43,6 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
-		efb.setTerminologyService(terminologyService);
 		efb.initializeBuilder(entry);
 		
 		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.EXPRESSION);

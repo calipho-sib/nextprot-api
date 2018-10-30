@@ -5,9 +5,11 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,11 +19,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-@Component
+@Service
 public class ExpressionFieldBuilder extends EntryFieldBuilder {
 
 	protected Logger logger = Logger.getLogger(ExpressionFieldBuilder.class);
-	
+
+	@Autowired
+	private TerminologyService terminologyService;
+
 	@Override
 	protected void init(Entry entry) {
 		//Extract the tissues where there is expression ....
@@ -49,17 +54,17 @@ public class ExpressionFieldBuilder extends EntryFieldBuilder {
 		for (String cv : cv_tissues) {
 			cv_tissues_final.add(cv);
 			if(cv.startsWith("TS-")) {
-				CvTerm term = terminologyservice.findCvTermByAccession(cv);
+				CvTerm term = terminologyService.findCvTermByAccession(cv);
 				if (null==term) {
 					// there is nothing more we can add to indexed fields (ancestors, synonyms), so let's return
 					logger.error(entry.getUniqueName() + " - term with accession |" + cv + "| not found with findCvTermByAccession()");
 					continue;
 				}
-				List<String> ancestors = terminologyservice.getAllAncestorsAccession(term.getAccession());
+				List<String> ancestors = terminologyService.getAllAncestorsAccession(term.getAccession());
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
 					  cv_tissues_final.add(ancestorac);  
-					  cv_tissues_final.add(terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
+					  cv_tissues_final.add(terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 

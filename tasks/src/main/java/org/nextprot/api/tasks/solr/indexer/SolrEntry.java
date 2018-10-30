@@ -4,10 +4,6 @@ import com.google.common.collect.Sets;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryReportStatsService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.reflections.Reflections;
@@ -18,10 +14,6 @@ import java.util.Set;
 
 public class SolrEntry extends SolrObject<Entry> {
 
-    private TerminologyService terminologyservice;
-    private EntryBuilderService entryBuilderService;
-    private PublicationService publicationService;
-    private EntryReportStatsService entryReportStatsService;
     private boolean isGold;
 
     private SolrEntry(Entry entry, boolean isGold) {
@@ -51,10 +43,6 @@ public class SolrEntry extends SolrObject<Entry> {
 			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
 			EntryFieldBuilder fb = fieldsBuilderMap.get(f);
 			fb.setGold(isGold);
-			fb.setTerminologyService(terminologyservice);
-			fb.setEntryBuilderService(entryBuilderService);
-			fb.setPublicationService(publicationService);
-			fb.setEntryReportStatsService(entryReportStatsService);
 			fb.initializeBuilder(getDocumentType());
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
@@ -67,27 +55,6 @@ public class SolrEntry extends SolrObject<Entry> {
 		}
 
 		return doc;
-	}
-
-	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
-		this.entryBuilderService = entryBuilderService;
-	}
-
-	public EntryBuilderService getEntryBuilderService() {
-		return entryBuilderService;
-	}
-
-	// TODO: UGGLY CODE!!! remove those setters
-	public void setTerminologyservice(TerminologyService terminologyservice) {
-		this.terminologyservice = terminologyservice;
-	}
-
-    public void setPublicationService(PublicationService publicationService) {
-        this.publicationService = publicationService;
-    }
-
-	public void setEntryReportStatsService(EntryReportStatsService entryReportStatsService) {
-		this.entryReportStatsService = entryReportStatsService;
 	}
 
 	static Map<EntryField, EntryFieldBuilder> instanciateAllEntryFieldBuilders() {

@@ -5,8 +5,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
@@ -22,10 +20,6 @@ import java.util.TreeSet;
 
 public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
-	@Autowired
-	private EntryBuilderService entryBuilderService = null;
-	@Autowired
-	private MasterIdentifierService masterIdentifierService = null;
 	@Autowired
 	TerminologyService terminologyService;
 
@@ -57,7 +51,6 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		// Variants
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
 		afb.setGold(true);
-		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
 		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.ANNOTATIONS);
@@ -72,7 +65,6 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
 		// Expression
 		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
-		efb.setTerminologyService(terminologyService);
 		efb.setGold(true);
 		efb.initializeBuilder(entry);
 		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.EXPRESSION);
@@ -108,8 +100,6 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		if(expectedInteractions != null) {
 			Integer oldcnt = 0, newcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
-			ifb.setTerminologyService(terminologyService);
-			ifb.setEntryBuilderService(entryBuilderService);
 			ifb.setGold(true);
 			ifb.initializeBuilder(entry);
 			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
@@ -122,7 +112,6 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
         // CVs
 		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.CV_ACS));
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.setTerminologyService(terminologyService);
 		cfb.setGold(true);
 		cfb.initializeBuilder(entry);
 		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntryField.CV_ACS, List.class));

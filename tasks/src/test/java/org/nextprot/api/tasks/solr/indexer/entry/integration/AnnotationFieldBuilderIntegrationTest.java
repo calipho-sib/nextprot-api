@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
@@ -18,8 +16,6 @@ import java.util.List;
 public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationTest{
 
 	@Autowired	private EntryBuilderService entryBuilderService = null;
-	@Autowired	private MasterIdentifierService masterIdentifierService = null;
-	@Autowired 	private TerminologyService terminologyService;
 	@Test
 	public void testBEDintegration() {
 		String[] BEDtest_list = {"NX_P35498", "NX_Q99250","NX_Q9NY46", "NX_P35499", "NX_Q14524", "NX_Q01118","NX_Q9UQD0", "NX_Q15858", "NX_Q9Y5Y9", "NX_Q9UI33",
@@ -27,7 +23,6 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		int bedAnnotCnt = 0;
 		
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(getEntry("NX_P35498"));
 
 		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);

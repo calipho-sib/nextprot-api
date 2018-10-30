@@ -4,19 +4,24 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 
-@Component
+@Service
 public class InteractionFieldBuilder extends EntryFieldBuilder {
-	
+
+	@Autowired
+	private EntryBuilderService entryBuilderService;
+
 	@Override
 	protected void init(Entry entry){
 

@@ -10,21 +10,25 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class AnnotationFieldBuilder extends EntryFieldBuilder {
 
 	protected Logger logger = Logger.getLogger(AnnotationFieldBuilder.class);
 
+	@Autowired
+	private TerminologyService terminologyService;
 	
 	@Override
 	protected void init(Entry entry) {
@@ -231,7 +235,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 			}
 			// Sonetimes these synonymes are wrong eg: NX_Q6NUT3 -> Major
 			// facilitator (TC 2.A.1) superfamily
-			List<String> famsynonyms = this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ac).getSynonyms();
+			List<String> famsynonyms = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ac).getSynonyms();
 			if (famsynonyms != null)
 				for (String famsynonym : famsynonyms)
 					addField(EntryField.ANNOTATIONS, famsynonym.trim());
@@ -257,7 +261,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 				addField(EntryField.ANNOTATIONS, cvac);
 				addField(EntryField.ANNOTATIONS, currannot.getCvTermName());
 				
-				CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
+				CvTerm term = terminologyService.findCvTermByAccession(cvac);
 				if (null==term) {
 					// there is nothing more we can add to indexed fields (ancestors, synonyms), so let's return
 					logger.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
@@ -275,13 +279,13 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 					addField(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
 				}
 
-				List<String> ancestors = terminologyservice.getAllAncestorsAccession(cvac);
+				List<String> ancestors = terminologyService.getAllAncestorsAccession(cvac);
 				String allancestors = "";
 				for (String ancestor : ancestors) {
 					if (!allancestors.isEmpty())
 						allancestors += " | ";
 					allancestors += ancestor + " | "; // adding Ac
-					String ancestorname = this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestor).getName();
+					String ancestorname = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestor).getName();
 					allancestors += ancestorname;
 				}
 				if (allancestors.endsWith(" domain"))

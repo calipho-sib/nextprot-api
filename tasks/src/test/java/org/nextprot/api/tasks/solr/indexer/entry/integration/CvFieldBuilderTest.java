@@ -28,7 +28,6 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		String entryName = "NX_Q9H207";
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("variant"));
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.setTerminologyService(terminologyService);
 
 		cvfb.initializeBuilder(entry);
 		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
@@ -48,7 +47,6 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.setTerminologyService(terminologyService);
 
 		cvfb.initializeBuilder(entry);
 		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
@@ -70,7 +68,6 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.setTerminologyService(terminologyService);
 		cvfb.initializeBuilder(entry);
 
 		String enzymes = cvfb.getFieldValue(EntryField.EC_NAME, String.class);
@@ -90,7 +87,6 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().withAnnotations());
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.setTerminologyService(terminologyService);
 		cvfb.initializeBuilder(entry);
 
 	}

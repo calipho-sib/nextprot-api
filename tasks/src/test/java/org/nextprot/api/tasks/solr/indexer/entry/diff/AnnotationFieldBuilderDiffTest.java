@@ -3,8 +3,6 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
@@ -20,10 +18,6 @@ import static org.junit.Assert.assertEquals;
 
 public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 
-	@Autowired
-	private EntryBuilderService entryBuilderService = null;
-	@Autowired
-	private MasterIdentifierService masterIdentifierService = null;
 	@Autowired
 	TerminologyService terminologyService;
 
@@ -51,7 +45,6 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFunctionalDesc(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 		List<String> functionalDescriptions = afb.getFieldValue(EntryField.FUNCTION_DESC, List.class);
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.FUNCTION_DESC);
@@ -72,7 +65,6 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testAnnotations(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 
 		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);

@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.TreeSet;
 
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 	
-	@Autowired EntryBuilderService entryBuilderService;
-
 	@Ignore
 	@Test
 	public void testXrefs() {
@@ -40,7 +36,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
-		xfb.setEntryBuilderService(entryBuilderService);
 		xfb.initializeBuilder(entry);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ANTIBODY);
@@ -98,7 +93,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
 			Integer olditcnt = 0, newitcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
-			ifb.setEntryBuilderService(entryBuilderService);
 			ifb.initializeBuilder(entry);
 			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;

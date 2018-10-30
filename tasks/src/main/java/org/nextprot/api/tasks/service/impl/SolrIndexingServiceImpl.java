@@ -191,13 +191,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 
     private SolrEntry newSolrEntry(Entry entry, boolean isGold) {
 
-        SolrEntry solrEntry = (isGold) ? SolrEntry.GoldOnly(entry) : SolrEntry.SilverAndGold(entry);
-        solrEntry.setTerminologyservice(terminologyService);
-        solrEntry.setEntryBuilderService(entryBuilderService);
-        solrEntry.setPublicationService(publicationService);
-        solrEntry.setEntryReportStatsService(entryReportStatsService);
-
-        return solrEntry;
+        return  (isGold) ? SolrEntry.GoldOnly(entry) : SolrEntry.SilverAndGold(entry);
     }
 
     private String getServerUrl(String indexName) {

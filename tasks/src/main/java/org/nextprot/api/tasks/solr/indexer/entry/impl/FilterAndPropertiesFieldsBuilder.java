@@ -3,17 +3,22 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.EntryReportStats;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 
-@Component
+@Service
 public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
-	
+
+	@Autowired
+	private EntryReportStatsService entryReportStatsService;
+
 	@Override
 	protected void init(Entry entry) {
 

@@ -6,14 +6,14 @@ import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@Component
+@Service
 public class NamesFieldBuilder extends EntryFieldBuilder {
 
 	@Override

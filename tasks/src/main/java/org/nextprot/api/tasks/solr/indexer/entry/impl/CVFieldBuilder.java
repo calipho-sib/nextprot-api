@@ -7,10 +7,12 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,10 +25,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class CVFieldBuilder extends EntryFieldBuilder {
 
 	protected static final Logger LOGGER = Logger.getLogger(CVFieldBuilder.class);
+
+	@Autowired
+	private TerminologyService terminologyService;
 
 	@Override
 	protected void init(Entry entry) {
@@ -139,12 +144,12 @@ public class CVFieldBuilder extends EntryFieldBuilder {
 
 		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
-			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
+			CvTerm term = terminologyService.findCvTermByAccession(cvac);
 			if (null==term) {
 				LOGGER.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
 				continue;
 			}
-			List<String> ancestors = terminologyservice.getAllAncestorsAccession(term.getAccession());
+			List<String> ancestors = terminologyService.getAllAncestorsAccession(term.getAccession());
 			if(ancestors != null) {
 				for (String ancestor : ancestors) cv_ancestors_acs.add(ancestor);
 			}
@@ -160,7 +165,7 @@ public class CVFieldBuilder extends EntryFieldBuilder {
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			addField(EntryField.CV_ANCESTORS_ACS, ancestorac);
-			addField(EntryField.CV_ANCESTORS, this.terminologyservice.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
+			addField(EntryField.CV_ANCESTORS, terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 		}
 
 		for (String synonym : cv_synonyms) {
