@@ -8,9 +8,13 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public abstract class FieldBuilder {
+public abstract class EntryFieldBuilder {
 
 	boolean isGold = false;
 	protected TerminologyService terminologyservice = null;

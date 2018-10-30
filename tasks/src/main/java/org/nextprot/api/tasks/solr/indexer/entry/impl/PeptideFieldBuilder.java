@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @Component
-public class PeptideFieldBuilder extends FieldBuilder{
+public class PeptideFieldBuilder extends EntryFieldBuilder {
 	
 	@Override
 	protected void init(Entry entry){ 

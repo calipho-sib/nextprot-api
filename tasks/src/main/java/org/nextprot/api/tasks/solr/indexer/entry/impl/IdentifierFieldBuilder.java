@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class IdentifierFieldBuilder extends FieldBuilder {
+public class IdentifierFieldBuilder extends EntryFieldBuilder {
 
 	@Override
 	protected void init(Entry entry) {

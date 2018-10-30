@@ -3,14 +3,14 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 @Component
-public class OverviewFieldBuilder extends FieldBuilder {
+public class OverviewFieldBuilder extends EntryFieldBuilder {
 
 	@Override
 	protected void init(Entry entry) {

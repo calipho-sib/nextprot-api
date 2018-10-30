@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 
 import java.util.Map;
 
@@ -13,7 +13,7 @@ public class BuildersTest extends AbstractUnitBaseTest {
 	
 	@Test
 	public void shouldCoverAllSolrFields() {
-		Map<EntryField, FieldBuilder> map = SolrEntry.instanciateAllEntryFieldBuilders();
+		Map<EntryField, EntryFieldBuilder> map = SolrEntry.instanciateAllEntryFieldBuilders();
 		
 		StringBuilder sb = new StringBuilder();
 		for(EntryField f : EntryField.values()){

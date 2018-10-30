@@ -4,7 +4,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.BeanDiscoveryService;
 import org.nextprot.api.tasks.service.SolrDocumentService;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SolrDocumentServiceImpl implements SolrDocumentService {
@@ -17,7 +17,7 @@ public class SolrDocumentServiceImpl implements SolrDocumentService {
 
 		SolrInputDocument doc = new SolrInputDocument();
 
-		for (FieldBuilder entryFieldBuilder : beanDiscoveryService.getAllBeans(FieldBuilder.class)) {
+		for (EntryFieldBuilder entryFieldBuilder : beanDiscoveryService.getAllBeans(EntryFieldBuilder.class)) {
 
 			// each builder should create index for a part of an entry
 			// we should probably provide a collector such as a map of E

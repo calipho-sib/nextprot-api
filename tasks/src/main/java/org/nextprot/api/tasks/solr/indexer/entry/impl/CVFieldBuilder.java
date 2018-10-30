@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class CVFieldBuilder extends FieldBuilder {
+public class CVFieldBuilder extends EntryFieldBuilder {
 
 	protected static final Logger LOGGER = Logger.getLogger(CVFieldBuilder.class);
 

@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 @Component
-public class PublicationsFieldBuilder extends FieldBuilder {
+public class PublicationsFieldBuilder extends EntryFieldBuilder {
 	
 	protected Logger logger = Logger.getLogger(PublicationsFieldBuilder.class);
 

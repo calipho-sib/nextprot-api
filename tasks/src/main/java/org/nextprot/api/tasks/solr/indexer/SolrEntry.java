@@ -1,5 +1,6 @@
 package org.nextprot.api.tasks.solr.indexer;
 
+import com.google.common.collect.Sets;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
@@ -9,7 +10,6 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 import org.reflections.Reflections;
 
 import java.util.HashMap;
@@ -42,14 +42,14 @@ public class SolrEntry extends SolrObject<Entry> {
 	@Override
 	public SolrInputDocument solrDocument() {
 
-        Map<EntryField, FieldBuilder> fieldsBuilderMap = instanciateAllEntryFieldBuilders();
+        Map<EntryField, EntryFieldBuilder> fieldsBuilderMap = instanciateAllEntryFieldBuilders();
 
 		SolrInputDocument doc = new SolrInputDocument();
 
 		for (EntryField f : EntryField.values()) {
 			//System.err.println("field: " + f.toString());
 			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
-			FieldBuilder fb = fieldsBuilderMap.get(f);
+			EntryFieldBuilder fb = fieldsBuilderMap.get(f);
 			fb.setGold(isGold);
 			fb.setTerminologyService(terminologyservice);
 			fb.setEntryBuilderService(entryBuilderService);
@@ -90,15 +90,15 @@ public class SolrEntry extends SolrObject<Entry> {
 		this.entryReportStatsService = entryReportStatsService;
 	}
 
-	static Map<EntryField, FieldBuilder> instanciateAllEntryFieldBuilders() {
+	static Map<EntryField, EntryFieldBuilder> instanciateAllEntryFieldBuilders() {
 
-        Map<EntryField, FieldBuilder> fieldsBuilderMap = new HashMap<>();
+        Map<EntryField, EntryFieldBuilder> fieldsBuilderMap = new HashMap<>();
 		Reflections reflections = new Reflections("org.nextprot.api.tasks.solr.indexer.entry.impl");
 
-		Set<Class<?>> entryFieldBuilderClasses = reflections.getTypesAnnotatedWith(EntryFieldBuilder.class);
+		Set<Class<?>> entryFieldBuilderClasses = Sets.newHashSet(); //reflections.getTypesAnnotatedWith(EntryFieldBuilder.class);
 		for (Class<?> c : entryFieldBuilderClasses) {
 			try {
-				FieldBuilder fb = (FieldBuilder) c.newInstance();
+				EntryFieldBuilder fb = (EntryFieldBuilder) c.newInstance();
 
 				if(fb.getSupportedFields() != null){
 					for (EntryField f : fb.getSupportedFields()) {
