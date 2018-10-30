@@ -248,4 +248,24 @@ public class IsoformPEFFHeaderBuilderTest extends CoreUnitBaseTest {
                 .withModResFormats().build();
         Assert.assertTrue(!peff.getModResFormat().contains("null"));
     }
+
+	@Test
+	public void checkThatPTMVariantHiddenFromNX_O75478_1() {
+
+		IsoformPEFFHeader peff = newIsoformPEFFHeaderBuilder("NX_O75478-1")
+				.withModResFormats().build();
+
+		Assert.assertEquals("\\ModResPsi=(132|MOD:00134|N6-glycyl-L-lysine)(132|MOD:00134|N6-glycyl-L-lysine)(138|MOD:00134|N6-glycyl-L-lysine)(361|MOD:00046|O-phospho-L-serine)(398|MOD:00134|N6-glycyl-L-lysine)(407|MOD:00134|N6-glycyl-L-lysine)",
+				peff.getModResPsiFormat());
+	}
+
+	@Test
+	public void checkThatPTMVariantHiddenFromNX_P02042_1() {
+
+		IsoformPEFFHeader peff = newIsoformPEFFHeaderBuilder("NX_P02042-1")
+				.withModResFormats().build();
+
+		Assert.assertEquals("\\ModResPsi=(45|MOD:00046|O-phospho-L-serine)(50|MOD:00046|O-phospho-L-serine)(51|MOD:00046|O-phospho-L-serine)(87|MOD:00046|O-phospho-L-serine)(124|MOD:00047|O-phospho-L-threonine)",
+				peff.getModResPsiFormat());
+	}
 }
