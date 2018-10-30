@@ -16,7 +16,7 @@ public class PEFFProcessedMolecule extends AnnotationBasedPEFFInformation {
         ANNOTATION_CATEGORY_TO_NAME = new HashMap<>();
 
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.SIGNAL_PEPTIDE, "signal peptide");                 // was "SIGNAL"
-        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MATURATION_PEPTIDE, "maturation peptide");         // was "PROPEP"
+        ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MATURATION_PEPTIDE, "propeptide");                 // was "PROPEP"
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MATURE_PROTEIN, "mature protein");                 // was "CHAIN"
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE, "transit peptide");    // was "TRANSIT"
         ANNOTATION_CATEGORY_TO_NAME.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "transit peptide"); // was "TRANSIT"

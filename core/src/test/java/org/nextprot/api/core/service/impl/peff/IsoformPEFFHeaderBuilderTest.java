@@ -203,7 +203,7 @@ public class IsoformPEFFHeaderBuilderTest extends CoreUnitBaseTest {
         IsoformPEFFHeader peff = newIsoformPEFFHeaderBuilder("NX_P01308-1")
                 .withProcessedMoleculeFormat().build();
 
-        Assert.assertEquals("\\Processed=(1|24|signal peptide)(25|54|mature protein)(57|87|maturation peptide)(90|110|mature protein)",
+        Assert.assertEquals("\\Processed=(1|24|signal peptide)(25|54|mature protein)(57|87|propeptide)(90|110|mature protein)",
                 peff.getProcessedMoleculeFormat());
     }
 
