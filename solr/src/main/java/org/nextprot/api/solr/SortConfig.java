@@ -1,43 +1,43 @@
 package org.nextprot.api.solr;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class SortConfig {
 	private String name;
-	private List<Pair<IndexField, ORDER>> sorting;
+	private List<Pair<SolrField, ORDER>> sorting;
 	private int boost = -1;
 	
-	private SortConfig(String name, IndexField field, ORDER order) {
+	private SortConfig(String name, SolrField field, ORDER order) {
 		this.name = name;
-		this.sorting = new ArrayList<Pair<IndexField,ORDER>>();
+		this.sorting = new ArrayList<>();
 		this.sorting.add(Pair.create(field, order));
 	}
 	
-	private SortConfig(String name, IndexField field, ORDER order, int boost) {
+	private SortConfig(String name, SolrField field, ORDER order, int boost) {
 		this(name, field, order);
 		this.boost = boost;
 	}
 
-	private SortConfig(String name, Pair<IndexField, ORDER>[] sorting) {
+	private SortConfig(String name, Pair<SolrField, ORDER>[] sorting) {
 		this.name = name;
-		this.sorting = new ArrayList<Pair<IndexField,ORDER>>();
-		for(Pair<IndexField, ORDER> p : sorting)
-			this.sorting.add(p);
+		this.sorting = new ArrayList<>();
+		this.sorting.addAll(Arrays.asList(sorting));
 	}
 	
-	public static SortConfig create(String name, IndexField field, ORDER order) {
+	public static SortConfig create(String name, SolrField field, ORDER order) {
 		return new SortConfig(name, field, order);
 	}
 	
-	public static SortConfig create(String name, IndexField field, ORDER order, int boost) {
+	public static SortConfig create(String name, SolrField field, ORDER order, int boost) {
 		return new SortConfig(name, field, order, boost);
 	}
 	
-	public static SortConfig create(String name, Pair<IndexField, ORDER>[] sorting) {
+	public static SortConfig create(String name, Pair<SolrField, ORDER>[] sorting) {
 		return new SortConfig(name, sorting);
 	}
 
@@ -49,7 +49,7 @@ public class SortConfig {
 		this.name = name;
 	}
 
-	public List<Pair<IndexField, ORDER>> getSorting() {
+	public List<Pair<SolrField, ORDER>> getSorting() {
 		return sorting;
 	}
 

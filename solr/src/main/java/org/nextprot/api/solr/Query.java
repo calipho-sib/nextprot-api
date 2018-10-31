@@ -6,7 +6,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 public class Query {
 
 	private String indexName;
-	private SolrIndex index;
+	private SolrCore index;
 	private String configuration;
 	private String field; // q
 	private String queryString; // q => field:value ex. id: NX_...
@@ -16,11 +16,11 @@ public class Query {
 	private int start = 0;
 	private int rows;
     
-    public Query(SolrIndex index) {
+    public Query(SolrCore index) {
 		this(index, null);
 	}
 	
-	public Query(SolrIndex index, String configuration) {
+	public Query(SolrCore index, String configuration) {
 		this.index = index;
 		this.indexName = index.getName();
 		this.configuration = configuration;
@@ -62,11 +62,11 @@ public class Query {
 		this.indexName = indexName;
 	}
 
-	public SolrIndex getIndex() {
+	public SolrCore getIndex() {
 		return index;
 	}
 
-	public void setIndex(SolrIndex index) {
+	public void setIndex(SolrCore index) {
 		this.index = index;
 	}
 
@@ -109,7 +109,7 @@ public class Query {
         // escape <:> everywhere if requested
         if (escapeColon) qs = qs.replace(":","\\:");   
         // replace public field names with private ones (known by solr)
-        for (IndexField f: this.index.getFieldValues()) {
+        for (SolrField f: this.index.getFieldValues()) {
         	if (f.hasPublicName()) {
         		String esc = escapeColon ? "\\" : "";
                 qs = qs.replace(f.getPublicName() + esc + ":", f.getName() + ":");

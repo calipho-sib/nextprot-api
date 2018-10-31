@@ -1,9 +1,9 @@
 package org.nextprot.api.tasks.solr.indexer;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeSolrFieldCollector;
+
+import static org.junit.Assert.assertEquals;
 
 public class ChromosomeLocationSortOrderTest {
 
@@ -41,7 +41,7 @@ public class ChromosomeLocationSortOrderTest {
 
 	
 	public void computeAndCheckValueFor(String positions) {
-		Integer actualValue = ChromosomeFieldBuilder.sortChr(positions);
+		Integer actualValue = ChromosomeSolrFieldCollector.sortChr(positions);
 		Integer expectedValue = new Long(sortChrOld(positions)).intValue();
 		System.out.println("order value for " + positions + " : expected " + expectedValue + " - got " + actualValue);
 		assertEquals(expectedValue, actualValue);

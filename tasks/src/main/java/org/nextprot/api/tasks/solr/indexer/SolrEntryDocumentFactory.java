@@ -4,8 +4,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,40 +22,40 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 	@Override
 	public SolrInputDocument calcSolrInputDocument() {
 
-		Map<EntryField, EntryFieldBuilder> fieldsBuilderMap = mapBuildersByEntryField();
+		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = mapBuildersByEntryField();
 
 		SolrInputDocument doc = new SolrInputDocument();
 
-		for (EntryField f : EntryField.values()) {
-			if (f == EntryField.TEXT || f == EntryField.SCORE) {
+		for (EntrySolrField f : EntrySolrField.values()) {
+			if (f == EntrySolrField.TEXT || f == EntrySolrField.SCORE) {
 				continue; // Directly computed by SOLR
 			}
 
-			EntryFieldBuilder entryFieldBuilder = fieldsBuilderMap.get(f);
-			entryFieldBuilder.collect(solrizableObject, isGold);
+			EntrySolrFieldCollector entrySolrFieldCollector = fieldsBuilderMap.get(f);
+			entrySolrFieldCollector.collect(solrizableObject, isGold);
 
-			Object o = entryFieldBuilder.getFieldValue(f, f.getClazz());
+			Object o = entrySolrFieldCollector.getFieldValue(f, f.getType());
 			doc.addField(f.getName(), o);
 		}
 
 		//Reset all fields builders
-		for (EntryField f : EntryField.values()) {
-			if (f == EntryField.TEXT || f == EntryField.SCORE) {
+		for (EntrySolrField f : EntrySolrField.values()) {
+			if (f == EntrySolrField.TEXT || f == EntrySolrField.SCORE) {
 				continue; // Directly computed by SOLR
 			}
-			fieldsBuilderMap.get(f).reset();
+			fieldsBuilderMap.get(f).clear();
 		}
 
 		return doc;
 	}
 
-	static Map<EntryField, EntryFieldBuilder> mapBuildersByEntryField() {
+	static Map<EntrySolrField, EntrySolrFieldCollector> mapBuildersByEntryField() {
 
-		Map<EntryField, EntryFieldBuilder> fieldsBuilderMap = new HashMap<>();
+		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = new HashMap<>();
 
-		for (EntryFieldBuilder builder : SpringApplicationContext.getAllBeansOfType(EntryFieldBuilder.class)) {
-			if (!builder.getSupportedFields().isEmpty()) {
-				for (EntryField indexedField : builder.getSupportedFields()) {
+		for (EntrySolrFieldCollector builder : SpringApplicationContext.getAllBeansOfType(EntrySolrFieldCollector.class)) {
+			if (!builder.getCollectedFields().isEmpty()) {
+				for (EntrySolrField indexedField : builder.getCollectedFields()) {
 					NPreconditions.checkTrue(!(fieldsBuilderMap.containsKey(indexedField)), "The field " + indexedField.getName() + " cannot be indexed by several builders: " + indexedField.getClass() + ", " + fieldsBuilderMap.get(indexedField));
 					fieldsBuilderMap.put(indexedField, builder);
 				}

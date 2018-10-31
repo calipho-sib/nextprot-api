@@ -1,9 +1,5 @@
 package org.nextprot.api.solr;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
@@ -12,12 +8,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Lazy
 @Component
 public class SolrConnectionFactory {
 	private Map<String, HttpSolrServer> serverMap;
 	private final String baseSolrUrl;
-	private final List<SolrIndex> indexes;
+	private final List<SolrCore> indexes;
 	
 	private final char DASH = '/';
 	
@@ -58,7 +58,7 @@ public class SolrConnectionFactory {
 	 */
 	private void initializeServerMap(){
 		this.serverMap = new HashMap<String, HttpSolrServer>();
-		for(SolrIndex index : indexes) {
+		for(SolrCore index : indexes) {
 			this.serverMap.put(index.getName(), new HttpSolrServer(this.baseSolrUrl+index.getUrl()));
 		}
 	}

@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.CvField;
+import org.nextprot.api.solr.index.CvSolrField;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTermDocumentFactory;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,31 +57,31 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 
 		SolrInputDocument solrDoc = new SolrCvTermDocumentFactory(term).calcSolrInputDocument();
 		
-		String expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.AC);
+		String expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.AC);
 		//System.err.println("expected ac: " + expected);
 		Assert.assertEquals(expected.trim(), solrDoc.getFieldValue("ac"));
 		
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.FILTERS);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.FILTERS);
 		//System.err.println("expected filters: " + expected + " -> " + solrDoc.getFieldValue("filters"));
 		Assert.assertEquals(expected, solrDoc.getFieldValue("filters"));
 
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.NAME);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.NAME);
 		//System.err.println("name: " + expected);
 		Assert.assertEquals(expected, solrDoc.getFieldValue("name"));
 		
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.NAME_S);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.NAME_S);
 		//System.err.println("name_s: " + expected);
 		Assert.assertEquals(expected, solrDoc.getFieldValue("name_s"));
 		
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.DESCRIPTION);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.DESCRIPTION);
 		//System.err.println("first_page: " + expected);
 		Assert.assertEquals(expected, solrDoc.getFieldValue("description"));
 		
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.OTHER_XREFS);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.OTHER_XREFS);
 		//System.err.println("other_xrefs: " + expected);
 		Assert.assertEquals(expected, solrDoc.getFieldValue("other_xrefs"));
 		
-		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.PROPERTIES);
+		expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.PROPERTIES);
 		//System.err.println("properties: " + expected);
 		Assert.assertEquals(expected, solrDoc.getFieldValue("properties"));
 	}

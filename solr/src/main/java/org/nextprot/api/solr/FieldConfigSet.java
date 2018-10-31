@@ -7,19 +7,19 @@ import java.util.Set;
 public class FieldConfigSet {
 		
 	private IndexParameter parameter;
-	private Map<IndexField, Integer> configs;
+	private Map<SolrField, Integer> configs;
 	
 	public FieldConfigSet(IndexParameter parameter) {
 		this.parameter = parameter;
 		this.configs = new HashMap<>();
 	}
 	
-	public FieldConfigSet add(IndexField field) {
+	public FieldConfigSet add(SolrField field) {
 		this.configs.put(field, 0);
 		return this;
 	}
 	
-	public FieldConfigSet addWithBoostFactor(IndexField field, int boost) {
+	public FieldConfigSet addWithBoostFactor(SolrField field, int boost) {
 		this.configs.put(field, boost);
 		return this;
 	}
@@ -28,11 +28,11 @@ public class FieldConfigSet {
 		return parameter;
 	}
 
-    public Set<IndexField> getIndexFields() {
+    public Set<SolrField> getIndexFields() {
         return configs.keySet();
     }
 
-	public int getBoostFactor(IndexField indexField) {
+	public int getBoostFactor(SolrField indexField) {
 
 		return configs.get(indexField);
 	}

@@ -3,9 +3,9 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeSolrFieldCollector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -92,9 +92,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	
 	private void testChrLoc(Entry entry) {
 		
-		EntryField field = EntryField.CHR_LOC;
+		EntrySolrField field = EntrySolrField.CHR_LOC;
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		cfb.collect(entry, false);
 		
 		// build a set with the list of actual values in field (which are separated by spaces)
@@ -127,11 +127,11 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	 */
 	private void testChrLocS(Entry entry) {
 		
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		cfb.collect(entry, false);
 
-		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.CHR_LOC_S);
-		Integer actualValue = cfb.getFieldValue(EntryField.CHR_LOC_S, Integer.class);
+		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.CHR_LOC_S);
+		Integer actualValue = cfb.getFieldValue(EntrySolrField.CHR_LOC_S, Integer.class);
 
 		assertEquals(expectedValue, actualValue);
 
@@ -141,9 +141,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	private void testGeneBand(Entry entry) {
 		
-		EntryField field = EntryField.GENE_BAND;
+		EntrySolrField field = EntrySolrField.GENE_BAND;
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		cfb.collect(entry, false);
 		
 		Set<String> actualSet = new TreeSet<>();

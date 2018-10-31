@@ -6,8 +6,8 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +20,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Service
-public class ExpressionFieldBuilder extends EntryFieldBuilder {
+public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 
-	protected Logger logger = Logger.getLogger(ExpressionFieldBuilder.class);
+	protected Logger logger = Logger.getLogger(ExpressionSolrFieldCollector.class);
 
 	@Autowired
 	private TerminologyService terminologyService;
@@ -71,15 +71,15 @@ public class ExpressionFieldBuilder extends EntryFieldBuilder {
 			}
 		}
 		for (String cv : cv_tissues_final) {
-			addEntryFieldValue(EntryField.EXPRESSION, cv.trim());
+			addEntrySolrFieldValue(EntrySolrField.EXPRESSION, cv.trim());
 		}
 
 	}
 
 
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.EXPRESSION);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.EXPRESSION);
 	}
 	
 }

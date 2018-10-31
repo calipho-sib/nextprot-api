@@ -9,9 +9,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.CvField;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.solr.index.PubField;
+import org.nextprot.api.solr.index.CvSolrField;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.index.PublicationSolrField;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,19 +53,19 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 		return result.get(0); 
 	}
 	
-	protected Object getValueForFieldInCurrentGoldSolrImplementation(String entryName, EntryField field) {
+	protected Object getValueForFieldInCurrentGoldSolrImplementation(String entryName, EntrySolrField field) {
 		return getValueForFieldInCurrentSolrImplementation(solrEntriesGold, entryName, field.getName());
 	}
 
-	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, EntryField field) {
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, EntrySolrField field) {
 		return getValueForFieldInCurrentSolrImplementation(solrEntries, entryName, field.getName());
 	}
 
-	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, PubField field) {
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, PublicationSolrField field) {
 		return getValueForFieldInCurrentSolrImplementation(solrPublications, entryName, field.getName());
 	}
 
-	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, CvField field) {
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, CvSolrField field) {
 		return getValueForFieldInCurrentSolrImplementation(solrCvs, entryName, field.getName());
 	}
 

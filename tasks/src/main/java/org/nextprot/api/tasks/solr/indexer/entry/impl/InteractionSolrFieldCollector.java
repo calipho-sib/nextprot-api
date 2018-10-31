@@ -6,8 +6,8 @@ import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Service
-public class InteractionFieldBuilder extends EntryFieldBuilder {
+public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -46,18 +46,18 @@ public class InteractionFieldBuilder extends EntryFieldBuilder {
 					else // Xeno interaction
 					  recName = "";
 					if(!gold || currinteraction.getQuality().equals("GOLD"))
-				      addEntryFieldValue(EntryField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
+				      addEntrySolrFieldValue(EntrySolrField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
 				}
 				else if(currinteraction.isSelfInteraction() == true)
 					if(!gold || currinteraction.getQuality().equals("GOLD"))
-					   addEntryFieldValue(EntryField.INTERACTIONS,"selfInteraction");
+					   addEntrySolrFieldValue(EntrySolrField.INTERACTIONS,"selfInteraction");
 			}
 		}
 		
 		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots)
 			if(currannot.getCategory().equals("subunit")) // Always GOLD
-				addEntryFieldValue(EntryField.INTERACTIONS, currannot.getDescription());
+				addEntrySolrFieldValue(EntrySolrField.INTERACTIONS, currannot.getDescription());
 
 
 		/*
@@ -84,8 +84,8 @@ public class InteractionFieldBuilder extends EntryFieldBuilder {
 	}
 	
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.INTERACTIONS);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.INTERACTIONS);
 	}
 	
 

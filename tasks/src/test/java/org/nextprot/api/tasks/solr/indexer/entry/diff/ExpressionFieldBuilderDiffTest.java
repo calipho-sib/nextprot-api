@@ -5,9 +5,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -42,16 +42,16 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 
 		System.out.println("Testing: " + entryName);
-		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
+		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
 		efb.collect(entry, false);
 		
-		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.EXPRESSION);
+		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.EXPRESSION);
 		Set<String> expectedExpression = null;
 		Set<String> exprSet = null;
 		if(explist != null)  {
 			//Get expectedExpression as a Set to remove redundancy
 			expectedExpression = new TreeSet<String>(explist);
-		    exprSet = new TreeSet<String>(efb.getFieldValue(EntryField.EXPRESSION, List.class));
+		    exprSet = new TreeSet<String>(efb.getFieldValue(EntrySolrField.EXPRESSION, List.class));
 		}
 		
 

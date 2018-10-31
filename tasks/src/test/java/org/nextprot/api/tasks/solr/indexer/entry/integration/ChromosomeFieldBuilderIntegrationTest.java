@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertTrue;
@@ -19,12 +19,12 @@ public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 	@Test
 	public void testChrLoc() {
 		
-		EntryField field = EntryField.CHR_LOC;
+		EntrySolrField field = EntrySolrField.CHR_LOC;
 		String entryName = "NX_Q06124";
 		
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withChromosomalLocations());
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		cfb.collect(entry, false);
 		String chrLocValue = cfb.getFieldValue(field, String.class);
 		

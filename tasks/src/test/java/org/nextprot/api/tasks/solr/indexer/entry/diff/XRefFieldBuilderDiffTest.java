@@ -4,10 +4,10 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionSolrFieldCollector;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefSolrFieldCollector;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,25 +35,25 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		int newcnt=0, comcnt=0, misscnt=0;
 		
 		System.out.println("Testing: " + entryName);
-		XrefFieldBuilder xfb = new XrefFieldBuilder();
+		XrefSolrFieldCollector xfb = new XrefSolrFieldCollector();
 		xfb.collect(entry, false);
 		
-		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ANTIBODY);
+		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ANTIBODY);
 		if(expectedABs != null) {
 		  Collections.sort(expectedABs);
-		  List<String> currentABs = xfb.getFieldValue(EntryField.ANTIBODY, List.class);
+		  List<String> currentABs = xfb.getFieldValue(EntrySolrField.ANTIBODY, List.class);
 		  if(currentABs != null) Collections.sort(currentABs);
 		    Assert.assertEquals(expectedABs, currentABs);
 		}
 		
-		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ENSEMBL);
+		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ENSEMBL);
 		if(expectedEnsembl != null) {
 			if(expectedEnsembl.size() > 1 || expectedEnsembl.get(0).startsWith("ENS")) // We don't want housemade ENSEMBL like NX_VG_7_129906380_2933 (NX_Q13166)
-		      Assert.assertEquals(xfb.getFieldValue(EntryField.ENSEMBL, List.class).size(), expectedEnsembl.size());
+		      Assert.assertEquals(xfb.getFieldValue(EntrySolrField.ENSEMBL, List.class).size(), expectedEnsembl.size());
 		}
 
-		Set<String> expectedxrefSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.XREFS));
-		Set<String> xrefSet = new TreeSet<String>(xfb.getFieldValue(EntryField.XREFS, List.class));
+		Set<String> expectedxrefSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.XREFS));
+		Set<String> xrefSet = new TreeSet<String>(xfb.getFieldValue(EntrySolrField.XREFS, List.class));
 		Set<String> acOnlySet = new TreeSet<String>();
 		Set<String> expectedacOnlySet = new TreeSet<String>();
 		for(String elem : expectedxrefSet)
@@ -88,13 +88,13 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		}
 		else  Assert.assertTrue(true);
 
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.INTERACTIONS);
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.INTERACTIONS);
 		if(expectedInteractions != null) {
 		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
 			Integer olditcnt = 0, newitcnt = 0;
-			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
+			InteractionSolrFieldCollector ifb = new InteractionSolrFieldCollector();
 			ifb.collect(entry, false);
-			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
+			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntrySolrField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;
 			// There may be one more interaction in the new index (the subunit annotation)

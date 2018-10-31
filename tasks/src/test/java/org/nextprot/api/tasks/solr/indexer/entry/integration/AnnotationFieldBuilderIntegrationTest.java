@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -22,10 +22,10 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 				"NX_P38398", "NX_P51587","NX_P16422", "NX_P40692", "NX_Q9UHC1", "NX_P43246", "NX_P52701", "NX_P54278"};
 		int bedAnnotCnt = 0;
 		
-		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		afb.collect(getEntry("NX_P35498"), false);
 
-		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
+		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations) {
 			if(annot.startsWith("SCN1A-")) {
 				bedAnnotCnt++;
@@ -36,9 +36,9 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		Assert.assertTrue(bedAnnotCnt >= 33);
 		
 		bedAnnotCnt = 0;
-		afb.reset();
+		afb.clear();
 		afb.collect(getEntry("NX_P16422"), false);
-		annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
+		annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations)
 			if(annot.startsWith("EPCAM-"))
 				bedAnnotCnt++;

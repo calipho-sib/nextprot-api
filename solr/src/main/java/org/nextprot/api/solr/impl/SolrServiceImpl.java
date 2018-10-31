@@ -19,15 +19,30 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.IndexConfiguration;
+import org.nextprot.api.solr.IndexParameter;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SearchResult.Facet;
 import org.nextprot.api.solr.SearchResult.Spellcheck;
+import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrConnectionFactory;
+import org.nextprot.api.solr.SolrCore;
+import org.nextprot.api.solr.SolrField;
+import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.SortConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Lazy
 @Service
@@ -50,7 +65,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-		SolrIndex index = query.getIndex();
+		SolrCore index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		
 		logSolrQuery("executeQuery",solrQuery);
@@ -58,7 +73,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public SearchResult executeCustomQuery(Query query, String[] fields) throws SearchQueryException {
-		SolrIndex index = query.getIndex();
+		SolrCore index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		solrQuery.setFields(fields);
 
@@ -67,7 +82,7 @@ public class SolrServiceImpl implements SolrService {
 
 	
 	public SearchResult executeIdQuery(Query query) throws SearchQueryException {
-		SolrIndex index = query.getIndex();
+		SolrCore index = query.getIndex();
 
 		if (index == null)
 			index = this.configuration.getIndexByName(query.getIndexName());
@@ -87,7 +102,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
-		SolrIndex index = query.getIndex();
+		SolrCore index = query.getIndex();
 
 		if (index == null)
 			index = this.configuration.getIndexByName(query.getIndexName());
@@ -167,11 +182,11 @@ public class SolrServiceImpl implements SolrService {
 			sortConfig = indexConfig.getDefaultSortConfiguration();
 
 		if (query.getOrder() != null) {
-			for (Pair<IndexField, ORDER> s : sortConfig.getSorting())
+			for (Pair<SolrField, ORDER> s : sortConfig.getSorting())
 				solrQuery.addSort(s.getFirst().getName(), query.getOrder());
 
 		} else {
-			for (Pair<IndexField, ORDER> s : sortConfig.getSorting())
+			for (Pair<SolrField, ORDER> s : sortConfig.getSorting())
 				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
 		}
 
@@ -193,7 +208,7 @@ public class SolrServiceImpl implements SolrService {
 	 * @param solrQuery
 	 * @return
 	 */
-	private SearchResult executeSolrQuery(SolrIndex index, SolrQuery solrQuery) {
+	private SearchResult executeSolrQuery(SolrCore index, SolrQuery solrQuery) {
 		SearchResult result = new SearchResult();
 		SolrServer server = this.connFactory.getServer(index.getName());
 
@@ -337,7 +352,7 @@ public class SolrServiceImpl implements SolrService {
 
 		String actualIndexName = indexName.equals("entry") && quality != null && quality.equalsIgnoreCase("gold") ? "gold-entry" : indexName;
 
-		SolrIndex index = this.configuration.getIndexByName(actualIndexName);
+		SolrCore index = this.configuration.getIndexByName(actualIndexName);
 
 		Query q = new Query(index).addQuery(queryString);
 		q.setConfiguration(configuration);

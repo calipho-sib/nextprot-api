@@ -4,8 +4,8 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class NamesFieldBuilder extends EntryFieldBuilder {
+public class NamesSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Override
 	public void collect(Entry entry, boolean gold) {
@@ -30,11 +30,11 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 				if(paltnames != null )
 				for (EntityName paltfullname : paltnames) {
 					if(!paltfullname.getType().equals("enzyme name")) // Enzymes are delt with elsewhere
-						addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, paltfullname.getName());
+						addEntrySolrFieldValue(EntrySolrField.ALTERNATIVE_NAMES, paltfullname.getName());
 				    List <EntityName> paltshortnames = paltfullname.getSynonyms();
 				    if(paltshortnames != null )
 				      for (EntityName paltshortname : paltshortnames) {
-				        if(!paltshortname.getType().equals("enzyme name")) addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, paltshortname.getName());
+				        if(!paltshortname.getType().equals("enzyme name")) addEntrySolrFieldValue(EntrySolrField.ALTERNATIVE_NAMES, paltshortname.getName());
 				    }
 				}
 			}
@@ -43,25 +43,25 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 		if(altnames != null )
 			for (EntityName altname : altnames) {
 				//System.err.println(altname.getName());
-				addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, altname.getName());
+				addEntrySolrFieldValue(EntrySolrField.ALTERNATIVE_NAMES, altname.getName());
 				String nametype = altname.getType();
 		    	if(nametype.equals("CD antigen"))  
-				  addEntryFieldValue(EntryField.CD_ANTIGEN, altname.getName());
+				  addEntrySolrFieldValue(EntrySolrField.CD_ANTIGEN, altname.getName());
 		    	else if(nametype.equals("International Nonproprietary Names"))  
-				  addEntryFieldValue(EntryField.INTERNATIONAL_NAME, altname.getName());
+				  addEntrySolrFieldValue(EntrySolrField.INTERNATIONAL_NAME, altname.getName());
 			}
 		
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
 		if(altnames != null )
 			for (EntityName altname : altnames) {
-				addEntryFieldValue(EntryField.REGION_NAME, altname.getName()); // region_name should be renamed activity_name
+				addEntrySolrFieldValue(EntrySolrField.REGION_NAME, altname.getName()); // region_name should be renamed activity_name
 				List <EntityName> paltnames = altname.getSynonyms();
 				if(paltnames != null )
 				 for (EntityName ecname : paltnames) {
-				    addEntryFieldValue(EntryField.REGION_NAME, ecname.getName());
+				    addEntrySolrFieldValue(EntrySolrField.REGION_NAME, ecname.getName());
 				    List <EntityName> shortnames = ecname.getSynonyms();
 				    if(shortnames != null ){
-				    	for (EntityName xname : shortnames)	addEntryFieldValue(EntryField.REGION_NAME, xname.getName());
+				    	for (EntityName xname : shortnames)	addEntrySolrFieldValue(EntrySolrField.REGION_NAME, xname.getName());
 				    }
 				} 
 			}
@@ -77,16 +77,16 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 				if(genesynonames != null)
 					for (EntityName genesynoname : genesynonames) {
 						if(!genesynoname.getType().equals("open reading frame"))
-							addEntryFieldValue(EntryField.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
+							addEntrySolrFieldValue(EntrySolrField.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
 					}
 				}			
-			addEntryFieldValue(EntryField.RECOMMENDED_GENE_NAMES, allgenenames);
-			addEntryFieldValue(EntryField.RECOMMENDED_GENE_NAMES_S, allgenenames);
+			addEntrySolrFieldValue(EntrySolrField.RECOMMENDED_GENE_NAMES, allgenenames);
+			addEntrySolrFieldValue(EntrySolrField.RECOMMENDED_GENE_NAMES_S, allgenenames);
 			
 			List <String> orfnames = getORFNames(ovv);
 			if(orfnames != null)
 				for( String orfname : orfnames)
-					addEntryFieldValue(EntryField.ORF_NAMES, orfname);
+					addEntrySolrFieldValue(EntrySolrField.ORF_NAMES, orfname);
 			
 		}
 		//else System.err.println("no gene names for: " + entry.getUniqueName());
@@ -99,8 +99,8 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 		}
 
 		if (allfamilies != null) {
-			addEntryFieldValue(EntryField.FAMILY_NAMES, allfamilies);
-			addEntryFieldValue(EntryField.FAMILY_NAMES_S, allfamilies);
+			addEntrySolrFieldValue(EntrySolrField.FAMILY_NAMES, allfamilies);
+			addEntrySolrFieldValue(EntrySolrField.FAMILY_NAMES_S, allfamilies);
 		}
 	}
 	
@@ -120,8 +120,8 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 	}
 
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.INTERNATIONAL_NAME, EntryField.CD_ANTIGEN, EntryField.ORF_NAMES, EntryField.FAMILY_NAMES, EntryField.FAMILY_NAMES_S, EntryField.ALTERNATIVE_GENE_NAMES, EntryField.RECOMMENDED_GENE_NAMES, EntryField.RECOMMENDED_GENE_NAMES_S, EntryField.REGION_NAME, EntryField.ALTERNATIVE_NAMES);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.INTERNATIONAL_NAME, EntrySolrField.CD_ANTIGEN, EntrySolrField.ORF_NAMES, EntrySolrField.FAMILY_NAMES, EntrySolrField.FAMILY_NAMES_S, EntrySolrField.ALTERNATIVE_GENE_NAMES, EntrySolrField.RECOMMENDED_GENE_NAMES, EntrySolrField.RECOMMENDED_GENE_NAMES_S, EntrySolrField.REGION_NAME, EntrySolrField.ALTERNATIVE_NAMES);
 	}
 
 }

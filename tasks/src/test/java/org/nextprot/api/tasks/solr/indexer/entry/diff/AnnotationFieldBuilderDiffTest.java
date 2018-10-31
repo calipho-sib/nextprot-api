@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -44,10 +44,10 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	public void testFunctionalDesc(Entry entry) {
 
-		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		afb.collect(entry, false);
-		List<String> functionalDescriptions = afb.getFieldValue(EntryField.FUNCTION_DESC, List.class);
-		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.FUNCTION_DESC);
+		List<String> functionalDescriptions = afb.getFieldValue(EntrySolrField.FUNCTION_DESC, List.class);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.FUNCTION_DESC);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
 			//System.err.println("exp: " + expectedValues + "\nact: " + functionalDescriptions);
@@ -64,11 +64,11 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	public void testAnnotations(Entry entry) {
 
-		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		afb.collect(entry, false);
 
-		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.ANNOTATIONS);
+		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.ANNOTATIONS);
 		List<String> expectedValues = new ArrayList<String>();
 
 		for (String s : expectedRawValues) {

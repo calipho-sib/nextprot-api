@@ -3,9 +3,9 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.IdentifierFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.IdentifierSolrFieldCollector;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,28 +30,28 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 
 		System.out.println("Testing: " + entryName);
-		IdentifierFieldBuilder ifb = new IdentifierFieldBuilder();
+		IdentifierSolrFieldCollector ifb = new IdentifierSolrFieldCollector();
 		ifb.collect(entry, false);
 		
-		List<String> expectedACs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ALTERNATIVE_ACS);
+		List<String> expectedACs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ALTERNATIVE_ACS);
 		if(expectedACs != null) {
 		  Collections.sort(expectedACs);
-		  List<String> secundaryACs = ifb.getFieldValue(EntryField.ALTERNATIVE_ACS, List.class);
+		  List<String> secundaryACs = ifb.getFieldValue(EntrySolrField.ALTERNATIVE_ACS, List.class);
 		  Collections.sort(secundaryACs);
 		  Assert.assertEquals(secundaryACs, expectedACs);
 		}
 		
-		List<String> expectedCloneNames = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.CLONE_NAME);
+		List<String> expectedCloneNames = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CLONE_NAME);
 		if(expectedCloneNames != null)
-		  Assert.assertEquals(ifb.getFieldValue(EntryField.CLONE_NAME, List.class).size(), expectedCloneNames.size());
+		  Assert.assertEquals(ifb.getFieldValue(EntrySolrField.CLONE_NAME, List.class).size(), expectedCloneNames.size());
 		
-		List<String> expectedMicroarrays = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.MICROARRAY_PROBE);
+		List<String> expectedMicroarrays = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.MICROARRAY_PROBE);
 		if(expectedMicroarrays != null)
-		  Assert.assertEquals(ifb.getFieldValue(EntryField.MICROARRAY_PROBE, List.class).size(), expectedMicroarrays.size());
+		  Assert.assertEquals(ifb.getFieldValue(EntrySolrField.MICROARRAY_PROBE, List.class).size(), expectedMicroarrays.size());
 		
 		// There is only one UNIPROT_NAME per entry, it shouldn't be a list/multifield
-		List<String> expectedUniProtName = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.UNIPROT_NAME);
-		Assert.assertEquals(ifb.getFieldValue(EntryField.UNIPROT_NAME, List.class), expectedUniProtName);
+		List<String> expectedUniProtName = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.UNIPROT_NAME);
+		Assert.assertEquals(ifb.getFieldValue(EntrySolrField.UNIPROT_NAME, List.class), expectedUniProtName);
 	}
 	
 }

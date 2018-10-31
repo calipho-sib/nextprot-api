@@ -3,8 +3,8 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import com.google.common.base.Joiner;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Service
-public class ChromosomeFieldBuilder extends EntryFieldBuilder {
+public class ChromosomeSolrFieldCollector extends EntrySolrFieldCollector {
 
 
 	@Override
@@ -44,15 +44,15 @@ public class ChromosomeFieldBuilder extends EntryFieldBuilder {
 		String gene_band = Joiner.on(" ").skipNulls().join(gbset).trim();
 		String chr_loc = Joiner.on(" ").skipNulls().join(clset).trim();
 		Integer chr_loc_s = sortChr(chr_loc);
-		addEntryFieldValue(EntryField.GENE_BAND, gene_band);
-		addEntryFieldValue(EntryField.CHR_LOC, chr_loc);
-		addEntryFieldValue(EntryField.CHR_LOC_S, chr_loc_s);
+		addEntrySolrFieldValue(EntrySolrField.GENE_BAND, gene_band);
+		addEntrySolrFieldValue(EntrySolrField.CHR_LOC, chr_loc);
+		addEntrySolrFieldValue(EntrySolrField.CHR_LOC_S, chr_loc_s);
 	}
 
 
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.CHR_LOC, EntryField.CHR_LOC_S, EntryField.GENE_BAND);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.CHR_LOC, EntrySolrField.CHR_LOC_S, EntrySolrField.GENE_BAND);
 	}
 
 	// Allows to sort results based on chromosomal location

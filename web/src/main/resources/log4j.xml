@@ -89,11 +89,11 @@
 		<level value="DEBUG" />
 	</logger>
 
-	<logger name="org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsFieldBuilder">
+	<logger name="org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsSolrFieldCollector">
 		<level value="WARN" />
 	</logger>
 	
-	<logger name="org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder">
+	<logger name="org.nextprot.api.tasks.solr.indexer.entry.impl.CVSolrFieldCollector">
 		<level value="DEBUG" />
 	</logger>
 

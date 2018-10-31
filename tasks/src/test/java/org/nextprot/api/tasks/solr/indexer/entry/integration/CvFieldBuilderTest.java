@@ -5,9 +5,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.CVSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -27,11 +27,11 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 
 		String entryName = "NX_Q9H207";
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("variant"));
-		CVFieldBuilder cvfb = new CVFieldBuilder();
+		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
 
 		cvfb.collect(entry, false);
-		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
-        List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
+		List<String> cvAvs = cvfb.getFieldValue(EntrySolrField.CV_ACS, List.class);
+        List<String> cvNames = cvfb.getFieldValue(EntrySolrField.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("ECO:0000219"));
 		//The text should not be indexed
@@ -46,11 +46,11 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		String entryName = "NX_Q9BV57";
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
 
-		CVFieldBuilder cvfb = new CVFieldBuilder();
+		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
 
 		cvfb.collect(entry, false);
-		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
-		List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
+		List<String> cvAvs = cvfb.getFieldValue(EntrySolrField.CV_ACS, List.class);
+		List<String> cvNames = cvfb.getFieldValue(EntrySolrField.CV_NAMES, List.class);
 
 		assertTrue(cvAvs.contains("SL-9910"));
 		//The text should not be indexed
@@ -67,13 +67,13 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		String entryName = "NX_P12821";
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
 
-		CVFieldBuilder cvfb = new CVFieldBuilder();
+		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
 		cvfb.collect(entry, false);
 
-		String enzymes = cvfb.getFieldValue(EntryField.EC_NAME, String.class);
+		String enzymes = cvfb.getFieldValue(EntrySolrField.EC_NAME, String.class);
 		assertTrue(enzymes.contains("EC 3.4.15.1"));
 
-		List<String> names = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
+		List<String> names = cvfb.getFieldValue(EntrySolrField.CV_NAMES, List.class);
 		assertTrue(names.contains("Peptidase M2 family")); //family names
 
 	}
@@ -86,7 +86,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		String entryName = "NX_P78536";
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().withAnnotations());
 
-		CVFieldBuilder cvfb = new CVFieldBuilder();
+		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
 		cvfb.collect(entry, false);
 
 	}

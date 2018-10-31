@@ -6,12 +6,12 @@ import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.CVFieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationSolrFieldCollector;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.CVSolrFieldCollector;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionSolrFieldCollector;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -49,28 +49,28 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 		
 		// Variants
-		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		afb.collect(entry, true);
 		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.ANNOTATIONS);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.ANNOTATIONS);
 		for(String rawAnnot : expectedRawValues)
 			if(rawAnnot.contains(">sequence variant<"))
 				oldgoldvarcnt++;
-		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
+		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
 		for (String s : annotations)
 			if(s.startsWith("Variant"))
 				newgoldvarcnt++;
 		Assert.assertEquals(oldgoldvarcnt, newgoldvarcnt);
 
 		// Expression
-		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
+		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
 		efb.collect(entry, true);
-		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.EXPRESSION);
+		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.EXPRESSION);
 		Set<String> expectedCVSet = new TreeSet<String>();
 		Set<String> expressionCVSet = new TreeSet<String>();
 		Set<String> exprSet = null;
 		if(explist != null) {
-		  exprSet = new TreeSet<String>(efb.getFieldValue(EntryField.EXPRESSION, List.class));
+		  exprSet = new TreeSet<String>(efb.getFieldValue(EntrySolrField.EXPRESSION, List.class));
 		  // Consider only tissue CVs
 		  for (String s : explist) {
 			if(s.startsWith("TS-"))
@@ -94,12 +94,12 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expectedCVSet.size(), expressionCVSet.size());
 		
 		// Interactions
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.INTERACTIONS);
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.INTERACTIONS);
 		if(expectedInteractions != null) {
 			Integer oldcnt = 0, newcnt = 0;
-			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
+			InteractionSolrFieldCollector ifb = new InteractionSolrFieldCollector();
 			ifb.collect(entry, true);
-			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
+			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntrySolrField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) oldcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newcnt++;
 			// There may be one more interaction in the new index (the subunit annotation)
@@ -107,10 +107,10 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		}
 		
         // CVs
-		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.CV_ACS));
-		CVFieldBuilder cfb = new CVFieldBuilder();
+		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.CV_ACS));
+		CVSolrFieldCollector cfb = new CVSolrFieldCollector();
 		cfb.collect(entry, true);
-		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntryField.CV_ACS, List.class));
+		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_ACS, List.class));
         Assert.assertTrue(expectedCVs.size() == CvSet.size());
 	}
 

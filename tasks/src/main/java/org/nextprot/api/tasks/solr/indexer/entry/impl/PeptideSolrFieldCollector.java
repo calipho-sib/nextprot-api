@@ -4,8 +4,8 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @Service
-public class PeptideFieldBuilder extends EntryFieldBuilder {
+public class PeptideSolrFieldCollector extends EntrySolrFieldCollector {
 	
 	@Override
 	public void collect(Entry entry, boolean gold) {
@@ -25,8 +25,8 @@ public class PeptideFieldBuilder extends EntryFieldBuilder {
 				for (AnnotationEvidence currEv : evList) {
 					String db = currEv.getResourceDb();
 					if(!db.equals("neXtProtSubmission")) {
-					   if(db.equals(XrefDatabase.PUB_MED.getName())) addEntryFieldValue(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession());
-					   else addEntryFieldValue(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
+					   if(db.equals(XrefDatabase.PUB_MED.getName())) addEntrySolrFieldValue(EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession());
+					   else addEntrySolrFieldValue(EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
 					}
 				}
 			}
@@ -34,8 +34,8 @@ public class PeptideFieldBuilder extends EntryFieldBuilder {
 	}
 	
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.PEPTIDE);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.PEPTIDE);
 	}
 	
 }

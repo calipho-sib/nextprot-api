@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.FilterAndPropertiesFieldsBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.FilterAndPropertiesFieldsCollectorSolr;
 
 public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 
@@ -27,24 +27,24 @@ public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFilterAndProperties(Entry entry) {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
-		FilterAndPropertiesFieldsBuilder ffb = new FilterAndPropertiesFieldsBuilder();
+		FilterAndPropertiesFieldsCollectorSolr ffb = new FilterAndPropertiesFieldsCollectorSolr();
 		ffb.collect(entry, false);
 		
 		int expectedCount = 0;
 		
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ISOFORM_NUM);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.ISOFORM_NUM, Integer.class));
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ISOFORM_NUM);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntrySolrField.ISOFORM_NUM, Integer.class));
 		
-		if(getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PTM_NUM) != null) {
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PTM_NUM);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.PTM_NUM, Integer.class));
+		if(getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PTM_NUM) != null) {
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PTM_NUM);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntrySolrField.PTM_NUM, Integer.class));
 		}
 
-		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.AA_LENGTH);
-		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntryField.AA_LENGTH, Integer.class));
+		expectedCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.AA_LENGTH);
+		Assert.assertEquals(expectedCount, (int) ffb.getFieldValue(EntrySolrField.AA_LENGTH, Integer.class));
 		
-		String expectedFilters = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.FILTERS);
-		Assert.assertEquals(expectedFilters, ffb.getFieldValue(EntryField.FILTERS, String.class));
+		String expectedFilters = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.FILTERS);
+		Assert.assertEquals(expectedFilters, ffb.getFieldValue(EntrySolrField.FILTERS, String.class));
 }
 
 }

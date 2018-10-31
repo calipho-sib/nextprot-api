@@ -3,9 +3,9 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntryField;
+import org.nextprot.api.solr.index.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.OverviewFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.OverviewSolrFieldCollector;
 
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
@@ -25,14 +25,14 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 	public void testOverview(Entry entry) {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
-		OverviewFieldBuilder ofb = new OverviewFieldBuilder();
+		OverviewSolrFieldCollector ofb = new OverviewSolrFieldCollector();
 		ofb.collect(entry, false);
 		
-		String expectedRecname = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.RECOMMENDED_NAME);
-		Assert.assertEquals(ofb.getFieldValue(EntryField.RECOMMENDED_NAME, String.class), expectedRecname);
+		String expectedRecname = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.RECOMMENDED_NAME);
+		Assert.assertEquals(ofb.getFieldValue(EntrySolrField.RECOMMENDED_NAME, String.class), expectedRecname);
 		
-		String expectedPE = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PROTEIN_EXISTENCE);
-		Assert.assertEquals(ofb.getFieldValue(EntryField.PROTEIN_EXISTENCE, String.class), expectedPE.replace(" ", "_"));
+		String expectedPE = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PROTEIN_EXISTENCE);
+		Assert.assertEquals(ofb.getFieldValue(EntrySolrField.PROTEIN_EXISTENCE, String.class), expectedPE.replace(" ", "_"));
 	}
 
 }

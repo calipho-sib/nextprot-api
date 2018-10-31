@@ -7,8 +7,8 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.SortedSet;
 
 @Service
-public class PublicationsFieldBuilder extends EntryFieldBuilder {
+public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 	
-	protected Logger logger = Logger.getLogger(PublicationsFieldBuilder.class);
+	protected Logger logger = Logger.getLogger(PublicationsSolrFieldCollector.class);
 
 	@Autowired
 	private PublicationService publicationService;
@@ -50,31 +50,31 @@ public class PublicationsFieldBuilder extends EntryFieldBuilder {
 				JournalResourceLocator journalLocator = currpubli.getJournalResourceLocator();
 
 				if (journalLocator.hasJournalId())
-					addEntryFieldValue(EntryField.PUBLICATIONS, journalLocator.getNLMid());
+					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, journalLocator.getNLMid());
 
 				Jinfo = currpubli.getJournalResourceLocator().getName();
 				if (journalLocator.hasJournalId())
 					Jinfo += " - " + currpubli.getJournalResourceLocator().getMedAbbrev(); // Index name and abbrev in the same token
 
-				addEntryFieldValue(EntryField.PUBLICATIONS,Jinfo);
+				addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS,Jinfo);
 			}
 			String title = currpubli.getTitle();
-			if(title.length() > 0) addEntryFieldValue(EntryField.PUBLICATIONS,title);
+			if(title.length() > 0) addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
-					addEntryFieldValue(EntryField.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
+					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
 				else if(!forename.isEmpty() ) // trim not to add spaces when forename/initials are empty
-					addEntryFieldValue(EntryField.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
+					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
 				else
-					addEntryFieldValue(EntryField.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
+					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 			}
 		}
 		
-		addEntryFieldValue(EntryField.PUBLI_COMPUTED_COUNT, publi_computed_count);
-		addEntryFieldValue(EntryField.PUBLI_CURATED_COUNT, publi_curated_count);
-		addEntryFieldValue(EntryField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
+		addEntrySolrFieldValue(EntrySolrField.PUBLI_COMPUTED_COUNT, publi_computed_count);
+		addEntrySolrFieldValue(EntrySolrField.PUBLI_CURATED_COUNT, publi_curated_count);
+		addEntrySolrFieldValue(EntrySolrField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
 		int pe_level = entry.getOverview().getProteinExistences().getProteinExistence().getLevel();
@@ -86,14 +86,14 @@ public class PublicationsFieldBuilder extends EntryFieldBuilder {
 		else if(pe_level == 5) info_score=5;
 		float coeff = 100*publi_curated_count + 25*publi_computed_count + 10*publi_large_scale_count;
 		info_score = coeff * info_score / 10;
-		addEntryFieldValue(EntryField.INFORMATIONAL_SCORE, info_score);
+		addEntrySolrFieldValue(EntrySolrField.INFORMATIONAL_SCORE, info_score);
 
 	}
 
 
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.PUBLICATIONS, EntryField.PUBLI_COMPUTED_COUNT, EntryField.PUBLI_CURATED_COUNT, EntryField.PUBLI_LARGE_SCALE_COUNT, EntryField.INFORMATIONAL_SCORE);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.PUBLICATIONS, EntrySolrField.PUBLI_COMPUTED_COUNT, EntrySolrField.PUBLI_CURATED_COUNT, EntrySolrField.PUBLI_LARGE_SCALE_COUNT, EntrySolrField.INFORMATIONAL_SCORE);
 	}
 
 }

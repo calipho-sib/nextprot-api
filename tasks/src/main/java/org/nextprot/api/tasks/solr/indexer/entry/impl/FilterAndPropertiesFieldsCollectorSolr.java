@@ -4,8 +4,8 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.service.EntryReportStatsService;
-import org.nextprot.api.solr.index.EntryField;
-import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
 
 
 @Service
-public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
+public class FilterAndPropertiesFieldsCollectorSolr extends EntrySolrFieldCollector {
 
 	@Autowired
 	private EntryReportStatsService entryReportStatsService;
@@ -26,15 +26,15 @@ public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
 
 		// Filters and entry properties
 		EntryProperties props = entry.getProperties();
-		addEntryFieldValue(EntryField.ISOFORM_NUM, ers.countIsoforms());
+		addEntrySolrFieldValue(EntrySolrField.ISOFORM_NUM, ers.countIsoforms());
 		int cnt;
 		cnt = ers.countPTMs();
 		if (cnt > 0) {
-			addEntryFieldValue(EntryField.PTM_NUM, cnt);
+			addEntrySolrFieldValue(EntrySolrField.PTM_NUM, cnt);
 		}
 		cnt = ers.countVariants();
 		if (cnt > 0) {
-			addEntryFieldValue(EntryField.VAR_NUM, cnt);
+			addEntrySolrFieldValue(EntrySolrField.VAR_NUM, cnt);
 		}
 		String filters = "";
 		if (props.getFilterstructure()) filters += "filterstructure ";
@@ -43,13 +43,13 @@ public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
 		if (ers.isMutagenesis()) filters += "filtermutagenesis ";
 		if (ers.isProteomics()) filters += "filterproteomics ";
 		if (filters.length() > 0) {
-			addEntryFieldValue(EntryField.FILTERS, filters.trim());
+			addEntrySolrFieldValue(EntrySolrField.FILTERS, filters.trim());
 		}
-		addEntryFieldValue(EntryField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
+		addEntrySolrFieldValue(EntrySolrField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
 	}
 
 	@Override
-	public Collection<EntryField> getSupportedFields() {
-		return Arrays.asList(EntryField.ISOFORM_NUM, EntryField.PTM_NUM, EntryField.VAR_NUM, EntryField.FILTERS, EntryField.AA_LENGTH);
+	public Collection<EntrySolrField> getCollectedFields() {
+		return Arrays.asList(EntrySolrField.ISOFORM_NUM, EntrySolrField.PTM_NUM, EntrySolrField.VAR_NUM, EntrySolrField.FILTERS, EntrySolrField.AA_LENGTH);
 	}
 }

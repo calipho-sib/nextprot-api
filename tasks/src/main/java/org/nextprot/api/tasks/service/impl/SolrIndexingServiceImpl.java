@@ -11,10 +11,10 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
-import org.nextprot.api.solr.index.CvIndex;
-import org.nextprot.api.solr.index.GoldAndSilverEntryIndex;
-import org.nextprot.api.solr.index.GoldOnlyEntryIndex;
-import org.nextprot.api.solr.index.PublicationIndex;
+import org.nextprot.api.solr.index.CvCore;
+import org.nextprot.api.solr.index.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.index.GoldOnlyEntryCore;
+import org.nextprot.api.solr.index.PublicationCore;
 import org.nextprot.api.tasks.service.SolrIndexingService;
 import org.nextprot.api.tasks.solr.indexer.BufferingSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTermDocumentFactory;
@@ -55,7 +55,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         long seconds = System.currentTimeMillis() / 1000;
         StringBuilder info = new StringBuilder();
 
-        String indexName = isGold ? GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
+        String indexName = isGold ? GoldOnlyEntryCore.NAME : GoldAndSilverEntryCore.NAME;
         logAndCollect(info, "adding entries to index " + indexName + " from chromosome " + chrName + "...STARTING at " + new Date());
 
         String serverUrl = getServerUrl(indexName);
@@ -92,7 +92,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         long seconds = System.currentTimeMillis() / 1000;
         StringBuilder info = new StringBuilder();
 
-        String indexName = isGold ? GoldOnlyEntryIndex.NAME : GoldAndSilverEntryIndex.NAME;
+        String indexName = isGold ? GoldOnlyEntryCore.NAME : GoldAndSilverEntryCore.NAME;
         logAndCollect(info, "initializing index " + indexName + "...STARTING at " + new Date());
 
         logAndCollect(info, "clearing index " + indexName);
@@ -119,7 +119,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "terms indexing...STARTING at " + new Date());
 
-        String serverUrl = getServerUrl(CvIndex.NAME);
+        String serverUrl = getServerUrl(CvCore.NAME);
         logAndCollect(info, "Solr server: " + serverUrl);
 
         logAndCollect(info, "clearing term index");
@@ -154,7 +154,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "publications indexing...STARTING at " + new Date());
 
-        String serverUrl = getServerUrl(PublicationIndex.NAME);
+        String serverUrl = getServerUrl(PublicationCore.NAME);
         logAndCollect(info, "Solr server: " + serverUrl);
 
         logAndCollect(info, "clearing publication index");
