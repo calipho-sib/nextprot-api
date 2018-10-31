@@ -8,17 +8,17 @@ import org.apache.solr.common.SolrInputDocument;
 import java.io.IOException;
 import java.util.Collection;
 
-public class SimpleHttpSolrServer implements SimpleSolrServer {
+public class HttpSolrIndexer implements SolrIndexer {
 
     private final HttpSolrServer solrServer;
 
-    public SimpleHttpSolrServer(String url) {
+    public HttpSolrIndexer(String url) {
 
         solrServer = new HttpSolrServer(url);
     }
 
     @Override
-    public final UpdateResponse add(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
+    public final UpdateResponse performIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
         return solrServer.add(docs);
     }
 
@@ -28,7 +28,7 @@ public class SimpleHttpSolrServer implements SimpleSolrServer {
     }
 
     @Override
-    public final UpdateResponse commit() throws SolrServerException, IOException {
+    public final UpdateResponse execute() throws SolrServerException, IOException {
     	solrServer.commit();
         return solrServer.optimize();
     }
