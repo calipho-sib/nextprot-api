@@ -8,7 +8,6 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanDiscoveryService;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParseException;
 
@@ -23,17 +22,13 @@ abstract class SequenceFeatureBase implements SequenceFeature {
     private final AnnotationCategory type;
     private final SequenceVariation variation;
     private final Isoform isoform;
-    private final BeanDiscoveryService beanDiscoveryService;
     private final boolean isIsoformSpecific;
 
-    SequenceFeatureBase(String feature, AnnotationCategory type, SequenceVariationParser parser, BeanDiscoveryService beanDiscoveryService) throws ParseException, SequenceVariationBuildException {
+    SequenceFeatureBase(String feature, AnnotationCategory type, SequenceVariationParser parser) throws ParseException, SequenceVariationBuildException {
 
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(parser);
-        Preconditions.checkNotNull(beanDiscoveryService);
-
-        this.beanDiscoveryService = beanDiscoveryService;
 
         this.type = type;
         this.feature = feature.trim();
@@ -106,10 +101,6 @@ abstract class SequenceFeatureBase implements SequenceFeature {
     public String asString() {
 
         return feature;
-    }
-
-    BeanDiscoveryService getBeanDiscoveryService() {
-        return beanDiscoveryService;
     }
 
     /**

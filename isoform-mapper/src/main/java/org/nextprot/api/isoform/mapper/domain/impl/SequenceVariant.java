@@ -5,10 +5,10 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.service.BeanDiscoveryService;
 import org.nextprot.api.core.service.EntityNameService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
@@ -37,19 +37,19 @@ public class SequenceVariant extends SequenceFeatureBase {
     private String geneName;
     private String entryAccession;
 
-    private SequenceVariant(String feature, AnnotationCategory type, BeanDiscoveryService beanDiscoveryService) throws ParseException, SequenceVariationBuildException {
+    private SequenceVariant(String feature, AnnotationCategory type) throws ParseException, SequenceVariationBuildException {
 
-        super(feature, type, HGVS_FORMAT, beanDiscoveryService);
+        super(feature, type, HGVS_FORMAT);
     }
 
-    public static SequenceVariant variant(String feature, BeanDiscoveryService beanDiscoveryService) throws ParseException, SequenceVariationBuildException {
+    public static SequenceVariant variant(String feature) throws ParseException, SequenceVariationBuildException {
 
-        return new SequenceVariant(feature, AnnotationCategory.VARIANT, beanDiscoveryService);
+        return new SequenceVariant(feature, AnnotationCategory.VARIANT);
     }
 
-    public static SequenceVariant mutagenesis(String feature, BeanDiscoveryService beanDiscoveryService) throws ParseException, SequenceVariationBuildException {
+    public static SequenceVariant mutagenesis(String feature) throws ParseException, SequenceVariationBuildException {
 
-        return new SequenceVariant(feature, AnnotationCategory.MUTAGENESIS, beanDiscoveryService);
+        return new SequenceVariant(feature, AnnotationCategory.MUTAGENESIS);
     }
 
     @Override
@@ -69,7 +69,8 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     private String findEntryAccessionFromGeneName() throws UnknownGeneNameException {
 
-        Set<String> entries = getBeanDiscoveryService().getBean(MasterIdentifierService.class).findEntryAccessionByGeneName(geneName, false);
+        Set<String> entries = SpringApplicationContext.getBeanOfType(MasterIdentifierService.class)
+		        .findEntryAccessionByGeneName(geneName, false);
 
         if (entries == null || entries.isEmpty()) {
             throw new UnknownGeneNameException(geneName);
@@ -182,11 +183,10 @@ public class SequenceVariant extends SequenceFeatureBase {
 
         Optional<String> isoSpecificName = extractExplicitIsoformName(sequenceIdPart);
 
-        BeanDiscoveryService beanDiscoveryService = getBeanDiscoveryService();
-        IsoformService isoformService = beanDiscoveryService.getBean(IsoformService.class);
+        IsoformService isoformService = SpringApplicationContext.getBeanOfType(IsoformService.class);
 
         // 2. get isoform accession from iso name and entry
-        Isoform isoform = (isoSpecificName.isPresent()) ? isoformService.findIsoformByName(entryAccession, isoSpecificName.get()) : IsoformUtils.getCanonicalIsoform(beanDiscoveryService.getBean(EntryBuilderService.class)
+        Isoform isoform = (isoSpecificName.isPresent()) ? isoformService.findIsoformByName(entryAccession, isoSpecificName.get()) : IsoformUtils.getCanonicalIsoform(SpringApplicationContext.getBeanOfType(EntryBuilderService.class)
                 .build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()));
 
         if (isoform == null) {
@@ -204,7 +204,7 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
 
-        List<EntityName> geneNames = getBeanDiscoveryService().getBean(EntityNameService.class)
+        List<EntityName> geneNames = SpringApplicationContext.getBeanOfType(EntityNameService.class)
                 .findNamesByEntityNameClass(query.getAccession(), Overview.EntityNameClass.GENE_NAMES);
 
         if (geneNames.isEmpty()) {
