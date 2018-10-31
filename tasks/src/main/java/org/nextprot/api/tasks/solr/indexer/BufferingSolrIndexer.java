@@ -2,8 +2,8 @@ package org.nextprot.api.tasks.solr.indexer;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.tasks.solr.SimpleHttpSolrServer;
-import org.nextprot.api.tasks.solr.SimpleSolrServer;
+import org.nextprot.api.tasks.solr.HttpSolrIndexer;
+import org.nextprot.api.tasks.solr.SolrIndexer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,19 +13,19 @@ import java.util.stream.Collectors;
 /**
  * Add a certain amount of solr objects to internal buffer before starting to commit to the solr server
  */
-public class BufferingSolrServer {
+public class BufferingSolrIndexer {
 
 	private static final int BUFFER_SIZE = 150;
 
-	private final SimpleSolrServer solrServer;
-	private final List<SolrObject> buffer;
+	private final SolrIndexer solrServer;
+	private final List<SolrDocumentFactory> buffer;
 	private final int bufferSize;
 
-    public BufferingSolrServer(String solrServerUrl) {
-        this(new SimpleHttpSolrServer(solrServerUrl), BUFFER_SIZE);
+    public BufferingSolrIndexer(String solrServerUrl) {
+        this(new HttpSolrIndexer(solrServerUrl), BUFFER_SIZE);
     }
 
-	public BufferingSolrServer(SimpleSolrServer solrServer, int bufferSize) {
+	public BufferingSolrIndexer(SolrIndexer solrServer, int bufferSize) {
 
         this.solrServer = solrServer;
         this.bufferSize = bufferSize;
@@ -33,16 +33,16 @@ public class BufferingSolrServer {
 	}
 
 	/**
-	 * Put solr object into buffer - if buffer is full objects are flushed to solr server
-	 * @param solrObject object to be indexed by solr
+	 * Put factories that produce solr document into buffer - if buffer is full objects are flushed to solr server
+	 * @param solrDocument object to be indexed by solr
 	 */
-	public void pushSolrObject(SolrObject solrObject) {
+	public void pushSolrDocumentFactory(SolrDocumentFactory solrDocument) {
 
-		if (solrObject == null) {
+		if (solrDocument == null) {
 			throw new NextProtException("cannot create solr index from undefined object");
 		}
 
-		buffer.add(solrObject);
+		buffer.add(solrDocument);
 		if (buffer.size() % bufferSize == 0) {
 			flushSolrDocumentsToSolr();
 		}
@@ -58,7 +58,7 @@ public class BufferingSolrServer {
 		}
 
 		try {
-            solrServer.commit();
+            solrServer.execute();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -70,7 +70,7 @@ public class BufferingSolrServer {
 	public void clearIndexes() {
 		try {
 			solrServer.deleteIndexes();
-            solrServer.commit();
+            solrServer.execute();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -79,8 +79,8 @@ public class BufferingSolrServer {
     private void flushSolrDocumentsToSolr() {
 
         try {
-            solrServer.add(buffer.stream()
-                .map(so -> so.solrDocument())
+            solrServer.performIndexation(buffer.stream()
+                .map(so -> so.calcSolrInputDocument())
 	            .collect(Collectors.toList()));
 	        buffer.clear();
         } catch (SolrServerException | IOException e) {

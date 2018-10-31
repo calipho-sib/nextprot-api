@@ -12,9 +12,9 @@ public class HttpSolrIndexer implements SolrIndexer {
 
     private final HttpSolrServer solrServer;
 
-    public HttpSolrIndexer(String url) {
+    public HttpSolrIndexer(String solrServerUrl) {
 
-        solrServer = new HttpSolrServer(url);
+        solrServer = new HttpSolrServer(solrServerUrl);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.CvField;
-import org.nextprot.api.tasks.solr.indexer.SolrCvTerm;
+import org.nextprot.api.tasks.solr.indexer.SolrCvTermDocumentFactory;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,7 +55,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 		if(id == 154329) return;
 		System.out.println("Testing cv: " + Long.toString(id) + "=" + entry);
 
-		SolrInputDocument solrDoc = new SolrCvTerm(term).solrDocument();
+		SolrInputDocument solrDoc = new SolrCvTermDocumentFactory(term).calcSolrInputDocument();
 		
 		String expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvField.AC);
 		//System.err.println("expected ac: " + expected);

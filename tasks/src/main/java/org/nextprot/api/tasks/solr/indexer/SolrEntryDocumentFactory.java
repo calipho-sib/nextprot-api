@@ -14,19 +14,9 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 
     private final boolean isGold;
 
-    private SolrEntryDocumentFactory(Entry entry, boolean isGold) {
+	public SolrEntryDocumentFactory(Entry entry, boolean isGold) {
         super(entry);
         this.isGold = isGold;
-    }
-
-    public static SolrEntryDocumentFactory GoldOnly(Entry entry) {
-
-        return new SolrEntryDocumentFactory(entry, true);
-    }
-
-    public static SolrEntryDocumentFactory SilverAndGold(Entry entry) {
-
-        return new SolrEntryDocumentFactory(entry, false);
     }
 
 	@Override
