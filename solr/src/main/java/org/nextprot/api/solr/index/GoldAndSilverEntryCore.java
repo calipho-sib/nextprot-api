@@ -183,7 +183,7 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 		return plSearchConfig;
 	}
 
-	public Class<? extends SolrField> getFields() {
+	public Class<? extends SolrField> getSolrFieldClasses() {
 		return EntrySolrField.class;
 	}
 

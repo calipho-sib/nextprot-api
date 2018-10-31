@@ -123,7 +123,7 @@ public class PublicationCore extends CoreTemplate {
 		addConfiguration(autocompleteConfiguration);
 	}
 	
-	public Class<? extends SolrField> getFields() {
+	public Class<? extends SolrField> getSolrFieldClasses() {
 		return PublicationSolrField.class;
 	}
 	

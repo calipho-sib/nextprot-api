@@ -21,11 +21,6 @@ public class CvCore extends CoreTemplate {
 	}
 
 	@Override
-	public Class<? extends SolrField> getFields() {
-		return CvSolrField.class;
-	}
-
-	@Override
 	protected IndexConfiguration newDefaultConfiguration() {
 
 		IndexConfiguration defaultConfig = IndexConfiguration.SIMPLE();
