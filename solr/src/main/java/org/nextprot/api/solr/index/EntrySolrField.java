@@ -1,10 +1,10 @@
 package org.nextprot.api.solr.index;
 
-import org.nextprot.api.solr.IndexField;
+import org.nextprot.api.solr.SolrField;
 
 import java.util.List;
 
-public enum EntryField implements IndexField {
+public enum EntrySolrField implements SolrField {
     ID("id","id", String.class), // public name for id is necessary for executeIdQuery() otherwise the id: of the query string is escaped
     PROTEIN_EXISTENCE("protein_existence", String.class),
     PE_LEVEL("pe_level","pe", Integer.class),
@@ -59,17 +59,16 @@ public enum EntryField implements IndexField {
 
     private String fieldName;
     private String publicName;
-    private Class<?> clazz;
+    private Class<?> fieldType;
 
-    EntryField(String fieldName, Class<?> clazz) {
-        this.fieldName = fieldName;
-        this.clazz=clazz;
+    EntrySolrField(String fieldName, Class<?> fieldType) {
+        this(fieldName, null, fieldType);
     }
 
-    EntryField(String fieldName, String publicName, Class<?> clazz) {
+    EntrySolrField(String fieldName, String publicName, Class<?> fieldType) {
         this.fieldName = fieldName;
-        this.publicName=publicName;
-        this.clazz=clazz;
+        this.publicName = publicName;
+        this.fieldType = fieldType;
     }
 
     public String getName() {
@@ -85,9 +84,8 @@ public enum EntryField implements IndexField {
     public boolean hasPublicName() {
         return this.publicName!=null && this.publicName.length()>0;
     }
-    public Class<?> getClazz() {
-        return this.clazz;
+
+    public Class<?> getType() {
+        return fieldType;
     }
-
-
 }

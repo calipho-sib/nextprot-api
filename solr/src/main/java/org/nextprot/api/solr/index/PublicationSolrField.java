@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.index;
 
-import org.nextprot.api.solr.IndexField;
+import org.nextprot.api.solr.SolrField;
 
-public enum PubField implements IndexField {
+public enum PublicationSolrField implements SolrField {
     ID("id"),
     IDSP0("idsp0"),                   // searchable (text_split0)
     AC("ac"), 						  // PMIDs + DOIs
@@ -27,11 +27,11 @@ public enum PubField implements IndexField {
     private String name;
     private String publicName;
 
-    PubField(String name) {
+    PublicationSolrField(String name) {
         this.name = name;
     }
 
-    PubField(String name, String publicName) {
+    PublicationSolrField(String name, String publicName) {
         this.name = name;
         this.publicName = publicName;
     }

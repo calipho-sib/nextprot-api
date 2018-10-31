@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.index;
 
-import org.nextprot.api.solr.IndexField;
+import org.nextprot.api.solr.SolrField;
 
-public enum CvField implements IndexField {
+public enum CvSolrField implements SolrField {
     ID("id"),
     AC("ac"),
     NAME("name"),
@@ -17,7 +17,7 @@ public enum CvField implements IndexField {
 
     private String name;
 
-    CvField(String name) {
+    CvSolrField(String name) {
         this.name = name;
     }
 
