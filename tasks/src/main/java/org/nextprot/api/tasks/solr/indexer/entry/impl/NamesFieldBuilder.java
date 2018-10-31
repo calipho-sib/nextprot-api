@@ -17,25 +17,24 @@ import java.util.List;
 public class NamesFieldBuilder extends EntryFieldBuilder {
 
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean gold) {
 		
 		Overview ovv = entry.getOverview();
 		
 		//TODO Daniel repeated code in CvFieldBuilder
-		
-		List <EntityName> altnames = null;
-		altnames = ovv.getProteinNames();
+
+		List<EntityName> altnames = ovv.getProteinNames();
 		if(altnames != null )
 			for (EntityName altname : altnames) {
 				List <EntityName> paltnames = altname.getSynonyms();
 				if(paltnames != null )
 				for (EntityName paltfullname : paltnames) {
 					if(!paltfullname.getType().equals("enzyme name")) // Enzymes are delt with elsewhere
-						addField(EntryField.ALTERNATIVE_NAMES, paltfullname.getName());
+						addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, paltfullname.getName());
 				    List <EntityName> paltshortnames = paltfullname.getSynonyms();
 				    if(paltshortnames != null )
 				      for (EntityName paltshortname : paltshortnames) {
-				        if(!paltshortname.getType().equals("enzyme name")) addField(EntryField.ALTERNATIVE_NAMES, paltshortname.getName());
+				        if(!paltshortname.getType().equals("enzyme name")) addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, paltshortname.getName());
 				    }
 				}
 			}
@@ -44,25 +43,25 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 		if(altnames != null )
 			for (EntityName altname : altnames) {
 				//System.err.println(altname.getName());
-				addField(EntryField.ALTERNATIVE_NAMES, altname.getName());
+				addEntryFieldValue(EntryField.ALTERNATIVE_NAMES, altname.getName());
 				String nametype = altname.getType();
 		    	if(nametype.equals("CD antigen"))  
-				  addField(EntryField.CD_ANTIGEN, altname.getName());
+				  addEntryFieldValue(EntryField.CD_ANTIGEN, altname.getName());
 		    	else if(nametype.equals("International Nonproprietary Names"))  
-				  addField(EntryField.INTERNATIONAL_NAME, altname.getName());
+				  addEntryFieldValue(EntryField.INTERNATIONAL_NAME, altname.getName());
 			}
 		
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
 		if(altnames != null )
 			for (EntityName altname : altnames) {
-				addField(EntryField.REGION_NAME, altname.getName()); // region_name should be renamed activity_name
+				addEntryFieldValue(EntryField.REGION_NAME, altname.getName()); // region_name should be renamed activity_name
 				List <EntityName> paltnames = altname.getSynonyms();
 				if(paltnames != null )
 				 for (EntityName ecname : paltnames) {
-				    addField(EntryField.REGION_NAME, ecname.getName());
+				    addEntryFieldValue(EntryField.REGION_NAME, ecname.getName());
 				    List <EntityName> shortnames = ecname.getSynonyms();
 				    if(shortnames != null ){
-				    	for (EntityName xname : shortnames)	addField(EntryField.REGION_NAME, xname.getName());
+				    	for (EntityName xname : shortnames)	addEntryFieldValue(EntryField.REGION_NAME, xname.getName());
 				    }
 				} 
 			}
@@ -78,16 +77,16 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 				if(genesynonames != null)
 					for (EntityName genesynoname : genesynonames) {
 						if(!genesynoname.getType().equals("open reading frame"))
-							addField(EntryField.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
+							addEntryFieldValue(EntryField.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
 					}
 				}			
-			addField(EntryField.RECOMMENDED_GENE_NAMES, allgenenames);
-			addField(EntryField.RECOMMENDED_GENE_NAMES_S, allgenenames);
+			addEntryFieldValue(EntryField.RECOMMENDED_GENE_NAMES, allgenenames);
+			addEntryFieldValue(EntryField.RECOMMENDED_GENE_NAMES_S, allgenenames);
 			
 			List <String> orfnames = getORFNames(ovv);
 			if(orfnames != null)
 				for( String orfname : orfnames)
-					addField(EntryField.ORF_NAMES, orfname);
+					addEntryFieldValue(EntryField.ORF_NAMES, orfname);
 			
 		}
 		//else System.err.println("no gene names for: " + entry.getUniqueName());
@@ -100,8 +99,8 @@ public class NamesFieldBuilder extends EntryFieldBuilder {
 		}
 
 		if (allfamilies != null) {
-			addField(EntryField.FAMILY_NAMES, allfamilies);
-			addField(EntryField.FAMILY_NAMES_S, allfamilies);
+			addEntryFieldValue(EntryField.FAMILY_NAMES, allfamilies);
+			addEntryFieldValue(EntryField.FAMILY_NAMES_S, allfamilies);
 		}
 	}
 	

@@ -28,7 +28,7 @@ public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
 		FilterAndPropertiesFieldsBuilder ffb = new FilterAndPropertiesFieldsBuilder();
-		ffb.initializeBuilder(entry);
+		ffb.collect(entry, false);
 		
 		int expectedCount = 0;
 		

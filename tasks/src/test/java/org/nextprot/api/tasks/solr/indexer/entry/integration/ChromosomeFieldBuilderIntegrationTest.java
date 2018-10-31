@@ -25,7 +25,7 @@ public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withChromosomalLocations());
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, false);
 		String chrLocValue = cfb.getFieldValue(field, String.class);
 		
 		

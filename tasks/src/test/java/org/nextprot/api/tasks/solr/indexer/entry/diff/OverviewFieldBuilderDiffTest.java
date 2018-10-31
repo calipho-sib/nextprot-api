@@ -26,7 +26,7 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
 		OverviewFieldBuilder ofb = new OverviewFieldBuilder();
-		ofb.initializeBuilder(entry);
+		ofb.collect(entry, false);
 		
 		String expectedRecname = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.RECOMMENDED_NAME);
 		Assert.assertEquals(ofb.getFieldValue(EntryField.RECOMMENDED_NAME, String.class), expectedRecname);

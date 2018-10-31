@@ -32,7 +32,7 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 		System.out.println("Testing " + entryName);
 
 		PeptideFieldBuilder pfb = new PeptideFieldBuilder();
-		pfb.initializeBuilder(entry);
+		pfb.collect(entry, false);
 		List<String> peptideList = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PEPTIDE);
 		if(peptideList == null) return; // No peptides in this entry
 		

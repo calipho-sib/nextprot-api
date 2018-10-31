@@ -32,7 +32,7 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		NamesFieldBuilder nfb = new NamesFieldBuilder();
-		nfb.initializeBuilder(entry);
+		nfb.collect(entry, false);
 		
 		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
 		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.RECOMMENDED_GENE_NAMES);

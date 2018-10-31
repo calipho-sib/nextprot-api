@@ -31,12 +31,12 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 	private TerminologyService terminologyService;
 	
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean isGold) {
 		// Function with canonical first
 		List<String> function_canonical = EntryUtils.getFunctionInfoWithCanonicalFirst(entry);
 		for (String finfo : function_canonical) {
-			addField(EntryField.FUNCTION_DESC, finfo);
-			addField(EntryField.ANNOTATIONS, finfo);
+			addEntryFieldValue(EntryField.FUNCTION_DESC, finfo);
+			addEntryFieldValue(EntryField.ANNOTATIONS, finfo);
 		}
 
 		List<Annotation> annots = entry.getAnnotations();
@@ -62,11 +62,11 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 				if (xref != null)
 					// It is actually not a synonym but the carbohydrate id from
 					// glycosuitedb !
-					addField(EntryField.ANNOTATIONS, xref);
+					addEntryFieldValue(EntryField.ANNOTATIONS, xref);
 			}
 
 			else if (apiCategory.equals(AnnotationCategory.DNA_BINDING_REGION))
-				addField(EntryField.ANNOTATIONS, category);
+				addEntryFieldValue(EntryField.ANNOTATIONS, category);
 			else if (apiCategory.equals(AnnotationCategory.VARIANT))
 				// We need to index them somehow for the GOLD/SILVER tests, or
 				// do we ? in creates a lot of useless 'variant null' tokens
@@ -86,7 +86,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 						// truncate the position
 						mainreason = mainreason.substring(0, stringpos);
 					}
-					addField(EntryField.ANNOTATIONS, mainreason);
+					addEntryFieldValue(EntryField.ANNOTATIONS, mainreason);
 
 					if (desclevels.length > 1) {
 						if (stringpos > 0) // mainreason truncated
@@ -95,7 +95,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 							stringpos = desc.indexOf(mainreason) + mainreason.length();
 							desc = desc.substring(stringpos + 2);
 						}
-						addField(EntryField.ANNOTATIONS, desc);
+						addEntryFieldValue(EntryField.ANNOTATIONS, desc);
 					}
 				}
 
@@ -107,7 +107,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 																		// cvac,
 																		// not
 																		// description
-					if (!this.isGold() || quality.equals("GOLD")) {
+					if (!isGold || quality.equals("GOLD")) {
 						if (apiCategory.equals(AnnotationCategory.PHENOTYPIC_VARIATION)) {
 							// Get BED data (also get the notes ? )
 							Map<String, AnnotationIsoformSpecificity> annotSpecs = currannot.getTargetingIsoformsMap();
@@ -115,12 +115,12 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 								String subjectName = mapentry.getValue().getName();
 								// update description with the subject for each
 								// target isofotm
-								addField(EntryField.ANNOTATIONS, subjectName + " " + desc);
+								addEntryFieldValue(EntryField.ANNOTATIONS, subjectName + " " + desc);
 								// System.err.println("adding: " + subjectName +
 								// " " + desc);
 							}
 						} else
-							addField(EntryField.ANNOTATIONS, desc);
+							addEntryFieldValue(EntryField.ANNOTATIONS, desc);
 					}
 				}
 				// in pathway and disease new annotations may appear due to
@@ -128,7 +128,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 				// annotations in the api
 			}
 
-			handleAnnotationTerm(currannot, entry);
+			handleAnnotationTerm(currannot, entry, isGold);
 			
 			if (apiCategory.equals(AnnotationCategory.MATURE_PROTEIN)
 					|| apiCategory.equals(AnnotationCategory.MATURATION_PEPTIDE)) {
@@ -137,7 +137,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 					// System.err.println( currannot.getAllSynonyms().size() +
 					// " synonyms: " + currannot.getAllSynonyms());
 					if (chainid.contains("-"))
-						addField(EntryField.ANNOTATIONS, chainid); // Uniprot FT id,
+						addEntryFieldValue(EntryField.ANNOTATIONS, chainid); // Uniprot FT id,
 																// like
 																// PRO_0000019235,
 																// shouldn't be
@@ -146,14 +146,14 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 					else {
 						List<String> chainsynonyms = currannot.getSynonyms();
 						if (chainsynonyms.size() == 1)
-							addField(EntryField.ANNOTATIONS,
+							addEntryFieldValue(EntryField.ANNOTATIONS,
 									StringUtils.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 						else {
 							chainid = "";
 							for (String syno : chainsynonyms) {
 								chainid += syno + " | ";
 							}
-							addField(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
+							addEntryFieldValue(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
 						}
 					}
 				} // else System.err.println("chainid null for: " + desc);
@@ -190,15 +190,15 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 							}
 						}
 					}
-				if (!this.isGold() || quality.equals("GOLD")) {
+				if (!isGold || quality.equals("GOLD")) {
 					if (!evidxrefaccs.isEmpty())
-						addField(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
+						addEntryFieldValue(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
 					Collection<AnnotationProperty> props = currannot.getProperties();
 					for (AnnotationProperty prop : props)
 						if (prop.getName().equals("mutation AA"))
 							// eg: p.D1685E, it is unclear why this property
 							// exists only in cosmic variants
-							addField(EntryField.ANNOTATIONS, prop.getValue());
+							addEntryFieldValue(EntryField.ANNOTATIONS, prop.getValue());
 				}
 			}
 		}
@@ -207,29 +207,29 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 		for (Family family : entry.getOverview().getFamilies()) {
 			String ac = family.getAccession();
 			int stringpos = 0;
-			addField(EntryField.ANNOTATIONS, ac);
+			addEntryFieldValue(EntryField.ANNOTATIONS, ac);
 			String famdesc = family.getDescription();
 			// There is no get_synonyms() method for families -> can't access
 			// PERVR for FA-04785
-			addField(EntryField.ANNOTATIONS, famdesc);
+			addEntryFieldValue(EntryField.ANNOTATIONS, famdesc);
 			stringpos = famdesc.indexOf("elongs to ") + 14;
 			famdesc = famdesc.substring(stringpos); // Skip the 'Belongs to' and
 													// what may come before (eg:
 													// NX_P19021)
 			famdesc = famdesc.substring(0, famdesc.length() - 1); // remove
 																	// final dot
-			addField(EntryField.ANNOTATIONS, famdesc);
+			addEntryFieldValue(EntryField.ANNOTATIONS, famdesc);
 			String[] families = famdesc.split("\\. "); // are there subfamilies
 														// ?
 			if (families.length > 1) { // Always GOLD
 				for (int i = 0; i < families.length; i++) {
-					addField(EntryField.ANNOTATIONS, families[i]);
+					addEntryFieldValue(EntryField.ANNOTATIONS, families[i]);
 					if (families[i].contains(") superfamily")) { // index one
 																	// more time
 																	// without
 																	// parenthesis
 						famdesc = families[i].substring(0, families[i].indexOf("(")) + "superfamily";
-						addField(EntryField.ANNOTATIONS, famdesc);
+						addEntryFieldValue(EntryField.ANNOTATIONS, famdesc);
 					}
 				}
 			}
@@ -238,12 +238,11 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 			List<String> famsynonyms = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ac).getSynonyms();
 			if (famsynonyms != null)
 				for (String famsynonym : famsynonyms)
-					addField(EntryField.ANNOTATIONS, famsynonym.trim());
+					addEntryFieldValue(EntryField.ANNOTATIONS, famsynonym.trim());
 		}
 	}
-	
-	
-	protected void handleAnnotationTerm(Annotation currannot, Entry entry) {
+
+	private void handleAnnotationTerm(Annotation currannot, Entry entry, boolean isGold) {
 		
 		String quality = currannot.getQualityQualifier();
 		String cvac = currannot.getCvTermAccessionCode();
@@ -257,9 +256,9 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 					return;
 				}
 			}
-			if (!this.isGold() || quality.equals("GOLD")) {
-				addField(EntryField.ANNOTATIONS, cvac);
-				addField(EntryField.ANNOTATIONS, currannot.getCvTermName());
+			if (!isGold || quality.equals("GOLD")) {
+				addEntryFieldValue(EntryField.ANNOTATIONS, cvac);
+				addEntryFieldValue(EntryField.ANNOTATIONS, currannot.getCvTermName());
 				
 				CvTerm term = terminologyService.findCvTermByAccession(cvac);
 				if (null==term) {
@@ -276,7 +275,7 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 							allsynonyms += " | ";
 						allsynonyms += synonym.trim();
 					}
-					addField(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
+					addEntryFieldValue(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
 				}
 
 				List<String> ancestors = terminologyService.getAllAncestorsAccession(cvac);
@@ -300,16 +299,14 @@ public class AnnotationFieldBuilder extends EntryFieldBuilder {
 					allancestors = "repeat"; // don't index generic top
 												// level ancestors
 				if (allancestors.length() > 1)
-					addField(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
+					addEntryFieldValue(EntryField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 			}
 		}
 
 	}
-	
 
 	@Override
 	public Collection<EntryField> getSupportedFields() {
 		return Arrays.asList(EntryField.ANNOTATIONS, EntryField.FUNCTION_DESC);
 	}
-
 }

@@ -16,7 +16,6 @@ public enum EntryField implements IndexField {
     EC_NAME("ec_name", String.class),
     FUNCTION_DESC("function_desc", List.class), //List<String>
     CHR_LOC("chr_loc", String.class),
-    //CHR_LOC_S("chr_loc_s", Long.class),
     CHR_LOC_S("chr_loc_s", Integer.class),
     ISOFORM_NUM("isoform_num", Integer.class),
     PTM_NUM("ptm_num", Integer.class),

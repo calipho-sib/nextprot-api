@@ -14,7 +14,7 @@ import java.util.List;
 public class IdentifierFieldBuilder extends EntryFieldBuilder {
 
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean gold) {
 		
 		// Identifiers
 		List <Identifier> identifiers = entry.getIdentifiers();
@@ -23,15 +23,15 @@ public class IdentifierFieldBuilder extends EntryFieldBuilder {
 			//if(currident.getDatabase() == null)
 			//System.err.println("type: " + idtype + " " + currident.getName());
 			if(idtype.equals("Secondary AC")) {
-				addField(EntryField.ALTERNATIVE_ACS, currident.getName());
+				addEntryFieldValue(EntryField.ALTERNATIVE_ACS, currident.getName());
 			}
 			else if (idtype.equals("IMAGE") || idtype.equals("FLJ") || idtype.equals("MGC") || idtype.equals("DKFZ") || idtype.equals("Others")) {
-				addField(EntryField.CLONE_NAME, currident.getName());
+				addEntryFieldValue(EntryField.CLONE_NAME, currident.getName());
 			} else if (idtype.equals("Illumina") || idtype.equals("Affymetrix")){
-				addField(EntryField.MICROARRAY_PROBE, currident.getName());
+				addEntryFieldValue(EntryField.MICROARRAY_PROBE, currident.getName());
 			}
 			else if (idtype.equals("Entry name")) {
-				addField(EntryField.UNIPROT_NAME, currident.getName());
+				addEntryFieldValue(EntryField.UNIPROT_NAME, currident.getName());
 			}
 		}
 		

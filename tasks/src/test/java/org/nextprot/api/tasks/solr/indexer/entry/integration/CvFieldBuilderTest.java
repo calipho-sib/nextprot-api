@@ -29,7 +29,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("variant"));
 		CVFieldBuilder cvfb = new CVFieldBuilder();
 
-		cvfb.initializeBuilder(entry);
+		cvfb.collect(entry, false);
 		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
         List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
 
@@ -48,7 +48,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
 
-		cvfb.initializeBuilder(entry);
+		cvfb.collect(entry, false);
 		List<String> cvAvs = cvfb.getFieldValue(EntryField.CV_ACS, List.class);
 		List<String> cvNames = cvfb.getFieldValue(EntryField.CV_NAMES, List.class);
 
@@ -68,7 +68,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().with("subcellular-location"));
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.initializeBuilder(entry);
+		cvfb.collect(entry, false);
 
 		String enzymes = cvfb.getFieldValue(EntryField.EC_NAME, String.class);
 		assertTrue(enzymes.contains("EC 3.4.15.1"));
@@ -87,7 +87,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest{
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withEnzymes().withAnnotations());
 
 		CVFieldBuilder cvfb = new CVFieldBuilder();
-		cvfb.initializeBuilder(entry);
+		cvfb.collect(entry, false);
 
 	}
 }

@@ -23,7 +23,7 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		int bedAnnotCnt = 0;
 		
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.initializeBuilder(getEntry("NX_P35498"));
+		afb.collect(getEntry("NX_P35498"), false);
 
 		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
 		for(String annot : annotations) {
@@ -37,7 +37,7 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		
 		bedAnnotCnt = 0;
 		afb.reset();
-		afb.initializeBuilder(getEntry("NX_P16422"));
+		afb.collect(getEntry("NX_P16422"), false);
 		annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
 		for(String annot : annotations)
 			if(annot.startsWith("EPCAM-"))

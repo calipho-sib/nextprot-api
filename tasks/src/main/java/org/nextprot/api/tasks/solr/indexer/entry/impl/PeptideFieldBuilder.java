@@ -17,7 +17,7 @@ import java.util.List;
 public class PeptideFieldBuilder extends EntryFieldBuilder {
 	
 	@Override
-	protected void init(Entry entry){ 
+	public void collect(Entry entry, boolean gold) {
 		for (Annotation currannot : entry.getAnnotations()) {
 			String category = currannot.getCategory();
 			if (category.contains("peptide mapping")){
@@ -25,8 +25,8 @@ public class PeptideFieldBuilder extends EntryFieldBuilder {
 				for (AnnotationEvidence currEv : evList) {
 					String db = currEv.getResourceDb();
 					if(!db.equals("neXtProtSubmission")) {
-					   if(db.equals(XrefDatabase.PUB_MED.getName())) addField(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession());
-					   else addField(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
+					   if(db.equals(XrefDatabase.PUB_MED.getName())) addEntryFieldValue(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession());
+					   else addEntryFieldValue(EntryField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
 					}
 				}
 			}

@@ -31,7 +31,7 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		IdentifierFieldBuilder ifb = new IdentifierFieldBuilder();
-		ifb.initializeBuilder(entry);
+		ifb.collect(entry, false);
 		
 		List<String> expectedACs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ALTERNATIVE_ACS);
 		if(expectedACs != null) {

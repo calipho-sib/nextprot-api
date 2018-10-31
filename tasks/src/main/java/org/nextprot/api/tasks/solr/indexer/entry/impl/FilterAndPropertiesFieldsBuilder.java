@@ -20,21 +20,21 @@ public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
 	private EntryReportStatsService entryReportStatsService;
 
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean gold) {
 
 		EntryReportStats ers = entryReportStatsService.reportEntryStats(entry.getUniqueName());
 
 		// Filters and entry properties
 		EntryProperties props = entry.getProperties();
-		addField(EntryField.ISOFORM_NUM, ers.countIsoforms());
+		addEntryFieldValue(EntryField.ISOFORM_NUM, ers.countIsoforms());
 		int cnt;
 		cnt = ers.countPTMs();
 		if (cnt > 0) {
-			addField(EntryField.PTM_NUM, cnt);
+			addEntryFieldValue(EntryField.PTM_NUM, cnt);
 		}
 		cnt = ers.countVariants();
 		if (cnt > 0) {
-			addField(EntryField.VAR_NUM, cnt);
+			addEntryFieldValue(EntryField.VAR_NUM, cnt);
 		}
 		String filters = "";
 		if (props.getFilterstructure()) filters += "filterstructure ";
@@ -43,9 +43,9 @@ public class FilterAndPropertiesFieldsBuilder extends EntryFieldBuilder {
 		if (ers.isMutagenesis()) filters += "filtermutagenesis ";
 		if (ers.isProteomics()) filters += "filterproteomics ";
 		if (filters.length() > 0) {
-			addField(EntryField.FILTERS, filters.trim());
+			addEntryFieldValue(EntryField.FILTERS, filters.trim());
 		}
-		addField(EntryField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
+		addEntryFieldValue(EntryField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
 	}
 
 	@Override

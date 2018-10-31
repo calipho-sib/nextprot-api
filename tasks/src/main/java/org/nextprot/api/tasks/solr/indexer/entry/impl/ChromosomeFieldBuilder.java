@@ -20,7 +20,7 @@ public class ChromosomeFieldBuilder extends EntryFieldBuilder {
 
 
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean gold) {
 
 		// build GENE_BAND by concatenating distinct band and chr+band
 		// build CHR_LOC field by concatenating distinct chromosomal locations (chr + band) after sorting them alphabetically
@@ -44,9 +44,9 @@ public class ChromosomeFieldBuilder extends EntryFieldBuilder {
 		String gene_band = Joiner.on(" ").skipNulls().join(gbset).trim();
 		String chr_loc = Joiner.on(" ").skipNulls().join(clset).trim();
 		Integer chr_loc_s = sortChr(chr_loc);
-		addField(EntryField.GENE_BAND, gene_band);
-		addField(EntryField.CHR_LOC, chr_loc);
-		addField(EntryField.CHR_LOC_S, chr_loc_s);
+		addEntryFieldValue(EntryField.GENE_BAND, gene_band);
+		addEntryFieldValue(EntryField.CHR_LOC, chr_loc);
+		addEntryFieldValue(EntryField.CHR_LOC_S, chr_loc_s);
 	}
 
 

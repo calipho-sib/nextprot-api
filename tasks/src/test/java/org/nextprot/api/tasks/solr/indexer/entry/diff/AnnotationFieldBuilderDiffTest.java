@@ -45,7 +45,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFunctionalDesc(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.initializeBuilder(entry);
+		afb.collect(entry, false);
 		List<String> functionalDescriptions = afb.getFieldValue(EntryField.FUNCTION_DESC, List.class);
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.FUNCTION_DESC);
 
@@ -65,7 +65,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testAnnotations(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.initializeBuilder(entry);
+		afb.collect(entry, false);
 
 		List<String> annotations = afb.getFieldValue(EntryField.ANNOTATIONS, List.class);
 		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.ANNOTATIONS);

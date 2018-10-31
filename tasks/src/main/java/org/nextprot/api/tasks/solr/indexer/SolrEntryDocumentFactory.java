@@ -27,18 +27,22 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 		SolrInputDocument doc = new SolrInputDocument();
 
 		for (EntryField f : EntryField.values()) {
-			//System.err.println("field: " + f.toString());
-			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
-			EntryFieldBuilder fb = fieldsBuilderMap.get(f);
-			fb.setGold(isGold);
-			fb.initializeBuilder(solrizableObject);
-			Object o = fb.getFieldValue(f, f.getClazz());
+			if (f == EntryField.TEXT || f == EntryField.SCORE) {
+				continue; // Directly computed by SOLR
+			}
+
+			EntryFieldBuilder entryFieldBuilder = fieldsBuilderMap.get(f);
+			entryFieldBuilder.collect(solrizableObject, isGold);
+
+			Object o = entryFieldBuilder.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
 		}
 
 		//Reset all fields builders
 		for (EntryField f : EntryField.values()) {
-			if(f == EntryField.TEXT || f == EntryField.SCORE) continue; // Directly computed by SOLR
+			if (f == EntryField.TEXT || f == EntryField.SCORE) {
+				continue; // Directly computed by SOLR
+			}
 			fieldsBuilderMap.get(f).reset();
 		}
 

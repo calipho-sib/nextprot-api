@@ -23,7 +23,7 @@ public class InteractionFieldBuilder extends EntryFieldBuilder {
 	private EntryBuilderService entryBuilderService;
 
 	@Override
-	protected void init(Entry entry){
+	public void collect(Entry entry, boolean gold){
 
 		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//String id = entry.getUniqueName();
@@ -45,19 +45,19 @@ public class InteractionFieldBuilder extends EntryFieldBuilder {
 					}
 					else // Xeno interaction
 					  recName = "";
-					if(!this.isGold() || currinteraction.getQuality().equals("GOLD")) 
-				      addField(EntryField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
+					if(!gold || currinteraction.getQuality().equals("GOLD"))
+				      addEntryFieldValue(EntryField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
 				}
 				else if(currinteraction.isSelfInteraction() == true)
-					if(!this.isGold() || currinteraction.getQuality().equals("GOLD")) 
-					   addField(EntryField.INTERACTIONS,"selfInteraction");
+					if(!gold || currinteraction.getQuality().equals("GOLD"))
+					   addEntryFieldValue(EntryField.INTERACTIONS,"selfInteraction");
 			}
 		}
 		
 		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots)
 			if(currannot.getCategory().equals("subunit")) // Always GOLD
-				addField(EntryField.INTERACTIONS, currannot.getDescription());
+				addEntryFieldValue(EntryField.INTERACTIONS, currannot.getDescription());
 
 
 		/*

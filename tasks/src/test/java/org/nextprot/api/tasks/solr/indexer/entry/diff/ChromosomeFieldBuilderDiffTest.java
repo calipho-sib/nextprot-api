@@ -95,7 +95,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		EntryField field = EntryField.CHR_LOC;
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, false);
 		
 		// build a set with the list of actual values in field (which are separated by spaces)
 		Set<String> actualSet = new TreeSet<String>();
@@ -128,7 +128,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	private void testChrLocS(Entry entry) {
 		
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, false);
 
 		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntryField.CHR_LOC_S);
 		Integer actualValue = cfb.getFieldValue(EntryField.CHR_LOC_S, Integer.class);
@@ -144,9 +144,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		EntryField field = EntryField.GENE_BAND;
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, false);
 		
-		Set<String> actualSet = new TreeSet<String>();
+		Set<String> actualSet = new TreeSet<>();
 		List<String> geneBandValues = cfb.getFieldValue(field, List.class);
 		for (String s: geneBandValues) actualSet.addAll(Arrays.asList(s.split(" ")));
 

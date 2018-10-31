@@ -35,7 +35,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		PublicationsFieldBuilder pfb = new PublicationsFieldBuilder();
-		pfb.initializeBuilder(entry);
+		pfb.collect(entry, false);
 		
 		Set<String> expectedPublisRaw = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.PUBLICATIONS));
 		Set<String> expectedValues = new TreeSet<String>();

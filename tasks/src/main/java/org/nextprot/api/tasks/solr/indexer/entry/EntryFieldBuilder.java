@@ -12,31 +12,12 @@ import java.util.Map;
 
 public abstract class EntryFieldBuilder {
 
-	boolean isGold = false;
-
-    public boolean isGold() {
-		return isGold;
-	}
-
-	public void setGold(boolean isGold) {
-		this.isGold = isGold;
-	}
-
-	boolean initialized = false;
-	private Map<EntryField, Object> fields = new HashMap<>();
+	private final Map<EntryField, Object> fields = new HashMap<>();
 
 	abstract public Collection<EntryField> getSupportedFields();
 
-	public final void initializeBuilder(Entry entry) {
-		if(!initialized){
-			//System.err.println("initializing FieldBuilder: " + this.toString());
-			init(entry);
-			initialized = true;
-		}
-	}
+	protected void addEntryFieldValue(EntryField field, Object value) {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected void addField(EntryField field, Object value) {
 		NPreconditions.checkTrue(getSupportedFields().contains(field), "The field " + field.name() + " is not supported in " + getClass().getName());
 
 		if (!fields.containsKey(field) && field.getClazz().equals(List.class)) {
@@ -51,20 +32,17 @@ public abstract class EntryFieldBuilder {
 
 	}
 
-	protected abstract void init(Entry entry);
+	public abstract void collect(Entry entry, boolean isGold);
 
 	public final <T> T getFieldValue(EntryField field, Class<T> requiredType) {
 
-		// If it has not been yet initialized
-		NPreconditions.checkTrue(initialized, "The builder has not been yet initialized, invoke 'initializeBuilder' method");
-
-		return requiredType.cast(fields.get(field));
-
+		if (fields.containsKey(field)) {
+			return requiredType.cast(fields.get(field));
+		}
+		return null;
 	}
 	
 	public final void reset() {
-		initialized = false;
 		fields.clear();
 	}
-
 }

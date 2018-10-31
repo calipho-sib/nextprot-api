@@ -50,8 +50,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		
 		// Variants
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setGold(true);
-		afb.initializeBuilder(entry);
+		afb.collect(entry, true);
 		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
 		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.ANNOTATIONS);
 		for(String rawAnnot : expectedRawValues)
@@ -65,8 +64,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
 		// Expression
 		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
-		efb.setGold(true);
-		efb.initializeBuilder(entry);
+		efb.collect(entry, true);
 		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.EXPRESSION);
 		Set<String> expectedCVSet = new TreeSet<String>();
 		Set<String> expressionCVSet = new TreeSet<String>();
@@ -100,8 +98,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		if(expectedInteractions != null) {
 			Integer oldcnt = 0, newcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
-			ifb.setGold(true);
-			ifb.initializeBuilder(entry);
+			ifb.collect(entry, true);
 			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) oldcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newcnt++;
@@ -112,8 +109,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
         // CVs
 		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntryField.CV_ACS));
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.setGold(true);
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, true);
 		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntryField.CV_ACS, List.class));
         Assert.assertTrue(expectedCVs.size() == CvSet.size());
 	}

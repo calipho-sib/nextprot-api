@@ -36,7 +36,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
-		xfb.initializeBuilder(entry);
+		xfb.collect(entry, false);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.ANTIBODY);
 		if(expectedABs != null) {
@@ -93,7 +93,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
 			Integer olditcnt = 0, newitcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
-			ifb.initializeBuilder(entry);
+			ifb.collect(entry, false);
 			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntryField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;

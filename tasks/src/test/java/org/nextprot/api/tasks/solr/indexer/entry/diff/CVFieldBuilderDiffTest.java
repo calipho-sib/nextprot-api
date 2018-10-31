@@ -39,7 +39,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.initializeBuilder(entry);
+		cfb.collect(entry, false);
 		
 		// CV_ACS
 		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntryField.CV_ACS));

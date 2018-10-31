@@ -28,7 +28,7 @@ public class ExpressionFieldBuilder extends EntryFieldBuilder {
 	private TerminologyService terminologyService;
 
 	@Override
-	protected void init(Entry entry) {
+	public void collect(Entry entry, boolean gold) {
 		//Extract the tissues where there is expression ....
 		Set <String> cv_tissues = new HashSet<String>();
 		for (Annotation currannot : entry.getAnnotations()) {
@@ -36,12 +36,12 @@ public class ExpressionFieldBuilder extends EntryFieldBuilder {
 				// Check there is a detected expression
 				boolean allnegative = true;
 				for(AnnotationEvidence ev : currannot.getEvidences())
-					if(!ev.isNegativeEvidence() && (!this.isGold() || ev.getQualityQualifier().equals("GOLD")))
+					if(!ev.isNegativeEvidence() && (!gold || ev.getQualityQualifier().equals("GOLD")))
 						// Only a GOLD positive evidence can invalidate allnegative in the GOLD index
 				      {allnegative = false; break;}
 				if(!allnegative) {
 				// No duplicates this is a Set
-				if(!this.isGold() || currannot.getQualityQualifier().equals("GOLD")) {
+				if(!gold || currannot.getQualityQualifier().equals("GOLD")) {
 					cv_tissues.add(currannot.getCvTermAccessionCode());
 					cv_tissues.add(currannot.getCvTermName());
 					}
@@ -71,7 +71,7 @@ public class ExpressionFieldBuilder extends EntryFieldBuilder {
 			}
 		}
 		for (String cv : cv_tissues_final) {
-			addField(EntryField.EXPRESSION, cv.trim());
+			addEntryFieldValue(EntryField.EXPRESSION, cv.trim());
 		}
 
 	}
