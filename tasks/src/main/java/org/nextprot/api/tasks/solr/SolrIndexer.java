@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * A simplified Solr Server
+ * A Solr indexer can execute indexation and clean indexes
  */
-public interface SimpleSolrServer {
+public interface SolrIndexer {
 
-    UpdateResponse add(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
+    UpdateResponse performIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
     UpdateResponse deleteIndexes() throws SolrServerException, IOException;
-    UpdateResponse commit() throws SolrServerException, IOException;
+    UpdateResponse execute() throws SolrServerException, IOException;
 }
