@@ -7,10 +7,10 @@
 	<bean id="solrConfiguration" class="org.nextprot.api.solr.SolrConfiguration">
 		<property name="indexes">
 			<list>
-				<value>org.nextprot.api.solr.index.GoldAndSilverEntryIndex</value>
-				<value>org.nextprot.api.solr.index.GoldOnlyEntryIndex</value>
-				<value>org.nextprot.api.solr.index.CvIndex</value>
-				<value>org.nextprot.api.solr.index.PublicationIndex</value>
+				<value>org.nextprot.api.solr.index.GoldAndSilverEntryCore</value>
+				<value>org.nextprot.api.solr.index.GoldOnlyEntryCore</value>
+				<value>org.nextprot.api.solr.index.CvCore</value>
+				<value>org.nextprot.api.solr.index.PublicationCore</value>
 			</list>
 		</property>
 	</bean>
