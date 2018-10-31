@@ -187,7 +187,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 
     private String getServerUrl(String indexName) {
         String baseUrl = connFactory.getSolrBaseUrl();
-        String indexUrl = configuration.getIndexByName(indexName).getUrl();
+        String indexUrl = configuration.getSolrCoreByName(indexName).getUrl();
         return baseUrl + indexUrl;
     }
 

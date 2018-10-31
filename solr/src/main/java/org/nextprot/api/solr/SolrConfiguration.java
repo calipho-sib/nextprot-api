@@ -14,44 +14,43 @@ import java.util.Map;
 @Component
 public class SolrConfiguration {
 	
-	private Map<String, SolrCore> indexes = new HashMap<>();
-	private List<Class<? extends SolrCore>> indexClasses;
-	
+	private Map<String, SolrCore> solrCores = new HashMap<>();
+	private List<Class<? extends SolrCore>> solrCoreClasses;
+
 	@PostConstruct
-	public void init() throws InstantiationException, IllegalAccessException {
-		SolrCore instance;
-		for(Class<? extends SolrCore> clazz : this.indexClasses) {
-			instance = clazz.newInstance();
-			addIndex(instance);
+	public void buildSolrCores() throws InstantiationException, IllegalAccessException {
+		for(Class<? extends SolrCore> clazz : this.solrCoreClasses) {
+			addSolrCore(clazz.newInstance());
 		}
 	}
 
-	public void setIndexes(List<Class<? extends SolrCore>> indexClasses) {
-		this.indexClasses = indexClasses;
+	public void setSolrCores(List<Class<? extends SolrCore>> solrCoreClasses) {
+		this.solrCoreClasses = solrCoreClasses;
 	}
 	
-	private void addIndex(SolrCore index) {
-		if (index.getFields() != null && (index.getFields().isMemberClass() || index.getFields().isEnum()))
-			this.indexes.put(index.getName(), index);
-		else throw new SearchConfigException("Didn't setup fields for index "+index.getName());
+	private void addSolrCore(SolrCore solrCore) {
+		if (solrCore.getFieldValues() != null && solrCore.getFieldValues().length > 0) {
+			solrCores.put(solrCore.getName(), solrCore);
+		}
+		else {
+			throw new SearchConfigException("Didn't setup fields for solr core "+solrCore.getName());
+		}
+	}
+
+	public SolrCore getSolrCoreByName(String coreName) {
+		if(this.solrCores.containsKey(coreName)) {
+			return solrCores.get(coreName);
+		}
+		else {
+			throw new SearchConfigException("Solr core "+coreName+" does not exist. Available cores: "+this.solrCores.entrySet());
+		}
 	}
 	
-	/**
-	 * 
-	 * @param indexName
-	 * @return
-	 */
-	public SolrCore getIndexByName(String indexName) {
-		if(this.indexes.containsKey(indexName))
-			return this.indexes.get(indexName);
-		else throw new SearchConfigException("Index "+indexName+" does not exist. Available indexes: "+this.indexes.entrySet());  
+	public List<SolrCore> getSolrCores() {
+		return new ArrayList<>(this.solrCores.values());
 	}
 	
-	public List<SolrCore> getIndexes() {
-		return new ArrayList<SolrCore>(this.indexes.values());
-	}
-	
-	public boolean hasIndex(String indexName) {
-		return this.indexes.containsKey(indexName);
+	public boolean hasSolrCore(String solrCoreName) {
+		return solrCores.containsKey(solrCoreName);
 	}
 }

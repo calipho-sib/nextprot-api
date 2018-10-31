@@ -56,7 +56,7 @@ public class SolrServiceImpl implements SolrService {
 	private SolrConfiguration configuration;
 
 	private void logSolrQuery(String context, SolrQuery sq) {
-		Set<String> params = new TreeSet<String>();
+		Set<String> params = new TreeSet<>();
 		for (String p : sq.getParameterNames()) params.add(p + " : " + sq.get(p));
 		Logger.debug("SolrQuery ============================================================== in " + context);
 		for (String p : params) {
@@ -85,9 +85,9 @@ public class SolrServiceImpl implements SolrService {
 		SolrCore index = query.getIndex();
 
 		if (index == null)
-			index = this.configuration.getIndexByName(query.getIndexName());
+			index = this.configuration.getSolrCoreByName(query.getIndexName());
 		String configName = query.getConfigName();
-		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = (configName == null) ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
 		Logger.debug("configName="+indexConfig.getName());
 
 		SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
@@ -98,17 +98,17 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public boolean checkAvailableIndex(String indexName) {
-		return this.configuration.hasIndex(indexName);
+		return this.configuration.hasSolrCore(indexName);
 	}
 
 	private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
 		SolrCore index = query.getIndex();
 
 		if (index == null)
-			index = this.configuration.getIndexByName(query.getIndexName());
+			index = this.configuration.getSolrCoreByName(query.getIndexName());
 		String configName = query.getConfigName();
 
-		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = (configName == null) ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
 
 		return buildSolrQuery(query, indexConfig);
 	}
@@ -352,7 +352,7 @@ public class SolrServiceImpl implements SolrService {
 
 		String actualIndexName = indexName.equals("entry") && quality != null && quality.equalsIgnoreCase("gold") ? "gold-entry" : indexName;
 
-		SolrCore index = this.configuration.getIndexByName(actualIndexName);
+		SolrCore index = this.configuration.getSolrCoreByName(actualIndexName);
 
 		Query q = new Query(index).addQuery(queryString);
 		q.setConfiguration(configuration);

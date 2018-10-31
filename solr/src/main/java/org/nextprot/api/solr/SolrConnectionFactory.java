@@ -17,13 +17,13 @@ import java.util.Map;
 public class SolrConnectionFactory {
 	private Map<String, HttpSolrServer> serverMap;
 	private final String baseSolrUrl;
-	private final List<SolrCore> indexes;
+	private final List<SolrCore> solrCores;
 	
 	private final char DASH = '/';
 	
 	@Autowired
 	public SolrConnectionFactory(final SolrConfiguration solrConfiguration, @Value("${solr.url}") final String baseSolrUrl) {
-		indexes = solrConfiguration.getIndexes();
+		solrCores = solrConfiguration.getSolrCores();
 
 		if(baseSolrUrl.charAt(baseSolrUrl.length()-1) != DASH)
 			this.baseSolrUrl = baseSolrUrl + DASH;
@@ -44,24 +44,21 @@ public class SolrConnectionFactory {
 			}
 		}
 		
-		if(this.serverMap.containsKey(indexName)) 
+		if(this.serverMap.containsKey(indexName)) {
 			return this.serverMap.get(indexName);
-		else throw new SearchConfigException("Index "+indexName+" is not available");
-
-		
+		}
+		else {
+			throw new SearchConfigException("Index "+indexName+" is not available");
+		}
 	}
 	
-	
-
 	/**
 	 * Initialize the map only when needed to optimise the start up of the program
 	 */
 	private void initializeServerMap(){
-		this.serverMap = new HashMap<String, HttpSolrServer>();
-		for(SolrCore index : indexes) {
-			this.serverMap.put(index.getName(), new HttpSolrServer(this.baseSolrUrl+index.getUrl()));
+		this.serverMap = new HashMap<>();
+		for(SolrCore solrCore : solrCores) {
+			this.serverMap.put(solrCore.getName(), new HttpSolrServer(this.baseSolrUrl+solrCore.getUrl()));
 		}
 	}
-	
-	
 }
