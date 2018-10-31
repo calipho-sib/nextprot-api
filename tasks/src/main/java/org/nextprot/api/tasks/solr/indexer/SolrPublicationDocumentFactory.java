@@ -1,6 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
@@ -13,22 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class SolrPublication extends SolrObject<Publication>{
+public class SolrPublicationDocumentFactory extends SolrDocumentFactory<Publication> {
 
-    private PublicationService publicationService;
-
-    public SolrPublication(Publication publi, PublicationService publicationService) {
+    public SolrPublicationDocumentFactory(Publication publi) {
         super(publi);
-        this.publicationService = publicationService;
     }
 
 	@Override
-	public SolrInputDocument solrDocument() {
+	public SolrInputDocument calcSolrInputDocument() {
 
-        Publication publi = getDocumentType();
+        Publication publi = solrizableObject;
 
         GlobalPublicationStatistics.PublicationStatistics publicationStats =
-                publicationService.getPublicationStatistics(publi.getPublicationId());
+		        SpringApplicationContext.getBeanOfType(PublicationService.class)
+				        .getPublicationStatistics(publi.getPublicationId());
 
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", publi.getPublicationId());

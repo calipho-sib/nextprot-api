@@ -8,17 +8,17 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import java.util.List;
 
 
-public class SolrCvTerm extends SolrObject<CvTerm> {
+public class SolrCvTermDocumentFactory extends SolrDocumentFactory<CvTerm> {
 
-    public SolrCvTerm(CvTerm term) {
+    public SolrCvTermDocumentFactory(CvTerm term) {
 
         super(term);
     }
 
     @Override
-	public SolrInputDocument solrDocument() {
+	public SolrInputDocument calcSolrInputDocument() {
 
-        CvTerm term = getDocumentType();
+        CvTerm term = solrizableObject;
 
 		String ontology = term.getOntology();
 		if (ontology.equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
