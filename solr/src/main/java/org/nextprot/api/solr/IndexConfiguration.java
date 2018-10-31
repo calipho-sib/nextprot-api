@@ -6,17 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class IndexConfiguration implements QueryBuilder {
-	protected final String BOOST_SEPARATOR = "^";
-	protected final String PLUS = "+";
-	protected final String WHITESPACE = " ";
+
+	private static final String BOOST_SEPARATOR = "^";
+	private static final String PLUS = "+";
+	public static final String SIMPLE = "simple";
+
+	final static String WHITESPACE = " ";
 	
 	private String name;
-	protected Map<IndexParameter, FieldConfigSet> fieldConfigSets;
-	protected Map<String, SortConfig> sortConfigs;
-	protected Map<String, String> otherParameters;
-	
-	protected String defaultSortName;
-	
+	private final Map<IndexParameter, FieldConfigSet> fieldConfigSets;
+	private final Map<String, SortConfig> sortConfigs;
+	protected final Map<String, String> otherParameters;
+
+	private String defaultSortName;
+
 	public IndexConfiguration(String name) {
 		this.name = name;
 		this.fieldConfigSets = new HashMap<>();
@@ -33,6 +36,10 @@ public class IndexConfiguration implements QueryBuilder {
 		this.defaultSortName = originalConfiguration.getDefaultSortConfiguration().getName();
 	}
 
+	public static IndexConfiguration SIMPLE() {
+		return new IndexConfiguration(SIMPLE);
+	}
+
 	public void addConfigSet(FieldConfigSet configSet) {
 		this.fieldConfigSets.put(configSet.getParameter(), configSet);
 	}
@@ -43,7 +50,7 @@ public class IndexConfiguration implements QueryBuilder {
 	}
 	
 	public SortConfig getSortConfig(String name) {
-		return this.sortConfigs.containsKey(name) ? this.sortConfigs.get(name) : null;
+		return sortConfigs.getOrDefault(name, null);
 	}
 	
 	public IndexConfiguration addOtherParameter(String parameterName, String parameterValue) {
@@ -58,13 +65,14 @@ public class IndexConfiguration implements QueryBuilder {
 	 * @param query
 	 * @return
 	 */
+	@Override
 	public String buildQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
 
         String[] tokens = query.getQueryString(true).split(WHITESPACE);
 
         for (int i = 0; i < tokens.length; i++) {
-            queryBuilder.append(PLUS + tokens[i]);
+            queryBuilder.append(PLUS).append(tokens[i]);
 
             if (i != tokens.length - 1)
                 queryBuilder.append(WHITESPACE);
@@ -88,7 +96,7 @@ public class IndexConfiguration implements QueryBuilder {
 		if(this.fieldConfigSets.containsKey(parameter)) {
 			configSet = this.fieldConfigSets.get(parameter);
 			
-			for(IndexField field : configSet.getIndexFields()) {
+			for(SolrField field : configSet.getIndexFields()) {
                 int boost = configSet.getBoostFactor(field);
 
 				builder.append(field.getName());

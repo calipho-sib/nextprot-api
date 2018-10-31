@@ -2,12 +2,14 @@ package org.nextprot.api.solr;
 
 
 public class AutocompleteConfiguration extends IndexConfiguration {
+
+	private static final String AUTOCOMPLETE = "autocomplete";
+
+	private final static char STAR = '*';
+	private final static String RANDOM_STRING = "dfjhgdfjh";
 	
-	private final char STAR = '*';
-	private final String RANDOM_STRING = "dfjhgdfjh";
-	
-	public AutocompleteConfiguration(String name, IndexConfiguration parentConfiguration) {
-		super(name, parentConfiguration);
+	public AutocompleteConfiguration(IndexConfiguration parentConfiguration) {
+		super(AUTOCOMPLETE, parentConfiguration);
 	}
 	
 	/**
