@@ -25,90 +25,122 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 		super(name, index);
 	}
 
-	public Class<? extends SolrField> getFields() {
-		return EntrySolrField.class;
+	@Override
+	protected IndexConfiguration newDefaultConfiguration() {
+
+		// SIMPLE Config
+
+		IndexConfiguration defaultConfig = IndexConfiguration.SIMPLE();
+
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
+				.add(EntrySolrField.ID)
+				.add(EntrySolrField.EC_NAME)
+				.add(EntrySolrField.FILTERS)
+				.add(EntrySolrField.RECOMMENDED_AC)
+				.add(EntrySolrField.RECOMMENDED_NAME)
+				.add(EntrySolrField.CD_ANTIGEN)
+				.add(EntrySolrField.INTERNATIONAL_NAME)
+				.add(EntrySolrField.UNIPROT_NAME)
+				.add(EntrySolrField.RECOMMENDED_GENE_NAMES)
+				.add(EntrySolrField.GENE_BAND)
+				.add(EntrySolrField.SCORE)
+				.add(EntrySolrField.FUNCTION_DESC)
+				.add(EntrySolrField.CHR_LOC)
+				.add(EntrySolrField.ISOFORM_NUM)
+				.add(EntrySolrField.PTM_NUM)
+				.add(EntrySolrField.AA_LENGTH)
+				.add(EntrySolrField.VAR_NUM)
+				.add(EntrySolrField.PROTEIN_EXISTENCE));
+
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
+				//.add(Fields.ID,64)
+				.addWithBoostFactor(EntrySolrField.IDSP0,64)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_AC, 8)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_NAME, 32)
+				.add(EntrySolrField.CD_ANTIGEN)
+				.add(EntrySolrField.INTERNATIONAL_NAME)
+				.addWithBoostFactor(EntrySolrField.UNIPROT_NAME, 16)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_ACS, 8)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_NAMES, 16)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_GENE_NAMES, 32)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_GENE_NAMES, 8)
+				.addWithBoostFactor(EntrySolrField.FAMILY_NAMES, 4)
+				.addWithBoostFactor(EntrySolrField.CV_NAMES, 4)
+				.addWithBoostFactor(EntrySolrField.CV_SYNONYMS, 4)
+				.addWithBoostFactor(EntrySolrField.CV_ANCESTORS, 2)
+				.addWithBoostFactor(EntrySolrField.PEPTIDE, 2)
+				.addWithBoostFactor(EntrySolrField.ANTIBODY, 2)
+				.add(EntrySolrField.TEXT));
+
+		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
+				//.add(Fields.ID, 640)
+				.addWithBoostFactor(EntrySolrField.IDSP0,640)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_AC, 80)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_NAME, 320)
+				.add(EntrySolrField.CD_ANTIGEN)
+				.add(EntrySolrField.INTERNATIONAL_NAME)
+				.addWithBoostFactor(EntrySolrField.UNIPROT_NAME, 160)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_ACS, 80)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_NAMES, 160)
+				.addWithBoostFactor(EntrySolrField.RECOMMENDED_GENE_NAMES, 320)
+				.addWithBoostFactor(EntrySolrField.ALTERNATIVE_GENE_NAMES, 80)
+				.addWithBoostFactor(EntrySolrField.FAMILY_NAMES, 40)
+				.addWithBoostFactor(EntrySolrField.CV_NAMES, 40)
+				.addWithBoostFactor(EntrySolrField.CV_SYNONYMS, 40)
+				.addWithBoostFactor(EntrySolrField.CV_ANCESTORS, 20)
+				.addWithBoostFactor(EntrySolrField.PEPTIDE, 20)
+				.addWithBoostFactor(EntrySolrField.ANTIBODY, 20)
+				.addWithBoostFactor(EntrySolrField.TEXT, 20));
+
+		defaultConfig.addOtherParameter("defType", "edismax")
+				.addOtherParameter("df", "text")
+				.addOtherParameter("mm", "100%")
+				.addOtherParameter("lowercaseOperators", "true")
+				.addOtherParameter("ps", "3")
+				.addOtherParameter("facet", "true")
+				.addOtherParameter("facet.field", "filters")
+				.addOtherParameter("facet.limit", "10")
+				.addOtherParameter("facet.method", "enum")
+				.addOtherParameter("facet.mincount", "1")
+				.addOtherParameter("facet.prefix", "")
+				.addOtherParameter("facet.sort", "count");
+
+		defaultConfig
+				.addOtherParameter("spellcheck.dictionary", "default")
+				.addOtherParameter("spellcheck", "on")
+				.addOtherParameter("spellcheck.extendedResults", "true")
+				.addOtherParameter("spellcheck.count", "10")
+				.addOtherParameter("spellcheck.alternativeTermCount", "5")
+				.addOtherParameter("spellcheck.maxResultsForSuggest", "5")
+				.addOtherParameter("spellcheck.collate", "true")
+				.addOtherParameter("spellcheck.collateExtendedResults", "true")
+				.addOtherParameter("spellcheck.maxCollationTries", "5")
+				.addOtherParameter("spellcheck.maxCollations", "10")
+				.addOtherParameter("mm", "100%");
+
+		defaultConfig.addSortConfig(sortConfigurations);
+		defaultConfig.setDefaultSortName("default");
+
+		return defaultConfig;
 	}
 
 	@Override
-	protected void setupConfigurations() {
-		
-		// SIMPLE Config
-		
-		IndexConfiguration indexConfig = IndexConfiguration.SIMPLE();
-		
-		indexConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
-			.add(EntrySolrField.ID)
-			.add(EntrySolrField.EC_NAME)
-			.add(EntrySolrField.FILTERS)
-			.add(EntrySolrField.RECOMMENDED_AC)
-			.add(EntrySolrField.RECOMMENDED_NAME)
-			.add(EntrySolrField.CD_ANTIGEN)
-			.add(EntrySolrField.INTERNATIONAL_NAME)
-			.add(EntrySolrField.UNIPROT_NAME)
-			.add(EntrySolrField.RECOMMENDED_GENE_NAMES)
-			.add(EntrySolrField.GENE_BAND)
-			.add(EntrySolrField.SCORE)
-			.add(EntrySolrField.FUNCTION_DESC)
-			.add(EntrySolrField.CHR_LOC)
-			.add(EntrySolrField.ISOFORM_NUM)
-			.add(EntrySolrField.PTM_NUM)
-			.add(EntrySolrField.AA_LENGTH)
-			.add(EntrySolrField.VAR_NUM)
-			.add(EntrySolrField.PROTEIN_EXISTENCE));
+	protected AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration defaultConfiguration) {
 
-		indexConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
-			//.add(Fields.ID,64)
-			.addWithBoostFactor(EntrySolrField.IDSP0,64)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_AC, 8)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_NAME, 32)
-			.add(EntrySolrField.CD_ANTIGEN)
-			.add(EntrySolrField.INTERNATIONAL_NAME)
-			.addWithBoostFactor(EntrySolrField.UNIPROT_NAME, 16)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_ACS, 8)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_NAMES, 16)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_GENE_NAMES, 32)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_GENE_NAMES, 8)
-			.addWithBoostFactor(EntrySolrField.FAMILY_NAMES, 4)
-			.addWithBoostFactor(EntrySolrField.CV_NAMES, 4)
-			.addWithBoostFactor(EntrySolrField.CV_SYNONYMS, 4)
-			.addWithBoostFactor(EntrySolrField.CV_ANCESTORS, 2)
-			.addWithBoostFactor(EntrySolrField.PEPTIDE, 2)
-			.addWithBoostFactor(EntrySolrField.ANTIBODY, 2)
-			.add(EntrySolrField.TEXT));
-		
-		indexConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
-			//.add(Fields.ID, 640)
-			.addWithBoostFactor(EntrySolrField.IDSP0,640)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_AC, 80)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_NAME, 320)
-			.add(EntrySolrField.CD_ANTIGEN)
-			.add(EntrySolrField.INTERNATIONAL_NAME)
-			.addWithBoostFactor(EntrySolrField.UNIPROT_NAME, 160)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_ACS, 80)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_NAMES, 160)
-			.addWithBoostFactor(EntrySolrField.RECOMMENDED_GENE_NAMES, 320)
-			.addWithBoostFactor(EntrySolrField.ALTERNATIVE_GENE_NAMES, 80)
-			.addWithBoostFactor(EntrySolrField.FAMILY_NAMES, 40)
-			.addWithBoostFactor(EntrySolrField.CV_NAMES, 40)
-			.addWithBoostFactor(EntrySolrField.CV_SYNONYMS, 40)
-			.addWithBoostFactor(EntrySolrField.CV_ANCESTORS, 20)
-			.addWithBoostFactor(EntrySolrField.PEPTIDE, 20)
-			.addWithBoostFactor(EntrySolrField.ANTIBODY, 20)
-			.addWithBoostFactor(EntrySolrField.TEXT, 20));
-		
-		indexConfig.addOtherParameter("defType", "edismax")
-			.addOtherParameter("df", "text")
-			.addOtherParameter("mm", "100%")
-			.addOtherParameter("lowercaseOperators", "true")
-			.addOtherParameter("ps", "3")
-			.addOtherParameter("facet", "true")
-			.addOtherParameter("facet.field", "filters")
-			.addOtherParameter("facet.limit", "10")
-			.addOtherParameter("facet.method", "enum")
-			.addOtherParameter("facet.mincount", "1")
-			.addOtherParameter("facet.prefix", "")
-			.addOtherParameter("facet.sort", "count");
-		
+		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(defaultConfiguration);
+
+		autocompleteConfig
+				.addOtherParameter("facet.field", "text")
+				.addOtherParameter("stopwords", "true");
+
+		autocompleteConfig.addSortConfig(sortConfigurations);
+
+		return autocompleteConfig;
+	}
+
+	@Override
+	protected SortConfig[] newSortConfigurations() {
+
 		SortConfig[] sortConfigs = new SortConfig[] {
 				SortConfig.create("gene", EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc),
 				SortConfig.create("protein", EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc),
@@ -118,64 +150,56 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 				SortConfig.create("chromosome", EntrySolrField.CHR_LOC_S, ORDER.asc),
 				SortConfig.create("default", EntrySolrField.SCORE, ORDER.desc, 100)
 		};
-		indexConfig.addSortConfig(sortConfigs);
-		indexConfig.setDefaultSortName("default");
-		addConfiguration(indexConfig);
-		
-		// AUTOCOMPLETE Config
 
-		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(indexConfig);
-		
-		autocompleteConfig
-			.addOtherParameter("facet.field", "text")
-			.addOtherParameter("stopwords", "true");
-			
-		autocompleteConfig.addSortConfig(sortConfigs);
-		addConfiguration(autocompleteConfig);
+		return sortConfigs;
+	}
 
-		indexConfig
-			.addOtherParameter("spellcheck.dictionary", "default")
-			.addOtherParameter("spellcheck", "on")
-			.addOtherParameter("spellcheck.extendedResults", "true")
-			.addOtherParameter("spellcheck.count", "10")
-			.addOtherParameter("spellcheck.alternativeTermCount", "5")
-			.addOtherParameter("spellcheck.maxResultsForSuggest", "5")
-			.addOtherParameter("spellcheck.collate", "true")
-			.addOtherParameter("spellcheck.collateExtendedResults", "true")
-			.addOtherParameter("spellcheck.maxCollationTries", "5")
-			.addOtherParameter("spellcheck.maxCollations", "10")
-			.addOtherParameter("mm", "100%");
-		
-
-		setConfigAsDefault(IndexConfiguration.SIMPLE);
-		
-		
-		// ID_SEARCH Config
+	private IndexConfiguration newIdSearchConfiguration(IndexConfiguration defaultConfiguration) {
 
 		IndexConfiguration idSearchConfig = new SearchByIdConfiguration(ID_SEARCH);
 		idSearchConfig.addSortConfig(SortConfig.create("default", EntrySolrField.SCORE, ORDER.desc));
-		idSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
+		idSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 		idSearchConfig.setDefaultSortName("default");
-		addConfiguration(idSearchConfig);
-		
-		
-		// PL_SEARCH Config
+
+		return idSearchConfig;
+	}
+
+	private IndexConfiguration newPlSearchConfiguration(IndexConfiguration defaultConfiguration) {
 
 		IndexConfiguration plSearchConfig = new SearchByIdConfiguration(PL_SEARCH);
 		plSearchConfig.addSortConfig(SortConfig.create("default", EntrySolrField.SCORE, ORDER.desc));
-		plSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
+		plSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 		plSearchConfig.setDefaultSortName("default");
-		plSearchConfig.addSortConfig(sortConfigs);
-		
+
 		plSearchConfig.addOtherParameter("facet", "true")
-		.addOtherParameter("facet.field", "filters")
-		.addOtherParameter("facet.limit", "10")
-		.addOtherParameter("facet.method", "enum")
-		.addOtherParameter("facet.mincount", "1")
-		.addOtherParameter("facet.prefix", "")
-		.addOtherParameter("facet.sort", "count");
-		addConfiguration(plSearchConfig);
+				.addOtherParameter("facet.field", "filters")
+				.addOtherParameter("facet.limit", "10")
+				.addOtherParameter("facet.method", "enum")
+				.addOtherParameter("facet.mincount", "1")
+				.addOtherParameter("facet.prefix", "")
+				.addOtherParameter("facet.sort", "count");
+
+
+		return plSearchConfig;
+	}
+
+	public Class<? extends SolrField> getFields() {
+		return EntrySolrField.class;
+	}
+
+	@Override
+	protected void setupConfigurations() {
 		
+		addConfiguration(defaultConfiguration);
+		addConfiguration(autocompleteConfiguration);
+
+		setConfigAsDefault(IndexConfiguration.SIMPLE);
+
+		// ID_SEARCH Config
+		addConfiguration(newIdSearchConfiguration(defaultConfiguration));
+
+		// PL_SEARCH Config
+		addConfiguration(newPlSearchConfiguration(defaultConfiguration));
 	}
 
 	@Override
