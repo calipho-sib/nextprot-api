@@ -16,15 +16,15 @@ public class PublicationCore extends CoreTemplate {
 	// a way to get it easily from everywhere !
 	public static final String NAME = "publication";
 
-
 	public PublicationCore() {
 		super(PublicationCore.NAME, "nppublications1");
 	}
-	
+
 	@Override
-	protected void setupConfigurations() {
+	protected IndexConfiguration newDefaultConfiguration() {
+
 		IndexConfiguration defaultConfig = IndexConfiguration.SIMPLE();
-		
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
 				.add(PublicationSolrField.ID)
 				.add(PublicationSolrField.AC)
@@ -39,7 +39,7 @@ public class PublicationCore extends CoreTemplate {
 				//.add(PubField.SOURCE)
 				.add(PublicationSolrField.PRETTY_AUTHORS)
 				.add(PublicationSolrField.FILTERS));
-		
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
 				.addWithBoostFactor(PublicationSolrField.AC, 16)
 				.addWithBoostFactor(PublicationSolrField.YEAR, 16)
@@ -50,7 +50,7 @@ public class PublicationCore extends CoreTemplate {
 				.addWithBoostFactor(PublicationSolrField.JOURNAL, 8) // contain both full name and iso abbr
 				//.add(PubField.SOURCE, 8)
 				.addWithBoostFactor(PublicationSolrField.AUTHORS, 8));
-		
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
 				.addWithBoostFactor(PublicationSolrField.AC, 160)
 				.addWithBoostFactor(PublicationSolrField.YEAR, 160)
@@ -61,18 +61,50 @@ public class PublicationCore extends CoreTemplate {
 				.addWithBoostFactor(PublicationSolrField.JOURNAL, 80) // contain both full name and iso abbr
 				//.add(PubField.SOURCE, 80)
 				.addWithBoostFactor(PublicationSolrField.AUTHORS, 80));
-	
 
-		
 		defaultConfig.addOtherParameter("defType", "edismax")
-			.addOtherParameter("facet", "true")
-			.addOtherParameter("facet.field", "filters")
-			.addOtherParameter("facet.limit", "10")
-			.addOtherParameter("facet.method", "enum")
-			.addOtherParameter("facet.mincount", "1")
-			.addOtherParameter("facet.sort", "count");
-		
-		@SuppressWarnings("unchecked")
+				.addOtherParameter("facet", "true")
+				.addOtherParameter("facet.field", "filters")
+				.addOtherParameter("facet.limit", "10")
+				.addOtherParameter("facet.method", "enum")
+				.addOtherParameter("facet.mincount", "1")
+				.addOtherParameter("facet.sort", "count");
+
+		defaultConfig
+				.addOtherParameter("spellcheck.dictionary", "default")
+				.addOtherParameter("spellcheck", "on")
+				.addOtherParameter("spellcheck.extendedResults", "true")
+				.addOtherParameter("spellcheck.count", "10")
+				.addOtherParameter("spellcheck.alternativeTermCount", "5")
+				.addOtherParameter("spellcheck.maxResultsForSuggest", "5")
+				.addOtherParameter("spellcheck.collate", "true")
+				.addOtherParameter("spellcheck.collateExtendedResults", "true")
+				.addOtherParameter("spellcheck.maxCollationTries", "5")
+				.addOtherParameter("spellcheck.maxCollations", "10")
+				.addOtherParameter("mm", "100%");
+
+		defaultConfig.addSortConfig(sortConfigurations);
+		defaultConfig.setDefaultSortName("default");
+
+		return defaultConfig;
+	}
+
+	@Override
+	protected AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration) {
+
+		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(configuration);
+
+		autocompleteConfig
+				.addOtherParameter("facet.field", "text")
+				.addOtherParameter("stopwords", "true");
+		autocompleteConfig.addSortConfig(sortConfigurations);
+
+		return autocompleteConfig;
+	}
+
+	@Override
+	protected SortConfig[] newSortConfigurations() {
+
 		SortConfig sortConfig = SortConfig.create("default", new Pair[] {
 				Pair.create(PublicationSolrField.YEAR, ORDER.desc),
 				Pair.create(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
@@ -80,37 +112,15 @@ public class PublicationCore extends CoreTemplate {
 				Pair.create(PublicationSolrField.FIRST_PAGE, ORDER.asc),
 		});
 
-		defaultConfig.addSortConfig(sortConfig);
-		defaultConfig.setDefaultSortName("default");
-		addConfiguration(defaultConfig);
-		setConfigAsDefault(IndexConfiguration.SIMPLE);
-		
-		
-		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(defaultConfig);
-		
-		autocompleteConfig
-			.addOtherParameter("facet.field", "text")
-			.addOtherParameter("stopwords", "true");
-		
-		autocompleteConfig.addSortConfig(sortConfig);
-		addConfiguration(autocompleteConfig);
+		return new SortConfig[] { sortConfig };
+	}
 
-		defaultConfig
-			.addOtherParameter("spellcheck.dictionary", "default")
-			.addOtherParameter("spellcheck", "on")
-			.addOtherParameter("spellcheck.extendedResults", "true")
-			.addOtherParameter("spellcheck.count", "10")
-			.addOtherParameter("spellcheck.alternativeTermCount", "5")
-			.addOtherParameter("spellcheck.maxResultsForSuggest", "5")
-			.addOtherParameter("spellcheck.collate", "true")
-			.addOtherParameter("spellcheck.collateExtendedResults", "true")
-			.addOtherParameter("spellcheck.maxCollationTries", "5")
-			.addOtherParameter("spellcheck.maxCollations", "10")
-			.addOtherParameter("mm", "100%");
-	
+	@Override
+	protected void setupConfigurations() {
 
+		addConfiguration(defaultConfiguration);
 		setConfigAsDefault(IndexConfiguration.SIMPLE);
-		
+		addConfiguration(autocompleteConfiguration);
 	}
 	
 	public Class<? extends SolrField> getFields() {
