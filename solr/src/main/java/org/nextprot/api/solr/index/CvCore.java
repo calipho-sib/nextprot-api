@@ -14,7 +14,7 @@ public class CvCore extends CoreTemplate {
 
 	public static final String NAME = "term";
 
-	public static final String SIMPLE = "simple";
+	private static final String SIMPLE = "simple";
 
 	public CvCore() {
 		super(CvCore.NAME, "npcvs1");
@@ -26,9 +26,10 @@ public class CvCore extends CoreTemplate {
 	}
 
 	@Override
-	protected void setupConfigurations() {
+	protected IndexConfiguration newDefaultConfiguration() {
+
 		IndexConfiguration defaultConfig = IndexConfiguration.SIMPLE();
-		
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
 				.add(CvSolrField.AC)
 				.add(CvSolrField.NAME)
@@ -36,8 +37,8 @@ public class CvCore extends CoreTemplate {
 				.add(CvSolrField.DESCRIPTION)
 				.add(CvSolrField.PROPERTIES)
 				.add(CvSolrField.FILTERS));
-				//.add(CvField.TEXT));
-				
+		//.add(CvField.TEXT));
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
 				.addWithBoostFactor(CvSolrField.AC, 64)
 				.addWithBoostFactor(CvSolrField.NAME, 32)
@@ -45,7 +46,7 @@ public class CvCore extends CoreTemplate {
 				.addWithBoostFactor(CvSolrField.DESCRIPTION, 16)
 				.addWithBoostFactor(CvSolrField.PROPERTIES, 8)
 				.addWithBoostFactor(CvSolrField.OTHER_XREFS, 8));
-		
+
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
 				.addWithBoostFactor(CvSolrField.AC, 640)
 				.addWithBoostFactor(CvSolrField.NAME, 320)
@@ -55,37 +56,55 @@ public class CvCore extends CoreTemplate {
 				.addWithBoostFactor(CvSolrField.OTHER_XREFS, 80));
 
 		defaultConfig.addOtherParameter("defType", "edismax")
-			.addOtherParameter("facet", "true")
-			.addOtherParameter("facet.field", "filters")
-			.addOtherParameter("facet.limit", "10")
-			.addOtherParameter("facet.method", "enum")
-			.addOtherParameter("facet.mincount", "1")
-			.addOtherParameter("facet.sort", "count");
-		
-		defaultConfig.addSortConfig(SortConfig.create("default", new Pair[] {
-				Pair.create(CvSolrField.SCORE, ORDER.desc),
-				Pair.create(CvSolrField.FILTERS, ORDER.asc)
-		}));		
-		defaultConfig.addSortConfig(SortConfig.create("name", new Pair[] {
-				Pair.create(CvSolrField.NAME_S, ORDER.asc),
-				Pair.create(CvSolrField.FILTERS, ORDER.asc)
-		}));		
+				.addOtherParameter("facet", "true")
+				.addOtherParameter("facet.field", "filters")
+				.addOtherParameter("facet.limit", "10")
+				.addOtherParameter("facet.method", "enum")
+				.addOtherParameter("facet.mincount", "1")
+				.addOtherParameter("facet.sort", "count");
+
+		defaultConfig.addSortConfig(
+				SortConfig.create("default", new Pair[] {
+						Pair.create(CvSolrField.SCORE, ORDER.desc),
+						Pair.create(CvSolrField.FILTERS, ORDER.asc)
+				}),
+				SortConfig.create("name", new Pair[] {
+						Pair.create(CvSolrField.NAME_S, ORDER.asc),
+						Pair.create(CvSolrField.FILTERS, ORDER.asc)
+				})
+		);
 		defaultConfig.setDefaultSortName("default");
-		addConfiguration(defaultConfig);
-		setConfigAsDefault(SIMPLE);
-		
-		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(defaultConfig);
-		
+
+		return defaultConfig;
+	}
+
+	@Override
+	protected AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration) {
+		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(configuration);
+
 		autocompleteConfig.addOtherParameter("defType", "edismax")
-			.addOtherParameter("facet", "true")
-			.addOtherParameter("facet.field", "text")
-			.addOtherParameter("facet.limit", "10")
-			.addOtherParameter("facet.method", "enum")
-			.addOtherParameter("facet.mincount", "1")
-			.addOtherParameter("facet.sort", "count")
-			.addOtherParameter("stopwords", "true");
-			
-		addConfiguration(autocompleteConfig);
+				.addOtherParameter("facet", "true")
+				.addOtherParameter("facet.field", "text")
+				.addOtherParameter("facet.limit", "10")
+				.addOtherParameter("facet.method", "enum")
+				.addOtherParameter("facet.mincount", "1")
+				.addOtherParameter("facet.sort", "count")
+				.addOtherParameter("stopwords", "true");
+
+		return autocompleteConfig;
+	}
+
+	@Override
+	protected SortConfig[] newSortConfigurations() {
+		return new SortConfig[0];
+	}
+
+	@Override
+	protected void setupConfigurations() {
+
+		addConfiguration(defaultConfiguration);
+		setConfigAsDefault(SIMPLE);
+		addConfiguration(autocompleteConfiguration);
 	}
 	
 	@Override
