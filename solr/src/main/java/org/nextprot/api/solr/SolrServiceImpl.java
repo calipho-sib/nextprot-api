@@ -42,11 +42,10 @@ import java.util.TreeSet;
 @Lazy
 @Service
 public class SolrServiceImpl implements SolrService {
+
 	private static final Log Logger = LogFactory.getLog(SolrServiceImpl.class);
 	private static final int DEFAULT_ROWS = 50;
 
-	@Autowired
-	private SolrConnectionFactory connFactory;
 	@Autowired
 	private SolrCoreRepository solrCoreRepository;
 
@@ -60,36 +59,35 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-		SolrCore index = query.getSolrCore();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		
 		logSolrQuery("executeQuery",solrQuery);
-		return executeSolrQuery(index, solrQuery);
+		return executeSolrQuery(query.getSolrCore(), solrQuery);
 	}
 
 	public SearchResult executeCustomQuery(Query query, String[] fields) throws SearchQueryException {
-		SolrCore index = query.getSolrCore();
+		SolrCore solrCore = query.getSolrCore();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		solrQuery.setFields(fields);
 
-		return executeSolrQuery(index, solrQuery);
+		return executeSolrQuery(solrCore, solrQuery);
 	}
 
-	
 	public SearchResult executeIdQuery(Query query) throws SearchQueryException {
-		SolrCore index = query.getSolrCore();
+		SolrCore solrCore = query.getSolrCore();
 
-		if (index == null)
-			index = solrCoreRepository.getSolrCoreByName(query.getIndexName());
+		if (solrCore == null) {
+			solrCore = solrCoreRepository.getSolrCore(query.getIndexName());
+		}
 		String configName = query.getConfigName();
-		IndexConfiguration indexConfig = (configName == null) ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = (configName == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(query.getConfigName());
 		Logger.debug("configName="+indexConfig.getName());
 
 		SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
 		
 		logSolrQuery("executeIdQuery", solrQuery);
 		
-		return executeSolrQuery(index, solrQuery);
+		return executeSolrQuery(solrCore, solrQuery);
 	}
 
 	public boolean checkAvailableIndex(String indexName) {
@@ -97,13 +95,14 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
-		SolrCore index = query.getSolrCore();
+		SolrCore solrCore = query.getSolrCore();
 
-		if (index == null)
-			index = solrCoreRepository.getSolrCoreByName(query.getIndexName());
+		if (solrCore == null) {
+			solrCore = solrCoreRepository.getSolrCore(query.getIndexName());
+		}
 		String configName = query.getConfigName();
 
-		IndexConfiguration indexConfig = (configName == null) ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = (configName == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(query.getConfigName());
 
 		return buildSolrQuery(query, indexConfig);
 	}
@@ -199,13 +198,13 @@ public class SolrServiceImpl implements SolrService {
 	/**
 	 * Perform the Solr query and return the results
 	 *
-	 * @param index
+	 * @param solrCore
 	 * @param solrQuery
 	 * @return
 	 */
-	private SearchResult executeSolrQuery(SolrCore index, SolrQuery solrQuery) {
-		SearchResult result = new SearchResult();
-		SolrServer server = this.connFactory.getServer(index.getName());
+	private SearchResult executeSolrQuery(SolrCore solrCore, SolrQuery solrQuery) {
+		SearchResult result;
+		SolrServer server = solrCoreRepository.getSolrCore(solrCore.getEntity()).newSolrServer();
 
 		// Logger.debug("server: " + index.getName() + " >> " +
 		// ((HttpSolrServer) server).getBaseURL());
@@ -214,21 +213,21 @@ public class SolrServiceImpl implements SolrService {
 
 		try {
 			QueryResponse response = server.query(solrQuery, METHOD.POST);
-			result = buildSearchResult(solrQuery, index.getName(), index.getUrl(), response);
+			result = buildSearchResult(solrQuery, solrCore, response);
 		} catch (SolrServerException e) {
 			throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
 		}
 		return result;
 	}
 
-	private SearchResult buildSearchResult(SolrQuery query, String indexName, String url, QueryResponse response) {
-		SearchResult results = new SearchResult(indexName, url);
+	private SearchResult buildSearchResult(SolrQuery solrQuery, SolrCore solrCore, QueryResponse response) {
+		SearchResult results = new SearchResult(solrCore.getEntity().getName(), solrCore.getName());
 
 		SolrDocumentList docs = response.getResults();
 		Logger.debug("Response doc size:" + docs.size());
 		List<Map<String, Object>> res = new ArrayList<>();
 
-		Map<String, Object> item = null;
+		Map<String, Object> item;
 		for (SolrDocument doc : docs) {
 
 			item = new HashMap<>();
@@ -240,10 +239,10 @@ public class SolrServiceImpl implements SolrService {
 		}
 
 		results.addAllResults(res);
-		if (query.getStart() != null)
-			results.setStart(query.getStart());
+		if (solrQuery.getStart() != null)
+			results.setStart(solrQuery.getStart());
 
-		results.setRows(query.getRows());
+		results.setRows(solrQuery.getRows());
 		results.setElapsedTime(response.getElapsedTime());
 		results.setFound(docs.getNumFound());
 
@@ -292,34 +291,6 @@ public class SolrServiceImpl implements SolrService {
 		return results;
 	}
 
-	/*
-	 * @Override public SearchResult getUserListSearchResult(UserProteinList
-	 * proteinList) throws SearchQueryException {
-	 * 
-	 * Set<String> accessions = proteinList.getAccessionNumbers();
-	 * 
-	 * String queryString = "id:" + (accessions.size() > 1 ? "(" +
-	 * Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-	 * 
-	 * SolrIndex index = this.configuration.getIndexByName("entry");
-	 * IndexConfiguration indexConfig = index.getConfig("simple");
-	 * 
-	 * FieldConfigSet fieldConfigSet =
-	 * indexConfig.getConfigSet(IndexParameter.FL); Set<IndexField> fields =
-	 * fieldConfigSet.getConfigs().keySet(); getClass();
-	 * 
-	 * String[] fieldNames = new String[fields.size()]; Iterator<IndexField> it
-	 * = fields.iterator(); int counter = 0; while (it.hasNext()) {
-	 * fieldNames[counter++] = it.next().getName(); }
-	 * 
-	 * Query query = new Query(index); query.addQuery(queryString);
-	 * query.rows(50); // Query query = this.queryService.buildQuery(index,
-	 * "simple", // queryString, null, null, null, "0", "50", null, new
-	 * String[0]);
-	 * 
-	 * return this.executeByIdQuery(query, fieldNames); }
-	 */
-
 	@Override
 	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
@@ -347,7 +318,7 @@ public class SolrServiceImpl implements SolrService {
 
 		String actualIndexName = indexName.equals("entry") && quality != null && quality.equalsIgnoreCase("gold") ? "gold-entry" : indexName;
 
-		SolrCore index = solrCoreRepository.getSolrCoreByName(actualIndexName);
+		SolrCore index = solrCoreRepository.getSolrCore(actualIndexName);
 
 		Query q = new Query(index).addQuery(queryString);
 		q.setConfiguration(configuration);
