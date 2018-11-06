@@ -7,17 +7,20 @@ import org.nextprot.api.solr.config.FieldConfigSet;
 import org.nextprot.api.solr.config.IndexConfiguration;
 import org.nextprot.api.solr.config.IndexParameter;
 import org.nextprot.api.solr.config.SortConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CvCore extends CoreTemplate {
 
-	public static final String NAME = "term";
-
+	private static final String NAME = "npcvs1";
 	private static final String SIMPLE = "simple";
 
+	@Value("${solr.url}")
+	private String solrServerUrl;
+
 	public CvCore() {
-		super(CvCore.NAME, "npcvs1");
+		super(NAME, Entity.Term);
 	}
 
 	@Override
@@ -101,7 +104,12 @@ public class CvCore extends CoreTemplate {
 		setConfigAsDefault(SIMPLE);
 		addConfiguration(autocompleteConfiguration);
 	}
-	
+
+	@Override
+	protected String getServerUrl() {
+		return solrServerUrl;
+	}
+
 	@Override
 	public SolrField[] getSchema() {
 		return CvSolrField.values();

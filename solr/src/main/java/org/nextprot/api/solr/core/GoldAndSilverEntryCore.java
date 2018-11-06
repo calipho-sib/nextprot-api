@@ -7,6 +7,7 @@ import org.nextprot.api.solr.config.IndexConfiguration;
 import org.nextprot.api.solr.config.IndexParameter;
 import org.nextprot.api.solr.config.SearchByIdConfiguration;
 import org.nextprot.api.solr.config.SortConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static org.nextprot.api.solr.config.SearchByIdConfiguration.ID_SEARCH;
@@ -15,14 +16,17 @@ import static org.nextprot.api.solr.config.SearchByIdConfiguration.PL_SEARCH;
 @Component
 public class GoldAndSilverEntryCore extends CoreTemplate {
 
-	public static final String NAME = "entry";
+	private static final String NAME = "npentries1";
+
+	@Value("${solr.url}")
+	private String solrServerUrl;
 
 	public GoldAndSilverEntryCore() {
-		this(NAME, "npentries1");
+		this(NAME, Entity.Entry);
 	}
 
-	GoldAndSilverEntryCore(String name, String index) {
-		super(name, index);
+	protected GoldAndSilverEntryCore(String name, Entity entity) {
+		super(name, entity);
 	}
 
 	@Override
@@ -201,5 +205,10 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 	@Override
 	public SolrField[] getSchema() {
 		return EntrySolrField.values();
+	}
+
+	@Override
+	protected String getServerUrl() {
+		return solrServerUrl;
 	}
 }

@@ -7,17 +7,20 @@ import org.nextprot.api.solr.config.FieldConfigSet;
 import org.nextprot.api.solr.config.IndexConfiguration;
 import org.nextprot.api.solr.config.IndexParameter;
 import org.nextprot.api.solr.config.SortConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class PublicationCore extends CoreTemplate {
-	
-	// a way to get it easily from everywhere !
-	public static final String NAME = "publication";
+
+	private static final String NAME = "nppublications1";
+
+	@Value("${solr.url}")
+	private String solrServerUrl;
 
 	public PublicationCore() {
-		super(PublicationCore.NAME, "nppublications1");
+		super(PublicationCore.NAME, Entity.Publication);
 	}
 
 	@Override
@@ -126,5 +129,10 @@ public class PublicationCore extends CoreTemplate {
 	@Override
 	public SolrField[] getSchema() {
 		return PublicationSolrField.values();
+	}
+
+	@Override
+	protected String getServerUrl() {
+		return solrServerUrl;
 	}
 }
