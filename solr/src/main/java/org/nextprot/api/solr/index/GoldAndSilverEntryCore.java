@@ -9,10 +9,12 @@ import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.SearchByIdConfiguration;
 import org.nextprot.api.solr.SolrField;
 import org.nextprot.api.solr.SortConfig;
+import org.springframework.stereotype.Component;
 
 import static org.nextprot.api.solr.SearchByIdConfiguration.ID_SEARCH;
 import static org.nextprot.api.solr.SearchByIdConfiguration.PL_SEARCH;
 
+@Component
 public class GoldAndSilverEntryCore extends CoreTemplate {
 
 	public static final String NAME = "entry";
@@ -181,10 +183,6 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 
 
 		return plSearchConfig;
-	}
-
-	public Class<? extends SolrField> getSolrFieldClasses() {
-		return EntrySolrField.class;
 	}
 
 	@Override

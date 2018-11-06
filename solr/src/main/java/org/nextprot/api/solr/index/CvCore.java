@@ -9,7 +9,9 @@ import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.SolrField;
 import org.nextprot.api.solr.SortConfig;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CvCore extends CoreTemplate {
 
 	public static final String NAME = "term";

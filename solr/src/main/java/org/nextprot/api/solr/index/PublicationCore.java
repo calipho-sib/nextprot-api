@@ -9,8 +9,10 @@ import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.SolrField;
 import org.nextprot.api.solr.SortConfig;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class PublicationCore extends CoreTemplate {
 	
 	// a way to get it easily from everywhere !
@@ -123,13 +125,8 @@ public class PublicationCore extends CoreTemplate {
 		addConfiguration(autocompleteConfiguration);
 	}
 	
-	public Class<? extends SolrField> getSolrFieldClasses() {
-		return PublicationSolrField.class;
-	}
-	
 	@Override
 	public SolrField[] getFieldValues() {
 		return PublicationSolrField.values();
 	}
-
 }
