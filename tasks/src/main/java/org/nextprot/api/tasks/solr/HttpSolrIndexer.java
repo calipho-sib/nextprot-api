@@ -12,7 +12,7 @@ public class HttpSolrIndexer implements SolrIndexer {
 
     private final HttpSolrServer solrServer;
 
-	public HttpSolrIndexer(HttpSolrServer httpSolrServer) {
+    HttpSolrIndexer(HttpSolrServer httpSolrServer) {
 
 		solrServer = httpSolrServer;
 	}
