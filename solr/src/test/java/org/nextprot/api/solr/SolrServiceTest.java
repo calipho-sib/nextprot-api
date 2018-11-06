@@ -4,7 +4,6 @@ package org.nextprot.api.solr;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.solr.dto.Query;
 import org.nextprot.api.solr.dto.QueryRequest;
 import org.nextprot.api.solr.dto.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;

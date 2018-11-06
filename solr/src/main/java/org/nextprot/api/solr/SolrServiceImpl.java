@@ -24,7 +24,6 @@ import org.nextprot.api.solr.config.SortConfig;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrField;
-import org.nextprot.api.solr.dto.Query;
 import org.nextprot.api.solr.dto.QueryRequest;
 import org.nextprot.api.solr.dto.SearchResult;
 import org.nextprot.api.solr.dto.SearchResult.Facet;

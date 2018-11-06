@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.dto;
+package org.nextprot.api.solr;
 
 import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
