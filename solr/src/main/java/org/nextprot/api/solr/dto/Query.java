@@ -1,5 +1,6 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.dto;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
@@ -22,6 +23,9 @@ public class Query {
 	}
 	
 	public Query(SolrCore solrCore, String configuration) {
+
+		Preconditions.checkNotNull(solrCore);
+
 		this.solrCore = solrCore;
 		this.indexName = solrCore.getEntity().getName();
 		this.configuration = configuration;
@@ -65,10 +69,6 @@ public class Query {
 
 	public SolrCore getSolrCore() {
 		return solrCore;
-	}
-
-	public void setSolrCore(SolrCore solrCore) {
-		this.solrCore = solrCore;
 	}
 
 	public String getConfigName() {
