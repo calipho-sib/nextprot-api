@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import com.google.common.base.Joiner;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 

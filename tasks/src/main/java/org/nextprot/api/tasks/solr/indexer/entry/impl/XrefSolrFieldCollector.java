@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 

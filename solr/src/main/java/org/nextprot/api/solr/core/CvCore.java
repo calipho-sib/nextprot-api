@@ -1,9 +1,8 @@
-package org.nextprot.api.solr.index;
+package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.AutocompleteConfiguration;
-import org.nextprot.api.solr.CoreTemplate;
 import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexParameter;

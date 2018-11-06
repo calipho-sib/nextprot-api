@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

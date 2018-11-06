@@ -4,7 +4,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 

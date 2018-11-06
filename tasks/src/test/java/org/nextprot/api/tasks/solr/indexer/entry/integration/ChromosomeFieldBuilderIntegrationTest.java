@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;

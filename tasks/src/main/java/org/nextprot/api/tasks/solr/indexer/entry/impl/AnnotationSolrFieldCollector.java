@@ -12,7 +12,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.EntryUtils;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

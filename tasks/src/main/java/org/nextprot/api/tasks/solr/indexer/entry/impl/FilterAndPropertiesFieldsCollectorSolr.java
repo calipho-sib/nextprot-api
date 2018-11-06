@@ -4,7 +4,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.service.EntryReportStatsService;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

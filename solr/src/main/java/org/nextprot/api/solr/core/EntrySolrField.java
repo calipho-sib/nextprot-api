@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.index;
+package org.nextprot.api.solr.core;
 
 import org.nextprot.api.solr.SolrField;
 

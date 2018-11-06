@@ -2,7 +2,7 @@ package org.nextprot.api.tasks.solr.indexer.entry;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 
 import java.util.ArrayList;
 import java.util.Collection;

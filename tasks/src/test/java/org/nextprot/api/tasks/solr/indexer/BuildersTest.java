@@ -2,7 +2,7 @@ package org.nextprot.api.tasks.solr.indexer;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;

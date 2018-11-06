@@ -9,9 +9,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.index.CvSolrField;
-import org.nextprot.api.solr.index.EntrySolrField;
-import org.nextprot.api.solr.index.PublicationSolrField;
+import org.nextprot.api.solr.core.CvSolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
+import org.nextprot.api.solr.core.PublicationSolrField;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.CvSolrField;
+import org.nextprot.api.solr.core.CvSolrField;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTermDocumentFactory;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;

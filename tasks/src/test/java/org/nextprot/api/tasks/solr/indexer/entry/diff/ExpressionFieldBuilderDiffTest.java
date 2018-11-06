@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;

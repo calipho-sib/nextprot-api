@@ -3,8 +3,8 @@ package org.nextprot.api.solr;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.nextprot.api.solr.index.GoldAndSilverEntryCore;
-import org.nextprot.api.solr.index.PublicationCore;
+import org.nextprot.api.solr.core.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.PublicationCore;
 
 public class QueryTest {
 

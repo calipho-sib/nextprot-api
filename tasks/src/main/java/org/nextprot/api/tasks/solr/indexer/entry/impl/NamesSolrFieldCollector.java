@@ -4,7 +4,7 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.solr.index.EntrySolrField;
+import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.tasks.solr.indexer.entry.EntrySolrFieldCollector;
 import org.springframework.stereotype.Service;
 

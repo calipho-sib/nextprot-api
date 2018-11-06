@@ -7,7 +7,7 @@ import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.solr.index.PublicationSolrField;
+import org.nextprot.api.solr.core.PublicationSolrField;
 import org.nextprot.api.tasks.solr.indexer.SolrPublicationDocumentFactory;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
