@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -15,8 +13,8 @@ import java.util.stream.Stream;
 @Lazy
 @Repository
 public class SolrCoreRepository {
-	
-	private Map<String, SolrCore> solrCores = new HashMap<>();
+
+	private final Map<SolrCore.Entity, SolrCore> solrCores = new HashMap<>();
 
 	@Autowired
 	private CvCore cvCore;
@@ -38,15 +36,21 @@ public class SolrCoreRepository {
 	
 	private void addSolrCore(SolrCore solrCore) {
 		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
-			solrCores.put(solrCore.getName(), solrCore);
+			solrCores.put(solrCore.getEntity(), solrCore);
 		}
 		else {
-			throw new SearchConfigException("Missing schema for solr core "+solrCore.getName());
+			throw new SearchConfigException("Missing schema for solr core "+solrCore.getEntity());
 		}
 	}
 
-	public SolrCore getSolrCoreByName(String coreName) {
-		if(this.solrCores.containsKey(coreName)) {
+	public SolrCore getSolrCore(String name) {
+
+		return getSolrCore(SolrCore.Entity.valueOfName(name));
+	}
+
+	public SolrCore getSolrCore(SolrCore.Entity coreName) {
+
+		if (this.solrCores.containsKey(coreName)) {
 			return solrCores.get(coreName);
 		}
 		else {
@@ -54,11 +58,7 @@ public class SolrCoreRepository {
 		}
 	}
 	
-	public Collection<SolrCore> getSolrCores() {
-		return Collections.unmodifiableCollection(this.solrCores.values());
-	}
-	
-	public boolean hasSolrCore(String solrCoreName) {
-		return solrCores.containsKey(solrCoreName);
+	public boolean hasSolrCore(String entityName) {
+		return solrCores.containsKey(SolrCore.Entity.valueOfName(entityName));
 	}
 }
