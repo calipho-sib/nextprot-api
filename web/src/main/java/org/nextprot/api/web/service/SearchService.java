@@ -1,9 +1,9 @@
 package org.nextprot.api.web.service;
 
+import org.nextprot.api.solr.dto.QueryRequest;
+
 import java.util.List;
 import java.util.Set;
-
-import org.nextprot.api.solr.QueryRequest;
 
 public interface SearchService {
 

@@ -7,7 +7,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.dto.QueryRequest;
 import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.StreamEntryService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
@@ -17,7 +17,13 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 

@@ -1,8 +1,15 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.dto;
 
 import org.nextprot.api.commons.utils.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Encapsulate Solr result. 
@@ -144,14 +151,14 @@ public class SearchResult  {
 		return spellcheck;
 	}
 
-	Set<Map<String, Object>> getCollations() {
+	public Set<Map<String, Object>> getCollations() {
 
 		if (spellcheck != null && spellcheck.containsKey(Spellcheck.COLLATIONS))
 			return (Set<Map<String, Object>>) spellcheck.get(Spellcheck.COLLATIONS);
 		return new HashSet<>();
 	}
 
-	Map<String, List<String>> getSuggestions() {
+	public Map<String, List<String>> getSuggestions() {
 
 		if (spellcheck != null && spellcheck.containsKey(Spellcheck.SUGGESTIONS))
 			return (Map<String, List<String>>) spellcheck.get(Spellcheck.SUGGESTIONS);

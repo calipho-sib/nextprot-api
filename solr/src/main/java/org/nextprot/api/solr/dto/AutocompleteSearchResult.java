@@ -1,8 +1,8 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.dto;
 
 import org.apache.commons.collections.map.HashedMap;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Data transfer object that contains autocomplete search results

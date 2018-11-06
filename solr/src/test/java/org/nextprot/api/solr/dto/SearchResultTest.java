@@ -1,4 +1,4 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.dto;
 
 import org.junit.Assert;
 import org.junit.Test;

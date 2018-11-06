@@ -1,6 +1,7 @@
 package org.nextprot.api.solr;
 
 
+import org.nextprot.api.solr.dto.Query;
 
 public interface QueryBuilder {
 

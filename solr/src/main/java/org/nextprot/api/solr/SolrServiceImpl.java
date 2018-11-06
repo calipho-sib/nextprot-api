@@ -18,14 +18,17 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.SearchResult.Facet;
-import org.nextprot.api.solr.SearchResult.Spellcheck;
 import org.nextprot.api.solr.config.IndexConfiguration;
 import org.nextprot.api.solr.config.IndexParameter;
 import org.nextprot.api.solr.config.SortConfig;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.dto.Query;
+import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.dto.SearchResult;
+import org.nextprot.api.solr.dto.SearchResult.Facet;
+import org.nextprot.api.solr.dto.SearchResult.Spellcheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -305,7 +308,6 @@ public class SolrServiceImpl implements SolrService {
 			q.order(ORDER.valueOf(order));
 		}
 
-		q.setSolrCore(index);
 		q.setIndexName(actualIndexName);
 
 		if (filter != null && filter.length() > 0)
