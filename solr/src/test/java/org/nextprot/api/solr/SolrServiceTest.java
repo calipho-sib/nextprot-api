@@ -27,10 +27,7 @@ public class SolrServiceTest  {
 
     @Autowired
     private SolrService service;
-	@Autowired 
-	private SolrConfiguration configuration;
 
-    
     private boolean debug = false;
     
     @Test
