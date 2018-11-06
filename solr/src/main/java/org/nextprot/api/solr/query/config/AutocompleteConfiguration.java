@@ -1,7 +1,7 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr.query.config;
 
 
-import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.query.Query;
 
 public class AutocompleteConfiguration extends IndexConfiguration {
 

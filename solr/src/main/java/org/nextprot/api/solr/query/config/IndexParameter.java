@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr.query.config;
 
 /**
  * See http://wiki.apache.org/solr/ExtendedDisMax

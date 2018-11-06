@@ -18,7 +18,7 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.export.io.EntryProteinExistenceReportTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.StreamEntryService;

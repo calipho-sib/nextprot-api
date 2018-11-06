@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service;
 
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

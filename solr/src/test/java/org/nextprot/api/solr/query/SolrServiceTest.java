@@ -1,11 +1,11 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.query;
 
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.solr.dto.QueryRequest;
-import org.nextprot.api.solr.dto.SearchResult;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;

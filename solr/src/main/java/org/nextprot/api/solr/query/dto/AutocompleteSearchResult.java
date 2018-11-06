@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.dto;
+package org.nextprot.api.solr.query.dto;
 
 import org.apache.commons.collections.map.HashedMap;
 

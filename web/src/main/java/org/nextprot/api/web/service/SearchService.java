@@ -1,6 +1,6 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 
 import java.util.List;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr.query.config;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;

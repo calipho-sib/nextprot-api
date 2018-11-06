@@ -3,9 +3,9 @@ package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.config.IndexConfiguration;
-import org.nextprot.api.solr.config.SortConfig;
+import org.nextprot.api.solr.query.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.query.config.IndexConfiguration;
+import org.nextprot.api.solr.query.config.SortConfig;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,17 +1,17 @@
 package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.solr.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.config.FieldConfigSet;
-import org.nextprot.api.solr.config.IndexConfiguration;
-import org.nextprot.api.solr.config.IndexParameter;
-import org.nextprot.api.solr.config.SearchByIdConfiguration;
-import org.nextprot.api.solr.config.SortConfig;
+import org.nextprot.api.solr.query.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.query.config.FieldConfigSet;
+import org.nextprot.api.solr.query.config.IndexConfiguration;
+import org.nextprot.api.solr.query.config.IndexParameter;
+import org.nextprot.api.solr.query.config.SearchByIdConfiguration;
+import org.nextprot.api.solr.query.config.SortConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import static org.nextprot.api.solr.config.SearchByIdConfiguration.ID_SEARCH;
-import static org.nextprot.api.solr.config.SearchByIdConfiguration.PL_SEARCH;
+import static org.nextprot.api.solr.query.config.SearchByIdConfiguration.ID_SEARCH;
+import static org.nextprot.api.solr.query.config.SearchByIdConfiguration.PL_SEARCH;
 
 @Component
 public class GoldAndSilverEntryCore extends CoreTemplate {

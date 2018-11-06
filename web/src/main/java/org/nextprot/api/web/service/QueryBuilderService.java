@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 
 public interface QueryBuilderService {
 

@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr.query.config;
 
 import org.nextprot.api.solr.core.SolrField;
 

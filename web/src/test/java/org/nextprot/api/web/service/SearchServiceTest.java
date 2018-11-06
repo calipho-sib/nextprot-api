@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service;
 
 import org.junit.Test;
-import org.nextprot.api.solr.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
