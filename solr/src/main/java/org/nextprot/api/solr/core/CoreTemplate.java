@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core;
 
 
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.solr.config.AutocompleteConfiguration;
@@ -79,7 +78,7 @@ abstract class CoreTemplate implements SolrCore {
 	}
 
 	@Override
-	public SolrServer newSolrServer() {
+	public HttpSolrServer newHttpSolrServer() {
 
 		return new HttpSolrServer(getUrl());
 	}

@@ -1,7 +1,7 @@
 package org.nextprot.api.solr.core;
 
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.solr.config.IndexConfiguration;
 
 public interface SolrCore {
@@ -21,8 +21,8 @@ public interface SolrCore {
 	IndexConfiguration getDefaultConfig();
 	IndexConfiguration getConfig(String configName);
 
-	/** @return a new instance of a solr server */
-	SolrServer newSolrServer();
+	/** @return a new instance of a http solr server */
+	HttpSolrServer newHttpSolrServer();
 
 	enum Entity {
 
