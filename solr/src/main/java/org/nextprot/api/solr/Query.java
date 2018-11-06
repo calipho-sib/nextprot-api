@@ -23,7 +23,7 @@ public class Query {
 	
 	public Query(SolrCore solrCore, String configuration) {
 		this.solrCore = solrCore;
-		this.indexName = solrCore.getName();
+		this.indexName = solrCore.getEntity().getName();
 		this.configuration = configuration;
 	}
 
@@ -141,7 +141,7 @@ public class Query {
 	public String toPrettyString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("indexName       : "+indexName + "\n");
-		builder.append("index.getName() : "+solrCore.getName() + "\n");
+		builder.append("index.getEntity : "+solrCore.getEntity().getName() + "\n");
 		builder.append("configuration   : "+configuration + "\n");
 		builder.append("queryString     : "+queryString + "\n");
 		builder.append("filter          : "+filter + "\n");
@@ -161,7 +161,7 @@ public class Query {
 		
 		builder.append(indexName);
 		builder.append(NEWLINE);
-		builder.append(solrCore.getName());
+		builder.append(solrCore.getEntity().getName());
 		builder.append(NEWLINE);
 		builder.append(configuration);
 		builder.append(NEWLINE);

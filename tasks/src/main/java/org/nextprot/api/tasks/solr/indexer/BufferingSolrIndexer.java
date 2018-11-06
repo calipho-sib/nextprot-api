@@ -1,6 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.tasks.solr.HttpSolrIndexer;
 import org.nextprot.api.tasks.solr.SolrIndexer;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Add a certain amount of solr objects to internal buffer before starting to commit to the solr server
+ * Solr server that add a certain amount of solr objects to internal buffer before performing indexation
  */
 public class BufferingSolrIndexer {
 
@@ -21,9 +22,9 @@ public class BufferingSolrIndexer {
 	private final List<SolrDocumentFactory> buffer;
 	private final int bufferSize;
 
-    public BufferingSolrIndexer(String solrServerUrl) {
-        this(new HttpSolrIndexer(solrServerUrl), BUFFER_SIZE);
-    }
+	public BufferingSolrIndexer(HttpSolrServer httpSolrServer) {
+		this(new HttpSolrIndexer(httpSolrServer), BUFFER_SIZE);
+	}
 
 	public BufferingSolrIndexer(SolrIndexer solrServer, int bufferSize) {
 

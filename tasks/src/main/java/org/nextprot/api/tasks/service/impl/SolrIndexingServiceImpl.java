@@ -1,6 +1,7 @@
 package org.nextprot.api.tasks.service.impl;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
@@ -9,12 +10,8 @@ import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.SolrConnectionFactory;
+import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
-import org.nextprot.api.solr.core.CvCore;
-import org.nextprot.api.solr.core.GoldAndSilverEntryCore;
-import org.nextprot.api.solr.core.GoldOnlyEntryCore;
-import org.nextprot.api.solr.core.PublicationCore;
 import org.nextprot.api.tasks.service.SolrIndexingService;
 import org.nextprot.api.tasks.solr.indexer.BufferingSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrCvTermDocumentFactory;
@@ -35,8 +32,6 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
     protected Logger logger = Logger.getLogger(SolrIndexingServiceImpl.class);
 
     @Autowired
-    private SolrConnectionFactory connFactory;
-    @Autowired
     private SolrCoreRepository solrCoreRepository;
     @Autowired
     private TerminologyService terminologyService;
@@ -49,19 +44,39 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
     @Autowired
     private MasterIdentifierService masterIdentifierService;
 
+	@Override
+	public String initIndexEntries(boolean isGold) {
+
+		long seconds = System.currentTimeMillis() / 1000;
+		StringBuilder info = new StringBuilder();
+
+		SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
+		logAndCollect(info, "initializing index " + entity.getName() + "...STARTING at " + new Date());
+
+		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
+
+		logAndCollect(info, "clearing index " + entity.getName());
+		solrIndexer.clearIndexes();
+
+		logAndCollect(info, "committing index " + entity.getName());
+		solrIndexer.performIndexation();
+
+		seconds = (System.currentTimeMillis() / 1000 - seconds);
+		logAndCollect(info, "index " + entity.getName() + " initialized in " + seconds + " seconds ...END at " + new Date());
+
+		return info.toString();
+	}
+
     @Override
     public String indexEntriesChromosome(boolean isGold, String chrName) {
 
         long seconds = System.currentTimeMillis() / 1000;
         StringBuilder info = new StringBuilder();
 
-        String indexName = isGold ? GoldOnlyEntryCore.NAME : GoldAndSilverEntryCore.NAME;
-        logAndCollect(info, "adding entries to index " + indexName + " from chromosome " + chrName + "...STARTING at " + new Date());
+        SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
+        logAndCollect(info, "adding entries to index " + entity.getName() + " from chromosome " + chrName + "...STARTING at " + new Date());
 
-        String serverUrl = getServerUrl(indexName);
-        logAndCollect(info, "Solr server: " + serverUrl);
-
-        BufferingSolrIndexer solrIndexer = new BufferingSolrIndexer(serverUrl);
+        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
 
         logAndCollect(info, "getting entry list of chromosome " + chrName);
         List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
@@ -74,40 +89,14 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	        solrIndexer.pushSolrDocumentFactory(new SolrEntryDocumentFactory(entryBuilderService.buildWithEverything(id), isGold));
 
             if ((ecnt % 300) == 0)
-                logAndCollect(info, ecnt + "/" + allentryids.size() + " entries added to index " + indexName + " for chromosome " + chrName);
+                logAndCollect(info, ecnt + "/" + allentryids.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
         }
 
-        logAndCollect(info, "committing index " + indexName);
+        logAndCollect(info, "committing index " + entity.getName());
 	    solrIndexer.performIndexation();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
-        logAndCollect(info, "added entries to index " + indexName + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
-
-        return info.toString();
-    }
-
-    @Override
-    public String initIndexEntries(boolean isGold) {
-
-        long seconds = System.currentTimeMillis() / 1000;
-        StringBuilder info = new StringBuilder();
-
-        String indexName = isGold ? GoldOnlyEntryCore.NAME : GoldAndSilverEntryCore.NAME;
-        logAndCollect(info, "initializing index " + indexName + "...STARTING at " + new Date());
-
-        logAndCollect(info, "clearing index " + indexName);
-
-        String serverUrl = getServerUrl(indexName);
-        logAndCollect(info, "Solr server: " + serverUrl);
-
-        BufferingSolrIndexer solrIndexer = new BufferingSolrIndexer(serverUrl);
-	    solrIndexer.clearIndexes();
-
-        logAndCollect(info, "committing index " + indexName);
-	    solrIndexer.performIndexation();
-
-        seconds = (System.currentTimeMillis() / 1000 - seconds);
-        logAndCollect(info, "index " + indexName + " initialized in " + seconds + " seconds ...END at " + new Date());
+        logAndCollect(info, "added entries to index " + entity.getName() + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
 
         return info.toString();
     }
@@ -119,16 +108,13 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "terms indexing...STARTING at " + new Date());
 
-        String serverUrl = getServerUrl(CvCore.NAME);
-        logAndCollect(info, "Solr server: " + serverUrl);
+        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Entity.Term, info);
 
-        logAndCollect(info, "clearing term index");
-        BufferingSolrIndexer solrIndexer = new BufferingSolrIndexer(serverUrl);
-        List<CvTerm> allterms;
+	    logAndCollect(info, "clearing term index");
 	    solrIndexer.clearIndexes();
 
         logAndCollect(info, "getting terms for all terminologies");
-        allterms = terminologyService.findAllCVTerms();
+	    List<CvTerm> allterms = terminologyService.findAllCVTerms();
 
         logAndCollect(info, "start indexing of " + allterms.size() + " terms");
         int termcnt = 0;
@@ -150,15 +136,14 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 
     @Override
     public String indexPublications() {
+
         long seconds = System.currentTimeMillis() / 1000;
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "publications indexing...STARTING at " + new Date());
 
-        String serverUrl = getServerUrl(PublicationCore.NAME);
-        logAndCollect(info, "Solr server: " + serverUrl);
+	    BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Entity.Publication, info);
 
-        logAndCollect(info, "clearing publication index");
-        BufferingSolrIndexer solrIndexer = new BufferingSolrIndexer(serverUrl);
+	    logAndCollect(info, "clearing publication index");
 	    solrIndexer.clearIndexes();
 
         logAndCollect(info, "getting publications");
@@ -185,14 +170,16 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
         return info.toString();
     }
 
-    private String getServerUrl(String indexName) {
-        String baseUrl = connFactory.getSolrBaseUrl();
-        String indexUrl = solrCoreRepository.getSolrCoreByName(indexName).getUrl();
-        return baseUrl + indexUrl;
+    private BufferingSolrIndexer newBufferingSolrIndexer(SolrCore.Entity entity, StringBuilder info) {
+
+	    HttpSolrServer solrServer = solrCoreRepository.getSolrCore(entity).newHttpSolrServer();
+	    logAndCollect(info, "Solr server: " + solrServer.getBaseURL());
+
+	    return new BufferingSolrIndexer(solrServer);
     }
 
-    private void logAndCollect(StringBuilder info, String message) {
-        logger.info(message);
-        info.append(message).append("\n");
-    }
+	private void logAndCollect(StringBuilder info, String message) {
+		logger.info(message);
+		info.append(message).append("\n");
+	}
 }

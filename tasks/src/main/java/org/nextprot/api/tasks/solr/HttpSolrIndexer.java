@@ -12,10 +12,10 @@ public class HttpSolrIndexer implements SolrIndexer {
 
     private final HttpSolrServer solrServer;
 
-    public HttpSolrIndexer(String solrServerUrl) {
+	public HttpSolrIndexer(HttpSolrServer httpSolrServer) {
 
-        solrServer = new HttpSolrServer(solrServerUrl);
-    }
+		solrServer = httpSolrServer;
+	}
 
     @Override
     public final UpdateResponse performIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {

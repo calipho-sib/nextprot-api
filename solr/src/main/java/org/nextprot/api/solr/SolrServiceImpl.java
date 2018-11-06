@@ -204,7 +204,7 @@ public class SolrServiceImpl implements SolrService {
 	 */
 	private SearchResult executeSolrQuery(SolrCore solrCore, SolrQuery solrQuery) {
 		SearchResult result;
-		SolrServer server = solrCoreRepository.getSolrCore(solrCore.getEntity()).newSolrServer();
+		SolrServer server = solrCoreRepository.getSolrCore(solrCore.getEntity()).newHttpSolrServer();
 
 		// Logger.debug("server: " + index.getName() + " >> " +
 		// ((HttpSolrServer) server).getBaseURL());
