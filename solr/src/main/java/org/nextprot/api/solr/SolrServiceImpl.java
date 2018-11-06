@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.impl;
+package org.nextprot.api.solr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,19 +19,8 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.IndexConfiguration;
-import org.nextprot.api.solr.IndexParameter;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SearchResult.Facet;
 import org.nextprot.api.solr.SearchResult.Spellcheck;
-import org.nextprot.api.solr.SolrConnectionFactory;
-import org.nextprot.api.solr.SolrCore;
-import org.nextprot.api.solr.SolrCoreRepository;
-import org.nextprot.api.solr.SolrField;
-import org.nextprot.api.solr.SolrService;
-import org.nextprot.api.solr.SortConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
