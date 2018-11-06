@@ -13,7 +13,6 @@
 	<context:component-scan base-package="org.nextprot.api.user" />
 	<context:component-scan base-package="org.nextprot.api.security" />
 	<context:component-scan base-package="org.nextprot.api.rdf" />
-	<context:component-scan base-package="org.nextprot.api.solr" />
 	<context:component-scan base-package="org.nextprot.api.web" />
 	<context:component-scan base-package="org.nextprot.api.test.rdf" />
 	<context:component-scan base-package="org.nextprot.api.blast" />
