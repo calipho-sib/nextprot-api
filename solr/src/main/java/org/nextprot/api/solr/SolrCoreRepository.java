@@ -41,11 +41,11 @@ public class SolrCoreRepository {
 	}
 	
 	private void addSolrCore(SolrCore solrCore) {
-		if (solrCore.getFieldValues() != null && solrCore.getFieldValues().length > 0) {
+		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
 			solrCores.put(solrCore.getName(), solrCore);
 		}
 		else {
-			throw new SearchConfigException("Didn't setup fields for solr core "+solrCore.getName());
+			throw new SearchConfigException("Missing schema for solr core "+solrCore.getName());
 		}
 	}
 

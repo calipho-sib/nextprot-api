@@ -201,7 +201,7 @@ public class GoldAndSilverEntryCore extends CoreTemplate {
 	}
 
 	@Override
-	public SolrField[] getFieldValues() {
+	public SolrField[] getSchema() {
 		return EntrySolrField.values();
 	}
 }

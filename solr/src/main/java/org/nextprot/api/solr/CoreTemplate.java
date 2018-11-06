@@ -31,7 +31,7 @@ public abstract class CoreTemplate implements SolrCore {
 
 	protected abstract void setupConfigurations();
 
-	public abstract SolrField[] getFieldValues();
+	public abstract SolrField[] getSchema();
 
 	protected void addConfiguration(IndexConfiguration config) {
 		this.configurations.put(config.getName(), config);

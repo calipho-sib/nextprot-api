@@ -104,7 +104,7 @@ public class Query {
         // escape <:> everywhere if requested
         if (escapeColon) qs = qs.replace(":","\\:");   
         // replace public field names with private ones (known by solr)
-        for (SolrField f: solrCore.getFieldValues()) {
+        for (SolrField f: solrCore.getSchema()) {
         	if (f.hasPublicName()) {
         		String esc = escapeColon ? "\\" : "";
                 qs = qs.replace(f.getPublicName() + esc + ":", f.getName() + ":");

@@ -105,7 +105,7 @@ public class CvCore extends CoreTemplate {
 	}
 	
 	@Override
-	public SolrField[] getFieldValues() {
+	public SolrField[] getSchema() {
 		return CvSolrField.values();
 	}
 }

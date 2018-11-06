@@ -7,5 +7,5 @@ public interface SolrCore {
 	String getUrl();
 	IndexConfiguration getDefaultConfig();
 	IndexConfiguration getConfig(String configName);
-	SolrField[] getFieldValues();
+	SolrField[] getSchema();
 }

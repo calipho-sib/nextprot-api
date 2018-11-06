@@ -126,7 +126,7 @@ public class PublicationCore extends CoreTemplate {
 	}
 	
 	@Override
-	public SolrField[] getFieldValues() {
+	public SolrField[] getSchema() {
 		return PublicationSolrField.values();
 	}
 }
