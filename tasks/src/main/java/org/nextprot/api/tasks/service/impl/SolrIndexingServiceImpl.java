@@ -9,8 +9,8 @@ import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
+import org.nextprot.api.solr.SolrCoreRepository;
 import org.nextprot.api.solr.index.CvCore;
 import org.nextprot.api.solr.index.GoldAndSilverEntryCore;
 import org.nextprot.api.solr.index.GoldOnlyEntryCore;
@@ -37,7 +37,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
     @Autowired
     private SolrConnectionFactory connFactory;
     @Autowired
-    private SolrConfiguration configuration;
+    private SolrCoreRepository solrCoreRepository;
     @Autowired
     private TerminologyService terminologyService;
     @Autowired
@@ -187,7 +187,7 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 
     private String getServerUrl(String indexName) {
         String baseUrl = connFactory.getSolrBaseUrl();
-        String indexUrl = configuration.getSolrCoreByName(indexName).getUrl();
+        String indexUrl = solrCoreRepository.getSolrCoreByName(indexName).getUrl();
         return baseUrl + indexUrl;
     }
 

@@ -1,11 +1,6 @@
 package org.nextprot.api.web.controller;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -17,7 +12,7 @@ import org.nextprot.api.solr.AutocompleteSearchResult;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrCoreRepository;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
@@ -36,7 +31,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Joiner;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Lazy
 @Controller
@@ -50,7 +49,7 @@ public class SearchController {
 
 	@Autowired private UserQueryService userQueryService;
 	@Autowired private UserProteinListService proteinListService;
-	@Autowired private SolrConfiguration configuration;
+	@Autowired private SolrCoreRepository solrCoreRepository;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Autowired

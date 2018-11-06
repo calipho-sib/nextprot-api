@@ -1,31 +1,43 @@
 package org.nextprot.api.solr;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.solr.index.CvCore;
+import org.nextprot.api.solr.index.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.index.GoldOnlyEntryCore;
+import org.nextprot.api.solr.index.PublicationCore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Lazy
-@Component
-public class SolrConfiguration {
+@Repository
+public class SolrCoreRepository {
 	
 	private Map<String, SolrCore> solrCores = new HashMap<>();
-	private List<Class<? extends SolrCore>> solrCoreClasses;
+
+	@Autowired
+	private CvCore cvCore;
+
+	@Autowired
+	private GoldAndSilverEntryCore goldAndSilverEntryCore;
+
+	@Autowired
+	private GoldOnlyEntryCore goldOnlyEntryCore;
+
+	@Autowired
+	private PublicationCore publicationCore;
 
 	@PostConstruct
-	public void buildSolrCores() throws InstantiationException, IllegalAccessException {
-		for(Class<? extends SolrCore> clazz : this.solrCoreClasses) {
-			addSolrCore(clazz.newInstance());
-		}
-	}
+	private void addSolrCores() {
 
-	public void setSolrCores(List<Class<? extends SolrCore>> solrCoreClasses) {
-		this.solrCoreClasses = solrCoreClasses;
+		Stream.of(cvCore, goldAndSilverEntryCore, goldOnlyEntryCore, publicationCore).forEach(core -> addSolrCore(core));
 	}
 	
 	private void addSolrCore(SolrCore solrCore) {
@@ -46,8 +58,8 @@ public class SolrConfiguration {
 		}
 	}
 	
-	public List<SolrCore> getSolrCores() {
-		return new ArrayList<>(this.solrCores.values());
+	public Collection<SolrCore> getSolrCores() {
+		return Collections.unmodifiableCollection(this.solrCores.values());
 	}
 	
 	public boolean hasSolrCore(String solrCoreName) {

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Lazy
@@ -17,13 +17,13 @@ import java.util.Map;
 public class SolrConnectionFactory {
 	private Map<String, HttpSolrServer> serverMap;
 	private final String baseSolrUrl;
-	private final List<SolrCore> solrCores;
+	private final Collection<SolrCore> solrCores;
 	
 	private final char DASH = '/';
 	
 	@Autowired
-	public SolrConnectionFactory(final SolrConfiguration solrConfiguration, @Value("${solr.url}") final String baseSolrUrl) {
-		solrCores = solrConfiguration.getSolrCores();
+	public SolrConnectionFactory(final SolrCoreRepository solrCoreRepository, @Value("${solr.url}") final String baseSolrUrl) {
+		solrCores = solrCoreRepository.getSolrCores();
 
 		if(baseSolrUrl.charAt(baseSolrUrl.length()-1) != DASH)
 			this.baseSolrUrl = baseSolrUrl + DASH;
