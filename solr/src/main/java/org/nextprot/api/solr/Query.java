@@ -6,9 +6,8 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 public class Query {
 
 	private String indexName;
-	private SolrCore index;
+	private SolrCore solrCore;
 	private String configuration;
-	private String field; // q
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
 	private String sort;
@@ -16,13 +15,13 @@ public class Query {
 	private int start = 0;
 	private int rows;
     
-    public Query(SolrCore index) {
-		this(index, null);
+    public Query(SolrCore solrCore) {
+		this(solrCore, null);
 	}
 	
-	public Query(SolrCore index, String configuration) {
-		this.index = index;
-		this.indexName = index.getName();
+	public Query(SolrCore solrCore, String configuration) {
+		this.solrCore = solrCore;
+		this.indexName = solrCore.getName();
 		this.configuration = configuration;
 	}
 
@@ -62,12 +61,12 @@ public class Query {
 		this.indexName = indexName;
 	}
 
-	public SolrCore getIndex() {
-		return index;
+	public SolrCore getSolrCore() {
+		return solrCore;
 	}
 
-	public void setIndex(SolrCore index) {
-		this.index = index;
+	public void setSolrCore(SolrCore solrCore) {
+		this.solrCore = solrCore;
 	}
 
 	public String getConfigName() {
@@ -76,10 +75,6 @@ public class Query {
 	
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
-	}
-
-	public String getField() {
-		return field;
 	}
 
 	/**
@@ -109,7 +104,7 @@ public class Query {
         // escape <:> everywhere if requested
         if (escapeColon) qs = qs.replace(":","\\:");   
         // replace public field names with private ones (known by solr)
-        for (SolrField f: this.index.getFieldValues()) {
+        for (SolrField f: solrCore.getFieldValues()) {
         	if (f.hasPublicName()) {
         		String esc = escapeColon ? "\\" : "";
                 qs = qs.replace(f.getPublicName() + esc + ":", f.getName() + ":");
@@ -144,9 +139,8 @@ public class Query {
 	public String toPrettyString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("indexName       : "+indexName + "\n");
-		builder.append("index.getName() : "+index.getName() + "\n");
+		builder.append("index.getName() : "+solrCore.getName() + "\n");
 		builder.append("configuration   : "+configuration + "\n");
-		builder.append("field           : "+field + "\n");
 		builder.append("queryString     : "+queryString + "\n");
 		builder.append("filter          : "+filter + "\n");
 		builder.append("sort            : "+sort + "\n");
@@ -165,11 +159,9 @@ public class Query {
 		
 		builder.append(indexName);
 		builder.append(NEWLINE);
-		builder.append(index.getName());
+		builder.append(solrCore.getName());
 		builder.append(NEWLINE);
 		builder.append(configuration);
-		builder.append(NEWLINE);
-		builder.append(field);
 		builder.append(NEWLINE);
 		builder.append(queryString);
 		builder.append(NEWLINE);

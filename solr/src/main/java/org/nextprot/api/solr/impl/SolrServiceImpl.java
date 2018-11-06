@@ -65,7 +65,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-		SolrCore index = query.getIndex();
+		SolrCore index = query.getSolrCore();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		
 		logSolrQuery("executeQuery",solrQuery);
@@ -73,7 +73,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	public SearchResult executeCustomQuery(Query query, String[] fields) throws SearchQueryException {
-		SolrCore index = query.getIndex();
+		SolrCore index = query.getSolrCore();
 		SolrQuery solrQuery = solrQuerySetup(query);
 		solrQuery.setFields(fields);
 
@@ -82,7 +82,7 @@ public class SolrServiceImpl implements SolrService {
 
 	
 	public SearchResult executeIdQuery(Query query) throws SearchQueryException {
-		SolrCore index = query.getIndex();
+		SolrCore index = query.getSolrCore();
 
 		if (index == null)
 			index = this.configuration.getSolrCoreByName(query.getIndexName());
@@ -102,7 +102,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
-		SolrCore index = query.getIndex();
+		SolrCore index = query.getSolrCore();
 
 		if (index == null)
 			index = this.configuration.getSolrCoreByName(query.getIndexName());
@@ -367,7 +367,7 @@ public class SolrServiceImpl implements SolrService {
 			q.order(ORDER.valueOf(order));
 		}
 
-		q.setIndex(index);
+		q.setSolrCore(index);
 		q.setIndexName(actualIndexName);
 
 		if (filter != null && filter.length() > 0)
