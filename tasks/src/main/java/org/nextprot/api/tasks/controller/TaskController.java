@@ -6,7 +6,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.tasks.service.SolrIndexingService;
+import org.nextprot.api.solr.index.SolrIndexingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -25,7 +25,7 @@ public class TaskController {
 	
 	private static final Log LOGGER = LogFactory.getLog(TaskController.class);
 	
-	@Autowired private SolrIndexingService solrIndexerService; 
+	@Autowired private SolrIndexingService solrIndexerService;
 	
 	@ResponseBody
 	@RequestMapping(value = "/tasks/solr/{indexname}/index/chromosome/{chrname}", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
