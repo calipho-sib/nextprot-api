@@ -1,7 +1,8 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.solr.core.SolrField;
 
 import java.util.ArrayList;
 import java.util.Arrays;

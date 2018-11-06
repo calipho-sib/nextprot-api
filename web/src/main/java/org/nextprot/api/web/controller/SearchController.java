@@ -12,7 +12,7 @@ import org.nextprot.api.solr.AutocompleteSearchResult;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrCoreRepository;
+import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;

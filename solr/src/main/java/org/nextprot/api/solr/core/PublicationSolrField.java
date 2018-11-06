@@ -1,7 +1,5 @@
 package org.nextprot.api.solr.core;
 
-import org.nextprot.api.solr.SolrField;
-
 public enum PublicationSolrField implements SolrField {
     ID("id"),
     IDSP0("idsp0"),                   // searchable (text_split0)

@@ -2,11 +2,9 @@ package org.nextprot.api.solr.core;
 
 
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.AutocompleteConfiguration;
-import org.nextprot.api.solr.IndexConfiguration;
-import org.nextprot.api.solr.SolrCore;
-import org.nextprot.api.solr.SolrField;
-import org.nextprot.api.solr.SortConfig;
+import org.nextprot.api.solr.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.config.IndexConfiguration;
+import org.nextprot.api.solr.config.SortConfig;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -10,7 +10,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.SolrConnectionFactory;
-import org.nextprot.api.solr.SolrCoreRepository;
+import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.CvCore;
 import org.nextprot.api.solr.core.GoldAndSilverEntryCore;
 import org.nextprot.api.solr.core.GoldOnlyEntryCore;

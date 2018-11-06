@@ -1,7 +1,5 @@
 package org.nextprot.api.solr.core;
 
-import org.nextprot.api.solr.SolrField;
-
 public enum CvSolrField implements SolrField {
     ID("id"),
     AC("ac"),

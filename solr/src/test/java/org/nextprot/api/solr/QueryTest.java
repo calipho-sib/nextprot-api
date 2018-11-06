@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.solr.core.GoldAndSilverEntryCore;
 import org.nextprot.api.solr.core.PublicationCore;
+import org.nextprot.api.solr.core.SolrCore;
 
 public class QueryTest {
 

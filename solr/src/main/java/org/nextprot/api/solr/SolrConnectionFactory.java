@@ -3,6 +3,8 @@ package org.nextprot.api.solr;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;

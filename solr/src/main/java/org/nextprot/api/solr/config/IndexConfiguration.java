@@ -1,6 +1,9 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryBuilder;
+import org.nextprot.api.solr.core.SolrField;
 
 import java.util.HashMap;
 import java.util.Map;

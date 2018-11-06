@@ -1,10 +1,10 @@
 package org.nextprot.api.solr;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.SearchQueryException;
+import org.nextprot.api.solr.config.IndexConfiguration;
 
 public interface SolrService {
 

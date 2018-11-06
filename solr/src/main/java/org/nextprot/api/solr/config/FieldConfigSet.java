@@ -1,4 +1,6 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
+
+import org.nextprot.api.solr.core.SolrField;
 
 import java.util.HashMap;
 import java.util.Map;

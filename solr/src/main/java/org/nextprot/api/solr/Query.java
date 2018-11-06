@@ -1,6 +1,8 @@
 package org.nextprot.api.solr;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.SolrField;
 
 
 public class Query {

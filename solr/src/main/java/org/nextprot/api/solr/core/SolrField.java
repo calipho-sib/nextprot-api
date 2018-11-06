@@ -1,4 +1,4 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.core;
 
 /**
  * The schema is the place where you tell Solr how it should build indexes from input documents.

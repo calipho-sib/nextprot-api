@@ -1,7 +1,5 @@
 package org.nextprot.api.solr.core;
 
-import org.nextprot.api.solr.SolrField;
-
 import java.util.List;
 
 public enum EntrySolrField implements SolrField {

@@ -1,5 +1,7 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.core;
 
+
+import org.nextprot.api.solr.config.IndexConfiguration;
 
 public interface SolrCore {
 
