@@ -34,8 +34,7 @@ public class SolrEntryDocumentFactory extends SolrDocumentBaseFactory<Entry> {
 			EntrySolrFieldCollector entrySolrFieldCollector = fieldsBuilderMap.get(f);
 			entrySolrFieldCollector.collect(solrizableObject, isGold);
 
-			Object o = entrySolrFieldCollector.getFieldValue(f, f.getType());
-			doc.addField(f.getName(), o);
+			doc.addField(f.getName(), entrySolrFieldCollector.getFieldValue(f));
 		}
 
 		//Reset all fields builders

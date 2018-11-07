@@ -29,6 +29,13 @@ public abstract class EntrySolrFieldCollector {
 
 	}
 
+	public final Object getFieldValue(EntrySolrField field) {
+		if (fields.containsKey(field)) {
+			return fields.get(field);
+		}
+		return null;
+	}
+
 	public final <T> T getFieldValue(EntrySolrField field, Class<T> requiredType) {
 
 		if (fields.containsKey(field)) {
