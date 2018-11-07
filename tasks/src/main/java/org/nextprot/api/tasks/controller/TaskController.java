@@ -6,7 +6,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.solr.index.service.SolrIndexationService;
+import org.nextprot.api.solr.service.SolrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -25,7 +25,7 @@ public class TaskController {
 	
 	private static final Log LOGGER = LogFactory.getLog(TaskController.class);
 	
-	@Autowired private SolrIndexationService solrIndexerService;
+	@Autowired private SolrService solrService;
 	
 	@ResponseBody
 	@RequestMapping(value = "/tasks/solr/{indexname}/index/chromosome/{chrname}", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
@@ -40,9 +40,9 @@ public class TaskController {
 		String result;
 		try {
 			if ("entries".equals(indexName)) {
-				result = solrIndexerService.indexEntriesChromosome(false, chrName);
+				result = solrService.indexEntriesChromosome(false, chrName);
 			} else if ("gold-entries".equals(indexName)) {
-				result = solrIndexerService.indexEntriesChromosome(true, chrName);
+				result = solrService.indexEntriesChromosome(true, chrName);
 			} else {
 				result = "Error: invalid index name, should be either entries or gold-entries";
 			}
@@ -65,9 +65,9 @@ public class TaskController {
 		String result;
 		try {
 			if ("entries".equals(indexName)) {
-				result = solrIndexerService.initIndexEntries(false);
+				result = solrService.initIndexEntries(false);
 			} else if ("gold-entries".equals(indexName)) {
-				result = solrIndexerService.initIndexEntries(true);				
+				result = solrService.initIndexEntries(true);
 			} else {
 				result = "Error: invalid index name, should be either entries or gold-entries";
 			}
@@ -87,7 +87,7 @@ public class TaskController {
 		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
 		String result;
 		try {
-			result = solrIndexerService.indexTerminologies();
+			result = solrService.indexTerminologies();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
@@ -104,7 +104,7 @@ public class TaskController {
 		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
 		String result;
 		try {
-			result = solrIndexerService.indexPublications();
+			result = solrService.indexPublications();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());

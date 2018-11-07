@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.solr.core.schema.CvSolrField;
 import org.nextprot.api.solr.query.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.config.FieldConfigSet;
 import org.nextprot.api.solr.query.config.IndexConfiguration;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CvCore extends CoreTemplate {
+public class CvCore extends RealSolrCore {
 
 	private static final String NAME = "npcvs1";
 	private static final String SIMPLE = "simple";

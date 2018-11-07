@@ -9,16 +9,14 @@ import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryService;
-import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.service.impl.SparqlQueryDictionary;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -43,18 +41,13 @@ import java.util.Set;
 public class SearchController {
 
 //	private final Log Logger = LogFactory.getLog(SearchController.class);
-	@Autowired private SolrQueryService queryService;
+	@Autowired private SolrService queryService;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 
 	@Autowired private UserQueryService userQueryService;
 	@Autowired private UserProteinListService proteinListService;
-	@Autowired private SolrCoreRepository solrCoreRepository;
 	@Autowired private QueryBuilderService queryBuilderService;
-
-	@Autowired
-	private SparqlQueryDictionary sparqlQueryDictionary;
-	
 
 	/**
 	 * Useful to build the cache for sparql queries on a target api server (typically build-api.nextprot.org)

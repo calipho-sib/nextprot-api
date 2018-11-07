@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.core.schema.EntrySolrField;
 import org.nextprot.api.solr.query.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.config.FieldConfigSet;
 import org.nextprot.api.solr.query.config.IndexConfiguration;
@@ -14,7 +15,7 @@ import static org.nextprot.api.solr.query.config.SearchByIdConfiguration.ID_SEAR
 import static org.nextprot.api.solr.query.config.SearchByIdConfiguration.PL_SEARCH;
 
 @Component
-public class GoldAndSilverEntryCore extends CoreTemplate {
+public class GoldAndSilverEntryCore extends RealSolrCore {
 
 	private static final String NAME = "npentries1";
 

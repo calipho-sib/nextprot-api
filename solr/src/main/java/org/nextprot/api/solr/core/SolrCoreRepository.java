@@ -14,13 +14,13 @@ import java.util.stream.Stream;
 @Repository
 public class SolrCoreRepository {
 
-	private final Map<SolrCore.Entity, SolrCore> solrCores = new HashMap<>();
+	private final Map<SolrCore.Entity, RealSolrCore> solrCores = new HashMap<>();
 
 	@Autowired
 	private CvCore cvCore;
 
 	@Autowired
-	private GoldAndSilverEntryCore goldAndSilverEntryCore;
+	private RealSolrCore goldAndSilverEntryCore;
 
 	@Autowired
 	private GoldOnlyEntryCore goldOnlyEntryCore;
@@ -31,10 +31,10 @@ public class SolrCoreRepository {
 	@PostConstruct
 	private void addSolrCores() {
 
-		Stream.of(cvCore, goldAndSilverEntryCore, goldOnlyEntryCore, publicationCore).forEach(core -> addSolrCore(core));
+		Stream.of(cvCore, goldAndSilverEntryCore, goldOnlyEntryCore, publicationCore).forEach(this::addSolrCore);
 	}
 	
-	private void addSolrCore(SolrCore solrCore) {
+	private void addSolrCore(RealSolrCore solrCore) {
 		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
 			solrCores.put(solrCore.getEntity(), solrCore);
 		}
@@ -43,12 +43,12 @@ public class SolrCoreRepository {
 		}
 	}
 
-	public SolrCore getSolrCore(String name) {
+	public RealSolrCore getSolrCore(String name) {
 
 		return getSolrCore(SolrCore.Entity.valueOfName(name));
 	}
 
-	public SolrCore getSolrCore(SolrCore.Entity coreName) {
+	public RealSolrCore getSolrCore(SolrCore.Entity coreName) {
 
 		if (this.solrCores.containsKey(coreName)) {
 			return solrCores.get(coreName);

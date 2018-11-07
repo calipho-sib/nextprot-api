@@ -7,8 +7,8 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -31,7 +31,7 @@ import java.util.Set;
 public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 	@Autowired
-	private SolrQueryService queryService;
+	private SolrService queryService;
 	@Autowired
 	private SparqlService sparqlService;
 	@Autowired

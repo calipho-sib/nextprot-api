@@ -1,6 +1,5 @@
 package org.nextprot.api.solr.core;
 
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +51,9 @@ public class SolrCoreRepositoryTest {
 		Assert.assertEquals(expectedCoreName, repo.getName());
 		Assert.assertEquals(entity, repo.getEntity());
 		Assert.assertEquals(expectedUrl, repo.getUrl());
-		HttpSolrServer solrServer = repo.newHttpSolrServer();
-		Assert.assertEquals(expectedUrl, solrServer.getBaseURL());
+		SolrServer solrServer = repo.newSolrServer();
+		Assert.assertTrue(solrServer instanceof SolrCoreServer);
+		SolrCoreServer defaultSolrServer = (SolrCoreServer) repo.newSolrServer();
+		Assert.assertEquals(expectedUrl, defaultSolrServer.getBaseURL());
 	}
 }

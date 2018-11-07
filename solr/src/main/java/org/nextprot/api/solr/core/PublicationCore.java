@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.solr.core.schema.PublicationSolrField;
 import org.nextprot.api.solr.query.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.config.FieldConfigSet;
 import org.nextprot.api.solr.query.config.IndexConfiguration;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class PublicationCore extends CoreTemplate {
+public class PublicationCore extends RealSolrCore {
 
 	private static final String NAME = "nppublications1";
 

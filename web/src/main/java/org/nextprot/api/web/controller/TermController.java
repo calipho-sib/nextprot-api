@@ -14,9 +14,9 @@ import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,7 +42,7 @@ public class TermController {
 
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
-	@Autowired private SolrQueryService solrQueryService;
+	@Autowired private SolrService solrQueryService;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)

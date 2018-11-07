@@ -18,9 +18,9 @@ import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -49,7 +49,7 @@ public class EntryPublicationController {
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
-    private SolrQueryService solrQueryService;
+    private SolrService solrQueryService;
     @Autowired
     private QueryBuilderService queryBuilderService;
     @Autowired

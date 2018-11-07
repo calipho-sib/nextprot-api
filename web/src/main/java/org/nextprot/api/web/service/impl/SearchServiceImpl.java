@@ -9,9 +9,9 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -36,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
 	private final Log Logger = LogFactory.getLog(SearchServiceImpl.class);
 
 	@Autowired
-	private SolrQueryService solrQueryService;
+	private SolrService solrQueryService;
 
 	@Autowired
 	private SparqlService sparqlService;
