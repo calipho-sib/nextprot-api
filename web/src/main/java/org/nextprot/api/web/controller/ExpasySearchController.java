@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.web.service.QueryBuilderService;
@@ -25,7 +25,7 @@ public class ExpasySearchController {
 
 	private final Log LOGGER = LogFactory.getLog(ExpasySearchController.class);
 
-	@Autowired private SolrService queryService;
+	@Autowired private SolrQueryService queryService;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 

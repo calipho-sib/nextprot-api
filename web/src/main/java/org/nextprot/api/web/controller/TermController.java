@@ -14,7 +14,7 @@ import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.web.service.QueryBuilderService;
@@ -42,7 +42,7 @@ public class TermController {
 
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
-	@Autowired private SolrService solrService;
+	@Autowired private SolrQueryService solrQueryService;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -144,7 +144,7 @@ public class TermController {
 			qr.setRows("0");
 			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
 			try {
-				SearchResult sr = solrService.executeQuery(query);
+				SearchResult sr = solrQueryService.executeQuery(query);
 				long relevantForEntry = sr.getFound();
 				node.setRelevantFor(relevantForEntry);
 			} catch (SearchQueryException e) {

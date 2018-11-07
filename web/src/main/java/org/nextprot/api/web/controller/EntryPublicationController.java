@@ -18,7 +18,7 @@ import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.web.service.QueryBuilderService;
@@ -49,7 +49,7 @@ public class EntryPublicationController {
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
-    private SolrService solrService;
+    private SolrQueryService solrQueryService;
     @Autowired
     private QueryBuilderService queryBuilderService;
     @Autowired
@@ -174,7 +174,7 @@ public class EntryPublicationController {
 
         Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
         try {
-            SearchResult searchResult = solrService.executeQuery(q);
+            SearchResult searchResult = solrQueryService.executeQuery(q);
 
             view.setRelatedEntryCount(eps.size());
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));

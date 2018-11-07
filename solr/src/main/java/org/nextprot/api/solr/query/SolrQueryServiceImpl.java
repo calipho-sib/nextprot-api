@@ -42,9 +42,9 @@ import java.util.TreeSet;
 
 @Lazy
 @Service
-public class SolrServiceImpl implements SolrService {
+public class SolrQueryServiceImpl implements SolrQueryService {
 
-	private static final Log Logger = LogFactory.getLog(SolrServiceImpl.class);
+	private static final Log Logger = LogFactory.getLog(SolrQueryServiceImpl.class);
 	private static final int DEFAULT_ROWS = 50;
 
 	@Autowired

@@ -25,10 +25,10 @@ import static org.junit.Assert.assertTrue;
 @ActiveProfiles({"unit", "unit-schema-nextprot"})
 @DirtiesContext
 @ContextConfiguration({"classpath:spring/commons-context.xml","classpath:spring/solr-context.xml"})
-public class SolrServiceTest  {
+public class SolrQueryServiceTest {
 
     @Autowired
-    private SolrService service;
+    private SolrQueryService service;
 
     private boolean debug = false;
     

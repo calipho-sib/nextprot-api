@@ -9,7 +9,7 @@ import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
 import org.nextprot.api.solr.query.dto.QueryRequest;
@@ -43,7 +43,7 @@ import java.util.Set;
 public class SearchController {
 
 //	private final Log Logger = LogFactory.getLog(SearchController.class);
-	@Autowired private SolrService queryService;
+	@Autowired private SolrQueryService queryService;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 

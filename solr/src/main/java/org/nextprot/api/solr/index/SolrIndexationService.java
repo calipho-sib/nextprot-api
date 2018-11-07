@@ -1,7 +1,7 @@
 package org.nextprot.api.solr.index;
 
 
-public interface SolrIndexingService {
+public interface SolrIndexationService {
 	
 	String indexTerminologies();
 	String indexPublications();

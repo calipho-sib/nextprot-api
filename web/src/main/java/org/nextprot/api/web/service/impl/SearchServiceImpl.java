@@ -9,7 +9,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -36,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
 	private final Log Logger = LogFactory.getLog(SearchServiceImpl.class);
 
 	@Autowired
-	private SolrService solrService;
+	private SolrQueryService solrQueryService;
 
 	@Autowired
 	private SparqlService sparqlService;
@@ -97,7 +97,7 @@ public class SearchServiceImpl implements SearchService {
 			queryRequest.setQuery(queryString);
 
 			Query query = queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
-			SearchResult result = this.solrService.executeQuery(query);
+			SearchResult result = this.solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
 			for (Map<String, Object> res : results) {
@@ -116,7 +116,7 @@ public class SearchServiceImpl implements SearchService {
 		Set<String> set = new LinkedHashSet<>();
 		try {
 			Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
-			SearchResult results = solrService.executeIdQuery(query);
+			SearchResult results = solrQueryService.executeIdQuery(query);
 			for (Map<String, Object> f : results.getFoundFacets("id")) {
 				String entry = (String) f.get("name");
 				set.add(entry);

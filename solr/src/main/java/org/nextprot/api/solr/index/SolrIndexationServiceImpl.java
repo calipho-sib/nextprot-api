@@ -25,9 +25,9 @@ import java.util.Set;
 
 @Lazy
 @Service
-public class SolrIndexingServiceImpl implements SolrIndexingService {
+public class SolrIndexationServiceImpl implements SolrIndexationService {
 
-    protected Logger logger = Logger.getLogger(SolrIndexingServiceImpl.class);
+    protected Logger logger = Logger.getLogger(SolrIndexationServiceImpl.class);
 
     @Autowired
     private SolrCoreRepository solrCoreRepository;

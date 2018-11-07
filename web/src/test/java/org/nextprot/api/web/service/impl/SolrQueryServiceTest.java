@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrService;
+import org.nextprot.api.solr.query.SolrQueryService;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({"dev","cache"})
-public class SolrServiceTest extends WebUnitBaseTest {
+public class SolrQueryServiceTest extends WebUnitBaseTest {
 
-    @Autowired private SolrService service;
+    @Autowired private SolrQueryService service;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Test

@@ -6,7 +6,7 @@ import org.nextprot.api.solr.query.config.IndexConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
-public interface SolrService {
+public interface SolrQueryService {
 
 	/**
 	 * Execute a SOLR search query and return results
