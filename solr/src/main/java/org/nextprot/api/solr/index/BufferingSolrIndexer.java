@@ -22,7 +22,11 @@ public class BufferingSolrIndexer {
 	private final int bufferSize;
 
 	public BufferingSolrIndexer(HttpSolrServer httpSolrServer) {
-		this(new HttpSolrIndexer(httpSolrServer), BUFFER_SIZE);
+		this(httpSolrServer, BUFFER_SIZE);
+	}
+
+	public BufferingSolrIndexer(HttpSolrServer httpSolrServer, int bufferSize) {
+		this(new HttpSolrIndexer(httpSolrServer), bufferSize);
 	}
 
 	public BufferingSolrIndexer(SolrIndexer solrServer, int bufferSize) {
