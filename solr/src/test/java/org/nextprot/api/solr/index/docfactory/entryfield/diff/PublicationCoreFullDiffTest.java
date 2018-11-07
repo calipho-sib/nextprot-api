@@ -48,7 +48,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		//System.err.println("Testing publi: " + entry);
         SolrPublicationDocumentFactory solrPublication = new SolrPublicationDocumentFactory(publicationService.findPublicationById(pubid));
 
-		SolrInputDocument solrDoc = solrPublication.calcSolrInputDocument();
+		SolrInputDocument solrDoc = solrPublication.createSolrInputDocument();
 		if(getValueForFieldInCurrentSolrImplementation(entry, PublicationSolrField.ID) == null)
 		  {
 		  System.err.println(entry + " Not in current kant index, pubmed: " + solrDoc.getFieldValue("ac"));

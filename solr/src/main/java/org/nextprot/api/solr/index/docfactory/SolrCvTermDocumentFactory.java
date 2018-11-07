@@ -8,7 +8,7 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import java.util.List;
 
 
-public class SolrCvTermDocumentFactory extends SolrDocumentFactory<CvTerm> {
+public class SolrCvTermDocumentFactory extends SolrDocumentBaseFactory<CvTerm> {
 
     public SolrCvTermDocumentFactory(CvTerm term) {
 
@@ -16,7 +16,7 @@ public class SolrCvTermDocumentFactory extends SolrDocumentFactory<CvTerm> {
     }
 
     @Override
-	public SolrInputDocument calcSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument() {
 
         CvTerm term = solrizableObject;
 

@@ -10,7 +10,7 @@ import org.nextprot.api.solr.index.docfactory.entryfield.EntrySolrFieldCollector
 import java.util.HashMap;
 import java.util.Map;
 
-public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
+public class SolrEntryDocumentFactory extends SolrDocumentBaseFactory<Entry> {
 
     private final boolean isGold;
 
@@ -20,7 +20,7 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
     }
 
 	@Override
-	public SolrInputDocument calcSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument() {
 
 		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = mapBuildersByEntryField();
 

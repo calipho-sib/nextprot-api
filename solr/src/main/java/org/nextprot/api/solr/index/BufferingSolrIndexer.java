@@ -1,9 +1,9 @@
 package org.nextprot.api.solr.index;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.solr.index.docfactory.SolrDocumentFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Solr server that add a certain amount of solr objects to internal buffer before performing indexation
+ * Solr server able to add a certain amount of solr objects to internal buffer before performing indexation
  */
 public class BufferingSolrIndexer {
 
 	private static final int BUFFER_SIZE = 150;
 
-	private final SolrIndexer solrServer;
+	private final SolrIndexer solrIndexer;
 	private final List<SolrDocumentFactory> buffer;
 	private final int bufferSize;
 
@@ -29,24 +29,27 @@ public class BufferingSolrIndexer {
 		this(new HttpSolrIndexer(httpSolrServer), bufferSize);
 	}
 
-	public BufferingSolrIndexer(SolrIndexer solrServer, int bufferSize) {
+	public BufferingSolrIndexer(SolrIndexer solrIndexer, int bufferSize) {
 
-        this.solrServer = solrServer;
+		Preconditions.checkNotNull(solrIndexer);
+		Preconditions.checkArgument(bufferSize >= 0);
+
+        this.solrIndexer = solrIndexer;
         this.bufferSize = bufferSize;
 		buffer = new ArrayList<>();
 	}
 
 	/**
 	 * Put factories that produce solr document into buffer - if buffer is full objects are flushed to solr server
-	 * @param solrDocument object to be indexed by solr
+	 * @param documentFactory a factory that are able to create solr document from object to be indexed by solr
 	 */
-	public void pushSolrDocumentFactory(SolrDocumentFactory solrDocument) {
+	public void pushSolrDocumentFactory(SolrDocumentFactory documentFactory) {
 
-		if (solrDocument == null) {
-			throw new NextProtException("cannot create solr index from undefined object");
+		if (documentFactory == null) {
+			throw new NextProtException("cannot create solr index from undefined solr document factory");
 		}
 
-		buffer.add(solrDocument);
+		buffer.add(documentFactory);
 		if (buffer.size() % bufferSize == 0) {
 			flushSolrDocumentsToSolr();
 		}
@@ -62,7 +65,7 @@ public class BufferingSolrIndexer {
 		}
 
 		try {
-            solrServer.execute();
+			solrIndexer.execute();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -73,8 +76,8 @@ public class BufferingSolrIndexer {
 	 */
 	public void clearIndexes() {
 		try {
-			solrServer.deleteIndexes();
-            solrServer.execute();
+			solrIndexer.deleteIndexes();
+			solrIndexer.execute();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -83,8 +86,8 @@ public class BufferingSolrIndexer {
     private void flushSolrDocumentsToSolr() {
 
         try {
-            solrServer.performIndexation(buffer.stream()
-                .map(so -> so.calcSolrInputDocument())
+			solrIndexer.performIndexation(buffer.stream()
+                .map(SolrDocumentFactory::createSolrInputDocument)
 	            .collect(Collectors.toList()));
 	        buffer.clear();
         } catch (SolrServerException | IOException e) {

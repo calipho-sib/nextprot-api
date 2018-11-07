@@ -55,7 +55,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 		if(id == 154329) return;
 		System.out.println("Testing cv: " + Long.toString(id) + "=" + entry);
 
-		SolrInputDocument solrDoc = new SolrCvTermDocumentFactory(term).calcSolrInputDocument();
+		SolrInputDocument solrDoc = new SolrCvTermDocumentFactory(term).createSolrInputDocument();
 		
 		String expected = (String) getValueForFieldInCurrentSolrImplementation(Long.toString(id), CvSolrField.AC);
 		//System.err.println("expected ac: " + expected);

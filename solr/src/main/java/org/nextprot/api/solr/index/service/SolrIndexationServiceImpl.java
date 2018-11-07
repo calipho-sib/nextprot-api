@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.index;
+package org.nextprot.api.solr.index.service;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -12,18 +12,17 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
+import org.nextprot.api.solr.index.BufferingSolrIndexer;
 import org.nextprot.api.solr.index.docfactory.SolrCvTermDocumentFactory;
 import org.nextprot.api.solr.index.docfactory.SolrEntryDocumentFactory;
 import org.nextprot.api.solr.index.docfactory.SolrPublicationDocumentFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-@Lazy
 @Service
 public class SolrIndexationServiceImpl implements SolrIndexationService {
 

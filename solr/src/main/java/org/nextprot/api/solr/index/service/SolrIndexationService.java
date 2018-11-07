@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.index;
+package org.nextprot.api.solr.index.service;
 
 
 public interface SolrIndexationService {

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * A Solr indexer can execute indexation and clean indexes
+ * A Solr indexer can create indexes from solr documents and clean indexes
  */
 public interface SolrIndexer {
 

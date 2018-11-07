@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class SolrPublicationDocumentFactory extends SolrDocumentFactory<Publication> {
+public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publication> {
 
     public SolrPublicationDocumentFactory(Publication publi) {
         super(publi);
     }
 
 	@Override
-	public SolrInputDocument calcSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument() {
 
         Publication publi = solrizableObject;
 
