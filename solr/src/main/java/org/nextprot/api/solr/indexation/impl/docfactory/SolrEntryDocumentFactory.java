@@ -52,11 +52,11 @@ public class SolrEntryDocumentFactory extends SolrDocumentBaseFactory<Entry> {
 
 		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = new HashMap<>();
 
-		for (EntrySolrFieldCollector builder : SpringApplicationContext.getAllBeansOfType(EntrySolrFieldCollector.class)) {
-			if (!builder.getCollectedFields().isEmpty()) {
-				for (EntrySolrField indexedField : builder.getCollectedFields()) {
+		for (EntrySolrFieldCollector collector : SpringApplicationContext.getAllBeansOfType(EntrySolrFieldCollector.class)) {
+			if (!collector.getCollectedFields().isEmpty()) {
+				for (EntrySolrField indexedField : collector.getCollectedFields()) {
 					NPreconditions.checkTrue(!(fieldsBuilderMap.containsKey(indexedField)), "The field " + indexedField.getName() + " cannot be indexed by several builders: " + indexedField.getClass() + ", " + fieldsBuilderMap.get(indexedField));
-					fieldsBuilderMap.put(indexedField, builder);
+					fieldsBuilderMap.put(indexedField, collector);
 				}
 			}
 

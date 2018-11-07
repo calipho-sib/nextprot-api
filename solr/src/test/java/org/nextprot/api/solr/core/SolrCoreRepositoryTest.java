@@ -52,8 +52,6 @@ public class SolrCoreRepositoryTest {
 		Assert.assertEquals(expectedCoreName, repo.getName());
 		Assert.assertEquals(entity, repo.getEntity());
 		Assert.assertEquals(expectedUrl, repo.getUrl());
-		SolrServer solrServer = repo.newSolrServer();
-		Assert.assertTrue(solrServer instanceof SolrCoreServer);
 		SolrCoreServer defaultSolrServer = (SolrCoreServer) repo.newSolrServer();
 		Assert.assertEquals(expectedUrl, defaultSolrServer.getBaseURL());
 	}
