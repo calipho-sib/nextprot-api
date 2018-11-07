@@ -4,7 +4,7 @@ package org.nextprot.api.solr.service;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.config.IndexConfiguration;
+import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 

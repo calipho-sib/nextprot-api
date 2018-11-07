@@ -1,6 +1,10 @@
 package org.nextprot.api.solr.core;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.solr.core.impl.CvCore;
+import org.nextprot.api.solr.core.impl.GoldOnlyEntryCore;
+import org.nextprot.api.solr.core.impl.PublicationCore;
+import org.nextprot.api.solr.core.impl.RealSolrCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;

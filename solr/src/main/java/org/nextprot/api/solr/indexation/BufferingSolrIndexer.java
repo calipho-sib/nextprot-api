@@ -78,6 +78,10 @@ public class BufferingSolrIndexer {
 		}
 	}
 
+	int getBufferSize() {
+		return buffer.size();
+	}
+
     private void flushSolrDocumentsToSolr() {
 
         try {
