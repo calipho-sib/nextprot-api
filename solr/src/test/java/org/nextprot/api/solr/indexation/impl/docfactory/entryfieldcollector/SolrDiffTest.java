@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -9,9 +9,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.core.schema.CvSolrField;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
-import org.nextprot.api.solr.core.schema.PublicationSolrField;
+import org.nextprot.api.solr.core.impl.schema.CvSolrField;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 

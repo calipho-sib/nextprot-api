@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.diff;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.diff;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
@@ -7,9 +7,9 @@ import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.solr.core.schema.PublicationSolrField;
-import org.nextprot.api.solr.indexation.docfactory.SolrPublicationDocumentFactory;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.SolrDiffTest;
+import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.SolrPublicationDocumentFactory;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;

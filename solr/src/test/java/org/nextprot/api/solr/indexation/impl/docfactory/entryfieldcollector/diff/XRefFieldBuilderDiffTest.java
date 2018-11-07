@@ -1,13 +1,13 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.diff;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.diff;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.InteractionSolrFieldCollector;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.SolrDiffTest;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.XrefSolrFieldCollector;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.InteractionSolrFieldCollector;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrDiffTest;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.XrefSolrFieldCollector;
 
 import java.util.Collections;
 import java.util.List;

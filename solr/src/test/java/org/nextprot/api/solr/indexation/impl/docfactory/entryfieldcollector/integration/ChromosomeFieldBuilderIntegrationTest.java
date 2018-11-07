@@ -1,12 +1,12 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.integration;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.integration;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.ChromosomeSolrFieldCollector;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.SolrBuildIntegrationTest;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.ChromosomeSolrFieldCollector;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertTrue;

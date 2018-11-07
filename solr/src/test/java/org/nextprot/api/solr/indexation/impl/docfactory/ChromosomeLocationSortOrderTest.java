@@ -1,7 +1,7 @@
-package org.nextprot.api.solr.indexation.docfactory;
+package org.nextprot.api.solr.indexation.impl.docfactory;
 
 import org.junit.Test;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.ChromosomeSolrFieldCollector;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.ChromosomeSolrFieldCollector;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,17 +1,18 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.integration;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.integration;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 
-public class AnnotationFieldBuilderIntegrationTest extends org.nextprot.api.solr.indexation.docfactory.entryfield.SolrBuildIntegrationTest {
+public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationTest {
 
 	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Test
@@ -20,7 +21,7 @@ public class AnnotationFieldBuilderIntegrationTest extends org.nextprot.api.solr
 				"NX_P38398", "NX_P51587","NX_P16422", "NX_P40692", "NX_Q9UHC1", "NX_P43246", "NX_P52701", "NX_P54278"};
 		int bedAnnotCnt = 0;
 		
-		org.nextprot.api.solr.indexation.docfactory.entryfield.AnnotationSolrFieldCollector afb = new org.nextprot.api.solr.indexation.docfactory.entryfield.AnnotationSolrFieldCollector();
+		org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.AnnotationSolrFieldCollector afb = new org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.AnnotationSolrFieldCollector();
 		afb.collect(getEntry("NX_P35498"), false);
 
 		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);

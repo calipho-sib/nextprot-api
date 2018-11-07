@@ -1,9 +1,9 @@
-package org.nextprot.api.solr.indexation.docfactory;
+package org.nextprot.api.solr.indexation.impl.docfactory;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.EntrySolrFieldCollector;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.EntrySolrFieldCollector;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -13,11 +13,11 @@ import static org.junit.Assert.fail;
 
 @ActiveProfiles({"build"})
 @ContextConfiguration("classpath:spring/commons-context.xml")
-public class BuildersTest extends AbstractUnitBaseTest {
+public class CollectorsTest extends AbstractUnitBaseTest {
 
 	@Test
 	public void shouldCoverAllSolrFields() {
-		Map<EntrySolrField, EntrySolrFieldCollector> map = SolrEntryDocumentFactory.mapBuildersByEntryField();
+		Map<EntrySolrField, EntrySolrFieldCollector> map = SolrEntryDocumentFactory.mapCollectorsByEntryField();
 		
 		StringBuilder sb = new StringBuilder();
 		for(EntrySolrField f : EntrySolrField.values()){

@@ -1,11 +1,11 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.diff;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.diff;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.solr.core.schema.EntrySolrField;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.OverviewSolrFieldCollector;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.SolrDiffTest;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.OverviewSolrFieldCollector;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrDiffTest;
 
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 

@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield.diff;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.diff;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
@@ -6,9 +6,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.core.schema.CvSolrField;
-import org.nextprot.api.solr.indexation.docfactory.SolrCvTermDocumentFactory;
-import org.nextprot.api.solr.indexation.docfactory.entryfield.SolrDiffTest;
+import org.nextprot.api.solr.core.impl.schema.CvSolrField;
+import org.nextprot.api.solr.indexation.impl.docfactory.SolrCvTermDocumentFactory;
+import org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CVtermCoreFullDiffTest extends SolrDiffTest {

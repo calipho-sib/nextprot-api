@@ -2,8 +2,8 @@ package org.nextprot.api.solr.query;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.solr.core.GoldAndSilverEntryCore;
-import org.nextprot.api.solr.core.PublicationCore;
+import org.nextprot.api.solr.core.impl.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.impl.PublicationCore;
 
 public class QueryTest {
 
@@ -56,7 +56,7 @@ public class QueryTest {
         System.out.println(query.getQueryString());
         Assert.assertEquals("authors:bairoch title:nextprot GO\\:218374 year:2004", query.getQueryString(true));
     }
-    
+
     @Test
     public void testEscapingIrrelevantFieldForIndex() {
         Query query = new Query(new GoldAndSilverEntryCore());

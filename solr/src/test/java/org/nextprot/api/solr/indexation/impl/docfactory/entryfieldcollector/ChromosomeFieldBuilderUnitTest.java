@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.docfactory.entryfield;
+package org.nextprot.api.solr.indexation.impl.docfactory.entryfieldcollector;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
