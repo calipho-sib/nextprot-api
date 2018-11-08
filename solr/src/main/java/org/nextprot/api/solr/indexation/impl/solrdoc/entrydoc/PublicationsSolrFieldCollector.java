@@ -22,8 +22,12 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 	
 	protected Logger logger = Logger.getLogger(PublicationsSolrFieldCollector.class);
 
-	@Autowired
 	private PublicationService publicationService;
+
+	@Autowired
+	public PublicationsSolrFieldCollector(PublicationService publicationService) {
+		this.publicationService = publicationService;
+	}
 
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {

@@ -36,7 +36,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 
 		System.out.println("Testing: " + entryName);
-		PublicationsSolrFieldCollector pfb = new PublicationsSolrFieldCollector();
+		PublicationsSolrFieldCollector pfb = new PublicationsSolrFieldCollector(null);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		pfb.collect(fields, entry, false);
 		
