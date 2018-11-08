@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 
 @Service
@@ -19,21 +20,21 @@ public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector 
 	private EntryReportStatsService entryReportStatsService;
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 
 		EntryReportStats ers = entryReportStatsService.reportEntryStats(entry.getUniqueName());
 
 		// Filters and entry properties
 		EntryProperties props = entry.getProperties();
-		addEntrySolrFieldValue(EntrySolrField.ISOFORM_NUM, ers.countIsoforms());
+		addEntrySolrFieldValue(fields, EntrySolrField.ISOFORM_NUM, ers.countIsoforms());
 		int cnt;
 		cnt = ers.countPTMs();
 		if (cnt > 0) {
-			addEntrySolrFieldValue(EntrySolrField.PTM_NUM, cnt);
+			addEntrySolrFieldValue(fields, EntrySolrField.PTM_NUM, cnt);
 		}
 		cnt = ers.countVariants();
 		if (cnt > 0) {
-			addEntrySolrFieldValue(EntrySolrField.VAR_NUM, cnt);
+			addEntrySolrFieldValue(fields, EntrySolrField.VAR_NUM, cnt);
 		}
 		String filters = "";
 		if (props.getFilterstructure()) filters += "filterstructure ";
@@ -42,9 +43,9 @@ public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector 
 		if (ers.isMutagenesis()) filters += "filtermutagenesis ";
 		if (ers.isProteomics()) filters += "filterproteomics ";
 		if (filters.length() > 0) {
-			addEntrySolrFieldValue(EntrySolrField.FILTERS, filters.trim());
+			addEntrySolrFieldValue(fields, EntrySolrField.FILTERS, filters.trim());
 		}
-		addEntrySolrFieldValue(EntrySolrField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
+		addEntrySolrFieldValue(fields, EntrySolrField.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
 	}
 
 	@Override

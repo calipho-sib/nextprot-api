@@ -8,7 +8,9 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.ChromosomeSolrFieldColl
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -95,17 +97,18 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		EntrySolrField field = EntrySolrField.CHR_LOC;
 
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
-		cfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cfb.collect(fields, entry, false);
 		
 		// build a set with the list of actual values in field (which are separated by spaces)
-		Set<String> actualSet = new TreeSet<String>();
-		String actualValue = cfb.getFieldValue(field, String.class);
+		Set<String> actualSet = new TreeSet<>();
+		String actualValue = getFieldValue(fields, field, String.class);
 		actualSet.addAll(Arrays.asList(actualValue.split(" ")));
 		
 		// in the current pam implementation the data is the same 
 		// but can contain several times the same values (and may have a different order)
 		// nevertheless the set of unique values should be the same
-		Set<String> expectedSet = new TreeSet<String>();
+		Set<String> expectedSet = new TreeSet<>();
 		String expectedValue = (String) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
 		expectedSet.addAll(Arrays.asList(expectedValue.replace(",","").split(" ")));
 
@@ -128,10 +131,11 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	private void testChrLocS(Entry entry) {
 		
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
-		cfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cfb.collect(fields, entry, false);
 
 		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.CHR_LOC_S);
-		Integer actualValue = cfb.getFieldValue(EntrySolrField.CHR_LOC_S, Integer.class);
+		Integer actualValue = getFieldValue(fields, EntrySolrField.CHR_LOC_S, Integer.class);
 
 		assertEquals(expectedValue, actualValue);
 
@@ -144,10 +148,11 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		EntrySolrField field = EntrySolrField.GENE_BAND;
 
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
-		cfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cfb.collect(fields, entry, false);
 		
 		Set<String> actualSet = new TreeSet<>();
-		List<String> geneBandValues = cfb.getFieldValue(field, List.class);
+		List<String> geneBandValues = getFieldValue(fields, field, List.class);
 		for (String s: geneBandValues) actualSet.addAll(Arrays.asList(s.split(" ")));
 
 		// in the current pam implementation the data is the same 

@@ -10,7 +10,9 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.XrefSolrFieldCollector;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -36,12 +38,13 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		System.out.println("Testing: " + entryName);
 		XrefSolrFieldCollector xfb = new XrefSolrFieldCollector();
-		xfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		xfb.collect(fields, entry, false);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ANTIBODY);
 		if(expectedABs != null) {
 		  Collections.sort(expectedABs);
-		  List<String> currentABs = xfb.getFieldValue(EntrySolrField.ANTIBODY, List.class);
+		  List<String> currentABs = getFieldValue(fields, EntrySolrField.ANTIBODY, List.class);
 		  if(currentABs != null) Collections.sort(currentABs);
 		    Assert.assertEquals(expectedABs, currentABs);
 		}
@@ -49,13 +52,13 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ENSEMBL);
 		if(expectedEnsembl != null) {
 			if(expectedEnsembl.size() > 1 || expectedEnsembl.get(0).startsWith("ENS")) // We don't want housemade ENSEMBL like NX_VG_7_129906380_2933 (NX_Q13166)
-		      Assert.assertEquals(xfb.getFieldValue(EntrySolrField.ENSEMBL, List.class).size(), expectedEnsembl.size());
+		      Assert.assertEquals(getFieldValue(fields, EntrySolrField.ENSEMBL, List.class).size(), expectedEnsembl.size());
 		}
 
-		Set<String> expectedxrefSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.XREFS));
-		Set<String> xrefSet = new TreeSet<String>(xfb.getFieldValue(EntrySolrField.XREFS, List.class));
-		Set<String> acOnlySet = new TreeSet<String>();
-		Set<String> expectedacOnlySet = new TreeSet<String>();
+		Set<String> expectedxrefSet = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.XREFS));
+		Set<String> xrefSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.XREFS, List.class));
+		Set<String> acOnlySet = new TreeSet<>();
+		Set<String> expectedacOnlySet = new TreeSet<>();
 		for(String elem : expectedxrefSet)
 			if(!elem.startsWith("journal:")) // For some unknown reasons some journals appear in the xref field of kant (eg:NX_P43686), this is a bug
 			  expectedacOnlySet.add(elem.substring(elem.indexOf(", ")+2));
@@ -93,8 +96,9 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
 			Integer olditcnt = 0, newitcnt = 0;
 			InteractionSolrFieldCollector ifb = new InteractionSolrFieldCollector();
-			ifb.collect(entry, false);
-			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(EntrySolrField.INTERACTIONS, List.class));
+			fields.clear();
+			ifb.collect(fields, entry, false);
+			Set<String> itSet = new TreeSet<String>(getFieldValue(fields, EntrySolrField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;
 			// There may be one more interaction in the new index (the subunit annotation)

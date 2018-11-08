@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 @Service
@@ -25,7 +26,7 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 	private PublicationService publicationService;
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 
 		// Publications
 		// Shouldn't Xrefs to PubMed and DOIs be also indexed here ?
@@ -49,31 +50,31 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 				JournalResourceLocator journalLocator = currpubli.getJournalResourceLocator();
 
 				if (journalLocator.hasJournalId())
-					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, journalLocator.getNLMid());
+					addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS, journalLocator.getNLMid());
 
 				Jinfo = currpubli.getJournalResourceLocator().getName();
 				if (journalLocator.hasJournalId())
 					Jinfo += " - " + currpubli.getJournalResourceLocator().getMedAbbrev(); // Index name and abbrev in the same token
 
-				addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS,Jinfo);
+				addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS,Jinfo);
 			}
 			String title = currpubli.getTitle();
-			if(title.length() > 0) addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS,title);
+			if(title.length() > 0) addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
-					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
+					addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
 				else if(!forename.isEmpty() ) // trim not to add spaces when forename/initials are empty
-					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
+					addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
 				else
-					addEntrySolrFieldValue(EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
+					addEntrySolrFieldValue(fields, EntrySolrField.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 			}
 		}
 		
-		addEntrySolrFieldValue(EntrySolrField.PUBLI_COMPUTED_COUNT, publi_computed_count);
-		addEntrySolrFieldValue(EntrySolrField.PUBLI_CURATED_COUNT, publi_curated_count);
-		addEntrySolrFieldValue(EntrySolrField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
+		addEntrySolrFieldValue(fields, EntrySolrField.PUBLI_COMPUTED_COUNT, publi_computed_count);
+		addEntrySolrFieldValue(fields, EntrySolrField.PUBLI_CURATED_COUNT, publi_curated_count);
+		addEntrySolrFieldValue(fields, EntrySolrField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
 		int pe_level = entry.getOverview().getProteinExistences().getProteinExistence().getLevel();
@@ -85,7 +86,7 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 		else if(pe_level == 5) info_score=5;
 		float coeff = 100*publi_curated_count + 25*publi_computed_count + 10*publi_large_scale_count;
 		info_score = coeff * info_score / 10;
-		addEntrySolrFieldValue(EntrySolrField.INFORMATIONAL_SCORE, info_score);
+		addEntrySolrFieldValue(fields, EntrySolrField.INFORMATIONAL_SCORE, info_score);
 
 	}
 

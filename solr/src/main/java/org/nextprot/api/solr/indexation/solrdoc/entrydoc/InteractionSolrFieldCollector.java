@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -22,7 +23,7 @@ public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 	private EntryBuilderService entryBuilderService;
 
 	@Override
-	public void collect(Entry entry, boolean gold){
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold){
 
 		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//String id = entry.getUniqueName();
@@ -45,18 +46,18 @@ public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 					else // Xeno interaction
 					  recName = "";
 					if(!gold || currinteraction.getQuality().equals("GOLD"))
-				      addEntrySolrFieldValue(EntrySolrField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
+				      addEntrySolrFieldValue(fields, EntrySolrField.INTERACTIONS,"AC: " + interactantAC + " gene: " + currinteractant.getGenename() + " name: " + recName + " refs: " + currinteraction.getEvidenceXrefAC());
 				}
 				else if(currinteraction.isSelfInteraction() == true)
 					if(!gold || currinteraction.getQuality().equals("GOLD"))
-					   addEntrySolrFieldValue(EntrySolrField.INTERACTIONS,"selfInteraction");
+					   addEntrySolrFieldValue(fields, EntrySolrField.INTERACTIONS,"selfInteraction");
 			}
 		}
 		
 		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots)
 			if(currannot.getCategory().equals("subunit")) // Always GOLD
-				addEntrySolrFieldValue(EntrySolrField.INTERACTIONS, currannot.getDescription());
+				addEntrySolrFieldValue(fields, EntrySolrField.INTERACTIONS, currannot.getDescription());
 
 
 		/*

@@ -9,7 +9,11 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.ChromosomeSolrFieldColl
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertTrue;
+import static org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest.getFieldValue;
 
 
 public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationTest {
@@ -25,8 +29,9 @@ public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withChromosomalLocations());
 
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
-		cfb.collect(entry, false);
-		String chrLocValue = cfb.getFieldValue(field, String.class);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cfb.collect(fields, entry, false);
+		String chrLocValue = getFieldValue(fields, field, String.class);
 		
 		
 		assertTrue(chrLocValue.contains("12q24.13"));

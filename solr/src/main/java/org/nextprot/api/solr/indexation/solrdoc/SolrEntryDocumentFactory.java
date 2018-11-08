@@ -32,18 +32,13 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 			}
 
 			EntrySolrFieldCollector entrySolrFieldCollector = collectors.get(f);
-			entrySolrFieldCollector.collect(solrizableObject, isGold);
 
-			Object o = entrySolrFieldCollector.getFieldValue(f, f.getType());
-			doc.addField(f.getName(), o);
-		}
+			Map<EntrySolrField, Object> fields = new HashMap<>();
 
-		//Reset all fields builders
-		for (EntrySolrField f : EntrySolrField.values()) {
-			if (f == EntrySolrField.TEXT || f == EntrySolrField.SCORE) {
-				continue; // Directly computed by SOLR
-			}
-			collectors.get(f).clear();
+			// TODO: should give SolrInputDocument instead of a map
+			entrySolrFieldCollector.collect(fields, solrizableObject, isGold);
+
+			doc.addField(f.getName(), fields.get(f));
 		}
 
 		return doc;

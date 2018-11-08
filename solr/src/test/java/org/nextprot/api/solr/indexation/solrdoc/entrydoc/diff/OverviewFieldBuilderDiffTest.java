@@ -7,6 +7,9 @@ import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.OverviewSolrFieldCollector;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
@@ -26,13 +29,14 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
 		OverviewSolrFieldCollector ofb = new OverviewSolrFieldCollector();
-		ofb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		ofb.collect(fields, entry, false);
 		
 		String expectedRecname = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.RECOMMENDED_NAME);
-		Assert.assertEquals(ofb.getFieldValue(EntrySolrField.RECOMMENDED_NAME, String.class), expectedRecname);
+		Assert.assertEquals(getFieldValue(fields, EntrySolrField.RECOMMENDED_NAME, String.class), expectedRecname);
 		
 		String expectedPE = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PROTEIN_EXISTENCE);
-		Assert.assertEquals(ofb.getFieldValue(EntrySolrField.PROTEIN_EXISTENCE, String.class), expectedPE.replace(" ", "_"));
+		Assert.assertEquals(getFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, String.class), expectedPE.replace(" ", "_"));
 	}
 
 }

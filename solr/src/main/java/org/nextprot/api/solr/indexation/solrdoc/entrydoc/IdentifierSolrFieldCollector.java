@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class IdentifierSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 		
 		// Identifiers
 		List <Identifier> identifiers = entry.getIdentifiers();
@@ -22,15 +23,15 @@ public class IdentifierSolrFieldCollector extends EntrySolrFieldCollector {
 			//if(currident.getDatabase() == null)
 			//System.err.println("type: " + idtype + " " + currident.getName());
 			if(idtype.equals("Secondary AC")) {
-				addEntrySolrFieldValue(EntrySolrField.ALTERNATIVE_ACS, currident.getName());
+				addEntrySolrFieldValue(fields, EntrySolrField.ALTERNATIVE_ACS, currident.getName());
 			}
 			else if (idtype.equals("IMAGE") || idtype.equals("FLJ") || idtype.equals("MGC") || idtype.equals("DKFZ") || idtype.equals("Others")) {
-				addEntrySolrFieldValue(EntrySolrField.CLONE_NAME, currident.getName());
+				addEntrySolrFieldValue(fields, EntrySolrField.CLONE_NAME, currident.getName());
 			} else if (idtype.equals("Illumina") || idtype.equals("Affymetrix")){
-				addEntrySolrFieldValue(EntrySolrField.MICROARRAY_PROBE, currident.getName());
+				addEntrySolrFieldValue(fields, EntrySolrField.MICROARRAY_PROBE, currident.getName());
 			}
 			else if (idtype.equals("Entry name")) {
-				addEntrySolrFieldValue(EntrySolrField.UNIPROT_NAME, currident.getName());
+				addEntrySolrFieldValue(fields, EntrySolrField.UNIPROT_NAME, currident.getName());
 			}
 		}
 		

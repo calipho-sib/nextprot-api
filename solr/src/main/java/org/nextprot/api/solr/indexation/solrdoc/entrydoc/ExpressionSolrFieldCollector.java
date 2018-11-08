@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -27,7 +28,7 @@ public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 	private TerminologyService terminologyService;
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 		//Extract the tissues where there is expression ....
 		Set <String> cv_tissues = new HashSet<String>();
 		for (Annotation currannot : entry.getAnnotations()) {
@@ -70,7 +71,7 @@ public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 			}
 		}
 		for (String cv : cv_tissues_final) {
-			addEntrySolrFieldValue(EntrySolrField.EXPRESSION, cv.trim());
+			addEntrySolrFieldValue(fields, EntrySolrField.EXPRESSION, cv.trim());
 		}
 
 	}

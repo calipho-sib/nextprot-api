@@ -7,7 +7,9 @@ import org.nextprot.api.solr.core.EntrySolrField;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.PeptideSolrFieldCollector;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,7 +34,8 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 		System.out.println("Testing " + entryName);
 
 		PeptideSolrFieldCollector pfb = new PeptideSolrFieldCollector();
-		pfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		pfb.collect(fields, entry, false);
 		List<String> peptideList = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PEPTIDE);
 		if(peptideList == null) return; // No peptides in this entry
 		

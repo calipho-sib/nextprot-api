@@ -33,26 +33,26 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	private TerminologyService terminologyService;
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 
 		boolean buildingSilverIndex = !gold;
 
 		Set<String> cvTermsSetForAncestors = new HashSet<>();
 
 		//Get cv terms related to normal annotations (except expressions)
-		cvTermsSetForAncestors.addAll(setAndGetCvTermAnnotationsExceptExpression(entry, buildingSilverIndex));
+		cvTermsSetForAncestors.addAll(setAndGetCvTermAnnotationsExceptExpression(fields, entry, buildingSilverIndex));
 
 		//Get family names
-		cvTermsSetForAncestors.addAll(setAndGetFamilyNames(entry));
+		cvTermsSetForAncestors.addAll(setAndGetFamilyNames(fields, entry));
 
 		//Only cv terms from normal annotations and family are required to be indexed with their ancestors
-		setAncestorsAndSynonyms(entry, cvTermsSetForAncestors);
+		setAncestorsAndSynonyms(fields, entry, cvTermsSetForAncestors);
 
 		//Add more cv term accession
-		setExperimentalContextAndPropertiesCvAccessionOnly(entry);
+		setExperimentalContextAndPropertiesCvAccessionOnly(fields, entry);
 
 		//Add enzyme names to EC_NAMES
-		setEnzymeNames(entry);
+		setEnzymeNames(fields, entry);
 
 	}
 
@@ -63,7 +63,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	}
 
 
-	private Set<String> setAndGetCvTermAnnotationsExceptExpression(Entry entry, boolean buildingSilverIndex){
+	private Set<String> setAndGetCvTermAnnotationsExceptExpression(Map<EntrySolrField, Object> fields, Entry entry, boolean buildingSilverIndex){
 
 		Set<String> cv_acs = new HashSet<>();
 
@@ -84,8 +84,8 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 					//If we are building SILVER index always add, otherwise (we are building GOLD index) we need the annotation need to be GOLD.
 					if(buildingSilverIndex || currannot.getQualityQualifier().equals("GOLD")) {
-						addEntrySolrFieldValue(EntrySolrField.CV_ACS, term.getAccession());
-						addEntrySolrFieldValue(EntrySolrField.CV_NAMES,  term.getName());
+						addEntrySolrFieldValue(fields, EntrySolrField.CV_ACS, term.getAccession());
+						addEntrySolrFieldValue(fields, EntrySolrField.CV_NAMES,  term.getName());
 						cv_acs.add(term.getAccession()); // No duplicates: this is a Set, will be used for synonyms and ancestors
 					}
 				}
@@ -96,7 +96,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		return cv_acs;
 	}
 
-	private void setExperimentalContextAndPropertiesCvAccessionOnly(Entry entry){
+	private void setExperimentalContextAndPropertiesCvAccessionOnly(Map<EntrySolrField, Object> fields, Entry entry){
 
 		Map<Long, List<CvTerm>> expCtxtCvTermMap = extractCvTermsFromExperimentalContext(entry);
 		//We have added in CV_ACS the accessions related to experimental context and properties
@@ -112,19 +112,19 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 			for (CvTerm t : terms) {
 				//Only add accessions in here. The use case is related to the page /term/TERM-NAME and see entries related to the term.
 				//No need to index term name in here
-				addEntrySolrFieldValue(EntrySolrField.CV_ACS, t.getAccession());
+				addEntrySolrFieldValue(fields, EntrySolrField.CV_ACS, t.getAccession());
 			}
 		}
 	}
 
-	private Set<String> setAndGetFamilyNames(Entry entry){
+	private Set<String> setAndGetFamilyNames(Map<EntrySolrField, Object> fields, Entry entry){
 
 		Set<String> cv_acs = new HashSet<>();
 
 		// Families (why not part of Annotations ?)
 		for (Family family : entry.getOverview().getFamilies()) {
-			addEntrySolrFieldValue(EntrySolrField.CV_ACS, family.getAccession());
-			addEntrySolrFieldValue(EntrySolrField.CV_NAMES,  family.getName() + " family");
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_ACS, family.getAccession());
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_NAMES,  family.getName() + " family");
 			cv_acs.add(family.getAccession());
 		}
 
@@ -133,7 +133,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	}
 
 
-	private void setAncestorsAndSynonyms(Entry entry, Set<String> cv_acs){
+	private void setAncestorsAndSynonyms(Map<EntrySolrField, Object> fields, Entry entry, Set<String> cv_acs){
 
 		// top level ancestors (Annotation, feature, and ROI)
 		final Set<String> TOP_ACS = new HashSet<>(Arrays.asList("CVAN_0001","CVAN_0002","CVAN_0011"));
@@ -163,32 +163,32 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
-			addEntrySolrFieldValue(EntrySolrField.CV_ANCESTORS_ACS, ancestorac);
-			addEntrySolrFieldValue(EntrySolrField.CV_ANCESTORS, terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_ANCESTORS_ACS, ancestorac);
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_ANCESTORS, terminologyService.findCvTermByAccessionOrThrowRuntimeException(ancestorac).getName());
 		}
 
 		for (String synonym : cv_synonyms) {
-			addEntrySolrFieldValue(EntrySolrField.CV_SYNONYMS, synonym);
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_SYNONYMS, synonym);
 		}
 
 	}
 
-	private void setEnzymeNames(Entry entry){
+	private void setEnzymeNames(Map<EntrySolrField, Object> fields, Entry entry){
 
 		List<CvTerm> enzymes = entry.getEnzymes();
 		String ec_names = "";
 		for (CvTerm currenzyme : enzymes) {
-			addEntrySolrFieldValue(EntrySolrField.CV_NAMES, currenzyme.getName());
+			addEntrySolrFieldValue(fields, EntrySolrField.CV_NAMES, currenzyme.getName());
 			if(ec_names != "") ec_names += ", ";
 			ec_names += "EC " + currenzyme.getAccession();
 			List <String> synonyms = currenzyme.getSynonyms();
 			if(synonyms != null)
 				for (String synonym : synonyms) {
-					addEntrySolrFieldValue(EntrySolrField.CV_SYNONYMS, synonym.trim());
+					addEntrySolrFieldValue(fields, EntrySolrField.CV_SYNONYMS, synonym.trim());
 				}
 		}
 
-		addEntrySolrFieldValue(EntrySolrField.EC_NAME, ec_names);
+		addEntrySolrFieldValue(fields, EntrySolrField.EC_NAME, ec_names);
 
 	}
 

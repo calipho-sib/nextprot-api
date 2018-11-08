@@ -30,12 +30,12 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 	private TerminologyService terminologyService;
 	
 	@Override
-	public void collect(Entry entry, boolean isGold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean isGold) {
 		// Function with canonical first
 		List<String> function_canonical = EntryUtils.getFunctionInfoWithCanonicalFirst(entry);
 		for (String finfo : function_canonical) {
-			addEntrySolrFieldValue(EntrySolrField.FUNCTION_DESC, finfo);
-			addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, finfo);
+			addEntrySolrFieldValue(fields, EntrySolrField.FUNCTION_DESC, finfo);
+			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, finfo);
 		}
 
 		List<Annotation> annots = entry.getAnnotations();
@@ -61,11 +61,11 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				if (xref != null)
 					// It is actually not a synonym but the carbohydrate id from
 					// glycosuitedb !
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, xref);
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, xref);
 			}
 
 			else if (apiCategory.equals(AnnotationCategory.DNA_BINDING_REGION))
-				addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, category);
+				addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, category);
 			else if (apiCategory.equals(AnnotationCategory.VARIANT))
 				// We need to index them somehow for the GOLD/SILVER tests, or
 				// do we ? in creates a lot of useless 'variant null' tokens
@@ -85,7 +85,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 						// truncate the position
 						mainreason = mainreason.substring(0, stringpos);
 					}
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, mainreason);
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, mainreason);
 
 					if (desclevels.length > 1) {
 						if (stringpos > 0) // mainreason truncated
@@ -94,7 +94,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 							stringpos = desc.indexOf(mainreason) + mainreason.length();
 							desc = desc.substring(stringpos + 2);
 						}
-						addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, desc);
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, desc);
 					}
 				}
 
@@ -114,12 +114,12 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 								String subjectName = mapentry.getValue().getName();
 								// update description with the subject for each
 								// target isofotm
-								addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, subjectName + " " + desc);
+								addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, subjectName + " " + desc);
 								// System.err.println("adding: " + subjectName +
 								// " " + desc);
 							}
 						} else
-							addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, desc);
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, desc);
 					}
 				}
 				// in pathway and disease new annotations may appear due to
@@ -127,7 +127,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				// annotations in the api
 			}
 
-			handleAnnotationTerm(currannot, entry, isGold);
+			handleAnnotationTerm(fields, currannot, entry, isGold);
 			
 			if (apiCategory.equals(AnnotationCategory.MATURE_PROTEIN)
 					|| apiCategory.equals(AnnotationCategory.MATURATION_PEPTIDE)) {
@@ -136,7 +136,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					// System.err.println( currannot.getAllSynonyms().size() +
 					// " synonyms: " + currannot.getAllSynonyms());
 					if (chainid.contains("-"))
-						addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, chainid); // Uniprot FT id,
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, chainid); // Uniprot FT id,
 																// like
 																// PRO_0000019235,
 																// shouldn't be
@@ -145,14 +145,14 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					else {
 						List<String> chainsynonyms = currannot.getSynonyms();
 						if (chainsynonyms.size() == 1)
-							addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS,
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS,
 									StringUtils.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 						else {
 							chainid = "";
 							for (String syno : chainsynonyms) {
 								chainid += syno + " | ";
 							}
-							addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
 						}
 					}
 				} // else System.err.println("chainid null for: " + desc);
@@ -191,13 +191,13 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					}
 				if (!isGold || quality.equals("GOLD")) {
 					if (!evidxrefaccs.isEmpty())
-						addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
 					Collection<AnnotationProperty> props = currannot.getProperties();
 					for (AnnotationProperty prop : props)
 						if (prop.getName().equals("mutation AA"))
 							// eg: p.D1685E, it is unclear why this property
 							// exists only in cosmic variants
-							addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, prop.getValue());
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, prop.getValue());
 				}
 			}
 		}
@@ -206,29 +206,29 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 		for (Family family : entry.getOverview().getFamilies()) {
 			String ac = family.getAccession();
 			int stringpos = 0;
-			addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, ac);
+			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, ac);
 			String famdesc = family.getDescription();
 			// There is no get_synonyms() method for families -> can't access
 			// PERVR for FA-04785
-			addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, famdesc);
+			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, famdesc);
 			stringpos = famdesc.indexOf("elongs to ") + 14;
 			famdesc = famdesc.substring(stringpos); // Skip the 'Belongs to' and
 													// what may come before (eg:
 													// NX_P19021)
 			famdesc = famdesc.substring(0, famdesc.length() - 1); // remove
 																	// final dot
-			addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, famdesc);
+			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, famdesc);
 			String[] families = famdesc.split("\\. "); // are there subfamilies
 														// ?
 			if (families.length > 1) { // Always GOLD
 				for (int i = 0; i < families.length; i++) {
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, families[i]);
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, families[i]);
 					if (families[i].contains(") superfamily")) { // index one
 																	// more time
 																	// without
 																	// parenthesis
 						famdesc = families[i].substring(0, families[i].indexOf("(")) + "superfamily";
-						addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, famdesc);
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, famdesc);
 					}
 				}
 			}
@@ -237,11 +237,11 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			List<String> famsynonyms = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ac).getSynonyms();
 			if (famsynonyms != null)
 				for (String famsynonym : famsynonyms)
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, famsynonym.trim());
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, famsynonym.trim());
 		}
 	}
 
-	private void handleAnnotationTerm(Annotation currannot, Entry entry, boolean isGold) {
+	private void handleAnnotationTerm(Map<EntrySolrField, Object> fields, Annotation currannot, Entry entry, boolean isGold) {
 		
 		String quality = currannot.getQualityQualifier();
 		String cvac = currannot.getCvTermAccessionCode();
@@ -256,8 +256,8 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				}
 			}
 			if (!isGold || quality.equals("GOLD")) {
-				addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, cvac);
-				addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, currannot.getCvTermName());
+				addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, cvac);
+				addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, currannot.getCvTermName());
 				
 				CvTerm term = terminologyService.findCvTermByAccession(cvac);
 				if (null==term) {
@@ -274,7 +274,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 							allsynonyms += " | ";
 						allsynonyms += synonym.trim();
 					}
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms));
 				}
 
 				List<String> ancestors = terminologyService.getAllAncestorsAccession(cvac);
@@ -298,7 +298,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					allancestors = "repeat"; // don't index generic top
 												// level ancestors
 				if (allancestors.length() > 1)
-					addEntrySolrFieldValue(EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
+					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 			}
 		}
 

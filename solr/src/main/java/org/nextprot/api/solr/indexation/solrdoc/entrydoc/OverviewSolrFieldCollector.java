@@ -7,26 +7,27 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 @Service
 public class OverviewSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 
 		Overview ovv = entry.getOverview();
 		String id = entry.getUniqueName();
 
-		addEntrySolrFieldValue(EntrySolrField.ID, id);
-		addEntrySolrFieldValue(EntrySolrField.IDSP0, id);
-		addEntrySolrFieldValue(EntrySolrField.RECOMMENDED_AC, id.substring(3));
+		addEntrySolrFieldValue(fields, EntrySolrField.ID, id);
+		addEntrySolrFieldValue(fields, EntrySolrField.IDSP0, id);
+		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_AC, id.substring(3));
 		
-		addEntrySolrFieldValue(EntrySolrField.PE_LEVEL, ovv.getProteinExistences().getProteinExistence().getLevel());
-		addEntrySolrFieldValue(EntrySolrField.PROTEIN_EXISTENCE, ovv.getProteinExistences().getProteinExistence().getDescriptionName());
+		addEntrySolrFieldValue(fields, EntrySolrField.PE_LEVEL, ovv.getProteinExistences().getProteinExistence().getLevel());
+		addEntrySolrFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, ovv.getProteinExistences().getProteinExistence().getDescriptionName());
 
 		String precname = ovv.getMainProteinName();
-		addEntrySolrFieldValue(EntrySolrField.RECOMMENDED_NAME, precname);
-		addEntrySolrFieldValue(EntrySolrField.RECOMMENDED_NAME_S, precname);
+		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_NAME, precname);
+		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_NAME_S, precname);
 
 	}
 

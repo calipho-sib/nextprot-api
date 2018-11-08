@@ -10,7 +10,9 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.CVSolrFieldCollector;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,11 +41,12 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		CVSolrFieldCollector cfb = new CVSolrFieldCollector();
-		cfb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cfb.collect(fields, entry, false);
 		
 		// CV_ACS
-		Set<String> expectedCVs = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ACS));
-		Set<String> CvSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_ACS, List.class));
+		Set<String> expectedCVs = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ACS));
+		Set<String> CvSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_ACS, List.class));
 		if(CvSet.size() > expectedCVs.size()) {
 			CvSet.removeAll(expectedCVs);
 			System.err.println(CvSet);
@@ -51,8 +54,8 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expectedCVs.size(), CvSet.size());
 
 		// CV_ANCESTORS_ACS
-		Set<String> expectedCVancestorsAcs = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ANCESTORS_ACS));
-		Set<String> CvancestorsAcsSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_ANCESTORS_ACS, List.class));
+		Set<String> expectedCVancestorsAcs = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ANCESTORS_ACS));
+		Set<String> CvancestorsAcsSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_ANCESTORS_ACS, List.class));
 		Assert.assertEquals(expectedCVancestorsAcs.size(), CvancestorsAcsSet.size());
 		if (CvancestorsAcsSet.size() > expectedCVancestorsAcs.size()) {
 			CvancestorsAcsSet.removeAll(expectedCVancestorsAcs);
@@ -64,23 +67,23 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		}
 		
 		// CV_ANCESTORS
-		Set<String> expectedCVancestors = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ANCESTORS));
-		Set<String> CvancestorsSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_ANCESTORS, List.class));
+		Set<String> expectedCVancestors = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ANCESTORS));
+		Set<String> CvancestorsSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_ANCESTORS, List.class));
 		Assert.assertEquals(expectedCVancestors.size(), CvancestorsSet.size());
 		//System.err.println("CV ancestors OK");
 		
 		// CV_SYNONYMS
 		List<String> synolist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_SYNONYMS);
 		if(synolist != null)  {
-			Set<String> expectedSynonyms = new TreeSet<String>(synolist);
-			Set<String> SynonymsSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_SYNONYMS, List.class));
+			Set<String> expectedSynonyms = new TreeSet<>(synolist);
+			Set<String> SynonymsSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_SYNONYMS, List.class));
 			//Assert.assertEquals(expectedSynonyms.size(), SynonymsSet.size());
 			Assert.assertEquals(expectedSynonyms, SynonymsSet);
 		}
 		
 		// CV_NAMES
-		Set<String> expectedCVNames = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_NAMES));
-		Set<String> CVNamesSet = new TreeSet<String>(cfb.getFieldValue(EntrySolrField.CV_NAMES, List.class));
+		Set<String> expectedCVNames = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_NAMES));
+		Set<String> CVNamesSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_NAMES, List.class));
 		Assert.assertEquals(expectedCVNames.size(), CVNamesSet.size());
 		//Assert.assertTrue(true);
 		if (CVNamesSet.size() < expectedCVNames.size()) {
@@ -91,7 +94,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		// EC_NAME -> current solr implementation doesn't index ECs for multifunctional enzymes (eg:NX_P14060) discuss with PAM
 		String expected = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.EC_NAME);
 		if(expected != null)  {
-			String ECsString = cfb.getFieldValue(EntrySolrField.EC_NAME, String.class);
+			String ECsString = getFieldValue(fields, EntrySolrField.EC_NAME, String.class);
 			Assert.assertEquals(expected, ECsString);
 		}
 		

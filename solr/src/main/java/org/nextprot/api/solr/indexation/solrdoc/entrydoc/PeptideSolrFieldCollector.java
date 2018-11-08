@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 public class PeptideSolrFieldCollector extends EntrySolrFieldCollector {
 	
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 		for (Annotation currannot : entry.getAnnotations()) {
 			String category = currannot.getCategory();
 			if (category.contains("peptide mapping")){
@@ -24,8 +25,8 @@ public class PeptideSolrFieldCollector extends EntrySolrFieldCollector {
 				for (AnnotationEvidence currEv : evList) {
 					String db = currEv.getResourceDb();
 					if(!db.equals("neXtProtSubmission")) {
-					   if(db.equals(XrefDatabase.PUB_MED.getName())) addEntrySolrFieldValue(EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession());
-					   else addEntrySolrFieldValue(EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
+					   if(db.equals(XrefDatabase.PUB_MED.getName())) addEntrySolrFieldValue(fields, EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession());
+					   else addEntrySolrFieldValue(fields, EntrySolrField.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
 					}
 				}
 			}

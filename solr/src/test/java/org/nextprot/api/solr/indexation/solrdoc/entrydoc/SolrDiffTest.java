@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	
@@ -119,4 +120,11 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 		return null;
 	}
 
+	public static <T> T getFieldValue(Map<EntrySolrField, Object> fields, EntrySolrField field, Class<T> requiredType) {
+
+		if (fields.containsKey(field)) {
+			return requiredType.cast(fields.get(field));
+		}
+		return null;
+	}
 }

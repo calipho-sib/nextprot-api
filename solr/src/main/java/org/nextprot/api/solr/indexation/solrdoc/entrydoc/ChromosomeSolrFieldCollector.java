@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,16 +20,16 @@ public class ChromosomeSolrFieldCollector extends EntrySolrFieldCollector {
 
 
 	@Override
-	public void collect(Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
 
 		// build GENE_BAND by concatenating distinct band and chr+band
 		// build CHR_LOC field by concatenating distinct chromosomal locations (chr + band) after sorting them alphabetically
 		// build CHR_LOCS field based of first element in CHR_LOC 
 		// Note that CHR_LOC is displayed in UI search result and CHR_LOC_S is used to sort UI search result
 		// this is why it is important to compute the CHR_LOC_S based on the first location displayed in UI (consistency)
-		List<String> gblist = new ArrayList<String>();
-		Set<String> clset = new TreeSet<String>();
-		Set<String> gbset = new TreeSet<String>( Collections.reverseOrder() );
+		List<String> gblist = new ArrayList<>();
+		Set<String> clset = new TreeSet<>();
+		Set<String> gbset = new TreeSet<>( Collections.reverseOrder() );
 		// The reverse is important otherwise solr may find wrong locations with queries like 11q13 in "19q13.11 q13.11"
 		List<ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
 		for (ChromosomalLocation data : chrlocs) {
@@ -43,9 +44,9 @@ public class ChromosomeSolrFieldCollector extends EntrySolrFieldCollector {
 		String gene_band = Joiner.on(" ").skipNulls().join(gbset).trim();
 		String chr_loc = Joiner.on(" ").skipNulls().join(clset).trim();
 		Integer chr_loc_s = sortChr(chr_loc);
-		addEntrySolrFieldValue(EntrySolrField.GENE_BAND, gene_band);
-		addEntrySolrFieldValue(EntrySolrField.CHR_LOC, chr_loc);
-		addEntrySolrFieldValue(EntrySolrField.CHR_LOC_S, chr_loc_s);
+		addEntrySolrFieldValue(fields, EntrySolrField.GENE_BAND, gene_band);
+		addEntrySolrFieldValue(fields, EntrySolrField.CHR_LOC, chr_loc);
+		addEntrySolrFieldValue(fields, EntrySolrField.CHR_LOC_S, chr_loc_s);
 	}
 
 

@@ -10,7 +10,9 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.ExpressionSolrFieldColl
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,15 +45,16 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
-		efb.collect(entry, false);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		efb.collect(fields, entry, false);
 		
 		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.EXPRESSION);
 		Set<String> expectedExpression = null;
 		Set<String> exprSet = null;
 		if(explist != null)  {
 			//Get expectedExpression as a Set to remove redundancy
-			expectedExpression = new TreeSet<String>(explist);
-		    exprSet = new TreeSet<String>(efb.getFieldValue(EntrySolrField.EXPRESSION, List.class));
+			expectedExpression = new TreeSet<>(explist);
+		    exprSet = new TreeSet<String>(getFieldValue(fields, EntrySolrField.EXPRESSION, List.class));
 		}
 		
 

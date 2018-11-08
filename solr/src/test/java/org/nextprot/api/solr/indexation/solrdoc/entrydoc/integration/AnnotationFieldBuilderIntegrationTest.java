@@ -6,9 +6,14 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.core.EntrySolrField;
+import org.nextprot.api.solr.indexation.solrdoc.entrydoc.AnnotationSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest.getFieldValue;
 
 
 public class AnnotationFieldBuilderIntegrationTest extends org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrBuildIntegrationTest {
@@ -20,10 +25,11 @@ public class AnnotationFieldBuilderIntegrationTest extends org.nextprot.api.solr
 				"NX_P38398", "NX_P51587","NX_P16422", "NX_P40692", "NX_Q9UHC1", "NX_P43246", "NX_P52701", "NX_P54278"};
 		int bedAnnotCnt = 0;
 		
-		org.nextprot.api.solr.indexation.solrdoc.entrydoc.AnnotationSolrFieldCollector afb = new org.nextprot.api.solr.indexation.solrdoc.entrydoc.AnnotationSolrFieldCollector();
-		afb.collect(getEntry("NX_P35498"), false);
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		afb.collect(fields, getEntry("NX_P35498"), false);
 
-		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
+		List<String> annotations = getFieldValue(fields, EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations) {
 			if(annot.startsWith("SCN1A-")) {
 				bedAnnotCnt++;
@@ -34,9 +40,9 @@ public class AnnotationFieldBuilderIntegrationTest extends org.nextprot.api.solr
 		Assert.assertTrue(bedAnnotCnt >= 33);
 		
 		bedAnnotCnt = 0;
-		afb.clear();
-		afb.collect(getEntry("NX_P16422"), false);
-		annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
+		fields.clear();
+		afb.collect(fields, getEntry("NX_P16422"), false);
+		annotations = getFieldValue(fields, EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations)
 			if(annot.startsWith("EPCAM-"))
 				bedAnnotCnt++;

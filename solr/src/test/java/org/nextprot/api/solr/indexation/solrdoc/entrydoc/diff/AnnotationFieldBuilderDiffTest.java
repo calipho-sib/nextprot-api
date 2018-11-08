@@ -10,7 +10,9 @@ import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,8 +47,10 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFunctionalDesc(Entry entry) {
 
 		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
-		afb.collect(entry, false);
-		List<String> functionalDescriptions = afb.getFieldValue(EntrySolrField.FUNCTION_DESC, List.class);
+
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		afb.collect(fields, entry, false);
+		List<String> functionalDescriptions = getFieldValue(fields, EntrySolrField.FUNCTION_DESC, List.class);
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.FUNCTION_DESC);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
@@ -65,9 +69,11 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testAnnotations(Entry entry) {
 
 		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
-		afb.collect(entry, false);
 
-		List<String> annotations = afb.getFieldValue(EntrySolrField.ANNOTATIONS, List.class);
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		afb.collect(fields, entry, false);
+
+		List<String> annotations = getFieldValue(fields, EntrySolrField.ANNOTATIONS, List.class);
 		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.ANNOTATIONS);
 		List<String> expectedValues = new ArrayList<String>();
 
