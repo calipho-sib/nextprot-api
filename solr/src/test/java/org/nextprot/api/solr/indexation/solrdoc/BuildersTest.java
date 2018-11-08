@@ -12,7 +12,7 @@ import java.util.Map;
 import static org.junit.Assert.fail;
 
 @ActiveProfiles({"build"})
-@ContextConfiguration("classpath:spring/commons-context.xml")
+@ContextConfiguration("classpath:spring/solr-context.xml")
 public class BuildersTest extends AbstractUnitBaseTest {
 
 	@Test
