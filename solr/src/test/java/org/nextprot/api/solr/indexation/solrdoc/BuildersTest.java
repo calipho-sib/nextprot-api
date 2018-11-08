@@ -17,7 +17,7 @@ public class BuildersTest extends AbstractUnitBaseTest {
 
 	@Test
 	public void shouldCoverAllSolrFields() {
-		Map<EntrySolrField, EntrySolrFieldCollector> map = SolrEntryDocumentFactory.mapBuildersByEntryField();
+		Map<EntrySolrField, EntrySolrFieldCollector> map = SolrEntryDocumentFactory.mapCollectorsByEntryField();
 		
 		StringBuilder sb = new StringBuilder();
 		for(EntrySolrField f : EntrySolrField.values()){

@@ -55,7 +55,7 @@ public class ChromosomeSolrFieldCollector extends EntrySolrFieldCollector {
 	}
 
 	// Allows to sort results based on chromosomal location
-	public static Integer sortChr(String chrs) {
+	static Integer sortChr(String chrs) {
 		
 		// base the computation of chr_loc_s on first chr_loc
 		String chr = chrs.split(" ")[0];

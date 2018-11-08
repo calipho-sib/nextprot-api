@@ -5,7 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.EntrySolrField;
-import org.nextprot.api.solr.indexation.solrdoc.entrydoc.FilterAndPropertiesFieldsCollectorSolr;
+import org.nextprot.api.solr.indexation.solrdoc.entrydoc.FilterAndPropertiesFieldsCollector;
 import org.nextprot.api.solr.indexation.solrdoc.entrydoc.SolrDiffTest;
 
 public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
@@ -27,7 +27,7 @@ public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFilterAndProperties(Entry entry) {
 		String entryName = entry.getUniqueName();
 		System.out.println("Testing " + entryName);
-		FilterAndPropertiesFieldsCollectorSolr ffb = new FilterAndPropertiesFieldsCollectorSolr();
+		FilterAndPropertiesFieldsCollector ffb = new FilterAndPropertiesFieldsCollector();
 		ffb.collect(entry, false);
 		
 		int expectedCount = 0;

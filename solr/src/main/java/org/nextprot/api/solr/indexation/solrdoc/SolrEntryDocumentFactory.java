@@ -22,7 +22,7 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 	@Override
 	public SolrInputDocument calcSolrInputDocument() {
 
-		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = mapBuildersByEntryField();
+		Map<EntrySolrField, EntrySolrFieldCollector> collectors = mapCollectorsByEntryField();
 
 		SolrInputDocument doc = new SolrInputDocument();
 
@@ -31,7 +31,7 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 				continue; // Directly computed by SOLR
 			}
 
-			EntrySolrFieldCollector entrySolrFieldCollector = fieldsBuilderMap.get(f);
+			EntrySolrFieldCollector entrySolrFieldCollector = collectors.get(f);
 			entrySolrFieldCollector.collect(solrizableObject, isGold);
 
 			Object o = entrySolrFieldCollector.getFieldValue(f, f.getType());
@@ -43,13 +43,13 @@ public class SolrEntryDocumentFactory extends SolrDocumentFactory<Entry> {
 			if (f == EntrySolrField.TEXT || f == EntrySolrField.SCORE) {
 				continue; // Directly computed by SOLR
 			}
-			fieldsBuilderMap.get(f).clear();
+			collectors.get(f).clear();
 		}
 
 		return doc;
 	}
 
-	public static Map<EntrySolrField, EntrySolrFieldCollector> mapBuildersByEntryField() {
+	public static Map<EntrySolrField, EntrySolrFieldCollector> mapCollectorsByEntryField() {
 
 		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = new HashMap<>();
 

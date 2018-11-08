@@ -1,7 +1,6 @@
-package org.nextprot.api.solr.indexation.solrdoc;
+package org.nextprot.api.solr.indexation.solrdoc.entrydoc;
 
 import org.junit.Test;
-import org.nextprot.api.solr.indexation.solrdoc.entrydoc.ChromosomeSolrFieldCollector;
 
 import static org.junit.Assert.assertEquals;
 

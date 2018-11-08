@@ -13,7 +13,7 @@ import java.util.Collection;
 
 
 @Service
-public class FilterAndPropertiesFieldsCollectorSolr extends EntrySolrFieldCollector {
+public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector {
 
 	@Autowired
 	private EntryReportStatsService entryReportStatsService;
