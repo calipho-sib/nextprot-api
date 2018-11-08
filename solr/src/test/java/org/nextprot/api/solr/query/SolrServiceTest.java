@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.query.service.SolrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
