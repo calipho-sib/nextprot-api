@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.diff;
+package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff;
 
 import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;

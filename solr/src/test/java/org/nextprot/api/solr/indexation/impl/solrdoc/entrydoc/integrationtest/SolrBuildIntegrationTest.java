@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
+package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
 
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;

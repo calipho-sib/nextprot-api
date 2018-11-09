@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integration;
+package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -7,14 +7,13 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.diff.SolrDiffTest.getFieldValue;
+import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff.SolrDiffTest.getFieldValue;
 
 
 public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationTest {
