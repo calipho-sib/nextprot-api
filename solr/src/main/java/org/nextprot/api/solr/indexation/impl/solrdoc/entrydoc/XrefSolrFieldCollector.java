@@ -64,7 +64,6 @@ public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
                     }
                 }
             }
-
         }
 
         // It is weird to have to go thru this to get the CAB antibodies, they should come with getXrefs()
@@ -100,12 +99,10 @@ public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
                 addEntrySolrFieldValue(fields, EntrySolrField.XREFS, db + ":" + acc + ", " + acc);
             }
         }
-
     }
 
     @Override
     public Collection<EntrySolrField> getCollectedFields() {
         return Arrays.asList(EntrySolrField.XREFS, EntrySolrField.ENSEMBL, EntrySolrField.ANTIBODY);
     }
-
 }

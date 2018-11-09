@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -42,6 +43,11 @@ public class ChromosomeSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
 		collector.collect(fields, entry, true);
+
+		Set<EntrySolrField> fieldKeys = fields.keySet();
+
+		Assert.assertEquals(3, fieldKeys.size());
+		Assert.assertTrue(collector.getCollectedFields().containsAll(fieldKeys));
 
 		Assert.assertTrue(fields.get(EntrySolrField.GENE_BAND) instanceof List);
 		List bands = (List)fields.get(EntrySolrField.GENE_BAND);
