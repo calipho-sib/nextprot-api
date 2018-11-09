@@ -44,8 +44,8 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			AnnotationCategory apiCategory = currannot.getAPICategory();
 			String quality = currannot.getQualityQualifier();
 
-			if (apiCategory.equals(AnnotationCategory.FUNCTION_INFO)
-					|| apiCategory.equals(AnnotationCategory.EXPRESSION_PROFILE))
+			if (apiCategory == AnnotationCategory.FUNCTION_INFO
+					|| apiCategory == AnnotationCategory.EXPRESSION_PROFILE)
 				// We just processed this via the EntryUtils dedicated method,
 				// and tissue specificity values are indexed under other fields
 				continue;
@@ -56,7 +56,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			// if(!apiCategory.equals(AnnotationCategory.) {//These values are
 			// indexed under other fields
 			String desc = currannot.getDescription();
-			if (apiCategory.equals(AnnotationCategory.GLYCOSYLATION_SITE)) {
+			if (apiCategory == AnnotationCategory.GLYCOSYLATION_SITE) {
 				String xref = currannot.getSynonym();
 				if (xref != null)
 					// It is actually not a synonym but the carbohydrate id from
@@ -64,15 +64,15 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, xref);
 			}
 
-			else if (apiCategory.equals(AnnotationCategory.DNA_BINDING_REGION))
+			else if (apiCategory == AnnotationCategory.DNA_BINDING_REGION)
 				addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, category);
-			else if (apiCategory.equals(AnnotationCategory.VARIANT))
+			else if (apiCategory == AnnotationCategory.VARIANT)
 				// We need to index them somehow for the GOLD/SILVER tests, or
 				// do we ? in creates a lot of useless 'variant null' tokens
 				desc = "Variant " + desc;
 			if (desc != null) { // System.err.println(category + ": " + desc);
-				if (apiCategory.equals(AnnotationCategory.SEQUENCE_CAUTION)) {
-					int stringpos = 0;
+				if (apiCategory == AnnotationCategory.SEQUENCE_CAUTION) {
+					int stringpos;
 					desc = desc.split(":")[1].substring(1); // The sequence
 															// AAH70170 differs
 															// from that shown.
@@ -107,7 +107,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 																		// not
 																		// description
 					if (!isGold || quality.equals("GOLD")) {
-						if (apiCategory.equals(AnnotationCategory.PHENOTYPIC_VARIATION)) {
+						if (apiCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
 							// Get BED data (also get the notes ? )
 							Map<String, AnnotationIsoformSpecificity> annotSpecs = currannot.getTargetingIsoformsMap();
 							for (Map.Entry<String, AnnotationIsoformSpecificity> mapentry : annotSpecs.entrySet()) {
@@ -129,14 +129,14 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 			handleAnnotationTerm(fields, currannot, entry, isGold);
 			
-			if (apiCategory.equals(AnnotationCategory.MATURE_PROTEIN)
-					|| apiCategory.equals(AnnotationCategory.MATURATION_PEPTIDE)) {
-				String chainid = currannot.getSynonym();
-				if (chainid != null) {
+			if (apiCategory == AnnotationCategory.MATURE_PROTEIN
+					|| apiCategory == AnnotationCategory.MATURATION_PEPTIDE) {
+				StringBuilder chainid = new StringBuilder(currannot.getSynonym());
+				if (chainid.length() > 0) {
 					// System.err.println( currannot.getAllSynonyms().size() +
 					// " synonyms: " + currannot.getAllSynonyms());
-					if (chainid.contains("-"))
-						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, chainid); // Uniprot FT id,
+					if (chainid.toString().contains("-"))
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, chainid.toString()); // Uniprot FT id,
 																// like
 																// PRO_0000019235,
 																// shouldn't be
@@ -148,11 +148,12 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS,
 									StringUtils.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 						else {
-							chainid = "";
+							// TODO: there is already a stringbuilder !!
+							chainid = new StringBuilder();
 							for (String syno : chainsynonyms) {
-								chainid += syno + " | ";
+								chainid.append(syno).append(" | ");
 							}
-							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid.toString()));
 						}
 					}
 				} // else System.err.println("chainid null for: " + desc);
@@ -160,7 +161,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			}
 
 			// variant xrefs and identifiers
-			if (apiCategory.equals(AnnotationCategory.VARIANT)) {
+			if (apiCategory == AnnotationCategory.VARIANT) {
 				String evidxrefaccs = "";
 				List<AnnotationEvidence> evidences = currannot.getEvidences();
 				if (evidences != null)
@@ -251,7 +252,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				// We don't index negative annotations
 				for (AnnotationEvidence ev : currannot.getEvidences())
 					allnegative = allnegative & ev.isNegativeEvidence();
-				if (allnegative == true) {
+				if (allnegative) {
 					return;
 				}
 			}
@@ -301,7 +302,6 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 					addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 			}
 		}
-
 	}
 
 	@Override
