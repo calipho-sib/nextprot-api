@@ -25,7 +25,7 @@ public class SolrCoreServer implements SolrServer {
 
     public SolrCoreServer(HttpSolrServer httpSolrServer) {
 
-        Preconditions.checkNotNull(httpSolrServer, "");
+        Preconditions.checkNotNull(httpSolrServer, "http solr server should be defined");
 
         baseUrl = httpSolrServer.getBaseURL();
         solrQueryServer = new HttpSolrQueryServer(httpSolrServer);

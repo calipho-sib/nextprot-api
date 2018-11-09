@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.indexation.impl;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
@@ -14,6 +15,8 @@ public class HttpSolrIndexationServer implements SolrIndexationServer {
     private final HttpSolrServer solrServer;
 
     public HttpSolrIndexationServer(HttpSolrServer httpSolrServer) {
+
+    	Preconditions.checkNotNull(httpSolrServer, "http solr server should be defined");
 
 		solrServer = httpSolrServer;
 	}
