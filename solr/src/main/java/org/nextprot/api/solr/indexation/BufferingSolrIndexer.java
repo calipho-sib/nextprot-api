@@ -27,7 +27,7 @@ public class BufferingSolrIndexer {
 	public BufferingSolrIndexer(SolrIndexationServer solrIndexer, int bufferSize) {
 
 		Preconditions.checkNotNull(solrIndexer);
-		Preconditions.checkArgument(bufferSize >= 0);
+		Preconditions.checkArgument(bufferSize > 0);
 
         this.solrIndexer = solrIndexer;
         this.bufferSize = bufferSize;
@@ -35,10 +35,11 @@ public class BufferingSolrIndexer {
 	}
 
 	/**
-	 * Put factories that produce solr document into buffer - if buffer is full objects are flushed to solr server
+	 * Add factories that can produce solr documents into buffer - if buffer is full, factories create solr docs
+	 * that are flushed to solr server for indexation
 	 * @param documentFactory a factory that are able to create solr document from object to be indexed by solr
 	 */
-	public void pushSolrDocumentFactory(SolrDocumentFactory documentFactory) {
+	public void addSolrDocumentFactory(SolrDocumentFactory documentFactory) {
 
 		if (documentFactory == null) {
 			throw new NextProtException("cannot create solr index from undefined solr document factory");

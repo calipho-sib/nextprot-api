@@ -1,43 +1,104 @@
 package org.nextprot.api.solr.indexation;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
-import static org.mockito.Mockito.mock;
+import java.io.IOException;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
 
 public class BufferingSolrIndexerTest {
 
+	private SolrIndexationServer indexationServer;
+
+	@Before
+	public void setup() {
+		indexationServer = mock(SolrIndexationServer.class);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void cannotConstructWithouIndexationServer() {
+
+		new BufferingSolrIndexer(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotConstructWithNegativeBufferSize() {
+
+		new BufferingSolrIndexer(indexationServer, -1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotConstructWithNoBufferSize() {
+
+		new BufferingSolrIndexer(indexationServer, 0);
+	}
+
     @Test
-    public void pushOneSolrDocumentFactory() {
+    public void addFactoriesAndDoNotPushForIndexation() throws IOException, SolrServerException {
 
-        BufferingSolrIndexer indexer = new BufferingSolrIndexer(mockSolrIndexer(), 10);
+        BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
 
-        indexer.pushSolrDocumentFactory(mockSolrDocumentFactory());
-        Assert.assertEquals(1, indexer.getBufferSize());
+        indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+	    indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+        Assert.assertEquals(2, indexer.getBufferSize());
+
+	    //noinspection unchecked
+	    Mockito.verify(indexationServer, never()).pushDocsForIndexation(Mockito.any(List.class));
+	    Mockito.verify(indexationServer, never()).commitIndexation();
     }
+
+	@Test
+	public void addOneFactoryAndPushForIndexation() throws IOException, SolrServerException {
+
+		BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 1);
+
+		indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+		Assert.assertEquals(0, indexer.getBufferSize());
+
+		//noinspection unchecked
+		Mockito.verify(indexationServer, times(1)).pushDocsForIndexation(Mockito.any(List.class));
+		Mockito.verify(indexationServer, never()).commitIndexation();
+	}
 
     @Test
-    public void performIndexation() {
+    public void testPerformIndexationPushBefore() throws IOException, SolrServerException {
+
+	    BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
+
+	    indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+	    indexer.performIndexation();
+	    Assert.assertEquals(0, indexer.getBufferSize());
+
+	    //noinspection unchecked
+	    Mockito.verify(indexationServer, times(1)).pushDocsForIndexation(Mockito.any(List.class));
+	    Mockito.verify(indexationServer, times(1)).commitIndexation();
     }
+
+	@Test
+	public void testPerformIndexationNothingToPush() throws IOException, SolrServerException {
+
+		BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
+
+		indexer.performIndexation();
+
+		//noinspection unchecked
+		Mockito.verify(indexationServer, never()).pushDocsForIndexation(Mockito.any(List.class));
+		Mockito.verify(indexationServer, times(1)).commitIndexation();
+	}
 
     @Test
-    public void clearIndexes() {
+    public void clearIndexes() throws IOException, SolrServerException {
+
+	    BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
+
+	    indexer.clearIndexes();
+
+	    Mockito.verify(indexationServer, times(1)).deleteIndexes();
+	    Mockito.verify(indexationServer, times(1)).commitIndexation();
     }
-
-    private SolrIndexationServer mockSolrIndexer() {
-
-        SolrIndexationServer indexer = mock(SolrIndexationServer.class);
-
-
-        return indexer;
-    }
-
-    private SolrDocumentFactory mockSolrDocumentFactory() {
-
-        SolrDocumentFactory factory = mock(SolrDocumentFactory.class);
-
-
-        return factory;
-    }
-
 }
