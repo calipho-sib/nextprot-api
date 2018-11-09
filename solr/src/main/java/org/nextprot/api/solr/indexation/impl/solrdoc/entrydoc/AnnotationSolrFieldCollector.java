@@ -45,14 +45,16 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean isGold) {
+
+		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
+
 		// Function with canonical first
-		List<String> function_canonical = getFunctionInfoWithCanonicalFirst(entryAccession);
+		List<String> function_canonical = getFunctionInfoWithCanonicalFirst(entryAccession, annots);
 		for (String finfo : function_canonical) {
 			addEntrySolrFieldValue(fields, EntrySolrField.FUNCTION_DESC, finfo);
 			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, finfo);
 		}
 
-		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
 			AnnotationCategory apiCategory = currannot.getAPICategory();
@@ -323,7 +325,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 		return Arrays.asList(EntrySolrField.ANNOTATIONS, EntrySolrField.FUNCTION_DESC);
 	}
 
-	public List<String> getFunctionInfoWithCanonicalFirst(String entryAccession) {
+	List<String> getFunctionInfoWithCanonicalFirst(String entryAccession, List<Annotation> annots) {
 
 		List<String> fInfoCanonical = new ArrayList<>();
 		List<String> fInfoNonCanonical = new ArrayList<>();
@@ -338,7 +340,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			}
 
 		// Get the function annotation and put it in the right basket
-		for (Annotation currannot : annotationService.findAnnotations(entryAccession)) {
+		for (Annotation currannot : annots) {
 			if(currannot.getAPICategory().equals(AnnotationCategory.FUNCTION_INFO))
 				if(currannot.isSpecificForIsoform(canonicalIso))
 					fInfoCanonical.add(currannot.getDescription());
@@ -359,7 +361,6 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
 				return c;
 			});
-			List<Annotation> annots = annotationService.findAnnotations(entryAccession);
 			for (Annotation currannot : annots) {
 				String category = currannot.getCategory();
 				if(category.equals("go biological process") || category.equals("go molecular function")) {
