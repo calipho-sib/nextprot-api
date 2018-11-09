@@ -2,11 +2,11 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import com.google.common.base.Joiner;
 import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.GeneService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,20 +18,22 @@ import java.util.TreeSet;
 @Service
 public class ChromosomeSolrFieldCollector extends EntrySolrFieldCollector {
 
+	@Autowired
+	private GeneService geneService;
 
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
+
+		List<ChromosomalLocation> chrlocs = geneService.findChromosomalLocationsByEntry(entryAccession);
 
 		// build GENE_BAND by concatenating distinct band and chr+band
 		// build CHR_LOC field by concatenating distinct chromosomal locations (chr + band) after sorting them alphabetically
 		// build CHR_LOCS field based of first element in CHR_LOC 
 		// Note that CHR_LOC is displayed in UI search result and CHR_LOC_S is used to sort UI search result
 		// this is why it is important to compute the CHR_LOC_S based on the first location displayed in UI (consistency)
-		List<String> gblist = new ArrayList<>();
 		Set<String> clset = new TreeSet<>();
 		Set<String> gbset = new TreeSet<>( Collections.reverseOrder() );
 		// The reverse is important otherwise solr may find wrong locations with queries like 11q13 in "19q13.11 q13.11"
-		List<ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
 		for (ChromosomalLocation data : chrlocs) {
 			String ch = data.getChromosome()==null ? "" : data.getChromosome();
 			String gb1 = data.getBand()==null ? "" : data.getBand();

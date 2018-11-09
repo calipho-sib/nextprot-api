@@ -2,7 +2,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.IdentifierSolrFieldCollector;
 
@@ -17,7 +16,7 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 	public void testIdentifiers() {
 
 		for(int i=0; i < 10; i++){
-			testIdentfiers(getEntry(i));
+			testIdentfiers(entries.get(i));
 		}
 		
 		//Entry entry = getEntry("NX_Q96I99");
@@ -26,14 +25,12 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 	}
 
 	
-	public void testIdentfiers(Entry entry) {
-		
-		String entryName = entry.getUniqueName();
+	public void testIdentfiers(String entryName) {
 
 		System.out.println("Testing: " + entryName);
 		IdentifierSolrFieldCollector ifb = new IdentifierSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		ifb.collect(fields, entry, false);
+		ifb.collect(fields, entryName, false);
 		
 		List<String> expectedACs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ALTERNATIVE_ACS);
 		if(expectedACs != null) {

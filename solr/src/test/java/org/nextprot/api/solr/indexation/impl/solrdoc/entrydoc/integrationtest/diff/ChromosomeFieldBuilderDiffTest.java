@@ -2,7 +2,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ChromosomeSolrFieldCollector;
 
@@ -74,30 +73,29 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testChromsomalLocation() {
 		for(int i=0; i < 10; i++){
-			Entry entry = getEntry(i);
-			System.out.println(entry.getUniqueName());
-			testChrLoc(entry);
-			testChrLocS(entry);
-			testGeneBand(entry);
+			String entryAccession = entries.get(i);
+			System.out.println(entryAccession);
+			testChrLoc(entryAccession);
+			testChrLocS(entryAccession);
+			testGeneBand(entryAccession);
 		}
 	}
 
 	
 	private void testEntryGivesSameIndexAsSolrIndex(String uniqueName) {
-		Entry entry = getEntry(uniqueName);
-		System.out.println(entry.getUniqueName());
-		testChrLoc(entry);
-		testChrLocS(entry);
-		testGeneBand(entry);		
+		System.out.println(uniqueName);
+		testChrLoc(uniqueName);
+		testChrLocS(uniqueName);
+		testGeneBand(uniqueName);
 	}
 	
-	private void testChrLoc(Entry entry) {
+	private void testChrLoc(String entryAccession) {
 		
 		EntrySolrField field = EntrySolrField.CHR_LOC;
 
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cfb.collect(fields, entry, false);
+		cfb.collect(fields, entryAccession, false);
 		
 		// build a set with the list of actual values in field (which are separated by spaces)
 		Set<String> actualSet = new TreeSet<>();
@@ -108,7 +106,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		// but can contain several times the same values (and may have a different order)
 		// nevertheless the set of unique values should be the same
 		Set<String> expectedSet = new TreeSet<>();
-		String expectedValue = (String) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
+		String expectedValue = (String) getValueForFieldInCurrentSolrImplementation(entryAccession, field);
 		expectedSet.addAll(Arrays.asList(expectedValue.replace(",","").split(" ")));
 
 		//showActualAndExpectedValues(expectedSet,actualSet, "chr_loc");
@@ -127,13 +125,13 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	 * on the basis of the first location found in chr_loc in both old and new implementation
 	 * 
 	 */
-	private void testChrLocS(Entry entry) {
+	private void testChrLocS(String entryAccession) {
 		
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cfb.collect(fields, entry, false);
+		cfb.collect(fields, entryAccession, false);
 
-		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), EntrySolrField.CHR_LOC_S);
+		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entryAccession, EntrySolrField.CHR_LOC_S);
 		Integer actualValue = getFieldValue(fields, EntrySolrField.CHR_LOC_S, Integer.class);
 
 		assertEquals(expectedValue, actualValue);
@@ -142,13 +140,13 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	
 
 	@SuppressWarnings("unchecked")
-	private void testGeneBand(Entry entry) {
+	private void testGeneBand(String entryAccession) {
 		
 		EntrySolrField field = EntrySolrField.GENE_BAND;
 
 		ChromosomeSolrFieldCollector cfb = new ChromosomeSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cfb.collect(fields, entry, false);
+		cfb.collect(fields, entryAccession, false);
 		
 		Set<String> actualSet = new TreeSet<>();
 		List<String> geneBandValues = getFieldValue(fields, field, List.class);
@@ -158,7 +156,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		// but can contains several times the same values and have a different order
 		// nevertheless the set of unique values should be the same
 		Set<String> expectedSet = new TreeSet<String>();
-		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entryAccession, field);
 		for (String s: expectedValues) expectedSet.addAll(Arrays.asList(s.split(" ")));
 		
 		//showActualAndExpectedValues(expectedSet,actualSet, "gene_band");

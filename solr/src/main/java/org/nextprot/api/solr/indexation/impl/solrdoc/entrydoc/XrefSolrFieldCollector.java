@@ -1,12 +1,16 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,12 +23,24 @@ import static org.nextprot.api.core.service.dbxref.XrefDatabase.*;
 @Service
 public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
 
+	@Autowired
+	private DbXrefService dbXrefService;
+
+	@Autowired
+	private AnnotationService annotationService;
+
+	@Autowired
+	private IsoformService isoformService;
+
+	@Autowired
+	private PublicationService publicationService;
+
     @Override
-    public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+    public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 
         String[] extraNameCat = {"entry name", "family name", "allergen name", "reaction ID", "toxin name"};
         // Xrefs
-        List<DbXref> xrefs = entry.getXrefs();
+        List<DbXref> xrefs = dbXrefService.findDbXrefsByMaster(entryAccession);
         for (DbXref xref : xrefs) {
             String acc = xref.getAccession();
             String db = xref.getDatabaseName();
@@ -67,7 +83,7 @@ public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
         }
 
         // It is weird to have to go thru this to get the CAB antibodies, they should come with getXrefs()
-        List<Annotation> annots = entry.getAnnotations();
+        List<Annotation> annots = annotationService.findAnnotations(entryAccession);
         for (Annotation currannot : annots) {
             String category = currannot.getCategory();
 
@@ -85,13 +101,13 @@ public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
         }
 
         // Isoform ids
-        List<Isoform> isoforms = entry.getIsoforms();
+        List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
         for (Isoform iso : isoforms) {
             String isoId = iso.getIsoformAccession().substring(3);
             addEntrySolrFieldValue(fields, EntrySolrField.XREFS, "isoform ID:" + isoId + ", " + isoId);
         }
         // Xrefs to publications (PubMed, DOIs)
-        for (Publication currpubli : entry.getPublications()) {
+        for (Publication currpubli : publicationService.findPublicationsByEntryName(entryAccession)) {
             List<PublicationDbXref> pubxrefs = currpubli.getDbXrefs();
             for (DbXref pubxref : pubxrefs) {
                 String acc = pubxref.getAccession().trim(); // It happens to have a trailing \t (like 10.1080/13547500802063240 in NX_P14635)

@@ -2,12 +2,8 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +14,6 @@ import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integration
 
 public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationTest {
 
-	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Test
 	public void testBEDintegration() {
 		String[] BEDtest_list = {"NX_P35498", "NX_Q99250","NX_Q9NY46", "NX_P35499", "NX_Q14524", "NX_Q01118","NX_Q9UQD0", "NX_Q15858", "NX_Q9Y5Y9", "NX_Q9UI33",
@@ -27,7 +22,7 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		
 		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		afb.collect(fields, getEntry("NX_P35498"), false);
+		afb.collect(fields, "NX_P35498", false);
 
 		List<String> annotations = getFieldValue(fields, EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations) {
@@ -41,7 +36,7 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		
 		bedAnnotCnt = 0;
 		fields.clear();
-		afb.collect(fields, getEntry("NX_P16422"), false);
+		afb.collect(fields, "NX_P16422", false);
 		annotations = getFieldValue(fields, EntrySolrField.ANNOTATIONS, List.class);
 		for(String annot : annotations)
 			if(annot.startsWith("EPCAM-"))
@@ -49,9 +44,4 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 		
 		Assert.assertTrue(bedAnnotCnt >= 21);
 	}
-	
-	protected Entry getEntry(String entryName){
-		return entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
-	}
-	
 }

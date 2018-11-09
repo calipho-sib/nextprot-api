@@ -10,29 +10,31 @@ import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
+import org.nextprot.api.solr.indexation.SolrDocumentFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publication> {
+public class SolrPublicationDocumentFactory implements SolrDocumentFactory {
 
-    public SolrPublicationDocumentFactory(Publication publi) {
-        super(publi);
+	private final Publication publication;
+	
+    public SolrPublicationDocumentFactory(Publication publication) {
+        
+    	this.publication = publication;
     }
 
 	@Override
 	public SolrInputDocument createSolrInputDocument() {
 
-        Publication publi = solrizableObject;
-
         GlobalPublicationStatistics.PublicationStatistics publicationStats =
 		        SpringApplicationContext.getBeanOfType(PublicationService.class)
-				        .getPublicationStatistics(publi.getPublicationId());
+				        .getPublicationStatistics(publication.getPublicationId());
 
 		SolrInputDocument doc = new SolrInputDocument();
-		doc.addField(PublicationSolrField.ID.getName(), publi.getPublicationId());
-		List<PublicationDbXref> xrefs = publi.getDbXrefs();
+		doc.addField(PublicationSolrField.ID.getName(), publication.getPublicationId());
+		List<PublicationDbXref> xrefs = publication.getDbXrefs();
 		// TODO: this 'ac' field should be renamed 'xrefs'
 		if (xrefs != null)
 		   // The format is slightly different in current publication indexes vs terminology indexes, check if justified
@@ -43,27 +45,27 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 		filters+=((publicationStats.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
 		filters+=((publicationStats.isLargeScale())?" largescale":"");
 		doc.addField(PublicationSolrField.FILTERS.getName(), filters);
-		doc.addField(PublicationSolrField.TITLE.getName(), publi.getTitle());
-		doc.addField(PublicationSolrField.TITLE_S.getName(), publi.getTitle());
+		doc.addField(PublicationSolrField.TITLE.getName(), publication.getTitle());
+		doc.addField(PublicationSolrField.TITLE_S.getName(), publication.getTitle());
 
-		if (publi.getPublicationDate() != null) {
-			doc.addField(PublicationSolrField.DATE.getName(), publi.getPublicationDate());
-			doc.addField(PublicationSolrField.YEAR.getName(), publi.getPublicationYear());
+		if (publication.getPublicationDate() != null) {
+			doc.addField(PublicationSolrField.DATE.getName(), publication.getPublicationDate());
+			doc.addField(PublicationSolrField.YEAR.getName(), publication.getPublicationYear());
 		}
-		doc.addField(PublicationSolrField.FIRST_PAGE.getName(), publi.getFirstPage());
-		doc.addField(PublicationSolrField.LAST_PAGE.getName(), publi.getLastPage());
-		doc.addField(PublicationSolrField.VOLUME.getName(), publi.getVolume());
-		doc.addField(PublicationSolrField.VOLUME_S.getName(), publi.getVolume());
-		doc.addField(PublicationSolrField.ABSTRACT.getName(), publi.getAbstractText());
-		doc.addField(PublicationSolrField.TYPE.getName(), publi.getPublicationType().name());
+		doc.addField(PublicationSolrField.FIRST_PAGE.getName(), publication.getFirstPage());
+		doc.addField(PublicationSolrField.LAST_PAGE.getName(), publication.getLastPage());
+		doc.addField(PublicationSolrField.VOLUME.getName(), publication.getVolume());
+		doc.addField(PublicationSolrField.VOLUME_S.getName(), publication.getVolume());
+		doc.addField(PublicationSolrField.ABSTRACT.getName(), publication.getAbstractText());
+		doc.addField(PublicationSolrField.TYPE.getName(), publication.getPublicationType().name());
 
 		//doc.addField("source", rs.getString("source"));
 		//This source feature is either PubMed (99.99%) or UniProt for published articles with no PMID, it is useless for the indexes since
 		// another way to get those is to query ac without pubmed ac:(-pubmed)
 
-		if (publi.isLocatedInScientificJournal()) {
+		if (publication.isLocatedInScientificJournal()) {
 
-			JournalResourceLocator journal = publi.getJournalResourceLocator();
+			JournalResourceLocator journal = publication.getJournalResourceLocator();
 			String jfield = journal.getName();
 
 			if (journal.hasJournalId()) {
@@ -78,10 +80,10 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 			doc.addField(PublicationSolrField.JOURNAL.getName(), jfield);
 		}
 		// no need the following anymore as journal name is now accessible from journal
-		//else if(publi.getJournal_from_properties() != null)
-		//	doc.addField("journal", publi.getJournal_from_properties());
+		//else if(publication.getJournal_from_properties() != null)
+		//	doc.addField("journal", publication.getJournal_from_properties());
 
-		SortedSet<PublicationAuthor> authorset = publi.getAuthors();
+		SortedSet<PublicationAuthor> authorset = publication.getAuthors();
 		if (authorset != null) {
 			String toIndex;
 			String inidotted;

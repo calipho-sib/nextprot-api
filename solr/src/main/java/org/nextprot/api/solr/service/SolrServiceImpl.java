@@ -101,17 +101,17 @@ public class SolrServiceImpl implements SolrService {
         BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
 
         logAndCollect(info, "getting entry list of chromosome " + chrName);
-        List<String> allentryids = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
+        List<String> allEntryAccessions = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
 
-        logAndCollect(info, "start indexing of " + allentryids.size() + " entries");
+        logAndCollect(info, "start indexing of " + allEntryAccessions.size() + " entries");
         int ecnt = 0;
-        for (String id : allentryids) {
+        for (String entryAccession : allEntryAccessions) {
             ecnt++;
 
-	        solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryBuilderService.buildWithEverything(id), isGold));
+	        solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryAccession, isGold));
 
             if ((ecnt % 300) == 0)
-                logAndCollect(info, ecnt + "/" + allentryids.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
+                logAndCollect(info, ecnt + "/" + allEntryAccessions.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
         }
 
         logAndCollect(info, "committing index " + entity.getName());

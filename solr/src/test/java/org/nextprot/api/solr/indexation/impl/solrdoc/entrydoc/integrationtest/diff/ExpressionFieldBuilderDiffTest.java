@@ -3,7 +3,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ExpressionSolrFieldCollector;
@@ -20,7 +19,8 @@ import java.util.TreeSet;
 
 public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
-	@Autowired TerminologyService terminologyService;
+	@Autowired
+	TerminologyService terminologyService;
 
 	@Ignore
 	@Test
@@ -29,7 +29,9 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < 12; i++){ testExpression(getEntry(test_list[i])); } 
+		for(int i=0; i < 12; i++) {
+			testExpression(test_list[i]);
+		}
 		// for(int i=0; i < 10; i++){	testExpression(getEntry(i));	} // 'random' entries
 		
 		//Entry entry = getEntry("NX_P20592");
@@ -38,14 +40,12 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 	
 	}
 
-	public void testExpression(Entry entry) {
-		
-		String entryName = entry.getUniqueName();
+	public void testExpression(String entryName) {
 
 		System.out.println("Testing: " + entryName);
 		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		efb.collect(fields, entry, false);
+		efb.collect(fields, entryName, false);
 		
 		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.EXPRESSION);
 		Set<String> expectedExpression = null;

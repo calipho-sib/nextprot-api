@@ -1,25 +1,29 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
+import org.nextprot.api.solr.indexation.SolrDocumentFactory;
 
 import java.util.List;
 
 
-public class SolrCvTermDocumentFactory extends SolrDocumentBaseFactory<CvTerm> {
+public class SolrCvTermDocumentFactory implements SolrDocumentFactory {
+
+	private final CvTerm term;
 
     public SolrCvTermDocumentFactory(CvTerm term) {
 
-        super(term);
+	    Preconditions.checkNotNull(term, "unable to solrize undefined term");
+
+	    this.term = term;
     }
 
     @Override
 	public SolrInputDocument createSolrInputDocument() {
-
-        CvTerm term = solrizableObject;
 
 		String ontology = term.getOntology();
 		if (ontology.equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology

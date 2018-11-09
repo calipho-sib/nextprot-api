@@ -1,10 +1,11 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,13 +17,14 @@ import java.util.Map;
 @Service
 public class NamesSolrFieldCollector extends EntrySolrFieldCollector {
 
-	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
-		
-		Overview ovv = entry.getOverview();
-		
-		//TODO Daniel repeated code in CvFieldBuilder
+	@Autowired
+	private OverviewService overviewService;
 
+	@Override
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
+		
+		Overview ovv = overviewService.findOverviewByEntry(entryAccession);
+		
 		List<EntityName> altnames = ovv.getProteinNames();
 		if(altnames != null )
 			for (EntityName altname : altnames) {

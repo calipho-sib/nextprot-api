@@ -4,22 +4,27 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
@@ -28,17 +33,26 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Autowired
 	private TerminologyService terminologyService;
-	
+
+	@Autowired
+	private AnnotationService annotationService;
+
+	@Autowired
+	private IsoformService isoformService;
+
+	@Autowired
+	private OverviewService overviewService;
+
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean isGold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean isGold) {
 		// Function with canonical first
-		List<String> function_canonical = EntryUtils.getFunctionInfoWithCanonicalFirst(entry);
+		List<String> function_canonical = getFunctionInfoWithCanonicalFirst(entryAccession);
 		for (String finfo : function_canonical) {
 			addEntrySolrFieldValue(fields, EntrySolrField.FUNCTION_DESC, finfo);
 			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, finfo);
 		}
 
-		List<Annotation> annots = entry.getAnnotations();
+		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
 			AnnotationCategory apiCategory = currannot.getAPICategory();
@@ -127,7 +141,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				// annotations in the api
 			}
 
-			handleAnnotationTerm(fields, currannot, entry, isGold);
+			handleAnnotationTerm(fields, currannot, entryAccession, isGold);
 			
 			if (apiCategory == AnnotationCategory.MATURE_PROTEIN
 					|| apiCategory == AnnotationCategory.MATURATION_PEPTIDE) {
@@ -204,7 +218,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 		}
 
 		// Families (why not part of Annotations ?), always GOLD
-		for (Family family : entry.getOverview().getFamilies()) {
+		for (Family family : overviewService.findOverviewByEntry(entryAccession).getFamilies()) {
 			String ac = family.getAccession();
 			int stringpos = 0;
 			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, ac);
@@ -242,7 +256,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 		}
 	}
 
-	private void handleAnnotationTerm(Map<EntrySolrField, Object> fields, Annotation currannot, Entry entry, boolean isGold) {
+	private void handleAnnotationTerm(Map<EntrySolrField, Object> fields, Annotation currannot, String entryAccession, boolean isGold) {
 		
 		String quality = currannot.getQualityQualifier();
 		String cvac = currannot.getCvTermAccessionCode();
@@ -263,7 +277,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 				CvTerm term = terminologyService.findCvTermByAccession(cvac);
 				if (null==term) {
 					// there is nothing more we can add to indexed fields (ancestors, synonyms), so let's return
-					logger.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
+					logger.error(entryAccession + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
 					return;
 				}
 				
@@ -308,4 +322,61 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 	public Collection<EntrySolrField> getCollectedFields() {
 		return Arrays.asList(EntrySolrField.ANNOTATIONS, EntrySolrField.FUNCTION_DESC);
 	}
+
+	public List<String> getFunctionInfoWithCanonicalFirst(String entryAccession) {
+
+		List<String> fInfoCanonical = new ArrayList<>();
+		List<String> fInfoNonCanonical = new ArrayList<>();
+		List<Isoform> isos = isoformService.findIsoformsByEntryName(entryAccession);
+		String canonicalIso = "";
+
+		// Get Id of the canonical (swissprotdisplayed) isoform
+		for (Isoform curriso : isos)
+			if(curriso.isCanonicalIsoform()) {
+				canonicalIso = curriso.getIsoformAccession();
+				break;
+			}
+
+		// Get the function annotation and put it in the right basket
+		for (Annotation currannot : annotationService.findAnnotations(entryAccession)) {
+			if(currannot.getAPICategory().equals(AnnotationCategory.FUNCTION_INFO))
+				if(currannot.isSpecificForIsoform(canonicalIso))
+					fInfoCanonical.add(currannot.getDescription());
+				else
+					fInfoNonCanonical.add(currannot.getDescription());
+		}
+
+		// Merge the lists in a final unique list with canonical function first
+		//System.err.println("before: " + fInfoCanonical);
+		fInfoCanonical.addAll(fInfoNonCanonical);
+		//System.err.println("after: " + fInfoCanonical);
+		if (fInfoCanonical.size()==0) {
+			Set<Annotation> goFuncSet = new TreeSet<>((e1, e2) -> {
+
+				int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
+				c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
+				if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
+				if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
+				return c;
+			});
+			List<Annotation> annots = annotationService.findAnnotations(entryAccession);
+			for (Annotation currannot : annots) {
+				String category = currannot.getCategory();
+				if(category.equals("go biological process") || category.equals("go molecular function")) {
+					goFuncSet.add(currannot); }
+			}
+			int rescnt = 0;
+			for (Annotation resannot : goFuncSet) {
+				// Stick term's name in the returned list
+				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) // avoid unsignificant function if possible
+					continue;
+				if(rescnt++ < 3) // return max 3 first annotation descriptions
+					fInfoCanonical.add(resannot.getCvTermName());
+				else break;
+			}
+		}
+
+		return fInfoCanonical;
+	}
+
 }

@@ -5,10 +5,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
@@ -22,19 +19,18 @@ import java.util.Map;
 
 public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	
-	@Autowired	private EntryBuilderService entryBuilderService = null;
-	@Autowired	private MasterIdentifierService masterIdentifierService = null;
+	@Autowired
+	private MasterIdentifierService masterIdentifierService = null;
+	protected List<String> entries = null;
 
 	HttpSolrServer solrEntries = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
 	HttpSolrServer solrEntriesGold = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1gold");
 	HttpSolrServer solrPublications = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/nppublications1");
 	HttpSolrServer solrCvs = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npcvs1");
 
-	
-	
 	private Object getValueForFieldInCurrentSolrImplementation(HttpSolrServer solrCore, String entryName, String fieldName) {
 
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 
 		try {
 			SolrQuery query = new SolrQuery();
@@ -71,24 +67,9 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 		return getValueForFieldInCurrentSolrImplementation(solrCvs, entryName, field.getName());
 	}
 
-	
-	private List<String> entries = null;
-	
-	protected Entry getEntry(String entryName){
-		return entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
-	}
-	
-	protected Entry getEntry(EntryConfig config){
-		return entryBuilderService.build(config);
-	}
-	
-	protected Entry getEntry(int i){
-		return entryBuilderService.build(EntryConfig.newConfig(entries.get(i)).withEverything());
-	}
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		entries = new ArrayList<String>(masterIdentifierService.findUniqueNames());
+		entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
 	}
 
 	

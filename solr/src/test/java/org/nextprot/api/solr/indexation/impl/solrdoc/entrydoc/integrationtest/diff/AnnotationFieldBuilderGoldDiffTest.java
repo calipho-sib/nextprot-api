@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
@@ -35,27 +34,24 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
 		for(int i=0; i < test_list.length; i++){
 		//for(int i=0; i < 120; i++){
-			Entry entry = getEntry(test_list[i]); 
+			String entryAccession = test_list[i];
 			//Entry entry = getEntry(i); // 'random' entry
 		    //Entry entry = getEntry("NX_P20592");
-			System.out.println(entry.getUniqueName());
-			testGoldAnnotations(entry);
+			System.out.println(entryAccession);
+			testGoldAnnotations(entryAccession);
 		}
-		
 	}
 
 	@SuppressWarnings("unchecked")
-	public void testGoldAnnotations(Entry entry) {
-
-		String entryName = entry.getUniqueName();
+	public void testGoldAnnotations(String entryAccession) {
 		
 		// Variants
 		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
-		afb.collect(fields, entry, true);
+		afb.collect(fields, entryAccession, true);
 		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.ANNOTATIONS);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryAccession, EntrySolrField.ANNOTATIONS);
 		for(String rawAnnot : expectedRawValues)
 			if(rawAnnot.contains(">sequence variant<"))
 				oldgoldvarcnt++;
@@ -68,8 +64,8 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		// Expression
 		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
 		fields.clear();
-		efb.collect(fields, entry, true);
-		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.EXPRESSION);
+		efb.collect(fields, entryAccession, true);
+		List<String> explist = (List) getValueForFieldInCurrentGoldSolrImplementation(entryAccession, EntrySolrField.EXPRESSION);
 		Set<String> expectedCVSet = new TreeSet<String>();
 		Set<String> expressionCVSet = new TreeSet<String>();
 		Set<String> exprSet = null;
@@ -98,12 +94,12 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expectedCVSet.size(), expressionCVSet.size());
 		
 		// Interactions
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.INTERACTIONS);
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentGoldSolrImplementation(entryAccession, EntrySolrField.INTERACTIONS);
 		if(expectedInteractions != null) {
 			Integer oldcnt = 0, newcnt = 0;
 			InteractionSolrFieldCollector ifb = new InteractionSolrFieldCollector();
 			fields.clear();
-			ifb.collect(fields, entry, true);
+			ifb.collect(fields, entryAccession, true);
 			Set<String> itSet = new TreeSet<String>(getFieldValue(fields, EntrySolrField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) oldcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newcnt++;
@@ -112,10 +108,10 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		}
 		
         // CVs
-		Set<String> expectedCVs = new TreeSet<>((List) getValueForFieldInCurrentGoldSolrImplementation(entryName, EntrySolrField.CV_ACS));
+		Set<String> expectedCVs = new TreeSet<>((List) getValueForFieldInCurrentGoldSolrImplementation(entryAccession, EntrySolrField.CV_ACS));
 		CVSolrFieldCollector cfb = new CVSolrFieldCollector();
 		fields.clear();
-		cfb.collect(fields, entry, true);
+		cfb.collect(fields, entryAccession, true);
 		Set<String> CvSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.CV_ACS, List.class));
         Assert.assertTrue(expectedCVs.size() == CvSet.size());
 	}

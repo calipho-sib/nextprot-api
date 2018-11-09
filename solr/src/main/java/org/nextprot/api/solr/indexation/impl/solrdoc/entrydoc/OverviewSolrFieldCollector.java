@@ -1,8 +1,9 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -12,15 +13,17 @@ import java.util.Map;
 @Service
 public class OverviewSolrFieldCollector extends EntrySolrFieldCollector {
 
+	@Autowired
+	private OverviewService overviewService;
+
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 
-		Overview ovv = entry.getOverview();
-		String id = entry.getUniqueName();
+		Overview ovv = overviewService.findOverviewByEntry(entryAccession);
 
-		addEntrySolrFieldValue(fields, EntrySolrField.ID, id);
-		addEntrySolrFieldValue(fields, EntrySolrField.IDSP0, id);
-		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_AC, id.substring(3));
+		addEntrySolrFieldValue(fields, EntrySolrField.ID, entryAccession);
+		addEntrySolrFieldValue(fields, EntrySolrField.IDSP0, entryAccession);
+		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_AC, entryAccession.substring(3));
 		
 		addEntrySolrFieldValue(fields, EntrySolrField.PE_LEVEL, ovv.getProteinExistences().getProteinExistence().getLevel());
 		addEntrySolrFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, ovv.getProteinExistences().getProteinExistence().getDescriptionName());

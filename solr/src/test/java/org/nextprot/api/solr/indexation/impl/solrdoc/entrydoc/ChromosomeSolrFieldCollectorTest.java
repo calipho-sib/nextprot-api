@@ -3,9 +3,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,9 +19,6 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class ChromosomeSolrFieldCollectorTest extends AbstractUnitBaseTest {
 
-	@Autowired
-	private EntryBuilderService entryBuilderService;
-
 	// Class under test
 	@Autowired
 	private ChromosomeSolrFieldCollector collector;
@@ -38,11 +32,9 @@ public class ChromosomeSolrFieldCollectorTest extends AbstractUnitBaseTest {
 	@Test
 	public void testNX_Q9P2G1() {
 
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_Q9P2G1").withChromosomalLocations());
-
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
-		collector.collect(fields, entry, true);
+		collector.collect(fields, "NX_Q9P2G1", true);
 
 		Set<EntrySolrField> fieldKeys = fields.keySet();
 

@@ -2,9 +2,9 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,17 @@ public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 	protected Logger logger = Logger.getLogger(ExpressionSolrFieldCollector.class);
 
 	@Autowired
+	private AnnotationService annotationService;
+
+	@Autowired
 	private TerminologyService terminologyService;
 
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
+
 		//Extract the tissues where there is expression ....
-		Set <String> cv_tissues = new HashSet<String>();
-		for (Annotation currannot : entry.getAnnotations()) {
+		Set <String> cv_tissues = new HashSet<>();
+		for (Annotation currannot : annotationService.findAnnotations(entryAccession)) {
 			if (currannot.getCategory().equals("tissue specificity")) {
 				// Check there is a detected expression
 				boolean allnegative = true;
@@ -57,7 +61,7 @@ public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 				CvTerm term = terminologyService.findCvTermByAccession(cv);
 				if (null==term) {
 					// there is nothing more we can add to indexed fields (ancestors, synonyms), so let's return
-					logger.error(entry.getUniqueName() + " - term with accession |" + cv + "| not found with findCvTermByAccession()");
+					logger.error(entryAccession + " - term with accession |" + cv + "| not found with findCvTermByAccession()");
 					continue;
 				}
 				List<String> ancestors = terminologyService.getAllAncestorsAccession(term.getAccession());
@@ -73,13 +77,10 @@ public class ExpressionSolrFieldCollector extends EntrySolrFieldCollector {
 		for (String cv : cv_tissues_final) {
 			addEntrySolrFieldValue(fields, EntrySolrField.EXPRESSION, cv.trim());
 		}
-
 	}
-
 
 	@Override
 	public Collection<EntrySolrField> getCollectedFields() {
 		return Arrays.asList(EntrySolrField.EXPRESSION);
 	}
-	
 }

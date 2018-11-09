@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.EntryReportStats;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,16 @@ public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector 
 	@Autowired
 	private EntryReportStatsService entryReportStatsService;
 
-	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	@Autowired
+	private EntryPropertiesService entryPropertiesService;
 
-		EntryReportStats ers = entryReportStatsService.reportEntryStats(entry.getUniqueName());
+	@Override
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
+
+		EntryReportStats ers = entryReportStatsService.reportEntryStats(entryAccession);
 
 		// Filters and entry properties
-		EntryProperties props = entry.getProperties();
+		EntryProperties props = entryPropertiesService.findEntryProperties(entryAccession);
 		addEntrySolrFieldValue(fields, EntrySolrField.ISOFORM_NUM, ers.countIsoforms());
 		int cnt;
 		cnt = ers.countPTMs();

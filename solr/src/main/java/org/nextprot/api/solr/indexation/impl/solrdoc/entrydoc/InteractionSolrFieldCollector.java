@@ -1,11 +1,11 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,17 +20,23 @@ import java.util.Map;
 public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 
 	@Autowired
-	private EntryBuilderService entryBuilderService;
+	private InteractionService interactionService;
+
+	@Autowired
+	private AnnotationService annotationService;
+
+	@Autowired
+	private OverviewService overviewService;
 
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold){
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold){
 
 		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//String id = entry.getUniqueName();
 		
 		String recName = "";
 		String interactantAC = "";
-		List<Interaction> interactions = entry.getInteractions();
+		List<Interaction> interactions = interactionService.findInteractionsByEntry(entryAccession);
 		//System.err.println(interactions.size() + " interactions");
 		for (Interaction currinteraction : interactions) {
 			//System.err.println(currinteraction.getEvidenceXrefAC()); // EBI-372273,EBI-603319
@@ -41,7 +47,7 @@ public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 					if(currinteractant.isNextprot()) {
 					  interactantAC = "NX_" + interactantAC.split("-")[0];	
 					  // We need the entryBuilderService to get interactant's recname
-				      recName = entryBuilderService.build(EntryConfig.newConfig(interactantAC).withOverview()).getOverview().getMainProteinName();
+				      recName = overviewService.findOverviewByEntry(interactantAC).getMainProteinName();
 					}
 					else // Xeno interaction
 					  recName = "";
@@ -54,12 +60,10 @@ public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 			}
 		}
 		
-		List<Annotation> annots = entry.getAnnotations();
+		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
 		for (Annotation currannot : annots)
 			if(currannot.getCategory().equals("subunit")) // Always GOLD
 				addEntrySolrFieldValue(fields, EntrySolrField.INTERACTIONS, currannot.getDescription());
-
-
 		/*
 		//Gets interactions using xrefs
 		List<DbXref> xrefs = entry.getXrefs();
@@ -80,14 +84,10 @@ public class InteractionSolrFieldCollector extends EntrySolrFieldCollector {
 		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		}*/
-		
 	}
 	
 	@Override
 	public Collection<EntrySolrField> getCollectedFields() {
 		return Arrays.asList(EntrySolrField.INTERACTIONS);
 	}
-	
-
-
 }

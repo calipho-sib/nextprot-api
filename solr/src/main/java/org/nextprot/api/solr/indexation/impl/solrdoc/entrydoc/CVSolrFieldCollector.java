@@ -2,13 +2,16 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,29 +33,40 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	protected static final Logger LOGGER = Logger.getLogger(CVSolrFieldCollector.class);
 
 	@Autowired
+	private AnnotationService annotationService;
+
+	@Autowired
+	private ExperimentalContextService experimentalContextService;
+
+	@Autowired
+	private OverviewService overviewService;
+
+	@Autowired
 	private TerminologyService terminologyService;
 
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 
 		boolean buildingSilverIndex = !gold;
 
 		Set<String> cvTermsSetForAncestors = new HashSet<>();
 
+		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
+
 		//Get cv terms related to normal annotations (except expressions)
-		cvTermsSetForAncestors.addAll(setAndGetCvTermAnnotationsExceptExpression(fields, entry, buildingSilverIndex));
+		cvTermsSetForAncestors.addAll(setAndGetCvTermAnnotationsExceptExpression(fields, annots, buildingSilverIndex));
 
 		//Get family names
-		cvTermsSetForAncestors.addAll(setAndGetFamilyNames(fields, entry));
+		cvTermsSetForAncestors.addAll(setAndGetFamilyNames(fields, entryAccession));
 
 		//Only cv terms from normal annotations and family are required to be indexed with their ancestors
-		setAncestorsAndSynonyms(fields, entry, cvTermsSetForAncestors);
+		setAncestorsAndSynonyms(fields, entryAccession, cvTermsSetForAncestors);
 
 		//Add more cv term accession
-		setExperimentalContextAndPropertiesCvAccessionOnly(fields, entry);
+		setExperimentalContextAndPropertiesCvAccessionOnly(fields, annots);
 
 		//Add enzyme names to EC_NAMES
-		setEnzymeNames(fields, entry);
+		setEnzymeNames(fields, entryAccession);
 
 	}
 
@@ -63,12 +77,11 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	}
 
 
-	private Set<String> setAndGetCvTermAnnotationsExceptExpression(Map<EntrySolrField, Object> fields, Entry entry, boolean buildingSilverIndex){
+	private Set<String> setAndGetCvTermAnnotationsExceptExpression(Map<EntrySolrField, Object> fields, List<Annotation> annots, boolean buildingSilverIndex){
 
 		Set<String> cv_acs = new HashSet<>();
 
 		// CV accessions
-		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
 
@@ -96,11 +109,11 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		return cv_acs;
 	}
 
-	private void setExperimentalContextAndPropertiesCvAccessionOnly(Map<EntrySolrField, Object> fields, Entry entry){
+	private void setExperimentalContextAndPropertiesCvAccessionOnly(Map<EntrySolrField, Object> fields, List<Annotation> annots){
 
-		Map<Long, List<CvTerm>> expCtxtCvTermMap = extractCvTermsFromExperimentalContext(entry);
+		Map<Long, List<CvTerm>> expCtxtCvTermMap = extractCvTermsFromExperimentalContext(annots);
 		//We have added in CV_ACS the accessions related to experimental context and properties
-		for (Annotation annot : entry.getAnnotations()) {
+		for (Annotation annot : annots) {
 
 			//Check cv terms used in experimental context
 			List<CvTerm> terms = new ArrayList<>();
@@ -117,12 +130,12 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		}
 	}
 
-	private Set<String> setAndGetFamilyNames(Map<EntrySolrField, Object> fields, Entry entry){
+	private Set<String> setAndGetFamilyNames(Map<EntrySolrField, Object> fields, String entryAccession){
 
 		Set<String> cv_acs = new HashSet<>();
 
 		// Families (why not part of Annotations ?)
-		for (Family family : entry.getOverview().getFamilies()) {
+		for (Family family : overviewService.findOverviewByEntry(entryAccession).getFamilies()) {
 			addEntrySolrFieldValue(fields, EntrySolrField.CV_ACS, family.getAccession());
 			addEntrySolrFieldValue(fields, EntrySolrField.CV_NAMES,  family.getName() + " family");
 			cv_acs.add(family.getAccession());
@@ -132,8 +145,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 	}
 
-
-	private void setAncestorsAndSynonyms(Map<EntrySolrField, Object> fields, Entry entry, Set<String> cv_acs){
+	private void setAncestorsAndSynonyms(Map<EntrySolrField, Object> fields, String entryAccession, Set<String> cv_acs){
 
 		// top level ancestors (Annotation, feature, and ROI)
 		final Set<String> TOP_ACS = new HashSet<>(Arrays.asList("CVAN_0001","CVAN_0002","CVAN_0011"));
@@ -145,7 +157,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		for (String cvac : cv_acs) {
 			CvTerm term = terminologyService.findCvTermByAccession(cvac);
 			if (null==term) {
-				LOGGER.error(entry.getUniqueName() + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
+				LOGGER.error(entryAccession + " - term with accession |" + cvac + "| not found with findCvTermByAccession()");
 				continue;
 			}
 			List<String> ancestors = terminologyService.getAllAncestorsAccession(term.getAccession());
@@ -173,9 +185,9 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 	}
 
-	private void setEnzymeNames(Map<EntrySolrField, Object> fields, Entry entry){
+	private void setEnzymeNames(Map<EntrySolrField, Object> fields, String entryAccession){
 
-		List<CvTerm> enzymes = entry.getEnzymes();
+		List<CvTerm> enzymes = terminologyService.findEnzymeByMaster(entryAccession);
 		String ec_names = "";
 		for (CvTerm currenzyme : enzymes) {
 			addEntrySolrFieldValue(fields, EntrySolrField.CV_NAMES, currenzyme.getName());
@@ -192,14 +204,11 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 	}
 
-
-
 	// PRIVATE METHODS
-
-	static Map<Long, List<CvTerm>> extractCvTermsFromExperimentalContext(Entry entry) {
+	private Map<Long, List<CvTerm>> extractCvTermsFromExperimentalContext(List<Annotation> annots) {
 		Map<Long, List<CvTerm>> expCtxtCvTermMap = new HashMap<>();
 
-		for (ExperimentalContext expCtxt : entry.getExperimentalContexts()) {
+		for (ExperimentalContext expCtxt : experimentalContextService.findExperimentalContextsByIds(EntryUtils.getExperimentalContextIds(annots))) {
 
 			List<CvTerm> contextTerms = new ArrayList();
 			if(expCtxt.getDisease() != null) contextTerms.add(expCtxt.getDisease());
@@ -216,7 +225,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		return expCtxtCvTermMap;
 	}
 
-	static Optional<CvTerm> getCvTermFromAnnot(Annotation annot) {
+	static private Optional<CvTerm> getCvTermFromAnnot(Annotation annot) {
 
 		if(annot.getCvTermAccessionCode() != null){
 			CvTerm term = new CvTerm();
@@ -230,7 +239,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 
 	}
 
-	static List<CvTerm> extractCvTermsFromExperimentalContext(Annotation annot, Map<Long, List<CvTerm>> expCtxtCvTermMap) {
+	static private List<CvTerm> extractCvTermsFromExperimentalContext(Annotation annot, Map<Long, List<CvTerm>> expCtxtCvTermMap) {
 
 		List<CvTerm> terms = new ArrayList<>();
 
@@ -251,8 +260,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		return terms;
 	}
 
-
-	static List<CvTerm> extractCvTermsFromProperties(Annotation annot) {
+	static private List<CvTerm> extractCvTermsFromProperties(Annotation annot) {
 
 		if(AnnotationUtils.onlyNegativeEvidences(annot)) {
 			return new ArrayList<>();
@@ -269,6 +277,4 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		}
 		return terms;
 	}
-
-
 }

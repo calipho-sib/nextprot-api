@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 
 import java.util.ArrayList;
@@ -31,6 +30,6 @@ public abstract class EntrySolrFieldCollector {
 	}
 
 	/** Collect associated index field data from entry */
-	public abstract void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean isGold);
+	public abstract void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean isGold);
 	public abstract Collection<EntrySolrField> getCollectedFields();
 }

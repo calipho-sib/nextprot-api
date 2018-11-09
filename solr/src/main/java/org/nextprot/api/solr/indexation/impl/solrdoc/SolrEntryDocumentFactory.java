@@ -1,21 +1,26 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.utils.SpringApplicationContext;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.EntrySolrFieldCollector;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SolrEntryDocumentFactory extends SolrDocumentBaseFactory<Entry> {
+public class SolrEntryDocumentFactory implements org.nextprot.api.solr.indexation.SolrDocumentFactory {
 
+	private final String entryAccession;
     private final boolean isGold;
 
-	public SolrEntryDocumentFactory(Entry entry, boolean isGold) {
-        super(entry);
+	public SolrEntryDocumentFactory(String entryAccession, boolean isGold) {
+
+		Preconditions.checkNotNull(entryAccession, "entry accession shoud not be undefined");
+		Preconditions.checkArgument(!entryAccession.isEmpty(), "entry accession shoud not be empty");
+
+		this.entryAccession = entryAccession;
         this.isGold = isGold;
     }
 
@@ -36,7 +41,7 @@ public class SolrEntryDocumentFactory extends SolrDocumentBaseFactory<Entry> {
 			Map<EntrySolrField, Object> fields = new HashMap<>();
 
 			// TODO: should give SolrInputDocument instead of a map
-			entrySolrFieldCollector.collect(fields, solrizableObject, isGold);
+			entrySolrFieldCollector.collect(fields, entryAccession, isGold);
 
 			doc.addField(f.getName(), fields.get(f));
 		}

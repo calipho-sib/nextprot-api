@@ -1,11 +1,11 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.apache.log4j.Logger;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,24 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 	
 	protected Logger logger = Logger.getLogger(PublicationsSolrFieldCollector.class);
 
+	@Autowired
+	private OverviewService overviewService;
+
 	private PublicationService publicationService;
 
+	// Injecting via constructor for easier mocking a service that can take a lots of process time
 	@Autowired
 	public PublicationsSolrFieldCollector(PublicationService publicationService) {
+
 		this.publicationService = publicationService;
 	}
 
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 
 		// Publications
 		// Shouldn't Xrefs to PubMed and DOIs be also indexed here ?
-		List<Publication> publications = entry.getPublications();
+		List<Publication> publications = publicationService.findPublicationsByEntryName(entryAccession);
 		int publi_computed_count = 0;
 		int publi_curated_count = 0;
 		int publi_large_scale_count = 0;
@@ -43,7 +48,7 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 		for (Publication currpubli : publications) {
 
 			long pubId = currpubli.getPublicationId();
-			logger.debug("looking for stats about pair " + entry.getUniqueName() + " - pubId:" + pubId);
+			logger.debug("looking for stats about pair " + entryAccession + " - pubId:" + pubId);
             GlobalPublicationStatistics.PublicationStatistics publiStats = publicationService.getPublicationStatistics(pubId);
             if(publiStats.isComputed()) publi_computed_count++;
 			if(publiStats.isCurated()) publi_curated_count++;
@@ -81,7 +86,7 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 		addEntrySolrFieldValue(fields, EntrySolrField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
-		int pe_level = entry.getOverview().getProteinExistences().getProteinExistence().getLevel();
+		int pe_level = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence().getLevel();
 		
 		float info_score = 0;
 		if(pe_level == 1) info_score=12;

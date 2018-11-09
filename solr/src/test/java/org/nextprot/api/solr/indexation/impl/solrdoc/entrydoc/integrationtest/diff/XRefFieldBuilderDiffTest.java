@@ -3,7 +3,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.InteractionSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.XrefSolrFieldCollector;
@@ -23,22 +22,20 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q8N7I0", "NX_O00115","NX_O00116","NX_E5RQL4","NX_P32418","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_P10415", "NX_Q6PI97", "NX_Q8NDZ0", "NX_O15056"};
 
-		for(int i=0; i < test_list.length; i++)
-		    {
-			testXrefs(getEntry(test_list[i]));
-			} 
+		for(int i=0; i < test_list.length; i++) {
+			testXrefs(test_list[i]);
+		}
 		 //for(int i=4500; i < 5000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 	}
 
-	public void testXrefs(Entry entry) {
-		
-		String entryName = entry.getUniqueName();
+	public void testXrefs(String entryName) {
+
 		int newcnt=0, comcnt=0, misscnt=0;
 		
 		System.out.println("Testing: " + entryName);
 		XrefSolrFieldCollector xfb = new XrefSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		xfb.collect(fields, entry, false);
+		xfb.collect(fields, entryName, false);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.ANTIBODY);
 		if(expectedABs != null) {
@@ -96,8 +93,8 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			Integer olditcnt = 0, newitcnt = 0;
 			InteractionSolrFieldCollector ifb = new InteractionSolrFieldCollector();
 			fields.clear();
-			ifb.collect(fields, entry, false);
-			Set<String> itSet = new TreeSet<String>(getFieldValue(fields, EntrySolrField.INTERACTIONS, List.class));
+			ifb.collect(fields, entryName, false);
+			Set<String> itSet = new TreeSet<>(getFieldValue(fields, EntrySolrField.INTERACTIONS, List.class));
 			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
 			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;
 			// There may be one more interaction in the new index (the subunit annotation)

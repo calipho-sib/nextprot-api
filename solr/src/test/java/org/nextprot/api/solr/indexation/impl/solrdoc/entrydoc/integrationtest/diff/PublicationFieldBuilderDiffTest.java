@@ -3,7 +3,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.PublicationsSolrFieldCollector;
 
@@ -23,21 +22,22 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_P43686","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < test_list.length; i++){ testPublications(getEntry(test_list[i])); }
+		for(int i=0; i < test_list.length; i++) {
+			testPublications(test_list[i]);
+		}
+
 		// for(int i=0; i < 10; i++){ testPublications(getEntry(i)); } // 'random' entries
-		 
 		//Entry entry = getEntry("NX_P22102"); // fails
 		//Entry entry = getEntry("NX_P61604");
 		//testPublications(entry);
 	}
 
-	public void testPublications(Entry entry) {
-		String entryName = entry.getUniqueName();
+	public void testPublications(String entryName) {
 
 		System.out.println("Testing: " + entryName);
 		PublicationsSolrFieldCollector pfb = new PublicationsSolrFieldCollector(null);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		pfb.collect(fields, entry, false);
+		pfb.collect(fields, entryName, false);
 		
 		Set<String> expectedPublisRaw = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.PUBLICATIONS));
 		Set<String> expectedValues = new TreeSet<String>();

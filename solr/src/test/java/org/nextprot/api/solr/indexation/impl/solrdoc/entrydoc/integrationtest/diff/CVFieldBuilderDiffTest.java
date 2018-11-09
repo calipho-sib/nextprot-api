@@ -3,7 +3,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
@@ -25,23 +24,22 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q6H8Q1", "NX_O00116","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < test_list.length; i++){ 	testCVs(getEntry(test_list[i])); } 
+		for(int i=0; i < test_list.length; i++) {
+			testCVs(test_list[i]);
+		}
+
 		//for(int i=0; i < 1; i++){ 	testCVs(getEntry(test_list[i])); } // random entries
-		
 		//Entry entry = getEntry("NX_P20594");
 		//Entry entry = getEntry("NX_P14060");
 		//testCVs(entry);
-	
 	}
 
-	public void testCVs(Entry entry) {
+	public void testCVs(String entryName) {
 		
-		String entryName = entry.getUniqueName();
-
 		System.out.println("Testing: " + entryName);
 		CVSolrFieldCollector cfb = new CVSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cfb.collect(fields, entry, false);
+		cfb.collect(fields, entryName, false);
 		
 		// CV_ACS
 		Set<String> expectedCVs = new TreeSet<>((List) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.CV_ACS));
@@ -96,6 +94,5 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 			String ECsString = getFieldValue(fields, EntrySolrField.EC_NAME, String.class);
 			Assert.assertEquals(expected, ECsString);
 		}
-		
 	}
 }

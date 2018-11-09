@@ -2,7 +2,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.NamesSolrFieldCollector;
 
@@ -21,20 +20,20 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_Q12809","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_Q8IYV9", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < test_list.length; i++){ testNames(getEntry(test_list[i])); }
+		for(int i=0; i < test_list.length; i++) {
+			testNames(test_list[i]);
+		}
 		//for(int i=0; i < 80; i++){ testNames(getEntry(i)); } // 'random' entries
-
 		//Entry entry = getEntry("NX_P62805");
 		//testNames(entry);
 	}
 
-	public void testNames(Entry entry) {
-		String entryName = entry.getUniqueName();
+	public void testNames(String entryName) {
 
 		System.out.println("Testing: " + entryName);
 		NamesSolrFieldCollector nfb = new NamesSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		nfb.collect(fields, entry, false);
+		nfb.collect(fields, entryName, false);
 		
 		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
 		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.RECOMMENDED_GENE_NAMES);

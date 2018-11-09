@@ -1,8 +1,9 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Identifier;
+import org.nextprot.api.core.service.IdentifierService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -13,11 +14,15 @@ import java.util.Map;
 @Service
 public class IdentifierSolrFieldCollector extends EntrySolrFieldCollector {
 
+	@Autowired
+	private IdentifierService identifierService;
+
 	@Override
-	public void collect(Map<EntrySolrField, Object> fields, Entry entry, boolean gold) {
+	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 		
 		// Identifiers
-		List <Identifier> identifiers = entry.getIdentifiers();
+		List<Identifier> identifiers = identifierService.findIdentifiersByMaster(entryAccession);
+
 		for (Identifier currident : identifiers) {
 			String idtype = currident.getType();
 			//if(currident.getDatabase() == null)
@@ -34,12 +39,10 @@ public class IdentifierSolrFieldCollector extends EntrySolrFieldCollector {
 				addEntrySolrFieldValue(fields, EntrySolrField.UNIPROT_NAME, currident.getName());
 			}
 		}
-		
 	}
 
 	@Override
 	public Collection<EntrySolrField> getCollectedFields() {
 		return Arrays.asList(EntrySolrField.ALTERNATIVE_ACS, EntrySolrField.CLONE_NAME, EntrySolrField.MICROARRAY_PROBE, EntrySolrField.UNIPROT_NAME);
 	}
-
 }
