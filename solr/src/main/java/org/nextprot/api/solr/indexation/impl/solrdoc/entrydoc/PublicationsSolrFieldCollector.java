@@ -91,13 +91,10 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 		float coeff = 100*publi_curated_count + 25*publi_computed_count + 10*publi_large_scale_count;
 		info_score = coeff * info_score / 10;
 		addEntrySolrFieldValue(fields, EntrySolrField.INFORMATIONAL_SCORE, info_score);
-
 	}
-
 
 	@Override
 	public Collection<EntrySolrField> getCollectedFields() {
 		return Arrays.asList(EntrySolrField.PUBLICATIONS, EntrySolrField.PUBLI_COMPUTED_COUNT, EntrySolrField.PUBLI_CURATED_COUNT, EntrySolrField.PUBLI_LARGE_SCALE_COUNT, EntrySolrField.INFORMATIONAL_SCORE);
 	}
-
 }
