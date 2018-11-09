@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ChromosomeSolrFieldCollector;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrDiffTest;
 
 import java.util.Arrays;
 import java.util.HashMap;

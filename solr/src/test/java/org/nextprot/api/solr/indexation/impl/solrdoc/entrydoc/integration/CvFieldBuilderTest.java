@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrDiffTest.getFieldValue;
+import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.diff.SolrDiffTest.getFieldValue;
 
 
 public class CvFieldBuilderTest extends SolrBuildIntegrationTest {

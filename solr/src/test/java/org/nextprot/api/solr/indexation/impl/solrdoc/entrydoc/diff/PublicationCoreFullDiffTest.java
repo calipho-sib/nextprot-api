@@ -9,7 +9,6 @@ import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrPublicationDocumentFactory;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;

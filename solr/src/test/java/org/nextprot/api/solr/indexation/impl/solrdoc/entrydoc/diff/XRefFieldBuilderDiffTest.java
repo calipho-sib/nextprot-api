@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.InteractionSolrFieldCollector;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrDiffTest;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.XrefSolrFieldCollector;
 
 import java.util.Collections;

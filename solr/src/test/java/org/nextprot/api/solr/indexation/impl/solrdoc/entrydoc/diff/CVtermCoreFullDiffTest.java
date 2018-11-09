@@ -8,7 +8,6 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.SolrDiffTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CVtermCoreFullDiffTest extends SolrDiffTest {
