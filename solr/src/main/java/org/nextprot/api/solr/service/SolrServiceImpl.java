@@ -21,21 +21,21 @@ import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.core.impl.SolrCoreServer;
-import org.nextprot.api.solr.query.SolrQueryServer;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.SolrCoreServer;
 import org.nextprot.api.solr.indexation.BufferingSolrIndexer;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrEntryDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrPublicationDocumentFactory;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.SolrQueryServer;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexParameter;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
-import org.nextprot.api.solr.query.dto.QueryRequest;
-import org.nextprot.api.solr.query.dto.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,7 +108,7 @@ public class SolrServiceImpl implements SolrService {
         for (String id : allentryids) {
             ecnt++;
 
-	        solrIndexer.pushSolrDocumentFactory(new SolrEntryDocumentFactory(entryBuilderService.buildWithEverything(id), isGold));
+	        solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryBuilderService.buildWithEverything(id), isGold));
 
             if ((ecnt % 300) == 0)
                 logAndCollect(info, ecnt + "/" + allentryids.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
@@ -141,7 +141,7 @@ public class SolrServiceImpl implements SolrService {
         logAndCollect(info, "start indexing of " + allterms.size() + " terms");
         int termcnt = 0;
         for (CvTerm term : allterms) {
-	        solrIndexer.pushSolrDocumentFactory(new SolrCvTermDocumentFactory(term));
+	        solrIndexer.addSolrDocumentFactory(new SolrCvTermDocumentFactory(term));
             termcnt++;
             if ((termcnt % 3000) == 0)
                 logAndCollect(info, termcnt + "/" + allterms.size() + " cv terms done");
@@ -177,7 +177,7 @@ public class SolrServiceImpl implements SolrService {
             Publication currpub = publicationService.findPublicationById(id);
             if (currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
                 SolrPublicationDocumentFactory solrPublication = new SolrPublicationDocumentFactory(currpub);
-	            solrIndexer.pushSolrDocumentFactory(solrPublication);
+	            solrIndexer.addSolrDocumentFactory(solrPublication);
                 pubcnt++;
             }
             if ((pubcnt % 5000) == 0)
