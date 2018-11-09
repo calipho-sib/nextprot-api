@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,31 +31,31 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 				        .getPublicationStatistics(publi.getPublicationId());
 
 		SolrInputDocument doc = new SolrInputDocument();
-		doc.addField("id", publi.getPublicationId());
+		doc.addField(PublicationSolrField.ID.getName(), publi.getPublicationId());
 		List<PublicationDbXref> xrefs = publi.getDbXrefs();
 		// TODO: this 'ac' field should be renamed 'xrefs'
 		if (xrefs != null)
 		   // The format is slightly different in current publication indexes vs terminology indexes, check if justified
 		   // if yes create an adhoc Publication.convertXrefsToSolrString method
-		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<>(xrefs))); }
+		   { doc.addField(PublicationSolrField.AC.getName(),TerminologyUtils.convertXrefsToSolrString(new ArrayList<>(xrefs))); }
 		String filters="";
 		filters+=((publicationStats.isComputed())?" computed":"");
 		filters+=((publicationStats.isCurated())?" curated":""); // Change getIsCurated or set here to 'curated' if computed is false
 		filters+=((publicationStats.isLargeScale())?" largescale":"");
-		doc.addField("filters", filters);
-		doc.addField("title", publi.getTitle());
-		doc.addField("title_s", publi.getTitle());
+		doc.addField(PublicationSolrField.FILTERS.getName(), filters);
+		doc.addField(PublicationSolrField.TITLE.getName(), publi.getTitle());
+		doc.addField(PublicationSolrField.TITLE_S.getName(), publi.getTitle());
 
 		if (publi.getPublicationDate() != null) {
-			doc.addField("date", publi.getPublicationDate());
-			doc.addField("year", publi.getPublicationYear());
+			doc.addField(PublicationSolrField.DATE.getName(), publi.getPublicationDate());
+			doc.addField(PublicationSolrField.YEAR.getName(), publi.getPublicationYear());
 		}
-		doc.addField("first_page", publi.getFirstPage());
-		doc.addField("last_page", publi.getLastPage());
-		doc.addField("volume", publi.getVolume());
-		doc.addField("volume_s", publi.getVolume());
-		doc.addField("abstract", publi.getAbstractText());
-		doc.addField("type", publi.getPublicationType().name());
+		doc.addField(PublicationSolrField.FIRST_PAGE.getName(), publi.getFirstPage());
+		doc.addField(PublicationSolrField.LAST_PAGE.getName(), publi.getLastPage());
+		doc.addField(PublicationSolrField.VOLUME.getName(), publi.getVolume());
+		doc.addField(PublicationSolrField.VOLUME_S.getName(), publi.getVolume());
+		doc.addField(PublicationSolrField.ABSTRACT.getName(), publi.getAbstractText());
+		doc.addField(PublicationSolrField.TYPE.getName(), publi.getPublicationType().name());
 
 		//doc.addField("source", rs.getString("source"));
 		//This source feature is either PubMed (99.99%) or UniProt for published articles with no PMID, it is useless for the indexes since
@@ -71,10 +72,10 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 				jfield += " " + jabbrev;
 
 				// TODO: rename "pretty_journal" to "abbrev_journal"
-				doc.addField("pretty_journal", jabbrev);
+				doc.addField(PublicationSolrField.PRETTY_JOURNAL.getName(), jabbrev);
 			}
 
-			doc.addField("journal", jfield);
+			doc.addField(PublicationSolrField.JOURNAL.getName(), jfield);
 		}
 		// no need the following anymore as journal name is now accessible from journal
 		//else if(publi.getJournal_from_properties() != null)
@@ -82,8 +83,8 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 
 		SortedSet<PublicationAuthor> authorset = publi.getAuthors();
 		if (authorset != null) {
-			String toIndex = "";
-			String inidotted = "";
+			String toIndex;
+			String inidotted;
 			int i = authorset.size();
 			StringBuilder sb = new StringBuilder();
 			// (select string_agg(nextprot.pubauthors.last_name||' '|| nextprot.pubauthors.fore_name || ' ' || regexp_replace(nextprot.pubauthors.initials,'(.)',E'\\1.','g'),' | ')  -- PUBLI CONCAT AUTHORS 
@@ -92,11 +93,11 @@ public class SolrPublicationDocumentFactory extends SolrDocumentBaseFactory<Publ
 				inidotted = author.getInitials().replaceAll("(.)", "$1\\."); // replace each character by itself plus a dot
 				//System.err.println("LastName: " + author.getLastName() + " ForeName: " + author.getForeName() + " Initials: " + author.getInitials() + " inidotted: " + inidotted);
 				toIndex = author.getLastName() + " " + author.getForeName() + " " + inidotted;
-				doc.addField("authors",toIndex.trim().replaceAll("  ", " "));
+				doc.addField(PublicationSolrField.AUTHORS.getName(), toIndex.trim().replaceAll("  ", " "));
 				sb.append(author.getLastName() + " " + inidotted.replaceAll("\\.\\.\\.", "."));
 				if (--i != 0) sb.append(" | ");
 				}
-			doc.addField("pretty_authors",sb.toString()); // for display only
+			doc.addField(PublicationSolrField.PRETTY_AUTHORS.getName(),sb.toString()); // for display only
 		}
 		
 		return doc;

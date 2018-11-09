@@ -4,6 +4,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 
 import java.util.List;
 
@@ -26,13 +27,13 @@ public class SolrCvTermDocumentFactory extends SolrDocumentBaseFactory<CvTerm> {
 		else if (ontology.equals("UniprotFamilyCv")) return null; 
 
 		SolrInputDocument doc = new SolrInputDocument();
-		doc.addField("id", term.getId());
-		doc.addField("ac", term.getAccession());
-		String filters=term.getOntologyAltname().replaceAll("[ _-]", "").toLowerCase().replaceAll("uniprot", "up").replaceAll("nextprot", "aanp");
-		doc.addField("filters", filters);
-		doc.addField("name", term.getName());
-		doc.addField("name_s", term.getName().toLowerCase());
-		doc.addField("description", term.getDescription());
+		doc.addField(CvSolrField.ID.getName(), term.getId());
+		doc.addField(CvSolrField.AC.getName(), term.getAccession());
+		String filters = term.getOntologyAltname().replaceAll("[ _-]", "").toLowerCase().replaceAll("uniprot", "up").replaceAll("nextprot", "aanp");
+		doc.addField(CvSolrField.FILTERS.getName(), filters);
+		doc.addField(CvSolrField.NAME.getName(), term.getName());
+		doc.addField(CvSolrField.NAME_S.getName(), term.getName().toLowerCase());
+		doc.addField(CvSolrField.DESCRIPTION.getName(), term.getDescription());
 		
 		List<String> synonstrings = term.getSynonyms();
 		if (synonstrings != null) {
