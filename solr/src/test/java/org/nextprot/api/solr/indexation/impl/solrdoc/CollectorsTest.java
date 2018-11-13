@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
@@ -7,6 +8,7 @@ import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.EntrySolrFieldColl
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static org.junit.Assert.fail;
@@ -29,5 +31,14 @@ public class CollectorsTest extends AbstractUnitBaseTest {
 		if(!sb.toString().isEmpty()){
 			fail("Missing " +  sb.toString().split(",").length  + " fields " + " :" + sb.toString());
 		}
+	}
+
+	@Test
+	public void shouldCoverAllSolrFields2() {
+
+		Collection<EntrySolrFieldCollector> list = SolrEntryDocumentFactory.getCollectors();
+
+		Assert.assertTrue(!list.isEmpty());
+		Assert.assertEquals(12, list.size());
 	}
 }
