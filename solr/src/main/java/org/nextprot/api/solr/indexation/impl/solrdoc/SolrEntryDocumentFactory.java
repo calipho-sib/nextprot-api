@@ -29,6 +29,9 @@ public class SolrEntryDocumentFactory implements org.nextprot.api.solr.indexatio
 
 		Map<EntrySolrField, EntrySolrFieldCollector> collectors = mapCollectorsByEntryField();
 
+		Preconditions.checkArgument(!collectors.isEmpty(),
+				"Services are missing (check that spring config 'solr-context.xml' has been correctly imported)");
+
 		SolrInputDocument doc = new SolrInputDocument();
 
 		for (EntrySolrField f : EntrySolrField.values()) {
