@@ -150,33 +150,32 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 			
 			if (apiCategory == AnnotationCategory.MATURE_PROTEIN
 					|| apiCategory == AnnotationCategory.MATURATION_PEPTIDE) {
-				StringBuilder chainid = new StringBuilder(currannot.getSynonym());
-				if (chainid.length() > 0) {
+				String chainid = currannot.getSynonym();
+				if (chainid != null) {
 					// System.err.println( currannot.getAllSynonyms().size() +
 					// " synonyms: " + currannot.getAllSynonyms());
-					if (chainid.toString().contains("-"))
-						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, chainid.toString()); // Uniprot FT id,
-																// like
-																// PRO_0000019235,
-																// shouldn't be
-																// called a
-																// synonym
+					if (chainid.contains("-"))
+						addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, chainid); // Uniprot FT id,
+						// like
+						// PRO_0000019235,
+						// shouldn't be
+						// called a
+						// synonym
 					else {
 						List<String> chainsynonyms = currannot.getSynonyms();
 						if (chainsynonyms.size() == 1)
 							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS,
 									StringUtils.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 						else {
-							// TODO: there is already a stringbuilder !!
-							chainid = new StringBuilder();
+							chainid = "";
 							for (String syno : chainsynonyms) {
-								chainid.append(syno).append(" | ");
+								chainid += syno + " | ";
 							}
-							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid.toString()));
+							addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(chainid));
 						}
 					}
 				} // else System.err.println("chainid null for: " + desc);
-					// chainid 's null for the main chain, this is wrong
+				// chainid 's null for the main chain, this is wrong
 			}
 
 			// variant xrefs and identifiers
