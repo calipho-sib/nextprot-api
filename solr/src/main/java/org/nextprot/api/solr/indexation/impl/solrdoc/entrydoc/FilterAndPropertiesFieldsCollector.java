@@ -16,11 +16,15 @@ import java.util.Map;
 @Service
 public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector {
 
-	@Autowired
 	private EntryReportStatsService entryReportStatsService;
+	private EntryPropertiesService entryPropertiesService;
 
 	@Autowired
-	private EntryPropertiesService entryPropertiesService;
+	public FilterAndPropertiesFieldsCollector(EntryReportStatsService entryReportStatsService, EntryPropertiesService entryPropertiesService) {
+
+		this.entryReportStatsService = entryReportStatsService;
+		this.entryPropertiesService = entryPropertiesService;
+	}
 
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {

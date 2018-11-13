@@ -22,16 +22,15 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 	
 	protected Logger logger = Logger.getLogger(PublicationsSolrFieldCollector.class);
 
-	@Autowired
 	private OverviewService overviewService;
-
 	private PublicationService publicationService;
 
-	// Injecting via constructor for easier mocking a service that can take a lots of process time
+	// Injecting via constructor to mock service in tests
 	@Autowired
-	public PublicationsSolrFieldCollector(PublicationService publicationService) {
+	public PublicationsSolrFieldCollector(PublicationService publicationService, OverviewService overviewService) {
 
 		this.publicationService = publicationService;
+		this.overviewService = overviewService;
 	}
 
 	@Override

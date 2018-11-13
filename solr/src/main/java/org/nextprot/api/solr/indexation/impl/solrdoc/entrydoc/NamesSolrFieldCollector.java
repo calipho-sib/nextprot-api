@@ -20,6 +20,12 @@ public class NamesSolrFieldCollector extends EntrySolrFieldCollector {
 	@Autowired
 	private OverviewService overviewService;
 
+	@Autowired
+	public NamesSolrFieldCollector(OverviewService overviewService) {
+
+		this.overviewService = overviewService;
+	}
+
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {
 		

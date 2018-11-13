@@ -13,8 +13,13 @@ import java.util.Map;
 @Service
 public class OverviewSolrFieldCollector extends EntrySolrFieldCollector {
 
-	@Autowired
 	private OverviewService overviewService;
+
+	@Autowired
+	public OverviewSolrFieldCollector(OverviewService overviewService) {
+
+		this.overviewService = overviewService;
+	}
 
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean gold) {

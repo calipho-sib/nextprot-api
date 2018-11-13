@@ -31,17 +31,20 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 	protected Logger logger = Logger.getLogger(AnnotationSolrFieldCollector.class);
 
-	@Autowired
 	private TerminologyService terminologyService;
-
-	@Autowired
 	private AnnotationService annotationService;
-
-	@Autowired
 	private IsoformService isoformService;
+	private OverviewService overviewService;
 
 	@Autowired
-	private OverviewService overviewService;
+	public AnnotationSolrFieldCollector(AnnotationService annotationService, TerminologyService terminologyService,
+	                             IsoformService isoformService, OverviewService overviewService) {
+
+		this.annotationService = annotationService;
+		this.terminologyService = terminologyService;
+		this.isoformService = isoformService;
+		this.overviewService = overviewService;
+	}
 
 	@Override
 	public void collect(Map<EntrySolrField, Object> fields, String entryAccession, boolean isGold) {
