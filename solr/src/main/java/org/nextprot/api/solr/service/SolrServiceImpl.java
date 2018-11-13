@@ -123,7 +123,30 @@ public class SolrServiceImpl implements SolrService {
         return info.toString();
     }
 
-    @Override
+	@Override
+	public String indexEntry(String entryAccession, boolean isGold) {
+
+		long seconds = System.currentTimeMillis() / 1000;
+		StringBuilder info = new StringBuilder();
+
+		SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
+		logAndCollect(info, "adding entry "+ entryAccession+" to index " + entity.getName() + "...STARTING at " + new Date());
+
+		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
+
+		logAndCollect(info, "start indexing entry " + entryAccession);
+		solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryAccession, isGold));
+
+		logAndCollect(info, "committing index " + entity.getName());
+		solrIndexer.performIndexation();
+
+		seconds = (System.currentTimeMillis() / 1000 - seconds);
+		logAndCollect(info, "done in " + seconds + " seconds ...END at " + new Date());
+
+		return info.toString();
+	}
+
+	@Override
     public String indexTerminologies() {
 
         long seconds = System.currentTimeMillis() / 1000;

@@ -4,9 +4,9 @@ package org.nextprot.api.solr.service;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 public interface SolrService {
 	
@@ -14,6 +14,8 @@ public interface SolrService {
 	String indexPublications();
 	String initIndexEntries(boolean isGold);
 	String indexEntriesChromosome(boolean isGold, String chrName);
+	String indexEntry(String entryAccession, boolean isGold);
+
 	/**
 	 * Execute a SOLR search query and return results
 	 *
