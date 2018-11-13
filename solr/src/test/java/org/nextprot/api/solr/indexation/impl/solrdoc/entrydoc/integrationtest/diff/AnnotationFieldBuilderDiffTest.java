@@ -43,7 +43,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	public void testFunctionalDesc(String entryAccession) {
 
-		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector(null, null, null, null);
 
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		afb.collect(fields, entryAccession, false);
@@ -65,7 +65,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	public void testAnnotations(String entryAccession) {
 
-		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector(null, null, null, null);
 
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		afb.collect(fields, entryAccession, false);

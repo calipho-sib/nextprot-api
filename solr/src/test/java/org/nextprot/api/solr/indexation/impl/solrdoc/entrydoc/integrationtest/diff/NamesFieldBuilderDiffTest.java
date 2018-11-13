@@ -4,6 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.NamesSolrFieldCollector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,8 +15,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+@ActiveProfiles({"dev"})
+@ContextConfiguration("classpath:spring/solr-context.xml")
 public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 
+	@Autowired
+	NamesSolrFieldCollector namesSolrFieldCollector;
 
 	@Test
 	public void testNames() {
@@ -31,9 +38,8 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 	public void testNames(String entryName) {
 
 		System.out.println("Testing: " + entryName);
-		NamesSolrFieldCollector nfb = new NamesSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		nfb.collect(fields, entryName, false);
+		namesSolrFieldCollector.collect(fields, entryName, false);
 		
 		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
 		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.RECOMMENDED_GENE_NAMES);

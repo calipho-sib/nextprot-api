@@ -7,7 +7,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +22,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff.OverviewFieldBuilderDiffTest.mockOverview;
 
 @ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
@@ -30,11 +35,18 @@ public class PublicationsSolrFieldCollectorTest extends AbstractUnitBaseTest {
     @Mock
     private PublicationService publicationService;
 
+	@Mock
+	private OverviewService overviewService;
+
     @Before
     public void init() {
 
         MockitoAnnotations.initMocks(this);
-        publicationsSolrFieldCollector = new PublicationsSolrFieldCollector(publicationService);
+
+	    Overview overview = mockOverview(ProteinExistence.PROTEIN_LEVEL);
+	    Mockito.when(overviewService.findOverviewByEntry(anyString())).thenReturn(overview);
+
+	    publicationsSolrFieldCollector = new PublicationsSolrFieldCollector(publicationService, overviewService);
 
         GlobalPublicationStatistics.PublicationStatistics publicationStatistics =
                 new GlobalPublicationStatistics.PublicationStatistics();

@@ -30,7 +30,7 @@ public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFilterAndProperties(String entryName) {
 
 		System.out.println("Testing " + entryName);
-		FilterAndPropertiesFieldsCollector ffb = new FilterAndPropertiesFieldsCollector();
+		FilterAndPropertiesFieldsCollector ffb = new FilterAndPropertiesFieldsCollector(null, null);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		ffb.collect(fields, entryName, false);
 		

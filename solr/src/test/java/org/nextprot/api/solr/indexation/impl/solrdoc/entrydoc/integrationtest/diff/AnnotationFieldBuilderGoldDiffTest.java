@@ -46,7 +46,7 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 	public void testGoldAnnotations(String entryAccession) {
 		
 		// Variants
-		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector(null, null, null, null);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
 		afb.collect(fields, entryAccession, true);

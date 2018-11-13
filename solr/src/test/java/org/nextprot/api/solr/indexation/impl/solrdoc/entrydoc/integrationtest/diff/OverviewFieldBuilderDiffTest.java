@@ -2,13 +2,32 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.d
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.ProteinExistenceInferred;
+import org.nextprot.api.core.domain.ProteinExistences;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.OverviewSolrFieldCollector;
+import org.nextprot.api.solr.indexation.service.SolrEntryFieldCollectorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.mockito.Mockito.mock;
+
+@ActiveProfiles({"dev"})
+@ContextConfiguration("classpath:spring/solr-context.xml")
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
+
+	@Autowired
+	OverviewSolrFieldCollector overviewSolrFieldCollector;
+
+	@Autowired
+	SolrEntryFieldCollectorService solrEntryFieldCollectorService;
 
 	@Test
 	public void testOverview() {
@@ -28,9 +47,8 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 	public void testOverview(String entryName) {
 
 		System.out.println("Testing " + entryName);
-		OverviewSolrFieldCollector ofb = new OverviewSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		ofb.collect(fields, entryName, false);
+		overviewSolrFieldCollector.collect(fields, entryName, false);
 		
 		String expectedRecname = (String) getValueForFieldInCurrentSolrImplementation(entryName, EntrySolrField.RECOMMENDED_NAME);
 		Assert.assertEquals(getFieldValue(fields, EntrySolrField.RECOMMENDED_NAME, String.class), expectedRecname);
@@ -39,4 +57,18 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 		Assert.assertEquals(getFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, String.class), expectedPE.replace(" ", "_"));
 	}
 
+	public static Overview mockOverview(ProteinExistence pe) {
+
+		Overview overview = mock(Overview.class);
+
+		ProteinExistences pes = new ProteinExistences();
+		ProteinExistenceInferred pei = new ProteinExistenceInferred(pe,
+				ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
+		pes.setProteinExistenceInferred(pei);
+
+		Mockito.when(overview.getProteinExistences()).thenReturn(pes);
+		Mockito.when(overview.getMainGeneName()).thenReturn("roudoudou");
+
+		return overview;
+	}
 }

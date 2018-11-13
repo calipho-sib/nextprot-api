@@ -20,7 +20,7 @@ public class AnnotationFieldBuilderIntegrationTest extends SolrBuildIntegrationT
 				"NX_P38398", "NX_P51587","NX_P16422", "NX_P40692", "NX_Q9UHC1", "NX_P43246", "NX_P52701", "NX_P54278"};
 		int bedAnnotCnt = 0;
 		
-		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector();
+		AnnotationSolrFieldCollector afb = new AnnotationSolrFieldCollector(null, null, null, null);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		afb.collect(fields, "NX_P35498", false);
 
