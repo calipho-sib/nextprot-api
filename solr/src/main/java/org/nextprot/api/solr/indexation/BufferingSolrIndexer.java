@@ -45,9 +45,13 @@ public class BufferingSolrIndexer {
 			throw new NextProtException("cannot create solr index from undefined solr document");
 		}
 
-		buffer.add(document);
-		if (buffer.size() % bufferSize == 0) {
-			flushSolrDocumentsToSolr();
+		if (!document.isEmpty()) {
+
+			buffer.add(document);
+
+			if (buffer.size() % bufferSize == 0) {
+				flushSolrDocumentsToSolr();
+			}
 		}
 	}
 
