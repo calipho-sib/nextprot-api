@@ -60,19 +60,20 @@ public class BufferingSolrIndexer {
 			flushSolrDocumentsToSolr();
 		}
 
+		commitAndOptimize();
+	}
+
+	public void clearIndexes() {
 		try {
+			solrIndexer.deleteIndexes();
 			solrIndexer.commitAndOptimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
 	}
 
-	/**
-	 * Delete all documents indexes
-	 */
-	public void clearIndexes() {
+	public void commitAndOptimize() {
 		try {
-			solrIndexer.deleteIndexes();
 			solrIndexer.commitAndOptimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
