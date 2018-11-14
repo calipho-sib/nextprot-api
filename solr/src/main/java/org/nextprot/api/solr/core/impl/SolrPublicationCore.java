@@ -16,9 +16,9 @@ public class SolrPublicationCore extends SolrCoreBase {
 
 	private static final String NAME = "nppublications1";
 
-	public SolrPublicationCore(String solrServerUrl) {
+	public SolrPublicationCore(String solrServerBaseURL) {
 
-		super(SolrPublicationCore.NAME, Alias.Publication, solrServerUrl);
+		super(SolrPublicationCore.NAME, Alias.Publication, solrServerBaseURL);
 	}
 
 	@Override

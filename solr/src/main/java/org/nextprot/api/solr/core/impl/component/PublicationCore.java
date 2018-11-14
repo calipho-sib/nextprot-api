@@ -15,13 +15,13 @@ import javax.annotation.PostConstruct;
 public class PublicationCore implements SolrCore {
 
 	@Value("${solr.url}")
-	private String solrServerUrl;
+	private String solrServerBaseURL;
 
 	private SolrCore core;
 
 	@PostConstruct
 	private void init() {
-		core = new SolrPublicationCore(solrServerUrl);
+		core = new SolrPublicationCore(solrServerBaseURL);
 	}
 
 	@Override

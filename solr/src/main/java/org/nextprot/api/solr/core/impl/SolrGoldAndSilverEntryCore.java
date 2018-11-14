@@ -18,14 +18,14 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 
 	private static final String NAME = "npentries1";
 
-	public SolrGoldAndSilverEntryCore(String solrServerUrl) {
+	public SolrGoldAndSilverEntryCore(String solrServerBaseURL) {
 
-		this(NAME, Alias.Entry, solrServerUrl);
+		this(NAME, Alias.Entry, solrServerBaseURL);
 	}
 
-	protected SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerUrl) {
+	protected SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerBaseURL) {
 
-		super(name, alias, solrServerUrl);
+		super(name, alias, solrServerBaseURL);
 	}
 
 	@Override

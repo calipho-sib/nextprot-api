@@ -16,9 +16,9 @@ public class SolrCvCore extends SolrCoreBase {
 	private static final String NAME = "npcvs1";
 	private static final String SIMPLE = "simple";
 
-	public SolrCvCore(String solrServerUrl) {
+	public SolrCvCore(String solrServerBaseURL) {
 
-		super(NAME, Alias.Term, solrServerUrl);
+		super(NAME, Alias.Term, solrServerBaseURL);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import java.util.Map;
 public abstract class SolrCoreBase implements SolrCore {
 
 	protected String name;
-	private String solrServerUrl;
+	private String solrServerBaseURL;
 	protected Alias alias;
 	protected IndexConfiguration defaultConfiguration;
 	protected SortConfig[] sortConfigurations;
@@ -23,10 +23,10 @@ public abstract class SolrCoreBase implements SolrCore {
 	protected String defaultConfigName;
 	protected Map<String, IndexConfiguration> configurations = new HashMap<>();
 
-	protected SolrCoreBase(String name, Alias alias, String solrServerUrl) {
+	protected SolrCoreBase(String name, Alias alias, String solrServerBaseURL) {
 		this.name = name;
 		this.alias = alias;
-		this.solrServerUrl = solrServerUrl;
+		this.solrServerBaseURL = solrServerBaseURL;
 		sortConfigurations = newSortConfigurations();
 		defaultConfiguration = newDefaultConfiguration();
 		autocompleteConfiguration = newAutoCompleteConfiguration(defaultConfiguration);
@@ -73,7 +73,7 @@ public abstract class SolrCoreBase implements SolrCore {
 	@Override
 	public SolrCoreHttpClient newSolrClient() {
 
-		return new SolrCoreHttpClient(name, new HttpSolrServer(solrServerUrl));
+		return new SolrCoreHttpClient(name, new HttpSolrServer(solrServerBaseURL));
 	}
 
 	protected abstract IndexConfiguration newDefaultConfiguration();

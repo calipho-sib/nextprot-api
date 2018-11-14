@@ -5,9 +5,11 @@ import org.nextprot.api.solr.query.SolrQueryClient;
 
 public interface SolrHttpClient extends SolrQueryClient, SolrIndexationClient {
 
-	/** @return the base url */
+	/** @return The URL of the Solr server. For example, "
+	 *          <code>http://localhost:8983/solr</code>". */
 	String getBaseURL();
 
-	/** @return the complete url to solr core */
+	/** @return the complete URL to the solr core. For example, "
+	 *          <code>http://localhost:8983/solr/#/npcvs1</code>"*/
 	String getURL();
 }

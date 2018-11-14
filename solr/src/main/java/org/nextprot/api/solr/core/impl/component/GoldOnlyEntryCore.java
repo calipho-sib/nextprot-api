@@ -15,13 +15,13 @@ import javax.annotation.PostConstruct;
 public class GoldOnlyEntryCore implements SolrCore {
 
 	@Value("${solr.url}")
-	private String solrServerUrl;
+	private String solrServerBaseURL;
 
 	private SolrCore core;
 
 	@PostConstruct
 	private void init() {
-		core = new SolrGoldOnlyEntryCore(solrServerUrl);
+		core = new SolrGoldOnlyEntryCore(solrServerBaseURL);
 	}
 
 	@Override

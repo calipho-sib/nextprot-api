@@ -14,13 +14,13 @@ import javax.annotation.PostConstruct;
 public class CvCore implements SolrCore {
 
 	@Value("${solr.url}")
-	private String solrServerUrl;
+	private String solrServerBaseURL;
 
 	private SolrCore core;
 
 	@PostConstruct
 	private void init() {
-		core = new SolrCvCore(solrServerUrl);
+		core = new SolrCvCore(solrServerBaseURL);
 	}
 
 	@Override
