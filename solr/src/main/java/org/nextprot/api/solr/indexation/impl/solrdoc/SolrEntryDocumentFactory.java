@@ -15,22 +15,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class SolrEntryDocumentFactory implements SolrDocumentFactory {
+public class SolrEntryDocumentFactory implements SolrDocumentFactory<String> {
 
-	private final String entryAccession;
     private final boolean isGold;
 
-	public SolrEntryDocumentFactory(String entryAccession, boolean isGold) {
+	public SolrEntryDocumentFactory(boolean isGold) {
 
-		Preconditions.checkNotNull(entryAccession, "entry accession should not be undefined");
-		Preconditions.checkArgument(!entryAccession.isEmpty(), "entry accession should not be empty");
-
-		this.entryAccession = entryAccession;
         this.isGold = isGold;
     }
 
 	@Override
-	public SolrInputDocument createSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument(String entryAccession) {
+
+		Preconditions.checkNotNull(entryAccession, "unable to create a solr doc from an undefined entry accession");
+		Preconditions.checkArgument(!entryAccession.isEmpty(), "unable to create a solr doc from an empty entry accession");
 
 		SolrInputDocument solrInputDocument = new SolrInputDocument();
 

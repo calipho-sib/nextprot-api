@@ -11,21 +11,14 @@ import org.nextprot.api.solr.indexation.SolrDocumentFactory;
 import java.util.List;
 
 
-public class SolrCvTermDocumentFactory implements SolrDocumentFactory {
-
-	private final CvTerm term;
-
-    public SolrCvTermDocumentFactory(CvTerm term) {
-
-	    Preconditions.checkNotNull(term, "unable to solrize undefined term");
-
-	    this.term = term;
-    }
+public class SolrCvTermDocumentFactory implements SolrDocumentFactory<CvTerm> {
 
     @Override
-	public SolrInputDocument createSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument(CvTerm term) {
 
-		String ontology = term.getOntology();
+	    Preconditions.checkNotNull(term, "unable to create a solr doc from an undefined cvterm");
+
+	    String ontology = term.getOntology();
 		if (ontology.equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
 		else if (ontology.equals("NextprotAnnotationCv")) return null; // CaliphoMisc-194, ignore this ontology
 		else if (ontology.equals("UniprotFamilyCv")) return null; 

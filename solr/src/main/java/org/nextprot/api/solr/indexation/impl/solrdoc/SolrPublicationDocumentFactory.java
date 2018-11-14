@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
+import com.google.common.base.Preconditions;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Publication;
@@ -16,19 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 
-public class SolrPublicationDocumentFactory implements SolrDocumentFactory {
-
-	private final Publication publication;
-	
-    public SolrPublicationDocumentFactory(Publication publication) {
-        
-    	this.publication = publication;
-    }
+public class SolrPublicationDocumentFactory implements SolrDocumentFactory<Publication> {
 
 	@Override
-	public SolrInputDocument createSolrInputDocument() {
+	public SolrInputDocument createSolrInputDocument(Publication publication) {
 
-        GlobalPublicationStatistics.PublicationStatistics publicationStats =
+		Preconditions.checkNotNull(publication, "unable to create a solr doc from an undefined publication");
+
+		GlobalPublicationStatistics.PublicationStatistics publicationStats =
 		        SpringApplicationContext.getBeanOfType(PublicationService.class)
 				        .getPublicationStatistics(publication.getPublicationId());
 

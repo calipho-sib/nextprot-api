@@ -105,10 +105,12 @@ public class SolrServiceImpl implements SolrService {
 
         logAndCollect(info, "start indexing of " + allEntryAccessions.size() + " entries");
         int ecnt = 0;
+
+	    SolrEntryDocumentFactory factory = new SolrEntryDocumentFactory(isGold);
         for (String entryAccession : allEntryAccessions) {
             ecnt++;
 
-	        solrIndexer.indexDocument(new SolrEntryDocumentFactory(entryAccession, isGold).createSolrInputDocument());
+	        solrIndexer.indexDocument(factory.createSolrInputDocument(entryAccession));
 
             if ((ecnt % 300) == 0)
                 logAndCollect(info, ecnt + "/" + allEntryAccessions.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
@@ -135,7 +137,7 @@ public class SolrServiceImpl implements SolrService {
 		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
 
 		logAndCollect(info, "start indexing entry " + entryAccession);
-		solrIndexer.indexDocument(new SolrEntryDocumentFactory(entryAccession, isGold).createSolrInputDocument());
+		solrIndexer.indexDocument(new SolrEntryDocumentFactory(isGold).createSolrInputDocument(entryAccession));
 
 		logAndCollect(info, "committing index " + entity.getName());
 		solrIndexer.indexAndCommitLastDocuments();
@@ -163,8 +165,10 @@ public class SolrServiceImpl implements SolrService {
 
         logAndCollect(info, "start indexing of " + allterms.size() + " terms");
         int termcnt = 0;
+
+		SolrCvTermDocumentFactory factory = new SolrCvTermDocumentFactory();
         for (CvTerm term : allterms) {
-	        solrIndexer.indexDocument(new SolrCvTermDocumentFactory(term).createSolrInputDocument());
+	        solrIndexer.indexDocument(factory.createSolrInputDocument(term));
             termcnt++;
             if ((termcnt % 3000) == 0)
                 logAndCollect(info, termcnt + "/" + allterms.size() + " cv terms done");
@@ -196,12 +200,12 @@ public class SolrServiceImpl implements SolrService {
 
         logAndCollect(info, "start indexing of " + allpubids.size() + " publications");
         int pubcnt = 0;
-        for (Long id : allpubids) {
+	    SolrPublicationDocumentFactory factory = new SolrPublicationDocumentFactory();
+	    for (Long id : allpubids) {
             Publication currpub = publicationService.findPublicationById(id);
             if (currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
 
-                SolrPublicationDocumentFactory factory = new SolrPublicationDocumentFactory(currpub);
-	            solrIndexer.indexDocument(factory.createSolrInputDocument());
+	            solrIndexer.indexDocument(factory.createSolrInputDocument(currpub));
                 pubcnt++;
             }
             if ((pubcnt % 5000) == 0)
