@@ -1,50 +1,43 @@
 package org.nextprot.api.solr.service;
 
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 public interface SolrService {
-	
-	String indexTerminologies();
-	String indexPublications();
+
+	/** Clear all entry indexes */
 	String initIndexEntries(boolean isGold);
+
+	/** Make indexation of all cv terms */
+	String indexTerminologies();
+
+	/** Make indexation of all publications */
+	String indexPublications();
+
+	/** Make indexation of all entries located in the given chromosome */
 	String indexEntriesChromosome(boolean isGold, String chrName);
+
+	/** Make indexation of one entry */
 	String indexEntry(String entryAccession, boolean isGold);
 
-	/**
-	 * Execute a SOLR search query and return results
-	 *
-	 * @param query
-	 */
-	SearchResult executeQuery(Query query) throws SearchQueryException;
-
-	/**
-	 * Returns only the IDs of the document which are the result of the query
-	 *
-	 * @param query
-	 * @return
-	 * @throws SearchQueryException
-	 */
-	SearchResult executeIdQuery(Query query) throws SearchQueryException;
-
-	/**
-	 * Verifies if the specified name matches a name of a registered index
-	 *
-	 * @param indexName
-	 * @return
-	 */
+	/** Verifies that the specified name is an existing index (entry) */
 	boolean checkAvailableIndex(String indexName);
 
+	/** Build a query in autocomplete mode */
 	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
+	/** Build a query in search index mode */
 	Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
 
+	/** Build a query in protein list mode */
 	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
-	SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException;
+	/** Execute a SOLR query and return results */
+	SearchResult executeQuery(Query query) throws SearchQueryException;
+
+	/** Execute a SOLR query and return only the IDs of the document */
+	SearchResult executeIdQuery(Query query) throws SearchQueryException;
 }
