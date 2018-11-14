@@ -75,7 +75,7 @@ public class SearchController {
 	@ResponseBody
 	public SearchResult search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest) {
 
-		if (this.queryService.checkAvailableIndex(indexName)) {
+		if (this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
 
 			Query query = queryBuilderService.buildQueryForSearch(queryRequest, indexName);
 
@@ -101,7 +101,7 @@ public class SearchController {
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
 			@RequestParam(value="filter", required=false) String filter) {
 		
-		if (this.queryService.checkAvailableIndex(indexName)) {
+		if (this.queryService.checkSolrCore(indexName, quality)) {
 
 			Query q = this.queryBuilderService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, "0", filter);
 
@@ -144,12 +144,12 @@ public class SearchController {
 	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
 	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		
-		if(this.queryService.checkAvailableIndex(indexName)) {
+		if(this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
 			
 			SearchResult result;
 			try {
 				
-				Query query = null;
+				Query query;
 				
 				if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 					
