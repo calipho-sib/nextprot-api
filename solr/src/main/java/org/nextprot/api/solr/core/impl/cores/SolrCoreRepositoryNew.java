@@ -1,10 +1,6 @@
 package org.nextprot.api.solr.core.impl.cores;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.core.SolrCore;
-import org.nextprot.api.solr.core.impl.CvCore;
-import org.nextprot.api.solr.core.impl.GoldOnlyEntryCore;
-import org.nextprot.api.solr.core.impl.PublicationCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -18,19 +14,19 @@ import java.util.stream.Stream;
 @Repository
 public class SolrCoreRepositoryNew {
 
-	private final Map<SolrCore.Alias, SolrCore> solrCores = new HashMap<>();
+	private final Map<SolrCoreNew.Alias, SolrCoreNew> solrCores = new HashMap<>();
 
 	@Autowired
-	private CvCore cvCore;
+	private CvCoreNew cvCore;
 
 	@Autowired
-	private SolrCore goldAndSilverEntryCore;
+	private GoldAndSilverEntryCoreNew goldAndSilverEntryCore;
 
 	@Autowired
-	private GoldOnlyEntryCore goldOnlyEntryCore;
+	private GoldOnlyEntryCoreNew goldOnlyEntryCore;
 
 	@Autowired
-	private PublicationCore publicationCore;
+	private PublicationCoreNew publicationCore;
 
 	@PostConstruct
 	private void addSolrCores() {
@@ -39,7 +35,7 @@ public class SolrCoreRepositoryNew {
 				.forEach(this::addSolrCore);
 	}
 	
-	private void addSolrCore(SolrCore solrCore) {
+	private void addSolrCore(SolrCoreNew solrCore) {
 		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
 			solrCores.put(solrCore.getAlias(), solrCore);
 		}
@@ -48,12 +44,12 @@ public class SolrCoreRepositoryNew {
 		}
 	}
 
-	public SolrCore getSolrCoreFromAlias(String aliasName) {
+	public SolrCoreNew getSolrCoreFromAlias(String aliasName) {
 
-		return getSolrCore(SolrCore.Alias.valueOfName(aliasName));
+		return getSolrCore(SolrCoreNew.Alias.valueOfName(aliasName));
 	}
 
-	public SolrCore getSolrCore(SolrCore.Alias alias) {
+	public SolrCoreNew getSolrCore(SolrCoreNew.Alias alias) {
 
 		if (this.solrCores.containsKey(alias)) {
 			return solrCores.get(alias);
@@ -65,6 +61,6 @@ public class SolrCoreRepositoryNew {
 	
 	public boolean hasSolrCore(String aliasName) {
 
-		return solrCores.containsKey(SolrCore.Alias.valueOfName(aliasName));
+		return solrCores.containsKey(SolrCoreNew.Alias.valueOfName(aliasName));
 	}
 }
