@@ -72,19 +72,19 @@ public class SolrServiceImpl implements SolrService {
 		long seconds = System.currentTimeMillis() / 1000;
 		StringBuilder info = new StringBuilder();
 
-		SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
-		logAndCollect(info, "initializing index " + entity.getName() + "...STARTING at " + new Date());
+		SolrCore.Alias alias = isGold ? SolrCore.Alias.GoldEntry : SolrCore.Alias.Entry;
+		logAndCollect(info, "initializing index " + alias.getName() + "...STARTING at " + new Date());
 
-		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
+		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(alias, info);
 
-		logAndCollect(info, "clearing index " + entity.getName());
+		logAndCollect(info, "clearing index " + alias.getName());
 		solrIndexer.clearIndexes();
 
-		logAndCollect(info, "committing index " + entity.getName());
-		solrIndexer.indexAndCommitLastDocuments();
+		logAndCollect(info, "committing index " + alias.getName());
+		solrIndexer.commitAndOptimize();
 
 		seconds = (System.currentTimeMillis() / 1000 - seconds);
-		logAndCollect(info, "index " + entity.getName() + " initialized in " + seconds + " seconds ...END at " + new Date());
+		logAndCollect(info, "index " + alias.getName() + " initialized in " + seconds + " seconds ...END at " + new Date());
 
 		return info.toString();
 	}
@@ -95,10 +95,10 @@ public class SolrServiceImpl implements SolrService {
         long seconds = System.currentTimeMillis() / 1000;
         StringBuilder info = new StringBuilder();
 
-        SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
-        logAndCollect(info, "adding entries to index " + entity.getName() + " from chromosome " + chrName + "...STARTING at " + new Date());
+        SolrCore.Alias alias = isGold ? SolrCore.Alias.GoldEntry : SolrCore.Alias.Entry;
+        logAndCollect(info, "adding entries to index " + alias.getName() + " from chromosome " + chrName + "...STARTING at " + new Date());
 
-        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
+        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(alias, info);
 
         logAndCollect(info, "getting entry list of chromosome " + chrName);
         List<String> allEntryAccessions = masterIdentifierService.findUniqueNamesOfChromosome(chrName);
@@ -113,14 +113,14 @@ public class SolrServiceImpl implements SolrService {
 	        solrIndexer.indexDocument(factory.createSolrInputDocument(entryAccession));
 
             if ((ecnt % 300) == 0)
-                logAndCollect(info, ecnt + "/" + allEntryAccessions.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
+                logAndCollect(info, ecnt + "/" + allEntryAccessions.size() + " entries added to index " + alias.getName() + " for chromosome " + chrName);
         }
 
-        logAndCollect(info, "committing index " + entity.getName());
+        logAndCollect(info, "committing index " + alias.getName());
 	    solrIndexer.indexAndCommitLastDocuments();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
-        logAndCollect(info, "added entries to index " + entity.getName() + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
+        logAndCollect(info, "added entries to index " + alias.getName() + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
 
         return info.toString();
     }
@@ -131,15 +131,15 @@ public class SolrServiceImpl implements SolrService {
 		long seconds = System.currentTimeMillis() / 1000;
 		StringBuilder info = new StringBuilder();
 
-		SolrCore.Entity entity = isGold ? SolrCore.Entity.GoldEntry : SolrCore.Entity.Entry;
-		logAndCollect(info, "adding entry "+ entryAccession+" to index " + entity.getName() + "...STARTING at " + new Date());
+		SolrCore.Alias alias = isGold ? SolrCore.Alias.GoldEntry : SolrCore.Alias.Entry;
+		logAndCollect(info, "adding entry "+ entryAccession+" to index " + alias.getName() + "...STARTING at " + new Date());
 
-		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
+		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(alias, info);
 
 		logAndCollect(info, "start indexing entry " + entryAccession);
 		solrIndexer.indexDocument(new SolrEntryDocumentFactory(isGold).createSolrInputDocument(entryAccession));
 
-		logAndCollect(info, "committing index " + entity.getName());
+		logAndCollect(info, "committing index " + alias.getName());
 		solrIndexer.indexAndCommitLastDocuments();
 
 		seconds = (System.currentTimeMillis() / 1000 - seconds);
@@ -155,7 +155,7 @@ public class SolrServiceImpl implements SolrService {
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "terms indexing...STARTING at " + new Date());
 
-        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Entity.Term, info);
+        BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Alias.Term, info);
 
 	    logAndCollect(info, "clearing term index");
 	    solrIndexer.clearIndexes();
@@ -180,7 +180,6 @@ public class SolrServiceImpl implements SolrService {
         logAndCollect(info, termcnt + " terms indexed in " + seconds + " seconds ...END at " + new Date());
 
         return info.toString();
-
     }
 
     @Override
@@ -190,7 +189,7 @@ public class SolrServiceImpl implements SolrService {
         StringBuilder info = new StringBuilder();
         logAndCollect(info, "publications indexing...STARTING at " + new Date());
 
-	    BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Entity.Publication, info);
+	    BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(SolrCore.Alias.Publication, info);
 
 	    logAndCollect(info, "clearing publication index");
 	    solrIndexer.clearIndexes();
@@ -220,6 +219,27 @@ public class SolrServiceImpl implements SolrService {
         return info.toString();
     }
 
+	@Override
+	public boolean checkSolrCore(String indexName, String quality) {
+
+		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(indexName, quality));
+	}
+
+	@Override
+	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
+	}
+
+	@Override
+	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
+		return this.buildQuery(indexName, configurationName, request);
+	}
+
+	@Override
+	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
+	}
+
     @Override
     public SearchResult executeQuery(Query query) throws SearchQueryException {
         SolrQuery solrQuery = solrQuerySetup(query);
@@ -233,62 +253,17 @@ public class SolrServiceImpl implements SolrService {
         SolrCore solrCore = query.getSolrCore();
 
         if (solrCore == null) {
-            solrCore = solrCoreRepository.getSolrCore(query.getIndexName());
+            solrCore = solrCoreRepository.getSolrCoreFromAlias(query.getIndexName());
         }
         String configName = query.getConfigName();
         IndexConfiguration indexConfig = (configName == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(query.getConfigName());
         LOGGER.debug("configName="+indexConfig.getName());
 
-        SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
+        SolrQuery solrQuery = this.buildSolrQuery(query, indexConfig);
 
         logSolrQuery("executeIdQuery", solrQuery);
 
         return executeSolrQuery(solrCore, solrQuery);
-    }
-
-    @Override
-    public boolean checkAvailableIndex(String indexName) {
-        return solrCoreRepository.hasSolrCore(indexName);
-    }
-
-    /*
-     * references: SearchController.searchIds() -> this.executeIdQuery() -> here
-     */
-    @Override
-    public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
-        LOGGER.debug("Query index name:" + query.getIndexName());
-        LOGGER.debug("Query config name: "+ query.getConfigName());
-        String solrReadyQueryString = indexConfig.buildQuery(query);
-        String filter = query.getFilter();
-        if (filter != null)
-            solrReadyQueryString += " AND filters:" + filter;
-
-        LOGGER.debug("Solr-ready query       : " + solrReadyQueryString);
-        SolrQuery solrQuery = new SolrQuery();
-        solrQuery.setQuery(solrReadyQueryString);
-        solrQuery.setRows(0);
-        solrQuery.set("facet", true);
-        solrQuery.set("facet.field", "id");
-        solrQuery.set("facet.method", "enum");
-        solrQuery.set("facet.query", solrReadyQueryString);
-        solrQuery.set("facet.limit", 30000);
-        logSolrQuery("buildSolrIdQuery",solrQuery);
-        return solrQuery;
-    }
-
-    @Override
-    public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-        return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
-    }
-
-    @Override
-    public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
-        return this.buildQuery(indexName, configurationName, request);
-    }
-
-    @Override
-    public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-        return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
     }
 
     /**
@@ -375,7 +350,7 @@ public class SolrServiceImpl implements SolrService {
     }
 
     private SearchResult buildSearchResult(SolrQuery solrQuery, SolrCore solrCore, QueryResponse response) {
-        SearchResult results = new SearchResult(solrCore.getEntity().getName(), solrCore.getName());
+        SearchResult results = new SearchResult(solrCore.getAlias().getName(), solrCore.getName());
 
         SolrDocumentList docs = response.getResults();
         LOGGER.debug("Response doc size:" + docs.size());
@@ -455,11 +430,9 @@ public class SolrServiceImpl implements SolrService {
 
     private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
-        String actualIndexName = indexName.equals("entry") && quality != null && quality.equalsIgnoreCase("gold") ? "gold-entry" : indexName;
+        SolrCore solrCore = solrCoreRepository.getSolrCoreFromAlias(getSolrCoreAliasName(indexName, quality));
 
-        SolrCore index = solrCoreRepository.getSolrCore(actualIndexName);
-
-        Query q = new Query(index).addQuery(queryString);
+        Query q = new Query(solrCore).addQuery(queryString);
         q.setConfiguration(configuration);
 
         q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
@@ -472,7 +445,7 @@ public class SolrServiceImpl implements SolrService {
             q.order(SolrQuery.ORDER.valueOf(order));
         }
 
-        q.setIndexName(actualIndexName);
+        q.setIndexName(solrCore.getAlias().getName());
 
         if (filter != null && filter.length() > 0)
             q.addFilter(filter);
@@ -484,7 +457,7 @@ public class SolrServiceImpl implements SolrService {
         SolrCore solrCore = query.getSolrCore();
 
         if (solrCore == null) {
-            solrCore = solrCoreRepository.getSolrCore(query.getIndexName());
+            solrCore = solrCoreRepository.getSolrCoreFromAlias(query.getIndexName());
         }
         String configName = query.getConfigName();
 
@@ -503,9 +476,9 @@ public class SolrServiceImpl implements SolrService {
     }
 
     // TODO: should will defined different buffer size depending on the entity to index
-    private BufferingSolrIndexer newBufferingSolrIndexer(SolrCore.Entity entity, StringBuilder info) {
+    private BufferingSolrIndexer newBufferingSolrIndexer(SolrCore.Alias alias, StringBuilder info) {
 
-        SolrCoreServer solrServer = solrCoreRepository.getSolrCore(entity).newSolrServer();
+        SolrCoreServer solrServer = solrCoreRepository.getSolrCore(alias).newSolrServer();
 	    logAndCollect(info, "Solr server: " + solrServer.getBaseURL());
 
 	    return new BufferingSolrIndexer(solrServer);
@@ -515,4 +488,33 @@ public class SolrServiceImpl implements SolrService {
         LOGGER.info(message);
 		info.append(message).append("\n");
 	}
+
+	private String getSolrCoreAliasName(String indexName, String quality) {
+
+    	return (indexName.equals("entry") && (quality != null && quality.equalsIgnoreCase("gold"))) ? "gold-entry" : indexName;
+	}
+	/*
+	 * references: SearchController.searchIds() -> this.executeIdQuery() -> here
+	 */
+    /*@Override
+    public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
+        LOGGER.debug("Query index name:" + query.getIndexName());
+        LOGGER.debug("Query config name: "+ query.getConfigName());
+        String solrReadyQueryString = indexConfig.buildQuery(query);
+        String filter = query.getFilter();
+        if (filter != null)
+            solrReadyQueryString += " AND filters:" + filter;
+
+        LOGGER.debug("Solr-ready query       : " + solrReadyQueryString);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(solrReadyQueryString);
+        solrQuery.setRows(0);
+        solrQuery.set("facet", true);
+        solrQuery.set("facet.field", "id");
+        solrQuery.set("facet.method", "enum");
+        solrQuery.set("facet.query", solrReadyQueryString);
+        solrQuery.set("facet.limit", 30000);
+        logSolrQuery("buildSolrIdQuery",solrQuery);
+        return solrQuery;
+    }*/
 }

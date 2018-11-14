@@ -23,8 +23,8 @@ public interface SolrService {
 	/** Make indexation of one entry */
 	String indexEntry(String entryAccession, boolean isGold);
 
-	/** Verifies that the specified name is an existing index (entry) */
-	boolean checkAvailableIndex(String indexName);
+	/** Verifies that the specified name is an existing index */
+	boolean checkSolrCore(String indexName, String quality);
 
 	/** Build a query in autocomplete mode */
 	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);

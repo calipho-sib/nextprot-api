@@ -47,7 +47,7 @@ public class SolrCoreRepository {
 		}
 	}
 
-	public RealSolrCore getSolrCoreFromEntity(String aliasName) {
+	public RealSolrCore getSolrCoreFromAlias(String aliasName) {
 
 		return getSolrCore(SolrCore.Alias.valueOfName(aliasName));
 	}
