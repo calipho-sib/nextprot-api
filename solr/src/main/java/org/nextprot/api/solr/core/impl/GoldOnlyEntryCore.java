@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl;
 
 
-import org.nextprot.api.solr.core.SolrCore;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,6 +10,6 @@ public class GoldOnlyEntryCore extends GoldAndSilverEntryCore {
 	private static final String NAME = "npentries1gold";
 	
 	public GoldOnlyEntryCore() {
-		super(NAME, SolrCore.Entity.GoldEntry);
+		super(NAME, Alias.GoldEntry);
 	}
 }

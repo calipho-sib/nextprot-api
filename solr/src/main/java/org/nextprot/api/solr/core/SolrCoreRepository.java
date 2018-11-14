@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Repository
 public class SolrCoreRepository {
 
-	private final Map<SolrCore.Entity, RealSolrCore> solrCores = new HashMap<>();
+	private final Map<SolrCore.Alias, RealSolrCore> solrCores = new HashMap<>();
 
 	@Autowired
 	private CvCore cvCore;
@@ -40,29 +40,30 @@ public class SolrCoreRepository {
 	
 	private void addSolrCore(RealSolrCore solrCore) {
 		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
-			solrCores.put(solrCore.getEntity(), solrCore);
+			solrCores.put(solrCore.getAlias(), solrCore);
 		}
 		else {
-			throw new SearchConfigException("Missing schema for solr core "+solrCore.getEntity());
+			throw new SearchConfigException("Missing schema for solr core "+solrCore.getAlias());
 		}
 	}
 
-	public RealSolrCore getSolrCore(String name) {
+	public RealSolrCore getSolrCoreFromEntity(String aliasName) {
 
-		return getSolrCore(SolrCore.Entity.valueOfName(name));
+		return getSolrCore(SolrCore.Alias.valueOfName(aliasName));
 	}
 
-	public RealSolrCore getSolrCore(SolrCore.Entity coreName) {
+	public RealSolrCore getSolrCore(SolrCore.Alias alias) {
 
-		if (this.solrCores.containsKey(coreName)) {
-			return solrCores.get(coreName);
+		if (this.solrCores.containsKey(alias)) {
+			return solrCores.get(alias);
 		}
 		else {
-			throw new SearchConfigException("Solr core "+coreName+" does not exist. Available cores: "+this.solrCores.entrySet());
+			throw new SearchConfigException("Solr core "+alias+" does not exist. Available cores: "+this.solrCores.entrySet());
 		}
 	}
 	
-	public boolean hasSolrCore(String entityName) {
-		return solrCores.containsKey(SolrCore.Entity.valueOfName(entityName));
+	public boolean hasSolrCore(String aliasName) {
+
+		return solrCores.containsKey(SolrCore.Alias.valueOfName(aliasName));
 	}
 }

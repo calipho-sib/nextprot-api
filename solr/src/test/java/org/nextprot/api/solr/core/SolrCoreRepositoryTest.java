@@ -22,35 +22,35 @@ public class SolrCoreRepositoryTest {
 	@Test
 	public void testSolrCoreTerm() {
 
-		testSolrCore(SolrCore.Entity.Term, "npcvs1", "http://crick:8983/solr/npcvs1");
+		testSolrCore(SolrCore.Alias.Term, "npcvs1", "http://crick:8983/solr/npcvs1");
 	}
 
 	@Test
 	public void testSolrCorePubli() {
 
-		testSolrCore(SolrCore.Entity.Publication, "nppublications1", "http://crick:8983/solr/nppublications1");
+		testSolrCore(SolrCore.Alias.Publication, "nppublications1", "http://crick:8983/solr/nppublications1");
 	}
 
 	@Test
 	public void testSolrCoreEntry() {
 
-		testSolrCore(SolrCore.Entity.Entry, "npentries1", "http://crick:8983/solr/npentries1");
+		testSolrCore(SolrCore.Alias.Entry, "npentries1", "http://crick:8983/solr/npentries1");
 	}
 
 	@Test
 	public void testSolrCoreEntryGold() {
 
-		testSolrCore(SolrCore.Entity.GoldEntry, "npentries1gold", "http://crick:8983/solr/npentries1gold");
+		testSolrCore(SolrCore.Alias.GoldEntry, "npentries1gold", "http://crick:8983/solr/npentries1gold");
 	}
 
-	private void testSolrCore(SolrCore.Entity entity, String expectedCoreName, String expectedUrl) {
+	private void testSolrCore(SolrCore.Alias alias, String expectedCoreName, String expectedUrl) {
 
-		Assert.assertTrue(repository.hasSolrCore(entity.getName()));
+		Assert.assertTrue(repository.hasSolrCore(alias.getName()));
 
-		SolrCore repo = repository.getSolrCore(entity);
+		SolrCore repo = repository.getSolrCore(alias);
 
 		Assert.assertEquals(expectedCoreName, repo.getName());
-		Assert.assertEquals(entity, repo.getEntity());
+		Assert.assertEquals(alias, repo.getAlias());
 		Assert.assertEquals(expectedUrl, repo.getUrl());
 		SolrCoreServer defaultSolrServer = (SolrCoreServer) repo.newSolrServer();
 		Assert.assertEquals(expectedUrl, defaultSolrServer.getBaseURL());

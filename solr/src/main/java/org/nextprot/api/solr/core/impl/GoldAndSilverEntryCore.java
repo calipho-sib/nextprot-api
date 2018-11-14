@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
@@ -25,11 +24,11 @@ public class GoldAndSilverEntryCore extends RealSolrCore {
 	private String solrServerUrl;
 
 	public GoldAndSilverEntryCore() {
-		this(NAME, SolrCore.Entity.Entry);
+		this(NAME, Alias.Entry);
 	}
 
-	protected GoldAndSilverEntryCore(String name, SolrCore.Entity entity) {
-		super(name, entity);
+	protected GoldAndSilverEntryCore(String name, Alias alias) {
+		super(name, alias);
 	}
 
 	@Override

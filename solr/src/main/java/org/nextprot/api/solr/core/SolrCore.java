@@ -11,8 +11,8 @@ public interface SolrCore {
 	/** @return the solr core url */
 	String getUrl();
 
-	/** @return the solr core entity */
-	Entity getEntity();
+	/** @return the solr core alias */
+	Alias getAlias();
 
 	/** @return the solr core schema */
 	SolrField[] getSchema();
@@ -23,7 +23,8 @@ public interface SolrCore {
 	/** @return a new instance of a solr query server */
 	SolrServer newSolrServer();
 
-	enum Entity {
+	/** An alias to a SolCore instance */
+	enum Alias {
 
 		Entry,
 		GoldEntry("gold-entry"),
@@ -32,11 +33,11 @@ public interface SolrCore {
 
 		private final String name;
 
-		Entity() {
+		Alias() {
 			this.name = name().toLowerCase();
 		}
 
-		Entity(String name) {
+		Alias(String name) {
 			this.name = name;
 		}
 
@@ -44,7 +45,7 @@ public interface SolrCore {
 			return name;
 		}
 
-		public static Entity valueOfName(String name) {
+		public static Alias valueOfName(String name) {
 
 			switch (name) {
 				case "entry":
@@ -56,7 +57,7 @@ public interface SolrCore {
 				case "publication":
 					return Publication;
 				default:
-					throw new IllegalArgumentException("Unknown Entity."+name);
+					throw new IllegalArgumentException("Unknown Alias."+name);
 			}
 		}
 	}

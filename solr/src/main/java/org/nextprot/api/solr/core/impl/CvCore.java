@@ -2,7 +2,6 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
@@ -23,7 +22,7 @@ public class CvCore extends RealSolrCore {
 	private String solrServerUrl;
 
 	public CvCore() {
-		super(NAME, SolrCore.Entity.Term);
+		super(NAME, Alias.Term);
 	}
 
 	@Override

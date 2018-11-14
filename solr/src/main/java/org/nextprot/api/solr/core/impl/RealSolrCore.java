@@ -14,16 +14,16 @@ import java.util.Map;
 public abstract class RealSolrCore implements SolrCore {
 
 	protected String name;
-	protected Entity entityName;
+	protected Alias alias;
 	protected IndexConfiguration defaultConfiguration;
 	protected SortConfig[] sortConfigurations;
 	protected AutocompleteConfiguration autocompleteConfiguration;
 	protected String defaultConfigName;
 	protected Map<String, IndexConfiguration> configurations = new HashMap<>();
 
-	protected RealSolrCore(String name, Entity entityName) {
+	protected RealSolrCore(String name, Alias alias) {
 		this.name = name;
-		this.entityName = entityName;
+		this.alias = alias;
 		sortConfigurations = newSortConfigurations();
 		defaultConfiguration = newDefaultConfiguration();
 		autocompleteConfiguration = newAutoCompleteConfiguration(defaultConfiguration);
@@ -63,8 +63,8 @@ public abstract class RealSolrCore implements SolrCore {
 	}
 
 	@Override
-	public Entity getEntity() {
-		return entityName;
+	public Alias getAlias() {
+		return alias;
 	}
 
 	@Override
