@@ -5,13 +5,13 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
-import org.nextprot.api.solr.query.SolrQueryServer;
+import org.nextprot.api.solr.query.SolrQueryClient;
 
-public class HttpSolrQueryServer implements SolrQueryServer {
+public class HttpSolrQueryClient implements SolrQueryClient {
 
     private final HttpSolrServer solrServer;
 
-    public HttpSolrQueryServer(HttpSolrServer httpSolrServer) {
+    public HttpSolrQueryClient(HttpSolrServer httpSolrServer) {
 
 		solrServer = httpSolrServer;
 	}

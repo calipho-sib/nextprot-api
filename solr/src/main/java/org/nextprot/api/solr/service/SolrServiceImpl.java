@@ -24,13 +24,13 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrField;
-import org.nextprot.api.solr.core.impl.SolrCoreServer;
+import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.indexation.BufferingSolrIndexer;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrEntryDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrPublicationDocumentFactory;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.SolrQueryServer;
+import org.nextprot.api.solr.query.SolrQueryClient;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
@@ -337,7 +337,7 @@ public class SolrServiceImpl implements SolrService {
      * @return
      */
     private SearchResult executeSolrQuery(SolrCore solrCore, SolrQuery solrQuery) {
-        SolrQueryServer server = solrCore.newSolrServer();
+        SolrQueryClient server = solrCore.newSolrClient();
 
         logSolrQuery("executeSolrQuery", solrQuery);
 
@@ -478,10 +478,10 @@ public class SolrServiceImpl implements SolrService {
     // TODO: should will defined different buffer size depending on the entity to index
     private BufferingSolrIndexer newBufferingSolrIndexer(SolrCore.Alias alias, StringBuilder info) {
 
-        SolrCoreServer solrServer = solrCoreRepository.getSolrCore(alias).newSolrServer();
-	    logAndCollect(info, "Solr server: " + solrServer.getBaseURL());
+        SolrHttpClient solrClient = solrCoreRepository.getSolrCore(alias).newSolrClient();
+	    logAndCollect(info, "Solr server: " + solrClient.getBaseURL());
 
-	    return new BufferingSolrIndexer(solrServer);
+	    return new BufferingSolrIndexer(solrClient);
     }
 
 	private void logAndCollect(StringBuilder info, String message) {

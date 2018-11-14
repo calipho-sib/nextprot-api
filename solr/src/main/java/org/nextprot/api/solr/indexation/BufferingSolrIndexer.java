@@ -16,15 +16,15 @@ public class BufferingSolrIndexer {
 
 	private static final int BUFFER_SIZE = 150;
 
-	private final SolrIndexationServer solrIndexer;
+	private final SolrIndexationClient solrIndexer;
 	private final List<SolrInputDocument> buffer;
 	private final int bufferSize;
 
-	public BufferingSolrIndexer(SolrIndexationServer solrIndexer) {
+	public BufferingSolrIndexer(SolrIndexationClient solrIndexer) {
 		this(solrIndexer, BUFFER_SIZE);
 	}
 
-	public BufferingSolrIndexer(SolrIndexationServer solrIndexer, int bufferSize) {
+	public BufferingSolrIndexer(SolrIndexationClient solrIndexer, int bufferSize) {
 
 		Preconditions.checkNotNull(solrIndexer);
 		Preconditions.checkArgument(bufferSize > 0);

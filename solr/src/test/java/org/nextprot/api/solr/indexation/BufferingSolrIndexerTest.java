@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
 
 public class BufferingSolrIndexerTest {
 
-	private SolrIndexationServer indexationServer;
+	private SolrIndexationClient indexationServer;
 
 	@Before
 	public void setup() {
-		indexationServer = mock(SolrIndexationServer.class);
+		indexationServer = mock(SolrIndexationClient.class);
 	}
 
 	@Test(expected = NullPointerException.class)

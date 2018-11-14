@@ -8,9 +8,6 @@ public interface SolrCore {
 	/** @return the solr core name */
 	String getName();
 
-	/** @return the solr core url */
-	String getUrl();
-
 	/** @return the solr core alias */
 	Alias getAlias();
 
@@ -20,8 +17,8 @@ public interface SolrCore {
 	IndexConfiguration getDefaultConfig();
 	IndexConfiguration getConfig(String configName);
 
-	/** @return a new instance of a solr query server */
-	SolrServer newSolrServer();
+	/** @return a new instance of a solr client */
+	SolrHttpClient newSolrClient();
 
 	/** An alias to a SolCore instance */
 	enum Alias {

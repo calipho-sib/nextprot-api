@@ -3,26 +3,22 @@ package org.nextprot.api.solr.core.impl;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.FieldConfigSet;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexParameter;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 
-@Component
-public class PublicationCore extends RealSolrCore {
+public class SolrPublicationCore extends SolrCoreBase {
 
 	private static final String NAME = "nppublications1";
 
-	@Value("${solr.url}")
-	private String solrServerUrl;
+	public SolrPublicationCore(String solrServerUrl) {
 
-	public PublicationCore() {
-		super(PublicationCore.NAME, Alias.Publication);
+		super(SolrPublicationCore.NAME, Alias.Publication, solrServerUrl);
 	}
 
 	@Override
@@ -131,10 +127,5 @@ public class PublicationCore extends RealSolrCore {
 	@Override
 	public SolrField[] getSchema() {
 		return PublicationSolrField.values();
-	}
-
-	@Override
-	protected String getServerUrl() {
-		return solrServerUrl;
 	}
 }

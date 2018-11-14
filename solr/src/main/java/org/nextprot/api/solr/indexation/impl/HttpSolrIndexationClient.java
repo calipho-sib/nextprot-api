@@ -5,16 +5,16 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.solr.indexation.SolrIndexationServer;
+import org.nextprot.api.solr.indexation.SolrIndexationClient;
 
 import java.io.IOException;
 import java.util.Collection;
 
-public class HttpSolrIndexationServer implements SolrIndexationServer {
+public class HttpSolrIndexationClient implements SolrIndexationClient {
 
     private final HttpSolrServer solrServer;
 
-    public HttpSolrIndexationServer(HttpSolrServer httpSolrServer) {
+    public HttpSolrIndexationClient(HttpSolrServer httpSolrServer) {
 
     	Preconditions.checkNotNull(httpSolrServer, "http solr server should be defined");
 

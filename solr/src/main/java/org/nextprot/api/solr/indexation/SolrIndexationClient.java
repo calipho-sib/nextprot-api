@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * A Solr server can create indexes from solr documents and clean indexes
+ * A Solr client communicates with a single Solr node to create indexes from solr documents and clean indexes
  */
-public interface SolrIndexationServer {
+public interface SolrIndexationClient {
 
     UpdateResponse indexDocuments(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
     UpdateResponse deleteIndexes() throws SolrServerException, IOException;

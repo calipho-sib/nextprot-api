@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.FieldConfigSet;
@@ -9,26 +10,22 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexParameter;
 import org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import static org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration.ID_SEARCH;
 import static org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration.PL_SEARCH;
 
-@Component
-public class GoldAndSilverEntryCore extends RealSolrCore {
+public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 
 	private static final String NAME = "npentries1";
 
-	@Value("${solr.url}")
-	private String solrServerUrl;
+	public SolrGoldAndSilverEntryCore(String solrServerUrl) {
 
-	public GoldAndSilverEntryCore() {
-		this(NAME, Alias.Entry);
+		this(NAME, Alias.Entry, solrServerUrl);
 	}
 
-	protected GoldAndSilverEntryCore(String name, Alias alias) {
-		super(name, alias);
+	protected SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerUrl) {
+
+		super(name, alias, solrServerUrl);
 	}
 
 	@Override
@@ -207,10 +204,5 @@ public class GoldAndSilverEntryCore extends RealSolrCore {
 	@Override
 	public SolrField[] getSchema() {
 		return EntrySolrField.values();
-	}
-
-	@Override
-	protected String getServerUrl() {
-		return solrServerUrl;
 	}
 }

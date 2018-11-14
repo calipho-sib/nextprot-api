@@ -1,6 +1,10 @@
-package org.nextprot.api.solr.core.impl.cores;
+package org.nextprot.api.solr.core.impl.component;
 
+
+import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.SolrHttpClient;
+import org.nextprot.api.solr.core.impl.SolrGoldOnlyEntryCore;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -8,16 +12,16 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class CvCoreNew implements SolrCoreNew {
+public class GoldOnlyEntryCore implements SolrCore {
 
 	@Value("${solr.url}")
 	private String solrServerUrl;
 
-	private CvCoreImpl core;
+	private SolrCore core;
 
 	@PostConstruct
 	private void init() {
-		core = new CvCoreImpl(solrServerUrl);
+		core = new SolrGoldOnlyEntryCore(solrServerUrl);
 	}
 
 	@Override
@@ -26,7 +30,7 @@ public class CvCoreNew implements SolrCoreNew {
 	}
 
 	@Override
-	public Alias getAlias() {
+	public SolrCore.Alias getAlias() {
 		return core.getAlias();
 	}
 
@@ -46,7 +50,7 @@ public class CvCoreNew implements SolrCoreNew {
 	}
 
 	@Override
-	public SolrCoreServerNew newSolrServer() {
-		return core.newSolrServer();
+	public SolrHttpClient newSolrClient() {
+		return core.newSolrClient();
 	}
 }

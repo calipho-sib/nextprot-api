@@ -1,8 +1,9 @@
-package org.nextprot.api.solr.core.impl.cores;
+package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.FieldConfigSet;
@@ -10,12 +11,12 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexParameter;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
 
-public class CvCoreImpl extends RealSolrCoreNew {
+public class SolrCvCore extends SolrCoreBase {
 
 	private static final String NAME = "npcvs1";
 	private static final String SIMPLE = "simple";
 
-	public CvCoreImpl(String solrServerUrl) {
+	public SolrCvCore(String solrServerUrl) {
 
 		super(NAME, Alias.Term, solrServerUrl);
 	}

@@ -2,8 +2,8 @@ package org.nextprot.api.solr.query;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.solr.core.impl.GoldAndSilverEntryCore;
-import org.nextprot.api.solr.core.impl.PublicationCore;
+import org.nextprot.api.solr.core.impl.component.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.impl.component.PublicationCore;
 
 public class QueryTest {
 

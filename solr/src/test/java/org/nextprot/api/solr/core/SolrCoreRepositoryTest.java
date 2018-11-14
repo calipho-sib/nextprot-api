@@ -3,7 +3,6 @@ package org.nextprot.api.solr.core;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.solr.core.impl.SolrCoreServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,28 +21,28 @@ public class SolrCoreRepositoryTest {
 	@Test
 	public void testSolrCoreTerm() {
 
-		testSolrCore(SolrCore.Alias.Term, "npcvs1", "http://crick:8983/solr/npcvs1");
+		testSolrCore(SolrCore.Alias.Term, "npcvs1", "http://crick:8983/solr");
 	}
 
 	@Test
 	public void testSolrCorePubli() {
 
-		testSolrCore(SolrCore.Alias.Publication, "nppublications1", "http://crick:8983/solr/nppublications1");
+		testSolrCore(SolrCore.Alias.Publication, "nppublications1", "http://crick:8983/solr");
 	}
 
 	@Test
 	public void testSolrCoreEntry() {
 
-		testSolrCore(SolrCore.Alias.Entry, "npentries1", "http://crick:8983/solr/npentries1");
+		testSolrCore(SolrCore.Alias.Entry, "npentries1", "http://crick:8983/solr");
 	}
 
 	@Test
 	public void testSolrCoreEntryGold() {
 
-		testSolrCore(SolrCore.Alias.GoldEntry, "npentries1gold", "http://crick:8983/solr/npentries1gold");
+		testSolrCore(SolrCore.Alias.GoldEntry, "npentries1gold", "http://crick:8983/solr");
 	}
 
-	private void testSolrCore(SolrCore.Alias alias, String expectedCoreName, String expectedUrl) {
+	private void testSolrCore(SolrCore.Alias alias, String expectedCoreName, String expectedBaseURL) {
 
 		Assert.assertTrue(repository.hasSolrCore(alias.getName()));
 
@@ -51,8 +50,8 @@ public class SolrCoreRepositoryTest {
 
 		Assert.assertEquals(expectedCoreName, repo.getName());
 		Assert.assertEquals(alias, repo.getAlias());
-		Assert.assertEquals(expectedUrl, repo.getUrl());
-		SolrCoreServer defaultSolrServer = (SolrCoreServer) repo.newSolrServer();
-		Assert.assertEquals(expectedUrl, defaultSolrServer.getBaseURL());
+		SolrHttpClient defaultSolrClient = repo.newSolrClient();
+		Assert.assertEquals(expectedBaseURL, defaultSolrClient.getBaseURL());
+		Assert.assertEquals(expectedBaseURL+"/"+expectedCoreName, defaultSolrClient.getURL());
 	}
 }

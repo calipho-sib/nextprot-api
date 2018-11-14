@@ -1,10 +1,10 @@
 package org.nextprot.api.solr.core;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.core.impl.CvCore;
-import org.nextprot.api.solr.core.impl.GoldOnlyEntryCore;
-import org.nextprot.api.solr.core.impl.PublicationCore;
-import org.nextprot.api.solr.core.impl.RealSolrCore;
+import org.nextprot.api.solr.core.impl.component.CvCore;
+import org.nextprot.api.solr.core.impl.component.GoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.impl.component.GoldOnlyEntryCore;
+import org.nextprot.api.solr.core.impl.component.PublicationCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -18,13 +18,13 @@ import java.util.stream.Stream;
 @Repository
 public class SolrCoreRepository {
 
-	private final Map<SolrCore.Alias, RealSolrCore> solrCores = new HashMap<>();
+	private final Map<SolrCore.Alias, SolrCore> solrCores = new HashMap<>();
 
 	@Autowired
 	private CvCore cvCore;
 
 	@Autowired
-	private RealSolrCore goldAndSilverEntryCore;
+	private GoldAndSilverEntryCore goldAndSilverEntryCore;
 
 	@Autowired
 	private GoldOnlyEntryCore goldOnlyEntryCore;
@@ -35,10 +35,11 @@ public class SolrCoreRepository {
 	@PostConstruct
 	private void addSolrCores() {
 
-		Stream.of(cvCore, goldAndSilverEntryCore, goldOnlyEntryCore, publicationCore).forEach(this::addSolrCore);
+		Stream.of(cvCore, goldAndSilverEntryCore, goldOnlyEntryCore, publicationCore)
+				.forEach(this::addSolrCore);
 	}
-	
-	private void addSolrCore(RealSolrCore solrCore) {
+
+	private void addSolrCore(SolrCore solrCore) {
 		if (solrCore.getSchema() != null && solrCore.getSchema().length > 0) {
 			solrCores.put(solrCore.getAlias(), solrCore);
 		}
@@ -47,12 +48,12 @@ public class SolrCoreRepository {
 		}
 	}
 
-	public RealSolrCore getSolrCoreFromAlias(String aliasName) {
+	public SolrCore getSolrCoreFromAlias(String aliasName) {
 
 		return getSolrCore(SolrCore.Alias.valueOfName(aliasName));
 	}
 
-	public RealSolrCore getSolrCore(SolrCore.Alias alias) {
+	public SolrCore getSolrCore(SolrCore.Alias alias) {
 
 		if (this.solrCores.containsKey(alias)) {
 			return solrCores.get(alias);
@@ -61,7 +62,7 @@ public class SolrCoreRepository {
 			throw new SearchConfigException("Solr core "+alias+" does not exist. Available cores: "+this.solrCores.entrySet());
 		}
 	}
-	
+
 	public boolean hasSolrCore(String aliasName) {
 
 		return solrCores.containsKey(SolrCore.Alias.valueOfName(aliasName));

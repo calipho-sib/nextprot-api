@@ -1,8 +1,10 @@
-package org.nextprot.api.solr.core.impl.cores;
+package org.nextprot.api.solr.core.impl.component;
 
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.impl.SolrCoreHttpClient;
 import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
@@ -10,7 +12,7 @@ import org.nextprot.api.solr.query.impl.config.SortConfig;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class RealSolrCoreNew implements SolrCoreNew {
+public abstract class SolrCoreBase implements SolrCore {
 
 	protected String name;
 	private String solrServerUrl;
@@ -21,7 +23,7 @@ public abstract class RealSolrCoreNew implements SolrCoreNew {
 	protected String defaultConfigName;
 	protected Map<String, IndexConfiguration> configurations = new HashMap<>();
 
-	protected RealSolrCoreNew(String name, Alias alias, String solrServerUrl) {
+	protected SolrCoreBase(String name, Alias alias, String solrServerUrl) {
 		this.name = name;
 		this.alias = alias;
 		this.solrServerUrl = solrServerUrl;
@@ -69,9 +71,9 @@ public abstract class RealSolrCoreNew implements SolrCoreNew {
 	}
 
 	@Override
-	public SolrCoreServerNew newSolrServer() {
+	public SolrCoreHttpClient newSolrClient() {
 
-		return new SolrCoreServerNew(name, new HttpSolrServer(solrServerUrl));
+		return new SolrCoreHttpClient(name, new HttpSolrServer(solrServerUrl));
 	}
 
 	protected abstract IndexConfiguration newDefaultConfiguration();

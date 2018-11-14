@@ -6,9 +6,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.SolrParams;
 
 /**
- * A Solr server can make queries on indexed solr documents
+ * A Solr client can make queries on indexed solr documents
  */
-public interface SolrQueryServer {
+public interface SolrQueryClient {
 
     QueryResponse query(SolrParams params, SolrRequest.METHOD method) throws SolrServerException;
 }
