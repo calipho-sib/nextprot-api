@@ -1,6 +1,6 @@
 {
 	"elapsedTime":${result.elapsedTime},
-	"entity":"${result.entity}",
+	"entity":"${result.alias}",
 	"index":"${result.index}",
 	"score":${result.score},
 	"found":${result.found},
