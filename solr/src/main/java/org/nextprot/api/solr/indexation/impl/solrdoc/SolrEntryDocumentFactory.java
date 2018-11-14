@@ -1,6 +1,5 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
-import com.google.common.base.Preconditions;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.utils.SpringApplicationContext;
@@ -27,8 +26,8 @@ public class SolrEntryDocumentFactory implements SolrDocumentFactory<String> {
 	@Override
 	public SolrInputDocument createSolrInputDocument(String entryAccession) {
 
-		Preconditions.checkNotNull(entryAccession, "unable to create a solr doc from an undefined entry accession");
-		Preconditions.checkArgument(!entryAccession.isEmpty(), "unable to create a solr doc from an empty entry accession");
+		NPreconditions.checkNotNull(entryAccession, "unable to create a solr doc from an undefined entry accession");
+		NPreconditions.checkTrue(!entryAccession.isEmpty(), "unable to create a solr doc from an empty entry accession");
 
 		SolrInputDocument solrInputDocument = new SolrInputDocument();
 
@@ -67,21 +66,5 @@ public class SolrEntryDocumentFactory implements SolrDocumentFactory<String> {
 
 		}
 		return collectors;
-	}
-
-	static Map<EntrySolrField, EntrySolrFieldCollector> mapCollectorsByEntryField() {
-
-		Map<EntrySolrField, EntrySolrFieldCollector> fieldsBuilderMap = new HashMap<>();
-
-		for (EntrySolrFieldCollector collector : SpringApplicationContext.getAllBeansOfType(EntrySolrFieldCollector.class)) {
-			if (!collector.getCollectedFields().isEmpty()) {
-				for (EntrySolrField indexedField : collector.getCollectedFields()) {
-					NPreconditions.checkTrue(!(fieldsBuilderMap.containsKey(indexedField)), "The field " + indexedField.getName() + " cannot be indexed by several builders: " + indexedField.getClass() + ", " + fieldsBuilderMap.get(indexedField));
-					fieldsBuilderMap.put(indexedField, collector);
-				}
-			}
-
-		}
-		return fieldsBuilderMap;
 	}
 }
