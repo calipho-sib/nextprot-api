@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,13 +44,13 @@ public class BufferingSolrIndexerTest {
 
         BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
 
-        indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
-	    indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+        indexer.indexDocument(mock(SolrInputDocument.class));
+	    indexer.indexDocument(mock(SolrInputDocument.class));
         Assert.assertEquals(2, indexer.getBufferSize());
 
 	    //noinspection unchecked
-	    Mockito.verify(indexationServer, never()).pushDocsForIndexation(Mockito.any(List.class));
-	    Mockito.verify(indexationServer, never()).commitIndexation();
+	    Mockito.verify(indexationServer, never()).indexDocuments(Mockito.any(List.class));
+	    Mockito.verify(indexationServer, never()).commitAndOptimize();
     }
 
 	@Test
@@ -57,12 +58,12 @@ public class BufferingSolrIndexerTest {
 
 		BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 1);
 
-		indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
+		indexer.indexDocument(mock(SolrInputDocument.class));
 		Assert.assertEquals(0, indexer.getBufferSize());
 
 		//noinspection unchecked
-		Mockito.verify(indexationServer, times(1)).pushDocsForIndexation(Mockito.any(List.class));
-		Mockito.verify(indexationServer, never()).commitIndexation();
+		Mockito.verify(indexationServer, times(1)).indexDocuments(Mockito.any(List.class));
+		Mockito.verify(indexationServer, never()).commitAndOptimize();
 	}
 
     @Test
@@ -70,13 +71,13 @@ public class BufferingSolrIndexerTest {
 
 	    BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
 
-	    indexer.addSolrDocumentFactory(mock(SolrDocumentFactory.class));
-	    indexer.performIndexation();
+	    indexer.indexDocument(mock(SolrInputDocument.class));
+	    indexer.indexAndCommitLastDocuments();
 	    Assert.assertEquals(0, indexer.getBufferSize());
 
 	    //noinspection unchecked
-	    Mockito.verify(indexationServer, times(1)).pushDocsForIndexation(Mockito.any(List.class));
-	    Mockito.verify(indexationServer, times(1)).commitIndexation();
+	    Mockito.verify(indexationServer, times(1)).indexDocuments(Mockito.any(List.class));
+	    Mockito.verify(indexationServer, times(1)).commitAndOptimize();
     }
 
 	@Test
@@ -84,11 +85,11 @@ public class BufferingSolrIndexerTest {
 
 		BufferingSolrIndexer indexer = new BufferingSolrIndexer(indexationServer, 10);
 
-		indexer.performIndexation();
+		indexer.indexAndCommitLastDocuments();
 
 		//noinspection unchecked
-		Mockito.verify(indexationServer, never()).pushDocsForIndexation(Mockito.any(List.class));
-		Mockito.verify(indexationServer, times(1)).commitIndexation();
+		Mockito.verify(indexationServer, never()).indexDocuments(Mockito.any(List.class));
+		Mockito.verify(indexationServer, times(1)).commitAndOptimize();
 	}
 
     @Test
@@ -99,6 +100,6 @@ public class BufferingSolrIndexerTest {
 	    indexer.clearIndexes();
 
 	    Mockito.verify(indexationServer, times(1)).deleteIndexes();
-	    Mockito.verify(indexationServer, times(1)).commitIndexation();
+	    Mockito.verify(indexationServer, times(1)).commitAndOptimize();
     }
 }

@@ -2,12 +2,12 @@ package org.nextprot.api.solr.indexation;
 
 import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NextProtException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Solr server able to add a certain amount of solr objects to internal buffer before performing indexation
@@ -17,7 +17,7 @@ public class BufferingSolrIndexer {
 	private static final int BUFFER_SIZE = 150;
 
 	private final SolrIndexationServer solrIndexer;
-	private final List<SolrDocumentFactory> buffer;
+	private final List<SolrInputDocument> buffer;
 	private final int bufferSize;
 
 	public BufferingSolrIndexer(SolrIndexationServer solrIndexer) {
@@ -37,31 +37,31 @@ public class BufferingSolrIndexer {
 	/**
 	 * Add factories that can produce solr documents into buffer - if buffer is full, factories create solr docs
 	 * that are flushed to solr server for indexation
-	 * @param documentFactory a factory that are able to create solr document from object to be indexed by solr
+	 * @param document solr document to be indexed by solr
 	 */
-	public void addSolrDocumentFactory(SolrDocumentFactory documentFactory) {
+	public void indexDocument(SolrInputDocument document) {
 
-		if (documentFactory == null) {
-			throw new NextProtException("cannot create solr index from undefined solr document factory");
+		if (document == null) {
+			throw new NextProtException("cannot create solr index from undefined solr document");
 		}
 
-		buffer.add(documentFactory);
+		buffer.add(document);
 		if (buffer.size() % bufferSize == 0) {
 			flushSolrDocumentsToSolr();
 		}
 	}
 
 	/**
-	 * Commit solr document for indexation by solr server
+	 * Commit last solr documents for indexation by solr server
 	 */
-	public void performIndexation() {
+	public void indexAndCommitLastDocuments() {
 
 		if (!buffer.isEmpty()) {
 			flushSolrDocumentsToSolr();
 		}
 
 		try {
-			solrIndexer.commitIndexation();
+			solrIndexer.commitAndOptimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -73,7 +73,7 @@ public class BufferingSolrIndexer {
 	public void clearIndexes() {
 		try {
 			solrIndexer.deleteIndexes();
-			solrIndexer.commitIndexation();
+			solrIndexer.commitAndOptimize();
 		} catch (SolrServerException | IOException e) {
 			throw new NextProtException(e);
 		}
@@ -86,9 +86,7 @@ public class BufferingSolrIndexer {
     private void flushSolrDocumentsToSolr() {
 
         try {
-			solrIndexer.pushDocsForIndexation(buffer.stream()
-                .map(SolrDocumentFactory::createSolrInputDocument)
-	            .collect(Collectors.toList()));
+			solrIndexer.indexDocuments(buffer);
 	        buffer.clear();
         } catch (SolrServerException | IOException e) {
             throw new NextProtException(e);

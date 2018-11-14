@@ -33,8 +33,8 @@ public class SolrCoreServer implements SolrServer {
     }
 
     @Override
-    public UpdateResponse pushDocsForIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
-        return solrIndexationServer.pushDocsForIndexation(docs);
+    public UpdateResponse indexDocuments(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
+        return solrIndexationServer.indexDocuments(docs);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class SolrCoreServer implements SolrServer {
     }
 
     @Override
-    public UpdateResponse commitIndexation() throws SolrServerException, IOException {
-        return solrIndexationServer.commitIndexation();
+    public UpdateResponse commitAndOptimize() throws SolrServerException, IOException {
+        return solrIndexationServer.commitAndOptimize();
     }
 
     @Override

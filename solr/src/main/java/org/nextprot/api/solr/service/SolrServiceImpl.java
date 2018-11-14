@@ -81,7 +81,7 @@ public class SolrServiceImpl implements SolrService {
 		solrIndexer.clearIndexes();
 
 		logAndCollect(info, "committing index " + entity.getName());
-		solrIndexer.performIndexation();
+		solrIndexer.indexAndCommitLastDocuments();
 
 		seconds = (System.currentTimeMillis() / 1000 - seconds);
 		logAndCollect(info, "index " + entity.getName() + " initialized in " + seconds + " seconds ...END at " + new Date());
@@ -108,14 +108,14 @@ public class SolrServiceImpl implements SolrService {
         for (String entryAccession : allEntryAccessions) {
             ecnt++;
 
-	        solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryAccession, isGold));
+	        solrIndexer.indexDocument(new SolrEntryDocumentFactory(entryAccession, isGold).createSolrInputDocument());
 
             if ((ecnt % 300) == 0)
                 logAndCollect(info, ecnt + "/" + allEntryAccessions.size() + " entries added to index " + entity.getName() + " for chromosome " + chrName);
         }
 
         logAndCollect(info, "committing index " + entity.getName());
-	    solrIndexer.performIndexation();
+	    solrIndexer.indexAndCommitLastDocuments();
 
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, "added entries to index " + entity.getName() + "from chromosome " + chrName + " in " + seconds + " seconds ...END at " + new Date());
@@ -135,10 +135,10 @@ public class SolrServiceImpl implements SolrService {
 		BufferingSolrIndexer solrIndexer = newBufferingSolrIndexer(entity, info);
 
 		logAndCollect(info, "start indexing entry " + entryAccession);
-		solrIndexer.addSolrDocumentFactory(new SolrEntryDocumentFactory(entryAccession, isGold));
+		solrIndexer.indexDocument(new SolrEntryDocumentFactory(entryAccession, isGold).createSolrInputDocument());
 
 		logAndCollect(info, "committing index " + entity.getName());
-		solrIndexer.performIndexation();
+		solrIndexer.indexAndCommitLastDocuments();
 
 		seconds = (System.currentTimeMillis() / 1000 - seconds);
 		logAndCollect(info, "done in " + seconds + " seconds ...END at " + new Date());
@@ -164,14 +164,14 @@ public class SolrServiceImpl implements SolrService {
         logAndCollect(info, "start indexing of " + allterms.size() + " terms");
         int termcnt = 0;
         for (CvTerm term : allterms) {
-	        solrIndexer.addSolrDocumentFactory(new SolrCvTermDocumentFactory(term));
+	        solrIndexer.indexDocument(new SolrCvTermDocumentFactory(term).createSolrInputDocument());
             termcnt++;
             if ((termcnt % 3000) == 0)
                 logAndCollect(info, termcnt + "/" + allterms.size() + " cv terms done");
         }
 
         logAndCollect(info, "committing");
-	    solrIndexer.performIndexation();
+	    solrIndexer.indexAndCommitLastDocuments();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, termcnt + " terms indexed in " + seconds + " seconds ...END at " + new Date());
 
@@ -199,8 +199,9 @@ public class SolrServiceImpl implements SolrService {
         for (Long id : allpubids) {
             Publication currpub = publicationService.findPublicationById(id);
             if (currpub.getPublicationType().equals(PublicationType.ARTICLE)) {
-                SolrPublicationDocumentFactory solrPublication = new SolrPublicationDocumentFactory(currpub);
-	            solrIndexer.addSolrDocumentFactory(solrPublication);
+
+                SolrPublicationDocumentFactory factory = new SolrPublicationDocumentFactory(currpub);
+	            solrIndexer.indexDocument(factory.createSolrInputDocument());
                 pubcnt++;
             }
             if ((pubcnt % 5000) == 0)
@@ -208,7 +209,7 @@ public class SolrServiceImpl implements SolrService {
         }
 
         logAndCollect(info, "committing");
-	    solrIndexer.performIndexation();
+	    solrIndexer.indexAndCommitLastDocuments();
         seconds = (System.currentTimeMillis() / 1000 - seconds);
         logAndCollect(info, pubcnt + " publications indexed in " + seconds + " seconds ...END at " + new Date());
 

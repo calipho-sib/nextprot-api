@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public interface SolrIndexationServer {
 
-    UpdateResponse pushDocsForIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
+    UpdateResponse indexDocuments(Collection<SolrInputDocument> docs) throws SolrServerException, IOException;
     UpdateResponse deleteIndexes() throws SolrServerException, IOException;
-    UpdateResponse commitIndexation() throws SolrServerException, IOException;
+    UpdateResponse commitAndOptimize() throws SolrServerException, IOException;
 }

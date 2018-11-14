@@ -22,7 +22,7 @@ public class HttpSolrIndexationServer implements SolrIndexationServer {
 	}
 
     @Override
-    public final UpdateResponse pushDocsForIndexation(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
+    public final UpdateResponse indexDocuments(Collection<SolrInputDocument> docs) throws SolrServerException, IOException {
         return solrServer.add(docs);
     }
 
@@ -32,7 +32,7 @@ public class HttpSolrIndexationServer implements SolrIndexationServer {
     }
 
     @Override
-    public final UpdateResponse commitIndexation() throws SolrServerException, IOException {
+    public final UpdateResponse commitAndOptimize() throws SolrServerException, IOException {
     	solrServer.commit();
         return solrServer.optimize();
     }
