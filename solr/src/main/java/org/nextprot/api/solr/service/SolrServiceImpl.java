@@ -497,6 +497,7 @@ public class SolrServiceImpl implements SolrService {
         }
     }
 
+    // TODO: should will defined different buffer size depending on the entity to index
     private BufferingSolrIndexer newBufferingSolrIndexer(SolrCore.Entity entity, StringBuilder info) {
 
         SolrCoreServer solrServer = solrCoreRepository.getSolrCore(entity).newSolrServer();

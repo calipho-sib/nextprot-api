@@ -29,34 +29,6 @@ public class SolrEntryDocumentFactory implements SolrDocumentFactory {
         this.isGold = isGold;
     }
 
-    // TODO: remove this code once the newer is validated
-	private SolrInputDocument createSolrInputDocumentOld() {
-
-		Map<EntrySolrField, EntrySolrFieldCollector> collectors = mapCollectorsByEntryField();
-
-		Preconditions.checkArgument(!collectors.isEmpty(),
-				"Services are missing (check that spring config 'solr-context.xml' has been correctly imported)");
-
-		SolrInputDocument doc = new SolrInputDocument();
-
-		for (EntrySolrField esf : EntrySolrField.values()) {
-			if (esf == EntrySolrField.TEXT || esf == EntrySolrField.SCORE) {
-				continue; // Directly computed by SOLR
-			}
-
-			EntrySolrFieldCollector entrySolrFieldCollector = collectors.get(esf);
-
-			Map<EntrySolrField, Object> fields = new HashMap<>();
-
-			// TODO: should give SolrInputDocument instead of a map
-			entrySolrFieldCollector.collect(fields, entryAccession, isGold);
-
-			fields.keySet().forEach(entrySolrField -> doc.addField(entrySolrField.getName(), fields.get(entrySolrField)));
-		}
-
-		return doc;
-	}
-
 	@Override
 	public SolrInputDocument createSolrInputDocument() {
 
