@@ -36,8 +36,8 @@ public interface SolrService {
 	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Execute a SOLR query and return results */
-	SearchResult executeQuery(Query query) throws QueryConfiguration.BuildSolrQueryException;
+	SearchResult executeQuery(Query query) throws QueryConfiguration.MissingSortConfigException;
 
 	/** Execute a SOLR query and return only the IDs of the document */
-	SearchResult executeIdQuery(Query query) throws QueryConfiguration.BuildSolrQueryException;
+	SearchResult executeIdQuery(Query query);
 }

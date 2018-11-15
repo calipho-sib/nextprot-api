@@ -105,7 +105,7 @@ public class SearchServiceImpl implements SearchService {
 				sortedAccessions.add(entry);
 			}
 
-		} catch (QueryConfiguration.BuildSolrQueryException e) {
+		} catch (QueryConfiguration.MissingSortConfigException e) {
 			e.printStackTrace();
 			throw new NextProtException("Error when retrieving accessions");
 		}
@@ -114,16 +114,11 @@ public class SearchServiceImpl implements SearchService {
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
 		Set<String> set = new LinkedHashSet<>();
-		try {
-			Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
-			SearchResult results = solrQueryService.executeIdQuery(query);
-			for (Map<String, Object> f : results.getFoundFacets("id")) {
-				String entry = (String) f.get("name");
-				set.add(entry);
-			}
-		} catch (QueryConfiguration.BuildSolrQueryException e) {
-			e.printStackTrace();
-			throw new NextProtException("Error when retrieving accessions");
+		Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
+		SearchResult results = solrQueryService.executeIdQuery(query);
+		for (Map<String, Object> f : results.getFoundFacets("id")) {
+			String entry = (String) f.get("name");
+			set.add(entry);
 		}
 		return set;
 	}

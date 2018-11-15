@@ -31,7 +31,7 @@ public class QueryExecutor {
 		this.core = core;
 	}
 
-	public SearchResult execute(Query query) throws SolrServerException, QueryConfiguration.BuildSolrQueryException {
+	public SearchResult execute(Query query) throws SolrServerException, QueryConfiguration.MissingSortConfigException {
 
 		SolrQuery solrQuery = core.getDefaultConfig().convertQuery(query);
 

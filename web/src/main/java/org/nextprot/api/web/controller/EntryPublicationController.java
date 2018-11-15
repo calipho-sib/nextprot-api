@@ -179,7 +179,7 @@ public class EntryPublicationController {
             view.setRelatedEntryCount(eps.size());
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
 
-        } catch (QueryConfiguration.BuildSolrQueryException e) {
+        } catch (QueryConfiguration.MissingSortConfigException e) {
             throw new NextProtException(e.getMessage());
         }
 

@@ -81,7 +81,7 @@ public class SearchController {
 
 			try {
 				return queryService.executeQuery(query);
-			} catch (QueryConfiguration.BuildSolrQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 
 				throw new NextProtException(e);
 			}
@@ -107,7 +107,7 @@ public class SearchController {
 
 			try {
 				return convert(queryService.executeQuery(q));
-			} catch (QueryConfiguration.BuildSolrQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 				throw new NextProtException(e);
 			}
 		} else {
@@ -144,35 +144,28 @@ public class SearchController {
 	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
 	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		
-		if(this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
+		if (this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
 			
 			SearchResult result;
-			try {
-				
-				Query query;
-				
-				if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
-					
-					Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
-					String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-					queryRequest.setQuery(queryString);
-					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+			Query query;
 
-				} else {
-					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+			if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 
-				}
-				
-				result = this.queryService.executeIdQuery(query);
-				model.addAttribute("SearchResult", SearchResult.class);
-				model.addAttribute("result", result);
+				Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
-			} catch (QueryConfiguration.BuildSolrQueryException e) {
-				e.printStackTrace();
-				model.addAttribute("errormessage", e.getMessage());
-				return "exception";
+				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+				queryRequest.setQuery(queryString);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+
+			} else {
+				query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+
 			}
+
+			result = this.queryService.executeIdQuery(query);
+			model.addAttribute("SearchResult", SearchResult.class);
+			model.addAttribute("result", result);
 		}
 		
 		return "search-ids";
@@ -186,7 +179,7 @@ public class SearchController {
 			@RequestParam(value="start", required=false) String start,
 			@RequestParam(value="rows", required=false) String rows,
 			@RequestParam(value="filter", required=false) String filter,
-			Model model) throws QueryConfiguration.BuildSolrQueryException {
+			Model model) throws QueryConfiguration.MissingSortConfigException {
 		
 		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
 		Set<String> accessions = proteinList.getAccessionNumbers();

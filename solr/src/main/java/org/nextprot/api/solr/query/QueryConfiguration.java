@@ -17,14 +17,14 @@ public interface QueryConfiguration {
 	/**
 	 * Builds a SOLR Query according to the specified index configuration
 	 */
-	SolrQuery convertQuery(Query query) throws BuildSolrQueryException;
+	SolrQuery convertQuery(Query query) throws MissingSortConfigException;
 	SolrQuery convertIdQuery(Query query);
 
-	class BuildSolrQueryException extends Exception {
+	class MissingSortConfigException extends Exception {
 
-		public BuildSolrQueryException(String message, Query query) {
+		public MissingSortConfigException(String name, Query query) {
 
-			super(message + ": could not build solr query from " + query.toPrettyString());
+			super("sort config " + name + " does not exist: could not build solr query from " + query.toPrettyString());
 		}
 	}
 }

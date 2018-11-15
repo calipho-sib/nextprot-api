@@ -281,7 +281,7 @@ public class SolrServiceImpl implements SolrService {
      * Perform the Solr query and return the results
      */
     @Override
-    public SearchResult executeQuery(Query query) throws QueryConfiguration.BuildSolrQueryException {
+    public SearchResult executeQuery(Query query) throws QueryConfiguration.MissingSortConfigException {
 
 	    SolrCore core = getSolrCore(query);
 

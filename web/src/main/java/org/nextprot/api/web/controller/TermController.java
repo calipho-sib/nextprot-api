@@ -147,7 +147,7 @@ public class TermController {
 				SearchResult sr = solrQueryService.executeQuery(query);
 				long relevantForEntry = sr.getFound();
 				node.setRelevantFor(relevantForEntry);
-			} catch (QueryConfiguration.BuildSolrQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 				e.printStackTrace();
 				LOGGER.error(e.getLocalizedMessage());
 			}

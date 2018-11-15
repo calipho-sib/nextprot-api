@@ -121,7 +121,7 @@ public class IndexConfiguration implements QueryConfiguration {
 	}
 
 	@Override
-	public SolrQuery convertQuery(Query query) throws BuildSolrQueryException {
+	public SolrQuery convertQuery(Query query) throws MissingSortConfigException {
 
 		SolrQuery solrQuery = new SolrQuery();
 
@@ -154,7 +154,7 @@ public class IndexConfiguration implements QueryConfiguration {
 			sortConfig = getSortConfig(sortName);
 
 			if (sortConfig == null)
-				throw new BuildSolrQueryException("sort " + sortName + " does not exist", query);
+				throw new MissingSortConfigException(sortName, query);
 		} else
 			sortConfig = getDefaultSortConfiguration();
 
