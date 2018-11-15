@@ -23,23 +23,29 @@ public interface SolrCore {
 	/** An alias to a SolCore instance */
 	enum Alias {
 
-		Entry,
-		GoldEntry("gold-entry"),
-		Term,
-		Publication;
+		Entry(Entity.Entry),
+		GoldEntry(Entity.Entry, "gold-entry"),
+		Term(Entity.Term),
+		Publication(Entity.Publication);
 
+		private final Entity entity;
 		private final String name;
 
-		Alias() {
-			this.name = name().toLowerCase();
+		Alias(Entity entity) {
+			this(entity, null);
 		}
 
-		Alias(String name) {
-			this.name = name;
+		Alias(Entity entity, String name) {
+			this.entity = entity;
+			this.name = (name != null) ? name.toLowerCase() : name().toLowerCase();
 		}
 
 		public String getName() {
 			return name;
+		}
+
+		public Entity getEntity() {
+			return entity;
 		}
 
 		public static Alias valueOfName(String name) {
@@ -56,6 +62,12 @@ public interface SolrCore {
 				default:
 					throw new IllegalArgumentException("Unknown Alias."+name);
 			}
+		}
+
+		public static Alias fromEntityAndQuality(Entity entity, String quality) {
+
+			return ((entity == Entity.Entry) && (quality != null && quality.equalsIgnoreCase("gold"))) ?
+					SolrCore.Alias.GoldEntry : SolrCore.Alias.valueOfName(entity.getName());
 		}
 	}
 }

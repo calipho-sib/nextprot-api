@@ -210,7 +210,7 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean checkSolrCore(Entity entity, String quality) {
 
-		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(entity, quality));
+		return solrCoreRepository.hasSolrCore(SolrCore.Alias.fromEntityAndQuality(entity, quality));
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class SolrServiceImpl implements SolrService {
 
 	private Query buildQuery(Entity entity, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
-		SolrCore solrCore = solrCoreRepository.getSolrCore(getSolrCoreAliasName(entity, quality));
+		SolrCore solrCore = solrCoreRepository.getSolrCore(SolrCore.Alias.fromEntityAndQuality(entity, quality));
 
 		Query q = new Query(solrCore).addQuery(queryString);
 		q.setConfiguration(configuration);
@@ -337,10 +337,5 @@ public class SolrServiceImpl implements SolrService {
 	private void logAndCollect(StringBuilder info, String message) {
         LOGGER.info(message);
 		info.append(message).append("\n");
-	}
-
-	private SolrCore.Alias getSolrCoreAliasName(Entity entity, String quality) {
-
-    	return ((entity == Entity.Entry) && (quality != null && quality.equalsIgnoreCase("gold"))) ? SolrCore.Alias.GoldEntry : SolrCore.Alias.valueOfName(entity.getName());
 	}
 }

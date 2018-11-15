@@ -42,6 +42,15 @@ public class SolrCoreRepositoryTest {
 		testSolrCore(SolrCore.Alias.GoldEntry, "npentries1gold", "http://crick:8983/solr");
 	}
 
+	@Test
+	public void testAliasToEntity() {
+
+		Assert.assertEquals(Entity.Entry, SolrCore.Alias.Entry.getEntity());
+		Assert.assertEquals(Entity.Entry, SolrCore.Alias.GoldEntry.getEntity());
+		Assert.assertEquals(Entity.Term, SolrCore.Alias.Term.getEntity());
+		Assert.assertEquals(Entity.Publication, SolrCore.Alias.Publication.getEntity());
+	}
+
 	private void testSolrCore(SolrCore.Alias alias, String expectedCoreName, String expectedBaseURL) {
 
 		Assert.assertTrue(repository.hasSolrCore(alias));
