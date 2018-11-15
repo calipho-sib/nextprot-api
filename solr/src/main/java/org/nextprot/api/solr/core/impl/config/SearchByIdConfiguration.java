@@ -1,11 +1,12 @@
-package org.nextprot.api.solr.query.impl.config;
+package org.nextprot.api.solr.core.impl.config;
 
 
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.query.Query;
 
 public class SearchByIdConfiguration extends IndexConfiguration {
 
-	public SearchByIdConfiguration(Mode mode) {
+	public SearchByIdConfiguration(SearchMode mode) {
 		super(mode);
 	}
 	

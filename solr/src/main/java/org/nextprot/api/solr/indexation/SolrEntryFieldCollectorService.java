@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.service;
+package org.nextprot.api.solr.indexation;
 
 import org.apache.solr.common.SolrInputDocument;
 

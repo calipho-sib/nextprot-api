@@ -1,8 +1,11 @@
-package org.nextprot.api.solr.core;
+package org.nextprot.api.solr.core.impl.component;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.SolrHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;

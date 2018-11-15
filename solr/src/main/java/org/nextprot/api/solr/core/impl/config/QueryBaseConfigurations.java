@@ -1,11 +1,9 @@
-package org.nextprot.api.solr.core;
+package org.nextprot.api.solr.core.impl.config;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.query.QueryConfiguration;
-import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.query.impl.config.Mode;
-import org.nextprot.api.solr.query.impl.config.SortConfig;
+import org.nextprot.api.solr.core.QueryConfiguration;
+import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.SearchMode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +13,8 @@ public abstract class QueryBaseConfigurations implements QueryConfigurations {
 	protected IndexConfiguration defaultConfiguration;
 	protected SortConfig[] sortConfigurations;
 	protected AutocompleteConfiguration autocompleteConfiguration;
-	protected Mode defaultConfigMode;
-	protected Map<Mode, QueryConfiguration> configurations = new HashMap<>();
+	protected SearchMode defaultConfigMode;
+	protected Map<SearchMode, QueryConfiguration> configurations = new HashMap<>();
 
 	public QueryBaseConfigurations() {
 
@@ -30,13 +28,13 @@ public abstract class QueryBaseConfigurations implements QueryConfigurations {
 		this.configurations.put(config.getMode(), config);
 	}
 
-	protected void setConfigAsDefault(Mode mode) {
+	protected void setConfigAsDefault(SearchMode mode) {
 		if(this.configurations.containsKey(mode))
 			this.defaultConfigMode = mode;
 		else throw new SearchConfigException("Cannot set configuration "+mode+" since it does not exist");
 	}
 
-	public Mode getDefaultMode() {
+	public SearchMode getDefaultMode() {
 
 		if (this.defaultConfigMode != null) {
 			return defaultConfigMode;
@@ -54,7 +52,7 @@ public abstract class QueryBaseConfigurations implements QueryConfigurations {
 	}
 
 	@Override
-	public QueryConfiguration getConfig(Mode mode) {
+	public QueryConfiguration getConfig(SearchMode mode) {
 		if (this.configurations.containsKey(mode))
 			return this.configurations.get(mode);
 		else

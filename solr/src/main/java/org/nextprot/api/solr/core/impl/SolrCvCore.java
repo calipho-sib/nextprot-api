@@ -2,17 +2,17 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.core.QueryBaseConfigurations;
 import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
+import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.config.IndexConfiguration;
+import org.nextprot.api.solr.core.impl.config.IndexParameter;
+import org.nextprot.api.solr.core.impl.config.QueryBaseConfigurations;
+import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
-import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.query.impl.config.FieldConfigSet;
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.query.impl.config.IndexParameter;
-import org.nextprot.api.solr.query.impl.config.Mode;
-import org.nextprot.api.solr.query.impl.config.SortConfig;
 
 public class SolrCvCore extends SolrCoreBase {
 
@@ -39,7 +39,7 @@ public class SolrCvCore extends SolrCoreBase {
 		@Override
 		protected IndexConfiguration newDefaultConfiguration() {
 
-			IndexConfiguration defaultConfig = new IndexConfiguration(Mode.SIMPLE);
+			IndexConfiguration defaultConfig = new IndexConfiguration(SearchMode.SIMPLE);
 
 			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
 					.add(CvSolrField.AC)
@@ -114,7 +114,7 @@ public class SolrCvCore extends SolrCoreBase {
 		protected void setupConfigurations() {
 
 			addConfiguration(defaultConfiguration);
-			setConfigAsDefault(Mode.SIMPLE);
+			setConfigAsDefault(SearchMode.SIMPLE);
 			addConfiguration(autocompleteConfiguration);
 		}
 	}

@@ -2,16 +2,16 @@ package org.nextprot.api.solr.query;
 
 import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
-import org.nextprot.api.solr.query.impl.config.Mode;
 
 
 public class Query {
 
 	private String indexName;
 	private SolrCore solrCore;
-	private Mode configuration;
+	private SearchMode configuration;
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
 	private String sort;
@@ -23,7 +23,7 @@ public class Query {
 		this(solrCore, null);
 	}
 	
-	public Query(SolrCore solrCore, Mode configuration) {
+	public Query(SolrCore solrCore, SearchMode configuration) {
 
 		Preconditions.checkNotNull(solrCore);
 
@@ -72,11 +72,11 @@ public class Query {
 		return solrCore;
 	}
 
-	public Mode getConfig() {
+	public SearchMode getConfig() {
 		return configuration;
 	}
 	
-	public void setConfiguration(Mode configuration) {
+	public void setConfiguration(SearchMode configuration) {
 		this.configuration = configuration;
 	}
 

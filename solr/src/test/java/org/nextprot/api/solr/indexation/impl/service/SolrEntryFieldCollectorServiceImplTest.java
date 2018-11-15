@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.indexation.service;
+package org.nextprot.api.solr.indexation.impl.service;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Before;
@@ -14,6 +14,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.indexation.SolrEntryFieldCollectorService;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ChromosomeSolrFieldCollector;

@@ -1,6 +1,6 @@
-package org.nextprot.api.solr.query.impl.config;
+package org.nextprot.api.solr.core;
 
-public enum Mode {
+public enum SearchMode {
 
 	AUTOCOMPLETE,
 	SIMPLE,
@@ -10,7 +10,7 @@ public enum Mode {
 
 	private final String name;
 
-	Mode() {
+	SearchMode() {
 		this.name = name().toLowerCase();
 	}
 

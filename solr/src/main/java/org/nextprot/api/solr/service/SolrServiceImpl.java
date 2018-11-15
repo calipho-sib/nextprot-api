@@ -14,20 +14,20 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
-import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrHttpClient;
+import org.nextprot.api.solr.core.impl.component.SolrCoreRepository;
 import org.nextprot.api.solr.indexation.BufferingSolrIndexer;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrEntryDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrPublicationDocumentFactory;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
-import org.nextprot.api.solr.query.impl.config.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -216,20 +216,20 @@ public class SolrServiceImpl implements SolrService {
 
 	@Override
 	public Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(entity, Mode.AUTOCOMPLETE, queryString, quality, sort, order, start, rows, filter);
+		return buildQuery(entity, SearchMode.AUTOCOMPLETE, queryString, quality, sort, order, start, rows, filter);
 	}
 
 	@Override
-	public Query buildQueryForSearchIndexes(Entity entity, Mode mode, QueryRequest request) {
+	public Query buildQueryForSearchIndexes(Entity entity, SearchMode mode, QueryRequest request) {
 		return this.buildQuery(entity, mode, request);
 	}
 
 	@Override
 	public Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(entity, Mode.PL_SEARCH, queryString, quality, sort, order, start, rows, filter);
+		return buildQuery(entity, SearchMode.PL_SEARCH, queryString, quality, sort, order, start, rows, filter);
 	}
 
-	private Query buildQuery(Entity entity, Mode configuration, QueryRequest request) {
+	private Query buildQuery(Entity entity, SearchMode configuration, QueryRequest request) {
 		LOGGER.debug("calling buildQuery() with entityName=" + entity.getName() + ", configName=" + configuration.getName()) ;
 		LOGGER.debug("\n--------------\nQueryRequest:\n--------------\n"+request.toPrettyString()+"\n--------------");
 		Query q = buildQuery(entity, configuration, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
@@ -237,7 +237,7 @@ public class SolrServiceImpl implements SolrService {
 		return q;
 	}
 
-	private Query buildQuery(Entity entity, Mode configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+	private Query buildQuery(Entity entity, SearchMode configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
 		SolrCore solrCore = solrCoreRepository.getSolrCore(SolrCore.Alias.fromEntityAndQuality(entity, quality));
 
@@ -297,7 +297,7 @@ public class SolrServiceImpl implements SolrService {
         }
     }
 
-    private QueryConfiguration getConfig(SolrCore solrCore, Mode mode) {
+    private QueryConfiguration getConfig(SolrCore solrCore, SearchMode mode) {
 
 	    QueryConfigurations configs = solrCore.getQueryConfigurations();
 

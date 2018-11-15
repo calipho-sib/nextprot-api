@@ -8,11 +8,11 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.core.QueryConfiguration;
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
-import org.nextprot.api.solr.query.impl.config.Mode;
 import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
@@ -98,7 +98,7 @@ public class SearchServiceImpl implements SearchService {
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
 
-			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, Mode.PL_SEARCH, queryRequest);
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, SearchMode.PL_SEARCH, queryRequest);
 			SearchResult result = this.solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
@@ -116,7 +116,7 @@ public class SearchServiceImpl implements SearchService {
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
 		Set<String> set = new LinkedHashSet<>();
-		Query query = this.queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, Mode.SIMPLE, queryRequest);
+		Query query = this.queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, SearchMode.SIMPLE, queryRequest);
 		SearchResult results = solrQueryService.executeIdQuery(query);
 		for (Map<String, Object> f : results.getFoundFacets("id")) {
 			String entry = (String) f.get("name");

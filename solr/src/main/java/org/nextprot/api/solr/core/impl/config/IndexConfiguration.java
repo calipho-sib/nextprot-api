@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.query.impl.config;
+package org.nextprot.api.solr.core.impl.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -6,9 +6,10 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.solr.core.QueryConfiguration;
+import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.QueryConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +25,14 @@ public class IndexConfiguration implements QueryConfiguration {
 
 	final static String WHITESPACE = " ";
 	
-	private Mode mode;
+	private SearchMode mode;
 	private final Map<IndexParameter, FieldConfigSet> fieldConfigSets;
 	private final Map<String, SortConfig> sortConfigs;
 	protected final Map<String, String> otherParameters;
 
 	private String defaultSortName;
 
-	public IndexConfiguration(Mode mode) {
+	public IndexConfiguration(SearchMode mode) {
 		NPreconditions.checkNotNull(mode, "Solr query configuration mode is undefined");
 
 		this.mode = mode;
@@ -40,7 +41,7 @@ public class IndexConfiguration implements QueryConfiguration {
 		this.otherParameters = new HashMap<>();
 	}
 	
-	public IndexConfiguration(Mode mode, IndexConfiguration originalConfiguration) {
+	public IndexConfiguration(SearchMode mode, IndexConfiguration originalConfiguration) {
 		this(mode);
 		
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
@@ -209,7 +210,7 @@ public class IndexConfiguration implements QueryConfiguration {
 		return sortConfigs;
 	}
 
-	public Mode getMode() {
+	public SearchMode getMode() {
 		return mode;
 	}
 

@@ -1,12 +1,12 @@
-package org.nextprot.api.solr.query;
+package org.nextprot.api.solr.core;
 
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.nextprot.api.solr.query.impl.config.Mode;
+import org.nextprot.api.solr.query.Query;
 
 public interface QueryConfiguration {
 
-	Mode getMode();
+	SearchMode getMode();
 
 	/**
 	 * It splits the query coming for the controller in tokens 

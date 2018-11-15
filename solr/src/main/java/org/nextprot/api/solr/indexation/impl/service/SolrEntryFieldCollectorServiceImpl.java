@@ -1,9 +1,10 @@
-package org.nextprot.api.solr.indexation.service;
+package org.nextprot.api.solr.indexation.impl.service;
 
 import com.google.common.base.Preconditions;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.indexation.SolrEntryFieldCollectorService;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ChromosomeSolrFieldCollector;
