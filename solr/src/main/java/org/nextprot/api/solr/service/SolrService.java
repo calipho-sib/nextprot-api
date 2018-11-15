@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.service;
 
 
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
@@ -36,8 +36,8 @@ public interface SolrService {
 	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Execute a SOLR query and return results */
-	SearchResult executeQuery(Query query) throws SearchQueryException;
+	SearchResult executeQuery(Query query) throws QueryConfiguration.BuildSolrQueryException;
 
 	/** Execute a SOLR query and return only the IDs of the document */
-	SearchResult executeIdQuery(Query query) throws SearchQueryException;
+	SearchResult executeIdQuery(Query query) throws QueryConfiguration.BuildSolrQueryException;
 }

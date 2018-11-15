@@ -8,12 +8,12 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.service.SolrService;
@@ -147,7 +147,7 @@ public class TermController {
 				SearchResult sr = solrQueryService.executeQuery(query);
 				long relevantForEntry = sr.getFound();
 				node.setRelevantFor(relevantForEntry);
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.BuildSolrQueryException e) {
 				e.printStackTrace();
 				LOGGER.error(e.getLocalizedMessage());
 			}

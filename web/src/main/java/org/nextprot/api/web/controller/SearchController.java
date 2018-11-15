@@ -5,10 +5,10 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -81,7 +81,7 @@ public class SearchController {
 
 			try {
 				return queryService.executeQuery(query);
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.BuildSolrQueryException e) {
 
 				throw new NextProtException(e);
 			}
@@ -107,7 +107,7 @@ public class SearchController {
 
 			try {
 				return convert(queryService.executeQuery(q));
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.BuildSolrQueryException e) {
 				throw new NextProtException(e);
 			}
 		} else {
@@ -168,7 +168,7 @@ public class SearchController {
 				model.addAttribute("SearchResult", SearchResult.class);
 				model.addAttribute("result", result);
 
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.BuildSolrQueryException e) {
 				e.printStackTrace();
 				model.addAttribute("errormessage", e.getMessage());
 				return "exception";
@@ -186,7 +186,7 @@ public class SearchController {
 			@RequestParam(value="start", required=false) String start,
 			@RequestParam(value="rows", required=false) String rows,
 			@RequestParam(value="filter", required=false) String filter,
-			Model model) throws SearchQueryException {
+			Model model) throws QueryConfiguration.BuildSolrQueryException {
 		
 		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
 		Set<String> accessions = proteinList.getAccessionNumbers();

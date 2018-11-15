@@ -6,7 +6,6 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.EntryPublicationView;
@@ -18,6 +17,7 @@ import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.service.SolrService;
@@ -179,7 +179,7 @@ public class EntryPublicationController {
             view.setRelatedEntryCount(eps.size());
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
 
-        } catch (SearchQueryException e) {
+        } catch (QueryConfiguration.BuildSolrQueryException e) {
             throw new NextProtException(e.getMessage());
         }
 

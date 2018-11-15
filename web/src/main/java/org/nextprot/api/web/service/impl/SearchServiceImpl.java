@@ -4,11 +4,11 @@ import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.service.SolrService;
@@ -105,7 +105,7 @@ public class SearchServiceImpl implements SearchService {
 				sortedAccessions.add(entry);
 			}
 
-		} catch (SearchQueryException e) {
+		} catch (QueryConfiguration.BuildSolrQueryException e) {
 			e.printStackTrace();
 			throw new NextProtException("Error when retrieving accessions");
 		}
@@ -121,7 +121,7 @@ public class SearchServiceImpl implements SearchService {
 				String entry = (String) f.get("name");
 				set.add(entry);
 			}
-		} catch (SearchQueryException e) {
+		} catch (QueryConfiguration.BuildSolrQueryException e) {
 			e.printStackTrace();
 			throw new NextProtException("Error when retrieving accessions");
 		}
