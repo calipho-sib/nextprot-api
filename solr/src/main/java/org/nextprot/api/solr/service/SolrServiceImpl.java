@@ -13,6 +13,7 @@ import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrHttpClient;
@@ -207,37 +208,37 @@ public class SolrServiceImpl implements SolrService {
     }
 
 	@Override
-	public boolean checkSolrCore(String entityName, String quality) {
+	public boolean checkSolrCore(Entity entity, String quality) {
 
-		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(entityName, quality));
+		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(entity, quality));
 	}
 
 	@Override
-	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
+	public Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(entity, "autocomplete", queryString, quality, sort, order, start, rows, filter);
 	}
 
 	@Override
-	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
-		return this.buildQuery(indexName, configurationName, request);
+	public Query buildQueryForSearchIndexes(Entity entity, String configurationName, QueryRequest request) {
+		return this.buildQuery(entity, configurationName, request);
 	}
 
 	@Override
-	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
+	public Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(entity, "pl_search", queryString, quality, sort, order, start, rows, filter);
 	}
 
-	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-		LOGGER.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName) ;
+	private Query buildQuery(Entity entity, String configurationName, QueryRequest request) {
+		LOGGER.debug("calling buildQuery() with entityName=" + entity.getName() + ", configName=" + configurationName) ;
 		LOGGER.debug("\n--------------\nQueryRequest:\n--------------\n"+request.toPrettyString()+"\n--------------");
-		Query q = buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Query q = buildQuery(entity, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
 		LOGGER.debug("\n--------------\nQuery:\n--------------\n" + q.toPrettyString() + "\n--------------");
 		return q;
 	}
 
-	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+	private Query buildQuery(Entity entity, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
-		SolrCore solrCore = solrCoreRepository.getSolrCoreFromAlias(getSolrCoreAliasName(indexName, quality));
+		SolrCore solrCore = solrCoreRepository.getSolrCore(getSolrCoreAliasName(entity, quality));
 
 		Query q = new Query(solrCore).addQuery(queryString);
 		q.setConfiguration(configuration);
@@ -338,8 +339,8 @@ public class SolrServiceImpl implements SolrService {
 		info.append(message).append("\n");
 	}
 
-	private String getSolrCoreAliasName(String entityName, String quality) {
+	private SolrCore.Alias getSolrCoreAliasName(Entity entity, String quality) {
 
-    	return (entityName.equals("entry") && (quality != null && quality.equalsIgnoreCase("gold"))) ? "gold-entry" : entityName;
+    	return ((entity == Entity.Entry) && (quality != null && quality.equalsIgnoreCase("gold"))) ? SolrCore.Alias.GoldEntry : SolrCore.Alias.valueOfName(entity.getName());
 	}
 }

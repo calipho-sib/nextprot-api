@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.service;
 
 
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
@@ -24,16 +25,16 @@ public interface SolrService {
 	String indexEntry(String entryAccession, boolean isGold);
 
 	/** Verifies that the specified name is an existing index */
-	boolean checkSolrCore(String entityName, String quality);
+	boolean checkSolrCore(Entity entity, String quality);
 
 	/** Build a query in autocomplete mode */
-	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
+	Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Build a query in search index mode */
-	Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
+	Query buildQueryForSearchIndexes(Entity entity, String configurationName, QueryRequest request);
 
 	/** Build a query in protein list mode */
-	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
+	Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Execute a SOLR query and return results */
 	SearchResult executeQuery(Query query) throws QueryConfiguration.MissingSortConfigException;

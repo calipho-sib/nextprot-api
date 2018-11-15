@@ -7,6 +7,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
@@ -75,9 +76,11 @@ public class SearchController {
 	@ResponseBody
 	public SearchResult search(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest) {
 
-		if (this.queryService.checkSolrCore(entityName, queryRequest.getQuality())) {
+		Entity entity = Entity.valueOfName(entityName);
 
-			Query query = queryBuilderService.buildQueryForSearch(queryRequest, entityName);
+		if (this.queryService.checkSolrCore(entity, queryRequest.getQuality())) {
+
+			Query query = queryBuilderService.buildQueryForSearch(queryRequest, entity);
 
 			try {
 				return queryService.executeQuery(query);
@@ -100,10 +103,12 @@ public class SearchController {
 			@ApiQueryParam(name="order") @RequestParam(value="order", required=false) String order,
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
 			@RequestParam(value="filter", required=false) String filter) {
-		
-		if (this.queryService.checkSolrCore(entityName, quality)) {
 
-			Query q = this.queryBuilderService.buildQueryForAutocomplete(entityName, queryString, quality, sort, order, start, "0", filter);
+		Entity entity = Entity.valueOfName(entityName);
+
+		if (this.queryService.checkSolrCore(entity, quality)) {
+
+			Query q = this.queryBuilderService.buildQueryForAutocomplete(entity, queryString, quality, sort, order, start, "0", filter);
 
 			try {
 				return convert(queryService.executeQuery(q));
@@ -137,8 +142,10 @@ public class SearchController {
 
 	@RequestMapping(value="/search-ids/{entity}", method={ RequestMethod.POST })
 	public String searchIds(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest, Model model) {
-		
-		if (this.queryService.checkSolrCore(entityName, queryRequest.getQuality())) {
+
+		Entity entity = Entity.valueOfName(entityName);
+
+		if (this.queryService.checkSolrCore(entity, queryRequest.getQuality())) {
 			
 			SearchResult result;
 
@@ -150,10 +157,10 @@ public class SearchController {
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entityName, "pl_search", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, "pl_search", queryRequest);
 
 			} else {
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entityName, "simple", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, "simple", queryRequest);
 
 			}
 
@@ -182,7 +189,7 @@ public class SearchController {
 		
 //		SolrIndex index = this.configuration.getIndexByName("entry");
 		
-		Query query = this.queryBuilderService.buildQueryForProteinLists("entry", queryString, "", sort, order, start, rows, filter);
+		Query query = this.queryBuilderService.buildQueryForProteinLists(Entity.Entry, queryString, "", sort, order, start, rows, filter);
 		
 		SearchResult result = this.queryService.executeQuery(query);
 		

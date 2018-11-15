@@ -16,6 +16,7 @@ import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
@@ -172,7 +173,7 @@ public class EntryPublicationController {
 
         qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         try {
             SearchResult searchResult = solrQueryService.executeQuery(q);
 

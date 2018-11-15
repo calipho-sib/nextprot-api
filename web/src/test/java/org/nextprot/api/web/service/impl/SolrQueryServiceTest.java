@@ -3,6 +3,7 @@ package org.nextprot.api.web.service.impl;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -35,7 +36,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
     	
     	qr = new QueryRequest();
     	qr.setQuery("polo like");
-    	q = queryBuilderService.buildQueryForSearch(qr, "publication");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Publication);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -44,7 +45,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 
 		qr = new QueryRequest();
     	qr.setQuery("polo like in the of");
-    	q = queryBuilderService.buildQueryForSearch(qr, "publication");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Publication);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -62,7 +63,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
     	
     	qr = new QueryRequest();
     	qr.setQuery("insulin");
-    	q = queryBuilderService.buildQueryForSearch(qr, "entry");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -71,7 +72,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 
 		qr = new QueryRequest();
     	qr.setQuery("insulin in the of");
-    	q = queryBuilderService.buildQueryForSearch(qr, "entry");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -88,7 +89,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
     	
     	qr = new QueryRequest();
     	qr.setQuery("brain");
-    	q = queryBuilderService.buildQueryForSearch(qr, "term");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Term);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -97,7 +98,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 
 		qr = new QueryRequest();
     	qr.setQuery("brain in the of");
-    	q = queryBuilderService.buildQueryForSearch(qr, "term");
+    	q = queryBuilderService.buildQueryForSearch(qr, Entity.Term);
     	result = service.executeQuery(q);
 		numFound = result.getFound();
 		
@@ -114,7 +115,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setQuality("GOLD");
         qr.setEntryAccessionSet(accessions);
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertEquals(3, result.getFound());
@@ -132,7 +133,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setQuality("GOLD");
         qr.setEntryAccessionSet(new HashSet<>());
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertEquals(0, result.getFound());
@@ -143,7 +144,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 
         QueryRequest qr = new QueryRequest();
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertEquals(0, result.getFound());
@@ -155,7 +156,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         QueryRequest qr = new QueryRequest();
         qr.setQuery("MSH6");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertTrue(result.getFound() > 100);
@@ -168,7 +169,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setQuality("GOLD");
         qr.setQuery("MSH6");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertTrue(result.getFound()>70);
@@ -182,7 +183,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         QueryRequest qr = new QueryRequest();
         qr.setQuery("author:Doolittle");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "publication");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Publication);
         SearchResult result = service.executeQuery(q);
 
         assertTrue(result.getFound()>20);
@@ -194,7 +195,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         QueryRequest qr = new QueryRequest();
         qr.setQuery("liver");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "term");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Term);
         SearchResult result = service.executeQuery(q);
 
         Assert.assertTrue(result.getFound() > 1000);
@@ -209,7 +210,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setSparqlEngine("Jena");
         qr.setSparql("#Proteins phosphorylated and located in the cytoplasm\nselect distinct ?entry where {\n  ?entry :isoform ?iso.\n  ?iso :keyword / :term cv:KW-0597.\n  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n}");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertTrue(result.getFound() >= 5636);
@@ -227,7 +228,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setSparqlEngine("Jena");
         qr.setQueryId("NXQ_00001");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertEquals(5618, result.getFound());
@@ -241,7 +242,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setListId("Y7JPIEVH");
         qr.setListOwner("Guest");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertEquals(1, result.getFound());
@@ -255,7 +256,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setMode("advanced");
         qr.setQueryId("3K8W9PJT");
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
 
         assertTrue(result.getFound() >= 5636);

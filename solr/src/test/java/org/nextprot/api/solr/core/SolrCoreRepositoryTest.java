@@ -44,7 +44,7 @@ public class SolrCoreRepositoryTest {
 
 	private void testSolrCore(SolrCore.Alias alias, String expectedCoreName, String expectedBaseURL) {
 
-		Assert.assertTrue(repository.hasSolrCore(alias.getName()));
+		Assert.assertTrue(repository.hasSolrCore(alias));
 
 		SolrCore repo = repository.getSolrCore(alias);
 

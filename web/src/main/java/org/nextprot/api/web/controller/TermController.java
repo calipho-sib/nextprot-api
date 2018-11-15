@@ -12,6 +12,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
@@ -142,7 +143,7 @@ public class TermController {
 			}
 
 			qr.setRows("0");
-			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
+			Query query = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
 			try {
 				SearchResult sr = solrQueryService.executeQuery(query);
 				long relevantForEntry = sr.getFound();

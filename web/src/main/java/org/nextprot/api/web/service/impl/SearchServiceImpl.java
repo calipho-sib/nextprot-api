@@ -7,6 +7,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
@@ -96,7 +97,7 @@ public class SearchServiceImpl implements SearchService {
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
 
-			Query query = queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, "pl_search", queryRequest);
 			SearchResult result = this.solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
@@ -114,7 +115,7 @@ public class SearchServiceImpl implements SearchService {
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
 		Set<String> set = new LinkedHashSet<>();
-		Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
+		Query query = this.queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, "simple", queryRequest);
 		SearchResult results = solrQueryService.executeIdQuery(query);
 		for (Map<String, Object> f : results.getFoundFacets("id")) {
 			String entry = (String) f.get("name");

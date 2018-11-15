@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -40,7 +41,7 @@ public class SolrServiceTest {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQueryForSearchIndexes("entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes(Entity.Entry, "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
 		if (debug) System.out.println("numFound="+numFound);
@@ -72,7 +73,7 @@ public class SolrServiceTest {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes( Entity.Entry, "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
 		if (debug) System.out.println("numFound="+numFound);
@@ -104,7 +105,7 @@ public class SolrServiceTest {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes(Entity.Entry, "simple",  qr);
     	//IndexConfiguration ic = this.configuration.getIndexByName("entry").getConfig("simple");
     	//SolrQuery sq = service.buildSolrIdQuery(q, ic);
     	SearchResult result = service.executeIdQuery(q);
@@ -121,7 +122,7 @@ public class SolrServiceTest {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes( Entity.Entry, "simple",  qr);
     	SearchResult result = service.executeIdQuery(q);
 		long numFound = result.getFound();
 		Assert.assertTrue(numFound>=0); // we should get no error
@@ -144,7 +145,7 @@ public class SolrServiceTest {
 		qr.setQuality("gold");
 		qr.setSort("");
 		qr.setOrder("");
-		Query q = service.buildQueryForSearchIndexes("entry", "simple", qr);
+		Query q = service.buildQueryForSearchIndexes(Entity.Entry, "simple", qr);
 		SearchResult result = service.executeIdQuery(q);
 		List<Map<String, Object>> found = result.getFoundFacets("id");
 		Assert.assertEquals(result.getFound(), found.size());
@@ -162,7 +163,7 @@ public class SolrServiceTest {
     	qr.setSparql(null);
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQueryForSearchIndexes( "publication", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes( Entity.Publication, "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
 		if (debug) System.out.println("numFound="+numFound);

@@ -63,8 +63,8 @@ public class SolrCoreRepository {
 		}
 	}
 
-	public boolean hasSolrCore(String aliasName) {
+	public boolean hasSolrCore(SolrCore.Alias alias) {
 
-		return solrCores.containsKey(SolrCore.Alias.valueOfName(aliasName));
+		return solrCores.containsKey(alias);
 	}
 }

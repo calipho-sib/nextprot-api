@@ -26,7 +26,7 @@ public class SolrCvCoreTest {
 
 	simple
 	autocomplete
-	pl_search
+	pl_search for protein list
 	 */
 
 

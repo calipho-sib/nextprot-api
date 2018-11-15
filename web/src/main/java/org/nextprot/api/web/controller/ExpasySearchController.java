@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -36,7 +37,7 @@ public class ExpasySearchController {
             QueryRequest qr = new QueryRequest();
             qr.setQuality("gold-and-silver");
             qr.setQuery(query);
-            Query bq = queryBuilderService.buildQueryForSearch(qr, "entry");
+            Query bq = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
             SearchResult result = queryService.executeQuery(bq);
             model.addAttribute("count", result.getFound());
             model.addAttribute("url", "https://www.nextprot.org/proteins/search?quality=gold-and-silver&query=" + query);
