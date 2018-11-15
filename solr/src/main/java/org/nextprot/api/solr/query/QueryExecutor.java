@@ -33,7 +33,7 @@ public class QueryExecutor {
 
 	public SearchResult execute(Query query) throws SolrServerException, QueryConfiguration.MissingSortConfigException {
 
-		SolrQuery solrQuery = core.getDefaultConfig().convertQuery(query);
+		SolrQuery solrQuery = core.getQueryConfigurations().getDefaultConfig().convertQuery(query);
 
 		return execute(solrQuery);
 	}

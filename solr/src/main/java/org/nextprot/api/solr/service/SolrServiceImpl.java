@@ -14,6 +14,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrCoreRepository;
 import org.nextprot.api.solr.core.SolrHttpClient;
@@ -26,7 +27,6 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -297,9 +297,11 @@ public class SolrServiceImpl implements SolrService {
         }
     }
 
-    private IndexConfiguration getConfig(SolrCore solrCore, Mode mode) {
+    private QueryConfiguration getConfig(SolrCore solrCore, Mode mode) {
 
-	    return (mode == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(mode);
+	    QueryConfigurations configs = solrCore.getQueryConfigurations();
+
+	    return (mode == null) ? configs.getDefaultConfig() : configs.getConfig(mode);
     }
 
     private SolrCore getSolrCore(Query query) {

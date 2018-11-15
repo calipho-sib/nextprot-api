@@ -2,8 +2,11 @@ package org.nextprot.api.solr.query;
 
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.nextprot.api.solr.query.impl.config.Mode;
 
 public interface QueryConfiguration {
+
+	Mode getMode();
 
 	/**
 	 * It splits the query coming for the controller in tokens 

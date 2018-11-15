@@ -1,9 +1,6 @@
 package org.nextprot.api.solr.core;
 
 
-import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.query.impl.config.Mode;
-
 public interface SolrCore {
 
 	/** @return the solr core name */
@@ -15,8 +12,8 @@ public interface SolrCore {
 	/** @return the solr core schema */
 	SolrField[] getSchema();
 
-	IndexConfiguration getDefaultConfig();
-	IndexConfiguration getConfig(Mode mode);
+	/** @return the different query mode configurations */
+	QueryConfigurations getQueryConfigurations();
 
 	/** @return a new instance of a solr client */
 	SolrHttpClient newSolrClient();
