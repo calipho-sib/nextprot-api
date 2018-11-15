@@ -242,7 +242,7 @@ public class SolrServiceImpl implements SolrService {
 
     @Override
     public SearchResult executeQuery(Query query) throws SearchQueryException {
-        SolrQuery solrQuery = solrQuerySetup(query);
+        SolrQuery solrQuery = convertToSolrQuery(query);
 
         logSolrQuery("executeQuery",solrQuery);
         return executeSolrQuery(query.getSolrCore(), solrQuery);
@@ -276,7 +276,7 @@ public class SolrServiceImpl implements SolrService {
     private SolrQuery buildSolrQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
         SolrQuery solrQuery = new SolrQuery();
 
-        String queryString = indexConfig.buildQuery(query);
+        String queryString = indexConfig.formatQuery(query);
 
         String filter = query.getFilter();
         if (filter != null)
@@ -453,7 +453,7 @@ public class SolrServiceImpl implements SolrService {
         return q;
     }
 
-    private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
+    private SolrQuery convertToSolrQuery(Query query) throws SearchQueryException {
         SolrCore solrCore = query.getSolrCore();
 
         if (solrCore == null) {
