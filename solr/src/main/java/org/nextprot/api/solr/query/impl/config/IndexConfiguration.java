@@ -1,14 +1,22 @@
 package org.nextprot.api.solr.query.impl.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class IndexConfiguration implements QueryConfiguration {
+
+	private static final Log LOGGER = LogFactory.getLog(IndexConfiguration.class);
 
 	private static final String BOOST_SEPARATOR = "^";
 	private static final String PLUS = "+";
@@ -111,7 +119,86 @@ public class IndexConfiguration implements QueryConfiguration {
 		}
 		return builder.toString().trim();
 	}
-	
+
+	@Override
+	public SolrQuery convertQuery(Query query) throws BuildSolrQueryException {
+
+		SolrQuery solrQuery = new SolrQuery();
+
+		String queryString = formatQuery(query);
+
+		String filter = query.getFilter();
+		if (filter != null)
+			queryString += " AND filters:" + filter;
+
+		solrQuery.setQuery(queryString);
+		solrQuery.setStart(query.getStart());
+		solrQuery.setRows(query.getRows());
+		solrQuery.setFields(getParameterQuery(IndexParameter.FL));
+		solrQuery.set(IndexParameter.FL.name().toLowerCase(), getParameterQuery(IndexParameter.FL));
+		solrQuery.set(IndexParameter.QF.name().toLowerCase(), getParameterQuery(IndexParameter.QF));
+		solrQuery.set(IndexParameter.PF.name().toLowerCase(), getParameterQuery(IndexParameter.PF));
+		solrQuery.set(IndexParameter.FN.name().toLowerCase(), getParameterQuery(IndexParameter.FN));
+		solrQuery.set(IndexParameter.HI.name().toLowerCase(), getParameterQuery(IndexParameter.HI));
+
+		Map<String, String> otherParameters = getOtherParameters();
+
+		if (otherParameters != null)
+			for (Map.Entry<String, String> e : otherParameters.entrySet())
+				solrQuery.set(e.getKey(), e.getValue());
+
+		String sortName = query.getSort();
+		SortConfig sortConfig;
+
+		if (sortName != null) {
+			sortConfig = getSortConfig(sortName);
+
+			if (sortConfig == null)
+				throw new BuildSolrQueryException("sort " + sortName + " does not exist", query);
+		} else
+			sortConfig = getDefaultSortConfiguration();
+
+		if (query.getOrder() != null) {
+			for (Pair<SolrField, SolrQuery.ORDER> s : sortConfig.getSorting())
+				solrQuery.addSort(s.getFirst().getName(), query.getOrder());
+
+		} else {
+			for (Pair<SolrField, SolrQuery.ORDER> s : sortConfig.getSorting())
+				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
+		}
+
+		if (sortConfig.getBoost() != -1) {
+			solrQuery.set("boost", "sum(1.0,product(div(log(informational_score),6.0),div(" + sortConfig.getBoost() + ",100.0)))");
+		}
+
+		return solrQuery;
+	}
+
+	@Override
+	public SolrQuery convertIdQuery(Query query) {
+
+		LOGGER.debug("Query index name:" + query.getIndexName());
+		LOGGER.debug("Query config name: "+ query.getConfigName());
+		String solrReadyQueryString = formatQuery(query);
+		String filter = query.getFilter();
+		if (filter != null)
+			solrReadyQueryString += " AND filters:" + filter;
+
+		LOGGER.debug("Solr-ready query       : " + solrReadyQueryString);
+
+		SolrQuery solrQuery = new SolrQuery();
+		solrQuery.setQuery(solrReadyQueryString);
+		solrQuery.setRows(0);
+		solrQuery.set("facet", true);
+		solrQuery.set("facet.field", "id");
+		solrQuery.set("facet.method", "enum");
+		solrQuery.set("facet.query", solrReadyQueryString);
+		solrQuery.set("facet.limit", 30000);
+		logSolrQuery("convertIdQuery", solrQuery);
+
+		return solrQuery;
+	}
+
 	// 
 	//	Getters & Setters
 	//
@@ -143,4 +230,12 @@ public class IndexConfiguration implements QueryConfiguration {
 		return this.otherParameters;
 	}
 
+	private void logSolrQuery(String context, SolrQuery sq) {
+		Set<String> params = new TreeSet<>();
+		for (String p : sq.getParameterNames()) params.add(p + " : " + sq.get(p));
+		LOGGER.debug("SolrQuery ============================================================== in " + context);
+		for (String p : params) {
+			LOGGER.debug("SolrQuery " + p);
+		}
+	}
 }
