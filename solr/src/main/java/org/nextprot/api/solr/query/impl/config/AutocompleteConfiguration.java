@@ -5,13 +5,11 @@ import org.nextprot.api.solr.query.Query;
 
 public class AutocompleteConfiguration extends IndexConfiguration {
 
-	private static final String AUTOCOMPLETE = "autocomplete";
-
 	private final static char STAR = '*';
 	private final static String RANDOM_STRING = "dfjhgdfjh";
 	
 	public AutocompleteConfiguration(IndexConfiguration parentConfiguration) {
-		super(AUTOCOMPLETE, parentConfiguration);
+		super(Mode.AUTOCOMPLETE, parentConfiguration);
 	}
 	
 	/**

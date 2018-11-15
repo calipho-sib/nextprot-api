@@ -6,6 +6,7 @@ import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.query.impl.config.Mode;
 
 public interface SolrService {
 
@@ -31,7 +32,7 @@ public interface SolrService {
 	Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Build a query in search index mode */
-	Query buildQueryForSearchIndexes(Entity entity, String configurationName, QueryRequest request);
+	Query buildQueryForSearchIndexes(Entity entity, Mode configuration, QueryRequest request);
 
 	/** Build a query in protein list mode */
 	Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);

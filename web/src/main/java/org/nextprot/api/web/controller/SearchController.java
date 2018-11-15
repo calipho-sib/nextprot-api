@@ -13,6 +13,7 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.query.impl.config.Mode;
 import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
@@ -157,10 +158,10 @@ public class SearchController {
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, "pl_search", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, Mode.PL_SEARCH, queryRequest);
 
 			} else {
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, "simple", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, Mode.SIMPLE, queryRequest);
 
 			}
 

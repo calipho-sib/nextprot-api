@@ -5,6 +5,7 @@ import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.core.impl.SolrGoldAndSilverEntryCore;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
+import org.nextprot.api.solr.query.impl.config.Mode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,8 +45,8 @@ public class GoldAndSilverEntryCore implements SolrCore {
 	}
 
 	@Override
-	public IndexConfiguration getConfig(String configName) {
-		return core.getConfig(configName);
+	public IndexConfiguration getConfig(Mode mode) {
+		return core.getConfig(mode);
 	}
 
 	@Override

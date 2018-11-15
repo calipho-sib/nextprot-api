@@ -27,6 +27,7 @@ import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
+import org.nextprot.api.solr.query.impl.config.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -215,28 +216,28 @@ public class SolrServiceImpl implements SolrService {
 
 	@Override
 	public Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(entity, "autocomplete", queryString, quality, sort, order, start, rows, filter);
+		return buildQuery(entity, Mode.AUTOCOMPLETE, queryString, quality, sort, order, start, rows, filter);
 	}
 
 	@Override
-	public Query buildQueryForSearchIndexes(Entity entity, String configurationName, QueryRequest request) {
-		return this.buildQuery(entity, configurationName, request);
+	public Query buildQueryForSearchIndexes(Entity entity, Mode mode, QueryRequest request) {
+		return this.buildQuery(entity, mode, request);
 	}
 
 	@Override
 	public Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(entity, "pl_search", queryString, quality, sort, order, start, rows, filter);
+		return buildQuery(entity, Mode.PL_SEARCH, queryString, quality, sort, order, start, rows, filter);
 	}
 
-	private Query buildQuery(Entity entity, String configurationName, QueryRequest request) {
-		LOGGER.debug("calling buildQuery() with entityName=" + entity.getName() + ", configName=" + configurationName) ;
+	private Query buildQuery(Entity entity, Mode configuration, QueryRequest request) {
+		LOGGER.debug("calling buildQuery() with entityName=" + entity.getName() + ", configName=" + configuration.getName()) ;
 		LOGGER.debug("\n--------------\nQueryRequest:\n--------------\n"+request.toPrettyString()+"\n--------------");
-		Query q = buildQuery(entity, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Query q = buildQuery(entity, configuration, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
 		LOGGER.debug("\n--------------\nQuery:\n--------------\n" + q.toPrettyString() + "\n--------------");
 		return q;
 	}
 
-	private Query buildQuery(Entity entity, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+	private Query buildQuery(Entity entity, Mode configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 
 		SolrCore solrCore = solrCoreRepository.getSolrCore(SolrCore.Alias.fromEntityAndQuality(entity, quality));
 
@@ -268,7 +269,7 @@ public class SolrServiceImpl implements SolrService {
 
 		QueryExecutor executor = new QueryExecutor(core);
 
-		SolrQuery solrQuery = getConfig(core, query.getConfigName()).convertIdQuery(query);
+		SolrQuery solrQuery = getConfig(core, query.getConfig()).convertIdQuery(query);
 		logSolrQuery("executeIdQuery", solrQuery);
 
 		try {
@@ -289,16 +290,16 @@ public class SolrServiceImpl implements SolrService {
     	QueryExecutor executor = new QueryExecutor(core);
 
     	try {
-		    SolrQuery solrQuery = getConfig(core, query.getConfigName()).convertQuery(query);
+		    SolrQuery solrQuery = getConfig(core, query.getConfig()).convertQuery(query);
 		    return executor.execute(solrQuery);
 	    } catch (SolrServerException e) {
             throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
         }
     }
 
-    private IndexConfiguration getConfig(SolrCore solrCore, String configName) {
+    private IndexConfiguration getConfig(SolrCore solrCore, Mode mode) {
 
-	    return (configName == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(configName);
+	    return (mode == null) ? solrCore.getDefaultConfig() : solrCore.getConfig(mode);
     }
 
     private SolrCore getSolrCore(Query query) {

@@ -9,6 +9,7 @@ import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.FieldConfigSet;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexParameter;
+import org.nextprot.api.solr.query.impl.config.Mode;
 import org.nextprot.api.solr.query.impl.config.SortConfig;
 
 public class SolrCvCore extends SolrCoreBase {
@@ -24,7 +25,7 @@ public class SolrCvCore extends SolrCoreBase {
 	@Override
 	protected IndexConfiguration newDefaultConfiguration() {
 
-		IndexConfiguration defaultConfig = IndexConfiguration.SIMPLE();
+		IndexConfiguration defaultConfig = new IndexConfiguration(Mode.SIMPLE);
 
 		defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
 				.add(CvSolrField.AC)
@@ -99,7 +100,7 @@ public class SolrCvCore extends SolrCoreBase {
 	protected void setupConfigurations() {
 
 		addConfiguration(defaultConfiguration);
-		setConfigAsDefault(SIMPLE);
+		setConfigAsDefault(Mode.SIMPLE);
 		addConfiguration(autocompleteConfiguration);
 	}
 

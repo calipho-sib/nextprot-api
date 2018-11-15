@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core;
 
 
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
+import org.nextprot.api.solr.query.impl.config.Mode;
 
 public interface SolrCore {
 
@@ -15,7 +16,7 @@ public interface SolrCore {
 	SolrField[] getSchema();
 
 	IndexConfiguration getDefaultConfig();
-	IndexConfiguration getConfig(String configName);
+	IndexConfiguration getConfig(Mode mode);
 
 	/** @return a new instance of a solr client */
 	SolrHttpClient newSolrClient();

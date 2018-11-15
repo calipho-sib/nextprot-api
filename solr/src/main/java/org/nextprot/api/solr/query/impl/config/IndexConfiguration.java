@@ -3,6 +3,7 @@ package org.nextprot.api.solr.query.impl.config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
@@ -20,35 +21,32 @@ public class IndexConfiguration implements QueryConfiguration {
 
 	private static final String BOOST_SEPARATOR = "^";
 	private static final String PLUS = "+";
-	public static final String SIMPLE = "simple";
 
 	final static String WHITESPACE = " ";
 	
-	private String name;
+	private Mode mode;
 	private final Map<IndexParameter, FieldConfigSet> fieldConfigSets;
 	private final Map<String, SortConfig> sortConfigs;
 	protected final Map<String, String> otherParameters;
 
 	private String defaultSortName;
 
-	public IndexConfiguration(String name) {
-		this.name = name;
+	public IndexConfiguration(Mode mode) {
+		NPreconditions.checkNotNull(mode, "Solr query configuration mode is undefined");
+
+		this.mode = mode;
 		this.fieldConfigSets = new HashMap<>();
 		this.sortConfigs = new HashMap<>();
 		this.otherParameters = new HashMap<>();
 	}
 	
-	public IndexConfiguration(String name, IndexConfiguration originalConfiguration) {
-		this(name);
+	public IndexConfiguration(Mode mode, IndexConfiguration originalConfiguration) {
+		this(mode);
 		
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
 		this.sortConfigs.putAll(originalConfiguration.getSortConfigs());
 		this.otherParameters.putAll(originalConfiguration.getOtherParameters());
 		this.defaultSortName = originalConfiguration.getDefaultSortConfiguration().getName();
-	}
-
-	public static IndexConfiguration SIMPLE() {
-		return new IndexConfiguration(SIMPLE);
 	}
 
 	public void addConfigSet(FieldConfigSet configSet) {
@@ -178,7 +176,7 @@ public class IndexConfiguration implements QueryConfiguration {
 	public SolrQuery convertIdQuery(Query query) {
 
 		LOGGER.debug("Query index name:" + query.getIndexName());
-		LOGGER.debug("Query config name: "+ query.getConfigName());
+		LOGGER.debug("Query config name: "+ query.getConfig().getName());
 		String solrReadyQueryString = formatQuery(query);
 		String filter = query.getFilter();
 		if (filter != null)
@@ -211,8 +209,8 @@ public class IndexConfiguration implements QueryConfiguration {
 		return sortConfigs;
 	}
 
-	public String getName() {
-		return name;
+	public Mode getMode() {
+		return mode;
 	}
 
 	public SortConfig getDefaultSortConfiguration() {

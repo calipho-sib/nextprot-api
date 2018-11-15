@@ -9,6 +9,7 @@ import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.impl.config.Mode;
 import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
@@ -94,7 +95,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			    queryRequest.setQuery("");
             }
 
-			return queryService.buildQueryForSearchIndexes(entity, "simple", queryRequest);
+			return queryService.buildQueryForSearchIndexes(entity, Mode.SIMPLE, queryRequest);
 		}
 
 	}
@@ -105,8 +106,8 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	}
 
 	@Override
-	public Query buildQueryForSearchIndexes(Entity entity, String configurationName, QueryRequest request) {
-		return queryService.buildQueryForSearchIndexes(entity, configurationName, request);
+	public Query buildQueryForSearchIndexes(Entity entity, Mode configuration, QueryRequest request) {
+		return queryService.buildQueryForSearchIndexes(entity, configuration, request);
 	}
 
 	@Override
@@ -132,6 +133,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 	    queryRequest.setQuery(queryString);
 
-        return queryService.buildQueryForSearchIndexes(entity, "pl_search", queryRequest);
+        return queryService.buildQueryForSearchIndexes(entity, Mode.PL_SEARCH, queryRequest);
     }
 }

@@ -5,11 +5,8 @@ import org.nextprot.api.solr.query.Query;
 
 public class SearchByIdConfiguration extends IndexConfiguration {
 
-	public static final String ID_SEARCH = "id";
-	public static final String PL_SEARCH = "pl_search";
-
-	public SearchByIdConfiguration(String name) {
-		super(name);
+	public SearchByIdConfiguration(Mode mode) {
+		super(mode);
 	}
 	
 	@Override
