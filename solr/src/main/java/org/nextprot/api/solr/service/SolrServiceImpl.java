@@ -15,7 +15,6 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrHttpClient;
@@ -242,7 +241,7 @@ public class SolrServiceImpl implements SolrService {
 		SolrCore solrCore = solrCoreRepository.getSolrCore(SolrCore.Alias.fromEntityAndQuality(entity, quality));
 
 		Query q = new Query(solrCore).addQuery(queryString);
-		q.setConfiguration(configuration);
+		q.setSearchMode(configuration);
 
 		q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
 		q.start((start != null) ? Integer.parseInt(start) : 0);
@@ -269,7 +268,7 @@ public class SolrServiceImpl implements SolrService {
 
 		QueryExecutor executor = new QueryExecutor(core);
 
-		SolrQuery solrQuery = getConfig(core, query.getConfig()).convertIdQuery(query);
+		SolrQuery solrQuery = query.getQueryConfiguration().convertIdQuery(query);
 		logSolrQuery("executeIdQuery", solrQuery);
 
 		try {
@@ -290,18 +289,11 @@ public class SolrServiceImpl implements SolrService {
     	QueryExecutor executor = new QueryExecutor(core);
 
     	try {
-		    SolrQuery solrQuery = getConfig(core, query.getConfig()).convertQuery(query);
+		    SolrQuery solrQuery = query.getQueryConfiguration().convertQuery(query);
 		    return executor.execute(solrQuery);
 	    } catch (SolrServerException e) {
             throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
         }
-    }
-
-    private QueryConfiguration getConfig(SolrCore solrCore, SearchMode mode) {
-
-	    QueryConfigurations configs = solrCore.getQueryConfigurations();
-
-	    return (mode == null) ? configs.getDefaultConfig() : configs.getConfig(mode);
     }
 
     private SolrCore getSolrCore(Query query) {

@@ -177,7 +177,7 @@ public class IndexConfiguration implements QueryConfiguration {
 	public SolrQuery convertIdQuery(Query query) {
 
 		LOGGER.debug("Query index name:" + query.getIndexName());
-		LOGGER.debug("Query config name: "+ query.getConfig().getName());
+		LOGGER.debug("Query config name: "+ query.getSearchMode().getName());
 		String solrReadyQueryString = formatQuery(query);
 		String filter = query.getFilter();
 		if (filter != null)

@@ -2,6 +2,7 @@ package org.nextprot.api.solr.query;
 
 import com.google.common.base.Preconditions;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
@@ -11,7 +12,8 @@ public class Query {
 
 	private String indexName;
 	private SolrCore solrCore;
-	private SearchMode configuration;
+	private SearchMode searchMode;
+	private QueryConfiguration queryConfiguration;
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
 	private String sort;
@@ -20,16 +22,17 @@ public class Query {
 	private int rows;
     
     public Query(SolrCore solrCore) {
-		this(solrCore, null);
+		this(solrCore, solrCore.getQueryConfigurations().getDefaultConfig().getMode());
 	}
 	
-	public Query(SolrCore solrCore, SearchMode configuration) {
+	public Query(SolrCore solrCore, SearchMode searchMode) {
 
 		Preconditions.checkNotNull(solrCore);
 
 		this.solrCore = solrCore;
 		this.indexName = solrCore.getAlias().getName();
-		this.configuration = configuration;
+		this.searchMode = searchMode;
+		this.queryConfiguration = solrCore.getQueryConfigurations().getConfig(searchMode);
 	}
 
 
@@ -72,12 +75,16 @@ public class Query {
 		return solrCore;
 	}
 
-	public SearchMode getConfig() {
-		return configuration;
+	public SearchMode getSearchMode() {
+		return searchMode;
 	}
-	
-	public void setConfiguration(SearchMode configuration) {
-		this.configuration = configuration;
+
+	public QueryConfiguration getQueryConfiguration() {
+		return queryConfiguration;
+	}
+
+	public void setSearchMode(SearchMode searchMode) {
+		this.searchMode = searchMode;
 	}
 
 	/**
@@ -143,7 +150,7 @@ public class Query {
 		StringBuilder builder = new StringBuilder();
 		builder.append("indexName       : "+indexName + "\n");
 		builder.append("index.getAlias  : "+solrCore.getAlias().getName() + "\n");
-		builder.append("configuration   : "+configuration + "\n");
+		builder.append("configuration   : "+ searchMode + "\n");
 		builder.append("queryString     : "+queryString + "\n");
 		builder.append("filter          : "+filter + "\n");
 		builder.append("sort            : "+sort + "\n");
@@ -164,7 +171,7 @@ public class Query {
 		builder.append(NEWLINE);
 		builder.append(solrCore.getAlias().getName());
 		builder.append(NEWLINE);
-		builder.append(configuration);
+		builder.append(searchMode);
 		builder.append(NEWLINE);
 		builder.append(queryString);
 		builder.append(NEWLINE);

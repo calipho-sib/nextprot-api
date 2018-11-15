@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -253,6 +254,26 @@ public class SearchResult  {
 				return ((Long)m2.get(COLLATION_HITS)).compareTo((Long)m1.get(COLLATION_HITS));
 			}
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SearchResult that = (SearchResult) o;
+		return found == that.found &&
+				start == that.start &&
+				rows == that.rows &&
+				Objects.equals(entity, that.entity) &&
+				Objects.equals(index, that.index) &&
+				Objects.equals(results, that.results) &&
+				Objects.equals(facets, that.facets) &&
+				Objects.equals(spellcheck, that.spellcheck);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(entity, index, found, start, rows, results, facets, spellcheck);
 	}
 }
 
