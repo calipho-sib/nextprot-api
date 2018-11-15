@@ -1,7 +1,7 @@
 package org.nextprot.api.solr.query;
 
 
-public interface QueryBuilder {
+public interface QueryConfiguration {
 
 	/**
 	 * It splits the query coming for the controller in tokens 
@@ -10,5 +10,5 @@ public interface QueryBuilder {
 	 * @param query
 	 * @return
 	 */
-	String buildQuery(Query query);
+	String formatQuery(Query query);
 }

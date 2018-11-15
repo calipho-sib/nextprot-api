@@ -1,14 +1,14 @@
 package org.nextprot.api.solr.query.impl.config;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.solr.query.Query;
-import org.nextprot.api.solr.query.QueryBuilder;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class IndexConfiguration implements QueryBuilder {
+public class IndexConfiguration implements QueryConfiguration {
 
 	private static final String BOOST_SEPARATOR = "^";
 	private static final String PLUS = "+";
@@ -69,7 +69,7 @@ public class IndexConfiguration implements QueryBuilder {
 	 * @return
 	 */
 	@Override
-	public String buildQuery(Query query) {
+	public String formatQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
 
         String[] tokens = query.getQueryString(true).split(WHITESPACE);

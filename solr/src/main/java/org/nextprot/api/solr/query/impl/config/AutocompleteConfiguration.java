@@ -25,9 +25,9 @@ public class AutocompleteConfiguration extends IndexConfiguration {
 	 * @return
 	 */
 	@Override
-	public String buildQuery(Query query) {
+	public String formatQuery(Query query) {
 		String initialQuery = query.getQueryString(true);
-		String queryString = super.buildQuery(query);
+		String queryString = super.formatQuery(query);
 		
 		// finishes with space
 		if(initialQuery.charAt(initialQuery.length()-1) == WHITESPACE.charAt(0)) {
