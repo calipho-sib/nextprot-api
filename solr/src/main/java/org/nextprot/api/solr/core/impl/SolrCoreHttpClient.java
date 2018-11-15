@@ -1,13 +1,13 @@
 package org.nextprot.api.solr.core.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.params.SolrParams;
 import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.indexation.SolrIndexationClient;
 import org.nextprot.api.solr.indexation.impl.HttpSolrIndexationClient;
@@ -56,8 +56,8 @@ public class SolrCoreHttpClient implements SolrHttpClient {
     }
 
     @Override
-    public QueryResponse query(SolrParams params, SolrRequest.METHOD method) throws SolrServerException {
-        return solrQueryClient.query(params, method);
+    public QueryResponse query(SolrQuery query, SolrRequest.METHOD method) throws SolrServerException {
+        return solrQueryClient.query(query, method);
     }
 
 	@Override
