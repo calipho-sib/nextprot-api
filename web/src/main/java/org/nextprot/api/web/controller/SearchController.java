@@ -57,7 +57,7 @@ public class SearchController {
 	@RequestMapping(value = "/sparql/run", method = { RequestMethod.GET })
 	@ResponseBody
 	public Map<String,Object> runQuery(@RequestParam(value = "queryId", required = true) String queryId) {
-		Map<String,Object> result = new HashMap<String, Object>();
+		Map<String,Object> result = new HashMap<>();
 		result.put("queryId", queryId);
 		try {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryId);
@@ -71,13 +71,13 @@ public class SearchController {
 	}
 
 	
-	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
+	@RequestMapping(value = "/search/{entity}", method = { RequestMethod.POST })
 	@ResponseBody
-	public SearchResult search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest) {
+	public SearchResult search(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest) {
 
-		if (this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
+		if (this.queryService.checkSolrCore(entityName, queryRequest.getQuality())) {
 
-			Query query = queryBuilderService.buildQueryForSearch(queryRequest, indexName);
+			Query query = queryBuilderService.buildQueryForSearch(queryRequest, entityName);
 
 			try {
 				return queryService.executeQuery(query);
@@ -86,14 +86,14 @@ public class SearchController {
 				throw new NextProtException(e);
 			}
 		} else {
-			throw new NextProtException("error: index " + indexName + " is not available");
+			throw new NextProtException("error: entity " + entityName + " is not available");
 		}
 	}
 
-	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
-	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
+	@ApiMethod(path = "/autocomplete/{entity}", verb = ApiVerb.GET, description = "")
+	@RequestMapping(value="/autocomplete/{entity}", method={RequestMethod.GET, RequestMethod.POST})
 	public AutocompleteSearchResult autocomplete(
-			@ApiQueryParam(name="index", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("index") String indexName,
+			@ApiQueryParam(name="entity", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("entity") String entityName,
 			@ApiQueryParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
 			@ApiQueryParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
 			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
@@ -101,9 +101,9 @@ public class SearchController {
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
 			@RequestParam(value="filter", required=false) String filter) {
 		
-		if (this.queryService.checkSolrCore(indexName, quality)) {
+		if (this.queryService.checkSolrCore(entityName, quality)) {
 
-			Query q = this.queryBuilderService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, "0", filter);
+			Query q = this.queryBuilderService.buildQueryForAutocomplete(entityName, queryString, quality, sort, order, start, "0", filter);
 
 			try {
 				return convert(queryService.executeQuery(q));
@@ -111,7 +111,7 @@ public class SearchController {
 				throw new NextProtException(e);
 			}
 		} else {
-			throw new NextProtException("error: index " + indexName + " is not available");
+			throw new NextProtException("error: entity " + entityName + " is not available");
 		}
 	}
 
@@ -135,16 +135,10 @@ public class SearchController {
 		return autocompleteResult;
 	}
 
-	/**
-	 * @param indexName
-	 * @param queryRequest
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
-	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
+	@RequestMapping(value="/search-ids/{entity}", method={ RequestMethod.POST })
+	public String searchIds(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest, Model model) {
 		
-		if (this.queryService.checkSolrCore(indexName, queryRequest.getQuality())) {
+		if (this.queryService.checkSolrCore(entityName, queryRequest.getQuality())) {
 			
 			SearchResult result;
 
@@ -152,14 +146,14 @@ public class SearchController {
 
 			if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 
-				Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+				Set<String> accessions = new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
-				query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entityName, "pl_search", queryRequest);
 
 			} else {
-				query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entityName, "simple", queryRequest);
 
 			}
 

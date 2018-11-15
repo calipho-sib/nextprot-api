@@ -207,9 +207,9 @@ public class SolrServiceImpl implements SolrService {
     }
 
 	@Override
-	public boolean checkSolrCore(String indexName, String quality) {
+	public boolean checkSolrCore(String entityName, String quality) {
 
-		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(indexName, quality));
+		return solrCoreRepository.hasSolrCore(getSolrCoreAliasName(entityName, quality));
 	}
 
 	@Override
@@ -338,8 +338,8 @@ public class SolrServiceImpl implements SolrService {
 		info.append(message).append("\n");
 	}
 
-	private String getSolrCoreAliasName(String indexName, String quality) {
+	private String getSolrCoreAliasName(String entityName, String quality) {
 
-    	return (indexName.equals("entry") && (quality != null && quality.equalsIgnoreCase("gold"))) ? "gold-entry" : indexName;
+    	return (entityName.equals("entry") && (quality != null && quality.equalsIgnoreCase("gold"))) ? "gold-entry" : entityName;
 	}
 }

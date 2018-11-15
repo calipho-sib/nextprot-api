@@ -24,7 +24,7 @@ public interface SolrService {
 	String indexEntry(String entryAccession, boolean isGold);
 
 	/** Verifies that the specified name is an existing index */
-	boolean checkSolrCore(String indexName, String quality);
+	boolean checkSolrCore(String entityName, String quality);
 
 	/** Build a query in autocomplete mode */
 	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
