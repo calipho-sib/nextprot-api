@@ -19,20 +19,21 @@ import java.util.Collection;
 
 public class SolrCoreHttpClient implements SolrHttpClient {
 
-	private final String coreName;
 	private final String baseUrl;
+	private final String url;
     private final SolrQueryClient solrQueryClient;
     private final SolrIndexationClient solrIndexationClient;
 
-    public SolrCoreHttpClient(String coreName, HttpSolrServer httpSolrServer) {
+    public SolrCoreHttpClient(String coreName, String baseCoreUrl) {
 
         Preconditions.checkNotNull(coreName, "solr core name should be defined");
-        Preconditions.checkNotNull(httpSolrServer, "http solr server should be defined");
+        Preconditions.checkNotNull(baseCoreUrl, "base url should be defined");
 
-	    this.coreName = coreName;
-	    baseUrl = removeLastPotentialSlash(httpSolrServer.getBaseURL());
-        solrQueryClient = new HttpSolrQueryClient(httpSolrServer);
-        solrIndexationClient = new HttpSolrIndexationClient(httpSolrServer);
+	    baseUrl = removeLastPotentialSlash(baseCoreUrl);
+	    url = baseUrl + '/' + coreName;
+	    HttpSolrServer solrServer = new HttpSolrServer(url);
+        solrQueryClient = new HttpSolrQueryClient(solrServer);
+        solrIndexationClient = new HttpSolrIndexationClient(solrServer);
     }
 
 	private String removeLastPotentialSlash(String baseUrl) {
@@ -67,6 +68,6 @@ public class SolrCoreHttpClient implements SolrHttpClient {
 
 	@Override
 	public String getURL() {
-		return baseUrl + '/' + coreName;
+		return url;
 	}
 }

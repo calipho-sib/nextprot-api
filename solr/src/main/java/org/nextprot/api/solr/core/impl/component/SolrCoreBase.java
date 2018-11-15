@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl.component;
 
 
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.impl.SolrCoreHttpClient;
@@ -73,7 +72,7 @@ public abstract class SolrCoreBase implements SolrCore {
 	@Override
 	public SolrCoreHttpClient newSolrClient() {
 
-		return new SolrCoreHttpClient(name, new HttpSolrServer(solrServerBaseURL));
+		return new SolrCoreHttpClient(name, solrServerBaseURL);
 	}
 
 	protected abstract IndexConfiguration newDefaultConfiguration();
