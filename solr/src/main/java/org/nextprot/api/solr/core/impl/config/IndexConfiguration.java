@@ -12,11 +12,12 @@ import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.query.Query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class IndexConfiguration implements QueryConfiguration {
+public class IndexConfiguration<F extends SolrField> implements QueryConfiguration<F> {
 
 	private static final Log LOGGER = LogFactory.getLog(IndexConfiguration.class);
 
@@ -26,8 +27,8 @@ public class IndexConfiguration implements QueryConfiguration {
 	final static String WHITESPACE = " ";
 	
 	private SearchMode mode;
-	private final Map<IndexParameter, FieldConfigSet> fieldConfigSets;
-	private final Map<SortConfig.Criteria, SortConfig> sortConfigs;
+	private final Map<IndexParameter, FieldConfigSet<F>> fieldConfigSets;
+	private final Map<SortConfig.Criteria, SortConfig<F>> sortConfigs;
 	protected final Map<String, String> otherParameters;
 
 	private SortConfig.Criteria defaultSortCriteria;
@@ -50,17 +51,21 @@ public class IndexConfiguration implements QueryConfiguration {
 		this.defaultSortCriteria = originalConfiguration.getDefaultSortConfiguration().getCriteria();
 	}
 
-	public void addConfigSet(FieldConfigSet configSet) {
+	public void addConfigSet(FieldConfigSet<F> configSet) {
 		this.fieldConfigSets.put(configSet.getParameter(), configSet);
 	}
-	
-	public void addSortConfig(SortConfig... sortConfigs) {
-		for(SortConfig config : sortConfigs)
+
+	public void addSortConfig(SortConfig<F> sortConfig) {
+		this.sortConfigs.put(sortConfig.getCriteria(), sortConfig);
+	}
+
+	public void addSortConfigs(List<SortConfig<F>> sortConfigs) {
+		for(SortConfig<F> config : sortConfigs)
 			this.sortConfigs.put(config.getCriteria(), config);
 	}
 	
-	public SortConfig getSortConfig(String name) {
-		return sortConfigs.getOrDefault(name, null);
+	public SortConfig<F> getSortConfig(SortConfig.Criteria criteria) {
+		return sortConfigs.getOrDefault(criteria, null);
 	}
 	
 	public IndexConfiguration addOtherParameter(String parameterName, String parameterValue) {
@@ -79,7 +84,7 @@ public class IndexConfiguration implements QueryConfiguration {
 	public String formatQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
 
-        String[] tokens = query.getQueryString(true).split(WHITESPACE);
+        String[] tokens = query.getQueryStringEscapeColon().split(WHITESPACE);
 
         for (int i = 0; i < tokens.length; i++) {
             queryBuilder.append(PLUS).append(tokens[i]);
@@ -101,12 +106,12 @@ public class IndexConfiguration implements QueryConfiguration {
 	 */
 	public String getParameterQuery(IndexParameter parameter) {
 		StringBuilder builder = new StringBuilder();
-		FieldConfigSet configSet;
+		FieldConfigSet<F> configSet;
 		
 		if(this.fieldConfigSets.containsKey(parameter)) {
 			configSet = this.fieldConfigSets.get(parameter);
 			
-			for(SolrField field : configSet.getIndexFields()) {
+			for(F field : configSet.getIndexFields()) {
                 int boost = configSet.getBoostFactor(field);
 
 				builder.append(field.getName());
@@ -146,23 +151,23 @@ public class IndexConfiguration implements QueryConfiguration {
 			for (Map.Entry<String, String> e : otherParameters.entrySet())
 				solrQuery.set(e.getKey(), e.getValue());
 
-		String sortName = query.getSort();
-		SortConfig sortConfig;
+		SortConfig.Criteria criteria = query.getSort();
+		SortConfig<F> sortConfig;
 
-		if (sortName != null) {
-			sortConfig = getSortConfig(sortName);
+		if (criteria != null) {
+			sortConfig = getSortConfig(criteria);
 
 			if (sortConfig == null)
-				throw new MissingSortConfigException(sortName, query);
+				throw new MissingSortConfigException(criteria, query);
 		} else
 			sortConfig = getDefaultSortConfiguration();
 
 		if (query.getOrder() != null) {
-			for (Pair<SolrField, SolrQuery.ORDER> s : sortConfig.getSorting())
+			for (Pair<F, SolrQuery.ORDER> s : sortConfig.getSorting())
 				solrQuery.addSort(s.getFirst().getName(), query.getOrder());
 
 		} else {
-			for (Pair<SolrField, SolrQuery.ORDER> s : sortConfig.getSorting())
+			for (Pair<F, SolrQuery.ORDER> s : sortConfig.getSorting())
 				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
 		}
 
@@ -202,11 +207,11 @@ public class IndexConfiguration implements QueryConfiguration {
 	//	Getters & Setters
 	//
 	
-	public Map<IndexParameter, FieldConfigSet> getFieldConfigSets() {
+	public Map<IndexParameter, FieldConfigSet<F>> getFieldConfigSets() {
 		return fieldConfigSets;
 	}
 
-	public Map<SortConfig.Criteria, SortConfig> getSortConfigs() {
+	public Map<SortConfig.Criteria, SortConfig<F>> getSortConfigs() {
 		return sortConfigs;
 	}
 
@@ -214,7 +219,7 @@ public class IndexConfiguration implements QueryConfiguration {
 		return mode;
 	}
 
-	public SortConfig getDefaultSortConfiguration() {
+	public SortConfig<F> getDefaultSortConfiguration() {
 		if(defaultSortCriteria != null && sortConfigs.containsKey(this.defaultSortCriteria))
 			return sortConfigs.get(defaultSortCriteria);
 		else throw new SearchConfigException("No sorting set as default");

@@ -2,9 +2,10 @@ package org.nextprot.api.solr.core.impl.component;
 
 
 import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.SolrCoreHttpClient;
 
-public abstract class SolrCoreBase implements SolrCore {
+public abstract class SolrCoreBase<F extends SolrField> implements SolrCore<F> {
 
 	private final String name;
 	private final String solrServerBaseURL;

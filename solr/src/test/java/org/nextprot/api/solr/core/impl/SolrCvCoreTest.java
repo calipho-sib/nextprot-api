@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -31,11 +32,11 @@ public class SolrCvCoreTest {
 	@Test
 	public void compareResultsFromCrickAndKant() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
-		SolrCore cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
+		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
+		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
 
-		Query queryBuild = new Query(cvCoreBuild).rows(50).addQuery("MSH6");
-		Query queryAlpha = new Query(cvCoreAlpha).rows(50).addQuery("MSH6");
+		Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(50).addQuery("MSH6");
+		Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(50).addQuery("MSH6");
 
 		SearchResult bResult = executeQuery(queryBuild);
 		SearchResult aResult = executeQuery(queryAlpha);

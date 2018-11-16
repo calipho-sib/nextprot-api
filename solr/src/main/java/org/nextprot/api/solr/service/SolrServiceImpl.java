@@ -19,6 +19,7 @@ import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.core.impl.component.SolrCoreRepository;
+import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.indexation.BufferingSolrIndexer;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrEntryDocumentFactory;
@@ -247,7 +248,7 @@ public class SolrServiceImpl implements SolrService {
 		q.start((start != null) ? Integer.parseInt(start) : 0);
 
 		if (sort != null && sort.length() > 0)
-			q.sort(sort);
+			q.sort(SortConfig.Criteria.valueOf(sort.toUpperCase()));
 
 		if (order != null && (order.equals(SolrQuery.ORDER.asc.name()) || order.equals(SolrQuery.ORDER.desc.name()))) {
 			q.order(SolrQuery.ORDER.valueOf(order));

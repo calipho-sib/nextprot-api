@@ -6,26 +6,27 @@ import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.config.SortConfig;
 
 
-public class Query {
+public class Query<F extends SolrField> {
 
 	private String indexName;
-	private SolrCore solrCore;
+	private SolrCore<F> solrCore;
 	private SearchMode searchMode;
-	private QueryConfiguration queryConfiguration;
+	private QueryConfiguration<F> queryConfiguration;
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
-	private String sort;
+	private SortConfig.Criteria sort;
 	private ORDER order;
 	private int start = 0;
 	private int rows;
     
-    public Query(SolrCore solrCore) {
-		this(solrCore, solrCore.getQueryConfigurations().getDefaultConfig().getMode());
+    public Query(SolrCore<F> solrCore) {
+		this(solrCore, solrCore.getQueryConfigurations().getDefaultMode());
 	}
 	
-	public Query(SolrCore solrCore, SearchMode searchMode) {
+	public Query(SolrCore<F> solrCore, SearchMode searchMode) {
 
 		Preconditions.checkNotNull(solrCore);
 
@@ -36,22 +37,22 @@ public class Query {
 	}
 
 
-	public Query addQuery(String value) {
+	public Query<F> addQuery(String value) {
 		this.queryString=value;
 		return this;
 	}
 	
-	public Query addFilter(String filter) {
+	public Query<F> addFilter(String filter) {
 		this.filter = filter;
 		return this;
 	}
 	
-	public Query sort(String sort) {
+	public Query<F> sort(SortConfig.Criteria sort) {
 		this.sort = sort;
 		return this;
 	}
 	
-	public String getSort() {
+	public SortConfig.Criteria getSort() {
 		return this.sort;
 	}
 	
@@ -71,7 +72,7 @@ public class Query {
 		this.indexName = indexName;
 	}
 
-	public SolrCore getSolrCore() {
+	public SolrCore<F> getSolrCore() {
 		return solrCore;
 	}
 
@@ -79,7 +80,7 @@ public class Query {
 		return searchMode;
 	}
 
-	public QueryConfiguration getQueryConfiguration() {
+	public QueryConfiguration<F> getQueryConfiguration() {
 		return queryConfiguration;
 	}
 
@@ -95,24 +96,30 @@ public class Query {
 		return getQueryStringWithPrivateFieldNames(false);
 	}
 	
-	/**
-	 * Escaping non field related colon is mandatory for SolrService.buildSolrIdQuery() 
-	 * which is called by SolrService.executeIdQuery() called by SearchController.searchIds()
-	 * @param escapeColon
-	 * @return
-	 */
-	public String getQueryString(boolean escapeColon) {
-		return getQueryStringWithPrivateFieldNames(escapeColon);
+
+	public String getQueryStringEscapeColon() {
+
+		return getQueryStringWithPrivateFieldNames(true);
 	}
 
+	/**
+	 * Escaping non field related colon is mandatory for SolrService.buildSolrIdQuery()
+	 * which is called by SolrService.executeIdQuery() called by SearchController.searchIds()
+	 * @return
+	 */
 	private String getQueryStringWithPrivateFieldNames(boolean escapeColon) {
 		if(queryString == null) return null;
 		
 		String qs = this.queryString;
+
 		// remove any backslash
         qs = qs.replace("\\","");        			
+
         // escape <:> everywhere if requested
-        if (escapeColon) qs = qs.replace(":","\\:");   
+        if (escapeColon) {
+        	qs = qs.replace(":","\\:");
+        }
+
         // replace public field names with private ones (known by solr)
         for (SolrField f: solrCore.getSchema()) {
         	if (f.hasPublicName()) {
@@ -120,6 +127,7 @@ public class Query {
                 qs = qs.replace(f.getPublicName() + esc + ":", f.getName() + ":");
         	}
         }
+
         return qs;
 	}
 
@@ -127,7 +135,7 @@ public class Query {
 		return filter;
 	}
 
-	public Query start(int start) {
+	public Query<F> start(int start) {
 		this.start = start;
 		return this;
 	}
@@ -140,7 +148,7 @@ public class Query {
 		return rows;
 	}
 
-	public Query rows(int rows) {
+	public Query<F> rows(int rows) {
 		this.rows = rows;
 		return this;
 	}

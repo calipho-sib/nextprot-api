@@ -2,21 +2,21 @@ package org.nextprot.api.solr.core.impl.component;
 
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SolrCore;
-import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.core.impl.SolrGoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 @Component
-public class GoldAndSilverEntryCore implements SolrCore {
+public class GoldAndSilverEntryCore implements SolrCore<EntrySolrField> {
 
 	@Value("${solr.url}")
 	private String solrServerBaseURL;
 
-	private SolrCore core;
+	private SolrCore<EntrySolrField> core;
 
 	@PostConstruct
 	private void init() {
@@ -34,12 +34,12 @@ public class GoldAndSilverEntryCore implements SolrCore {
 	}
 
 	@Override
-	public SolrField[] getSchema() {
+	public EntrySolrField[] getSchema() {
 		return core.getSchema();
 	}
 
 	@Override
-	public QueryConfigurations getQueryConfigurations() {
+	public QueryConfigurations<EntrySolrField> getQueryConfigurations() {
 		return core.getQueryConfigurations();
 	}
 

@@ -2,89 +2,90 @@ package org.nextprot.api.solr.query;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.solr.core.impl.component.GoldAndSilverEntryCore;
-import org.nextprot.api.solr.core.impl.component.PublicationCore;
+import org.nextprot.api.solr.core.impl.SolrCvCore;
+import org.nextprot.api.solr.core.impl.SolrGoldAndSilverEntryCore;
+import org.nextprot.api.solr.core.impl.SolrPublicationCore;
+import org.nextprot.api.solr.core.impl.schema.CvSolrField;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 
 public class QueryTest {
 
     @Test
     public void testEscapingColon() {
-        Query query = new Query(new PublicationCore());
+        Query<CvSolrField> query = new Query<>(new SolrCvCore(""));
         query.addQuery("GO:0031017");
-        Assert.assertEquals("GO\\:0031017", query.getQueryString(true));
+        Assert.assertEquals("GO\\:0031017", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void testNotEscapingColonTwice() {
-        Query query = new Query(new PublicationCore());
+	    Query<CvSolrField> query = new Query<>(new SolrCvCore(""));
         query.addQuery("GO\\:0031017");
-        Assert.assertEquals("GO\\:0031017", query.getQueryString(true));
+        Assert.assertEquals("GO\\:0031017", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void testEscapingMultipleColons() {
-        Query query = new Query(new PublicationCore());
+	    Query<CvSolrField> query = new Query<>(new SolrCvCore(""));
         query.addQuery("GO:0031017:kokoko");
-        Assert.assertEquals("GO\\:0031017\\:kokoko", query.getQueryString(true));
+        Assert.assertEquals("GO\\:0031017\\:kokoko", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void testNotEscapingMultipleColonsTwice() {
-        Query query = new Query(new PublicationCore());
+	    Query<CvSolrField> query = new Query<>(new SolrCvCore(""));
         query.addQuery("GO\\:0031017\\:kokoko");
-        Assert.assertEquals("GO\\:0031017\\:kokoko", query.getQueryString(true));
+        Assert.assertEquals("GO\\:0031017\\:kokoko", query.getQueryStringEscapeColon());
     }
     
     @Test
     public void testNotEscapingAuthorAndReplacingWithItsPrivateName() {
-        Query query = new Query(new PublicationCore());
+	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
         query.addQuery("author:bairoch");
-        Assert.assertEquals("authors:bairoch", query.getQueryString(true));
+        Assert.assertEquals("authors:bairoch", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void testNotEscapingMultipleFields() {
-        Query query = new Query(new PublicationCore());
-        query.addQuery("author:bairoch title:nextprot year:2004");
-        Assert.assertEquals("authors:bairoch title:nextprot year:2004", query.getQueryString(true));
+	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
+	    query.addQuery("author:bairoch title:nextprot year:2004");
+        Assert.assertEquals("authors:bairoch title:nextprot year:2004", query.getQueryStringEscapeColon());
     }
     
     @Test
     public void testNotEscapingMultipleFieldsButEscapingGo() {
-        Query query = new Query(new PublicationCore());
-        query.addQuery("author:bairoch title:nextprot GO:218374 year:2004");
-        System.out.println(query.getQueryString());
-        Assert.assertEquals("authors:bairoch title:nextprot GO\\:218374 year:2004", query.getQueryString(true));
+	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
+	    query.addQuery("author:bairoch title:nextprot GO:218374 year:2004");
+        Assert.assertEquals("authors:bairoch title:nextprot GO\\:218374 year:2004", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void testEscapingIrrelevantFieldForIndex() {
-        Query query = new Query(new GoldAndSilverEntryCore());
+	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
         query.addQuery("author:bairoch");
-        System.out.println(query.getQueryString());
-        Assert.assertEquals("author\\:bairoch", query.getQueryString(true));
+        Assert.assertEquals("author\\:bairoch", query.getQueryStringEscapeColon());
     }
     
     @Test
     public void testNotEscapingAnithingButReplacingFieldsWithPrivateName() {
-        Query query = new Query(new PublicationCore());
-        query.addQuery("author:bairoch title:nextprot GO:218374 year:2004");
-        Assert.assertEquals("authors:bairoch title:nextprot GO:218374 year:2004", query.getQueryString(false));
+	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
+	    query.addQuery("author:bairoch title:nextprot GO:218374 year:2004");
+        Assert.assertEquals("authors:bairoch title:nextprot GO:218374 year:2004", query.getQueryString());
     }
 
     @Test
     public void testNotEscapingEntryIdField() {
-        Query query = new Query(new GoldAndSilverEntryCore());
-        query.addQuery("id:NX_A0P322");
-        Assert.assertEquals("id:NX_A0P322", query.getQueryString(true));
+	    Query<EntrySolrField> query = new Query<>(new SolrGoldAndSilverEntryCore(""));
+	    query.addQuery("id:NX_A0P322");
+        Assert.assertEquals("id:NX_A0P322", query.getQueryStringEscapeColon());
     }
 
     @Test
     public void test1() {
-        Query query = new Query(new GoldAndSilverEntryCore());
+	    Query<EntrySolrField> query = new Query<>(new SolrGoldAndSilverEntryCore(""));
         query.addQuery("+insulin");
-        String result = query.getQueryString(true);
-        System.out.println(result);
+        String result = query.getQueryStringEscapeColon();
         Assert.assertEquals("+insulin", result);
     }
 }

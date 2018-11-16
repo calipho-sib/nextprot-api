@@ -5,7 +5,6 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
-import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
@@ -16,9 +15,10 @@ import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
-public class SolrCvCore extends SolrCoreBase {
+public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 
 	private static final String NAME = "npcvs1";
 
@@ -28,53 +28,53 @@ public class SolrCvCore extends SolrCoreBase {
 	}
 
 	@Override
-	public SolrField[] getSchema() {
+	public CvSolrField[] getSchema() {
 		return CvSolrField.values();
 	}
 
 	@Override
-	public QueryConfigurations getQueryConfigurations() {
+	public QueryConfigurations<CvSolrField> getQueryConfigurations() {
 
 		return new Configurations();
 	}
 
-	private static class Configurations extends QueryBaseConfigurations {
+	private static class Configurations extends QueryBaseConfigurations<CvSolrField> {
 
 		@Override
-		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations) {
+		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<CvSolrField>> configurations) {
 
-			SortConfig[] sortConfigs = newSortConfigs();
+			List<SortConfig<CvSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration defaultConfig = newDefaultConfiguration(sortConfigs);
+			IndexConfiguration<CvSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
-			AutocompleteConfiguration autocompleteConfig = newAutoCompleteConfiguration(defaultConfig);
+			AutocompleteConfiguration<CvSolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig);
 			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
 
 			return defaultConfig.getMode();
 		}
 
-		private SortConfig[] newSortConfigs() {
+		private List<SortConfig<CvSolrField>> newSortConfigs() {
 
-			return new SortConfig[] {
-					SortConfig.create(SortConfig.Criteria.SCORE, Arrays.asList(
-							Pair.create(CvSolrField.SCORE, ORDER.desc),
-							Pair.create(CvSolrField.FILTERS, ORDER.asc))
+			return Arrays.asList(
+					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
+							new Pair<>(CvSolrField.SCORE, ORDER.desc),
+							new Pair<>(CvSolrField.FILTERS, ORDER.asc))
 					),
-					SortConfig.create(SortConfig.Criteria.NAME, Arrays.asList(
-							Pair.create(CvSolrField.NAME_S, ORDER.asc),
-							Pair.create(CvSolrField.FILTERS, ORDER.asc))
+					new SortConfig<>(SortConfig.Criteria.NAME, Arrays.asList(
+							new Pair<>(CvSolrField.NAME_S, ORDER.asc),
+							new Pair<>(CvSolrField.FILTERS, ORDER.asc))
 					)
-			};
+			);
 		}
 
-		private IndexConfiguration newDefaultConfiguration(SortConfig[] sortConfigs) {
+		private IndexConfiguration<CvSolrField> newDefaultConfiguration(List<SortConfig<CvSolrField>> sortConfigs) {
 
-			IndexConfiguration defaultConfig = new IndexConfiguration(SearchMode.SIMPLE);
+			IndexConfiguration<CvSolrField> defaultConfig = new IndexConfiguration<>(SearchMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
+			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.FL)
 					.add(CvSolrField.AC)
 					.add(CvSolrField.NAME)
 					.add(CvSolrField.SYNONYMS)
@@ -82,7 +82,7 @@ public class SolrCvCore extends SolrCoreBase {
 					.add(CvSolrField.PROPERTIES)
 					.add(CvSolrField.FILTERS));
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
+			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.QF)
 					.addWithBoostFactor(CvSolrField.AC, 64)
 					.addWithBoostFactor(CvSolrField.NAME, 32)
 					.addWithBoostFactor(CvSolrField.SYNONYMS, 32)
@@ -90,7 +90,7 @@ public class SolrCvCore extends SolrCoreBase {
 					.addWithBoostFactor(CvSolrField.PROPERTIES, 8)
 					.addWithBoostFactor(CvSolrField.OTHER_XREFS, 8));
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
+			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.PF)
 					.addWithBoostFactor(CvSolrField.AC, 640)
 					.addWithBoostFactor(CvSolrField.NAME, 320)
 					.addWithBoostFactor(CvSolrField.SYNONYMS, 320)
@@ -106,15 +106,15 @@ public class SolrCvCore extends SolrCoreBase {
 					.addOtherParameter("facet.mincount", "1")
 					.addOtherParameter("facet.sort", "count");
 
-			defaultConfig.addSortConfig(sortConfigs);
+			defaultConfig.addSortConfigs(sortConfigs);
 			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
 
-		private AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration) {
+		private AutocompleteConfiguration<CvSolrField> newAutoCompleteConfiguration(IndexConfiguration<CvSolrField> configuration) {
 
-			AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(configuration);
+			AutocompleteConfiguration<CvSolrField> autocompleteConfig = new AutocompleteConfiguration<>(configuration);
 
 			autocompleteConfig.addOtherParameter("defType", "edismax")
 					.addOtherParameter("facet", "true")

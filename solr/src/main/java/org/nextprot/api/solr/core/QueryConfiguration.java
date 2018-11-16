@@ -2,9 +2,13 @@ package org.nextprot.api.solr.core;
 
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.query.Query;
 
-public interface QueryConfiguration {
+public interface QueryConfiguration<F extends SolrField> {
+
+	void addConfigSet(FieldConfigSet<F> configSet);
 
 	SearchMode getMode();
 
@@ -25,9 +29,9 @@ public interface QueryConfiguration {
 
 	class MissingSortConfigException extends Exception {
 
-		public MissingSortConfigException(String name, Query query) {
+		public MissingSortConfigException(SortConfig.Criteria criteria, Query query) {
 
-			super("sort config " + name + " does not exist: could not build solr query from " + query.toPrettyString());
+			super("sort config " + criteria + " does not exist: could not build solr query from " + query.toPrettyString());
 		}
 	}
 }

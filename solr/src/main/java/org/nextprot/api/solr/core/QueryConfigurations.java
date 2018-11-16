@@ -1,7 +1,7 @@
 package org.nextprot.api.solr.core;
 
-public interface QueryConfigurations {
+public interface QueryConfigurations<F extends SolrField> {
 
-	QueryConfiguration getConfig(SearchMode mode);
-	QueryConfiguration getDefaultConfig();
+	QueryConfiguration<F> getConfig(SearchMode mode);
+	SearchMode getDefaultMode();
 }

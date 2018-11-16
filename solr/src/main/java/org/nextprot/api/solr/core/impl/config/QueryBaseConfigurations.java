@@ -4,13 +4,14 @@ import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
+import org.nextprot.api.solr.core.SolrField;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class QueryBaseConfigurations implements QueryConfigurations {
+public abstract class QueryBaseConfigurations<F extends SolrField> implements QueryConfigurations<F> {
 
-	private final Map<SearchMode, QueryConfiguration> configurations = new HashMap<>();
+	private final Map<SearchMode, QueryConfiguration<F>> configurations = new HashMap<>();
 	private final SearchMode defaultMode;
 
 	public QueryBaseConfigurations() {
@@ -27,7 +28,7 @@ public abstract class QueryBaseConfigurations implements QueryConfigurations {
 	}
 
 	@Override
-	public QueryConfiguration getConfig(SearchMode mode) {
+	public QueryConfiguration<F> getConfig(SearchMode mode) {
 
 		if (configurations.containsKey(mode)) {
 			return configurations.get(mode);
@@ -36,11 +37,11 @@ public abstract class QueryBaseConfigurations implements QueryConfigurations {
 	}
 
 	@Override
-	public QueryConfiguration getDefaultConfig() {
+	public SearchMode getDefaultMode() {
 
-		return configurations.get(defaultMode);
+		return defaultMode;
 	}
 
 	/** setup configurations and return the default search mode */
-	protected abstract SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations);
+	protected abstract SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<F>> configurations);
 }

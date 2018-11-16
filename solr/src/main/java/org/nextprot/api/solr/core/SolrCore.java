@@ -1,7 +1,7 @@
 package org.nextprot.api.solr.core;
 
 
-public interface SolrCore {
+public interface SolrCore<F extends SolrField> {
 
 	/** @return the solr core name */
 	String getName();
@@ -10,10 +10,10 @@ public interface SolrCore {
 	Alias getAlias();
 
 	/** @return the solr core schema */
-	SolrField[] getSchema();
+	F[] getSchema();
 
 	/** @return the different query mode configurations */
-	QueryConfigurations getQueryConfigurations();
+	QueryConfigurations<F> getQueryConfigurations();
 
 	/** @return a new instance of a solr client */
 	SolrHttpClient newSolrClient();

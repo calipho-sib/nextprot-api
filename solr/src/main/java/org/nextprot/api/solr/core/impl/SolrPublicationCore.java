@@ -5,7 +5,6 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
-import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
@@ -16,10 +15,12 @@ import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
-public class SolrPublicationCore extends SolrCoreBase {
+public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 
 	private static final String NAME = "nppublications1";
 
@@ -29,51 +30,51 @@ public class SolrPublicationCore extends SolrCoreBase {
 	}
 
 	@Override
-	public SolrField[] getSchema() {
+	public PublicationSolrField[] getSchema() {
 		return PublicationSolrField.values();
 	}
 
 	@Override
-	public QueryConfigurations getQueryConfigurations() {
+	public QueryConfigurations<PublicationSolrField> getQueryConfigurations() {
 
 		return new Configurations();
 	}
 
-	private static class Configurations extends QueryBaseConfigurations {
+	private static class Configurations extends QueryBaseConfigurations<PublicationSolrField> {
 
 		@Override
-		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations) {
+		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<PublicationSolrField>> configurations) {
 
-			SortConfig[] sortConfigs = newSortConfigs();
+			List<SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration defaultConfig = newDefaultConfiguration(sortConfigs);
+			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
-			AutocompleteConfiguration autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
+			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
 			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
 
 			return defaultConfig.getMode();
 		}
 
-		private SortConfig[] newSortConfigs() {
+		private List<SortConfig<PublicationSolrField>> newSortConfigs() {
 
-			SortConfig sortConfig = SortConfig.create(SortConfig.Criteria.SCORE, Arrays.asList(
-					Pair.create(PublicationSolrField.YEAR, ORDER.desc),
-					Pair.create(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
-					Pair.create(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
-					Pair.create(PublicationSolrField.FIRST_PAGE, ORDER.asc)
-			));
-
-			return new SortConfig[]{ sortConfig };
+			return Collections.singletonList(
+					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
+							new Pair<>(PublicationSolrField.YEAR, ORDER.desc),
+							new Pair<>(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
+							new Pair<>(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
+							new Pair<>(PublicationSolrField.FIRST_PAGE, ORDER.asc))
+					)
+			);
 		}
 
-		private IndexConfiguration newDefaultConfiguration(SortConfig[] sortConfigs) {
+		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs) {
 
-			IndexConfiguration defaultConfig = new IndexConfiguration(SearchMode.SIMPLE);
+			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(SearchMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.FL)
+			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL)
 					.add(PublicationSolrField.ID)
 					.add(PublicationSolrField.AC)
 					.add(PublicationSolrField.YEAR)
@@ -88,7 +89,7 @@ public class SolrPublicationCore extends SolrCoreBase {
 					.add(PublicationSolrField.PRETTY_AUTHORS)
 					.add(PublicationSolrField.FILTERS));
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.QF)
+			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.QF)
 					.addWithBoostFactor(PublicationSolrField.AC, 16)
 					.addWithBoostFactor(PublicationSolrField.YEAR, 16)
 					.addWithBoostFactor(PublicationSolrField.TITLE, 16)
@@ -99,7 +100,7 @@ public class SolrPublicationCore extends SolrCoreBase {
 					//.add(PubField.SOURCE, 8)
 					.addWithBoostFactor(PublicationSolrField.AUTHORS, 8));
 
-			defaultConfig.addConfigSet(new FieldConfigSet(IndexParameter.PF)
+			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.PF)
 					.addWithBoostFactor(PublicationSolrField.AC, 160)
 					.addWithBoostFactor(PublicationSolrField.YEAR, 160)
 					.addWithBoostFactor(PublicationSolrField.TITLE, 160)
@@ -131,20 +132,21 @@ public class SolrPublicationCore extends SolrCoreBase {
 					.addOtherParameter("spellcheck.maxCollations", "10")
 					.addOtherParameter("mm", "100%");
 
-			defaultConfig.addSortConfig(sortConfigs);
+			defaultConfig.addSortConfigs(sortConfigs);
 			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
 
-		private AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration, SortConfig[] sortConfigs) {
+		private AutocompleteConfiguration<PublicationSolrField> newAutoCompleteConfiguration(IndexConfiguration<PublicationSolrField> configuration,
+		                                                                                     List<SortConfig<PublicationSolrField>> sortConfigs) {
 
-			AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(configuration);
+			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = new AutocompleteConfiguration<>(configuration);
 
 			autocompleteConfig
 					.addOtherParameter("facet.field", "text")
 					.addOtherParameter("stopwords", "true");
-			autocompleteConfig.addSortConfig(sortConfigs);
+			autocompleteConfig.addSortConfigs(sortConfigs);
 
 			return autocompleteConfig;
 		}
