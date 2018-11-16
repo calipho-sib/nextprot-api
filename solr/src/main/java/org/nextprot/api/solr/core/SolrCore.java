@@ -13,7 +13,7 @@ public interface SolrCore<F extends SolrField> {
 	F[] getSchema();
 
 	/** @return the different query mode configurations */
-	QueryConfigurations<F> getQueryConfigurations();
+	QuerySettings<F> getQuerySettings();
 
 	/** @return a new instance of a solr client */
 	SolrHttpClient newSolrClient();

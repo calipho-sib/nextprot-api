@@ -1,6 +1,6 @@
 package org.nextprot.api.solr.core.impl.component;
 
-import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrHttpClient;
 import org.nextprot.api.solr.core.impl.SolrGoldAndSilverEntryCore;
@@ -39,8 +39,8 @@ public class GoldAndSilverEntryCore implements SolrCore<EntrySolrField> {
 	}
 
 	@Override
-	public QueryConfigurations<EntrySolrField> getQueryConfigurations() {
-		return core.getQueryConfigurations();
+	public QuerySettings<EntrySolrField> getQuerySettings() {
+		return core.getQuerySettings();
 	}
 
 	@Override

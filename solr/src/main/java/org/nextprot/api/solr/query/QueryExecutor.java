@@ -11,7 +11,7 @@ import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
@@ -35,9 +35,9 @@ public class QueryExecutor {
 
 	public SearchResult execute(Query query) throws SolrServerException, QueryConfiguration.MissingSortConfigException {
 
-		QueryConfigurations configs = core.getQueryConfigurations();
+		QuerySettings configs = core.getQuerySettings();
 
-		SolrQuery solrQuery = core.getQueryConfigurations().getConfig(configs.getDefaultMode()).convertQuery(query);
+		SolrQuery solrQuery = core.getQuerySettings().getConfig(configs.getDefaultMode()).convertQuery(query);
 
 		return execute(solrQuery);
 	}

@@ -2,14 +2,14 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
 import org.nextprot.api.solr.core.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.core.impl.config.IndexParameter;
-import org.nextprot.api.solr.core.impl.config.QueryBaseConfigurations;
+import org.nextprot.api.solr.core.impl.config.QueryBaseSettings;
 import org.nextprot.api.solr.core.impl.config.SearchByIdConfiguration;
 import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
@@ -40,12 +40,12 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 	}
 
 	@Override
-	public QueryConfigurations<EntrySolrField> getQueryConfigurations() {
+	public QuerySettings<EntrySolrField> getQuerySettings() {
 
-		return new Configurations();
+		return new Settings();
 	}
 
-	private static class Configurations extends QueryBaseConfigurations<EntrySolrField> {
+	private static class Settings extends QueryBaseSettings<EntrySolrField> {
 
 		@Override
 		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<EntrySolrField>> configurations) {

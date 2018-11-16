@@ -1,6 +1,6 @@
 package org.nextprot.api.solr.core.impl.component;
 
-import org.nextprot.api.solr.core.QueryConfigurations;
+import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.SolrHttpClient;
@@ -40,8 +40,8 @@ public class PublicationCore implements SolrCore {
 	}
 
 	@Override
-	public QueryConfigurations getQueryConfigurations() {
-		return core.getQueryConfigurations();
+	public QuerySettings getQuerySettings() {
+		return core.getQuerySettings();
 	}
 
 	@Override

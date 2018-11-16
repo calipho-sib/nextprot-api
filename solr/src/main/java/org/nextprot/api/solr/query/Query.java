@@ -23,7 +23,7 @@ public class Query<F extends SolrField> {
 	private int rows;
     
     public Query(SolrCore<F> solrCore) {
-		this(solrCore, solrCore.getQueryConfigurations().getDefaultMode());
+		this(solrCore, solrCore.getQuerySettings().getDefaultMode());
 	}
 	
 	public Query(SolrCore<F> solrCore, SearchMode searchMode) {
@@ -33,7 +33,7 @@ public class Query<F extends SolrField> {
 		this.solrCore = solrCore;
 		this.indexName = solrCore.getAlias().getName();
 		this.searchMode = searchMode;
-		this.queryConfiguration = solrCore.getQueryConfigurations().getConfig(searchMode);
+		this.queryConfiguration = solrCore.getQuerySettings().getConfig(searchMode);
 	}
 
 
