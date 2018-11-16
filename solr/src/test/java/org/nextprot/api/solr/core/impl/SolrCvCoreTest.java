@@ -4,10 +4,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
-import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 

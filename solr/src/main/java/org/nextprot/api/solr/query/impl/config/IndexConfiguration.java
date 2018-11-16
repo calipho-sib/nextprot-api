@@ -1,4 +1,4 @@
-package org.nextprot.api.solr.core.impl.config;
+package org.nextprot.api.solr.query.impl.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -6,10 +6,13 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.settings.IndexParameter;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,14 +29,14 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 
 	final static String WHITESPACE = " ";
 	
-	private SearchMode mode;
+	private QueryMode mode;
 	private final Map<IndexParameter, FieldConfigSet<F>> fieldConfigSets;
 	private final Map<SortConfig.Criteria, SortConfig<F>> sortConfigs;
 	protected final Map<String, String> otherParameters;
 
 	private SortConfig.Criteria defaultSortCriteria;
 
-	public IndexConfiguration(SearchMode mode) {
+	public IndexConfiguration(QueryMode mode) {
 		NPreconditions.checkNotNull(mode, "Solr query configuration mode is undefined");
 
 		this.mode = mode;
@@ -42,7 +45,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		this.otherParameters = new HashMap<>();
 	}
 	
-	public IndexConfiguration(SearchMode mode, IndexConfiguration originalConfiguration) {
+	public IndexConfiguration(QueryMode mode, IndexConfiguration originalConfiguration) {
 		this(mode);
 		
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
@@ -182,7 +185,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	public SolrQuery convertIdQuery(Query query) {
 
 		LOGGER.debug("Query index name:" + query.getIndexName());
-		LOGGER.debug("Query config name: "+ query.getSearchMode().getName());
+		LOGGER.debug("Query config name: "+ query.getQueryMode().getName());
 		String solrReadyQueryString = formatQuery(query);
 		String filter = query.getFilter();
 		if (filter != null)
@@ -215,7 +218,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		return sortConfigs;
 	}
 
-	public SearchMode getMode() {
+	public QueryMode getMode() {
 		return mode;
 	}
 

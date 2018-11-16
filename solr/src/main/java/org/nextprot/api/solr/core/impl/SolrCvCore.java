@@ -2,17 +2,17 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QuerySettings;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
-import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
-import org.nextprot.api.solr.core.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.core.impl.config.IndexParameter;
-import org.nextprot.api.solr.core.impl.config.QueryBaseSettings;
-import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
+import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.settings.IndexParameter;
+import org.nextprot.api.solr.core.impl.settings.QueryBaseSettings;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +41,7 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 	private static class Settings extends QueryBaseSettings<CvSolrField> {
 
 		@Override
-		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<CvSolrField>> configurations) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<CvSolrField>> configurations) {
 
 			List<SortConfig<CvSolrField>> sortConfigs = newSortConfigs();
 
@@ -72,7 +72,7 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 
 		private IndexConfiguration<CvSolrField> newDefaultConfiguration(List<SortConfig<CvSolrField>> sortConfigs) {
 
-			IndexConfiguration<CvSolrField> defaultConfig = new IndexConfiguration<>(SearchMode.SIMPLE);
+			IndexConfiguration<CvSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
 			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.FL)
 					.add(CvSolrField.AC)

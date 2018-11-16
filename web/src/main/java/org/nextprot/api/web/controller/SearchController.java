@@ -8,9 +8,9 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.core.Entity;
-import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
 import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
@@ -158,10 +158,10 @@ public class SearchController {
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, SearchMode.PL_SEARCH, queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.PL_SEARCH, queryRequest);
 
 			} else {
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, SearchMode.SIMPLE, queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.SIMPLE, queryRequest);
 
 			}
 

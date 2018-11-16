@@ -10,7 +10,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.query.dto.SearchResult;

@@ -1,9 +1,9 @@
-package org.nextprot.api.solr.core.impl.config;
+package org.nextprot.api.solr.query.impl.config;
 
 
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryMode;
 
 public class AutocompleteConfiguration<F extends SolrField> extends IndexConfiguration<F> {
 
@@ -11,7 +11,7 @@ public class AutocompleteConfiguration<F extends SolrField> extends IndexConfigu
 	private final static String RANDOM_STRING = "dfjhgdfjh";
 	
 	public AutocompleteConfiguration(IndexConfiguration<F> parentConfiguration) {
-		super(SearchMode.AUTOCOMPLETE, parentConfiguration);
+		super(QueryMode.AUTOCOMPLETE, parentConfiguration);
 	}
 	
 	/**

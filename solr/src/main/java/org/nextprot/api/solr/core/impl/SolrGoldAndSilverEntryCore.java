@@ -1,18 +1,18 @@
 package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QuerySettings;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
-import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
-import org.nextprot.api.solr.core.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.core.impl.config.IndexParameter;
-import org.nextprot.api.solr.core.impl.config.QueryBaseSettings;
-import org.nextprot.api.solr.core.impl.config.SearchByIdConfiguration;
-import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.settings.IndexParameter;
+import org.nextprot.api.solr.core.impl.settings.QueryBaseSettings;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
+import org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +48,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 	private static class Settings extends QueryBaseSettings<EntrySolrField> {
 
 		@Override
-		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<EntrySolrField>> configurations) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations) {
 
 			List<SortConfig<EntrySolrField>> sortConfigs = newSortConfigs();
 
@@ -86,7 +86,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(List<SortConfig<EntrySolrField>> sortConfigs) {
 
-			IndexConfiguration<EntrySolrField> defaultConfig = new IndexConfiguration<>(SearchMode.SIMPLE);
+			IndexConfiguration<EntrySolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
 			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.FL)
 					.add(EntrySolrField.ID)
@@ -195,7 +195,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 		private IndexConfiguration<EntrySolrField> newIdSearchConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration) {
 
-			IndexConfiguration<EntrySolrField> idSearchConfig = new SearchByIdConfiguration<>(SearchMode.ID_SEARCH);
+			IndexConfiguration<EntrySolrField> idSearchConfig = new SearchByIdConfiguration<>(QueryMode.ID_SEARCH);
 			idSearchConfig.addSortConfig(new SortConfig<>(SortConfig.Criteria.SCORE, EntrySolrField.SCORE, ORDER.desc));
 			idSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 			idSearchConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
@@ -205,7 +205,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 		private IndexConfiguration<EntrySolrField> newPlSearchConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration) {
 
-			IndexConfiguration<EntrySolrField> plSearchConfig = new SearchByIdConfiguration<>(SearchMode.PL_SEARCH);
+			IndexConfiguration<EntrySolrField> plSearchConfig = new SearchByIdConfiguration<>(QueryMode.PL_SEARCH);
 			plSearchConfig.addSortConfig(new SortConfig<>(SortConfig.Criteria.SCORE, EntrySolrField.SCORE, ORDER.desc));
 			plSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 			plSearchConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);

@@ -2,17 +2,17 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QuerySettings;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
-import org.nextprot.api.solr.core.impl.config.AutocompleteConfiguration;
-import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
-import org.nextprot.api.solr.core.impl.config.IndexConfiguration;
-import org.nextprot.api.solr.core.impl.config.IndexParameter;
-import org.nextprot.api.solr.core.impl.config.QueryBaseSettings;
-import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
+import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.settings.IndexParameter;
+import org.nextprot.api.solr.core.impl.settings.QueryBaseSettings;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
+import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 	private static class Settings extends QueryBaseSettings<PublicationSolrField> {
 
 		@Override
-		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration<PublicationSolrField>> configurations) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations) {
 
 			List<SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
 
@@ -72,7 +72,7 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 
 		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs) {
 
-			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(SearchMode.SIMPLE);
+			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
 			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL)
 					.add(PublicationSolrField.ID)

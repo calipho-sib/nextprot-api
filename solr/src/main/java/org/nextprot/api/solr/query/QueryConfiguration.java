@@ -1,16 +1,16 @@
-package org.nextprot.api.solr.core;
+package org.nextprot.api.solr.query;
 
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.nextprot.api.solr.core.impl.config.FieldConfigSet;
-import org.nextprot.api.solr.core.impl.config.SortConfig;
-import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
 
 public interface QueryConfiguration<F extends SolrField> {
 
 	void addConfigSet(FieldConfigSet<F> configSet);
 
-	SearchMode getMode();
+	QueryMode getMode();
 
 	/**
 	 * It splits the query coming for the controller in tokens 

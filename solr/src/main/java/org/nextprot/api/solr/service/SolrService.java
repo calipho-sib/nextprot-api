@@ -2,9 +2,9 @@ package org.nextprot.api.solr.service;
 
 
 import org.nextprot.api.solr.core.Entity;
-import org.nextprot.api.solr.core.QueryConfiguration;
-import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
@@ -32,7 +32,7 @@ public interface SolrService {
 	Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	/** Build a query in search index mode */
-	Query buildQueryForSearchIndexes(Entity entity, SearchMode configuration, QueryRequest request);
+	Query buildQueryForSearchIndexes(Entity entity, QueryMode configuration, QueryRequest request);
 
 	/** Build a query in protein list mode */
 	Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
