@@ -5,7 +5,6 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SortConfig {
@@ -47,10 +46,10 @@ public class SortConfig {
 		this.boost = boost;
 	}
 
-	private SortConfig(Criteria criteria, Pair<SolrField, ORDER>[] sorting) {
+	private SortConfig(Criteria criteria, List<Pair<SolrField, ORDER>> sorting) {
 		this.criteria = criteria;
 		this.sorting = new ArrayList<>();
-		this.sorting.addAll(Arrays.asList(sorting));
+		this.sorting.addAll(sorting);
 	}
 	
 	public static SortConfig create(Criteria criteria, SolrField field, ORDER order) {
@@ -61,7 +60,7 @@ public class SortConfig {
 		return new SortConfig(criteria, field, order, boost);
 	}
 	
-	public static SortConfig create(Criteria criteria, Pair<SolrField, ORDER>[] sorting) {
+	public static SortConfig create(Criteria criteria, List<Pair<SolrField, ORDER>> sorting) {
 		return new SortConfig(criteria, sorting);
 	}
 

@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
@@ -13,6 +14,8 @@ import org.nextprot.api.solr.core.impl.config.QueryBaseConfigurations;
 import org.nextprot.api.solr.core.impl.config.SearchByIdConfiguration;
 import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+
+import java.util.Map;
 
 
 public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
@@ -44,9 +47,43 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 	private static class Configurations extends QueryBaseConfigurations {
 
 		@Override
-		protected IndexConfiguration newDefaultConfiguration() {
+		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations) {
 
-			// SIMPLE Config
+			SortConfig[] sortConfigs = newSortConfigs();
+
+			// Simple
+			IndexConfiguration defaultConfig = newDefaultConfiguration(sortConfigs);
+			configurations.put(defaultConfig.getMode(), defaultConfig);
+
+			// Autocomplete
+			AutocompleteConfiguration autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
+			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
+
+			// id_search
+			IndexConfiguration idSearchConfig = newIdSearchConfiguration(defaultConfig);
+			configurations.put(idSearchConfig.getMode(), idSearchConfig);
+
+			// pl_search
+			IndexConfiguration plSearchConfig = newPlSearchConfiguration(defaultConfig);
+			configurations.put(plSearchConfig.getMode(), plSearchConfig);
+
+			return defaultConfig.getMode();
+		}
+
+		private SortConfig[] newSortConfigs() {
+
+			return new SortConfig[] {
+					SortConfig.create(SortConfig.Criteria.GENE, EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.PROTEIN, EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.FAMILY, EntrySolrField.FAMILY_NAMES_S, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.LENGTH, EntrySolrField.AA_LENGTH, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.AC, EntrySolrField.ID, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.CHROMOSOME, EntrySolrField.CHR_LOC_S, ORDER.asc),
+					SortConfig.create(SortConfig.Criteria.SCORE, EntrySolrField.SCORE, ORDER.desc, 100)
+			};
+		}
+
+		private IndexConfiguration newDefaultConfiguration(SortConfig[] sortConfigs) {
 
 			IndexConfiguration defaultConfig = new IndexConfiguration(SearchMode.SIMPLE);
 
@@ -136,14 +173,13 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 					.addOtherParameter("spellcheck.maxCollations", "10")
 					.addOtherParameter("mm", "100%");
 
-			defaultConfig.addSortConfig(sortConfigurations);
+			defaultConfig.addSortConfig(sortConfigs);
 			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
 
-		@Override
-		protected AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration defaultConfiguration) {
+		private AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration defaultConfiguration, SortConfig[] sortConfigs) {
 
 			AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(defaultConfiguration);
 
@@ -151,25 +187,9 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 					.addOtherParameter("facet.field", "text")
 					.addOtherParameter("stopwords", "true");
 
-			autocompleteConfig.addSortConfig(sortConfigurations);
+			autocompleteConfig.addSortConfig(sortConfigs);
 
 			return autocompleteConfig;
-		}
-
-		@Override
-		protected SortConfig[] newSortConfigurations() {
-
-			SortConfig[] sortConfigs = new SortConfig[]{
-					SortConfig.create(SortConfig.Criteria.GENE, EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.PROTEIN, EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.FAMILY, EntrySolrField.FAMILY_NAMES_S, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.LENGTH, EntrySolrField.AA_LENGTH, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.AC, EntrySolrField.ID, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.CHROMOSOME, EntrySolrField.CHR_LOC_S, ORDER.asc),
-					SortConfig.create(SortConfig.Criteria.SCORE, EntrySolrField.SCORE, ORDER.desc, 100)
-			};
-
-			return sortConfigs;
 		}
 
 		private IndexConfiguration newIdSearchConfiguration(IndexConfiguration defaultConfiguration) {
@@ -199,21 +219,6 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase {
 
 
 			return plSearchConfig;
-		}
-
-		@Override
-		protected void setupConfigurations() {
-
-			addConfiguration(defaultConfiguration);
-			addConfiguration(autocompleteConfiguration);
-
-			setConfigAsDefault(SearchMode.SIMPLE);
-
-			// ID_SEARCH Config
-			addConfiguration(newIdSearchConfiguration(defaultConfiguration));
-
-			// PL_SEARCH Config
-			addConfiguration(newPlSearchConfiguration(defaultConfiguration));
 		}
 	}
 }

@@ -10,57 +10,37 @@ import java.util.Map;
 
 public abstract class QueryBaseConfigurations implements QueryConfigurations {
 
-	protected IndexConfiguration defaultConfiguration;
-	protected SortConfig[] sortConfigurations;
-	protected AutocompleteConfiguration autocompleteConfiguration;
-	protected SearchMode defaultConfigMode;
-	protected Map<SearchMode, QueryConfiguration> configurations = new HashMap<>();
+	private final Map<SearchMode, QueryConfiguration> configurations = new HashMap<>();
+	private final SearchMode defaultMode;
 
 	public QueryBaseConfigurations() {
 
-		sortConfigurations = newSortConfigurations();
-		defaultConfiguration = newDefaultConfiguration();
-		autocompleteConfiguration = newAutoCompleteConfiguration(defaultConfiguration);
-		setupConfigurations();
-	}
+		defaultMode = setupConfigs(configurations);
 
-	protected void addConfiguration(QueryConfiguration config) {
-		this.configurations.put(config.getMode(), config);
-	}
-
-	protected void setConfigAsDefault(SearchMode mode) {
-		if(this.configurations.containsKey(mode))
-			this.defaultConfigMode = mode;
-		else throw new SearchConfigException("Cannot set configuration "+mode+" since it does not exist");
-	}
-
-	public SearchMode getDefaultMode() {
-
-		if (this.defaultConfigMode != null) {
-			return defaultConfigMode;
+		if (defaultMode == null) {
+			throw new SearchConfigException("default configuration mode has to be defined");
 		}
-		else if(this.configurations.size() == 1) {
-			return this.configurations.keySet().iterator().next();
+
+		if (!configurations.containsKey(defaultMode)) {
+			throw new SearchConfigException("missing default configuration");
 		}
-		throw new SearchConfigException("Default configuration has not been properly set");
+	}
+
+	@Override
+	public QueryConfiguration getConfig(SearchMode mode) {
+
+		if (configurations.containsKey(mode)) {
+			return configurations.get(mode);
+		}
+		throw new SearchConfigException("Configuration for mode "+mode+" does not exist");
 	}
 
 	@Override
 	public QueryConfiguration getDefaultConfig() {
 
-		return this.configurations.get(getDefaultMode());
+		return configurations.get(defaultMode);
 	}
 
-	@Override
-	public QueryConfiguration getConfig(SearchMode mode) {
-		if (this.configurations.containsKey(mode))
-			return this.configurations.get(mode);
-		else
-			throw new SearchConfigException("Configuration "+mode+" does not exist");
-	}
-
-	protected abstract IndexConfiguration newDefaultConfiguration();
-	protected abstract AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration defaultConfiguration);
-	protected abstract SortConfig[] newSortConfigurations();
-	protected abstract void setupConfigurations();
+	/** setup configurations and return the default search mode */
+	protected abstract SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations);
 }

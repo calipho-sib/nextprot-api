@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.solr.core.QueryConfiguration;
 import org.nextprot.api.solr.core.QueryConfigurations;
 import org.nextprot.api.solr.core.SearchMode;
 import org.nextprot.api.solr.core.SolrField;
@@ -13,6 +14,9 @@ import org.nextprot.api.solr.core.impl.config.IndexParameter;
 import org.nextprot.api.solr.core.impl.config.QueryBaseConfigurations;
 import org.nextprot.api.solr.core.impl.config.SortConfig;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 public class SolrPublicationCore extends SolrCoreBase {
@@ -38,7 +42,34 @@ public class SolrPublicationCore extends SolrCoreBase {
 	private static class Configurations extends QueryBaseConfigurations {
 
 		@Override
-		protected IndexConfiguration newDefaultConfiguration() {
+		protected SearchMode setupConfigs(Map<SearchMode, QueryConfiguration> configurations) {
+
+			SortConfig[] sortConfigs = newSortConfigs();
+
+			// Simple
+			IndexConfiguration defaultConfig = newDefaultConfiguration(sortConfigs);
+			configurations.put(defaultConfig.getMode(), defaultConfig);
+
+			// Autocomplete
+			AutocompleteConfiguration autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
+			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
+
+			return defaultConfig.getMode();
+		}
+
+		private SortConfig[] newSortConfigs() {
+
+			SortConfig sortConfig = SortConfig.create(SortConfig.Criteria.SCORE, Arrays.asList(
+					Pair.create(PublicationSolrField.YEAR, ORDER.desc),
+					Pair.create(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
+					Pair.create(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
+					Pair.create(PublicationSolrField.FIRST_PAGE, ORDER.asc)
+			));
+
+			return new SortConfig[]{ sortConfig };
+		}
+
+		private IndexConfiguration newDefaultConfiguration(SortConfig[] sortConfigs) {
 
 			IndexConfiguration defaultConfig = new IndexConfiguration(SearchMode.SIMPLE);
 
@@ -100,44 +131,22 @@ public class SolrPublicationCore extends SolrCoreBase {
 					.addOtherParameter("spellcheck.maxCollations", "10")
 					.addOtherParameter("mm", "100%");
 
-			defaultConfig.addSortConfig(sortConfigurations);
+			defaultConfig.addSortConfig(sortConfigs);
 			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
 
-		@Override
-		protected AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration) {
+		private AutocompleteConfiguration newAutoCompleteConfiguration(IndexConfiguration configuration, SortConfig[] sortConfigs) {
 
 			AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(configuration);
 
 			autocompleteConfig
 					.addOtherParameter("facet.field", "text")
 					.addOtherParameter("stopwords", "true");
-			autocompleteConfig.addSortConfig(sortConfigurations);
+			autocompleteConfig.addSortConfig(sortConfigs);
 
 			return autocompleteConfig;
-		}
-
-		@Override
-		protected SortConfig[] newSortConfigurations() {
-
-			SortConfig sortConfig = SortConfig.create(SortConfig.Criteria.SCORE, new Pair[]{
-					Pair.create(PublicationSolrField.YEAR, ORDER.desc),
-					Pair.create(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
-					Pair.create(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
-					Pair.create(PublicationSolrField.FIRST_PAGE, ORDER.asc),
-			});
-
-			return new SortConfig[]{sortConfig};
-		}
-
-		@Override
-		protected void setupConfigurations() {
-
-			addConfiguration(defaultConfiguration);
-			setConfigAsDefault(SearchMode.SIMPLE);
-			addConfiguration(autocompleteConfiguration);
 		}
 	}
 }
