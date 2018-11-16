@@ -27,10 +27,10 @@ public class IndexConfiguration implements QueryConfiguration {
 	
 	private SearchMode mode;
 	private final Map<IndexParameter, FieldConfigSet> fieldConfigSets;
-	private final Map<String, SortConfig> sortConfigs;
+	private final Map<SortConfig.Criteria, SortConfig> sortConfigs;
 	protected final Map<String, String> otherParameters;
 
-	private String defaultSortName;
+	private SortConfig.Criteria defaultSortCriteria;
 
 	public IndexConfiguration(SearchMode mode) {
 		NPreconditions.checkNotNull(mode, "Solr query configuration mode is undefined");
@@ -47,7 +47,7 @@ public class IndexConfiguration implements QueryConfiguration {
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
 		this.sortConfigs.putAll(originalConfiguration.getSortConfigs());
 		this.otherParameters.putAll(originalConfiguration.getOtherParameters());
-		this.defaultSortName = originalConfiguration.getDefaultSortConfiguration().getName();
+		this.defaultSortCriteria = originalConfiguration.getDefaultSortConfiguration().getCriteria();
 	}
 
 	public void addConfigSet(FieldConfigSet configSet) {
@@ -56,7 +56,7 @@ public class IndexConfiguration implements QueryConfiguration {
 	
 	public void addSortConfig(SortConfig... sortConfigs) {
 		for(SortConfig config : sortConfigs)
-			this.sortConfigs.put(config.getName(), config);
+			this.sortConfigs.put(config.getCriteria(), config);
 	}
 	
 	public SortConfig getSortConfig(String name) {
@@ -206,7 +206,7 @@ public class IndexConfiguration implements QueryConfiguration {
 		return fieldConfigSets;
 	}
 
-	public Map<String, SortConfig> getSortConfigs() {
+	public Map<SortConfig.Criteria, SortConfig> getSortConfigs() {
 		return sortConfigs;
 	}
 
@@ -215,13 +215,13 @@ public class IndexConfiguration implements QueryConfiguration {
 	}
 
 	public SortConfig getDefaultSortConfiguration() {
-		if(this.defaultSortName != null && this.sortConfigs.containsKey(this.defaultSortName))
-			return this.sortConfigs.get(this.defaultSortName); 
+		if(defaultSortCriteria != null && sortConfigs.containsKey(this.defaultSortCriteria))
+			return sortConfigs.get(defaultSortCriteria);
 		else throw new SearchConfigException("No sorting set as default");
 	}
 	
-	public void setDefaultSortName(String defaultSortName) {
-		this.defaultSortName = defaultSortName;
+	public void setDefaultSortCriteria(SortConfig.Criteria defaultSortCriteria) {
+		this.defaultSortCriteria = defaultSortCriteria;
 	}
 	
 

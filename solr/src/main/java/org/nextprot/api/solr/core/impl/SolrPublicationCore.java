@@ -101,7 +101,7 @@ public class SolrPublicationCore extends SolrCoreBase {
 					.addOtherParameter("mm", "100%");
 
 			defaultConfig.addSortConfig(sortConfigurations);
-			defaultConfig.setDefaultSortName("default");
+			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
@@ -122,7 +122,7 @@ public class SolrPublicationCore extends SolrCoreBase {
 		@Override
 		protected SortConfig[] newSortConfigurations() {
 
-			SortConfig sortConfig = SortConfig.create("default", new Pair[]{
+			SortConfig sortConfig = SortConfig.create(SortConfig.Criteria.SCORE, new Pair[]{
 					Pair.create(PublicationSolrField.YEAR, ORDER.desc),
 					Pair.create(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
 					Pair.create(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !

@@ -75,16 +75,16 @@ public class SolrCvCore extends SolrCoreBase {
 					.addOtherParameter("facet.sort", "count");
 
 			defaultConfig.addSortConfig(
-					SortConfig.create("default", new Pair[] {
+					SortConfig.create(SortConfig.Criteria.SCORE, new Pair[] {
 							Pair.create(CvSolrField.SCORE, ORDER.desc),
 							Pair.create(CvSolrField.FILTERS, ORDER.asc)
 					}),
-					SortConfig.create("name", new Pair[] {
+					SortConfig.create(SortConfig.Criteria.NAME, new Pair[] {
 							Pair.create(CvSolrField.NAME_S, ORDER.asc),
 							Pair.create(CvSolrField.FILTERS, ORDER.asc)
 					})
 			);
-			defaultConfig.setDefaultSortName("default");
+			defaultConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
 			return defaultConfig;
 		}
