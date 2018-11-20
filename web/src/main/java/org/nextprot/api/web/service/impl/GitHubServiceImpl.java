@@ -1,5 +1,21 @@
 package org.nextprot.api.web.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHTree;
+import org.kohsuke.github.GHTree.GHTreeEntry;
+import org.kohsuke.github.GitHub;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.web.domain.NextProtNews;
+import org.nextprot.api.web.service.GitHubService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -11,21 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.kohsuke.github.GHContent;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHTree;
-import org.kohsuke.github.GHTree.GHTreeEntry;
-import org.kohsuke.github.GitHub;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.web.domain.NextProtNews;
-import org.nextprot.api.web.service.GitHubService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -45,6 +46,8 @@ public class GitHubServiceImpl implements GitHubService {
 	
 	private Map<String, String> newsFileNames = new HashMap<>();
 	
+	@Autowired
+	StatisticsService statisticsService;
 
 	// will refresh every minute, because anonymous calls are limited to 60
 	// calls per hour
@@ -65,29 +68,34 @@ public class GitHubServiceImpl implements GitHubService {
 	public String getPage(String folder, String page) {
 		
 		String finalPage = page;
+
 		if("news".equalsIgnoreCase(folder)){
 			finalPage = getCorrespondingPageForNews(page);
 		}
 		
 		try {
-			GitHub github = getGitHubConnection();
-			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = null;
-			String  extension = ".md";
-			if(folder.contains("json")){ //if folder contains json
-				extension = ".json";
-			}
-			content = repo.getFileContent(folder + "/" + finalPage + extension, githubDocBranch);
+			GHRepository repo = getGitHubConnection().getRepository("calipho-sib/nextprot-docs");
 
-			return content.getContent();
+			String filename = folder + "/" + finalPage + (("json-config".equals(folder)) ? ".json" : ".md");
+
+			String gitHubFileContent = repo.getFileContent(filename, githubDocBranch).getContent();
+
+			if (ContentWithPlaceHolders.foundPlaceHolders(gitHubFileContent)) {
+
+				ContentWithPlaceHolders content = new ContentWithPlaceHolders(gitHubFileContent);
+				content.resolveDatePHs();
+				content.resolveStatPHs(statisticsService);
+				return content.resolvedContent();
+			}
+
+			return gitHubFileContent;
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Documentation not available, sorry for the inconvenience");
 		}
-
 	}
-	
+
 	private String getCorrespondingPageForNews(String url) {
 
 		String correspondingPage = url; // I don't like very much this code...
@@ -126,14 +134,14 @@ public class GitHubServiceImpl implements GitHubService {
 		}
 
 	}
-	
-	
+
+
 	@Override
 	@Cacheable(value = "github-news")
 	public List<NextProtNews> getNews() {
-		
+
 		List<NextProtNews> news = new ArrayList<>();
-		
+
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
@@ -162,7 +170,7 @@ public class GitHubServiceImpl implements GitHubService {
 		return news;
 
 	}
-	
+
 	@Value("${github.accesstoken}")
 	public void setGithubToken(String githubToken) {
 		this.githubToken = githubToken;
@@ -173,21 +181,21 @@ public class GitHubServiceImpl implements GitHubService {
 		this.githubDocBranch = githubDocBranch;
 	}
 
-	
+
 	static NextProtNews parseGitHubNewsFilePath(String filePath){
-		
+
 		NextProtNews result = new NextProtNews();
-		
+
 		if(filePath == null || filePath.equals("")){
 			return null;
 		}
-		
+
 		String[] elements = filePath.split("\\/");
 		if(elements.length != 4){
 			LOGGER.warn("Number of elements is different than 4 != " + elements.length + " " + elements);
 			return null;
 		}
-		
+
 		//Check for elements not null or empty
 		for(String elem : elements){
 			if(elem == null || elem.isEmpty()){
@@ -195,10 +203,10 @@ public class GitHubServiceImpl implements GitHubService {
 				return null;
 			}
 		}
-		
+
 		try { // Parse the date
-		
-			DateFormat df = new SimpleDateFormat("yyyy/MM/dd"); 
+
+			DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
 			Date date = df.parse(elements[0] + "/" +  elements[1] + "/" +  elements[2]);
 			result.setPublicationDate(date);
 
@@ -215,15 +223,15 @@ public class GitHubServiceImpl implements GitHubService {
 
 		return result;
 	}
-	
+
 	public static String normalizeTitleToUrl(String title){
-		
+
 		String charClass = "!?:;,/(){}\\\\";
 		String url = StringUtils.slug(title, "[" + charClass + "]", "-").toLowerCase();
 		String url1 = url.replaceAll("[" + charClass + "-]+$", "");
 		String url2 = url1.replaceAll("^[" + charClass + "-]+", "");
 
-		return url2.replaceAll("-{2,}", "-"); // replaces 
+		return url2.replaceAll("-{2,}", "-"); // replaces
 	}
 
 }

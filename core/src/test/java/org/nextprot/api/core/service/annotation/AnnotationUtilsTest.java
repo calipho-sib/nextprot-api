@@ -22,7 +22,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -530,26 +536,6 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 			}
 		}
 	}
-
-    @Test
-    public void shouldNotFindVariantModResForNX_O75478() throws Exception {
-
-        List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_O75478")
-                .with("modified-residue")).getAnnotations();
-
-        Assert.assertTrue(annotations.stream()
-                .noneMatch(annotation -> annotation.getDescription().contains("; in variant ")));
-    }
-
-    @Test
-    public void shouldNotFindVariantModResForNX_P02042() throws Exception {
-
-        List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P02042")
-                .with("modified-residue")).getAnnotations();
-
-        Assert.assertTrue(annotations.stream()
-                .noneMatch(annotation -> annotation.getDescription().contains("; in variant ")));
-    }
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {
 

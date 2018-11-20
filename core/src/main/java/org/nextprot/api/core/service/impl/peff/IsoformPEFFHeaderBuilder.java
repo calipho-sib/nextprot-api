@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl.peff;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformPEFFHeader;
 import org.nextprot.api.core.domain.Overview;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class IsoformPEFFHeaderBuilder {
 
@@ -132,7 +134,14 @@ public class IsoformPEFFHeaderBuilder {
 
         List<Annotation> unmappedUniprotModAnnotations = new ArrayList<>();
 
-        peff.setModResPsiFormat(new PEFFModResPsi(isoform.getIsoformAccession(), isoformAnnotations,
+        // TODO: should be skipped or handled at the data integration level
+	    List<Annotation> annots = isoformAnnotations.stream()
+			    // remove annotations that are ptms on isoform variant
+			    .filter(annotation -> (annotation.getAPICategory() != AnnotationCategory.MODIFIED_RESIDUE) ||
+					    !annotation.getDescription().contains("; in variant "))
+			    .collect(Collectors.toList());
+
+        peff.setModResPsiFormat(new PEFFModResPsi(isoform.getIsoformAccession(), annots,
                 cvTermToPsiModAccessionFunc, cvTermToPsiModNameFunc, unmappedUniprotModAnnotations).format());
 
         peff.setModResFormat(new PEFFModRes(isoform.getIsoformAccession(), isoformAnnotations,

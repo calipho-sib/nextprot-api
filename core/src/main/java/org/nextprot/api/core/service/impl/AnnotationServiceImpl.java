@@ -10,13 +10,31 @@ import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.*;
-import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.CvTermGraph;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.Feature;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.CvTermGraphService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntityNameService;
+import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MdataService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
@@ -26,9 +44,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
@@ -136,7 +159,8 @@ public class AnnotationServiceImpl implements AnnotationService {
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
                     .filter(entityName -> entityName.isMain())
                     .map(entityName -> entityName.getName())
-                    .findFirst().orElseThrow(() -> new NextProtException("Cannot find gene name for entry "+entryName));
+                    .findFirst()
+                    .orElse("");
 
             annotations = new AnnotationListMerger(geneName, annotations).merge(statementService.getAnnotations(entryName));
         }
@@ -151,13 +175,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
 		
 		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
-		return new ImmutableList.Builder<Annotation>().addAll(
-		        annotations.stream()
-                        // remove ptms on isoform variant
-                        .filter(annotation -> (annotation.getAPICategory() != AnnotationCategory.MODIFIED_RESIDUE) ||
-                                !annotation.getDescription().contains("; in variant "))
-                        .collect(Collectors.toList()))
-                .build();
+		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
 	
