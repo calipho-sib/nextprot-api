@@ -42,21 +42,36 @@ public class SolrCoreTest {
 	}
 
 	@Test
-	public void compareProteinSearchResultsFromCrickAndKantForQueryMSH6AllSolrFields() throws QueryConfiguration.MissingSortConfigException {
+	public void cmpProteinSearchResultsFromCrickAndKantForQueryMSH6AllSolrFields() throws QueryConfiguration.MissingSortConfigException {
 
 		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
 		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
 		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
 
-		ProteinSearchResultDiff diff = proteinQueryDiffs("kant", "crick", "MSH6", allEntrySolrFieldSet, SortConfig.Criteria.AC);
+		ProteinSearchResultDiff diff = proteinQueryDiffs("kant", "crick", false,"MSH6", allEntrySolrFieldSet, SortConfig.Criteria.AC);
 
 		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+diff.toString(), diff.equals);
 	}
 
-	private ProteinSearchResultDiff proteinQueryDiffs(String hostname1, String hostname2, String query, Set<EntrySolrField> fl, SortConfig.Criteria criteria) throws QueryConfiguration.MissingSortConfigException {
+	@Test
+	public void cmpProteinSearchResultsFromCrickAndKantForQueryMSH6AllSolrFieldsGoldOnly() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> core1 = new SolrGoldOnlyEntryCore("http://"+hostname1+":8983/solr", fl);
-		SolrCore<EntrySolrField> core2 = new SolrGoldOnlyEntryCore("http://"+hostname2+":8983/solr", fl);
+		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
+		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
+
+		ProteinSearchResultDiff diff = proteinQueryDiffs("kant", "crick", true,"MSH6", allEntrySolrFieldSet, SortConfig.Criteria.AC);
+
+		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+diff.toString(), diff.equals);
+	}
+
+	private ProteinSearchResultDiff proteinQueryDiffs(String hostname1, String hostname2, boolean isGold, String query, Set<EntrySolrField> fl, SortConfig.Criteria criteria) throws QueryConfiguration.MissingSortConfigException {
+
+		SolrCore<EntrySolrField> core1 = (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname1+":8983/solr", fl) :
+				new SolrGoldAndSilverEntryCore("http://"+hostname1+":8983/solr", fl);
+
+		SolrCore<EntrySolrField> core2 = (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname1+":8983/solr", fl) :
+				new SolrGoldAndSilverEntryCore("http://"+hostname2+":8983/solr", fl);
 
 		Query<EntrySolrField> queryOnHost1 = new Query<>(core1).rows(50)
 				.addQuery(query)
