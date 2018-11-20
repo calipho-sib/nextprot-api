@@ -2,6 +2,10 @@ package org.nextprot.api.solr.core.impl.schema;
 
 import org.nextprot.api.solr.core.SolrField;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public enum PublicationSolrField implements SolrField {
     ID("id"),
     IDSP0("idsp0"),                   // searchable (text_split0)
@@ -46,5 +50,13 @@ public enum PublicationSolrField implements SolrField {
 
     public String getPublicName() {
         return this.publicName;
+    }
+
+    public static Set<PublicationSolrField> allNonRedundantFields() {
+
+	    Set<PublicationSolrField> all = new HashSet<>(Arrays.asList(PublicationSolrField.values()));
+	    all.remove(PublicationSolrField.TEXT);
+
+	    return all;
     }
 }

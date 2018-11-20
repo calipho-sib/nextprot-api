@@ -2,7 +2,10 @@ package org.nextprot.api.solr.core.impl.schema;
 
 import org.nextprot.api.solr.core.SolrField;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public enum EntrySolrField implements SolrField {
     ID("id","id", String.class), // public name for id is necessary for executeIdQuery() otherwise the id: of the query string is escaped
@@ -88,4 +91,12 @@ public enum EntrySolrField implements SolrField {
     public Class<?> getType() {
         return fieldType;
     }
+
+	public static Set<EntrySolrField> allNonRedundantFields() {
+
+		Set<EntrySolrField> all = new HashSet<>(Arrays.asList(EntrySolrField.values()));
+		all.remove(EntrySolrField.TEXT);
+
+		return all;
+	}
 }

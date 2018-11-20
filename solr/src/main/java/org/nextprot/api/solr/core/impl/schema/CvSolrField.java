@@ -2,6 +2,10 @@ package org.nextprot.api.solr.core.impl.schema;
 
 import org.nextprot.api.solr.core.SolrField;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public enum CvSolrField implements SolrField {
     ID("id"),
     AC("ac"),
@@ -34,4 +38,12 @@ public enum CvSolrField implements SolrField {
     public boolean hasPublicName() {
         return false;
     }
+
+	public static Set<CvSolrField> allNonRedundantFields() {
+
+		Set<CvSolrField> all = new HashSet<>(Arrays.asList(CvSolrField.values()));
+		all.remove(CvSolrField.TEXT);
+
+		return all;
+	}
 }
