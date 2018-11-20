@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.core.impl.settings;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.SolrField;
@@ -19,8 +20,10 @@ public abstract class QueryBaseSettings<F extends SolrField> implements QuerySet
 
 	public QueryBaseSettings(Set<F> fieldSet) {
 
+		Preconditions.checkNotNull(fieldSet);
+
 		this.fieldSet.addAll(fieldSet);
-		defaultMode = setupConfigs(configurations, fieldSet);
+		defaultMode = setupConfigs(configurations);
 
 		if (defaultMode == null) {
 			throw new SearchConfigException("default configuration mode has to be defined");
@@ -46,6 +49,12 @@ public abstract class QueryBaseSettings<F extends SolrField> implements QuerySet
 		return defaultMode;
 	}
 
+	@Override
+	public Set<F> getReturnedFields() {
+
+		return fieldSet;
+	}
+
 	/** setup configurations and return the default search mode */
-	protected abstract QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<F>> configurations, Set<F> fieldSet);
+	protected abstract QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<F>> configurations);
 }
