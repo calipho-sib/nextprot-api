@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl.settings;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
 
 import java.util.ArrayList;
@@ -32,21 +31,21 @@ public class SortConfig<F extends SolrField> {
 	}
 
 	private Criteria criteria;
-	private List<Pair<F, ORDER>> sorting;
+	private List<SortBy<F>> sorting;
 	private int boost = -1;
 	
-	public SortConfig(Criteria criteria, F field, ORDER order) {
+	public SortConfig(Criteria criteria, SortBy<F> sortBy) {
 		this.criteria = criteria;
 		this.sorting = new ArrayList<>();
-		this.sorting.add(Pair.create(field, order));
+		this.sorting.add(sortBy);
 	}
 
-	public SortConfig(Criteria criteria, F field, ORDER order, int boost) {
-		this(criteria, field, order);
+	public SortConfig(Criteria criteria, SortBy<F> sortBy, int boost) {
+		this(criteria, sortBy);
 		this.boost = boost;
 	}
 
-	public SortConfig(Criteria criteria, List<Pair<F, ORDER>> sorting) {
+	public SortConfig(Criteria criteria, List<SortBy<F>> sorting) {
 		this.criteria = criteria;
 		this.sorting = new ArrayList<>();
 		this.sorting.addAll(sorting);
@@ -56,12 +55,31 @@ public class SortConfig<F extends SolrField> {
 		return criteria;
 	}
 
-	public List<Pair<F, ORDER>> getSorting() {
+	public List<SortBy<F>> getSorting() {
 		return sorting;
 	}
 
 	public int getBoost() {
 		return boost;
+	}
+
+	public static class SortBy<F extends SolrField> {
+
+		private final F field;
+		private final ORDER order;
+
+		public SortBy(F field, ORDER order) {
+			this.field = field;
+			this.order = order;
+		}
+
+		public F getField() {
+			return field;
+		}
+
+		public ORDER getOrder() {
+			return order;
+		}
 	}
 }
 	

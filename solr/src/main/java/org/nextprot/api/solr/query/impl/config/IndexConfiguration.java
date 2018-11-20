@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.SearchConfigException;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.settings.FieldConfigSet;
 import org.nextprot.api.solr.core.impl.settings.IndexParameter;
@@ -166,12 +165,12 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 			sortConfig = getDefaultSortConfiguration();
 
 		if (query.getOrder() != null) {
-			for (Pair<F, SolrQuery.ORDER> s : sortConfig.getSorting())
-				solrQuery.addSort(s.getFirst().getName(), query.getOrder());
+			for (SortConfig.SortBy<F> s : sortConfig.getSorting())
+				solrQuery.addSort(s.getField().getName(), query.getOrder());
 
 		} else {
-			for (Pair<F, SolrQuery.ORDER> s : sortConfig.getSorting())
-				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
+			for (SortConfig.SortBy<F> s : sortConfig.getSorting())
+				solrQuery.addSort(s.getField().getName(), s.getOrder());
 		}
 
 		if (sortConfig.getBoost() != -1) {

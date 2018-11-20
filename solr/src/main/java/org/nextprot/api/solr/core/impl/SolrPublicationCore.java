@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
@@ -91,10 +90,10 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 
 			return Collections.singletonList(
 					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
-							new Pair<>(PublicationSolrField.YEAR, ORDER.desc),
-							new Pair<>(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
-							new Pair<>(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
-							new Pair<>(PublicationSolrField.FIRST_PAGE, ORDER.asc))
+							new SortConfig.SortBy<>(PublicationSolrField.YEAR, ORDER.desc),
+							new SortConfig.SortBy<>(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
+							new SortConfig.SortBy<>(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
+							new SortConfig.SortBy<>(PublicationSolrField.FIRST_PAGE, ORDER.asc))
 					)
 			);
 		}

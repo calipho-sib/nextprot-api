@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.core.impl;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.core.QuerySettings;
 import org.nextprot.api.solr.core.impl.component.SolrCoreBase;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
@@ -83,12 +82,12 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 
 			return Arrays.asList(
 					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
-							new Pair<>(CvSolrField.SCORE, ORDER.desc),
-							new Pair<>(CvSolrField.FILTERS, ORDER.asc))
+							new SortConfig.SortBy<>(CvSolrField.SCORE, ORDER.desc),
+							new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc))
 					),
 					new SortConfig<>(SortConfig.Criteria.NAME, Arrays.asList(
-							new Pair<>(CvSolrField.NAME_S, ORDER.asc),
-							new Pair<>(CvSolrField.FILTERS, ORDER.asc))
+							new SortConfig.SortBy<>(CvSolrField.NAME_S, ORDER.asc),
+							new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc))
 					)
 			);
 		}

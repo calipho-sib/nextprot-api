@@ -5,16 +5,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.SolrCore;
+import org.nextprot.api.solr.core.SolrField;
+import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 import org.nextprot.api.solr.core.impl.settings.SortConfig;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,11 +45,14 @@ public class SolrCoreTest {
 	@Test
 	public void cmpProteinSearchResultsFromCrickAndKantForQueryMSH6AllSolrFields() throws QueryConfiguration.MissingSortConfigException {
 
-		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
-		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
-		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
+		Set<EntrySolrField> allEntrySolrFieldSet = EntrySolrField.allNonRedundantFields();
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE); // ignore score
 
-		ProteinSearchResultDiff diff = proteinQueryDiffs("kant", "crick", false,"MSH6", allEntrySolrFieldSet, SortConfig.Criteria.AC);
+		SearchResultDiff diff = queryDiffs(
+				buildEntrySolrCore("kant", allEntrySolrFieldSet,false),
+				buildEntrySolrCore("crick", allEntrySolrFieldSet,false),
+				"MSH6",
+				SortConfig.Criteria.AC);
 
 		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+diff.toString(), diff.equals);
 	}
@@ -56,35 +60,70 @@ public class SolrCoreTest {
 	@Test
 	public void cmpProteinSearchResultsFromCrickAndKantForQueryMSH6AllSolrFieldsGoldOnly() throws QueryConfiguration.MissingSortConfigException {
 
-		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
-		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
-		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
+		Set<EntrySolrField> allEntrySolrFieldSet = EntrySolrField.allNonRedundantFields();
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE); // ignore score
 
-		ProteinSearchResultDiff diff = proteinQueryDiffs("kant", "crick", true,"MSH6", allEntrySolrFieldSet, SortConfig.Criteria.AC);
+		SearchResultDiff diff = queryDiffs(
+				buildEntrySolrCore("kant", allEntrySolrFieldSet,true),
+				buildEntrySolrCore("crick", allEntrySolrFieldSet,true),
+				"MSH6",
+				SortConfig.Criteria.AC);
 
 		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+diff.toString(), diff.equals);
 	}
 
-	private ProteinSearchResultDiff proteinQueryDiffs(String hostname1, String hostname2, boolean isGold, String query, Set<EntrySolrField> fl, SortConfig.Criteria criteria) throws QueryConfiguration.MissingSortConfigException {
+	@Test
+	public void cmpPublicationSearchResultsFromCrickAndKant() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> core1 = (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname1+":8983/solr", fl) :
-				new SolrGoldAndSilverEntryCore("http://"+hostname1+":8983/solr", fl);
+		Set<PublicationSolrField> allSolrFieldSet = PublicationSolrField.allNonRedundantFields();
 
-		SolrCore<EntrySolrField> core2 = (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname1+":8983/solr", fl) :
-				new SolrGoldAndSilverEntryCore("http://"+hostname2+":8983/solr", fl);
+		SolrCore<PublicationSolrField> core1 = new SolrPublicationCore("http://"+"kant"+":8983/solr", allSolrFieldSet);
+		SolrCore<PublicationSolrField> core2 = new SolrPublicationCore("http://"+"uat-web2"+":8983/solr", allSolrFieldSet);
 
-		Query<EntrySolrField> queryOnHost1 = new Query<>(core1).rows(50)
-				.addQuery(query)
-				.sort(criteria);
+		SearchResultDiff diffs = queryDiffs(core1, core2, "author:Doolittle", SortConfig.Criteria.SCORE);
 
-		Query<EntrySolrField> queryOnHost2 = new Query<>(core2).rows(50)
-				.addQuery(query)
-				.sort(criteria);
-
-		return ProteinSearchResultDiff.compare(executeQuery(queryOnHost1), executeQuery(queryOnHost2));
+		Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
 	}
 
-	private static class ProteinSearchResultDiff {
+	@Test
+	public void cmpTermSearchResultsFromCrickAndKant() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<CvSolrField> allSolrFieldSet = CvSolrField.allNonRedundantFields();
+
+		SolrCore<CvSolrField> core1 = new SolrCvCore("http://"+"kant"+":8983/solr", allSolrFieldSet);
+		SolrCore<CvSolrField> core2 = new SolrCvCore("http://"+"uat-web2"+":8983/solr", allSolrFieldSet);
+
+		SearchResultDiff diffs = queryDiffs(core1, core2, "liver");
+
+		Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+	}
+
+
+	private SolrCore<EntrySolrField> buildEntrySolrCore(String hostname, Set<EntrySolrField> fl, boolean isGold) {
+
+		return (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname+":8983/solr", fl) :
+				new SolrGoldAndSilverEntryCore("http://"+hostname+":8983/solr", fl);
+	}
+
+	private <SF extends SolrField> SearchResultDiff queryDiffs(SolrCore<SF> core1, SolrCore<SF> core2, String query) throws QueryConfiguration.MissingSortConfigException {
+
+		return queryDiffs(core1, core2, query, null);
+	}
+
+	private <SF extends SolrField> SearchResultDiff queryDiffs(SolrCore<SF> core1, SolrCore<SF> core2, String query, SortConfig.Criteria criteria) throws QueryConfiguration.MissingSortConfigException {
+
+		Query<SF> queryOnHost1 = new Query<>(core1).rows(50)
+				.addQuery(query)
+		        .sort(criteria);
+
+		Query<SF> queryOnHost2 = new Query<>(core2).rows(50)
+				.addQuery(query)
+				.sort(criteria);
+
+		return SearchResultDiff.compare(executeQuery(queryOnHost1), executeQuery(queryOnHost2));
+	}
+
+	private static class SearchResultDiff {
 
 		private FieldDiff<String> entity;
 		private FieldDiff<String> index;
@@ -93,9 +132,9 @@ public class SolrCoreTest {
 		private ListDiff results;
 		private boolean equals;
 
-		static ProteinSearchResultDiff compare(SearchResult sr1, SearchResult sr2) {
+		static SearchResultDiff compare(SearchResult sr1, SearchResult sr2) {
 
-			ProteinSearchResultDiff diff = new ProteinSearchResultDiff();
+			SearchResultDiff diff = new SearchResultDiff();
 
 			diff.entity = new FieldDiff<>(sr1.getEntity(), sr2.getEntity());
 			diff.index = new FieldDiff<>(sr1.getIndex(), sr2.getIndex());
