@@ -33,6 +33,11 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		this(NAME, Alias.Entry, solrServerBaseURL, Collections.emptySet());
 	}
 
+	public SolrGoldAndSilverEntryCore(String solrServerBaseURL, Set<EntrySolrField> fieldSet) {
+
+		this(NAME, Alias.Entry, solrServerBaseURL, fieldSet);
+	}
+
 	protected SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerBaseURL) {
 
 		this(name, alias, solrServerBaseURL, Collections.emptySet());
