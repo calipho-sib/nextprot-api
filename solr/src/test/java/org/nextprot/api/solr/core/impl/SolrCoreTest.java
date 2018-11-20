@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class SolrCoreTest {
 
@@ -42,13 +43,13 @@ public class SolrCoreTest {
 	@Test
 	public void compareResultsFromCrickAndKantForQueryMSH6() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
-		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
+		SolrCore<EntrySolrField> coreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
+		SolrCore<EntrySolrField> coreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
 
 		for (SortConfig.Criteria criteria : SortConfig.Criteria.values()) {
 
-			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(50).addQuery("MSH6").sort(criteria);
-			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(50).addQuery("MSH6").sort(criteria);
+			Query<EntrySolrField> queryBuild = new Query<>(coreBuild).rows(50).addQuery("MSH6").sort(criteria);
+			Query<EntrySolrField> queryAlpha = new Query<>(coreAlpha).rows(50).addQuery("MSH6").sort(criteria);
 
 			SearchResult bResult = executeQuery(queryBuild);
 			SearchResult aResult = executeQuery(queryAlpha);
@@ -59,27 +60,24 @@ public class SolrCoreTest {
 	}
 
 	@Test
-	public void compareResultsFromCrickAndKantForQueryMSH6AllFields() throws QueryConfiguration.MissingSortConfigException {
+	public void compareResultsFromCrickAndKantForQueryMSH6AllSolrFields() throws QueryConfiguration.MissingSortConfigException {
 
 		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
 		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
 		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
 
 
-		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr", allEntrySolrFieldSet);
-		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr", allEntrySolrFieldSet);
+		SolrCore<EntrySolrField> coreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr", allEntrySolrFieldSet);
+		SolrCore<EntrySolrField> coreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr", allEntrySolrFieldSet);
 
-		for (SortConfig.Criteria criteria : SortConfig.Criteria.values()) {
+		Query<EntrySolrField> queryBuild = new Query<>(coreBuild).rows(50).addQuery("MSH6").sort(SortConfig.Criteria.AC);
+		Query<EntrySolrField> queryAlpha = new Query<>(coreAlpha).rows(50).addQuery("MSH6").sort(SortConfig.Criteria.AC);
 
-			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(1).addQuery("MSH6").sort(criteria);
-			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(1).addQuery("MSH6").sort(criteria);
+		SearchResult bResult = executeQuery(queryBuild);
+		SearchResult aResult = executeQuery(queryAlpha);
 
-			SearchResult bResult = executeQuery(queryBuild);
-			SearchResult aResult = executeQuery(queryAlpha);
-
-			SearchResultDiff srd = SearchResultDiff.compare(bResult, aResult);
-			Assert.assertTrue("criteria "+criteria+", diffs: "+srd.toString(), srd.equals);
-		}
+		SearchResultDiff srd = SearchResultDiff.compare(bResult, aResult);
+		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+srd.toString(), srd.equals);
 	}
 
 	private static class SearchResultDiff {
@@ -236,7 +234,22 @@ public class SolrCoreTest {
 
 			for (String key : keys) {
 
-				FieldDiff<Object> diffMap = new FieldDiff<>(m1.get(key), m2.get(key));
+				FieldDiff<Object> diffMap;
+
+				if (m1.get(key) instanceof List) {
+
+					List<String> l1 = ((List<String>) m1.get(key)).stream()
+							.sorted()
+							.collect(Collectors.toList());
+					List<String> l2 = ((List<String>) m2.get(key)).stream()
+							.sorted()
+							.collect(Collectors.toList());
+
+					diffMap = new FieldDiff<>(l1, l2);
+				}
+				else {
+					diffMap = new FieldDiff<>(m1.get(key), m2.get(key));
+				}
 
 				if (!diffMap.equals) {
 					diffs.put(key, diffMap);
