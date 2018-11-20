@@ -15,6 +15,7 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class SolrCoreTest {
 		SolrCore<CvSolrField> core1 = new SolrCvCore("http://"+"kant"+":8983/solr", allSolrFieldSet);
 		SolrCore<CvSolrField> core2 = new SolrCvCore("http://"+"uat-web2"+":8983/solr", allSolrFieldSet);
 
-		SearchResultDiff diffs = queryDiffs(core1, core2, "liver");
+		SearchResultDiff diffs = queryDiffsSortFirst(core1, core2, "liver", (e1, e2) -> Comparator.comparingDouble((double)e1.get("score"), (double)e2.get("score")));
 
 		Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
 	}
@@ -123,6 +124,17 @@ public class SolrCoreTest {
 		return SearchResultDiff.compare(executeQuery(queryOnHost1), executeQuery(queryOnHost2));
 	}
 
+	private <SF extends SolrField> SearchResultDiff queryDiffsSortFirst(SolrCore<SF> core1, SolrCore<SF> core2, String query, Comparator<Map<String, Object>> comparator) throws QueryConfiguration.MissingSortConfigException {
+
+		Query<SF> queryOnHost1 = new Query<>(core1).rows(50)
+				.addQuery(query);
+
+		Query<SF> queryOnHost2 = new Query<>(core2).rows(50)
+				.addQuery(query);
+
+		return SearchResultDiff.compare(executeQuery(queryOnHost1), executeQuery(queryOnHost2), comparator);
+	}
+
 	private static class SearchResultDiff {
 
 		private FieldDiff<String> entity;
@@ -134,6 +146,11 @@ public class SolrCoreTest {
 
 		static SearchResultDiff compare(SearchResult sr1, SearchResult sr2) {
 
+			return compare(sr1, sr2, null);
+		}
+
+		static SearchResultDiff compare(SearchResult sr1, SearchResult sr2, Comparator<Map<String, Object>> comparator) {
+
 			SearchResultDiff diff = new SearchResultDiff();
 
 			diff.entity = new FieldDiff<>(sr1.getEntity(), sr2.getEntity());
@@ -142,7 +159,27 @@ public class SolrCoreTest {
 			diff.found = new FieldDiff<>(sr1.getFound(), sr2.getFound());
 
 			if (diff.found.equals) {
-				diff.results = new ListDiff(sr1.getResults(), sr2.getResults());
+
+				List<Map<String, Object>> r1;
+				List<Map<String, Object>> r2;
+
+				if (comparator != null) {
+
+					r1 = sr1.getResults().stream()
+							.sorted(comparator)
+							.collect(Collectors.toList());
+
+					r2 = sr2.getResults().stream()
+							.sorted(comparator)
+							.collect(Collectors.toList());
+				}
+				else {
+
+					r1 = sr1.getResults();
+					r2 = sr2.getResults();
+				}
+
+				diff.results = new ListDiff(r1, r2);
 			}
 
 			diff.equals = diff.entity.equals
