@@ -12,7 +12,7 @@ public enum Xref2Annotation  {
 	REACTOME("Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
 			"Reactome","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	DRUGBANK("DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),
-			"DrugBank","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+			"DrugBank","SILVER","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	KEGGPATHWAY("KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
 			"KEGG_PTW","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	TCDB("TCDB",  "family name", AnnotationCategory.TRANSPORT_ACTIVITY.getDbAnnotationTypeName(),
@@ -28,6 +28,7 @@ public enum Xref2Annotation  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
+	private final String 
 
     Xref2Annotation(final String xrefDbName,
 			final String xrefPropName, final String annotCat, final String srcName,
