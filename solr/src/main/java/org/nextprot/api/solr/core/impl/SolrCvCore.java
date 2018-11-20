@@ -15,6 +15,7 @@ import org.nextprot.api.solr.query.impl.config.AutocompleteConfiguration;
 import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,12 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 
 	public SolrCvCore(String solrServerBaseURL) {
 
-		super(NAME, Alias.Term, solrServerBaseURL);
+		this(solrServerBaseURL, Collections.emptySet());
+	}
+
+	public SolrCvCore(String solrServerBaseURL, Set<CvSolrField> fieldSet) {
+
+		super(NAME, Alias.Term, solrServerBaseURL, fieldSet);
 	}
 
 	@Override
@@ -35,9 +41,9 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 	}
 
 	@Override
-	public QuerySettings<CvSolrField> getQuerySettings() {
+	protected QuerySettings<CvSolrField> buildSettings(Set<CvSolrField> specificFieldSet) {
 
-		return new Settings();
+		return (specificFieldSet.isEmpty()) ? new Settings() : new Settings(specificFieldSet);
 	}
 
 	private static class Settings extends QueryBaseSettings<CvSolrField> {
@@ -52,13 +58,18 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 					CvSolrField.FILTERS)));
 		}
 
+		private Settings(Set<CvSolrField> fieldSet) {
+
+			super(fieldSet);
+		}
+
 		@Override
-		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<CvSolrField>> configurations, Set<CvSolrField> fieldSet) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<CvSolrField>> configurations) {
 
 			List<SortConfig<CvSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration<CvSolrField> defaultConfig = newDefaultConfiguration(sortConfigs, fieldSet);
+			IndexConfiguration<CvSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
@@ -82,11 +93,11 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 			);
 		}
 
-		private IndexConfiguration<CvSolrField> newDefaultConfiguration(List<SortConfig<CvSolrField>> sortConfigs, Set<CvSolrField> fieldSet) {
+		private IndexConfiguration<CvSolrField> newDefaultConfiguration(List<SortConfig<CvSolrField>> sortConfigs) {
 
 			IndexConfiguration<CvSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.FL).addAll(fieldSet));
+			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.FL).addAll(getReturnedFields()));
 
 			defaultConfig.addConfigSet(new FieldConfigSet<CvSolrField>(IndexParameter.QF)
 					.addWithBoostFactor(CvSolrField.AC, 64)

@@ -26,8 +26,6 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 	private static final String NAME = "npentries1";
 
-	private final QuerySettings<EntrySolrField> settings;
-
 	public SolrGoldAndSilverEntryCore(String solrServerBaseURL) {
 
 		this(NAME, Alias.Entry, solrServerBaseURL, Collections.emptySet());
@@ -45,8 +43,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 	public SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerBaseURL, Set<EntrySolrField> fieldSet) {
 
-		super(name, alias, solrServerBaseURL);
-		this.settings = (fieldSet.isEmpty()) ? new Settings() : new Settings(fieldSet);
+		super(name, alias, solrServerBaseURL, fieldSet);
 	}
 
 	@Override
@@ -55,10 +52,9 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		return EntrySolrField.values();
 	}
 
-	@Override
-	public QuerySettings<EntrySolrField> getQuerySettings() {
+	protected QuerySettings<EntrySolrField> buildSettings(Set<EntrySolrField> specificFieldSet) {
 
-		return settings;
+		return (specificFieldSet.isEmpty()) ? new Settings() : new Settings(specificFieldSet);
 	}
 
 	private static class Settings extends QueryBaseSettings<EntrySolrField> {
@@ -91,13 +87,12 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		}
 
 		@Override
-		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations,
-		                                 Set<EntrySolrField> fieldSet) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations) {
 
 			List<SortConfig<EntrySolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration<EntrySolrField> defaultConfig = newDefaultConfiguration(fieldSet, sortConfigs);
+			IndexConfiguration<EntrySolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
@@ -128,12 +123,11 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			);
 		}
 
-		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(Set<EntrySolrField> fieldSet,
-		                                                                   List<SortConfig<EntrySolrField>> sortConfigs) {
+		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(List<SortConfig<EntrySolrField>> sortConfigs) {
 
 			IndexConfiguration<EntrySolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.FL).addAll(fieldSet));
+			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.FL).addAll(getReturnedFields()));
 
 			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.QF)
 					//.add(Fields.ID,64)

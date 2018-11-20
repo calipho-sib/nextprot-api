@@ -28,7 +28,12 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 
 	public SolrPublicationCore(String solrServerBaseURL) {
 
-		super(SolrPublicationCore.NAME, Alias.Publication, solrServerBaseURL);
+		super(NAME, Alias.Publication, solrServerBaseURL, Collections.emptySet());
+	}
+
+	public SolrPublicationCore(String solrServerBaseURL, Set<PublicationSolrField> fieldSet) {
+
+		super(NAME, Alias.Publication, solrServerBaseURL, fieldSet);
 	}
 
 	@Override
@@ -37,9 +42,9 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 	}
 
 	@Override
-	public QuerySettings<PublicationSolrField> getQuerySettings() {
+	protected QuerySettings<PublicationSolrField> buildSettings(Set<PublicationSolrField> specificFieldSet) {
 
-		return new Settings();
+		return (specificFieldSet.isEmpty()) ? new Settings() : new Settings(specificFieldSet);
 	}
 
 	private static class Settings extends QueryBaseSettings<PublicationSolrField> {
@@ -61,13 +66,18 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 					PublicationSolrField.FILTERS)));
 		}
 
+		private Settings(Set<PublicationSolrField> fieldSet) {
+
+			super(fieldSet);
+		}
+
 		@Override
-		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations, Set<PublicationSolrField> fieldSet) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations) {
 
 			List<SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs, fieldSet);
+			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
@@ -89,12 +99,11 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 			);
 		}
 
-		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs,
-		                                                                         Set<PublicationSolrField> fieldSet) {
+		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs) {
 
 			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL).addAll(fieldSet));
+			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL).addAll(getReturnedFields()));
 
 			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.QF)
 					.addWithBoostFactor(PublicationSolrField.AC, 16)
