@@ -28,7 +28,6 @@ public enum Xref2Annotation  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
-	private final String 
 
     Xref2Annotation(final String xrefDbName,
 			final String xrefPropName, final String annotCat, final String srcName,
