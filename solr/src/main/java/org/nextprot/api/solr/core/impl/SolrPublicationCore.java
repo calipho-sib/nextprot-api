@@ -16,8 +16,10 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
@@ -42,13 +44,30 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 
 	private static class Settings extends QueryBaseSettings<PublicationSolrField> {
 
+		private Settings() {
+			super(new HashSet<>(Arrays.asList(
+					PublicationSolrField.ID,
+					PublicationSolrField.AC,
+					PublicationSolrField.YEAR,
+					PublicationSolrField.TITLE,
+					PublicationSolrField.FIRST_PAGE,
+					PublicationSolrField.LAST_PAGE,
+					PublicationSolrField.ABSTRACT,
+					PublicationSolrField.VOLUME, // to be used for for display & search
+					PublicationSolrField.TYPE,
+					PublicationSolrField.PRETTY_JOURNAL, // contains only iso abbr to be displayed
+					//PublicationSolrField.SOURCE,
+					PublicationSolrField.PRETTY_AUTHORS,
+					PublicationSolrField.FILTERS)));
+		}
+
 		@Override
-		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations, Set<PublicationSolrField> fieldSet) {
 
 			List<SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
+			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs, fieldSet);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
@@ -70,24 +89,12 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 			);
 		}
 
-		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs) {
+		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs,
+		                                                                         Set<PublicationSolrField> fieldSet) {
 
 			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL)
-					.add(PublicationSolrField.ID)
-					.add(PublicationSolrField.AC)
-					.add(PublicationSolrField.YEAR)
-					.add(PublicationSolrField.TITLE)
-					.add(PublicationSolrField.FIRST_PAGE)
-					.add(PublicationSolrField.LAST_PAGE)
-					.add(PublicationSolrField.ABSTRACT)
-					.add(PublicationSolrField.VOLUME) // to be used for for display & search
-					.add(PublicationSolrField.TYPE)
-					.add(PublicationSolrField.PRETTY_JOURNAL) // contains only iso abbr to be displayed
-					//.add(PubField.SOURCE)
-					.add(PublicationSolrField.PRETTY_AUTHORS)
-					.add(PublicationSolrField.FILTERS));
+			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.FL).addAll(fieldSet));
 
 			defaultConfig.addConfigSet(new FieldConfigSet<PublicationSolrField>(IndexParameter.QF)
 					.addWithBoostFactor(PublicationSolrField.AC, 16)

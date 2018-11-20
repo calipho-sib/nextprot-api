@@ -2,6 +2,7 @@ package org.nextprot.api.solr.core.impl.settings;
 
 import org.nextprot.api.solr.core.SolrField;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,11 @@ public class FieldConfigSet<F extends SolrField> {
 	
 	public FieldConfigSet<F> add(F field) {
 		this.configs.put(field, 0);
+		return this;
+	}
+
+	public FieldConfigSet<F> addAll(Collection<F> fields) {
+		fields.forEach(f -> configs.put(f, 0));
 		return this;
 	}
 	

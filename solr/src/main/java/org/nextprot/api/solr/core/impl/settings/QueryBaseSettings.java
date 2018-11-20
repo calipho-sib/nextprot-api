@@ -7,16 +7,20 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryMode;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class QueryBaseSettings<F extends SolrField> implements QuerySettings<F> {
 
+	private final Set<F> fieldSet = new HashSet<>();
 	private final Map<QueryMode, QueryConfiguration<F>> configurations = new HashMap<>();
 	private final QueryMode defaultMode;
 
-	public QueryBaseSettings() {
+	public QueryBaseSettings(Set<F> fieldSet) {
 
-		defaultMode = setupConfigs(configurations);
+		this.fieldSet.addAll(fieldSet);
+		defaultMode = setupConfigs(configurations, fieldSet);
 
 		if (defaultMode == null) {
 			throw new SearchConfigException("default configuration mode has to be defined");
@@ -43,5 +47,5 @@ public abstract class QueryBaseSettings<F extends SolrField> implements QuerySet
 	}
 
 	/** setup configurations and return the default search mode */
-	protected abstract QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<F>> configurations);
+	protected abstract QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<F>> configurations, Set<F> fieldSet);
 }

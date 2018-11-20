@@ -15,22 +15,33 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 import org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 	private static final String NAME = "npentries1";
 
+	private final QuerySettings<EntrySolrField> settings;
+
 	public SolrGoldAndSilverEntryCore(String solrServerBaseURL) {
 
-		this(NAME, Alias.Entry, solrServerBaseURL);
+		this(NAME, Alias.Entry, solrServerBaseURL, Collections.emptySet());
 	}
 
 	protected SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerBaseURL) {
 
+		this(name, alias, solrServerBaseURL, Collections.emptySet());
+	}
+
+	public SolrGoldAndSilverEntryCore(String name, Alias alias, String solrServerBaseURL, Set<EntrySolrField> fieldSet) {
+
 		super(name, alias, solrServerBaseURL);
+		this.settings = (fieldSet.isEmpty()) ? new Settings() : new Settings(fieldSet);
 	}
 
 	@Override
@@ -42,18 +53,46 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 	@Override
 	public QuerySettings<EntrySolrField> getQuerySettings() {
 
-		return new Settings();
+		return settings;
 	}
 
 	private static class Settings extends QueryBaseSettings<EntrySolrField> {
 
+		private Settings() {
+			super(new HashSet<>(Arrays.asList(
+					EntrySolrField.ID,
+					EntrySolrField.EC_NAME,
+					EntrySolrField.FILTERS,
+					EntrySolrField.RECOMMENDED_AC,
+					EntrySolrField.RECOMMENDED_NAME,
+					EntrySolrField.CD_ANTIGEN,
+					EntrySolrField.INTERNATIONAL_NAME,
+					EntrySolrField.UNIPROT_NAME,
+					EntrySolrField.RECOMMENDED_GENE_NAMES,
+					EntrySolrField.GENE_BAND,
+					EntrySolrField.SCORE,
+					EntrySolrField.FUNCTION_DESC,
+					EntrySolrField.CHR_LOC,
+					EntrySolrField.ISOFORM_NUM,
+					EntrySolrField.PTM_NUM,
+					EntrySolrField.AA_LENGTH,
+					EntrySolrField.VAR_NUM,
+					EntrySolrField.PROTEIN_EXISTENCE)));
+		}
+
+		private Settings(Set<EntrySolrField> fieldSet) {
+
+			super(fieldSet);
+		}
+
 		@Override
-		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations) {
+		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations,
+		                                 Set<EntrySolrField> fieldSet) {
 
 			List<SortConfig<EntrySolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
-			IndexConfiguration<EntrySolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
+			IndexConfiguration<EntrySolrField> defaultConfig = newDefaultConfiguration(fieldSet, sortConfigs);
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
@@ -84,29 +123,12 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			);
 		}
 
-		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(List<SortConfig<EntrySolrField>> sortConfigs) {
+		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(Set<EntrySolrField> fieldSet,
+		                                                                   List<SortConfig<EntrySolrField>> sortConfigs) {
 
 			IndexConfiguration<EntrySolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
-			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.FL)
-					.add(EntrySolrField.ID)
-					.add(EntrySolrField.EC_NAME)
-					.add(EntrySolrField.FILTERS)
-					.add(EntrySolrField.RECOMMENDED_AC)
-					.add(EntrySolrField.RECOMMENDED_NAME)
-					.add(EntrySolrField.CD_ANTIGEN)
-					.add(EntrySolrField.INTERNATIONAL_NAME)
-					.add(EntrySolrField.UNIPROT_NAME)
-					.add(EntrySolrField.RECOMMENDED_GENE_NAMES)
-					.add(EntrySolrField.GENE_BAND)
-					.add(EntrySolrField.SCORE)
-					.add(EntrySolrField.FUNCTION_DESC)
-					.add(EntrySolrField.CHR_LOC)
-					.add(EntrySolrField.ISOFORM_NUM)
-					.add(EntrySolrField.PTM_NUM)
-					.add(EntrySolrField.AA_LENGTH)
-					.add(EntrySolrField.VAR_NUM)
-					.add(EntrySolrField.PROTEIN_EXISTENCE));
+			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.FL).addAll(fieldSet));
 
 			defaultConfig.addConfigSet(new FieldConfigSet<EntrySolrField>(IndexParameter.QF)
 					//.add(Fields.ID,64)
