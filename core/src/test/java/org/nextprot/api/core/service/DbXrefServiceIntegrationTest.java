@@ -3,6 +3,9 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.BioObject.BioType;
+import org.nextprot.api.core.domain.BioObject.ResourceType;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -16,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
@@ -121,11 +126,23 @@ having sum(a.cnt)=1
 		Annotation annot = annotations.get(0);
 		assertTrue(annot.getCategory().equals(AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()== AnnotationCategory.SMALL_MOLECULE_INTERACTION);
-		assertTrue(annot.getQualityQualifier().equals("GOLD"));
-		Assert.assertEquals("Pseudoephedrine", annot.getDescription());
+		assertTrue(annot.getQualityQualifier().equals("SILVER"));
+		assertEquals(null,annot.getDescription());
+		BioObject bo = annot.getBioObject();
+		assertNotNull(bo);
+		assertEquals("DB00852", bo.getAccession());
+		assertEquals(BioType.CHEMICAL, bo.getBioType());
+		assertEquals("DrugBank", bo.getDatabase());
+		assertEquals(983678L, bo.getId());
+		assertEquals("Pseudoephedrine", bo.getPropertyValue("chemical name"));
+		assertEquals(ResourceType.EXTERNAL, bo.getResourceType());
+		
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
+		
+		
+		
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
 		assertTrue(evi.getAssignedBy().equals("DrugBank"));
