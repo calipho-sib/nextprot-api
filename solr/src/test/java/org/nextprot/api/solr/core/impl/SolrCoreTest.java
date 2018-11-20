@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class SolrCoreTest {
 
@@ -42,13 +44,13 @@ public class SolrCoreTest {
 	@Test
 	public void compareResultsFromCrickAndKantForQueryMSH6() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
-		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
+		SolrCore<EntrySolrField> coreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr");
+		SolrCore<EntrySolrField> coreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr");
 
 		for (SortConfig.Criteria criteria : SortConfig.Criteria.values()) {
 
-			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(50).addQuery("MSH6").sort(criteria);
-			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(50).addQuery("MSH6").sort(criteria);
+			Query<EntrySolrField> queryBuild = new Query<>(coreBuild).rows(50).addQuery("MSH6").sort(criteria);
+			Query<EntrySolrField> queryAlpha = new Query<>(coreAlpha).rows(50).addQuery("MSH6").sort(criteria);
 
 			SearchResult bResult = executeQuery(queryBuild);
 			SearchResult aResult = executeQuery(queryAlpha);
@@ -59,27 +61,28 @@ public class SolrCoreTest {
 	}
 
 	@Test
-	public void compareResultsFromCrickAndKantForQueryMSH6AllFields() throws QueryConfiguration.MissingSortConfigException {
+	public void compareResultsFromCrickAndKantForQueryMSH6AllSolrFields() throws QueryConfiguration.MissingSortConfigException {
 
 		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
 		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
 		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
 
+		SolrCore<EntrySolrField> coreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr", allEntrySolrFieldSet);
+		SolrCore<EntrySolrField> coreAlpha = new SolrGoldOnlyEntryCore("http://crick:8983/solr", allEntrySolrFieldSet);
 
-		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr", allEntrySolrFieldSet);
-		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr", allEntrySolrFieldSet);
+		Query<EntrySolrField> queryBuild = new Query<>(coreBuild).rows(50)
+				.addQuery("MSH6")
+				.sort(SortConfig.Criteria.AC);
 
-		for (SortConfig.Criteria criteria : SortConfig.Criteria.values()) {
+		Query<EntrySolrField> queryAlpha = new Query<>(coreAlpha).rows(50)
+				.addQuery("MSH6")
+				.sort(SortConfig.Criteria.AC);
 
-			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(1).addQuery("MSH6").sort(criteria);
-			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(1).addQuery("MSH6").sort(criteria);
+		SearchResult bResult = executeQuery(queryBuild);
+		SearchResult aResult = executeQuery(queryAlpha);
 
-			SearchResult bResult = executeQuery(queryBuild);
-			SearchResult aResult = executeQuery(queryAlpha);
-
-			SearchResultDiff srd = SearchResultDiff.compare(bResult, aResult);
-			Assert.assertTrue("criteria "+criteria+", diffs: "+srd.toString(), srd.equals);
-		}
+		SearchResultDiff srd = SearchResultDiff.compare(bResult, aResult);
+		Assert.assertTrue("criteria "+SortConfig.Criteria.AC+", diffs: "+srd.toString(), srd.equals);
 	}
 
 	private static class SearchResultDiff {
@@ -136,10 +139,14 @@ public class SolrCoreTest {
 
 		FieldDiff(T o1, T o2) {
 
+			this(o1, o2, (a, b) -> Objects.equals(a, b));
+		}
+
+		FieldDiff(T o1, T o2, BiFunction<T, T, Boolean> op) {
+
 			this.o1 = o1;
 			this.o2 = o2;
-			//this.equals = (o1 instanceof Float) ? (int)((Float)o1 *1000000000) == (int)((Float)o2*1000000000) : Objects.equals(o1, o2);
-			this.equals = Objects.equals(o1, o2);
+			this.equals = op.apply(o1, o2);
 		}
 
 		public String toString() {
@@ -236,7 +243,33 @@ public class SolrCoreTest {
 
 			for (String key : keys) {
 
-				FieldDiff<Object> diffMap = new FieldDiff<>(m1.get(key), m2.get(key));
+				FieldDiff<Object> diffMap;
+
+				if (m1.get(key) instanceof List) {
+
+					List<String> l1 = ((List<String>) m1.get(key)).stream()
+							.sorted()
+							.collect(Collectors.toList());
+					List<String> l2 = ((List<String>) m2.get(key)).stream()
+							.sorted()
+							.collect(Collectors.toList());
+
+					diffMap = new FieldDiff<>(l1, l2);
+				}
+				else if (key.equals(EntrySolrField.PUBLI_COMPUTED_COUNT.getName()) ||
+						key.equals(EntrySolrField.PUBLI_CURATED_COUNT.getName()) ||
+						key.equals(EntrySolrField.PUBLI_LARGE_SCALE_COUNT.getName())) {
+
+					diffMap = new FieldDiff<>(m1.get(key), m2.get(key), (a, b) -> (int)a >= (int)b);
+				}
+				else if (key.equals(EntrySolrField.INFORMATIONAL_SCORE.getName())) {
+
+					diffMap = new FieldDiff<>(m1.get(key), m2.get(key), (a, b) -> (float)a >= (float)b);
+				}
+
+				else {
+					diffMap = new FieldDiff<>(m1.get(key), m2.get(key));
+				}
 
 				if (!diffMap.equals) {
 					diffs.put(key, diffMap);
