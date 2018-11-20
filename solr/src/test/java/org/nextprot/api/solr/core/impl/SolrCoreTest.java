@@ -12,14 +12,16 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class SolrCvCoreTest {
+public class SolrCoreTest {
 
 	@Test
 	public void testSolrOnKant() {
@@ -47,6 +49,30 @@ public class SolrCvCoreTest {
 
 			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(50).addQuery("MSH6").sort(criteria);
 			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(50).addQuery("MSH6").sort(criteria);
+
+			SearchResult bResult = executeQuery(queryBuild);
+			SearchResult aResult = executeQuery(queryAlpha);
+
+			SearchResultDiff srd = SearchResultDiff.compare(bResult, aResult);
+			Assert.assertTrue("criteria "+criteria+", diffs: "+srd.toString(), srd.equals);
+		}
+	}
+
+	@Test
+	public void compareResultsFromCrickAndKantForQueryMSH6AllFields() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<EntrySolrField> allEntrySolrFieldSet = new HashSet<>(Arrays.asList(EntrySolrField.values()));
+		allEntrySolrFieldSet.remove(EntrySolrField.TEXT);
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE);
+
+
+		SolrCore<EntrySolrField> cvCoreBuild = new SolrGoldOnlyEntryCore("http://kant:8983/solr", allEntrySolrFieldSet);
+		SolrCore<EntrySolrField> cvCoreAlpha = new SolrGoldOnlyEntryCore("http://uat-web2:8983/solr", allEntrySolrFieldSet);
+
+		for (SortConfig.Criteria criteria : SortConfig.Criteria.values()) {
+
+			Query<EntrySolrField> queryBuild = new Query<>(cvCoreBuild).rows(1).addQuery("MSH6").sort(criteria);
+			Query<EntrySolrField> queryAlpha = new Query<>(cvCoreAlpha).rows(1).addQuery("MSH6").sort(criteria);
 
 			SearchResult bResult = executeQuery(queryBuild);
 			SearchResult aResult = executeQuery(queryAlpha);
