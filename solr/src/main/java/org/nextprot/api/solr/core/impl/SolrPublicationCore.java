@@ -15,8 +15,8 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +73,7 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 		@Override
 		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<PublicationSolrField>> configurations) {
 
-			List<SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
+			Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
 			IndexConfiguration<PublicationSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
@@ -86,19 +86,21 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 			return defaultConfig.getMode();
 		}
 
-		private List<SortConfig<PublicationSolrField>> newSortConfigs() {
+		private Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> newSortConfigs() {
 
-			return Collections.singletonList(
-					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
-							new SortConfig.SortBy<>(PublicationSolrField.YEAR, ORDER.desc),
-							new SortConfig.SortBy<>(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
-							new SortConfig.SortBy<>(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
-							new SortConfig.SortBy<>(PublicationSolrField.FIRST_PAGE, ORDER.asc))
-					)
-			);
+            Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> map = new HashMap<>();
+
+            map.put(SortConfig.Criteria.SCORE, new SortConfig<>(Arrays.asList(
+                    new SortConfig.SortBy<>(PublicationSolrField.YEAR, ORDER.desc),
+                    new SortConfig.SortBy<>(PublicationSolrField.PRETTY_JOURNAL, ORDER.asc),
+                    new SortConfig.SortBy<>(PublicationSolrField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
+                    new SortConfig.SortBy<>(PublicationSolrField.FIRST_PAGE, ORDER.asc))
+                    ));
+
+            return map;
 		}
 
-		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(List<SortConfig<PublicationSolrField>> sortConfigs) {
+		private IndexConfiguration<PublicationSolrField> newDefaultConfiguration(Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> sortConfigs) {
 
 			IndexConfiguration<PublicationSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
@@ -154,7 +156,7 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 		}
 
 		private AutocompleteConfiguration<PublicationSolrField> newAutoCompleteConfiguration(IndexConfiguration<PublicationSolrField> configuration,
-		                                                                                     List<SortConfig<PublicationSolrField>> sortConfigs) {
+                                                                                             Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> sortConfigs) {
 
 			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = new AutocompleteConfiguration<>(configuration);
 

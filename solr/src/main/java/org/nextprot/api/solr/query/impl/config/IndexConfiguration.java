@@ -14,7 +14,6 @@ import org.nextprot.api.solr.query.QueryConfiguration;
 import org.nextprot.api.solr.query.QueryMode;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,20 +49,25 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
 		this.sortConfigs.putAll(originalConfiguration.getSortConfigs());
 		this.otherParameters.putAll(originalConfiguration.getOtherParameters());
-		this.defaultSortCriteria = originalConfiguration.getDefaultSortConfiguration().getCriteria();
+		this.defaultSortCriteria = originalConfiguration.getDefaultSortCriteria();
 	}
 
 	public void addConfigSet(FieldConfigSet<F> configSet) {
 		this.fieldConfigSets.put(configSet.getParameter(), configSet);
 	}
 
-	public void addSortConfig(SortConfig<F> sortConfig) {
-		this.sortConfigs.put(sortConfig.getCriteria(), sortConfig);
+	public void addSortConfig(SortConfig.Criteria criteria, SortConfig<F> sortConfig) {
+		if (sortConfigs.containsKey(criteria)) {
+			throw new IllegalStateException("already contains sorting criteria "+criteria);
+		}
+		this.sortConfigs.put(criteria, sortConfig);
 	}
 
-	public void addSortConfigs(List<SortConfig<F>> sortConfigs) {
-		for(SortConfig<F> config : sortConfigs)
-			this.sortConfigs.put(config.getCriteria(), config);
+	public void addSortConfigs(Map<SortConfig.Criteria, SortConfig<F>> map) {
+
+	    for (Map.Entry<SortConfig.Criteria, SortConfig<F>> entry : map.entrySet()) {
+			addSortConfig(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	public SortConfig<F> getSortConfig(SortConfig.Criteria criteria) {
@@ -83,7 +87,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	 * @return
 	 */
 	@Override
-	public String formatQuery(Query query) {
+	public String formatQuery(Query<F> query) {
 		StringBuilder queryBuilder = new StringBuilder();
 
         String[] tokens = query.getQueryStringEscapeColon().split(WHITESPACE);
@@ -127,7 +131,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	}
 
 	@Override
-	public SolrQuery convertQuery(Query query) throws MissingSortConfigException {
+	public SolrQuery convertQuery(Query<F> query) throws MissingSortConfigException {
 
 		SolrQuery solrQuery = new SolrQuery();
 
@@ -153,24 +157,36 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 			for (Map.Entry<String, String> e : otherParameters.entrySet())
 				solrQuery.set(e.getKey(), e.getValue());
 
-		SortConfig.Criteria criteria = query.getSort();
+        SortConfig.Criteria criteria = query.getSort();
 		SortConfig<F> sortConfig;
 
-		if (criteria != null) {
-			sortConfig = getSortConfig(criteria);
+		// sorting based solely on sortConfig field
+		if (query.getSortConfig() != null) {
+			sortConfig = query.getSortConfig();
+			for (SortConfig.SortBy<F> sb : sortConfig.getSorting()) {
+				solrQuery.addSort(sb.getField().getName(), sb.getOrder());
+			}
+		}
+		// sorting based on criteria and order
+		else {
+			if (criteria != null) {
+				sortConfig = getSortConfig(criteria);
 
-			if (sortConfig == null)
-				throw new MissingSortConfigException(criteria, query);
-		} else
-			sortConfig = getDefaultSortConfiguration();
+				if (sortConfig == null)
+					throw new MissingSortConfigException(criteria, query);
+			} else {
+				sortConfig = getDefaultSortConfiguration();
+			}
 
-		if (query.getOrder() != null) {
-			for (SortConfig.SortBy<F> s : sortConfig.getSorting())
-				solrQuery.addSort(s.getField().getName(), query.getOrder());
-
-		} else {
-			for (SortConfig.SortBy<F> s : sortConfig.getSorting())
-				solrQuery.addSort(s.getField().getName(), s.getOrder());
+			if (query.getOrder() != null) {
+				for (SortConfig.SortBy<F> sb : sortConfig.getSorting()) {
+					solrQuery.addSort(sb.getField().getName(), query.getOrder());
+				}
+			} else {
+				for (SortConfig.SortBy<F> sb : sortConfig.getSorting()) {
+					solrQuery.addSort(sb.getField().getName(), sb.getOrder());
+				}
+			}
 		}
 
 		if (sortConfig.getBoost() != -1) {
@@ -181,7 +197,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	}
 
 	@Override
-	public SolrQuery convertIdQuery(Query query) {
+	public SolrQuery convertIdQuery(Query<F> query) {
 
 		LOGGER.debug("Query index name:" + query.getIndexName());
 		LOGGER.debug("Query config name: "+ query.getQueryMode().getName());
@@ -222,7 +238,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	}
 
 	public SortConfig<F> getDefaultSortConfiguration() {
-		if(defaultSortCriteria != null && sortConfigs.containsKey(this.defaultSortCriteria))
+		if(defaultSortCriteria != null && sortConfigs.containsKey(defaultSortCriteria))
 			return sortConfigs.get(defaultSortCriteria);
 		else throw new SearchConfigException("No sorting set as default");
 	}
@@ -230,7 +246,10 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	public void setDefaultSortCriteria(SortConfig.Criteria defaultSortCriteria) {
 		this.defaultSortCriteria = defaultSortCriteria;
 	}
-	
+
+    public SortConfig.Criteria getDefaultSortCriteria() {
+        return defaultSortCriteria;
+    }
 
 	public Map<String, String> getOtherParameters() {
 		return this.otherParameters;

@@ -16,8 +16,8 @@ import org.nextprot.api.solr.query.impl.config.SearchByIdConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,7 +89,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		@Override
 		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<EntrySolrField>> configurations) {
 
-			List<SortConfig<EntrySolrField>> sortConfigs = newSortConfigs();
+			Map<SortConfig.Criteria, SortConfig<EntrySolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
 			IndexConfiguration<EntrySolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
@@ -110,20 +110,22 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			return defaultConfig.getMode();
 		}
 
-		private List<SortConfig<EntrySolrField>> newSortConfigs() {
+		private Map<SortConfig.Criteria, SortConfig<EntrySolrField>> newSortConfigs() {
 
-			return Arrays.asList(
-					new SortConfig<>(SortConfig.Criteria.GENE, new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.PROTEIN, new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.FAMILY, new SortConfig.SortBy<>(EntrySolrField.FAMILY_NAMES_S, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.LENGTH, new SortConfig.SortBy<>(EntrySolrField.AA_LENGTH, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.AC, new SortConfig.SortBy<>(EntrySolrField.ID, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.CHROMOSOME, new SortConfig.SortBy<>(EntrySolrField.CHR_LOC_S, ORDER.asc)),
-					new SortConfig<>(SortConfig.Criteria.SCORE, new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc), 100)
-			);
+			Map<SortConfig.Criteria, SortConfig<EntrySolrField>> map = new HashMap<>();
+
+			map.put(SortConfig.Criteria.GENE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.PROTEIN, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.FAMILY, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.FAMILY_NAMES_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.LENGTH, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.AA_LENGTH, ORDER.asc)));
+			map.put(SortConfig.Criteria.AC, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.ID, ORDER.asc)));
+			map.put(SortConfig.Criteria.CHROMOSOME, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.CHR_LOC_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.SCORE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc), 100));
+
+			return map;
 		}
 
-		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(List<SortConfig<EntrySolrField>> sortConfigs) {
+		private IndexConfiguration<EntrySolrField> newDefaultConfiguration(Map<SortConfig.Criteria, SortConfig<EntrySolrField>> sortConfigs) {
 
 			IndexConfiguration<EntrySolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
@@ -201,7 +203,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			return defaultConfig;
 		}
 
-		private AutocompleteConfiguration<EntrySolrField> newAutoCompleteConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration, List<SortConfig<EntrySolrField>> sortConfigs) {
+		private AutocompleteConfiguration<EntrySolrField> newAutoCompleteConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration, Map<SortConfig.Criteria, SortConfig<EntrySolrField>> sortConfigs) {
 
 			AutocompleteConfiguration<EntrySolrField> autocompleteConfig = new AutocompleteConfiguration<>(defaultConfiguration);
 
@@ -217,7 +219,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		private IndexConfiguration<EntrySolrField> newIdSearchConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration) {
 
 			IndexConfiguration<EntrySolrField> idSearchConfig = new SearchByIdConfiguration<>(QueryMode.ID_SEARCH);
-			idSearchConfig.addSortConfig(new SortConfig<>(SortConfig.Criteria.SCORE, new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc)));
+			idSearchConfig.addSortConfig(SortConfig.Criteria.SCORE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc)));
 			idSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 			idSearchConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 
@@ -227,7 +229,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 		private IndexConfiguration<EntrySolrField> newPlSearchConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration) {
 
 			IndexConfiguration<EntrySolrField> plSearchConfig = new SearchByIdConfiguration<>(QueryMode.PL_SEARCH);
-			plSearchConfig.addSortConfig(new SortConfig<>(SortConfig.Criteria.SCORE, new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc)));
+			plSearchConfig.addSortConfig(SortConfig.Criteria.SCORE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc)));
 			plSearchConfig.addConfigSet(defaultConfiguration.getFieldConfigSets().get(IndexParameter.FL));
 			plSearchConfig.setDefaultSortCriteria(SortConfig.Criteria.SCORE);
 

@@ -15,8 +15,8 @@ import org.nextprot.api.solr.query.impl.config.IndexConfiguration;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,7 +65,7 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 		@Override
 		protected QueryMode setupConfigs(Map<QueryMode, QueryConfiguration<CvSolrField>> configurations) {
 
-			List<SortConfig<CvSolrField>> sortConfigs = newSortConfigs();
+			Map<SortConfig.Criteria, SortConfig<CvSolrField>> sortConfigs = newSortConfigs();
 
 			// Simple
 			IndexConfiguration<CvSolrField> defaultConfig = newDefaultConfiguration(sortConfigs);
@@ -78,21 +78,25 @@ public class SolrCvCore extends SolrCoreBase<CvSolrField> {
 			return defaultConfig.getMode();
 		}
 
-		private List<SortConfig<CvSolrField>> newSortConfigs() {
+		private Map<SortConfig.Criteria, SortConfig<CvSolrField>> newSortConfigs() {
 
-			return Arrays.asList(
-					new SortConfig<>(SortConfig.Criteria.SCORE, Arrays.asList(
-							new SortConfig.SortBy<>(CvSolrField.SCORE, ORDER.desc),
-							new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc))
-					),
-					new SortConfig<>(SortConfig.Criteria.NAME, Arrays.asList(
-							new SortConfig.SortBy<>(CvSolrField.NAME_S, ORDER.asc),
-							new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc))
-					)
-			);
+			Map<SortConfig.Criteria, SortConfig<CvSolrField>> map = new HashMap<>();
+
+			map.put(SortConfig.Criteria.SCORE, new SortConfig<>(Arrays.asList(
+					new SortConfig.SortBy<>(CvSolrField.SCORE, ORDER.desc),
+					new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc),
+					new SortConfig.SortBy<>(CvSolrField.AC, ORDER.asc)
+			)));
+
+			map.put(SortConfig.Criteria.NAME, new SortConfig<>(Arrays.asList(
+					new SortConfig.SortBy<>(CvSolrField.NAME_S, ORDER.asc),
+					new SortConfig.SortBy<>(CvSolrField.FILTERS, ORDER.asc))
+			));
+
+			return map;
 		}
 
-		private IndexConfiguration<CvSolrField> newDefaultConfiguration(List<SortConfig<CvSolrField>> sortConfigs) {
+		private IndexConfiguration<CvSolrField> newDefaultConfiguration(Map<SortConfig.Criteria, SortConfig<CvSolrField>> sortConfigs) {
 
 			IndexConfiguration<CvSolrField> defaultConfig = new IndexConfiguration<>(QueryMode.SIMPLE);
 
