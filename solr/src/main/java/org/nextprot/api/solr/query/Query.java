@@ -55,8 +55,9 @@ public class Query<F extends SolrField> {
 		return sortConfig;
 	}
 
-	public void setSortConfig(SortConfig<F> sortConfig) {
+	public Query<F> sortConfig(SortConfig<F> sortConfig) {
 		this.sortConfig = sortConfig;
+        return this;
 	}
 
 	public SortConfig.Criteria getSort() {
