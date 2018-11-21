@@ -1,7 +1,12 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.Proteoform;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -9,7 +14,14 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -177,62 +189,6 @@ public class EntryUtils implements Serializable{
 		}
 		return result;
 	}
-	
-
-	public static List<String> getFunctionInfoWithCanonicalFirst(Entry entry) {
-		List<String> fInfoCanonical = new  ArrayList<String>();
-		List<String> fInfoNonCanonical = new  ArrayList<String>();
-		List<Isoform> isos = entry.getIsoforms();
-		String canonicalIso = "";
-		
-		// Get Id of the canonical (swissprotdisplayed) isoform
-		for (Isoform curriso : isos)
-			if(curriso.isCanonicalIsoform()) {
-				canonicalIso = curriso.getUniqueName();
-				break;
-				}	
-		
-		// Get the function annotation and put it in the right basket
-		for (Annotation currannot : entry.getAnnotations()) {
-			if(currannot.getAPICategory().equals(AnnotationCategory.FUNCTION_INFO))
-				if(currannot.isSpecificForIsoform(canonicalIso))
-					fInfoCanonical.add(currannot.getDescription());
-				else
-					fInfoNonCanonical.add(currannot.getDescription());
-		}
-		
-		// Merge the lists in a final unique list with canonical function first
-		//System.err.println("before: " + fInfoCanonical);
-		fInfoCanonical.addAll(fInfoNonCanonical);
-		//System.err.println("after: " + fInfoCanonical);
-		if (fInfoCanonical.size()==0) {
-			Set<Annotation> goFuncSet = new TreeSet<>((e1, e2) -> {
-
-                int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
-                c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
-                if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
-                if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
-                return c;
-            });
-			List<Annotation> annots = entry.getAnnotations();
-			for (Annotation currannot : annots) {
-				String category = currannot.getCategory();
-				if(category.equals("go biological process") || category.equals("go molecular function")) {
-				  goFuncSet.add(currannot); }
-			}
-			int rescnt = 0;
-			for (Annotation resannot : goFuncSet) {
-				// Stick term's name in the returned list
-				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) // avoid unsignificant function if possible
-					continue;
-				if(rescnt++ < 3) // return max 3 first annotation descriptions
-					fInfoCanonical.add(resannot.getCvTermName());
-				else break;
-			}
-		}
-
-		return fInfoCanonical;
-	 }
 
 	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
 

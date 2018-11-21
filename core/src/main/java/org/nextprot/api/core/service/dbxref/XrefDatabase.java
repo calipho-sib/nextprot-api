@@ -59,12 +59,12 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
     XrefDatabase() {
 
-        this(null);
+	    this.name = name();
     }
 
     XrefDatabase(String name) {
 
-        this.name = (name != null) ? name:name();
+        this.name = name;
     }
 
     public String getName() {

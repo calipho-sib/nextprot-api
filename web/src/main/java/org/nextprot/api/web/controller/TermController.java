@@ -8,15 +8,16 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,7 +43,7 @@ public class TermController {
 
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private CvTermGraphService cvTermGraphService;
-	@Autowired private SolrService solrService;
+	@Autowired private SolrService solrQueryService;
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,12 +143,12 @@ public class TermController {
 			}
 
 			qr.setRows("0");
-			Query query = queryBuilderService.buildQueryForSearch(qr, "entry");
+			Query query = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
 			try {
-				SearchResult sr = solrService.executeQuery(query);
+				SearchResult sr = solrQueryService.executeQuery(query);
 				long relevantForEntry = sr.getFound();
 				node.setRelevantFor(relevantForEntry);
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 				e.printStackTrace();
 				LOGGER.error(e.getLocalizedMessage());
 			}

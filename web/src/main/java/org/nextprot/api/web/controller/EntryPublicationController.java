@@ -6,22 +6,31 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublicationView;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationCategory;
+import org.nextprot.api.core.domain.publication.PublicationView;
 import org.nextprot.api.core.service.EntryPublicationService;
 import org.nextprot.api.core.service.EntryPublicationViewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +50,7 @@ public class EntryPublicationController {
     @Autowired
     private StatisticsService statisticsService;
     @Autowired
-    private SolrService solrService;
+    private SolrService solrQueryService;
     @Autowired
     private QueryBuilderService queryBuilderService;
     @Autowired
@@ -164,14 +173,14 @@ public class EntryPublicationController {
 
         qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
 
-        Query q = queryBuilderService.buildQueryForSearch(qr, "entry");
+        Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         try {
-            SearchResult searchResult = solrService.executeQuery(q);
+            SearchResult searchResult = solrQueryService.executeQuery(q);
 
             view.setRelatedEntryCount(eps.size());
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
 
-        } catch (SearchQueryException e) {
+        } catch (QueryConfiguration.MissingSortConfigException e) {
             throw new NextProtException(e.getMessage());
         }
 

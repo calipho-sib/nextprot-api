@@ -4,14 +4,16 @@ import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -22,7 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 @Lazy
@@ -31,7 +38,7 @@ public class SearchServiceImpl implements SearchService {
 	private final Log Logger = LogFactory.getLog(SearchServiceImpl.class);
 
 	@Autowired
-	private SolrService solrService;
+	private SolrService solrQueryService;
 
 	@Autowired
 	private SparqlService sparqlService;
@@ -91,8 +98,8 @@ public class SearchServiceImpl implements SearchService {
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
 
-			Query query = queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
-			SearchResult result = this.solrService.executeQuery(query);
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PL_SEARCH, queryRequest);
+			SearchResult result = this.solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
 			for (Map<String, Object> res : results) {
@@ -100,7 +107,7 @@ public class SearchServiceImpl implements SearchService {
 				sortedAccessions.add(entry);
 			}
 
-		} catch (SearchQueryException e) {
+		} catch (QueryConfiguration.MissingSortConfigException e) {
 			e.printStackTrace();
 			throw new NextProtException("Error when retrieving accessions");
 		}
@@ -109,16 +116,11 @@ public class SearchServiceImpl implements SearchService {
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
 		Set<String> set = new LinkedHashSet<>();
-		try {
-			Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
-			SearchResult results = solrService.executeIdQuery(query);
-			for (Map<String, Object> f : results.getFoundFacets("id")) {
-				String entry = (String) f.get("name");
-				set.add(entry);
-			}
-		} catch (SearchQueryException e) {
-			e.printStackTrace();
-			throw new NextProtException("Error when retrieving accessions");
+		Query query = this.queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.SIMPLE, queryRequest);
+		SearchResult results = solrQueryService.executeIdQuery(query);
+		for (Map<String, Object> f : results.getFoundFacets("id")) {
+			String entry = (String) f.get("name");
+			set.add(entry);
 		}
 		return set;
 	}

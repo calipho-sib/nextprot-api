@@ -3,19 +3,25 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.mockito.Matchers.any;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles({"dev"})
+@ContextConfiguration("classpath:spring/commons-context.xml")
 public class FeatureQuerySuccessTest {
 
     @Test
@@ -25,7 +31,7 @@ public class FeatureQuerySuccessTest {
 
         Entry entry = mockNX_Q9UI33();
 
-        SequenceVariant sequenceVariant = SequenceVariant.variant("SCN11A-p.Leu1158Pro", mockBeanService("SCN11A", entry));
+        SequenceVariant sequenceVariant = SequenceVariant.variant("SCN11A-p.Leu1158Pro");
 
         SingleFeatureQuerySuccessImpl result = new SingleFeatureQuerySuccessImpl(query, sequenceVariant);
         result.addMappedFeature(entry.getIsoforms().get(0), 1158, 1158);
@@ -51,21 +57,6 @@ public class FeatureQuerySuccessTest {
         Isoform iso3 = SequenceVariantTest.mockIsoform("NX_Q9UI33-3", "Iso 3", false, seqIso3);
 
         return SequenceVariantTest.mockEntry("NX_Q9UI33", iso1, iso2, iso3);
-    }
-
-    private static BeanService mockBeanService(String geneName, Entry entry) {
-
-        BeanService service = Mockito.mock(BeanService.class);
-
-        MasterIdentifierService masterIdentifierService = mockMasterIdentifierService(geneName, entry.getUniqueName());
-        EntryBuilderService entryBuilderService = mockEntryBuilderService(entry);
-        IsoformService isoformService = mockIsoformService();
-
-        Mockito.when(service.getBean(MasterIdentifierService.class)).thenReturn(masterIdentifierService);
-        Mockito.when(service.getBean(EntryBuilderService.class)).thenReturn(entryBuilderService);
-        Mockito.when(service.getBean(IsoformService.class)).thenReturn(isoformService);
-
-        return service;
     }
 
     private static EntryBuilderService mockEntryBuilderService(Entry entry) {

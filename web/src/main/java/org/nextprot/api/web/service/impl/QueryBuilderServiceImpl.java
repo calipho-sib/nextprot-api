@@ -6,9 +6,11 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -45,14 +47,14 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	private static final Log Logger = LogFactory.getLog(QueryBuilderServiceImpl.class);
 
 	@Override
-	public Query buildQueryForSearch(QueryRequest queryRequest, String indexName) {
+	public Query buildQueryForSearch(QueryRequest queryRequest, Entity entity) {
 
 		Logger.debug(queryRequest.toPrettyString());
 
 		if (queryRequest.isEntryAccessionSetDefined()) {
             Logger.debug("queryRequest.hasEntryAccessionList()");
 
-            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(queryRequest.getEntryAccessionSet()));
+            return buildQueryForSearchIndexes(entity, queryRequest, buildQueryStringFromEntryAccessions(queryRequest.getEntryAccessionSet()));
         }
         else if (queryRequest.hasList()) {
 			Logger.debug("queryRequest.hasList()");
@@ -62,7 +64,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			} else { //public id is used
 				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			}
-            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(proteinList.getAccessionNumbers()));
+            return buildQueryForSearchIndexes(entity, queryRequest, buildQueryStringFromEntryAccessions(proteinList.getAccessionNumbers()));
 		}
 		else if (queryRequest.hasNextProtQuery()) {
 			Logger.debug("queryRequest.hasNextProtQuery()");
@@ -76,14 +78,14 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			}
 
-            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+            return buildQueryForSearchIndexes(entity, queryRequest, buildQueryStringFromEntryAccessions(
                     new HashSet<>(sparqlService.findEntries(uq.getSparql(),
                             sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
 
         } else if (queryRequest.hasSparql()) {
 			Logger.debug("queryRequest.hasSparql()");
 
-            return buildQueryForSearchIndexes(indexName, queryRequest, buildQueryStringFromEntryAccessions(
+            return buildQueryForSearchIndexes(entity, queryRequest, buildQueryStringFromEntryAccessions(
                     new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()))));
 
 		} else {
@@ -93,24 +95,24 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			    queryRequest.setQuery("");
             }
 
-			return queryService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+			return queryService.buildQueryForSearchIndexes(entity, QueryMode.SIMPLE, queryRequest);
 		}
 
 	}
 
 	@Override
-	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return queryService.buildQueryForProteinLists(indexName, queryString, quality, sort, order, start, rows, filter);
+	public Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return queryService.buildQueryForProteinLists(entity, queryString, quality, sort, order, start, rows, filter);
 	}
 
 	@Override
-	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
-		return queryService.buildQueryForSearchIndexes(indexName, configurationName, request);
+	public Query buildQueryForSearchIndexes(Entity entity, QueryMode configuration, QueryRequest request) {
+		return queryService.buildQueryForSearchIndexes(entity, configuration, request);
 	}
 
 	@Override
-	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return queryService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, rows, filter);
+	public Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return queryService.buildQueryForAutocomplete(entity, queryString, quality, sort, order, start, rows, filter);
 	}
 
     private String buildQueryStringFromEntryAccessions(Set<String> accessions) {
@@ -127,10 +129,10 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
         return "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
     }
 
-    private Query buildQueryForSearchIndexes(String indexName, QueryRequest queryRequest, String queryString) {
+    private Query buildQueryForSearchIndexes(Entity entity, QueryRequest queryRequest, String queryString) {
 
 	    queryRequest.setQuery(queryString);
 
-        return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+        return queryService.buildQueryForSearchIndexes(entity, QueryMode.PL_SEARCH, queryRequest);
     }
 }

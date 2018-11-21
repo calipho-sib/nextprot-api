@@ -11,8 +11,8 @@ import org.nextprot.api.commons.bio.variation.prot.impl.format.PtmBioEditorForma
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.UniProtPTM;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
@@ -31,9 +31,9 @@ public class SequenceModification extends SequenceFeatureBase {
 
     private static final PtmBioEditorFormat PTM_FORMAT = new PtmBioEditorFormat();
 
-    public SequenceModification(String feature, BeanService beanService) throws ParseException, SequenceVariationBuildException {
+    public SequenceModification(String feature) throws ParseException, SequenceVariationBuildException {
 
-        super(feature, AnnotationCategory.GENERIC_PTM, PTM_FORMAT, beanService);
+        super(feature, AnnotationCategory.GENERIC_PTM, PTM_FORMAT);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SequenceModification extends SequenceFeatureBase {
     @Override
     public Isoform parseIsoform(String sequenceIdPart) throws ParseException {
 
-        Isoform isoform = getBeanService().getBean(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
+        Isoform isoform = SpringApplicationContext.getBeanOfType(IsoformService.class).getIsoformByNameOrCanonical(sequenceIdPart);
 
         if (isoform == null) {
             throw new ParseException(sequenceIdPart, 0);

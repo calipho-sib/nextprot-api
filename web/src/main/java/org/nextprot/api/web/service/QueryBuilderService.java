@@ -1,15 +1,14 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.dto.QueryRequest;
 
 public interface QueryBuilderService {
 
-	public Query buildQueryForSearch(QueryRequest queryRequest, String indexName);
-
-	
-	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
-	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
-	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
-
+	Query buildQueryForSearch(QueryRequest queryRequest, Entity entity);
+	Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
+	Query buildQueryForSearchIndexes(Entity entity, QueryMode configuration, QueryRequest request);
+	Query buildQueryForAutocomplete(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 }

@@ -1,13 +1,13 @@
 package org.nextprot.api.web.service;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-import org.junit.Test;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Exports an entry
