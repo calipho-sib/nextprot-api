@@ -15,6 +15,7 @@ public class Query<F extends SolrField> {
 	private QueryConfiguration<F> queryConfiguration;
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
+	private SortConfig<F> sortConfig; // first sort config then sort and order else default config
 	private SortConfig.Criteria sort;
 	private ORDER order;
 	private int start = 0;
@@ -49,7 +50,15 @@ public class Query<F extends SolrField> {
 		this.sort = sort;
 		return this;
 	}
-	
+
+	public SortConfig<F> getSortConfig() {
+		return sortConfig;
+	}
+
+	public void setSortConfig(SortConfig<F> sortConfig) {
+		this.sortConfig = sortConfig;
+	}
+
 	public SortConfig.Criteria getSort() {
 		return this.sort;
 	}
@@ -195,20 +204,5 @@ public class Query<F extends SolrField> {
 		builder.append(rows);
 	
 		return builder.toString();
-	}
-	
-	public enum SortOrder {
-		ASC("asc"),
-		DESC("desc");
-		
-		private String label;
-		
-		SortOrder(String label) {
-			this.label = label;
-		}
-		
-		public String getLabel() {
-			return this.label;
-		}
 	}
 }
