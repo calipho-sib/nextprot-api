@@ -3,6 +3,7 @@ package org.nextprot.api.solr.core.impl;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.SolrCore;
@@ -26,7 +27,9 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-public class SolrCoreTest {
+// Those tests compare query results from different solr instances
+@Ignore
+public class SolrCoreRefactoringTest {
 
 	@Test
 	public void testSolrOnKant() {
@@ -104,6 +107,108 @@ public class SolrCoreTest {
 		SearchResultDiff diffs = queryDiffsSortResultsFirst(core1, core2, "liver", sortConfig);
 
 		Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+	}
+
+	@Test
+	public void test9Entries() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<EntrySolrField> allEntrySolrFieldSet = EntrySolrField.allNonRedundantFields();
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE); // ignore score
+
+		SolrCore<EntrySolrField> kant = buildEntrySolrCore("kant", allEntrySolrFieldSet, false);
+		SolrCore<EntrySolrField> crick = buildEntrySolrCore("crick", allEntrySolrFieldSet, false);
+
+		for (String accession : Arrays.asList(
+				"NX_A0A024RBG1",
+				"NX_A0A075B6H9",
+				"NX_A0A075B6I0",
+				"NX_A0A075B6I1",
+				"NX_A0A075B6I4",
+				"NX_A0A075B6I9",
+				"NX_A0A075B6J1",
+				"NX_A0A075B6J6",
+				"NX_A0A075B6J9")) {
+
+			SearchResultDiff diffs = queryDiffs(kant, crick,
+					"id:"+accession,
+					SortConfig.Criteria.AC);
+
+			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+		}
+	}
+
+	@Test
+	public void test9GoldEntries() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<EntrySolrField> allEntrySolrFieldSet = EntrySolrField.allNonRedundantFields();
+		allEntrySolrFieldSet.remove(EntrySolrField.SCORE); // ignore score
+
+		SolrCore<EntrySolrField> kant = buildEntrySolrCore("kant", allEntrySolrFieldSet, true);
+		SolrCore<EntrySolrField> crick = buildEntrySolrCore("crick", allEntrySolrFieldSet, true);
+
+		for (String accession : Arrays.asList(
+				"NX_A0A024RBG1",
+				"NX_A0A075B6H9",
+				"NX_A0A075B6I0",
+				"NX_A0A075B6I1",
+				"NX_A0A075B6I4",
+				"NX_A0A075B6I9",
+				"NX_A0A075B6J1",
+				"NX_A0A075B6J6",
+				"NX_A0A075B6J9")) {
+
+			SearchResultDiff diffs = queryDiffs(kant, crick,
+					"id:"+accession,
+					SortConfig.Criteria.AC);
+
+			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+		}
+	}
+
+	@Test
+	public void test7Terms() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<CvSolrField> allSolrFieldSet = CvSolrField.allNonRedundantFields();
+
+		SolrCore<CvSolrField> kant = new SolrCvCore("http://"+"kant"+":8983/solr", allSolrFieldSet);
+		SolrCore<CvSolrField> crick = new SolrCvCore("http://"+"crick"+":8983/solr", allSolrFieldSet);
+
+		for (String accession : Arrays.asList(
+				"TS-0001",
+				"TS-1071",
+				"TS-2466",
+				"TS-0002",
+				"TS-2072",
+				"TS-2337",
+				"D000005")) {
+
+			SearchResultDiff diffs = queryDiffs(kant, crick, "ac:"+accession);
+
+			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+		}
+	}
+
+	@Test
+	public void test7Publications() throws QueryConfiguration.MissingSortConfigException {
+
+		Set<PublicationSolrField> allSolrFieldSet = PublicationSolrField.allNonRedundantFields();
+
+		SolrCore<PublicationSolrField> kant = new SolrPublicationCore("http://"+"kant"+":8983/solr", allSolrFieldSet);
+		SolrCore<PublicationSolrField> crick = new SolrPublicationCore("http://"+"crick"+":8983/solr", allSolrFieldSet);
+
+		for (String pubid : Arrays.asList(
+				"48705536",
+				"48705551",
+				"6763150",
+				"48705548",
+				"6763147",
+				"48705545",
+				"6763144")) {
+
+			SearchResultDiff diffs = queryDiffs(kant, crick, "id:"+pubid);
+
+			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+		}
 	}
 
 	private SolrCore<EntrySolrField> buildEntrySolrCore(String hostname, Set<EntrySolrField> fl, boolean isGold) {
