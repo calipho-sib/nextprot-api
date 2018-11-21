@@ -19,13 +19,13 @@ public interface QueryConfiguration<F extends SolrField> {
 	 * @param query
 	 * @return
 	 */
-	String formatQuery(Query query);
+	String formatQuery(Query<F> query);
 
 	/**
 	 * Builds a SOLR Query according to the specified index configuration
 	 */
-	SolrQuery convertQuery(Query query) throws MissingSortConfigException;
-	SolrQuery convertIdQuery(Query query);
+	SolrQuery convertQuery(Query<F> query) throws MissingSortConfigException;
+	SolrQuery convertIdQuery(Query<F> query);
 
 	class MissingSortConfigException extends Exception {
 
