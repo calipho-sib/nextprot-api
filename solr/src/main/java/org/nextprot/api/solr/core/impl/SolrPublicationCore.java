@@ -80,7 +80,7 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
-			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
+			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig);
 			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
 
 			return defaultConfig.getMode();
@@ -155,15 +155,13 @@ public class SolrPublicationCore extends SolrCoreBase<PublicationSolrField> {
 			return defaultConfig;
 		}
 
-		private AutocompleteConfiguration<PublicationSolrField> newAutoCompleteConfiguration(IndexConfiguration<PublicationSolrField> configuration,
-                                                                                             Map<SortConfig.Criteria, SortConfig<PublicationSolrField>> sortConfigs) {
+		private AutocompleteConfiguration<PublicationSolrField> newAutoCompleteConfiguration(IndexConfiguration<PublicationSolrField> configuration) {
 
 			AutocompleteConfiguration<PublicationSolrField> autocompleteConfig = new AutocompleteConfiguration<>(configuration);
 
 			autocompleteConfig
 					.addOtherParameter("facet.field", "text")
 					.addOtherParameter("stopwords", "true");
-			autocompleteConfig.addSortConfigs(sortConfigs);
 
 			return autocompleteConfig;
 		}

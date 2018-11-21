@@ -96,7 +96,7 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			configurations.put(defaultConfig.getMode(), defaultConfig);
 
 			// Autocomplete
-			AutocompleteConfiguration<EntrySolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig, sortConfigs);
+			AutocompleteConfiguration<EntrySolrField> autocompleteConfig = newAutoCompleteConfiguration(defaultConfig);
 			configurations.put(autocompleteConfig.getMode(), autocompleteConfig);
 
 			// id_search
@@ -203,15 +203,13 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 			return defaultConfig;
 		}
 
-		private AutocompleteConfiguration<EntrySolrField> newAutoCompleteConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration, Map<SortConfig.Criteria, SortConfig<EntrySolrField>> sortConfigs) {
+		private AutocompleteConfiguration<EntrySolrField> newAutoCompleteConfiguration(IndexConfiguration<EntrySolrField> defaultConfiguration) {
 
 			AutocompleteConfiguration<EntrySolrField> autocompleteConfig = new AutocompleteConfiguration<>(defaultConfiguration);
 
 			autocompleteConfig
 					.addOtherParameter("facet.field", "text")
 					.addOtherParameter("stopwords", "true");
-
-			autocompleteConfig.addSortConfigs(sortConfigs);
 
 			return autocompleteConfig;
 		}
