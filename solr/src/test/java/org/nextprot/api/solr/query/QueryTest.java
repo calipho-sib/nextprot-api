@@ -62,7 +62,7 @@ public class QueryTest {
 
     @Test
     public void testEscapingIrrelevantFieldForIndex() {
-	    Query<PublicationSolrField> query = new Query<>(new SolrPublicationCore(""));
+	    Query<EntrySolrField> query = new Query<>(new SolrGoldAndSilverEntryCore(""));
         query.addQuery("author:bairoch");
         Assert.assertEquals("author\\:bairoch", query.getQueryStringEscapeColon());
     }
