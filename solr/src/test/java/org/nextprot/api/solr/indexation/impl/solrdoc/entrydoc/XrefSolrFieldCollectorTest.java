@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@ActiveProfiles({"dev"})
+@ActiveProfiles({"dev", "cache"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class XrefSolrFieldCollectorTest extends AbstractUnitBaseTest {
 

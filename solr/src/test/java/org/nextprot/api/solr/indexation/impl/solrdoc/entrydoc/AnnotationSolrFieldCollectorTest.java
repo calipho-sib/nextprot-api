@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
-@ActiveProfiles({"dev"})
+@ActiveProfiles({"dev", "cache"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 
