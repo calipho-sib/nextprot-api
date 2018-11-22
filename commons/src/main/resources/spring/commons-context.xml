@@ -17,7 +17,7 @@
 	<context:component-scan base-package="org.nextprot.api.test.rdf" />
 	<context:component-scan base-package="org.nextprot.api.blast" />
 
-    <beans profile="build">
+	<beans profile="build">
 		<context:component-scan base-package="org.nextprot.api.etl" />
 		<context:component-scan base-package="org.nextprot.api.tasks" />
 	</beans>
@@ -54,6 +54,22 @@
 			<property name="username" value="${db.username}" />
 			<property name="password" value="${db.password}" />
 		</bean>
+
+		<beans profile="unit-schema-nextprot">
+			<bean id="dbUnitDatabaseConnection"
+				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+				<property name="schema" value="nextprot" />
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		</beans>
+
+		<beans profile="unit-schema-user">
+			<bean id="dbUnitDatabaseConnection"
+				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+				<property name="schema" value="np_users" />
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		</beans>
 	</beans>
 
 	<beans profile="pro">
