@@ -2,6 +2,7 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,6 +26,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff.OverviewFieldBuilderDiffTest.mockOverview;
 
+@Ignore
 @ActiveProfiles({"dev", "cache"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class PublicationsSolrFieldCollectorTest extends AbstractUnitBaseTest {

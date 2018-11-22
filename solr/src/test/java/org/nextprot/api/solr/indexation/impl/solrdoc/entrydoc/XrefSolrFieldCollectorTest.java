@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@Ignore
 @ActiveProfiles({"dev", "cache"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class XrefSolrFieldCollectorTest extends AbstractUnitBaseTest {

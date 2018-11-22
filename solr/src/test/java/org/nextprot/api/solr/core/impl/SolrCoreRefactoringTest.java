@@ -268,9 +268,6 @@ public class SolrCoreRefactoringTest {
 
 			if (diff.found.equals) {
 
-				List<Map<String, Object>> r1;
-				List<Map<String, Object>> r2;
-
 				diff.results = new ListDiff(sr1.getResults(), sr2.getResults());
 			}
 
@@ -410,7 +407,7 @@ public class SolrCoreRefactoringTest {
 
 						FieldDiff<Object> diffMap;
 
-						if (m1.get(key) instanceof List) {
+						if (m1.get(key) instanceof List && m2.get(key) instanceof List) {
 
 							List<String> l1 = ((List<String>) m1.get(key)).stream()
 									.sorted()
@@ -421,7 +418,7 @@ public class SolrCoreRefactoringTest {
 
 							diffMap = new FieldDiff<>(l1, l2);
 						}
-						else if (key.equals(EntrySolrField.PUBLI_COMPUTED_COUNT.getName()) ||
+						/*else if (key.equals(EntrySolrField.PUBLI_COMPUTED_COUNT.getName()) ||
 								key.equals(EntrySolrField.PUBLI_CURATED_COUNT.getName()) ||
 								key.equals(EntrySolrField.PUBLI_LARGE_SCALE_COUNT.getName())) {
 
@@ -430,7 +427,7 @@ public class SolrCoreRefactoringTest {
 						else if (key.equals(EntrySolrField.INFORMATIONAL_SCORE.getName())) {
 
 							diffMap = new FieldDiff<>(m1.get(key), m2.get(key), (a, b) -> (float)a >= (float)b);
-						}
+						}*/
 
 						else {
 							diffMap = new FieldDiff<>(m1.get(key), m2.get(key));
