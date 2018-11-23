@@ -1,5 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
@@ -11,6 +12,9 @@ import java.util.Set;
 
 // NOTE: if those tests fails it is probably because http://kant.isb-sib.ch:9000 is down
 // restart it by executing /share/sib/calipho/nxflat-proxy/statements-downloader/launch-web-statements-server.sh
+
+// those tests depend on the fact that the web server on kant is alive ... if he is not the tests fail
+@Ignore
 public class StatementRemoteServiceTest {
 
 
