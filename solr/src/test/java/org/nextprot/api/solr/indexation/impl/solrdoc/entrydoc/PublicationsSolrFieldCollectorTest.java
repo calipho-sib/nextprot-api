@@ -28,7 +28,7 @@ import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integration
 
 @Ignore
 @ActiveProfiles({"dev"})
-@ContextConfiguration("classpath:spring/solr-context.xml")
+@ContextConfiguration("classpath:spring/commons-context.xml")
 public class PublicationsSolrFieldCollectorTest extends AbstractUnitBaseTest {
 
     // Class under test

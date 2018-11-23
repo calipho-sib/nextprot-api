@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 
 @Ignore
 @ActiveProfiles({"dev"})
-@ContextConfiguration("classpath:spring/solr-context.xml")
+@ContextConfiguration("classpath:spring/commons-context.xml")
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired

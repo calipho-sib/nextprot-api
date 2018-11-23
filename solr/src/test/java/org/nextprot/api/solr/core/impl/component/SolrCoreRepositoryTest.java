@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"dev"})
 @DirtiesContext
-@ContextConfiguration({"classpath:spring/commons-context.xml","classpath:spring/solr-context.xml"})
+@ContextConfiguration({"classpath:spring/commons-context.xml"})
 public class SolrCoreRepositoryTest {
 
 	@Autowired

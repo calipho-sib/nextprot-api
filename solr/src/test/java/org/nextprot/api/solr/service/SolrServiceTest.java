@@ -25,7 +25,7 @@ import java.util.Set;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"unit", "unit-schema-nextprot"})
 @DirtiesContext
-@ContextConfiguration({"classpath:spring/commons-context.xml","classpath:spring/solr-context.xml"})
+@ContextConfiguration({"classpath:spring/commons-context.xml"})
 public class SolrServiceTest {
 
     @Autowired

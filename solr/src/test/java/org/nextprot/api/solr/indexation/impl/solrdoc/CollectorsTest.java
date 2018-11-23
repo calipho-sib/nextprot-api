@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.Collection;
 
 @ActiveProfiles({"build"})
-@ContextConfiguration("classpath:spring/solr-context.xml")
+@ContextConfiguration("classpath:spring/commons-context.xml")
 public class CollectorsTest extends AbstractUnitBaseTest {
 
 	@Test

@@ -18,7 +18,7 @@ import java.util.TreeSet;
 
 @Ignore
 @ActiveProfiles({"dev"})
-@ContextConfiguration("classpath:spring/solr-context.xml")
+@ContextConfiguration("classpath:spring/commons-context.xml")
 public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired
