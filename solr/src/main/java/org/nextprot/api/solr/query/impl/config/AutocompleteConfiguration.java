@@ -25,7 +25,11 @@ public class AutocompleteConfiguration<F extends SolrField> extends IndexConfigu
 	 * @return
 	 */
 	@Override
-	public String formatQuery(Query query) {
+	public String formatQuery(Query<F> query) {
+		if (query == null) {
+			return "";
+		}
+
 		String initialQuery = query.getQueryStringEscapeColon();
 		String queryString = super.formatQuery(query);
 		

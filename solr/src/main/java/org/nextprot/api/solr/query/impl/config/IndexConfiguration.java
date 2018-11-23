@@ -43,7 +43,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		this.otherParameters = new HashMap<>();
 	}
 	
-	public IndexConfiguration(QueryMode mode, IndexConfiguration originalConfiguration) {
+	public IndexConfiguration(QueryMode mode, IndexConfiguration<F> originalConfiguration) {
 		this(mode);
 		
 		this.fieldConfigSets.putAll(originalConfiguration.getFieldConfigSets());
@@ -122,7 +122,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 
 				builder.append(field.getName());
 				if(boost > 0) {
-				    builder.append(BOOST_SEPARATOR +boost);
+				    builder.append(BOOST_SEPARATOR).append(boost);
                 }
 				builder.append(WHITESPACE);
 			}
