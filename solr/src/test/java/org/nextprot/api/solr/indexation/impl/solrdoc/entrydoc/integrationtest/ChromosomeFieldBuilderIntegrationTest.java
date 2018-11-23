@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.ChromosomeSolrFieldCollector;
@@ -10,7 +11,7 @@ import java.util.Map;
 import static org.junit.Assert.assertTrue;
 import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff.SolrDiffTest.getFieldValue;
 
-
+@Ignore
 public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationTest {
 
 	@Test
