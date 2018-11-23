@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -79,6 +80,16 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
     }
+
+	@Test
+	public void testAddindAndWhileConvertingToSolrQuery() throws Exception {
+
+		QueryRequest qr = new QueryRequest();
+		qr.setQuery("insulin pancreas");
+		Query query = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
+		SolrQuery solrQuery = query.getQueryConfiguration().convertQuery(query);
+		Assert.assertEquals("+insulin +pancreas", solrQuery.getQuery());
+	}
 	
 	@Test
 	public void shoulReturnSomeTermsWhenStopWordsAreIncludedInQuery() throws Exception {
