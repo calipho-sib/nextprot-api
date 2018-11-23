@@ -17,6 +17,7 @@ import java.util.TreeSet;
 //import org.nextprot.api.core.utils.TerminologyUtils;
 //import org.nextprot.api.core.domain.Identifier;
 
+@Ignore
 public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired

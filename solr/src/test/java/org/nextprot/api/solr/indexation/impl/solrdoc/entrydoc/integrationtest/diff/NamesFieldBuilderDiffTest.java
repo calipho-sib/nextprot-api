@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.NamesSolrFieldCollector;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+@Ignore
 @ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class NamesFieldBuilderDiffTest extends SolrDiffTest {

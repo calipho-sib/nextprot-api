@@ -9,6 +9,7 @@ import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.FilterAndPropertie
 import java.util.HashMap;
 import java.util.Map;
 
+@Ignore
 public class FilterAndPropertiesFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Ignore

@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.TerminologyService;
@@ -16,6 +17,7 @@ import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Autowired

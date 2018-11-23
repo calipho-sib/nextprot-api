@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
-@ActiveProfiles({"dev", "cache"})
+@ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class ChromosomeSolrFieldCollectorTest extends AbstractUnitBaseTest {
 

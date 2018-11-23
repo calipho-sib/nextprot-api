@@ -27,7 +27,7 @@ import static org.mockito.Matchers.anyString;
 import static org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff.OverviewFieldBuilderDiffTest.mockOverview;
 
 @Ignore
-@ActiveProfiles({"dev", "cache"})
+@ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class PublicationsSolrFieldCollectorTest extends AbstractUnitBaseTest {
 

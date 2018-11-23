@@ -10,6 +10,7 @@ import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.SolrCvTermDocumentFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Ignore
 public class CVtermCoreFullDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;

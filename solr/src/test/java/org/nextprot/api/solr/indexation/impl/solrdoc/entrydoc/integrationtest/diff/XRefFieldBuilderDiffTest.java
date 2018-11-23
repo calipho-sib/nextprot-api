@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+@Ignore
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 	
 	@Ignore

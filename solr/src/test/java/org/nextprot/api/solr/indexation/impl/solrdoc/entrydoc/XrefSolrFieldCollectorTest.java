@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Ignore
-@ActiveProfiles({"dev", "cache"})
+@ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class XrefSolrFieldCollectorTest extends AbstractUnitBaseTest {
 

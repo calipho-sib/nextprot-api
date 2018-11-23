@@ -5,6 +5,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.junit.Ignore;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Ignore
 public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	
 	@Autowired

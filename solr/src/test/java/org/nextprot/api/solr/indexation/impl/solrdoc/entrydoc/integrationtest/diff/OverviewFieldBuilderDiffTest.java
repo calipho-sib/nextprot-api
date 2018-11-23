@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.domain.Overview;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
+@Ignore
 @ActiveProfiles({"dev"})
 @ContextConfiguration("classpath:spring/solr-context.xml")
 public class OverviewFieldBuilderDiffTest extends SolrDiffTest {

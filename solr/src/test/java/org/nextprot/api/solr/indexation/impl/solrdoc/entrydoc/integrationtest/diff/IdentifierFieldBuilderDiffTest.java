@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.diff;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.IdentifierSolrFieldCollector;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Ignore
 public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test

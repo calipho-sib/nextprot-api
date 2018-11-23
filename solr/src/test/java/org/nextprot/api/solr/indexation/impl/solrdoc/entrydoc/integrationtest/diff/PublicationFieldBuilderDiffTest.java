@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+@Ignore
 public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 
 	// This is the test for the Publication field of the entries core index (npentries1), not the publication index

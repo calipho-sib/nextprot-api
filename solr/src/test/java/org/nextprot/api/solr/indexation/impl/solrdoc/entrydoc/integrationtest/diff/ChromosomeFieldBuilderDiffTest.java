@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Ignore
