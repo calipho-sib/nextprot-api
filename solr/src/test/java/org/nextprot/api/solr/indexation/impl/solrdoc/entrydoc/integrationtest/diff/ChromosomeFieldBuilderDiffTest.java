@@ -75,7 +75,6 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	public void testChromsomalLocation() {
 		for(int i=0; i < 10; i++){
 			String entryAccession = entries.get(i);
-			System.out.println(entryAccession);
 			testChrLoc(entryAccession);
 			testChrLocS(entryAccession);
 			testGeneBand(entryAccession);
@@ -84,7 +83,6 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 
 	
 	private void testEntryGivesSameIndexAsSolrIndex(String uniqueName) {
-		System.out.println(uniqueName);
 		testChrLoc(uniqueName);
 		testChrLocS(uniqueName);
 		testGeneBand(uniqueName);
@@ -165,11 +163,4 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		assertEquals(expectedSet,actualSet);
 
 	}
-
-	private void showActualAndExpectedValues(Set<String> expectedSet, Set<String> actualSet, String fieldName) {
-		for (String s: actualSet)   System.out.println("actual   " + fieldName + " value: " +s);
-		for (String s: expectedSet) System.out.println("expected " + fieldName + " value: " +s);		
-	}
-	
-
 }

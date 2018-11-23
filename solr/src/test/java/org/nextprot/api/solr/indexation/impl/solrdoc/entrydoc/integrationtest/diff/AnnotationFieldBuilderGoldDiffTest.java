@@ -38,7 +38,6 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 			String entryAccession = test_list[i];
 			//Entry entry = getEntry(i); // 'random' entry
 		    //Entry entry = getEntry("NX_P20592");
-			System.out.println(entryAccession);
 			testGoldAnnotations(entryAccession);
 		}
 	}

@@ -42,7 +42,7 @@ public class ChromosomeLocationSortOrderTest {
 	public void computeAndCheckValueFor(String positions) {
 		Integer actualValue = ChromosomeSolrFieldCollector.sortChr(positions);
 		Integer expectedValue = new Long(sortChrOld(positions)).intValue();
-		System.out.println("order value for " + positions + " : expected " + expectedValue + " - got " + actualValue);
+		//System.out.println("order value for " + positions + " : expected " + expectedValue + " - got " + actualValue);
 		assertEquals(expectedValue, actualValue);
 	}
 	
@@ -52,7 +52,7 @@ public class ChromosomeLocationSortOrderTest {
 		// base the computation of chr_loc_s on first chr_loc
 		String chr = chrs.split(" ")[0];
 		chr=chr.trim();
-		System.out.println("old method: value of chr_loc before computation of chr_loc_s: " + chr);
+		//System.out.println("old method: value of chr_loc before computation of chr_loc_s: " + chr);
 		
 		String[] chr_loc=chr.split("([pq]|cen)");  // split on p or q
 		long f_chr0=1000000; 	 
@@ -78,7 +78,7 @@ public class ChromosomeLocationSortOrderTest {
 			chr0=Integer.parseInt(chr_loc[0])*f_chr0;
 		}
 		
-		System.out.println("step1: chr0="+chr0);
+		//System.out.println("step1: chr0="+chr0);
 
 		//
 		// sort(cen) = 10E5*XX + 10E4-1
@@ -97,13 +97,13 @@ public class ChromosomeLocationSortOrderTest {
 		// extract double value from digits after p or q
 		chr1=(long)( Double.parseDouble(chr_loc[1].split("[-,]")[0]) * f_chr1);
 		
-		System.out.println("step2: chr1="+chr1);
+		//System.out.println("step2: chr1="+chr1);
 
 		
 		// sort(q) = 10E5*XX + 10E4 + 100*YY
 		if(chr.indexOf('q')>-1){
 			//System.out.println(chr+" = "+(chr0+chr1+f_q));
-			System.out.println("step3: has q");			
+			//System.out.println("step3: has q");
 			return chr0+chr1+f_q;			
 		} 
 		

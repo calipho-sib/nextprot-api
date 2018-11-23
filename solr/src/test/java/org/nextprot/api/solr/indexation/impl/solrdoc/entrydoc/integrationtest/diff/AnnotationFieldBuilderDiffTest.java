@@ -35,7 +35,6 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		
 		for(int i=0; i < entryAccessionTestList.length; i++) {
 			//Entry entry = getEntry(i); // 'random' entry
-			System.out.println(entryAccessionTestList[i]);
 			testFunctionalDesc(entryAccessionTestList[i]);
 			testAnnotations(entryAccessionTestList[i]);
 		}

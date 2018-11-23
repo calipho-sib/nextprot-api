@@ -39,7 +39,6 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testNames(String entryName) {
 
-		System.out.println("Testing: " + entryName);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		namesSolrFieldCollector.collect(fields, entryName, false);
 		

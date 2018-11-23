@@ -32,8 +32,6 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testPeptides(String entryName) {
 
-		System.out.println("Testing " + entryName);
-
 		PeptideSolrFieldCollector pfb = new PeptideSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		pfb.collect(fields, entryName, false);

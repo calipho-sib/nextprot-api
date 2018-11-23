@@ -37,7 +37,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testCVs(String entryName) {
 		
-		System.out.println("Testing: " + entryName);
+		//System.out.println("Testing: " + entryName);
 		CVSolrFieldCollector cfb = new CVSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		cfb.collect(fields, entryName, false);

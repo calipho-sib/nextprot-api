@@ -76,9 +76,6 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==true) {
 				errCnt++;
-				System.out.println("ERROR: " + ac + " proteomics should be false");
-			} else {
-				System.out.println("OK: " + ac + " proteomics is false");
 			}
 		}
 		Assert.assertEquals(0, errCnt);			
@@ -109,9 +106,6 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==false) {
 				errCnt++;
-				System.out.println("ERROR: " + ac + " proteomics should be true");
-			} else {
-				System.out.println("OK: " + ac + " proteomics is true");
 			}
 		}
 		Assert.assertEquals(0, errCnt);			
@@ -127,9 +121,6 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isProteomics()==false) {
 				errCnt++;
-				System.out.println("ERROR: " + ac + " proteomics should be true");
-			} else {
-				System.out.println("OK: " + ac + " proteomics is true");
 			}
 		}
 		Assert.assertEquals(0, errCnt);			
@@ -147,9 +138,9 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 			List<EntryReport> reports = entryGeneReportService.reportEntry(ac);
 			if (reports.get(0).isAntibody()==false) {
 				errCnt++;
-				System.out.println("ERROR: " + ac + " antibody should be true");
+				//System.out.println("ERROR: " + ac + " antibody should be true");
 			} else {
-				System.out.println("OK: " + ac + " antibody is true");
+				//System.out.println("OK: " + ac + " antibody is true");
 			}
 		}
 		Assert.assertEquals(0, errCnt);			

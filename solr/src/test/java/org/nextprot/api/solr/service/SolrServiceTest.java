@@ -31,8 +31,6 @@ public class SolrServiceTest {
     @Autowired
     private SolrService service;
 
-    private boolean debug = false;
-    
     @Test
     public void testSuggestionsAndCollations() throws Exception {
     	QueryRequest qr = new QueryRequest();
@@ -45,18 +43,10 @@ public class SolrServiceTest {
     	Query q = service.buildQueryForSearchIndexes(Entity.Entry, QueryMode.SIMPLE,  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
-		if (debug) System.out.println("numFound="+numFound);
 		Set<Entry<String,List<String>>>suggestions = result.getSuggestions().entrySet();
-		for (Entry<String,List<String>> sug: suggestions) {
-			for (String v: sug.getValue()) {
-				if (debug) System.out.println("suggestion: " + sug.getKey() + " => " + v);
-			}
-		}
+
 		Set<Map<String, Object>> collations = result.getCollations();
-		for (Map<String, Object> col: collations) {
-			if (debug) System.out.println("collation: q=" + col.get(SearchResult.Spellcheck.COLLATION_QUERY)
-					+ ", hits=" + col.get(SearchResult.Spellcheck.COLLATION_HITS));
-		}		
+
 		// we check that there is no hit found 
 		Assert.assertEquals(0, numFound);
 		// we check that we get suggestions
@@ -77,18 +67,10 @@ public class SolrServiceTest {
     	Query q = service.buildQueryForSearchIndexes( Entity.Entry, QueryMode.SIMPLE,  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
-		if (debug) System.out.println("numFound="+numFound);
 		Set<Entry<String,List<String>>>suggestions = result.getSuggestions().entrySet();
-		for (Entry<String,List<String>> sug: suggestions) {
-			for (String v: sug.getValue()) {
-				if (debug) System.out.println("suggestion: " + sug.getKey() + " => " + v);
-			}
-		}
+
 		Set<Map<String, Object>> collations = result.getCollations();
-		for (Map<String, Object> col: collations) {
-			if (debug) System.out.println("collation: q=" + col.get(SearchResult.Spellcheck.COLLATION_QUERY)
-					+ ", hits=" + col.get(SearchResult.Spellcheck.COLLATION_HITS));
-		}		
+
 		// we check that there is no hit found 
 		Assert.assertTrue(numFound==1);
 		// we check that we get no suggestions
@@ -133,8 +115,6 @@ public class SolrServiceTest {
     public void testPlusAreRemoved() throws Exception {
     	String s = "+insulin +phosphorylation +intracellular";
     	String s2 = StringUtils.removePlus(s);
-    	if (debug) System.out.println(s);
-    	if (debug) System.out.println(s2);
     	Assert.assertEquals("insulin phosphorylation intracellular", s2);
     }
 
@@ -167,9 +147,8 @@ public class SolrServiceTest {
     	Query q = service.buildQueryForSearchIndexes( Entity.Publication, QueryMode.SIMPLE,  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getFound();
-		if (debug) System.out.println("numFound="+numFound);
-		// we check that there is 1 hit found 
-		Assert.assertTrue(numFound==1);
+		// we check that there is 1 hit found
+	    Assert.assertEquals(1, numFound);
 //		Map<String,Object> doc = result.getResults().get(0);
 //		for (String k: doc.keySet()) {
 //			System.out.println("field:" + k);

@@ -54,12 +54,11 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 	}
 	*/
 
+	// TODO: USELESS TEST
     @Test
     public void findSimpleGlycoAnnotations() {
 
         List<Annotation> annotations = statementService.getAnnotations("NX_O75503");
-
-        System.out.println(annotations);
     }
 	
 }

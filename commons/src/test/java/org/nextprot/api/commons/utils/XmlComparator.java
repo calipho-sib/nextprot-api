@@ -1,5 +1,10 @@
 package org.nextprot.api.commons.utils;
 
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
+import org.w3c.dom.Node;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,12 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.w3c.dom.Node;
-
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 
 public class XmlComparator {
 
@@ -76,7 +75,7 @@ public class XmlComparator {
 		// insert title line at top
 		filteredLines.add(0, parent);
 		// send to stdout if option is on
-		if (showList) for (int i=0;i<filteredLines.size();i++) System.out.println(parent + " - " + i + " - " + filteredLines.get(i));
+		//if (showList) for (int i=0;i<filteredLines.size();i++) System.out.println(parent + " - " + i + " - " + filteredLines.get(i));
 		return filteredLines;
 	}
 
@@ -170,7 +169,7 @@ public class XmlComparator {
         for (Delta delta: deltas) {
         	String deltaStr = delta.toString();
         	if (! deltaStr.contains("position: 0")) {
-        		System.out.println(tag + " - delta: " + deltaStr);
+        		//System.out.println(tag + " - delta: " + deltaStr);
         		status = false;
         	}
         }

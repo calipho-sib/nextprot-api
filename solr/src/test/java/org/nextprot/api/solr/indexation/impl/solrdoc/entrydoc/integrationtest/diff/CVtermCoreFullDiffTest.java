@@ -53,7 +53,6 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 		String entry = term.getAccession();
 		
 		if(id == 154329) return;
-		System.out.println("Testing cv: " + Long.toString(id) + "=" + entry);
 
 		SolrInputDocument solrDoc = new SolrCvTermDocumentFactory().createSolrInputDocument(term);
 		

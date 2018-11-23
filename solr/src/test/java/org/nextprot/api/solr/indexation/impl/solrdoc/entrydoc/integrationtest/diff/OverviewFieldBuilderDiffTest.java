@@ -48,7 +48,6 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testOverview(String entryName) {
 
-		System.out.println("Testing " + entryName);
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		overviewSolrFieldCollector.collect(fields, entryName, false);
 		

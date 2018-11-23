@@ -43,7 +43,7 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testExpression(String entryName) {
 
-		System.out.println("Testing: " + entryName);
+		//System.out.println("Testing: " + entryName);
 		ExpressionSolrFieldCollector efb = new ExpressionSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		efb.collect(fields, entryName, false);

@@ -1,7 +1,5 @@
 package org.nextprot.api.rdf.sparql;
 
-import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +8,8 @@ import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:app-context.xml" })
@@ -32,22 +32,23 @@ public class SparqlServiceTest {
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
 
+	// TODO: THIS TEST IS USELESS
 	@Test
 	public void testEntries() {
 		// List<String> entries = advanceQueryService.findEntries(SparqlEndpoint.Virtuoso, sLite, "title1");
 		List<String> entries = sparqlService.findEntries(sLite, sparqlEndpoint.getUrl(), "title1");
 		for (String s : entries) {
-			System.out.println(s);
+			//System.out.println(s);
 		}
 	}
 
 	@Test
 	public void testNoCacheEntries() {
-		System.out.println("Going to " + sparqlEndpoint.getUrl());
+
 		// List<String> entries = advanceQueryService.findEntries(SparqlEndpoint.Virtuoso, sLite, "title1");
 		List<String> entries = sparqlService.findEntriesNoCache(sLite, sparqlEndpoint.getUrl(), "titleNoCache", "testId" + System.currentTimeMillis());
 		for (String s : entries) {
-			System.out.println(s);
+			//System.out.println(s);
 		}
 	}
 

@@ -1,12 +1,8 @@
 package org.nextprot.api.test.rdf.db.diff;
 
-import static org.junit.Assert.assertTrue;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.rdf.model.Literal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
@@ -21,9 +17,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.rdf.model.Literal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 
 @ContextConfiguration("classpath:spring/commons-context.xml")
@@ -52,7 +51,6 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 			resetDefaultLogValues();		
 			getCountForSparql();
 			getCountForSql();
-			System.out.println("Query "+ qName +": sql =" + countSQL + ", rq="+countSPARQL);
 			this.status = (this.countSQL==this.countSPARQL ? "OK" : "FAIL");
 			assertTrue(this.countSQL==this.countSPARQL);
 		} finally {

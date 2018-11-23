@@ -106,11 +106,11 @@ public class SolrEntryFieldCollectorServiceImplTest {
 		));
 	}
 
+	// TODO: USELESS TEST
 	@Test
 	public void buildSolrDoc() {
 
 		// MSH6
 		SolrInputDocument doc = solrEntryFieldCollectorServiceImpl.buildSolrDoc("NX_P52701", true);
-		System.out.println(doc);
 	}
 }

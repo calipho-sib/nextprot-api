@@ -29,7 +29,6 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 	
 	public void testIdentfiers(String entryName) {
 
-		System.out.println("Testing: " + entryName);
 		IdentifierSolrFieldCollector ifb = new IdentifierSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		ifb.collect(fields, entryName, false);

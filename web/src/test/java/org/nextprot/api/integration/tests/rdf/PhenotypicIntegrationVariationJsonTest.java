@@ -26,7 +26,6 @@ public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTe
 		// Ensures that the viewer of phenotypes are not broken
 		String geneName = actualObj.get("entry").get("annotationsByCategory").get("binary-interaction").get(0).get("bioObject").get("properties").get("geneName").toString();
 
-		System.out.println("gene name " + geneName); // Should print NEDD4L
 		Assert.assertFalse(geneName.isEmpty());
 	}
 

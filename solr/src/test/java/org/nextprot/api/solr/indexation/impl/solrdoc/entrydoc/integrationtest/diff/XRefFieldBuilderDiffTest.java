@@ -33,7 +33,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 		int newcnt=0, comcnt=0, misscnt=0;
 		
-		System.out.println("Testing: " + entryName);
 		XrefSolrFieldCollector xfb = new XrefSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 		xfb.collect(fields, entryName, false);

@@ -155,14 +155,8 @@ public class GeneDaoIntegrationTest extends CoreUnitBaseTest {
 					cnt++;		
 				}
 			}
-			System.out.println(entryName + ":" + locs.size() + " ChrLocations, " + cnt + " SILVER mapping");
+			//System.out.println(entryName + ":" + locs.size() + " ChrLocations, " + cnt + " SILVER mapping");
 		}
 		Assert.assertEquals(true, haveSilverMapping);
-		
 	}
-	
-	
-
-
-	
 }

@@ -28,7 +28,6 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void testPublicationIds() {
 		 Set<Long> ids = globalPublicationService.findAllPublicationIds();
-		 System.out.println(ids.size());
 		 Assert.assertTrue(ids.size() > 370000);
 	}
 	
