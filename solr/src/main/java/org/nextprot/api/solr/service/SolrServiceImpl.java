@@ -226,7 +226,7 @@ public class SolrServiceImpl implements SolrService {
 
 	@Override
 	public Query buildQueryForProteinLists(Entity entity, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
-		return buildQuery(entity, QueryMode.PL_SEARCH, queryString, quality, sort, order, start, rows, filter);
+		return buildQuery(entity, QueryMode.PROTEIN_LIST_SEARCH, queryString, quality, sort, order, start, rows, filter);
 	}
 
 	private Query buildQuery(Entity entity, QueryMode configuration, QueryRequest request) {

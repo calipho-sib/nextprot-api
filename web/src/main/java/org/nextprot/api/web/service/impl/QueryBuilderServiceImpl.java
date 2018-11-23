@@ -133,6 +133,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 	    queryRequest.setQuery(queryString);
 
-        return queryService.buildQueryForSearchIndexes(entity, QueryMode.PL_SEARCH, queryRequest);
+        return queryService.buildQueryForSearchIndexes(entity, QueryMode.PROTEIN_LIST_SEARCH, queryRequest);
     }
 }

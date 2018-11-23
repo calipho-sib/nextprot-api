@@ -5,7 +5,7 @@ public enum QueryMode {
 	AUTOCOMPLETE,
 	SIMPLE,
 	ID_SEARCH,
-	PL_SEARCH
+	PROTEIN_LIST_SEARCH
 	;
 
 	private final String name;

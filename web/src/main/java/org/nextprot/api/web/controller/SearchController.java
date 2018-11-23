@@ -158,7 +158,7 @@ public class SearchController {
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
-				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.PL_SEARCH, queryRequest);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.PROTEIN_LIST_SEARCH, queryRequest);
 
 			} else {
 				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.SIMPLE, queryRequest);

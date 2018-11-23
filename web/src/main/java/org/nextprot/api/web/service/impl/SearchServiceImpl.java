@@ -98,7 +98,7 @@ public class SearchServiceImpl implements SearchService {
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
 
-			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PL_SEARCH, queryRequest);
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, queryRequest);
 			SearchResult result = this.solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
