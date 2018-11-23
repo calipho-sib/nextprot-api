@@ -269,11 +269,8 @@ public class SolrServiceImpl implements SolrService {
 
 		QueryExecutor executor = new QueryExecutor(core);
 
-		SolrQuery solrQuery = query.getQueryConfiguration().convertIdQuery(query);
-		logSolrQuery("executeIdQuery", solrQuery);
-
 		try {
-			return executor.execute(solrQuery);
+			return executor.execute(query.convertToSolrIdQuery());
 		} catch (SolrServerException e) {
 			throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
 		}
@@ -290,8 +287,7 @@ public class SolrServiceImpl implements SolrService {
     	QueryExecutor executor = new QueryExecutor(core);
 
     	try {
-		    SolrQuery solrQuery = query.getQueryConfiguration().convertQuery(query);
-		    return executor.execute(solrQuery);
+		    return executor.execute(query.convertToSolrQuery());
 	    } catch (SolrServerException e) {
             throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
         }

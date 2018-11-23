@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.query;
 
 import com.google.common.base.Preconditions;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
@@ -106,6 +107,16 @@ public class Query<F extends SolrField> {
 	public String getQueryStringEscapeColon() {
 
 		return getQueryStringWithPrivateFieldNames(true);
+	}
+
+	public SolrQuery convertToSolrQuery() throws QueryConfiguration.MissingSortConfigException {
+
+		return getQueryConfiguration().convertQuery(this);
+	}
+
+	public SolrQuery convertToSolrIdQuery() {
+
+		return getQueryConfiguration().convertIdQuery(this);
 	}
 
 	/**
