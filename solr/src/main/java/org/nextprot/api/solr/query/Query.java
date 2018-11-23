@@ -12,7 +12,6 @@ public class Query<F extends SolrField> {
 	private String indexName;
 	private SolrCore<F> solrCore;
 	private QueryMode queryMode;
-	private QueryConfiguration<F> queryConfiguration;
 	private String queryString; // q => field:value ex. id: NX_...
 	private String filter; // fq
 	private SortConfig<F> sortConfig; // first sort config then sort and order else default config
@@ -32,7 +31,6 @@ public class Query<F extends SolrField> {
 		this.solrCore = solrCore;
 		this.indexName = solrCore.getAlias().getName();
 		this.queryMode = queryMode;
-		this.queryConfiguration = solrCore.getQuerySettings().getConfig(queryMode);
 	}
 
 
@@ -89,7 +87,7 @@ public class Query<F extends SolrField> {
 	}
 
 	public QueryConfiguration<F> getQueryConfiguration() {
-		return queryConfiguration;
+		return solrCore.getQuerySettings().getConfig(queryMode);
 	}
 
 	public void setQueryMode(QueryMode queryMode) {
