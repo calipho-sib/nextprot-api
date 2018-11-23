@@ -8,11 +8,13 @@ import org.nextprot.api.solr.query.QueryMode;
 public class SearchByIdConfiguration<F extends SolrField> extends IndexConfiguration<F> {
 
 	public SearchByIdConfiguration(QueryMode mode) {
+
 		super(mode);
 	}
 	
 	@Override
 	public String formatQuery(Query query) {
-		return query.getQueryStringEscapeColon();
+
+		return (query != null) ? query.getQueryStringEscapeColon() : "";
 	}
 }

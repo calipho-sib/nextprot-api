@@ -78,31 +78,38 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		this.otherParameters.put(parameterName, parameterValue);
 		return this;
 	}
-	
-	/**
-	 * It splits the query coming for the controller in tokens 
-	 * and builds the query to Solr accordingly
-	 * 
-	 * @param query
-	 * @return
-	 */
+
 	@Override
 	public String formatQuery(Query<F> query) {
+
+		return (query != null) ? prefixAllTermsWithPlusOperator(query.getQueryStringEscapeColon()) : "";
+	}
+
+	/**
+	 * Add a '+' symbol (also known as the "required" operator) before all terms in the query string.
+	 *
+	 * https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-TheBooleanOperator_
+	 *
+	 * @param queryString the query to modify
+	 * @return the query with all terms prefixed with the "required" operator
+	 */
+	private String prefixAllTermsWithPlusOperator(String queryString) {
+
 		StringBuilder queryBuilder = new StringBuilder();
 
-        String[] tokens = query.getQueryStringEscapeColon().split(WHITESPACE);
+		String[] tokens = queryString.split(WHITESPACE);
 
-        for (int i = 0; i < tokens.length; i++) {
-            queryBuilder.append(PLUS).append(tokens[i]);
+		for (int i = 0; i < tokens.length; i++) {
+			queryBuilder.append(PLUS).append(tokens[i]);
 
-            if (i != tokens.length - 1)
-                queryBuilder.append(WHITESPACE);
-        }
+			if (i != tokens.length - 1)
+				queryBuilder.append(WHITESPACE);
+		}
 
 		//this.otherParameters.put("spellcheck.q", query.getQueryString());
 		return queryBuilder.toString();
 	}
-	
+
 	/**
 	 * Builds a query for a specified parameter ex. FL, QF, etc
 	 * If a variable has a defined boost for the asked parameter the boost
