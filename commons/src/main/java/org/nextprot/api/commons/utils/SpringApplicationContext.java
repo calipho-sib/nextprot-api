@@ -17,6 +17,9 @@ import java.util.Collection;
  * and applying generics to the methods.
  *
  * URL source: http://sujitpal.blogspot.com/2007/03/accessing-spring-beans-from-legacy-code.html
+ *
+ * The only caveat is that your DispatcherServlet must be loaded in web.xml before any component that needs to call the SpringApplicationContext.getBean().
+ * This ensures that the ApplicationContext has finished loading and SpringApplicationContext has a populated reference to it.
  */
 public class SpringApplicationContext implements ApplicationContextAware {
 
@@ -31,7 +34,11 @@ public class SpringApplicationContext implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 
 		CONTEXT = context;
-		LOGGER.info("Give access to application context from class SpringApplicationContext");
+		LOGGER.info("Give access to application context "+context.getDisplayName() + " from class SpringApplicationContext");
+	}
+
+	public static ApplicationContext getApplicationContext() {
+		return CONTEXT;
 	}
 
 	/**
