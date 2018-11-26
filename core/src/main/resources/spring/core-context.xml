@@ -51,7 +51,7 @@
 		</bean>
 		<bean id="ehcache"
 			class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-			p:configLocation="classpath:ehcache.xml" p:shared="true"/>
+			p:configLocation="classpath:ehcache.xml" />
 
 
 		<bean class="net.sf.ehcache.management.ManagementService"
@@ -64,6 +64,11 @@
 			<constructor-arg value="true" />
 		</bean>
 
+	</beans>
+
+	<beans>
+		<!-- A SINGLE ENTRY POINT FOR ACCESSING ANY BEANS FOR NON-SPRING OBJECTS -->
+		<bean id="springApplicationContext" class="org.nextprot.api.commons.utils.SpringApplicationContext"/>
 	</beans>
 </beans>
 		
