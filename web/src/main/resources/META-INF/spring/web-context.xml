@@ -6,7 +6,6 @@
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
-	<import resource="classpath:spring/core-context.xml" />
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="classpath:META-INF/spring/security-context.xml" />
 
@@ -169,4 +168,6 @@
 			</list>
 		</property>
 	</bean>
+
+	<import resource="classpath:spring/core-context.xml" />
 </beans>
