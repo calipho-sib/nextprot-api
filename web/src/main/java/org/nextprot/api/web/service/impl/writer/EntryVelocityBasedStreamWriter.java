@@ -3,13 +3,12 @@ package org.nextprot.api.web.service.impl.writer;
 import com.google.common.base.Preconditions;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.IOException;
@@ -21,8 +20,6 @@ import java.io.Writer;
  * @author fnikitin
  */
 public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<Writer> {
-
-    protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
     protected EntryReportStatsService entryReportStatsService;
@@ -37,9 +34,9 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
         Preconditions.checkNotNull(templateName);
         Preconditions.checkNotNull(viewName);
 
-        entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
-        entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
-        velocityConfig = applicationContext.getBean(VelocityConfig.class);
+        entryBuilderService = SpringApplicationContext.getBeanOfType(EntryBuilderService.class);
+        entryReportStatsService = SpringApplicationContext.getBeanOfType(EntryReportStatsService.class);
+        velocityConfig = SpringApplicationContext.getBeanOfType(VelocityConfig.class);
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
 
         this.viewName = viewName;

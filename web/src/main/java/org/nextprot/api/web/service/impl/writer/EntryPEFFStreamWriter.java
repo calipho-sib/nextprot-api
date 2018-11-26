@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -27,7 +28,7 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
 
         super(os);
 
-        this.entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
+        this.entryReportStatsService = SpringApplicationContext.getBeanOfType(EntryReportStatsService.class);
         cachedEntries = new HashMap<>();
     }
 
