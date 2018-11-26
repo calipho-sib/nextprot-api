@@ -1,5 +1,6 @@
 package org.nextprot.api.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationContextProvider implements ApplicationContextAware {
 
+    private static final Logger LOGGER = Logger.getLogger(ApplicationContextProvider.class);
+
     private static ApplicationContext applicationContext;
 
     public static ApplicationContext getApplicationContext() {
@@ -21,6 +24,8 @@ public class ApplicationContextProvider implements ApplicationContextAware {
     }
 
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+
+        LOGGER.info("Give access to application context "+ctx.getDisplayName() + " from class ApplicationContextProvider");
 
         applicationContext = ctx;
     }
