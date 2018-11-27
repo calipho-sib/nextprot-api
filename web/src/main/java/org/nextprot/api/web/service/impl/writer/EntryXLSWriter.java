@@ -10,9 +10,10 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -120,9 +121,9 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
 
     private final EntryDataProvider entryDataProvider;
 
-    protected EntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider, ApplicationContext applicationContext) {
+    protected EntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider, EntryBuilderService entryBuilderService) {
 
-        super(stream, applicationContext);
+        super(stream, entryBuilderService);
 
         Preconditions.checkNotNull(entryDataProvider);
 
@@ -134,12 +135,13 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
         this.entryDataProvider = entryDataProvider;
     }
 
-    public static EntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName, ApplicationContext applicationContext) {
+    public static EntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName, EntryBuilderService entryBuilderService,
+                                                     EntryReportStatsService entryReportStatsService) {
 
         if (viewName.equals("isoforms"))
-            return new EntryIsoformXLSWriter(os, applicationContext);
+            return new EntryIsoformXLSWriter(os, entryBuilderService);
         else
-            return new EntryOverviewXLSWriter(os, applicationContext);
+            return new EntryOverviewXLSWriter(os, entryReportStatsService, entryBuilderService);
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {

@@ -4,9 +4,9 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,11 +24,12 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
     private final EntryReportStatsService entryReportStatsService;
     private final Map<String, Entry> cachedEntries;
 
-    public EntryPEFFStreamWriter(OutputStream os, ApplicationContext applicationContext) throws IOException {
+    public EntryPEFFStreamWriter(OutputStream os, EntryBuilderService entryBuilderService,
+                                 EntryReportStatsService entryReportStatsService) throws IOException {
 
-        super(os, applicationContext);
+        super(os, entryBuilderService);
 
-        this.entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
+        this.entryReportStatsService = entryReportStatsService;
         cachedEntries = new HashMap<>();
     }
 

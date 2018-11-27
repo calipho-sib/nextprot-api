@@ -2,8 +2,10 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.velocity.Template;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.NXVelocityContext;
-import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,12 +18,16 @@ import java.util.Map;
  */
 public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public EntryTTLStreamWriter(Writer writer, String viewName, ApplicationContext applicationContext) {
-        super(writer, "turtle/entry.ttl.vm", viewName, applicationContext);
+    public EntryTTLStreamWriter(Writer writer, String viewName, EntryBuilderService entryBuilderService,
+                                EntryReportStatsService entryReportStatsService,
+                                VelocityConfig velocityConfig) {
+        super(writer, "turtle/entry.ttl.vm", viewName, entryBuilderService, entryReportStatsService, velocityConfig);
     }
     
-    public EntryTTLStreamWriter(OutputStream os, String viewName, ApplicationContext applicationContext) {
-        this(new OutputStreamWriter(os), viewName, applicationContext);
+    public EntryTTLStreamWriter(OutputStream os, String viewName, EntryBuilderService entryBuilderService,
+                                EntryReportStatsService entryReportStatsService,
+                                VelocityConfig velocityConfig) {
+        this(new OutputStreamWriter(os), viewName, entryBuilderService, entryReportStatsService, velocityConfig);
     }
 
     @Override

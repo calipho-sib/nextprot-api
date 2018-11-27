@@ -3,8 +3,12 @@ package org.nextprot.api.web.service.impl.writer;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayOutputStream;
@@ -17,12 +21,22 @@ import static org.junit.Assert.assertEquals;
 @Ignore
 public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
 
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private EntryReportStatsService entryReportStatsService;
+
+    @Autowired
+    private VelocityConfig velocityConfig;
+
     @Test
     public void testXMLExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        EntryXMLStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview", wac);
+        EntryXMLStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview", entryBuilderService,
+                entryReportStatsService, velocityConfig);
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
         exporter.close();
         writer.close();
@@ -40,7 +54,8 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     public void testWriteXML() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview", wac);
+        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview", entryBuilderService,
+                entryReportStatsService, velocityConfig);
         writer.write(Arrays.asList("NX_P06213", "NX_P01308"));
         writer.close();
         out.close();
@@ -52,7 +67,8 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     public void testWriteXMLPrematureClose() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview", wac);
+        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview", entryBuilderService,
+                entryReportStatsService, velocityConfig);
         writer.close();
         writer.write(Arrays.asList("NX_P06213"));
         Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

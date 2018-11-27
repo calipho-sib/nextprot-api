@@ -2,19 +2,28 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 public class EntryPEFFStreamWriterTest extends WebIntegrationBaseTest {
 
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private EntryReportStatsService entryReportStatsService;
+
     @Test
     public void testPeffExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out, wac);
+        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out, entryBuilderService, entryReportStatsService);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

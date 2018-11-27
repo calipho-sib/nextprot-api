@@ -8,7 +8,6 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.NXVelocityContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.IOException;
@@ -27,23 +26,22 @@ public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<W
     private final Template template;
     private final String viewName;
 
-    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName, ApplicationContext applicationContext) {
+    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName,
+                                          EntryBuilderService entryBuilderService,
+                                          EntryReportStatsService entryReportStatsService,
+                                          VelocityConfig velocityConfig) {
 
         super(writer);
 
         Preconditions.checkNotNull(templateName);
         Preconditions.checkNotNull(viewName);
 
-        entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
-        entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
-        velocityConfig = applicationContext.getBean(VelocityConfig.class);
+        this.entryBuilderService = entryBuilderService;
+        this.entryReportStatsService = entryReportStatsService;
+        this.velocityConfig = velocityConfig;
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
 
         this.viewName = viewName;
-    }
-
-    public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
-        this.entryBuilderService = entryBuilderService;
     }
 
     @Override

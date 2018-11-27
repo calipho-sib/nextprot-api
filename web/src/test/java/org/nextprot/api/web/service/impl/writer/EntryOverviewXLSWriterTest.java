@@ -6,20 +6,33 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 @Ignore
 public class EntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private EntryReportStatsService entryReportStatsService;
 
     @Test
     public void testXLSOverviewWriterStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, wac);
+        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, entryReportStatsService, entryBuilderService);
 
         writer.write(Arrays.asList("NX_P48730"));
         writer.close();
@@ -33,7 +46,7 @@ public class EntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
 
         FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/proteins.xls");
 
-        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, wac);
+        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, null, null);
 
         writer.write(Arrays.asList("NX_P48730"));
     }

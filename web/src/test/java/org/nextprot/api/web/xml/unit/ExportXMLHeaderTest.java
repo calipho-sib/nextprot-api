@@ -2,11 +2,15 @@ package org.nextprot.api.web.xml.unit;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
 import org.nextprot.api.web.utils.XMLUnitUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayOutputStream;
@@ -19,13 +23,23 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class ExportXMLHeaderTest extends WebUnitBaseTest {
-	
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
+
+    @Autowired
+    private EntryReportStatsService entryReportStatsService;
+
+    @Autowired
+    private VelocityConfig velocityConfig;
+
     @Test
     public void testXMLExportHeaderRelease() throws Exception {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview", wac);
+        EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview", entryBuilderService,
+                entryReportStatsService, velocityConfig);
         
         ReleaseInfoVersions rc = new ReleaseInfoVersions();
         rc.setApiRelease("api-test-version");

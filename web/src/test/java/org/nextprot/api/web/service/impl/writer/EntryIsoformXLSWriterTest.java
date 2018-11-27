@@ -5,19 +5,28 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 public class EntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
 
     @Test
     public void testXLSIsoformWriterStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, wac);
+        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, entryBuilderService);
 
         writer.write(Arrays.asList("NX_P48730"));
         writer.close();
@@ -33,7 +42,7 @@ public class EntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
         FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/isoforms.xls");
 
-        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, wac);
+        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, entryBuilderService);
 
         writer.write(Arrays.asList("NX_P48730"));
     }

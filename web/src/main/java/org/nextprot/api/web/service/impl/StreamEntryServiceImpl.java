@@ -1,19 +1,29 @@
 package org.nextprot.api.web.service.impl;
 
+import com.google.common.base.Preconditions;
 import org.apache.http.HttpStatus;
 import org.nextprot.api.commons.bio.Chromosome;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.solr.query.dto.QueryRequest;
 import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.StreamEntryService;
+import org.nextprot.api.web.service.impl.writer.EntryFastaStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryJSONStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryPEFFStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryTTLStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryTXTStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryXLSWriter;
+import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,8 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 
 @Service
 public class StreamEntryServiceImpl implements StreamEntryService {
@@ -41,19 +49,25 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	private SearchService searchService;
 
 	@Autowired
-	private ApplicationContext applicationContext;
+	private EntryBuilderService entryBuilderService;
+
+	@Autowired
+	private EntryReportStatsService entryReportStatsService;
+
+	@Autowired
+	private VelocityConfig velocityConfig;
 
 	@Override
 	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
 
-		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os, applicationContext);
+		EntryStreamWriter writer = newWriter(format, "entry", os);
 		writer.write(Collections.singletonList(accession), createInfos(description));
 	}
 
 	@Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
-        EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os, applicationContext);
+        EntryStreamWriter writer = newWriter(format, viewName, os);
         writer.write(accessions, createInfos(description));
     }
 
@@ -167,6 +181,39 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 			return "nextprot-chromosome-" + queryRequest.getChromosome() + "-" + viewName + "." + format.getExtension();
 		} else {
 			throw new NextProtException("Not implemented yet.");
+		}
+	}
+
+	/**
+	 * Create new instance of streaming NPEntryWriter
+	 *
+	 * @param format the output file format
+	 * @param view the view for velocity
+	 * @param os the output stream
+	 * @return a NPEntryWriter instance
+	 */
+	public EntryStreamWriter newWriter(NextprotMediaType format, String view, OutputStream os) throws IOException {
+
+		Preconditions.checkNotNull(format);
+
+		switch (format) {
+
+			case XML:
+				return new EntryXMLStreamWriter(os, view, entryBuilderService, entryReportStatsService, velocityConfig);
+			case TXT:
+				return new EntryTXTStreamWriter(os, entryBuilderService, entryReportStatsService, velocityConfig);
+			case XLS:
+				return EntryXLSWriter.newNPEntryXLSWriter(os, view, entryBuilderService, entryReportStatsService);
+			case JSON:
+				return new EntryJSONStreamWriter(os, view, entryBuilderService);
+			case FASTA:
+				return new EntryFastaStreamWriter(os, entryBuilderService, entryReportStatsService, velocityConfig);
+			case PEFF:
+				return new EntryPEFFStreamWriter(os, entryBuilderService, entryReportStatsService);
+			case TURTLE:
+				return new EntryTTLStreamWriter(os, view, entryBuilderService, entryReportStatsService, velocityConfig);
+			default:
+				throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
 		}
 	}
 }
