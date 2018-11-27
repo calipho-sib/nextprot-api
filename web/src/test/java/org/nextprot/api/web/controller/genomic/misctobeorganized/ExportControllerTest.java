@@ -2,6 +2,7 @@ package org.nextprot.api.web.controller.genomic.misctobeorganized;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 
+@Ignore
 public class ExportControllerTest extends MVCBaseIntegrationTest {
 
 	@Autowired
