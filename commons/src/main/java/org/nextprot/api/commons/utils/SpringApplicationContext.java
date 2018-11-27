@@ -21,7 +21,9 @@ import java.util.Collection;
  * The only caveat is that your DispatcherServlet must be loaded in web.xml before any component that needs to call the SpringApplicationContext.getBean().
  * This ensures that the ApplicationContext has finished loading and SpringApplicationContext has a populated reference to it.
  */
-public class SpringApplicationContext implements ApplicationContextAware {
+// does not seem to work with mockmvc test in package web
+@Deprecated
+class SpringApplicationContext implements ApplicationContextAware {
 
 	private static final Logger LOGGER = Logger.getLogger(SpringApplicationContext.class);
 	private static ApplicationContext CONTEXT;
