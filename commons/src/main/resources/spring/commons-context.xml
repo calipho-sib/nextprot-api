@@ -1,186 +1,188 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
  		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
-	<context:component-scan base-package="org.nextprot.api.commons" />
-	<context:component-scan base-package="org.nextprot.api.core" />
-	<context:component-scan base-package="org.nextprot.api.isoform.mapper" />
-	<context:component-scan base-package="org.nextprot.api.user" />
-	<context:component-scan base-package="org.nextprot.api.security" />
-    <context:component-scan base-package="org.nextprot.api.solr" />
-	<context:component-scan base-package="org.nextprot.api.rdf" />
-	<context:component-scan base-package="org.nextprot.api.web" />
-	<context:component-scan base-package="org.nextprot.api.test.rdf" />
-	<context:component-scan base-package="org.nextprot.api.blast" />
+    <context:component-scan base-package="org.nextprot.api.commons"/>
+    <context:component-scan base-package="org.nextprot.api.core"/>
+    <context:component-scan base-package="org.nextprot.api.isoform.mapper"/>
+    <context:component-scan base-package="org.nextprot.api.user"/>
+    <context:component-scan base-package="org.nextprot.api.security"/>
+    <context:component-scan base-package="org.nextprot.api.solr"/>
+    <context:component-scan base-package="org.nextprot.api.rdf"/>
+    <context:component-scan base-package="org.nextprot.api.web"/>
+    <context:component-scan base-package="org.nextprot.api.test.rdf"/>
+    <context:component-scan base-package="org.nextprot.api.blast"/>
 
-	<beans profile="build">
-		<context:component-scan base-package="org.nextprot.api.etl" />
-		<context:component-scan base-package="org.nextprot.api.tasks" />
-	</beans>
+    <beans profile="build">
+        <context:component-scan base-package="org.nextprot.api.etl"/>
+        <context:component-scan base-package="org.nextprot.api.tasks"/>
+    </beans>
 
-	<beans profile="unit">
+    <beans profile="unit">
 
-		<bean id="dataSourceServiceLocator"
-			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
-			<property name="dataSource" ref="dataSource" />
-			<!-- In unit test we use the same datasource for everything -->
-			<property name="userDataSource" ref="dataSource" />
-			<!--  <property name="statementsDataSource" ref="statementsDataSource" /> -->
-		</bean>
+        <bean id="dataSourceServiceLocator"
+              class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
+            <property name="dataSource" ref="dataSource"/>
+            <!-- In unit test we use the same datasource for everything -->
+            <property name="userDataSource" ref="dataSource"/>
+            <!--  <property name="statementsDataSource" ref="statementsDataSource" /> -->
+        </bean>
 
-		<bean id="txManager"
-			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-			<property name="dataSource" ref="dataSource" />
-		</bean>
+        <bean id="txManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource"/>
+        </bean>
 
-		<bean id="applicationProperties"
-			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="locations">
-				<list>
-					<value>classpath:application-unit.properties</value>
-				</list>
-			</property>
-		</bean>
+        <bean id="applicationProperties"
+              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="locations">
+                <list>
+                    <value>classpath:application-unit.properties</value>
+                </list>
+            </property>
+        </bean>
 
-		<!-- Use a connection pooling datasource -->
-		<bean id="dataSource"
-			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-			<property name="driverClassName" value="${db.driver}" />
-			<property name="url" value="${db.url}" />
-			<property name="username" value="${db.username}" />
-			<property name="password" value="${db.password}" />
-		</bean>
+        <!-- Use a connection pooling datasource -->
+        <bean id="dataSource"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="${db.driver}"/>
+            <property name="url" value="${db.url}"/>
+            <property name="username" value="${db.username}"/>
+            <property name="password" value="${db.password}"/>
+        </bean>
 
-		<beans profile="unit-schema-nextprot">
-			<bean id="dbUnitDatabaseConnection"
-				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
-				<property name="schema" value="nextprot" />
-				<property name="dataSource" ref="dataSource" />
-			</bean>
-		</beans>
+        <beans profile="unit-schema-nextprot">
+            <bean id="dbUnitDatabaseConnection"
+                  class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+                <property name="schema" value="nextprot"/>
+                <property name="dataSource" ref="dataSource"/>
+            </bean>
+        </beans>
 
-		<beans profile="unit-schema-user">
-			<bean id="dbUnitDatabaseConnection"
-				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
-				<property name="schema" value="np_users" />
-				<property name="dataSource" ref="dataSource" />
-			</bean>
-		</beans>
-	</beans>
+        <beans profile="unit-schema-user">
+            <bean id="dbUnitDatabaseConnection"
+                  class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+                <property name="schema" value="np_users"/>
+                <property name="dataSource" ref="dataSource"/>
+            </bean>
+        </beans>
+    </beans>
 
-	<beans profile="pro">
+    <beans profile="pro">
 
-		<bean id="applicationProperties"
-			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="locations">
-				<list>
-					<value>file:${user.home}/.config/nextprot-application.properties</value>
-				</list>
-			</property>
-		</bean>
+        <bean id="applicationProperties"
+              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="locations">
+                <list>
+                    <value>file:${user.home}/.config/nextprot-application.properties</value>
+                </list>
+            </property>
+        </bean>
 
-	</beans>
+    </beans>
 
-	<beans profile="dev">
+    <beans profile="dev">
 
-		<bean id="applicationProperties"
-			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="locations">
-				<list>
-					<value>classpath:application-dev.properties</value>
-				</list>
-			</property>
-		</bean>
+        <bean id="applicationProperties"
+              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="locations">
+                <list>
+                    <value>classpath:application-dev.properties</value>
+                </list>
+            </property>
+        </bean>
 
-	</beans>
+    </beans>
 
-	<beans profile="pro">
-		<bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
-			<property name="dataSource" ref="uds" />
-			<property name="schemas">
-				<list>
-					<value>np_users</value>
-				</list>
-			</property>
-		</bean>
-	</beans>
+    <beans profile="pro">
+        <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+            <property name="dataSource" ref="uds"/>
+            <property name="schemas">
+                <list>
+                    <value>np_users</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
 
-	<beans profile="pro,dev">
-	
-		<bean id="dataSourceServiceLocator"
-			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
-			<property name="dataSource" ref="dataSource" />
-			<property name="userDataSource" ref="userDataSource" />
-			<property name="statementsDataSource" ref="statementsDataSource" />
-		</bean>
+    <beans profile="pro,dev">
 
-		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-			<property name="driverClass" value="${db.data.driver}" />
-			<property name="jdbcUrl" value="${db.data.url}" />
-			<property name="user" value="${db.data.username}" />
-			<property name="password" value="${db.data.password}" />
-			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
-			<property name="minPoolSize" value="${db.data.minPoolSize}" />
-			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
-			<property name="autoCommitOnClose" value="false" />
-			<!-- Tuning: time out, losing connection after inactivity period (solution here: http://www.mchange.com/projects/c3p0/#configuring_connection_testing) -->
-			<property name="testConnectionOnCheckout" value="true" />
-			<!--
-			<property name="testConnectionOnCheckout" value="false" />
-			<property name="testConnectionOnCheckin" value="true" />
-			<property name="idleConnectionTestPeriod" value="120" />
-			<property name="preferredTestQuery" value="SELECT 1" />
-			-->
-		</bean>
+        <bean id="dataSourceServiceLocator"
+              class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="userDataSource" ref="userDataSource"/>
+            <property name="statementsDataSource" ref="statementsDataSource"/>
+        </bean>
 
-		<bean id="statementsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-			<property name="driverClass" value="${db.statements.driver}" />
-			<property name="jdbcUrl" value="${db.statements.url}" />
-			<property name="user" value="${db.statements.username}" />
-			<property name="password" value="${db.statements.password}" />
-			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
-			<property name="minPoolSize" value="${db.data.minPoolSize}" />
-			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
-			<property name="autoCommitOnClose" value="false" />
-		</bean>
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="${db.data.driver}"/>
+            <property name="jdbcUrl" value="${db.data.url}"/>
+            <property name="user" value="${db.data.username}"/>
+            <property name="password" value="${db.data.password}"/>
+            <property name="maxPoolSize" value="${db.data.maxPoolSize}"/>
+            <property name="minPoolSize" value="${db.data.minPoolSize}"/>
+            <property name="initialPoolSize" value="${db.data.initialPoolSize}"/>
+            <property name="autoCommitOnClose" value="false"/>
+            <!-- Tuning: time out, losing connection after inactivity period (solution here: http://www.mchange.com/projects/c3p0/#configuring_connection_testing) -->
+            <property name="testConnectionOnCheckout" value="true"/>
+            <!--
+            <property name="testConnectionOnCheckout" value="false" />
+            <property name="testConnectionOnCheckin" value="true" />
+            <property name="idleConnectionTestPeriod" value="120" />
+            <property name="preferredTestQuery" value="SELECT 1" />
+            -->
+        </bean>
 
-		<bean id="userDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-			<property name="driverClass" value="${db.user.driver}" />
-			<property name="jdbcUrl" value="${db.user.url}" />
-			<property name="user" value="${db.user.username}" />
-			<property name="password" value="${db.user.password}" />
-			<property name="maxPoolSize" value="${db.user.maxPoolSize}" />
-			<property name="minPoolSize" value="${db.user.minPoolSize}" />
-			<property name="initialPoolSize" value="${db.user.initialPoolSize}" />
-			<property name="autoCommitOnClose" value="false" />
-		</bean>
+        <bean id="statementsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="${db.statements.driver}"/>
+            <property name="jdbcUrl" value="${db.statements.url}"/>
+            <property name="user" value="${db.statements.username}"/>
+            <property name="password" value="${db.statements.password}"/>
+            <property name="maxPoolSize" value="${db.data.maxPoolSize}"/>
+            <property name="minPoolSize" value="${db.data.minPoolSize}"/>
+            <property name="initialPoolSize" value="${db.data.initialPoolSize}"/>
+            <property name="autoCommitOnClose" value="false"/>
+        </bean>
 
-	<bean id="uds"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <bean id="userDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="${db.user.driver}"/>
+            <property name="jdbcUrl" value="${db.user.url}"/>
+            <property name="user" value="${db.user.username}"/>
+            <property name="password" value="${db.user.password}"/>
+            <property name="maxPoolSize" value="${db.user.maxPoolSize}"/>
+            <property name="minPoolSize" value="${db.user.minPoolSize}"/>
+            <property name="initialPoolSize" value="${db.user.initialPoolSize}"/>
+            <property name="autoCommitOnClose" value="false"/>
+        </bean>
 
-		<property name="driverClassName" value="${db.user.driver}" />
-		<property name="url" value="${db.user.url}" />
-		<property name="username" value="${db.user.username}" />
-		<property name="password" value="${db.user.password}" />
-	</bean>
+        <bean id="uds"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
+            <property name="driverClassName" value="${db.user.driver}"/>
+            <property name="url" value="${db.user.url}"/>
+            <property name="username" value="${db.user.username}"/>
+            <property name="password" value="${db.user.password}"/>
+        </bean>
 
+        <!-- Transaction manager for the user data source -->
+        <bean id="txManager"
+              class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="userDataSource"/>
+        </bean>
 
-		<!-- Transaction manager for the user data source -->
-		<bean id="txManager"
-			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-			<property name="dataSource" ref="userDataSource" />
-		</bean>
-
-	</beans>
+    </beans>
 
     <beans>
-        <!-- A SINGLE ENTRY POINT FOR ACCESSING ANY BEANS FOR NON-SPRING OBJECTS -->
+        <!-- A SINGLE ENTRY POINT FOR ACCESSING ANY BEANS FOR NON-SPRING OBJECTS
+        http://sujitpal.blogspot.com/2007/03/accessing-spring-beans-from-legacy-code.html -->
         <bean id="springApplicationContext" class="org.nextprot.api.commons.utils.SpringApplicationContext"/>
     </beans>
 
