@@ -3,8 +3,13 @@ package org.nextprot.api.web.service.impl.writer;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.springframework.context.ApplicationContext;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -111,26 +116,26 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
      */
-    public static EntryStreamWriter newAutoCloseableWriter(NextprotMediaType format, String view, OutputStream os) throws IOException {
+    public static EntryStreamWriter newAutoCloseableWriter(NextprotMediaType format, String view, OutputStream os, ApplicationContext applicationContext) throws IOException {
 
         Preconditions.checkNotNull(format);
 
         switch (format) {
 
             case XML:
-                return new EntryXMLStreamWriter(os, view);
+                return new EntryXMLStreamWriter(os, view, applicationContext);
             case TXT:
-                return new EntryTXTStreamWriter(os);
+                return new EntryTXTStreamWriter(os, applicationContext);
             case XLS:
-                return EntryXLSWriter.newNPEntryXLSWriter(os, view);
+                return EntryXLSWriter.newNPEntryXLSWriter(os, view, applicationContext);
             case JSON:
-                return new EntryJSONStreamWriter(os, view);
+                return new EntryJSONStreamWriter(os, view, applicationContext);
             case FASTA:
-                return new EntryFastaStreamWriter(os);
+                return new EntryFastaStreamWriter(os, applicationContext);
             case PEFF:
-                return new EntryPEFFStreamWriter(os);
+                return new EntryPEFFStreamWriter(os, applicationContext);
             case TURTLE:
-                return new EntryTTLStreamWriter(os, view);
+                return new EntryTTLStreamWriter(os, view, applicationContext);
             default:
                 throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
         }

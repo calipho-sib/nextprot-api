@@ -14,7 +14,7 @@ public class EntryPEFFStreamWriterTest extends WebIntegrationBaseTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out);
+        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out, wac);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

@@ -25,7 +25,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview");
+        EntryVelocityBasedStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview", wac);
         
         ReleaseInfoVersions rc = new ReleaseInfoVersions();
         rc.setApiRelease("api-test-version");

@@ -1,6 +1,5 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.springframework.context.ApplicationContext;
 
@@ -13,11 +12,9 @@ import java.io.OutputStream;
  */
 public abstract class EntryOutputStreamWriter extends EntryStreamWriter<OutputStream> {
 
-    protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-
     protected EntryBuilderService entryBuilderService;
 
-    public EntryOutputStreamWriter(OutputStream os) {
+    public EntryOutputStreamWriter(OutputStream os, ApplicationContext applicationContext) {
 
         super(os);
 

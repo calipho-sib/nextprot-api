@@ -21,7 +21,7 @@ public class EntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
         Writer writer = new PrintWriter(out);
 
-        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer);
+        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer, wac);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), new HashMap<>());
 

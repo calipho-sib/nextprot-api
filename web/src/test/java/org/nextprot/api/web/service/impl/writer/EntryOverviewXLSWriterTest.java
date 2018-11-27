@@ -19,7 +19,7 @@ public class EntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryXLSWriter writer = new EntryOverviewXLSWriter(out);
+        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, wac);
 
         writer.write(Arrays.asList("NX_P48730"));
         writer.close();
@@ -33,7 +33,7 @@ public class EntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
 
         FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/proteins.xls");
 
-        EntryXLSWriter writer = new EntryOverviewXLSWriter(out);
+        EntryXLSWriter writer = new EntryOverviewXLSWriter(out, wac);
 
         writer.write(Arrays.asList("NX_P48730"));
     }

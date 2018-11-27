@@ -3,6 +3,7 @@ package org.nextprot.api.web.service.impl.writer;
 import org.apache.velocity.Template;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.NXVelocityContext;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,12 +16,12 @@ import java.util.Map;
  */
 public class EntryTTLStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public EntryTTLStreamWriter(Writer writer, String viewName) {
-        super(writer, "turtle/entry.ttl.vm", viewName);
+    public EntryTTLStreamWriter(Writer writer, String viewName, ApplicationContext applicationContext) {
+        super(writer, "turtle/entry.ttl.vm", viewName, applicationContext);
     }
     
-    public EntryTTLStreamWriter(OutputStream os, String viewName) {
-        this(new OutputStreamWriter(os), viewName);
+    public EntryTTLStreamWriter(OutputStream os, String viewName, ApplicationContext applicationContext) {
+        this(new OutputStreamWriter(os), viewName, applicationContext);
     }
 
     @Override

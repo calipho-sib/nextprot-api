@@ -3,7 +3,6 @@ package org.nextprot.api.web.service.impl.writer;
 import com.google.common.base.Preconditions;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
@@ -22,15 +21,13 @@ import java.io.Writer;
  */
 public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<Writer> {
 
-    protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-
     protected EntryBuilderService entryBuilderService;
     protected EntryReportStatsService entryReportStatsService;
     protected VelocityConfig velocityConfig;
     private final Template template;
     private final String viewName;
 
-    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName) {
+    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName, ApplicationContext applicationContext) {
 
         super(writer);
 

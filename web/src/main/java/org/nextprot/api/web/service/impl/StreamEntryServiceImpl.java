@@ -12,6 +12,7 @@ import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.StreamEntryService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,17 +40,20 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 	@Autowired
 	private SearchService searchService;
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
 	@Override
 	public void streamEntry(String accession, NextprotMediaType format, OutputStream os, String description) throws IOException {
 
-		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os);
+		EntryStreamWriter writer = newAutoCloseableWriter(format, "entry", os, applicationContext);
 		writer.write(Collections.singletonList(accession), createInfos(description));
 	}
 
 	@Override
     public void streamEntries(Collection<String> accessions, NextprotMediaType format, String viewName, OutputStream os, String description) throws IOException {
 
-        EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os);
+        EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, os, applicationContext);
         writer.write(accessions, createInfos(description));
     }
 

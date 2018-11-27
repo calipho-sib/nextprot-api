@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,9 +24,9 @@ public class EntryPEFFStreamWriter extends EntryOutputStreamWriter {
     private final EntryReportStatsService entryReportStatsService;
     private final Map<String, Entry> cachedEntries;
 
-    public EntryPEFFStreamWriter(OutputStream os) throws IOException {
+    public EntryPEFFStreamWriter(OutputStream os, ApplicationContext applicationContext) throws IOException {
 
-        super(os);
+        super(os, applicationContext);
 
         this.entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
         cachedEntries = new HashMap<>();

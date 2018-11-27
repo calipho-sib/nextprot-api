@@ -23,6 +23,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         return applicationContext;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
 
         LOGGER.info("Give access to application context "+ctx.getDisplayName() + " from class ApplicationContextProvider");

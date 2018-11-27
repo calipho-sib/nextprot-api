@@ -49,7 +49,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
     	
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer);
+        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer, wac);
         exporter.setEntryBuilderService(entryBuilderMockService);
 
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));

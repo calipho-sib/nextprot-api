@@ -2,6 +2,7 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,14 +22,14 @@ public class EntryTXTStreamWriter extends EntryVelocityBasedStreamWriter {
 
 	private static final Log LOGGER = LogFactory.getLog(EntryTXTStreamWriter.class);
 
-    public EntryTXTStreamWriter(OutputStream os) throws IOException {
+    public EntryTXTStreamWriter(OutputStream os, ApplicationContext applicationContext) throws IOException {
 
-        this(new OutputStreamWriter(os, UTF_8));
+        this(new OutputStreamWriter(os, UTF_8), applicationContext);
     }
 
-    public EntryTXTStreamWriter(Writer writer) {
+    public EntryTXTStreamWriter(Writer writer, ApplicationContext applicationContext) {
 
-        super(writer, "txt/entry.txt.vm", "accession");
+        super(writer, "txt/entry.txt.vm", "accession", applicationContext);
     }
 
     @Override

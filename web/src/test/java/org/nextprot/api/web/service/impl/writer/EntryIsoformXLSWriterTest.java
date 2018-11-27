@@ -17,7 +17,7 @@ public class EntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryXLSWriter writer = new EntryIsoformXLSWriter(out);
+        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, wac);
 
         writer.write(Arrays.asList("NX_P48730"));
         writer.close();
@@ -33,7 +33,7 @@ public class EntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
         FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/isoforms.xls");
 
-        EntryXLSWriter writer = new EntryIsoformXLSWriter(out);
+        EntryXLSWriter writer = new EntryIsoformXLSWriter(out, wac);
 
         writer.write(Arrays.asList("NX_P48730"));
     }

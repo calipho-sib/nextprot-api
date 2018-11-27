@@ -9,6 +9,7 @@ import org.nextprot.api.commons.utils.XMLPrettyPrinter;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.web.NXVelocityContext;
+import org.springframework.context.ApplicationContext;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -31,14 +32,14 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
     private final ByteArrayOutputStream tmpOut;
     private final Writer tmpWriter;
 
-    public EntryXMLStreamWriter(OutputStream os, String viewName) throws IOException {
+    public EntryXMLStreamWriter(OutputStream os, String viewName, ApplicationContext applicationContext) throws IOException {
 
-        this(new OutputStreamWriter(os, UTF_8), viewName);
+        this(new OutputStreamWriter(os, UTF_8), viewName, applicationContext);
     }
 
-    public EntryXMLStreamWriter(Writer writer, String viewName) {
+    public EntryXMLStreamWriter(Writer writer, String viewName, ApplicationContext applicationContext) {
 
-        super(writer, "entry.xml.vm", viewName);
+        super(writer, "entry.xml.vm", viewName, applicationContext);
 
         try {
             XMLPrettyPrinter = new XMLPrettyPrinter();

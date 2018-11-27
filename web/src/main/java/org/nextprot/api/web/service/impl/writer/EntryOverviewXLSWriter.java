@@ -1,12 +1,12 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
+import org.springframework.context.ApplicationContext;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -23,8 +23,8 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
 
         private final EntryReportStatsService entryReportStatsService;
 
-        DataProvider() {
-            entryReportStatsService = ApplicationContextProvider.getApplicationContext().getBean(EntryReportStatsService.class);
+        DataProvider(ApplicationContext applicationContext) {
+            entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
         }
 
         @Override
@@ -74,8 +74,8 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
         }
     }
 
-    public EntryOverviewXLSWriter(OutputStream stream) {
+    public EntryOverviewXLSWriter(OutputStream stream, ApplicationContext applicationContext) {
 
-        super(stream, "Proteins", new DataProvider());
+        super(stream, "Proteins", new DataProvider(applicationContext), applicationContext);
     }
 }

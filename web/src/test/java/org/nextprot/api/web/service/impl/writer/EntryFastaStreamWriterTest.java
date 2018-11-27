@@ -19,7 +19,7 @@ public class EntryFastaStreamWriterTest extends WebIntegrationBaseTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
 
-        EntryVelocityBasedStreamWriter exporter = new EntryFastaStreamWriter(writer);
+        EntryVelocityBasedStreamWriter exporter = new EntryFastaStreamWriter(writer, wac);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 
