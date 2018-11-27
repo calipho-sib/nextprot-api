@@ -180,10 +180,12 @@
 
     </beans>
 
+    <!-- Does not seems to work when multiple spring containers like in module web
+    https://objectpartners.com/2010/08/23/gaining-access-to-the-spring-context-in-non-spring-managed-classes/
     <beans>
-        <!-- A SINGLE ENTRY POINT FOR ACCESSING ANY BEANS FOR NON-SPRING OBJECTS
-        http://sujitpal.blogspot.com/2007/03/accessing-spring-beans-from-legacy-code.html -->
+        <!-A SINGLE ENTRY POINT FOR ACCESSING ANY BEANS FOR NON-SPRING OBJECTS
+        http://sujitpal.blogspot.com/2007/03/accessing-spring-beans-from-legacy-code.html ->
         <bean id="springApplicationContext" class="org.nextprot.api.commons.utils.SpringApplicationContext"/>
     </beans>
-
+    -->
 </beans>
