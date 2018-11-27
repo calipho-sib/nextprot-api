@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
@@ -25,7 +25,7 @@ public class SolrPublicationDocumentFactory implements SolrDocumentFactory<Publi
 		NPreconditions.checkNotNull(publication, "unable to create a solr doc from an undefined publication");
 
 		GlobalPublicationStatistics.PublicationStatistics publicationStats =
-		        SpringApplicationContext.getBeanOfType(PublicationService.class)
+				ApplicationContextProvider.getApplicationContext().getBean(PublicationService.class)
 				        .getPublicationStatistics(publication.getPublicationId());
 
 		SolrInputDocument doc = new SolrInputDocument();

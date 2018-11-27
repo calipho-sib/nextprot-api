@@ -1,6 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.nextprot.api.commons.utils.SpringApplicationContext;
+import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
@@ -24,7 +24,7 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
         private final EntryReportStatsService entryReportStatsService;
 
         DataProvider() {
-            entryReportStatsService = SpringApplicationContext.getBeanOfType(EntryReportStatsService.class);
+            entryReportStatsService = ApplicationContextProvider.getApplicationContext().getBean(EntryReportStatsService.class);
         }
 
         @Override

@@ -1,8 +1,8 @@
 package org.nextprot.api.solr.indexation.impl.solrdoc;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.SolrDocumentFactory;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.EntrySolrFieldCollector;
@@ -52,7 +52,7 @@ public class SolrEntryDocumentFactory implements SolrDocumentFactory<String> {
 
 		Set<EntrySolrField> fields = new HashSet<>();
 
-		for (EntrySolrFieldCollector collector : SpringApplicationContext.getAllBeansOfType(EntrySolrFieldCollector.class)) {
+		for (EntrySolrFieldCollector collector : ApplicationContextProvider.getApplicationContext().getBeansOfType(EntrySolrFieldCollector.class).values()) {
 			if (!collector.getCollectedFields().isEmpty()) {
 				for (EntrySolrField indexedField : collector.getCollectedFields()) {
 

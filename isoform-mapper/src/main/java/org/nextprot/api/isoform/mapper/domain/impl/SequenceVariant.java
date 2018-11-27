@@ -1,11 +1,11 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.impl.format.VariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.SpringApplicationContext;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
@@ -69,7 +69,7 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     private String findEntryAccessionFromGeneName() throws UnknownGeneNameException {
 
-        Set<String> entries = SpringApplicationContext.getBeanOfType(MasterIdentifierService.class)
+        Set<String> entries = ApplicationContextProvider.getApplicationContext().getBean(MasterIdentifierService.class)
 		        .findEntryAccessionByGeneName(geneName, false);
 
         if (entries == null || entries.isEmpty()) {
@@ -183,11 +183,13 @@ public class SequenceVariant extends SequenceFeatureBase {
 
         Optional<String> isoSpecificName = extractExplicitIsoformName(sequenceIdPart);
 
-        IsoformService isoformService = SpringApplicationContext.getBeanOfType(IsoformService.class);
+        IsoformService isoformService = ApplicationContextProvider.getApplicationContext().getBean(IsoformService.class);
 
         // 2. get isoform accession from iso name and entry
-        Isoform isoform = (isoSpecificName.isPresent()) ? isoformService.findIsoformByName(entryAccession, isoSpecificName.get()) : IsoformUtils.getCanonicalIsoform(SpringApplicationContext.getBeanOfType(EntryBuilderService.class)
-                .build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()));
+        Isoform isoform = (isoSpecificName.isPresent()) ?
+                isoformService.findIsoformByName(entryAccession, isoSpecificName.get()) :
+                IsoformUtils.getCanonicalIsoform(ApplicationContextProvider.getApplicationContext().getBean(EntryBuilderService.class)
+                        .build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()));
 
         if (isoform == null) {
             throw new ParseException("Cannot find isoform from sequence part "+ sequenceIdPart+" (entry accession="+entryAccession+")", 0);
@@ -204,7 +206,7 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     public SequenceVariantValidator newValidator(SingleFeatureQuery query) {
 
-        List<EntityName> geneNames = SpringApplicationContext.getBeanOfType(EntityNameService.class)
+        List<EntityName> geneNames = ApplicationContextProvider.getApplicationContext().getBean(EntityNameService.class)
                 .findNamesByEntityNameClass(query.getAccession(), Overview.EntityNameClass.GENE_NAMES);
 
         if (geneNames.isEmpty()) {
