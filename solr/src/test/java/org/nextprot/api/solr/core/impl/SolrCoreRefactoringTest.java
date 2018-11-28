@@ -1,5 +1,6 @@
 package org.nextprot.api.solr.core.impl;
 
+import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
@@ -18,6 +19,7 @@ import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -208,6 +210,39 @@ public class SolrCoreRefactoringTest {
 			SearchResultDiff diffs = queryDiffs(kant, crick, "id:"+pubid);
 
 			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
+		}
+	}
+
+	@Test
+	public void testRBRFamilyProteins() throws QueryConfiguration.MissingSortConfigException {
+
+		SolrCore<EntrySolrField> coreGoldOnly = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), true);
+		SolrCore<EntrySolrField> coreGoldAndSilver = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), false);
+
+		for (SolrCore<EntrySolrField> core : Arrays.asList(coreGoldAndSilver, coreGoldOnly)) {
+
+			Map<String, Set<String>> expectedProteins = new HashMap<>();
+			expectedProteins.put("FA-03242", Sets.newHashSet("NX_O95376", "NX_Q9Y4X5"));
+			expectedProteins.put("FA-03243", Sets.newHashSet("NX_O60260"));
+			expectedProteins.put("FA-03244", Sets.newHashSet("NX_Q9UBS8"));
+			expectedProteins.put("FA-03245", Sets.newHashSet("NX_Q7Z419", "NX_P50876"));
+			expectedProteins.put("FA-03246", Sets.newHashSet("NX_Q6ZMZ0", "NX_Q9NV58"));
+			expectedProteins.put("FA-03247", Sets.newHashSet("NX_Q8TC41"));
+			expectedProteins.put("FA-03241", Sets.newHashSet("NX_Q9P2G1", "NX_O95376", "NX_Q9Y4X5", "NX_O60260",
+					"NX_Q9UBS8", "NX_Q7Z419", "NX_P50876", "NX_Q6ZMZ0", "NX_Q9NV58", "NX_Q8TC41"));
+
+			for (String familyAc : expectedProteins.keySet()) {
+
+				Query<EntrySolrField> query = new Query<>(core).rows(50).addQuery(familyAc);
+
+				SearchResult response = executeQuery(query);
+				Assert.assertEquals(expectedProteins.get(familyAc).size(), response.getFound());
+
+				Set<String> acs = response.getResults().stream()
+						.map(r -> (String) r.get(EntrySolrField.ID.getName()))
+						.collect(Collectors.toSet());
+				Assert.assertEquals(expectedProteins.get(familyAc), acs);
+			}
 		}
 	}
 
