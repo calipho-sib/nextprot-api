@@ -162,7 +162,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 			}
 			List<String> ancestors = terminologyService.getAllAncestorsAccession(term.getAccession());
 			if(ancestors != null) {
-				for (String ancestor : ancestors) cv_ancestors_acs.add(ancestor);
+				cv_ancestors_acs.addAll(ancestors);
 			}
 			List<String> synonyms = term.getSynonyms();
 			if(synonyms != null) {
