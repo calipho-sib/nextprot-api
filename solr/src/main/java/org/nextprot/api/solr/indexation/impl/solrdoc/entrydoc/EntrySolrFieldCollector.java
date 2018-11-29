@@ -22,11 +22,16 @@ public abstract class EntrySolrFieldCollector {
 		}
 
 		if (field.getType().equals(List.class)) {
-			((List) fields.get(field)).add(value); // multiValued = true
+
+			//noinspection unchecked
+			List<Object> list = (List<Object>) fields.get(field);
+
+			if (!list.contains(value)) {
+				list.add(value); // multiValued = true
+			}
 		} else {
 			fields.put(field, value);
 		}
-
 	}
 
 	/** Collect associated index field data from entry */
