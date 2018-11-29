@@ -85,7 +85,7 @@ public class PublicationsSolrFieldCollector extends EntrySolrFieldCollector {
 		addEntrySolrFieldValue(fields, EntrySolrField.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
-		int pe_level = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence().getLevel();
+		int pe_level = overviewService.findOverviewByEntry(entryAccession).getProteinExistence().getLevel();
 		
 		float info_score = 0;
 		if(pe_level == 1) info_score=12;

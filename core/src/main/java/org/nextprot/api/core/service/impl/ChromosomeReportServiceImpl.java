@@ -5,18 +5,28 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryGeneReportService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -130,8 +140,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			//ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
-			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
 
 			if (!pe2entries.containsKey(pe)) {
 

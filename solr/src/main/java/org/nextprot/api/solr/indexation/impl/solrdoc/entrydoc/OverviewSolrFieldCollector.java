@@ -30,8 +30,8 @@ public class OverviewSolrFieldCollector extends EntrySolrFieldCollector {
 		addEntrySolrFieldValue(fields, EntrySolrField.IDSP0, entryAccession);
 		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_AC, entryAccession.substring(3));
 		
-		addEntrySolrFieldValue(fields, EntrySolrField.PE_LEVEL, ovv.getProteinExistences().getProteinExistence().getLevel());
-		addEntrySolrFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, ovv.getProteinExistences().getProteinExistence().getDescriptionName());
+		addEntrySolrFieldValue(fields, EntrySolrField.PE_LEVEL, ovv.getProteinExistence().getLevel());
+		addEntrySolrFieldValue(fields, EntrySolrField.PROTEIN_EXISTENCE, ovv.getProteinExistence().getDescriptionName());
 
 		String precname = ovv.getMainProteinName();
 		addEntrySolrFieldValue(fields, EntrySolrField.RECOMMENDED_NAME, precname);
