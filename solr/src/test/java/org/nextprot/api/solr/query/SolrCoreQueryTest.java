@@ -3,24 +3,24 @@ package org.nextprot.api.solr.query;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.impl.SolrGoldAndSilverEntryCore;
 import org.nextprot.api.solr.core.impl.SolrGoldOnlyEntryCore;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.api.solr.core.impl.settings.SortConfig;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO: do not ignore this test once SolrGoldAndSilverEntryCore.Settings has been returned (see issue https://issues.isb-sib.ch/browse/NEXTPROT-1684)
-@Ignore
 public class SolrCoreQueryTest {
 
     @Test
@@ -53,6 +53,28 @@ public class SolrCoreQueryTest {
 						.collect(Collectors.toSet());
 				Assert.assertEquals(expectedProteins.get(familyAc), acs);
 			}
+		}
+	}
+
+	@Test
+	public void testSortingInPLMode() throws QueryConfiguration.MissingSortConfigException {
+
+		SolrCore<EntrySolrField> core = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID, EntrySolrField.RECOMMENDED_GENE_NAMES), true);
+
+		Query<EntrySolrField> query = new Query<>(core).rows(50).addQuery("MSH6").sort(SortConfig.Criteria.GENE);
+		query.setQueryMode(QueryMode.PROTEIN_LIST_SEARCH);
+
+		SearchResult response = executeQuery(query);
+
+		Assert.assertEquals(72, response.getFound());
+		List<Map<String, Object>> results = response.getResults();
+
+		String geneName = (String) results.get(0).get("recommended_gene_names");
+
+		for (int i=1 ; i<50 ; i++) {
+
+			Assert.assertTrue(geneName.compareTo((String)results.get(i).get("recommended_gene_names")) < 0);
+			geneName = (String)results.get(i).get("recommended_gene_names");
 		}
 	}
 

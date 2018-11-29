@@ -69,9 +69,14 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 			addSortConfig(entry.getKey(), entry.getValue());
 		}
 	}
+
+	public boolean hasSortConfig(SortConfig.Criteria criteria) {
+
+		return sortConfigs.containsKey(criteria);
+	}
 	
 	public SortConfig<F> getSortConfig(SortConfig.Criteria criteria) {
-		return sortConfigs.getOrDefault(criteria, null);
+		return sortConfigs.get(criteria);
 	}
 	
 	public IndexConfiguration addOtherParameter(String parameterName, String parameterValue) {
@@ -82,7 +87,7 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 	@Override
 	public String formatQuery(Query<F> query) {
 
-		return (query != null) ? prefixAllTermsWithPlusOperator(query.getQueryStringEscapeColon()) : "";
+		return (query != null && query.getQueryString() != null) ? prefixAllTermsWithPlusOperator(query.getQueryStringEscapeColon()) : "";
 	}
 
 	/**
@@ -177,10 +182,11 @@ public class IndexConfiguration<F extends SolrField> implements QueryConfigurati
 		// sorting based on criteria and order
 		else {
 			if (criteria != null) {
-				sortConfig = getSortConfig(criteria);
 
-				if (sortConfig == null)
+				if (!hasSortConfig(criteria)) {
 					throw new MissingSortConfigException(criteria, query);
+				}
+				sortConfig = getSortConfig(criteria);
 			} else {
 				sortConfig = getDefaultSortConfiguration();
 			}

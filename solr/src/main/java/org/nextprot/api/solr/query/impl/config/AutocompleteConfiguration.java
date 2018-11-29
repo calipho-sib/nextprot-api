@@ -27,7 +27,7 @@ public class AutocompleteConfiguration<F extends SolrField> extends IndexConfigu
 	@Override
 	public String formatQuery(Query<F> query) {
 
-		if (query == null) {
+		if (query == null || query.getQueryString() == null) {
 			return "";
 		}
 
