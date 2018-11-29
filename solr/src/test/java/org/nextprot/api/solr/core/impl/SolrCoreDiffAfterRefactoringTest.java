@@ -1,12 +1,9 @@
 package org.nextprot.api.solr.core.impl;
 
-import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.SolrCore;
 import org.nextprot.api.solr.core.SolrField;
 import org.nextprot.api.solr.core.impl.schema.CvSolrField;
@@ -15,11 +12,9 @@ import org.nextprot.api.solr.core.impl.schema.PublicationSolrField;
 import org.nextprot.api.solr.core.impl.settings.SortConfig;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
-import org.nextprot.api.solr.query.QueryExecutor;
 import org.nextprot.api.solr.query.dto.SearchResult;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +24,12 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.solr.query.SolrCoreQueryTest.buildEntrySolrCore;
+import static org.nextprot.api.solr.query.SolrCoreQueryTest.executeQuery;
+
 // Those tests compare query results from different solr instances
 @Ignore
-public class SolrCoreRefactoringTest {
+public class SolrCoreDiffAfterRefactoringTest {
 
 	@Test
 	public void testSolrOnKant() {
@@ -211,45 +209,6 @@ public class SolrCoreRefactoringTest {
 
 			Assert.assertTrue("diffs: "+diffs.toString(), diffs.equals);
 		}
-	}
-
-	@Test
-	public void testRBRFamilyProteins() throws QueryConfiguration.MissingSortConfigException {
-
-		SolrCore<EntrySolrField> coreGoldOnly = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), true);
-		SolrCore<EntrySolrField> coreGoldAndSilver = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), false);
-
-		for (SolrCore<EntrySolrField> core : Arrays.asList(coreGoldAndSilver, coreGoldOnly)) {
-
-			Map<String, Set<String>> expectedProteins = new HashMap<>();
-			expectedProteins.put("FA-03242", Sets.newHashSet("NX_O95376", "NX_Q9Y4X5"));
-			expectedProteins.put("FA-03243", Sets.newHashSet("NX_O60260"));
-			expectedProteins.put("FA-03244", Sets.newHashSet("NX_Q9UBS8"));
-			expectedProteins.put("FA-03245", Sets.newHashSet("NX_Q7Z419", "NX_P50876"));
-			expectedProteins.put("FA-03246", Sets.newHashSet("NX_Q6ZMZ0", "NX_Q9NV58"));
-			expectedProteins.put("FA-03247", Sets.newHashSet("NX_Q8TC41"));
-			expectedProteins.put("FA-03241", Sets.newHashSet("NX_Q9P2G1", "NX_O95376", "NX_Q9Y4X5", "NX_O60260",
-					"NX_Q9UBS8", "NX_Q7Z419", "NX_P50876", "NX_Q6ZMZ0", "NX_Q9NV58", "NX_Q8TC41"));
-
-			for (String familyAc : expectedProteins.keySet()) {
-
-				Query<EntrySolrField> query = new Query<>(core).rows(50).addQuery(familyAc);
-
-				SearchResult response = executeQuery(query);
-				Assert.assertEquals(expectedProteins.get(familyAc).size(), response.getFound());
-
-				Set<String> acs = response.getResults().stream()
-						.map(r -> (String) r.get(EntrySolrField.ID.getName()))
-						.collect(Collectors.toSet());
-				Assert.assertEquals(expectedProteins.get(familyAc), acs);
-			}
-		}
-	}
-
-	private SolrCore<EntrySolrField> buildEntrySolrCore(String hostname, Set<EntrySolrField> fl, boolean isGold) {
-
-		return (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname+":8983/solr", fl) :
-				new SolrGoldAndSilverEntryCore("http://"+hostname+":8983/solr", fl);
 	}
 
 	private <SF extends SolrField> SearchResultDiff queryDiffs(SolrCore<SF> core1, SolrCore<SF> core2, String query) throws QueryConfiguration.MissingSortConfigException {
@@ -497,19 +456,6 @@ public class SolrCoreRefactoringTest {
 					return sb.toString();
 				}
 			}
-		}
-	}
-
-	private SearchResult executeQuery(Query query) throws QueryConfiguration.MissingSortConfigException {
-
-		SolrCore core = query.getSolrCore();
-
-		QueryExecutor executor = new QueryExecutor(core);
-
-		try {
-			return executor.execute(query.getQueryConfiguration().convertQuery(query));
-		} catch (SolrServerException e) {
-			throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
 		}
 	}
 }
