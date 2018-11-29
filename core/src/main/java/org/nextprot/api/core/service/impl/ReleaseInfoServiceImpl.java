@@ -5,19 +5,25 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
 import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoStats;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.jar.Attributes;
@@ -31,6 +37,7 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Autowired private ReleaseStatsDao releaseStatsDao;
 	@Autowired private Environment env;
 	@Autowired private MasterIdentifierService masterIdentifierService;
+	@Autowired private StatisticsService statisticsService;
 
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
 
@@ -51,8 +58,20 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
 
+		updatePECountAndPubliCountTags(stats);
+
+		rs.setTagStatistics(stats);
+
+		return rs;
+	}
+
+	private void updatePECountAndPubliCountTags(List<ReleaseStatsTag> stats) {
+
+		GlobalPublicationStatistics publisStats = statisticsService.getGlobalPublicationStatistics();
+
 		for (ReleaseStatsTag statsTag : stats) {
 
+			// Update PEs
 			if ("PROTEIN_LEVEL_MASTER".equals(statsTag.getTag())) {
 				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.PROTEIN_LEVEL).size());
 			}
@@ -68,11 +87,24 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 			else if ("UNCERTAIN_MASTER".equals(statsTag.getTag())) {
 				statsTag.setCount(masterIdentifierService.findEntryAccessionsByProteinExistence(ProteinExistence.UNCERTAIN).size());
 			}
+
+			// Update publis stats
+			else if ("CITED_PUBLI".equals(statsTag.getTag())) {
+				statsTag.setCount(publisStats.getNumberOfCitedPublications());
+			}
+
+			else if ("COMPUTED_PUBLI".equals(statsTag.getTag())) {
+				statsTag.setCount(publisStats.getNumberOfComputationallyMappedPublications());
+			}
+
+			else if ("LARGE_SCALE_PUBLI".equals(statsTag.getTag())) {
+				statsTag.setCount(publisStats.getNumberOfLargeScalePublications());
+			}
+
+			else if ("CURATED_PUBLI".equals(statsTag.getTag())) {
+				statsTag.setCount(publisStats.getNumberOfCuratedPublications());
+			}
 		}
-
-		rs.setTagStatistics(stats);
-
-		return rs;
 	}
 
 	@Override
