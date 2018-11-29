@@ -26,12 +26,17 @@ public abstract class EntrySolrFieldCollector {
 			//noinspection unchecked
 			List<Object> list = (List<Object>) fields.get(field);
 
-			if (!list.contains(value)) {
+			if (!isNullOrEmptyString(value, field)) {
 				list.add(value); // multiValued = true
 			}
 		} else {
 			fields.put(field, value);
 		}
+	}
+
+	private boolean isNullOrEmptyString(Object value, EntrySolrField field) {
+
+		return (value == null) || (field.getType() == String.class && ((String) value).isEmpty());
 	}
 
 	/** Collect associated index field data from entry */
