@@ -2,7 +2,6 @@ package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,33 +19,29 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	@Autowired
 	private CVSolrFieldCollector cvSolrFieldCollector;
 
-	@Autowired
-	private TerminologyService terminologyService;
-
 	@Test
 	public void shouldContainCvTermsFromExperimentalContext() {
 
-		String entryName = "NX_Q9H207";
-		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
-		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cvfb.collect(fields, entryName, false);
-		List<String> cvAvs = getFieldValue(fields, EntrySolrField.CV_ACS, List.class);
-        List<String> cvNames = getFieldValue(fields, EntrySolrField.CV_NAMES, List.class);
+		Map<EntrySolrField, Object> collector = new HashMap<>();
+		cvSolrFieldCollector.collect(collector, "NX_Q9H207", true);
 
-		assertTrue(cvAvs.contains("ECO:0000219"));
-		//The text should not be indexed
-		assertFalse(cvNames.contains("nucleotide sequencing assay evidence"));
+		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
+		//noinspection unchecked
+		List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+		Assert.assertTrue(cvAcs.contains("ECO:0000219"));
+
+		// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
+		Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
+		//noinspection unchecked
+		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
+		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
     }
 
 	@Test
 	public void shouldContainCvTermsFromPropertyNamesSuchAsTopologyAndOrientation() {
 
-		String entryName = "NX_Q9BV57";
-
-		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
-
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cvfb.collect(fields, entryName, false);
+		cvSolrFieldCollector.collect(fields, "NX_Q9BV57", false);
 		List<String> cvAvs = getFieldValue(fields, EntrySolrField.CV_ACS, List.class);
 		List<String> cvNames = getFieldValue(fields, EntrySolrField.CV_NAMES, List.class);
 
@@ -61,11 +56,8 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	@Test
 	public void shouldContainEnzymeAndFamilyNames() {
 
-		String entryName = "NX_P12821";
-
-		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
 		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cvfb.collect(fields, entryName, false);
+		cvSolrFieldCollector.collect(fields, "NX_P12821", false);
 
 		String enzymes = getFieldValue(fields, EntrySolrField.EC_NAME, String.class);
 		assertTrue(enzymes.contains("EC 3.4.15.1"));
@@ -75,23 +67,11 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	}
 
 	@Test
-	public void shouldWork() {
-
-		String entryName = "NX_P78536";
-
-		CVSolrFieldCollector cvfb = new CVSolrFieldCollector();
-		Map<EntrySolrField, Object> fields = new HashMap<>();
-		cvfb.collect(fields, entryName, false);
-	}
-
-	@Test
 	public void shouldContainCorrectCvTermACsFromFamilyFA03241() {
-
-		String entryName = "NX_O95376";
 
 		Map<EntrySolrField, Object> collector = new HashMap<>();
 
-		cvSolrFieldCollector.collect(collector, entryName, true);
+		cvSolrFieldCollector.collect(collector, "NX_O95376", true);
 
 		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
 		List<String> acs = (List<String>) collector.get(EntrySolrField.CV_ACS);
