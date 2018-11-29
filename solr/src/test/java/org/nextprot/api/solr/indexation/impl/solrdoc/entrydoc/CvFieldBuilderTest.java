@@ -1,9 +1,9 @@
-package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest;
+package org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
-import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
+import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
