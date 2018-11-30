@@ -100,7 +100,9 @@ public class SearchServiceImpl implements SearchService {
 
 			QueryRequest sortingRequest = new QueryRequest(queryRequest);
 			sortingRequest.setQuery(queryString);
-			sortingRequest.setRows("100000"); // we want to export all entries
+			// TODO: Performance Problems with "Deep Paging": we want to export all entries but it takes time
+			//  if high number of entries (see also https://lucene.apache.org/solr/guide/7_4/pagination-of-results.html)
+			sortingRequest.setRows("100000");
 
 			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, sortingRequest);
 			SearchResult result = solrQueryService.executeQuery(query);
