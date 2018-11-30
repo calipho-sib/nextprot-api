@@ -98,7 +98,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		}
 		
 		annotation.setEvidences(Collections.singletonList(newAnnotationEvidence(annotation)));
-		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
+		annotation.addTargetingIsoforms(AnnotationUtils.newNonPositionalAnnotationIsoformSpecificityList(isoforms, annotation));
 
 		return annotation;
 	}
@@ -131,26 +131,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return evidence;
 	}
 
-	// build isoform specificity from isoforms and annotations and link them to annotations
-	private List<AnnotationIsoformSpecificity> newAnnotationIsoformSpecificityList(List<Isoform> isoforms, Annotation xrefAnnotation) {
 
-		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
-
-		for (Isoform iso: isoforms) {
-
-			AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
-
-			isospec.setAnnotationId(xrefAnnotation.getAnnotationId());
-			isospec.setFirstPosition(null); //According to PAM on Tuesday th 16th in the presence of Pascale and Frederic Nikitin
-			isospec.setLastPosition(null);
-			isospec.setIsoformAccession(iso.getIsoformAccession());
-			isospec.setSpecificity("UNKNOWN");
-
-			isospecs.add(isospec);
-		}
-
-		return isospecs;
-	}
 
 	@Override
 	/** Convert dbxrefs of type XrefAnnotationMapping into annotation for the given entry */

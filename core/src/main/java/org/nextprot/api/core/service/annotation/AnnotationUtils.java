@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -315,6 +316,28 @@ public class AnnotationUtils {
 		return toRemove;
 	}
 
+	// build isoform specificity from isoforms and annotations and link them to annotations
+	public static List<AnnotationIsoformSpecificity> newNonPositionalAnnotationIsoformSpecificityList(List<Isoform> isoforms, Annotation xrefAnnotation) {
+
+		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
+
+		for (Isoform iso: isoforms) {
+
+			AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
+
+			isospec.setAnnotationId(xrefAnnotation.getAnnotationId());
+			isospec.setFirstPosition(null); //According to PAM on Tuesday th 16th in the presence of Pascale and Frederic Nikitin
+			isospec.setLastPosition(null);
+			isospec.setIsoformAccession(iso.getIsoformAccession());
+			isospec.setSpecificity("UNKNOWN");
+
+			isospecs.add(isospec);
+		}
+
+		return isospecs;
+	}	
+	
+	
 	public static BioObject newExternalChemicalBioObject(DbXref xref, String sourcePropertyName) {
 
 		BioObject bo = BioObject.external(BioObject.BioType.CHEMICAL, xref.getDatabaseName());
@@ -336,6 +359,7 @@ public class AnnotationUtils {
 		return bo;
 	}
 
+	
 	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
 
 		if(evidences == null || evidences.isEmpty()){
