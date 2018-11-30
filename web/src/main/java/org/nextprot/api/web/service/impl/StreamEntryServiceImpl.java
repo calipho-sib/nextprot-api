@@ -28,13 +28,13 @@ import org.springframework.web.servlet.view.velocity.VelocityConfig;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class StreamEntryServiceImpl implements StreamEntryService {
@@ -116,32 +116,29 @@ public class StreamEntryServiceImpl implements StreamEntryService {
     @Override
     public void streamQueriedEntries(QueryRequest queryRequest, NextprotMediaType format, String viewName, HttpServletResponse response) {
 
-        List<String> entries = getAccessions(queryRequest);
+        List<String> accessions = sortAccessions(queryRequest);
 
         try {
             setResponseHeader(response, format, getFilename(queryRequest, viewName, format));
 
-            streamEntries(entries, format, viewName, response.getOutputStream(), getHeaderDescription(queryRequest));
+            streamEntries(accessions, format, viewName, response.getOutputStream(), getHeaderDescription(queryRequest));
         }
         catch (IOException e) {
-        	throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
+        	throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+accessions.size()+" entries (query="+queryRequest.getQuery()+")", e);
         }
     }
 
-	private List<String> getAccessions(QueryRequest queryRequest) {
+	private List<String> sortAccessions(QueryRequest queryRequest) {
 
-		Set<String> accessionsSet = searchService.getAccessions(queryRequest);
-		List<String> accessions;
+		Set<String> accessionsSet = searchService.findAccessions(queryRequest);
 
 		if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
-			//TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
-			accessions = searchService.sortAccessions(queryRequest, accessionsSet);
+			return searchService.sortAccessionsWithSolr(queryRequest, accessionsSet);
 		} else {
-			accessions = new ArrayList<>(accessionsSet);
-			Collections.sort(accessions);
+			return accessionsSet.stream()
+					.sorted()
+					.collect(Collectors.toList());
 		}
-
-		return accessions;
 	}
 
 	private String getHeaderDescription(QueryRequest queryRequest) {

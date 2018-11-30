@@ -83,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
 			if((queryRequest.getQuality() == null) || (queryRequest.getQuality().equals(""))){
 				queryRequest.setQuality("gold");
 			}
-			Set<String> accessions =  getAccessionsForSimple(queryRequest);
+			Set<String> accessions = getAccessionsForSimple(queryRequest);
 			queryRequest.setQuality(originalQuality);
 
 			return accessions;
@@ -100,6 +100,7 @@ public class SearchServiceImpl implements SearchService {
 
 			QueryRequest sortingRequest = new QueryRequest(queryRequest);
 			sortingRequest.setQuery(queryString);
+			sortingRequest.setRows("100000"); // we want to export all entries
 
 			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, sortingRequest);
 			SearchResult result = solrQueryService.executeQuery(query);
