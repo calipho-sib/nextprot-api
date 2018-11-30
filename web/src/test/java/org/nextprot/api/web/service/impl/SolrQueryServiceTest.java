@@ -29,7 +29,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Test
-	public void shoulReturnSomePublicationsWhenStopWordsAreIncludedInQuery() throws Exception {
+	public void shouldReturnSomePublicationsWhenStopWordsAreIncludedInQuery() throws Exception {
     	QueryRequest qr;
     	Query q;
     	SearchResult result;

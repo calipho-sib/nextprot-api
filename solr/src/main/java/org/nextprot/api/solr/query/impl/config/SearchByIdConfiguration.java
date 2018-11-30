@@ -7,9 +7,9 @@ import org.nextprot.api.solr.query.QueryMode;
 
 public class SearchByIdConfiguration<F extends SolrField> extends IndexConfiguration<F> {
 
-	public SearchByIdConfiguration(QueryMode mode, IndexConfiguration<F> defaultConfiguration) {
+	public SearchByIdConfiguration(QueryMode mode) {
 
-		super(mode, defaultConfiguration);
+		super(mode);
 	}
 	
 	@Override
