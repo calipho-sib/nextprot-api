@@ -89,6 +89,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 			}
 
 			// Update publis stats
+			else if ("PUBLI".equals(statsTag.getTag())) {
+				statsTag.setCount(publisStats.getTotalNumberOfPublications());
+			}
+
 			else if ("CITED_PUBLI".equals(statsTag.getTag())) {
 				statsTag.setCount(publisStats.getNumberOfCitedPublications());
 			}
