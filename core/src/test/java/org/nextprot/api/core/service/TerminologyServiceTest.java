@@ -90,6 +90,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertTrue(terms.size() > 9700);
 	}
 
+	@Ignore
 	@Test
 	public void shouldReturnAllTerms()  {
 		int numberOfTermsHavingRelatedTerms = 0, sizeOfRelatedTerms = 0, maxSizeOfRelatedTerms = 0; 
