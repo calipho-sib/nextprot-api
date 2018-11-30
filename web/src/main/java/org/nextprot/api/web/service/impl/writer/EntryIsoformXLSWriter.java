@@ -4,6 +4,7 @@ import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 
 import java.io.OutputStream;
@@ -61,8 +62,8 @@ public class EntryIsoformXLSWriter extends EntryXLSWriter {
         }
     }
 
-    public EntryIsoformXLSWriter(OutputStream stream) {
+    public EntryIsoformXLSWriter(OutputStream stream, EntryBuilderService entryBuilderService) {
 
-        super(stream, "Isoforms", new DataProvider());
+        super(stream, "Isoforms", new DataProvider(), entryBuilderService);
     }
 }

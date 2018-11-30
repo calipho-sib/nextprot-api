@@ -7,9 +7,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.IOException;
@@ -22,31 +20,28 @@ import java.io.Writer;
  */
 public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<Writer> {
 
-    protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-
     protected EntryBuilderService entryBuilderService;
     protected EntryReportStatsService entryReportStatsService;
     protected VelocityConfig velocityConfig;
     private final Template template;
     private final String viewName;
 
-    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName) {
+    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName,
+                                          EntryBuilderService entryBuilderService,
+                                          EntryReportStatsService entryReportStatsService,
+                                          VelocityConfig velocityConfig) {
 
         super(writer);
 
         Preconditions.checkNotNull(templateName);
         Preconditions.checkNotNull(viewName);
 
-        entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
-        entryReportStatsService = applicationContext.getBean(EntryReportStatsService.class);
-        velocityConfig = applicationContext.getBean(VelocityConfig.class);
+        this.entryBuilderService = entryBuilderService;
+        this.entryReportStatsService = entryReportStatsService;
+        this.velocityConfig = velocityConfig;
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
 
         this.viewName = viewName;
-    }
-
-    public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
-        this.entryBuilderService = entryBuilderService;
     }
 
     @Override

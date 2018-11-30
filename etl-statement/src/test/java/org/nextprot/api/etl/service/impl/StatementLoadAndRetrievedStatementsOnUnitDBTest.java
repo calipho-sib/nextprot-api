@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 
 	
 	@Test
-	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() {
+	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
 		Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
@@ -57,7 +58,7 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 	}
 
     @Test
-    public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() {
+    public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() throws IOException {
 
         StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
         Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");

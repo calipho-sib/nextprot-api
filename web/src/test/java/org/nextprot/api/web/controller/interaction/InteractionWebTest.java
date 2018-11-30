@@ -1,12 +1,12 @@
 package org.nextprot.api.web.controller.interaction;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 /**
  * Testing the template for interactions
@@ -44,7 +44,6 @@ public class InteractionWebTest extends MVCDBUnitBaseTest {
 		ResultActions result = this.mockMvc.perform(get("/entry/NX_Q9NRR5/interaction.xml"));
 
 		String s = result.andReturn().getResponse().getContentAsString();
-		System.out.println(s);
 
 		//Verify the ac is correct
 		result.andExpect(xpath("interaction-list/interaction[@qualityQualifier='GOLD']/interactionXref/@accession['EBI-711226,EBI-711226']").exists());

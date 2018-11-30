@@ -1,8 +1,5 @@
 package org.nextprot.api.core.service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.SequenceUnicity;
@@ -10,6 +7,10 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
 
 @ActiveProfiles({ "dev","cache" })
 public class SequenceUnicityServiceIntegrationTest extends CoreUnitBaseTest{
@@ -129,8 +130,8 @@ public class SequenceUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	}
     	long tNext100 = System.currentTimeMillis()-t0;
 
-    	System.out.println("time for very first call: " + tFirst +   "[ms]");
-    	System.out.println("time for next 100  calls: " + tNext100 + "[ms]");
+//    	System.out.println("time for very first call: " + tFirst +   "[ms]");
+//    	System.out.println("time for next 100  calls: " + tNext100 + "[ms]");
     	// line below ok only if cache is cleared before starting the test
     	//Assert.assertTrue(tFirst > tNext100);
     }
@@ -185,8 +186,8 @@ public class SequenceUnicityServiceIntegrationTest extends CoreUnitBaseTest{
     	Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
     	long tNext = System.currentTimeMillis()-t0;
     	
-    	System.out.println("time for very first call: " + tFirst +   "[ms]");
-    	System.out.println("time for next      calls: " + tNext + "[ms]");
+//    	System.out.println("time for very first call: " + tFirst +   "[ms]");
+//    	System.out.println("time for next      calls: " + tNext + "[ms]");
     	// line below ok only if cache is cleared before starting the test
     	//Assert.assertTrue(tFirst > tNext);
     	
@@ -232,8 +233,8 @@ public class SequenceUnicityServiceIntegrationTest extends CoreUnitBaseTest{
 		Assert.assertEquals(expectedEquivalentIsoSet, pu.getEquivalentIsoforms());
 		long tNext = System.currentTimeMillis()-t0;
 
-		System.out.println("time for very first call: " + tFirst + "[ms]");
-		System.out.println("time for next      calls: " + tNext + "[ms]");
+//		System.out.println("time for very first call: " + tFirst + "[ms]");
+//		System.out.println("time for next      calls: " + tNext + "[ms]");
 		// line below ok only if cache is cleared before starting the test
 		Assert.assertTrue(tFirst > tNext);
 	}

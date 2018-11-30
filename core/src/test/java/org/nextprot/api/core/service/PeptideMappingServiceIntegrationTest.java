@@ -40,7 +40,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		List<String>entryNames = Arrays.asList(new String[]{"NX_Q6UWW9", "NX_Q04118", "NX_P48165","NX_P01308","NX_Q13557"});
 
 		String sep = "\t";
-		System.out.println("Isoform" + sep + "Coverage type"  + sep + "isoLength" + sep + "covered" + sep + "rateRounded");
+		//System.out.println("Isoform" + sep + "Coverage type"  + sep + "isoLength" + sep + "covered" + sep + "rateRounded");
 
 		
 		for (String entryName: entryNames) {
@@ -90,7 +90,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		PrintWriter out = new PrintWriter(filename);
 		out.print(sb.toString());
 		out.close();
-		System.out.println("Wrote result in file " + filename);
+	    //System.out.println("Wrote result in file " + filename);
 	}
 	
 	
@@ -110,7 +110,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		float rateRounded = Math.round(rate * 100.0f) / 100.0f;
 		String sep = "\t";
 		String title = proteotypic ? "proteotypic coverage" : "peptide coverage";
-		if (sysout) System.out.println(name + sep + title  + sep + isoLength + sep + covered + sep + rateRounded);
+		//if (sysout) System.out.println(name + sep + title  + sep + isoLength + sep + covered + sep + rateRounded);
 		return (name + " " + title  + " iso-length = " + isoLength + " covered = " + covered + " % : " + rateRounded);
 		// System.out.println(getCoverageString(coverage) + "\n");
 	}
@@ -123,14 +123,14 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		
 		String sep = "\t";
 		String title = "Natural highlight";
-		System.out.println(name + sep + title);
-		System.out.println(getHighlightString(coverage) + "\n");
+		//System.out.println(name + sep + title);
+		//System.out.println(getHighlightString(coverage) + "\n");
 		List<Chunk> chunks = getHighlightChunks(iso.getSequence(),coverage);
-		for (Chunk chunk: chunks) {
-			System.out.println(chunk);
-		}
+//		for (Chunk chunk: chunks) {
+//			System.out.println(chunk);
+//		}
 		String html = getHighlightHTML(name, iso.getSequence(), chunks, "turlu", "chouette");
-		System.out.println(html);
+		//System.out.println(html);
 	}
 
 	private String getHighlightHTML(Isoform iso, List<Annotation> annotations, String cpep, String ctyp) {

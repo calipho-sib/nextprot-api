@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Set;
 
 //import org.nextprot.api.core.utils.TerminologyUtils;
 
@@ -22,17 +21,6 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	@Autowired
 	private PublicationService publicationService;
 
-    @Autowired
-    private GlobalPublicationService globalPublicationService;
-
-	@Test
-	public void testPublicationIds() {
-		 Set<Long> ids = globalPublicationService.findAllPublicationIds();
-		 System.out.println(ids.size());
-		 Assert.assertTrue(ids.size() > 370000);
-	}
-	
-	
 	@Test
 	@Ignore
 	public void testPublicationXrefs() {

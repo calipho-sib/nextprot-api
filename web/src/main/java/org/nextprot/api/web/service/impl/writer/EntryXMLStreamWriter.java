@@ -8,11 +8,19 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.web.NXVelocityContext;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Map;
 
 /**
@@ -31,14 +39,18 @@ public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
     private final ByteArrayOutputStream tmpOut;
     private final Writer tmpWriter;
 
-    public EntryXMLStreamWriter(OutputStream os, String viewName) throws IOException {
+    public EntryXMLStreamWriter(OutputStream os, String viewName, EntryBuilderService entryBuilderService,
+                                EntryReportStatsService entryReportStatsService,
+                                VelocityConfig velocityConfig) throws IOException {
 
-        this(new OutputStreamWriter(os, UTF_8), viewName);
+        this(new OutputStreamWriter(os, UTF_8), viewName, entryBuilderService, entryReportStatsService, velocityConfig);
     }
 
-    public EntryXMLStreamWriter(Writer writer, String viewName) {
+    public EntryXMLStreamWriter(Writer writer, String viewName, EntryBuilderService entryBuilderService,
+                                EntryReportStatsService entryReportStatsService,
+                                VelocityConfig velocityConfig) {
 
-        super(writer, "entry.xml.vm", viewName);
+        super(writer, "entry.xml.vm", viewName, entryBuilderService, entryReportStatsService, velocityConfig);
 
         try {
             XMLPrettyPrinter = new XMLPrettyPrinter();

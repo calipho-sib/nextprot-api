@@ -10,7 +10,13 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -84,6 +90,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertTrue(terms.size() > 9700);
 	}
 
+	@Ignore
 	@Test
 	public void shouldReturnAllTerms()  {
 		int numberOfTermsHavingRelatedTerms = 0, sizeOfRelatedTerms = 0, maxSizeOfRelatedTerms = 0; 
@@ -121,9 +128,9 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 				xaxis[index] = xaxis[index] +1; 
 			}
 		}
-		for (int i=0;i<20;i++) {
-			System.out.println(i + "\t" + xaxis[i]);
-		}
+		//for (int i=0;i<20;i++) {
+		//	System.out.println(i + "\t" + xaxis[i]);
+		//}
 	}
 
 	
@@ -213,7 +220,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 		Collections.sort(map.get("UniprotPtmCv"));
 
-		System.out.println(map.get("UniprotPtmCv"));
+		//System.out.println(map.get("UniprotPtmCv"));
 	}
 
     @Test

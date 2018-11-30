@@ -1,17 +1,17 @@
 package org.nextprot.api.core.dao;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Mdata;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ActiveProfiles({ "dev"})
 public class MdataDaoIntegrationTest extends CoreUnitBaseTest {
@@ -27,7 +27,7 @@ public class MdataDaoIntegrationTest extends CoreUnitBaseTest {
 		map.keySet().forEach(k -> Assert.assertTrue(k.intValue()>0));
 		map.values().forEach(v -> Assert.assertTrue(v.intValue()>0));
 
-		map.entrySet().forEach(e -> System.out.println("evidence:"+ e.getKey() + " - mdata:" + e.getValue()));
+		//map.entrySet().forEach(e -> System.out.println("evidence:"+ e.getKey() + " - mdata:" + e.getValue()));
 
 		
 		// now retrieve the mdata objects from the set of mdata ids retrieved above
@@ -36,7 +36,7 @@ public class MdataDaoIntegrationTest extends CoreUnitBaseTest {
 		List<Mdata> mdatas = mdataDao.findMdataByIds(uniqueIds);
 		Assert.assertEquals(valueSet.size(), mdatas.size());
 		
-		mdatas.forEach(v -> System.out.println(v));
+		//mdatas.forEach(v -> System.out.println(v));
 	}
 	
 	@Test
@@ -54,8 +54,8 @@ public class MdataDaoIntegrationTest extends CoreUnitBaseTest {
 		List<Long> uniqueIds = new ArrayList<Long>(valueSet);
 		List<Mdata> mdatas = mdataDao.findMdataByIds(uniqueIds);
 		Assert.assertEquals(valueSet.size(), mdatas.size());
-		
-		mdatas.forEach(v -> System.out.println(v));
+
+		//mdatas.forEach(v -> System.out.println(v));
 	}
 	
 	

@@ -23,7 +23,6 @@ public class FamilyServiceIntegrationTest extends CoreUnitBaseTest {
  		List<Family> families = familyService.findFamilies("NX_Q3SY69");
  		assertTrue(families.size()==2);
  		for (Family fam: families) {
- 			System.out.println(fam);
  			assertTrue(fam.getAccession()!=null);
  			assertTrue(fam.getDescription()!=null);
  			assertTrue(fam.getName()!=null);
@@ -45,12 +44,9 @@ public class FamilyServiceIntegrationTest extends CoreUnitBaseTest {
  		List<Family> families = familyService.findFamilies("NX_O14678");
  		assertTrue(families.size()==1);
  		Family fam = families.get(0);
- 		System.out.println(fam);
  		assertTrue(fam.getParent()!=null);
- 		System.out.println(fam.getParent());
  		assertTrue(fam.getParent().getParent()!=null);
- 		System.out.println(fam.getParent().getParent());
- 		assertTrue(fam.getParent().getParent().getParent()==null); 		
+ 		assertTrue(fam.getParent().getParent().getParent()==null);
 	}
 
 	@Test

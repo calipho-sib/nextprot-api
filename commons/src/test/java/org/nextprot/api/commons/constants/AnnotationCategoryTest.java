@@ -1,7 +1,6 @@
 package org.nextprot.api.commons.constants;
 
 import com.google.common.collect.Sets;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -86,20 +85,19 @@ public class AnnotationCategoryTest {
 		Assert.assertTrue(children.contains(AnnotationCategory.GENERAL_ANNOTATION));
 		Assert.assertTrue(children.contains(AnnotationCategory.POSITIONAL_ANNOTATION));
 		Assert.assertTrue(children.contains(AnnotationCategory.VIRTUAL_ANNOTATION));
-		Assert.assertTrue(children.size() == 4);
+		Assert.assertEquals(4, children.size());
 	}
 	
 	@Test
 	public void testDbAnnotationTypeNameUnicity() {
 		Set<String> atns = new HashSet<>();
 		for (AnnotationCategory cat: AnnotationCategory.values()) {
-			if (atns.contains(cat.getDbAnnotationTypeName())) {
-				System.out.println("ERROR: AnnotationCategory.getDbAnnotationTypeName " + cat.getDbAnnotationTypeName() +  " is not unique" );
-			} else {
+			if (!atns.contains(cat.getDbAnnotationTypeName())) {
+
 				atns.add(cat.getDbAnnotationTypeName());
 			}
 		}
-		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
+		Assert.assertEquals(AnnotationCategory.values().length, atns.size());
 	}
 	
 	@Test
@@ -112,20 +110,19 @@ public class AnnotationCategoryTest {
 				atns.add(cat.getDbId());
 			}
 		}
-		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
+		Assert.assertEquals(AnnotationCategory.values().length, atns.size());
 	}
 
 	@Test
 	public void testApiTypeNameUnicity() {
 		Set<String> atns = new HashSet<>();
 		for (AnnotationCategory cat: AnnotationCategory.values()) {
-			if (atns.contains(cat.getApiTypeName())) {
-				System.out.println("ERROR: AnnotationCategory.getApiTypeName " + cat.getApiTypeName() +  " is not unique" );
-			} else {
+			if (!atns.contains(cat.getApiTypeName())) {
+
 				atns.add(cat.getApiTypeName());
 			}
 		}
-		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
+		Assert.assertEquals(AnnotationCategory.values().length, atns.size());
 	}
 	
 	/*
@@ -155,7 +152,7 @@ public class AnnotationCategoryTest {
 		}
 		Collections.sort(leaves);
 		for (String s: leaves) {
-			System.out.println(s);
+			//System.out.println(s);
 		}
 			
 	}
@@ -179,7 +176,6 @@ public class AnnotationCategoryTest {
 	@Test
 	public void testNameAllChildren() {
 		Set<AnnotationCategory> cs = AnnotationCategory.NAME.getAllChildren();
-		System.out.println("Name all children:"+cs.size());
 		Assert.assertTrue(cs.contains(AnnotationCategory.FAMILY_NAME));
 		//assertTrue(cs.contains(AnnotationCategory.ENZYME_CLASSIFICATION)); // is now a child of general annotiation
 	}
@@ -196,8 +192,8 @@ public class AnnotationCategoryTest {
 			// ... together with direct child of each child (we assume we have two child level only)
 			cs2.addAll(aam.getChildren());
 		}
-		System.out.println("all children of general annotation: "+cs.size());
-		System.out.println("children of children of general annotation: "+cs2.size());
+//		System.out.println("all children of general annotation: "+cs.size());
+//		System.out.println("children of children of general annotation: "+cs2.size());
 		Assert.assertTrue(cs.containsAll(cs2));
 		Assert.assertTrue(cs2.containsAll(cs));
 		Assert.assertTrue(cs.equals(cs2));
@@ -207,22 +203,22 @@ public class AnnotationCategoryTest {
 	public void testRootsAllChildrenConsistency() {
 		// set of roots
 		Set<AnnotationCategory> r = AnnotationCategory.ROOT.getChildren();
-		System.out.println("Roots :"+ r.size());
+		//System.out.println("Roots :"+ r.size());
 		// set of children of each root
 		Set<AnnotationCategory> s1 = AnnotationCategory.GENERAL_ANNOTATION.getAllChildren();
-		System.out.println("Positional annotations :"+ s1.size());
+		// System.out.println("Positional annotations :"+ s1.size());
 		Set<AnnotationCategory> s2 = AnnotationCategory.POSITIONAL_ANNOTATION.getAllChildren();
-		System.out.println("General annotations :"+ s2.size());
+		// System.out.println("General annotations :"+ s2.size());
 		Set<AnnotationCategory> s3 = AnnotationCategory.NAME.getAllChildren();
-		System.out.println("Names :"+ s3.size());
+		// System.out.println("Names :"+ s3.size());
 		Set<AnnotationCategory> s4 = AnnotationCategory.VIRTUAL_ANNOTATION.getAllChildren();
-		System.out.println("Names :"+ s4.size());
+		// System.out.println("Names :"+ s4.size());
 		int count = AnnotationCategory.values().length - 1;
-		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()+s4.size()));
-		System.out.println("Full count :" + count);
+		// System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()+s4.size()));
+		// System.out.println("Full count :" + count);
 		// we assume that no child has more than one root parent (but it is not forbidden)
 		// so the sum of each root shildren set + number of roots should be equal to enum values count
-		Assert.assertTrue(r.size() + s1.size() + s2.size() + s3.size() + s4.size() == count);
+		Assert.assertEquals(r.size() + s1.size() + s2.size() + s3.size() + s4.size(), count);
 	}
 
 	@Test
@@ -340,11 +336,12 @@ public class AnnotationCategoryTest {
 		Assert.assertFalse(AnnotationCategory.hasAnnotationByApiName("spongeboo"));
 	}
 
+	// TODO: USELESS TEST
 	@Test
 	public void sortCategories() {
 
 		List<AnnotationCategory> cats = AnnotationCategory.getSortedCategories();
 
-		System.out.println(cats);
+		//System.out.println(cats);
 	}//cats.stream().map(a -> a.getHierarchy()+"."+a.getApiTypeName()).collect(Collectors.toList())
 }

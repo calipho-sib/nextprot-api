@@ -569,7 +569,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	public static void assertContainsExpectedProperties(Collection<AnnotationProperty> properties, AnnotationProperty... expectedProperties) {
 
 		for (AnnotationProperty property : expectedProperties) {
-			System.out.println("expectedProperty:" + property.getName() + "found:" + properties.contains(property));
+			//System.out.println("expectedProperty:" + property.getName() + "found:" + properties.contains(property));
 			Assert.assertTrue(properties.contains(property));
 		}
 	}

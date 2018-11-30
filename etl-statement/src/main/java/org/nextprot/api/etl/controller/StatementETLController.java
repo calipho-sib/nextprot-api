@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Controller
 @Api(name = "ETL", description = "Extract Transform And Load Statements", group="ETL")
@@ -39,6 +41,10 @@ public class StatementETLController {
 			load = false;
 		}
 
-		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
+		try {
+			return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
+		} catch (IOException e) {
+			throw new NextProtException(e.getMessage());
+		}
 	}
 }

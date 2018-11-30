@@ -1,14 +1,5 @@
 package org.nextprot.api.web.ttl.integration;
 
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.io.Writer;
-
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.velocity.Template;
 import org.junit.Test;
@@ -16,6 +7,15 @@ import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class EntryTTLValidationIntegrationTest extends WebIntegrationBaseTest {
 
@@ -44,7 +44,7 @@ public class EntryTTLValidationIntegrationTest extends WebIntegrationBaseTest {
 			 lineNo++;
 			 if (line.contains("$")) {
 				 ok = false;
-				 System.out.println("Error - '$' found at line " + String.valueOf(lineNo) + line);
+				 //System.out.println("Error - '$' found at line " + String.valueOf(lineNo) + line);
 			 }
 		 }
 		 reader.close();

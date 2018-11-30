@@ -16,14 +16,20 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 @ActiveProfiles({ "dev","cache" })
 public class IsoformSequencePositionMapperIntegrationTest extends CoreUnitBaseTest {
-
-	private boolean sout = true;
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -42,11 +48,11 @@ public class IsoformSequencePositionMapperIntegrationTest extends CoreUnitBaseTe
 		for (String ac: acs) {
 			cnt++;
 			if (working) {
-				if (sout) System.out.println("--- START testing propagation for variants of entry no. " + cnt + ":" + ac);
+				//if (sout) System.out.println("--- START testing propagation for variants of entry no. " + cnt + ":" + ac);
 				int errorCnt = getErrorsDuringPropagationOnVariantsOfSingleEntry(ac);
 				if (errorCnt>0) entriesWithErrors++;
 				log(new Date() + " - " + cnt + " - " + ac + (errorCnt==0 ? " OK" : " has " +errorCnt + " ERROR(s)"));
-				if (sout) System.out.println("--- END   testing propagation for variants of entry no. " + cnt + ":" + ac + (errorCnt==0 ? ": OK":": with " +errorCnt + " ERRORs"));;
+				//if (sout) System.out.println("--- END   testing propagation for variants of entry no. " + cnt + ":" + ac + (errorCnt==0 ? ": OK":": with " +errorCnt + " ERRORs"));;
 			}
 			if (ac.equals("NX_Q86YS6")) working=true; // start just after last entry tested
 		}
@@ -158,13 +164,11 @@ NX_Q9UJW3 has 1 ERROR(s)
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
 				Isoform iso = IsoformUtils.getIsoformByName(entry, iso_ac);
 				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
-				if (sout) {
-					System.out.println("isoform position                                               : " + pos);
-					System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
-					System.out.println("master position according to iso mapper service                : " + nuPos.getNucleotidePosition(0));
-					System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
-					System.out.println("master first_position for Anne                                 : " + (nuPos.getNucleotidePosition(0) - 1));
-				}
+//				System.out.println("isoform position                                               : " + pos);
+//				System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
+//				System.out.println("master position according to iso mapper service                : " + nuPos.getNucleotidePosition(0));
+//				System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
+//				System.out.println("master first_position for Anne                                 : " + (nuPos.getNucleotidePosition(0) - 1));
 				// we then have to gie the last_positon to Anne, there are 2 cases:
 				// case 1: original AAs = single AA
 				// => master last_positon fo Anne = first_position for Anne + 3
@@ -218,8 +222,6 @@ NX_Q9UJW3 has 1 ERROR(s)
 				if (ori.length() == 1 && mut.length() == 1) {        subCount++;
 				} else if (ori.length() == 1 && mut.length() == 0) { delCount++;
 				} else if (ori.length() == 0 && mut.length() == 1) { insCount++;
-				} else if (sout){
-					System.out.println("Other variant:" + a.getUniqueName());	otherCount++;
 				}
 
 				Map<String, Integer> isoExpectedPos = getExpectedPosForEachIsoform(entry, a);
@@ -236,16 +238,14 @@ NX_Q9UJW3 has 1 ERROR(s)
 
 						if (!nuPos.isValid()) {
 							errorOnVariant = true;
-							if (sout) System.out.println("ERROR1: codon positions not found for " + iso1name + " for variant at position: " + iso1ExpectedPos);
+							//System.out.println("ERROR1: codon positions not found for " + iso1name + " for variant at position: " + iso1ExpectedPos);
 							continue;
 						}
 
 						printIsoLengthAndRangesNuCount(iso1.getUniqueName(), iso1.getSequence(), iso1.getMasterMapping());
-						if (sout) {
-							System.out.println("Starting variant propagation from isoform " + iso1name + " at position " + iso1ExpectedPos);
-							System.out.println(getSequenceWithHighlighedPos(iso1.getSequence(), iso1ExpectedPos));
-						}
-	
+//						System.out.println("Starting variant propagation from isoform " + iso1name + " at position " + iso1ExpectedPos);
+//						System.out.println(getSequenceWithHighlighedPos(iso1.getSequence(), iso1ExpectedPos));
+
 						for (Isoform iso2 : entry.getIsoforms()) {
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
@@ -253,19 +253,17 @@ NX_Q9UJW3 has 1 ERROR(s)
 							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getCodonNucleotideIndices(nuPos, iso2);
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
-							if (sout) System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);
+							//System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);
 							printIsoLengthAndRangesNuCount(iso2.getUniqueName(),iso2.getSequence(), iso2.getMasterMapping());
-							if (iso2ExpectedPos != null) if (sout) System.out.println("Expected:" + getSequenceWithHighlighedPos(iso2.getSequence(), iso2ExpectedPos));
-							if (iso2ActualPos != null)	if (sout) System.out.println("Actual  :"	+ getSequenceWithHighlighedPos(iso2.getSequence(), iso2ActualPos));
-							
+
 							if (iso2ActualPos == null && iso2ExpectedPos == null) {
 								// OK
 							} else if (iso2ActualPos == null || iso2ExpectedPos == null) {
 								errorOnVariant = true;
-								if (sout) System.out.println("ERROR2: variant position on isoform " + iso2name + " is " + iso2ActualPos + ", expected " + iso2ExpectedPos);
+								//System.out.println("ERROR2: variant position on isoform " + iso2name + " is " + iso2ActualPos + ", expected " + iso2ExpectedPos);
 							} else if (!iso2ActualPos.equals(iso2ExpectedPos)) {
 								errorOnVariant = true;
-								if (sout) System.out.println("ERROR3: variant position on isoform " + iso2name + " is " + iso2ActualPos + ", expected " + iso2ExpectedPos);
+								//System.out.println("ERROR3: variant position on isoform " + iso2name + " is " + iso2ActualPos + ", expected " + iso2ExpectedPos);
 							}
 						}
 					}
@@ -275,25 +273,21 @@ NX_Q9UJW3 has 1 ERROR(s)
 			}
 		}
 
-		if (sout) {
-			System.out.println("Summary " + entry.getUniqueName());
-			System.out.println("insCount:" + insCount);
-			System.out.println("delCount:" + delCount);
-			System.out.println("subCount:" + subCount);
-			System.out.println("otherCount:" + otherCount);
-			System.out.println("errorCount:" + errorCount);
-		}
+//		System.out.println("Summary " + entry.getUniqueName());
+//		System.out.println("insCount:" + insCount);
+//		System.out.println("delCount:" + delCount);
+//		System.out.println("subCount:" + subCount);
+//		System.out.println("otherCount:" + otherCount);
+//		System.out.println("errorCount:" + errorCount);
 		return errorCount;
 	}
 
 	@Test
 	public void test1() {
 
-		if (sout) {
-			System.out.println("pos 3:" + getSequenceWithHighlighedPos("12345", 3));
-			System.out.println("pos 1:" + getSequenceWithHighlighedPos("12345", 1));
-			System.out.println("pos 5:" + getSequenceWithHighlighedPos("12345", 5));
-		}
+//		System.out.println("pos 3:" + getSequenceWithHighlighedPos("12345", 3));
+//		System.out.println("pos 1:" + getSequenceWithHighlighedPos("12345", 1));
+//		System.out.println("pos 5:" + getSequenceWithHighlighedPos("12345", 5));
 	}
 
 	private Map<String, Integer> getExpectedPosForEachIsoform(Entry entry, Annotation a) {
@@ -320,7 +314,6 @@ NX_Q9UJW3 has 1 ERROR(s)
 			sb.append(isoname).append(" ");
 			sb.append(isoExpectedPos.get(isoname)).append(" ");
 			sb.append(a.getVariant().getOriginal()).append("->").append(a.getVariant().getVariant());
-			if (sout) System.out.println(sb.toString());
 		}
 	}
 
@@ -328,8 +321,9 @@ NX_Q9UJW3 has 1 ERROR(s)
 		int isoLng = isoSeq.length();
 		int nuCount = getNucleotideCount(ranges);
 		boolean ok = isoLng * 3 == nuCount;
-		for (NucleotidePositionRange r: ranges) if (sout) System.out.println(isoName + " has masterMapping range " + r);
-		if (sout) System.out.println((ok ? "OK - " : "ERROR4 - ") + isoName + " lng in nu:" + isoLng * 3 + " nuCount:" + nuCount);
+		//for (NucleotidePositionRange r: ranges)
+			//System.out.println(isoName + " has masterMapping range " + r);
+		//System.out.println((ok ? "OK - " : "ERROR4 - ") + isoName + " lng in nu:" + isoLng * 3 + " nuCount:" + nuCount);
 	}
 
 	private int getNucleotideCount(List<NucleotidePositionRange> ranges) {

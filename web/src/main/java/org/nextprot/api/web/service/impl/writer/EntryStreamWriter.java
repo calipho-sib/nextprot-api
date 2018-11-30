@@ -1,10 +1,10 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.export.format.NextprotMediaType;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -100,40 +100,6 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
     @Override
     public void close() throws IOException {
         stream.close();
-    }
-
-    /**
-     * Create new instance of streaming NPEntryWriter
-     *
-     * @param format the output file format
-     * @param view the view for velocity
-     * @param os the output stream
-     * @return a NPEntryWriter instance
-     * @throws UnsupportedEncodingException
-     */
-    public static EntryStreamWriter newAutoCloseableWriter(NextprotMediaType format, String view, OutputStream os) throws IOException {
-
-        Preconditions.checkNotNull(format);
-
-        switch (format) {
-
-            case XML:
-                return new EntryXMLStreamWriter(os, view);
-            case TXT:
-                return new EntryTXTStreamWriter(os);
-            case XLS:
-                return EntryXLSWriter.newNPEntryXLSWriter(os, view);
-            case JSON:
-                return new EntryJSONStreamWriter(os, view);
-            case FASTA:
-                return new EntryFastaStreamWriter(os);
-            case PEFF:
-                return new EntryPEFFStreamWriter(os);
-            case TURTLE:
-                return new EntryTTLStreamWriter(os, view);
-            default:
-                throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
-        }
     }
 
     public static String getEntryCountKey() {

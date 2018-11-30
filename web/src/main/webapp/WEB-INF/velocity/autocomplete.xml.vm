@@ -1,6 +1,6 @@
 <search-result>
 	<elapsedTime>${result.elapsedTime}</elapsedTime>
-	<entity>${result.entity}</entity>
+	<entity>${result.alias}</entity>
 	<index>${result.index}</index>
 	<score>${result.score}</score>
 	<found>${result.found}</found>

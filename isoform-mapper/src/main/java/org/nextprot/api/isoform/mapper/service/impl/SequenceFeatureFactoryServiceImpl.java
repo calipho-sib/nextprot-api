@@ -3,7 +3,6 @@ package org.nextprot.api.isoform.mapper.service.impl;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.BeanService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
@@ -13,7 +12,6 @@ import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQuery
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -22,9 +20,6 @@ import java.text.ParseException;
 @Service
 public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactoryService {
 
-    @Autowired
-    private BeanService beanService;
-
     @Override
     public SequenceFeature newSequenceFeature(String featureName, String featureType) throws ParseException, SequenceVariationBuildException {
 
@@ -32,11 +27,11 @@ public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactory
 
         switch (annotationCategory) {
             case MUTAGENESIS:
-                return SequenceVariant.mutagenesis(featureName, beanService);
+                return SequenceVariant.mutagenesis(featureName);
             case VARIANT:
-                return SequenceVariant.variant(featureName, beanService);
+                return SequenceVariant.variant(featureName);
             case GENERIC_PTM:
-                return new SequenceModification(featureName, beanService);
+                return new SequenceModification(featureName);
             default:
                 throw new NextProtException("invalid feature type " + featureType + ", feature name=" + featureName);
         }
@@ -53,11 +48,11 @@ public class SequenceFeatureFactoryServiceImpl implements SequenceFeatureFactory
         try {
             switch (annotationCategory) {
                 case MUTAGENESIS:
-                    return SequenceVariant.mutagenesis(query.getFeature(), beanService);
+                    return SequenceVariant.mutagenesis(query.getFeature());
                 case VARIANT:
-                    return SequenceVariant.variant(query.getFeature(), beanService);
+                    return SequenceVariant.variant(query.getFeature());
                 case GENERIC_PTM:
-                    return new SequenceModification(query.getFeature(), beanService);
+                    return new SequenceModification(query.getFeature());
                 default:
                     throw new InvalidFeatureQueryTypeException(query);
             }

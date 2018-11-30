@@ -2,11 +2,18 @@ package org.nextprot.api.core.domain.annotation;
 
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class AnnotationEvidence implements Serializable {
 
-	private static final long serialVersionUID = 20181011L;
+	private static final long serialVersionUID = 20160913L;
 
 	// map uniprot evidence code with ECO
 	private static final Map<String, String> evidenceInfo = new HashMap<>();

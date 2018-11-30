@@ -1,9 +1,17 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFHyperlink;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
@@ -113,9 +121,9 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
 
     private final EntryDataProvider entryDataProvider;
 
-    protected EntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider) {
+    protected EntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider, EntryBuilderService entryBuilderService) {
 
-        super(stream);
+        super(stream, entryBuilderService);
 
         Preconditions.checkNotNull(entryDataProvider);
 
@@ -127,12 +135,13 @@ public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
         this.entryDataProvider = entryDataProvider;
     }
 
-    public static EntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName) {
+    public static EntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName, EntryBuilderService entryBuilderService,
+                                                     EntryReportStatsService entryReportStatsService) {
 
         if (viewName.equals("isoforms"))
-            return new EntryIsoformXLSWriter(os);
+            return new EntryIsoformXLSWriter(os, entryBuilderService);
         else
-            return new EntryOverviewXLSWriter(os);
+            return new EntryOverviewXLSWriter(os, entryReportStatsService, entryBuilderService);
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {

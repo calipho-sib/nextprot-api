@@ -1,18 +1,18 @@
 package org.nextprot.api.web.service.impl;
 
-import java.util.Comparator;
-import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.domain.ui.page.PageView;
 import org.nextprot.api.core.domain.ui.page.impl.SequencePageView;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class PageViewTest extends WebIntegrationBaseTest {
 
@@ -29,21 +29,21 @@ public class PageViewTest extends WebIntegrationBaseTest {
     	//String entryName="NX_P01308";
     	
     	Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
-    	System.out.println("- - - - - before - - - - -");
-    	System.out.println("annot categ : " + entry.getAnnotationsByCategory().size());
-    	System.out.println("annot count : " + entry.getAnnotations().size());
-    	System.out.println("xrefs       : " + entry.getXrefs().size());
+//    	System.out.println("- - - - - before - - - - -");
+//    	System.out.println("annot categ : " + entry.getAnnotationsByCategory().size());
+//    	System.out.println("annot count : " + entry.getAnnotations().size());
+//    	System.out.println("xrefs       : " + entry.getXrefs().size());
     	showXref(entry, "UniProt");
     	
     	PageView pageDef = new SequencePageView();
     	long t0 = System.currentTimeMillis();
     	List<DbXref> xrefs = pageDef.getFurtherExternalLinksXrefs(entry);
     	t0 = System.currentTimeMillis()-t0;
-    	System.out.println("- - - - - after  - - - - -");
+    	//System.out.println("- - - - - after  - - - - -");
     	showXref(xrefs);
-    	System.out.println("xrefs       : " + xrefs.size());
-    	System.out.println("proc time ms: " + t0);
-    	System.out.println("- - - - - end  - - - - -");
+//    	System.out.println("xrefs       : " + xrefs.size());
+//    	System.out.println("proc time ms: " + t0);
+//    	System.out.println("- - - - - end  - - - - -");
     }
 
     private static class MyDbXrefComparator implements Comparator<DbXref> {
@@ -81,7 +81,7 @@ public class PageViewTest extends WebIntegrationBaseTest {
     		x.getProperties().stream()
     		.forEach(p -> sb.append("[").append(p.getName()).append("=").append(p.getValue()).append(" ").append("]"));
     	}
-    	System.out.println(sb.toString());
+    	//System.out.println(sb.toString());
     }
 
 }
