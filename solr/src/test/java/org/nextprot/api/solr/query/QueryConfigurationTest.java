@@ -21,14 +21,15 @@ import static org.nextprot.api.solr.query.SolrCoreQueryTest.buildEntrySolrCore;
 public class QueryConfigurationTest {
 
 	@Test
-	public void shouldConvertQueryInAllModesAllValidCritsInEntrySolrCore() {
+	public void shouldConvertQueryIn3ModesAllValidCritsInEntrySolrCore() {
 
 		SolrCore<EntrySolrField> core = buildEntrySolrCore("roudoudou", EnumSet.of(EntrySolrField.ID), false);
 
 		Set<SortConfig.Criteria> crits = new HashSet<>(Arrays.asList(SortConfig.Criteria.values()));
 		crits.remove(SortConfig.Criteria.NAME);
 
-		List<QueryConfiguration.MissingSortConfigException> exceptions = convertToSolrQuery(core, new HashSet<>(Arrays.asList(QueryMode.values())), crits);
+		List<QueryConfiguration.MissingSortConfigException> exceptions =
+				convertToSolrQuery(core, EnumSet.of(QueryMode.SIMPLE, QueryMode.AUTOCOMPLETE, QueryMode.PROTEIN_LIST_SEARCH), crits);
 		Assert.assertTrue(exceptions.isEmpty());
 	}
 
@@ -43,15 +44,37 @@ public class QueryConfigurationTest {
 	}
 
 	@Test
-	public void shouldConvertQueryInAllModesAllValidCritsInEntryGoldSolrCore() {
+	public void shouldConvertQueryIn3ModesAllValidCritsInEntryGoldSolrCore() {
 
 		SolrCore<EntrySolrField> core = buildEntrySolrCore("roudoudou", EnumSet.of(EntrySolrField.ID), true);
 
 		Set<SortConfig.Criteria> crits = new HashSet<>(Arrays.asList(SortConfig.Criteria.values()));
 		crits.remove(SortConfig.Criteria.NAME);
 
-		List<QueryConfiguration.MissingSortConfigException> exceptions = convertToSolrQuery(core, new HashSet<>(Arrays.asList(QueryMode.values())), crits);
+		List<QueryConfiguration.MissingSortConfigException> exceptions =
+				convertToSolrQuery(core, EnumSet.of(QueryMode.SIMPLE, QueryMode.AUTOCOMPLETE, QueryMode.PROTEIN_LIST_SEARCH), crits);
 		Assert.assertTrue(exceptions.isEmpty());
+	}
+
+	@Test
+	public void shouldConvertQueryInIDModeAllValidCritsInEntryGoldSolrCore() {
+
+		SolrCore<EntrySolrField> core = buildEntrySolrCore("roudoudou", EnumSet.of(EntrySolrField.ID), true);
+
+		List<QueryConfiguration.MissingSortConfigException> exceptions = convertToSolrQuery(core, EnumSet.of(QueryMode.ID_SEARCH), EnumSet.of(SortConfig.Criteria.SCORE));
+		Assert.assertTrue(exceptions.isEmpty());
+	}
+
+	@Test
+	public void shouldShouldNotConvertQueryInIDModeInvalidCritsInEntryGoldSolrCore() {
+
+		SolrCore<EntrySolrField> core = buildEntrySolrCore("roudoudou", EnumSet.of(EntrySolrField.ID), true);
+
+		Set<SortConfig.Criteria> crits = new HashSet<>(Arrays.asList(SortConfig.Criteria.values()));
+		crits.remove(SortConfig.Criteria.NAME);
+
+		List<QueryConfiguration.MissingSortConfigException> exceptions = convertToSolrQuery(core, EnumSet.of(QueryMode.ID_SEARCH), crits);
+		Assert.assertEquals(6, exceptions.size());
 	}
 
 	@Test

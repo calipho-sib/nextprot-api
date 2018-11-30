@@ -8,7 +8,6 @@ import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
@@ -50,8 +49,6 @@ public class SolrServiceImpl implements SolrService {
     private PublicationService publicationService;
     @Autowired
     private GlobalPublicationService globalPublicationService;
-    @Autowired
-    private EntryBuilderService entryBuilderService;
     @Autowired
     private MasterIdentifierService masterIdentifierService;
 

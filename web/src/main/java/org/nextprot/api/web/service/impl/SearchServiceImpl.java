@@ -92,7 +92,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<String> sortAccessions(QueryRequest queryRequest, Set<String> accessions) {
-		List<String> sortedAccessions = new ArrayList<String>();
+		List<String> sortedAccessions = new ArrayList<>();
 		try {
 
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
