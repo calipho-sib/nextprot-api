@@ -35,14 +35,14 @@ public class SortConfig<F extends SolrField> {
 	}
 
     public enum Criteria {
-        SCORE,
-        NAME,
-        GENE,
-        PROTEIN,
+	    AC,
+	    CHROMOSOME,
         FAMILY,
-        LENGTH,
-        AC,
-        CHROMOSOME
+        GENE,
+	    LENGTH,
+	    NAME,
+        PROTEIN,
+	    SCORE
         ;
 
         private final String name;

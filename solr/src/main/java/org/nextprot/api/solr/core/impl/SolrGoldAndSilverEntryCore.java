@@ -114,12 +114,12 @@ public class SolrGoldAndSilverEntryCore extends SolrCoreBase<EntrySolrField> {
 
 			Map<SortConfig.Criteria, SortConfig<EntrySolrField>> map = new HashMap<>();
 
-			map.put(SortConfig.Criteria.GENE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc)));
-			map.put(SortConfig.Criteria.PROTEIN, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc)));
-			map.put(SortConfig.Criteria.FAMILY, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.FAMILY_NAMES_S, ORDER.asc)));
-			map.put(SortConfig.Criteria.LENGTH, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.AA_LENGTH, ORDER.asc)));
 			map.put(SortConfig.Criteria.AC, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.ID, ORDER.asc)));
 			map.put(SortConfig.Criteria.CHROMOSOME, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.CHR_LOC_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.FAMILY, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.FAMILY_NAMES_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.GENE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_GENE_NAMES_S, ORDER.asc)));
+			map.put(SortConfig.Criteria.LENGTH, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.AA_LENGTH, ORDER.asc)));
+			map.put(SortConfig.Criteria.PROTEIN, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.RECOMMENDED_NAME_S, ORDER.asc)));
 			map.put(SortConfig.Criteria.SCORE, new SortConfig<>(new SortConfig.SortBy<>(EntrySolrField.SCORE, ORDER.desc), 100));
 
 			return map;
