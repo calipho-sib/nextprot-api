@@ -54,7 +54,7 @@ public class SearchServiceImpl implements SearchService {
 	private MasterIdentifierService masterIdentifierService;
 
 	@Override
-	public Set<String> getAccessions(QueryRequest queryRequest) {
+	public Set<String> findAccessions(QueryRequest queryRequest) {
 
 		if (queryRequest.hasChromosome()) {
 			
@@ -91,15 +91,18 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public List<String> sortAccessions(QueryRequest queryRequest, Set<String> accessions) {
+	public List<String> sortAccessionsWithSolr(QueryRequest queryRequest, Set<String> accessions) {
+
 		List<String> sortedAccessions = new ArrayList<>();
+
 		try {
-
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
 
-			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, queryRequest);
-			SearchResult result = this.solrQueryService.executeQuery(query);
+			QueryRequest sortingRequest = new QueryRequest(queryRequest);
+			sortingRequest.setQuery(queryString);
+
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, sortingRequest);
+			SearchResult result = solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
 			for (Map<String, Object> res : results) {
@@ -108,8 +111,8 @@ public class SearchServiceImpl implements SearchService {
 			}
 
 		} catch (QueryConfiguration.MissingSortConfigException e) {
-			e.printStackTrace();
-			throw new NextProtException("Error when retrieving accessions");
+			Logger.error(e.getMessage());
+			throw new NextProtException("Error when retrieving accessions", e);
 		}
 		return sortedAccessions;
 	}

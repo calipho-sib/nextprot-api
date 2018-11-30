@@ -7,8 +7,8 @@ import java.util.Set;
 
 public interface SearchService {
 
-	Set<String> getAccessions(QueryRequest queryRequest);
+	Set<String> findAccessions(QueryRequest queryRequest);
 
-	List<String> sortAccessions(QueryRequest queryRequest, Set<String> accessions);
-
+	/** sort accession by solr given a SortConfig.Criteria (by AC, CHROMOSOME, FAMILY, GENE,  LENGTH,  NAME, PROTEIN or SCORE) */
+	List<String> sortAccessionsWithSolr(QueryRequest queryRequest, Set<String> accessions);
 }
