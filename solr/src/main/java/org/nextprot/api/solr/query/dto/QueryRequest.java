@@ -3,6 +3,7 @@ package org.nextprot.api.solr.query.dto;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 public class QueryRequest implements Serializable, KeyValueRepresentation {
@@ -17,6 +18,43 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private String queryId = null; //nextprot query id
 	private String referer;
 	private String url;
+	private String quality;
+	private String sort;
+	private String order;
+	private String start;
+	private String rows;
+	private String filter;
+	private String sparql;
+	private String mode;
+	private String sparqlTitle;
+	private String sparqlEngine;
+
+	public QueryRequest() {}
+
+	// copy constructor
+	public QueryRequest(QueryRequest qr) {
+
+		this.query = qr.getQuery();
+		if (qr.getEntryAccessionSet() != null) {
+			this.entryAccessionSet = new HashSet<>(qr.getEntryAccessionSet());
+		}
+		this.listOwner = qr.getListOwner();
+		this.chromosome = qr.getChromosome();
+		this.listId = qr.getListId();
+		this.queryId = qr.getQueryId();
+		this.referer = qr.getReferer();
+		this.url = qr.getUrl();
+		this.quality = qr.getQuality();
+		this.sort = qr.getSort();
+		this.order = qr.getOrder();
+		this.start = qr.getStart();
+		this.rows = qr.getRows();
+		this.filter = qr.getFilter();
+		this.sparql = qr.getSparql();
+		this.mode = qr.getMode();
+		this.sparqlTitle = qr.getSparqlTitle();
+		this.sparqlEngine = qr.getSparqlEngine();
+	}
 
 	public String getListId() {
 		return listId;
@@ -33,19 +71,6 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	public void setQueryId(String queryId) {
 		this.queryId = queryId;
 	}
-
-	private String quality;
-	private String sort;
-	private String order;
-	private String start;
-	private String rows;
-	private String filter;
-	private String sparql;
-	private String mode;
-	private String sparqlTitle;
-	private String sparqlEngine;
-
-
 
 	public String getQuery() {
 		return query;
