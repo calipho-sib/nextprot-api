@@ -3,7 +3,6 @@ package org.nextprot.api.solr.query;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.solr.core.SolrCore;
@@ -21,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO: do not ignore this test once SolrGoldAndSilverEntryCore.Settings has been returned (see issue https://issues.isb-sib.ch/browse/NEXTPROT-1684)
-@Ignore
 public class SolrCoreQueryTest {
 
     @Test
