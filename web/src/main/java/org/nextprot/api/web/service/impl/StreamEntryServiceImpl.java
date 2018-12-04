@@ -62,6 +62,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
 		EntryStreamWriter writer = newWriter(format, "entry", os);
 		writer.write(Collections.singletonList(accession), createInfos(description));
+        writer.close();
 	}
 
 	@Override
@@ -69,6 +70,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 
         EntryStreamWriter writer = newWriter(format, viewName, os);
         writer.write(accessions, createInfos(description));
+        writer.close();
     }
 
     private Map<String, Object> createInfos(String description) {
