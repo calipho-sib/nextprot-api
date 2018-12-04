@@ -13,11 +13,14 @@ import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.IsoformDAO;
+import org.nextprot.api.core.domain.EntityName;
+import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
 
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,11 +85,16 @@ public class AnnotationMockServiceTest {
 	public void init() throws FileNotFoundException, DataSetException {
 
 		flatXmlDataSetExtractor = new FlatXmlDataSetExtractor(AnnotationMockServiceTest.class.getResource("AnnotationMVCTest.xml").getFile());
-		//System.out.println(flatXmlDataSetExtractor.toString());
 
 		MockitoAnnotations.initMocks(this);
 
+        EntityName entityName = new EntityName();
+        entityName.setMain(true);
+        entityName.setName("spongebob");
+
 		when(masterIdentifierService.findUniqueNames()).thenReturn(Sets.newHashSet("NX_P12345, NX_P10000"));
+		when(entityNameService.findNamesByEntityNameClass("NX_P12345", Overview.EntityNameClass.GENE_NAMES))
+                .thenReturn(Collections.singletonList(entityName));
 	}
 
 	@Test

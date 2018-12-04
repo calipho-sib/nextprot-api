@@ -1,22 +1,6 @@
 package org.nextprot.api.web.misc.to.be.organized;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
+import difflib.Delta;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,7 +15,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import difflib.Delta;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Class used for testing Genomic Mapping controller
@@ -72,14 +70,13 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 	public String oldServerBaseUrl = "http://uat-web1:8080/db/search/export";
 
 	public void memStatus(String msg) {
-		System.out.println(msg + ": " + "memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + "M" + " - free: " + Runtime.getRuntime().freeMemory()
-				/ 1024 / 1024 + "M" + " - tot: " + Runtime.getRuntime().totalMemory() / 1024 / 1024 + "M");
+		//System.out.println(msg + ": " + "memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + "M" + " - free: " + Runtime.getRuntime().freeMemory()/ 1024 / 1024 + "M" + " - tot: " + Runtime.getRuntime().totalMemory() / 1024 / 1024 + "M");
 
 	}
 
 	public Document getOldXMLDocument(String ac) throws Exception {
 		URL url = new URL(oldServerBaseUrl + "?ac=" + ac + "&type=xml");
-		System.out.println("Old URL is: " + url + "\n...");
+		//System.out.println("Old URL is: " + url + "\n...");
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -93,7 +90,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 	public Document getNewXMLDocument(String ac) throws Exception {
 		String url = "/entry/" + ac + ".xml";
 		RequestBuilder rb = get(url);
-		System.out.println("New URL is: " + url);
+		//System.out.println("New URL is: " + url);
 		// String s =
 		// this.mockMvc.perform(rb).andReturn().getResponse().getContentAsString();
 		InputStream in = new ByteArrayInputStream(this.mockMvc.perform(rb).andReturn().getResponse().getContentAsByteArray());
@@ -381,7 +378,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			XmlComparator.getNodeTreeAsList2(newN, "revised", lines2Ignore, true, showTrees, false, true);
 
 			boolean result = XmlComparator.compareXmlNodes2("annotations type:" + categ + " ", lines2Ignore, oldN, newN, false, true);
-			System.out.println((result ? "OK" : "ERROR") + ": content of annotation category: " + categ + " - " + newList.getLength() + " annotation(s)");
+			//System.out.println((result ? "OK" : "ERROR") + ": content of annotation category: " + categ + " - " + newList.getLength() + " annotation(s)");
 			String m = result ? "" : "ERROR: content of annotation type " + categ + " is not the same in old XML";
 			if (m.length() > 0) {
 				errMsg.append("\n");
@@ -390,7 +387,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 					break;
 			}
 		}
-		System.out.println("currentAC was:" + currentAC);
+		//System.out.println("currentAC was:" + currentAC);
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -402,7 +399,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			if (ac.equalsIgnoreCase("skfsjhf"))
 				skip = false;
 			if (skip) {
-				System.out.println("skipping tests on " + ac);
+				//System.out.println("skipping tests on " + ac);
 				continue;
 			}
 			memStatus("");
@@ -453,7 +450,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		XmlComparator.getNodeTreeAsList2(newN, "revised", lines2Ignore, true, showTrees, true, false);
 
 		boolean result = XmlComparator.compareXmlNodes2("keywords", lines2Ignore, oldN, newN, true, false);
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " keywords");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " keywords");
 		String m = result ? "" : "ERROR: " + currentAC + " keywords are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -473,8 +470,8 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		if (1 == a) {
 			String s = "aa|bb||c";
 			String[] list = s.split("\\|");
-			for (int i = 0; i < list.length; i++)
-				System.out.println(list[i]);
+			//for (int i = 0; i < list.length; i++)
+			//	System.out.println(list[i]);
 			System.exit(0);
 		}
 
@@ -525,7 +522,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		// but not in old one.
 		
 		if (oldN==null && newN==null) {
-			System.out.println("OK: " + currentAC + " has no interactions");	
+			//System.out.println("OK: " + currentAC + " has no interactions");
 			return;
 		}
 		
@@ -542,7 +539,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		String targets = oldUrlPart + "|" + oldUnamePart;
 		String replacs = newUrlPart + "|" + newUnamePart;
 		boolean result = XmlComparator.compareXmlNodes2("interactions", lines2Ignore, targets, replacs, oldN, newN, false, false, true);
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " interactions");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " interactions");
 		String m = result ? "" : "ERROR: " + currentAC + " interactions are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -603,7 +600,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		lines2Ignore += "|attr-accession=csnk1d-attr-category=other-attr-database=chitars-attr-id=28003577"; // xref not found in old url
 		
 		if (oldN==null && newN==null) {
-			System.out.println("OK: " + currentAC + " has no xrefs");	
+			//System.out.println("OK: " + currentAC + " has no xrefs");
 			return;
 		}
 		
@@ -621,11 +618,11 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				! d.toString().contains("03|-xrefs-xref-url")
 				)
 			{
-				System.out.println("DELTA=" + d.toString());
+				//System.out.println("DELTA=" + d.toString());
 				result = false;
 			}
 		}
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " xrefs");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " xrefs");
 		String m = result ? "" : "ERROR: " + currentAC + " xrefs are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -663,7 +660,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		//lines2Ignore +="|...";
 		
 		if (oldN==null && newN==null) {
-			System.out.println("OK: " + currentAC + " has no identifiers");	
+			//System.out.println("OK: " + currentAC + " has no identifiers");
 			return;
 		}
 		
@@ -683,11 +680,11 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			if (! d.toString().contains("ChangeDelta, position: 0") // this change is never significant
 					)
 			{
-				System.out.println("DELTA=" + d.toString());
+				//System.out.println("DELTA=" + d.toString());
 				result = false;
 			}
 		}
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " identifiers");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " identifiers");
 		String m = result ? "" : "ERROR: " + currentAC + " identifiers are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -725,7 +722,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		//lines2Ignore +="|...";
 		
 		if (oldN==null && newN==null) {
-			System.out.println("OK: " + currentAC + " has no publications");	
+			//System.out.println("OK: " + currentAC + " has no publications");
 			return;
 		}
 		
@@ -745,11 +742,11 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			if (! d.toString().contains("ChangeDelta, position: 0") // this change is never significant
 					)
 			{
-				System.out.println("DELTA=" + d.toString());
+				//System.out.println("DELTA=" + d.toString());
 				result = false;
 			}
 		}
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " publications");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " publications");
 		String m = result ? "" : "ERROR: " + currentAC + " publications are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -787,7 +784,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		//lines2Ignore +="|...";
 		
 		if (oldN==null && newN==null) {
-			System.out.println("OK: " + currentAC + " has no publications");	
+			//System.out.println("OK: " + currentAC + " has no publications");
 			return;
 		}
 		
@@ -807,11 +804,11 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			if (! d.toString().contains("ChangeDelta, position: 0") // this change is never significant
 					)
 			{
-				System.out.println("DELTA=" + d.toString());
+				//System.out.println("DELTA=" + d.toString());
 				result = false;
 			}
 		}
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " publications");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " publications");
 		String m = result ? "" : "ERROR: " + currentAC + " publications are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -850,7 +847,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		String replacs = "swissprotdisplayedisoform"; // correct spelling in new
 														// XML
 		boolean result = XmlComparator.compareXmlNodes2("isoforms", lines2Ignore, targets, replacs, oldN, newN, true, false, false);
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " isoforms");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " isoforms");
 		String m = result ? "" : "ERROR: " + currentAC + " isoforms are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -884,7 +881,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		String targets = null;
 		String replacs = null;
 		boolean result = XmlComparator.compareXmlNodes2("chromosomalLocations", lines2Ignore, targets, replacs, oldN, newN, false, false, false);
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " chromosomalLocations");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " chromosomalLocations");
 		String m = result ? "" : "ERROR: " + currentAC + " chromosomalLocations are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -903,7 +900,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		Node oldN = (Node) xpath.evaluate("/nextprotExport/proteins/protein/genomicMappings", oldDoc, XPathConstants.NODE);
 		Node newN = (Node) xpath.evaluate("/neXtProtExport/proteins/protein/genomicMappings", newDoc, XPathConstants.NODE);
 		if (oldN == null && newN == null) {
-			System.out.println("OK: " + currentAC + " genomicMappings");
+			//System.out.println("OK: " + currentAC + " genomicMappings");
 			return;
 		}
 
@@ -918,7 +915,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 		String targets = null;
 		String replacs = null;
 		boolean result = XmlComparator.compareXmlNodes2("genomicMappings", lines2Ignore, targets, replacs, oldN, newN, false, false, false);
-		System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " genomicMappings");
+		//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " genomicMappings");
 		String m = result ? "" : "ERROR: " + currentAC + " genomicMappings are not the same in old XML";
 		if (m.length() > 0) {
 			errMsg.append("\n");
@@ -966,7 +963,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				infoMsg.append(l + "\n");
 
 			boolean result = XmlComparator.compareXmlNodes2("proteinExistence", lines2Ignore, oldN, newN, true, false);
-			System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " proteinExistence");
+			//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " proteinExistence");
 			String m = result ? "" : "ERROR: " + currentAC + " proteinExistence are not the same in old XML";
 
 			if (m.length() > 0) {
@@ -974,7 +971,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				errMsg.append(m);
 			}
 		}
-		System.out.println(infoMsg.toString());
+		//System.out.println(infoMsg.toString());
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -1019,7 +1016,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				infoMsg.append(l + "\n");
 
 			boolean result = XmlComparator.compareXmlNodes2("proteinNames", lines2Ignore, oldN, newN, false, false);
-			System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " proteinNames");
+			//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " proteinNames");
 			String m = result ? "" : "ERROR: " + currentAC + " proteinNames are not the same in old XML";
 
 			if (m.length() > 0) {
@@ -1027,7 +1024,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				errMsg.append(m);
 			}
 		}
-		System.out.println(infoMsg.toString());
+		//System.out.println(infoMsg.toString());
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -1066,10 +1063,10 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			}
 			boolean result = XmlComparator.compareXmlNodes2("history", lines2Ignore, oldN, newN, false, false);
 			if (result) {
-				System.out.println("OK: " + currentAC + " history");
+				//System.out.println("OK: " + currentAC + " history");
 				infoMsg.append("OK: " + currentAC + " history\n");
 			} else {
-				System.out.println("ERROR: " + currentAC + " history");
+				//System.out.println("ERROR: " + currentAC + " history");
 				m = "ERROR: " + currentAC + " history";
 				List<String> lines;
 				m = m + "\nDetails:\n";
@@ -1085,8 +1082,8 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				errMsg.append(m);
 			}
 		}
-		System.out.println("Summary:");
-		System.out.println(infoMsg.toString());
+		//System.out.println("Summary:");
+		//System.out.println(infoMsg.toString());
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -1133,7 +1130,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				infoMsg.append(l + "\n");
 
 			boolean result = XmlComparator.compareXmlNodes2("geneNames", lines2Ignore, oldN, newN, false, false);
-			System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " geneNames");
+			//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " geneNames");
 			String m = result ? "" : "ERROR: " + currentAC + " geneNames are not the same in old XML";
 
 			if (m.length() > 0) {
@@ -1141,7 +1138,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				errMsg.append(m);
 			}
 		}
-		System.out.println(infoMsg.toString());
+		//System.out.println(infoMsg.toString());
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -1182,27 +1179,27 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			// then the test is OK only if the families found has no child
 			// Nodes.
 			if (oldN == null && newN != null) {
-				System.out.println(m);
+				//System.out.println(m);
 				List<String> lines = XmlComparator.getNodeTreeAsList2(newN, "revised", lines2Ignore, false, false, false, false);
 				if (lines.size() == 2 && lines.get(1).equalsIgnoreCase("-families")) {
 					String info = "OK: " + currentAC + " families node not found in old XML and found node without children in new XML";
-					System.out.println(info);
+					//System.out.println(info);
 					infoMsg.append(info + "\n");
 				} else {
 					m = "ERROR: " + currentAC + " families node not found in old XML but found in new XML";
-					System.out.println(m);
+					//System.out.println(m);
 				}
 
 			} else if (oldN != null && newN == null) {
 				m = "ERROR: " + currentAC + " families node found in old XML but not found in new XML";
-				System.out.println(m);
+				//System.out.println(m);
 
 			} else if (oldN != null && newN != null) {
 				// change the values below to help testing / finding the
 				// problems
 				boolean result = XmlComparator.compareXmlNodes2("families", lines2Ignore, oldN, newN, false, false);
 				m = result ? "" : "ERROR: " + currentAC + " families are not the same in old XML";
-				System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " families");
+				//System.out.println((result ? "OK" : "ERROR") + " " + currentAC + " families");
 				if (result) {
 					infoMsg.append("OK: " + currentAC + " families\n");
 				} else {
@@ -1217,7 +1214,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 				}
 
 			} else {
-				System.out.println("OK " + currentAC + ": no families found");
+				//System.out.println("OK " + currentAC + ": no families found");
 				infoMsg.append("OK " + currentAC + ": no families found\n");
 			}
 
@@ -1227,8 +1224,8 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			}
 
 		}
-		System.out.println("Summary:");
-		System.out.println(infoMsg.toString());
+		//System.out.println("Summary:");
+		//System.out.println(infoMsg.toString());
 		if (errMsg.length() > 0)
 			fail(errMsg.toString());
 	}
@@ -1244,13 +1241,13 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			String categ = n.getAttributes().getNamedItem("category").getNodeValue();
 			NodeList list = (NodeList) xpath.evaluate("/nextprotExport/proteins/protein/annotations/annotationList[@category='" + categ + "']/annotation",
 					oldDoc, XPathConstants.NODESET);
-			System.out.println("expected category: " + categ);
+			//System.out.println("expected category: " + categ);
 			NodeList list2 = (NodeList) xpath.evaluate("/neXtProtExport/proteins/protein/annotations/annotationList[@category='" + categ + "']/annotation",
 					newDoc, XPathConstants.NODESET);
 			String m = "";
 			if (list2 == null) {
 				m = "annotationList with category=" + categ + " expected but not found";
-				System.out.println(m);
+				//System.out.println(m);
 			} else if (list.getLength() != list2.getLength()) {
 				if (categ.equalsIgnoreCase("tissue specificity") && list2.getLength() < list.getLength()) {
 					// in the XML new version, we just include annotations
@@ -1258,14 +1255,13 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 					// generate
 					// annotations for parent terms as done in the old version
 					// of the XML.
-					System.out.println("WARNING: annotationList category=" + categ + " has " + list2.getLength() + " elements but " + list.getLength()
-							+ " were expected");
+					//System.out.println("WARNING: annotationList category=" + categ + " has " + list2.getLength() + " elements but " + list.getLength()+ " were expected");
 				} else {
 					m = "annotationList with category=" + categ + " has " + list2.getLength() + " elements but " + list.getLength() + " were expected";
-					System.out.println(m);
+					//System.out.println(m);
 				}
 			} else {
-				System.out.println("annotationList category=" + categ + ": OK");
+				//System.out.println("annotationList category=" + categ + ": OK");
 			}
 			if (m.length() > 0) {
 				errMsg.append("\n");
@@ -1279,7 +1275,7 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 	@Test
 	public void testExtraAnnotationTypes() throws Exception {
 		StringBuffer errMsg = new StringBuffer("");
-		System.out.println("Starting findExtraAnnotationTypes()");
+		//System.out.println("Starting findExtraAnnotationTypes()");
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 		NodeList newNl = (NodeList) xpath.evaluate("/neXtProtExport/proteins/protein/annotations/annotationList", newDoc, XPathConstants.NODESET);
@@ -1287,15 +1283,15 @@ public class EntryXmlTest extends MVCBaseIntegrationTest {
 			String categ = newNl.item(i).getAttributes().getNamedItem("category").getNodeValue();
 			Node n = (Node) xpath.evaluate("/nextprotExport/proteins/protein/annotations/annotationList[@category='" + categ + "']", oldDoc,
 					XPathConstants.NODE);
-			System.out.println("annotationList with category=" + categ + " found");
+			//System.out.println("annotationList with category=" + categ + " found");
 			String m = "";
 			if (n == null) {
 				// if (categ.equals("") || categ.equals("") || categ.equals(""))
 				// {}
 				m = "annotationList with category=" + categ + " found but not expected !";
-				System.out.println(m);
+				//System.out.println(m);
 			} else {
-				System.out.println("annotationList with category=" + categ + " was expected: OK");
+				//System.out.println("annotationList with category=" + categ + " was expected: OK");
 			}
 			if (m.length() > 0) {
 				errMsg.append("\n");

@@ -9,11 +9,14 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryTXTStreamWriter;
 import org.nextprot.api.web.service.impl.writer.EntryVelocityBasedStreamWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -37,6 +40,12 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
     @Mock
     EntryBuilderService entryBuilderMockService;
 
+    @Autowired
+    private EntryReportStatsService entryReportStatsService;
+
+    @Autowired
+    private VelocityConfig velocityConfig;
+
 	@Before
 	public void setup() {
 		super.setup();
@@ -49,8 +58,8 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
     	
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer);
-        exporter.setEntryBuilderService(entryBuilderMockService);
+        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer, entryBuilderMockService,
+                entryReportStatsService, velocityConfig);
 
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
 

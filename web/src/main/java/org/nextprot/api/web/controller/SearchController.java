@@ -1,29 +1,24 @@
 package org.nextprot.api.web.controller;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.AutocompleteSearchResult;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.core.Entity;
+import org.nextprot.api.solr.query.Query;
+import org.nextprot.api.solr.query.QueryConfiguration;
+import org.nextprot.api.solr.query.QueryMode;
+import org.nextprot.api.solr.query.dto.AutocompleteSearchResult;
+import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.query.dto.SearchResult;
+import org.nextprot.api.solr.service.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.service.impl.SparqlQueryDictionary;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -36,7 +31,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Joiner;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Lazy
 @Controller
@@ -50,12 +49,7 @@ public class SearchController {
 
 	@Autowired private UserQueryService userQueryService;
 	@Autowired private UserProteinListService proteinListService;
-	@Autowired private SolrConfiguration configuration;
 	@Autowired private QueryBuilderService queryBuilderService;
-
-	@Autowired
-	private SparqlQueryDictionary sparqlQueryDictionary;
-	
 
 	/**
 	 * Useful to build the cache for sparql queries on a target api server (typically build-api.nextprot.org)
@@ -65,7 +59,7 @@ public class SearchController {
 	@RequestMapping(value = "/sparql/run", method = { RequestMethod.GET })
 	@ResponseBody
 	public Map<String,Object> runQuery(@RequestParam(value = "queryId", required = true) String queryId) {
-		Map<String,Object> result = new HashMap<String, Object>();
+		Map<String,Object> result = new HashMap<>();
 		result.put("queryId", queryId);
 		try {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryId);
@@ -79,47 +73,51 @@ public class SearchController {
 	}
 
 	
-	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
+	@RequestMapping(value = "/search/{entity}", method = { RequestMethod.POST })
 	@ResponseBody
-	public SearchResult search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest) {
+	public SearchResult search(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest) {
 
-		if (this.queryService.checkAvailableIndex(indexName)) {
+		Entity entity = Entity.valueOfName(entityName);
 
-			Query query = queryBuilderService.buildQueryForSearch(queryRequest, indexName);
+		if (this.queryService.checkSolrCore(entity, queryRequest.getQuality())) {
+
+			Query query = queryBuilderService.buildQueryForSearch(queryRequest, entity);
 
 			try {
 				return queryService.executeQuery(query);
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 
 				throw new NextProtException(e);
 			}
 		} else {
-			throw new NextProtException("error: index " + indexName + " is not available");
+			throw new NextProtException("error: entity " + entityName + " is not available");
 		}
 	}
 
-	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
-	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
+	@ApiMethod(path = "/autocomplete/{entity}", verb = ApiVerb.GET, description = "")
+	@RequestMapping(value="/autocomplete/{entity}", method={RequestMethod.GET, RequestMethod.POST})
 	public AutocompleteSearchResult autocomplete(
-			@ApiQueryParam(name="index", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("index") String indexName,
+			@ApiQueryParam(name="entity", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("entity") String entityName,
 			@ApiQueryParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
 			@ApiQueryParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
 			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
 			@ApiQueryParam(name="order") @RequestParam(value="order", required=false) String order,
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
 			@RequestParam(value="filter", required=false) String filter) {
-		
-		if (this.queryService.checkAvailableIndex(indexName)) {
 
-			Query q = this.queryBuilderService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, "0", filter);
+		Entity entity = Entity.valueOfName(entityName);
+
+		if (this.queryService.checkSolrCore(entity, quality)) {
+
+			Query q = this.queryBuilderService.buildQueryForAutocomplete(entity, queryString, quality, sort, order, start, "0", filter);
 
 			try {
 				return convert(queryService.executeQuery(q));
-			} catch (SearchQueryException e) {
+			} catch (QueryConfiguration.MissingSortConfigException e) {
 				throw new NextProtException(e);
 			}
 		} else {
-			throw new NextProtException("error: index " + indexName + " is not available");
+			throw new NextProtException("error: entity " + entityName + " is not available");
 		}
 	}
 
@@ -143,44 +141,33 @@ public class SearchController {
 		return autocompleteResult;
 	}
 
-	/**
-	 * @param indexName
-	 * @param queryRequest
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
-	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
-		
-		if(this.queryService.checkAvailableIndex(indexName)) {
+	@RequestMapping(value="/search-ids/{entity}", method={ RequestMethod.POST })
+	public String searchIds(@PathVariable("entity") String entityName, @RequestBody QueryRequest queryRequest, Model model) {
+
+		Entity entity = Entity.valueOfName(entityName);
+
+		if (this.queryService.checkSolrCore(entity, queryRequest.getQuality())) {
 			
 			SearchResult result;
-			try {
-				
-				Query query = null;
-				
-				if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
-					
-					Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
-					String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-					queryRequest.setQuery(queryString);
-					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+			Query query;
 
-				} else {
-					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+			if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 
-				}
-				
-				result = this.queryService.executeIdQuery(query);
-				model.addAttribute("SearchResult", SearchResult.class);
-				model.addAttribute("result", result);
+				Set<String> accessions = new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
-			} catch (SearchQueryException e) {
-				e.printStackTrace();
-				model.addAttribute("errormessage", e.getMessage());
-				return "exception";
+				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+				queryRequest.setQuery(queryString);
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.PROTEIN_LIST_SEARCH, queryRequest);
+
+			} else {
+				query = this.queryBuilderService.buildQueryForSearchIndexes(entity, QueryMode.SIMPLE, queryRequest);
+
 			}
+
+			result = this.queryService.executeIdQuery(query);
+			model.addAttribute("SearchResult", SearchResult.class);
+			model.addAttribute("result", result);
 		}
 		
 		return "search-ids";
@@ -194,7 +181,7 @@ public class SearchController {
 			@RequestParam(value="start", required=false) String start,
 			@RequestParam(value="rows", required=false) String rows,
 			@RequestParam(value="filter", required=false) String filter,
-			Model model) throws SearchQueryException {
+			Model model) throws QueryConfiguration.MissingSortConfigException {
 		
 		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
 		Set<String> accessions = proteinList.getAccessionNumbers();
@@ -203,7 +190,7 @@ public class SearchController {
 		
 //		SolrIndex index = this.configuration.getIndexByName("entry");
 		
-		Query query = this.queryBuilderService.buildQueryForProteinLists("entry", queryString, "", sort, order, start, rows, filter);
+		Query query = this.queryBuilderService.buildQueryForProteinLists(Entity.Entry, queryString, "", sort, order, start, rows, filter);
 		
 		SearchResult result = this.queryService.executeQuery(query);
 		

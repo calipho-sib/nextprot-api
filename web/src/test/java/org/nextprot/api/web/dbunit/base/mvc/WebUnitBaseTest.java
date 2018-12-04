@@ -1,12 +1,7 @@
 package org.nextprot.api.web.dbunit.base.mvc;
 
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-
+import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.junit.Before;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
@@ -24,7 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
-import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Base class used to test mock controllers on top of dbunit test
@@ -41,6 +41,8 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
 public abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
 
+	private static final Logger LOGGER = Logger.getLogger(WebUnitBaseTest.class);
+
 	@Autowired
 	private VelocityConfig velocityConfig;
 	
@@ -52,6 +54,8 @@ public abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
+
+		LOGGER.info("setup mockmvc with ApplicationContext "+wac.getDisplayName());
 	}
 	
 	

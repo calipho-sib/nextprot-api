@@ -5,6 +5,7 @@ import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -314,6 +315,17 @@ public class AnnotationUtils {
 		return toRemove;
 	}
 
+	public static BioObject newExternalChemicalBioObject(DbXref xref, String sourcePropertyName) {
+
+		BioObject bo = BioObject.external(BioObject.BioType.CHEMICAL, xref.getDatabaseName());
+		bo.setId(xref.getDbXrefId());
+		bo.setAccession(xref.getAccession());
+		String chemicalName = xref.getPropertyValue(sourcePropertyName);
+		if (chemicalName!=null) bo.getProperties().put("chemical name", chemicalName);
+		return bo;
+	}
+	
+	
 	static BioObject newExternalChemicalBioObject(AnnotationEvidence evi) {
 
 		BioObject bo = BioObject.external(BioObject.BioType.CHEMICAL, evi.getResourceDb());

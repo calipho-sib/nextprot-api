@@ -1,10 +1,5 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -18,6 +13,11 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
@@ -35,7 +35,6 @@ public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
 		List<Annotation> annots = new ArrayList<>();
 		List<Isoform> isoforms = this.isoformService.findIsoformsByEntryName(entryName);
 		List<Interaction> interactions = this.interactionService.findInteractionsByEntry(entryName);
-		System.out.println("Interaction count:" + interactions.size());
 		for (Interaction inter : interactions) {
 		    
 			
@@ -47,18 +46,10 @@ public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
 				System.out.print(inter.getEvidenceXrefAC() + ": ");
 				System.out.print (inter.getInteractants().get(0).getAccession());
 				if (inter.getInteractants().size()==2) System.out.print( " <==> " + inter.getInteractants().get(1));
-				System.out.println("");
-				System.out.println(bo);
-		
 			}
-			
 		}
-		System.out.println("Annot count:" + annots.size());
-		
-
 	}
 
-	
 /*
  * This queries retrieves entries with their 
  * - count of xeno interactions

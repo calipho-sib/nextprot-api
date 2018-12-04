@@ -14,6 +14,7 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class StatementETLServiceImpl implements StatementETLService {
     private StatementLoaderService statementLoadService;
 
     @Override
-    public String etlStatements(NextProtSource source, String release, boolean load) {
+    public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
 
@@ -64,7 +65,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     }
 
-    Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) {
+    Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
 
         Set<Statement> statements = filterValidStatements(statementExtractorService.getStatementsForSource(source, release), report);
         report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());

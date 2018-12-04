@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class IsoformPEFFHeader implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public enum PEFF_KEY {
 
@@ -222,7 +222,6 @@ public class IsoformPEFFHeader implements Serializable {
     private static List<String> toKeyValueStringList(IsoformPEFFHeader pojo) {
 
         return Arrays.asList(
-                pojo.getIsoformAccessionFormat(),       // \DbUniqueId
                 pojo.getProteinNameFormat(),            // \PName
                 pojo.getGeneNameFormat(),               // \GName
                 pojo.getNcbiTaxonomyIdentifierFormat(), // \Ncbi
@@ -267,7 +266,6 @@ public class IsoformPEFFHeader implements Serializable {
 
     // ex:
     // \ModResPsi      (359|MOD:00046|O-phospho-L-serine)(1716|MOD:00047|O-phospho-L-threonine)(1778|MOD:00046|O-phospho-L-serine)
-    // \ModRes         (82||Disulfide)(110||Disulfide)(234||Disulfide)(247||Disulfide)(178||N-linked (GlcNAc...) (complex))
     // \VariantSimple  (1|V)(1|I)(2|N)(4|R)(12|V)(13|F)(18|R)
     // \VariantComplex (130|132|)(288|288|VA)(644|644|)(827|832|)(981|981|AP)(982|982|)(982|984|)
     // \Processed      (26|281|mature protein)(1|25|signal peptide)

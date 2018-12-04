@@ -6,6 +6,7 @@ import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
+import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class AdminController {
 
     @Autowired
     private PublicationService publicationService;
+
+    @Autowired
+    private GlobalPublicationService globalPublicationService;
 
     @Autowired
     private MasterIdentifierService masterIdentifierService;
@@ -256,7 +260,7 @@ public class AdminController {
         }
         else if ("publications-get-by-id".equals(cacheName)) {
 
-            publicationService.findAllPublicationIds().forEach(pubId -> {
+            globalPublicationService.findAllPublicationIds().forEach(pubId -> {
                 publicationService.findPublicationById(pubId);
                 result.add("publication " + pubId + " cached");
             });

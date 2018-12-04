@@ -22,14 +22,6 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	private PublicationService publicationService;
 
 	@Test
-	public void testPublicationIds() {
-		 List<Long> ids = publicationService.findAllPublicationIds();
-		 System.out.println(ids.size());
-		 Assert.assertTrue(ids.size() > 370000);
-	}
-	
-	
-	@Test
 	@Ignore
 	public void testPublicationXrefs() {
 		Publication publication = publicationService.findPublicationById(690405);

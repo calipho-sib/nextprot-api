@@ -1,14 +1,14 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class MasterIsoformMappingDaoIntegrationTest extends CoreUnitBaseTest {
@@ -24,7 +24,6 @@ public class MasterIsoformMappingDaoIntegrationTest extends CoreUnitBaseTest {
 			assertTrue(spec.getIsoformMainName()==null);	// is set later by service
 			assertTrue(spec.getIsoformAc()!=null);
 			assertTrue(spec.getPositions().size()==1);  // we expect one position item by row and thus by IsoformSpecificity
- 			System.out.println(spec.toString());
  		}
 	}		
 }

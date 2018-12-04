@@ -117,7 +117,7 @@ class TerminologyServiceImpl implements TerminologyService {
 		return new ImmutableList.Builder<String>().addAll(terminologyDao.findTerminologyNamesList()).build();
 	}
 
-	// http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/mod/data/PSI-MOD.obo
+	// https://github.com/HUPO-PSI/psi-mod-CV/blob/master/PSI-MOD.obo
 	@Override
 	public Optional<String> findPsiModName(String cvTermAccession) {
 

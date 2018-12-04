@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
@@ -17,6 +18,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
@@ -89,7 +91,12 @@ public class DbXrefServiceImpl implements DbXrefService {
 		annotation.setSynonym(null);
 		annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()));
 		annotation.setParentXref(xref);
-
+		
+		if (xam.usesBioObject()) {
+			annotation.setDescription(null);
+			annotation.setBioObject(AnnotationUtils.newExternalChemicalBioObject(xref,"generic name"));
+		}
+		
 		annotation.setEvidences(Collections.singletonList(newAnnotationEvidence(annotation)));
 		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
 

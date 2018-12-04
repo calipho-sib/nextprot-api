@@ -72,7 +72,6 @@ public class PeptideMappingDaoIntegrationTest extends CoreUnitBaseTest {
 		assertTrue(evMap.get(pepName1).size()==1); 			// 1 PeptideAtlas evidence expected
 		AnnotationEvidence ev = evMap.get(pepName1).get(0);
 		assertTrue(ev.getAnnotationId()==0L);               // setup later by service !
-		System.out.println("assigned by:"+ev.getAssignedBy());
 		assertTrue(ev.getEvidenceId()> IdentifierOffset.PEPTIDE_MAPPING_ANNOTATION_EVIDENCE_OFFSET);
 		assertTrue(ev.getAssignedBy().startsWith("PeptideAtlas"));
 		assertTrue(ev.getEvidenceCodeAC().startsWith("ECO"));

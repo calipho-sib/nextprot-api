@@ -24,6 +24,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.nextprot.api.commons.constants.IdentifierOffset.NXFLAT_ANNOTATION_ID_COUNTER;
+
 abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     protected static final Logger LOGGER = Logger.getLogger(StatementAnnotationBuilder.class);
@@ -94,7 +96,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     }
 
-    private List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
+    private List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements, long annotationId) {
 
         Map<String, AnnotationEvidence> evidencesMap = Statements.stream()
                 .map(s -> buildAnnotationEvidence(s))
@@ -104,7 +106,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                         (ev1, ev2) -> (ev1.getQualityQualifier().equals(QualityQualifier.GOLD.name())) ? ev1 : ev2));
 
         return evidencesMap.values().stream()
-                .peek(e -> e.setEvidenceId(IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet()))
+                .peek(e -> {
+                    e.setAnnotationId(annotationId);
+                    e.setEvidenceId(IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -238,7 +243,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Statement firstStatement = statements.get(0);
 
             annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
-            //annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
+            annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
             AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
             annotation.setAnnotationCategory(category);
@@ -256,7 +261,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             //Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
             if (!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)) {
-                annotation.setEvidences(buildAnnotationEvidences(statements));
+                annotation.setEvidences(buildAnnotationEvidences(statements, annotation.getAnnotationId()));
 
                 //TODO Remove this when you are able to do XREFs
                 if (((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS))) {

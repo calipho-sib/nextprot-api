@@ -31,12 +31,6 @@ public interface PublicationService {
 	List<Publication> findPublicationsByEntryName(@ValidEntry String uniqueName);
 
 	/**
-	 * Retrieves all publications ids
-	 * @return
-	 */	
-	List<Long> findAllPublicationIds();
-
-	/**
 	 * Find publication ids by database and accession.
 	 * For example to get a publication from PubMed given its id
 	 * @param database PubMed

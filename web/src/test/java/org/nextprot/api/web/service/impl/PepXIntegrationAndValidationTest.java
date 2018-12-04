@@ -52,7 +52,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	for(String peptide : peptides){
     		List<Entry> entries = pepXService.findEntriesWithPeptides(peptide, true);
     		for (Entry entry: entries) {
-    			System.out.println("testing peptide:" + peptide +  " for " + entry.getUniprotName());
+    			//System.out.println("testing peptide:" + peptide +  " for " + entry.getUniprotName());
     			// we should have at least one annotation for each entry / peptide match (can be a null variant)
     			assertFalse(entry.getAnnotations().isEmpty());
     		}

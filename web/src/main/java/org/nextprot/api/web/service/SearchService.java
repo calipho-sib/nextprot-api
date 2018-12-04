@@ -1,14 +1,14 @@
 package org.nextprot.api.web.service;
 
+import org.nextprot.api.solr.query.dto.QueryRequest;
+
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.solr.QueryRequest;
-
 public interface SearchService {
 
-	Set<String> getAccessions(QueryRequest queryRequest);
+	Set<String> findAccessions(QueryRequest queryRequest);
 
-	List<String> sortAccessions(QueryRequest queryRequest, Set<String> accessions);
-
+	/** sort accession by solr given a SortConfig.Criteria (by AC, CHROMOSOME, FAMILY, GENE,  LENGTH,  NAME, PROTEIN or SCORE) */
+	List<String> sortAccessionsWithSolr(QueryRequest queryRequest, Set<String> accessions);
 }

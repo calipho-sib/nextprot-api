@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
@@ -20,9 +21,9 @@ public class EntryJSONStreamWriter extends EntryOutputStreamWriter {
     private final JsonGenerator generator;
     private final String viewName;
 
-    public EntryJSONStreamWriter(OutputStream os, String viewName) throws IOException {
+    public EntryJSONStreamWriter(OutputStream os, String viewName, EntryBuilderService entryBuilderService) throws IOException {
 
-        super(os);
+        super(os, entryBuilderService);
 
         Preconditions.checkNotNull(viewName);
 

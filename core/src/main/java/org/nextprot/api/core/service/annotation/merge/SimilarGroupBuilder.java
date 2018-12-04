@@ -38,8 +38,7 @@ public class SimilarGroupBuilder {
      */
     public List<SimilarAnnotationGroup> groupBySimilarity(List<Annotation> otherAnnotations) {
 
-        List<SimilarAnnotationGroup> similarAnnotationGroups =
-                SimilarAnnotationGroup.fromAnnotationList(uniqueAnnotations);
+        List<SimilarAnnotationGroup> similarAnnotationGroups = SimilarAnnotationGroup.groupsOf(uniqueAnnotations);
 
         if (otherAnnotations == null || otherAnnotations.isEmpty()) {
 
@@ -179,7 +178,7 @@ public class SimilarGroupBuilder {
             group.add(annotation);
         }
 
-        public static List<SimilarAnnotationGroup> fromAnnotationList(List<Annotation> annotations) {
+        public static List<SimilarAnnotationGroup> groupsOf(List<Annotation> annotations) {
 
             List<SimilarAnnotationGroup> similarAnnotationGroups = new ArrayList<>(annotations.size());
             similarAnnotationGroups.addAll(annotations.stream()

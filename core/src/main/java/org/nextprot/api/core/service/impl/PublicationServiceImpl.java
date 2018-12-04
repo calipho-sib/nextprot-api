@@ -77,7 +77,7 @@ public class PublicationServiceImpl implements PublicationService {
 		publications.addAll(nxflatPublications);
 
 		Comparator<Publication> comparator = PublicationComparator.StringComparator(Publication::getPublicationYear).reversed()
-				.thenComparing(Comparator.comparing(Publication::getPublicationType))
+				.thenComparing(Publication::getPublicationType)
 				.thenComparing(PublicationComparator.StringComparator(Publication::getPublicationLocatorName))
 				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getVolume))
 				.thenComparing(PublicationComparator.FormattedNumberComparator(Publication::getFirstPage));
@@ -140,11 +140,6 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired
 	public void setPublicationDao(PublicationDao publicationDao) {
 		this.publicationDao = publicationDao;
-	}
-
-	@Override
-	public List<Long> findAllPublicationIds() {		
-		return publicationDao.findAllPublicationsIds();
 	}
 
 	private void loadAuthorsAndXrefs(Publication publication){

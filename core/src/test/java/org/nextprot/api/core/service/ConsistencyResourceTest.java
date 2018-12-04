@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
@@ -29,7 +29,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 				StatementField.REFERENCE_ACCESSION, 
 				new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
 		
-		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
+		//System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
 		for(String p : pubmedIds) {
 			if(p != null){ 
 				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
@@ -57,20 +57,20 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		System.gc(); 
 		Runtime rt = Runtime.getRuntime();
 	    long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-	    System.out.println("Memory used before getting map: " + usedMB);
+		//System.out.println("Memory used before getting map: " + usedMB);
 	    //
 		Map<String,MainNames> namesMap = mainNamesService.findIsoformOrEntryMainName();
 		//
 		System.gc(); 
 	    usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-	    System.out.println("Memory used after  getting map: " + usedMB);
+		//System.out.println("Memory used after  getting map: " + usedMB);
 		for (String ac: namesMap.keySet()) {
 			MainNames n = namesMap.get(ac);
 			Assert.assertTrue(n.getName().length()>0);
 			if (n.getAccession().contains("-")) isoCnt++; else masCnt++;
 		}
-		System.out.println("Mas cnt:" + masCnt);
-		System.out.println("Iso cnt:" + isoCnt);
+		//System.out.println("Mas cnt:" + masCnt);
+		//System.out.println("Iso cnt:" + isoCnt);
 	}
 
 	@Ignore
@@ -85,10 +85,10 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		Map<String,MainNames> namesMap3 = mainNamesService.findIsoformOrEntryMainName();
 		long t3 = System.currentTimeMillis();
 
-		System.out.println("\ncalling mainNamesService 3 times:");
-		System.out.println("call 1 in: " + (t1-t0) + " ms, map size:" + namesMap1.size());
-		System.out.println("call 2 in: " + (t2-t1) + " ms, map size:" + namesMap2.size());
-		System.out.println("call 3 in: " + (t3-t2) + " ms, map size:" + namesMap3.size());
+		//System.out.println("\ncalling mainNamesService 3 times:");
+		//System.out.println("call 1 in: " + (t1-t0) + " ms, map size:" + namesMap1.size());
+		//System.out.println("call 2 in: " + (t2-t1) + " ms, map size:" + namesMap2.size());
+		//System.out.println("call 3 in: " + (t3-t2) + " ms, map size:" + namesMap3.size());
 		Assert.assertTrue((t1-t0) > (t2-t1)*100);
 		Assert.assertTrue((t1-t0) > (t3-t2)*100);
 	}
@@ -99,7 +99,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		
 		boolean missingTerms = false;
 		List<String> terms = statementDao.findAllDistinctValuesforField(StatementField.ANNOT_CV_TERM_ACCESSION);
-		System.out.println("Found " + terms.size() + " distinct terms");
+		//System.out.println("Found " + terms.size() + " distinct terms");
 		for(String t : terms) {
 			if(t != null){
 				CvTerm term = terminologyService.findCvTermByAccession(t);

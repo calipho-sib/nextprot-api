@@ -5,13 +5,22 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublicationView;
+import org.nextprot.api.core.domain.publication.EntryPublications;
+import org.nextprot.api.core.domain.publication.PublicationCategory;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
+import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ActiveProfiles({ "dev", "cache"})
@@ -102,18 +111,17 @@ public class EntryPublicationServiceIntegrationTest extends CoreUnitBaseTest{
     		pubCnt.add(entry.getPublications().size());
     		curCnt.add(report.getEntryPublicationList(PublicationCategory.CURATED).size());
     		addCnt.add(report.getEntryPublicationList(PublicationCategory.ADDITIONAL).size());
-    		System.out.println(
-    				entry.getUniqueName() + " " +
-    				"load="+(tLoad.get(idx)) + "ms " +
-    	    		"build="+(tBuild.get(idx)) + "ms " +
-    				"annot="+annCnt.get(idx) + " " +
-    				"publi="+pubCnt.get(idx) + " " +
-    				"curated="+curCnt.get(idx) + " " +
-    				"additonal="+addCnt.get(idx) + " " 
-    				);
+//    		System.out.println(
+//    				entry.getUniqueName() + " " +
+//    				"load="+(tLoad.get(idx)) + "ms " +
+//    	    		"build="+(tBuild.get(idx)) + "ms " +
+//    				"annot="+annCnt.get(idx) + " " +
+//    				"publi="+pubCnt.get(idx) + " " +
+//    				"curated="+curCnt.get(idx) + " " +
+//    				"additonal="+addCnt.get(idx) + " "
+//    				);
     	}
-    	System.out.println("END");
-    	
+	    //System.out.println("END");
     }
     
     @Test

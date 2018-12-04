@@ -2,21 +2,25 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 @Ignore
-public class EntryJSONStreamWriterTest extends WebIntegrationBaseTest {
+public class EntryJSONStreamWriterTest {
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
 
     @Test
     public void testJSONExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        EntryOutputStreamWriter exporter = new EntryJSONStreamWriter(out, "overview");
+        EntryOutputStreamWriter exporter = new EntryJSONStreamWriter(out, "overview", entryBuilderService);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
         String output = out.toString();

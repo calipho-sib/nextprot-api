@@ -6,9 +6,8 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.tasks.service.SolrIndexingService;
+import org.nextprot.api.solr.service.SolrService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,14 +17,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Lazy
 @Controller
 @Api(name = "Solr indexing tasks", description = "Solr indexing operations", group="Task")
 public class TaskController {
 	
 	private static final Log LOGGER = LogFactory.getLog(TaskController.class);
 	
-	@Autowired private SolrIndexingService solrIndexerService; 
+	@Autowired private SolrService solrService;
 	
 	@ResponseBody
 	@RequestMapping(value = "/tasks/solr/{indexname}/index/chromosome/{chrname}", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
@@ -40,9 +38,36 @@ public class TaskController {
 		String result;
 		try {
 			if ("entries".equals(indexName)) {
-				result = solrIndexerService.indexEntriesChromosome(false, chrName);
+				result = solrService.indexEntriesChromosome(false, chrName);
 			} else if ("gold-entries".equals(indexName)) {
-				result = solrIndexerService.indexEntriesChromosome(true, chrName);
+				result = solrService.indexEntriesChromosome(true, chrName);
+			} else {
+				result = "Error: invalid index name, should be either entries or gold-entries";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+			result = e.getLocalizedMessage();
+		}
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/tasks/solr/{indexname}/index/entry/{entryname}", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
+	@ApiMethod(path = "/tasks/solr/{indexname}/index/entry/{entryname}", verb = ApiVerb.GET, description = "Add given entry to the entries or gold-entries solr index")
+	public String addEntryToIndex(
+			@ApiPathParam(name = "indexname", description = "The name of an entry index: entries or gold-entries",  allowedvalues = { "gold-entries"})
+			@PathVariable("indexname") String indexName,
+			@ApiPathParam(name = "entryname", description = "A neXtProt entry accession", allowedvalues = { "NX_P01308"})
+			@PathVariable("entryname") String entryname, HttpServletRequest request) {
+
+		LOGGER.warn("Request to add entry " + entryname + " to index " + indexName + " from " + request.getRemoteAddr());
+		String result;
+		try {
+			if ("entries".equals(indexName)) {
+				result = solrService.indexEntry(entryname, false);
+			} else if ("gold-entries".equals(indexName)) {
+				result = solrService.indexEntry(entryname, true);
 			} else {
 				result = "Error: invalid index name, should be either entries or gold-entries";
 			}
@@ -65,9 +90,9 @@ public class TaskController {
 		String result;
 		try {
 			if ("entries".equals(indexName)) {
-				result = solrIndexerService.initIndexEntries(false);
+				result = solrService.initIndexEntries(false);
 			} else if ("gold-entries".equals(indexName)) {
-				result = solrIndexerService.initIndexEntries(true);				
+				result = solrService.initIndexEntries(true);
 			} else {
 				result = "Error: invalid index name, should be either entries or gold-entries";
 			}
@@ -87,7 +112,7 @@ public class TaskController {
 		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
 		String result;
 		try {
-			result = solrIndexerService.indexTerminologies();
+			result = solrService.indexTerminologies();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
@@ -99,12 +124,12 @@ public class TaskController {
 	@ResponseBody
 	@RequestMapping(value = "/tasks/solr/publications/reindex", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
 	@ApiMethod(path = "/tasks/solr/publications/reindex", verb = ApiVerb.GET, description = "Rebuilds the solr index for publications")
-	public String indexPublicationss(HttpServletRequest request) {
+	public String indexPublications(HttpServletRequest request) {
 
-		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
+		LOGGER.warn("Request to build solr index for publications " + request.getRemoteAddr());
 		String result;
 		try {
-			result = solrIndexerService.indexPublications();
+			result = solrService.indexPublications();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());

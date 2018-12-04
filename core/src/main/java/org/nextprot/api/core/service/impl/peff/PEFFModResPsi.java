@@ -28,7 +28,8 @@ public class PEFFModResPsi extends PEFFPTMInformation {
                          Function<String, Optional<String>> uniprotModToPsiName,
                          List<Annotation> unmappedUniprotModAnnotations) {
 
-        super(isoformAccession, isoformAnnotations, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE),
+        super(isoformAccession, isoformAnnotations, EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE,
+                AnnotationCategory.CROSS_LINK, AnnotationCategory.DISULFIDE_BOND, AnnotationCategory.LIPIDATION_SITE),
                 Key.MOD_RES_PSI);
 
         this.uniprotModToPsi = uniprotModToPsi;
@@ -51,21 +52,46 @@ public class PEFFModResPsi extends PEFFPTMInformation {
     @Override
     protected void formatAnnotation(Annotation annotation, StringBuilder sb) {
 
-        String modAccession = getModAccession(annotation);
+        if (annotation.getAPICategory() == AnnotationCategory.DISULFIDE_BOND) {
 
-        if (modAccession.isEmpty()) {
-
-            unmappedUniprotModAnnotations.add(annotation);
-        } else {
-            sb
-                    .append("(")
-                    .append(annotation.getStartPositionForIsoform(isoformAccession))
-                    .append("|")
-                    .append(modAccession)
-                    .append("|")
-                    .append(getModName(annotation))
-                    .append(")")
-            ;
+            formatDisulfideBond(annotation, sb);
         }
+        else {
+            String modAccession = getModAccession(annotation);
+
+            if (modAccession.isEmpty()) {
+
+                unmappedUniprotModAnnotations.add(annotation);
+            } else {
+                sb
+                        .append("(")
+                        .append(annotation.getStartPositionForIsoform(isoformAccession))
+                        .append("|")
+                        .append(modAccession)
+                        .append("|")
+                        .append(getModName(annotation))
+                        .append(")")
+                ;
+            }
+        }
+    }
+
+    private void formatDisulfideBond(Annotation disulfideBondAnnotation, StringBuilder sb) {
+
+        Integer startPos = disulfideBondAnnotation.getStartPositionForIsoform(isoformAccession);
+        Integer endPos = disulfideBondAnnotation.getEndPositionForIsoform(isoformAccession);
+
+        sb
+                .append("(")
+                .append((startPos != null) ? startPos : "?")
+                .append("|MOD:00798|")
+                .append("half cystine")
+                .append(")")
+                .append("(")
+                .append((endPos != null) ? endPos : "?")
+                .append("|MOD:00798|")
+                .append("half cystine")
+                .append(")")
+        ;
     }
 }

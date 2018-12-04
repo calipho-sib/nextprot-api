@@ -27,7 +27,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("3DXD", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://www.rcsb.org/pdb/explore/explore.do?pdbId=3DXD", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -43,7 +42,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("1499", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&report=GeneRif&term=1499", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -59,7 +57,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("P30304", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://www.ebi.ac.uk/intact/query/P30304*", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -75,8 +72,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("Q99607", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://research.bioinformatics.udel.edu/iptmnet/entry/Q99607", l.getLink());
-        System.out.println(l.getLink());
-
     }
 
     @Test
@@ -92,7 +87,7 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("135499", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://geneticassociationdb.nih.gov/?id=135499", l.getLink());
-        System.out.println(l.getLink());
+	    //System.out.println(l.getLink());
 
     }
 
@@ -109,8 +104,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("P68431", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://www.phosphosite.org/uniprotAccAction?id=P68431", l.getLink());
-        System.out.println(l.getLink());
-
     }
 
     @Test
@@ -128,7 +121,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("REACT_11123", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://www.reactome.org/PathwayBrowser/#REACT_11123", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -146,7 +138,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("11897170", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/PubTator/index.cgi?searchtype=PubMed_Search&query=11897170", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -164,7 +155,7 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("PR:000044882", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://research.bioinformatics.udel.edu/pro/entry/PR:000044882/", l.getLink());
-        System.out.println(l.getLink());
+        //System.out.println(l.getLink());
     }
 
     @Test
@@ -182,7 +173,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("MINT-1402058", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://mint.bio.uniroma2.it/mint/search/search.do?queryType=protein&interactorAc=MINT-1402058", l.getLink());
-        System.out.println(l.getLink());
     }
 
 
@@ -201,7 +191,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("MetaCyc:ENSG00000162496-MONOMER", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("http://biocyc.org/getid?id=MetaCyc:ENSG00000162496-MONOMER", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test
@@ -219,7 +208,6 @@ public class PublicationDirectLinkTest  {
         Assert.assertEquals("S08.071", l.getAccession());
         Assert.assertEquals(expectedLabel, l.getLabel());
         if (checkLinks) Assert.assertEquals("https://www.ebi.ac.uk/merops/cgi-bin/pepsum?mid=S08.071", l.getLink());
-        System.out.println(l.getLink());
     }
 
     @Test

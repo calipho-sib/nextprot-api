@@ -6,7 +6,11 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.SequenceUnicity;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.AnnotationUtilsTest;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -168,7 +172,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getAnnotationId()==annotId);
 
     	ev = annot.getEvidences().get(0);
-    	System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
+		//System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
     	assertTrue(ev.getAnnotationId()==annotId);
 
     	// checking second annotation
@@ -176,7 +180,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getAnnotationId()==annotId2);
 
     	ev = annot.getEvidences().get(0);
-    	System.out.println("evidence 2 annotation id = " + ev.getAnnotationId());
+		//System.out.println("evidence 2 annotation id = " + ev.getAnnotationId());
     	assertTrue(ev.getAnnotationId()==annotId2);
     	
     }
@@ -251,7 +255,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	ev = annot.getEvidences().get(0);
     	//System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
     	assertTrue(ev.getAnnotationId()==annotId1);
-    	System.out.println("res ac:"+ ev.getResourceAccession());
+		//System.out.println("res ac:"+ ev.getResourceAccession());
     	assertTrue(ev.getResourceAccession().equals("some resource ac 1"));
     	ev = annot.getEvidences().get(1);
     	//System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
@@ -328,7 +332,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	ev = annot.getEvidences().get(0);
     	//System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
     	assertTrue(ev.getAnnotationId()==annotId3);
-    	System.out.println("res ac:"+ ev.getResourceAccession());
+		//System.out.println("res ac:"+ ev.getResourceAccession());
     	assertTrue(ev.getResourceAccession().equals("some resource ac 3"));
 
     	// checking properties of annot 3

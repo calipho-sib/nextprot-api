@@ -1,18 +1,22 @@
 package org.nextprot.api.core.domain.annotation;
 
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 public class AnnotationEvidence implements Serializable {
 
 	private static final long serialVersionUID = 20160913L;
 
 	// map uniprot evidence code with ECO
-	final static Map<String, String> evidenceInfo = new HashMap<>();
+	private static final Map<String, String> evidenceInfo = new HashMap<>();
 
 	// evidence properties mapping
 	private Map<String, String> propertiesMap = new HashMap<>();
@@ -532,13 +536,34 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AnnotationEvidence that = (AnnotationEvidence) o;
+		return resourceId == that.resourceId &&
+				isNegativeEvidence == that.isNegativeEvidence &&
+				evidenceId == that.evidenceId &&
+				Objects.equals(propertiesMap, that.propertiesMap) &&
+				Objects.equals(resourceType, that.resourceType) &&
+				Objects.equals(resourceAccession, that.resourceAccession) &&
+				Objects.equals(resourceDb, that.resourceDb) &&
+				Objects.equals(resourceDesc, that.resourceDesc) &&
+				Objects.equals(experimentalContextId, that.experimentalContextId) &&
+				Objects.equals(mdataId, that.mdataId) &&
+				Objects.equals(qualifierType, that.qualifierType) &&
+				Objects.equals(qualityQualifier, that.qualityQualifier) &&
+				Objects.equals(assignedBy, that.assignedBy) &&
+				Objects.equals(goAssignedBy, that.goAssignedBy) &&
+				Objects.equals(assignmentMethod, that.assignmentMethod) &&
+				Objects.equals(evidenceCodeAC, that.evidenceCodeAC) &&
+				Objects.equals(evidenceCodeName, that.evidenceCodeName) &&
+				Objects.equals(evidenceCodeOntology, that.evidenceCodeOntology) &&
+				Objects.equals(note, that.note) &&
+				Objects.equals(resourceAssociationType, that.resourceAssociationType);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
+	public int hashCode() {
+		return Objects.hash(propertiesMap, resourceId, resourceType, resourceAccession, resourceDb, resourceDesc, experimentalContextId, mdataId, isNegativeEvidence, qualifierType, qualityQualifier, evidenceId, assignedBy, goAssignedBy, assignmentMethod, evidenceCodeAC, evidenceCodeName, evidenceCodeOntology, note, resourceAssociationType);
 	}
-
 }
