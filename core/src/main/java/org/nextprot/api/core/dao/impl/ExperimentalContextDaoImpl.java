@@ -3,13 +3,13 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ExperimentalContextDao;
-import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -35,7 +35,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("experimental-contexts-all"), namedParameters, new ExperimentalContextMapper());
 	}
 
-	private class ExperimentalContextMapper implements ParameterizedRowMapper<ExperimentalContext> {
+	private class ExperimentalContextMapper extends SingleColumnRowMapper<ExperimentalContext> {
 
 		@Override
 		public ExperimentalContext mapRow(ResultSet rs, int row) throws SQLException {

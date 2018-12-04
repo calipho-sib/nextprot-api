@@ -1,20 +1,20 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Overview;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class EntityNameDaoImpl implements EntityNameDao {
@@ -29,7 +29,7 @@ public class EntityNameDaoImpl implements EntityNameDao {
 		 return entityNames;
 	}
 
-	private static class EntryNameRowMapper implements ParameterizedRowMapper<EntityName> {
+	private static class EntryNameRowMapper extends SingleColumnRowMapper<EntityName> {
 
 		@Override
 		public EntityName mapRow(ResultSet resultSet, int row) throws SQLException {

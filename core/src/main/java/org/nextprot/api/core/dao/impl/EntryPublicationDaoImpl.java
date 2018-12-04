@@ -7,8 +7,8 @@ import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -42,7 +42,7 @@ public class EntryPublicationDaoImpl implements EntryPublicationDao {
                 .collect(Collectors.groupingBy(PublicationDirectLink::getPublicationId));
     }
 
-    private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<PublicationDirectLink> {
+    private static class EntryPublicationPropertyRowMapper extends SingleColumnRowMapper<PublicationDirectLink> {
 
         @Override
         public PublicationDirectLink mapRow(ResultSet resultSet, int row) throws SQLException {

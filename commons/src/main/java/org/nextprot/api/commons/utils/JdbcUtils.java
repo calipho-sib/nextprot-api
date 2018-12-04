@@ -1,9 +1,9 @@
 package org.nextprot.api.commons.utils;
 
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -49,7 +49,7 @@ public class JdbcUtils {
         return keyHolder.getKey();
     }
 
-    public static class LongRowMapper implements ParameterizedRowMapper<Long> {
+    public static class LongRowMapper extends SingleColumnRowMapper<Long> {
 
         private final String columnName;
 

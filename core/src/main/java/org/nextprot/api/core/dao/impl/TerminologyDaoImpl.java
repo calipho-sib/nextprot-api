@@ -11,10 +11,10 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -104,7 +104,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 
 
 
-	private static class DbTermRowMapper implements ParameterizedRowMapper<CvTerm> {
+	private static class DbTermRowMapper extends SingleColumnRowMapper<CvTerm> {
 
 		@Override
 		public CvTerm mapRow(ResultSet resultSet, int row) throws SQLException {

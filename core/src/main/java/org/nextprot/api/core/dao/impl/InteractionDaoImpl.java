@@ -7,10 +7,10 @@ import org.nextprot.api.core.dao.InteractionDAO;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -42,7 +42,7 @@ public class InteractionDaoImpl implements InteractionDAO {
 
 
 
-	private static class InteractionRowMapper implements ParameterizedRowMapper<Interaction> {
+	private static class InteractionRowMapper extends SingleColumnRowMapper<Interaction> {
 
 		@Override
 		public Interaction mapRow(ResultSet resultSet, int row) throws SQLException {

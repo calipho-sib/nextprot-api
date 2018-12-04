@@ -5,10 +5,10 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -29,7 +29,7 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 		return template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
 	}
 	
-	static class EntryPropertyRowMapper implements ParameterizedRowMapper<EntryProperties> {
+	static class EntryPropertyRowMapper extends SingleColumnRowMapper<EntryProperties> {
 
 		@Override
 		public EntryProperties mapRow(ResultSet resultSet, int row) throws SQLException {

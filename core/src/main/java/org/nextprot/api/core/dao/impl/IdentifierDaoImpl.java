@@ -7,8 +7,8 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -64,7 +64,7 @@ public class IdentifierDaoImpl implements IdentifierDao {
         return false;
     }
 
-	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {
+	private static class IdentifierRowMapper extends SingleColumnRowMapper<Identifier> {
 
 		private String masterUniqueName;
 		

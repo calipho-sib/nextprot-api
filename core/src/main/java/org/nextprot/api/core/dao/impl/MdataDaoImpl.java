@@ -7,10 +7,10 @@ import org.nextprot.api.core.dao.MdataDao;
 import org.nextprot.api.core.domain.Mdata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -60,7 +60,7 @@ public class MdataDaoImpl implements MdataDao {
 		return map;		
 	}
 	
-	private static class MdataRowMapper implements ParameterizedRowMapper<Mdata> {
+	private static class MdataRowMapper extends SingleColumnRowMapper<Mdata> {
 
 		@Override
 		public Mdata mapRow(ResultSet rs, int row) throws SQLException {
@@ -74,7 +74,7 @@ public class MdataDaoImpl implements MdataDao {
 		}
 	}
 
-	private static class EvidenceMdataMapRowMapper implements ParameterizedRowMapper<Object> {
+	private static class EvidenceMdataMapRowMapper extends SingleColumnRowMapper<Object> {
 
 		private Map<Long,Long> map;
 		private long evidenceOffset = 0;

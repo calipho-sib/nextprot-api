@@ -2,15 +2,15 @@ package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.SlimIsoform;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -55,7 +55,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 
 	}
 
-	private static class EntityNameRowMapper implements ParameterizedRowMapper<EntityName> {
+	private static class EntityNameRowMapper extends SingleColumnRowMapper<EntityName> {
 
 		@Override
 		public EntityName mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -88,7 +88,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, new SlimIsoformRowMapper());
 	}
 
-	private static class IsoformRowMapper implements ParameterizedRowMapper<Isoform> {
+	private static class IsoformRowMapper extends SingleColumnRowMapper<Isoform> {
 
 		@Override
 		public Isoform mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -123,7 +123,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 		}
 	}
 
-	private static class EquivalentIsoformsRowMapper implements ParameterizedRowMapper<Set<String>> {
+	private static class EquivalentIsoformsRowMapper extends SingleColumnRowMapper<Set<String>> {
 		@Override
 		public Set<String> mapRow(ResultSet resultSet, int row) throws SQLException {
 			String[] isolist = resultSet.getString("isolist").split(",");
@@ -132,7 +132,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 		}
 	}
 
-	private static class EquivalentIsoformsAsEquivalentEntriesRowMapper implements ParameterizedRowMapper<Set<String>> {
+	private static class EquivalentIsoformsAsEquivalentEntriesRowMapper extends SingleColumnRowMapper<Set<String>> {
 		@Override
 		public Set<String> mapRow(ResultSet resultSet, int row) throws SQLException {
 			Set<String> entryset = new TreeSet<>();
@@ -145,7 +145,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 		}
 	}
 
-	private static class SlimIsoformRowMapper implements ParameterizedRowMapper<SlimIsoform> {
+	private static class SlimIsoformRowMapper extends SingleColumnRowMapper<SlimIsoform> {
 
 		@Override
 		public SlimIsoform mapRow(ResultSet resultSet, int row) throws SQLException {

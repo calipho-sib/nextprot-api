@@ -10,13 +10,18 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.annotation.GoDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
@@ -36,7 +41,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 	
-	private static class AnnotationRowMapper implements ParameterizedRowMapper<Annotation> {
+	private static class AnnotationRowMapper extends SingleColumnRowMapper<Annotation> {
 
 		@Override
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -114,7 +119,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 	// Annotation Isoforms /////////////////////////////////////////////////////////////////////////////
 
-	private static class AnnotationIsoformRowMapper implements ParameterizedRowMapper<AnnotationIsoformSpecificity> {
+	private static class AnnotationIsoformRowMapper extends SingleColumnRowMapper<AnnotationIsoformSpecificity> {
 
 		@Override
 		public AnnotationIsoformSpecificity mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -142,7 +147,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidence> findAnnotationEvidencesByAnnotationIds(List<Long> annotationIds) {
 
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, (ParameterizedRowMapper<AnnotationEvidence>) (resultSet, row) -> {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, (resultSet, row) -> {
 
             AnnotationEvidence evidence = new AnnotationEvidence();
             evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
@@ -177,7 +182,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds) {
 		
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, (ParameterizedRowMapper<AnnotationEvidenceProperty>) (resultSet, row) -> {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, (resultSet, row) -> {
 
             AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
             evidenceProperty.setEvidenceId(resultSet.getLong("evidence_id"));
@@ -195,7 +200,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, (ParameterizedRowMapper<AnnotationProperty>) (resultSet, row) -> {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, (resultSet, row) -> {
 
             AnnotationProperty property = new AnnotationProperty();
 
