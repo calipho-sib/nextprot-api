@@ -1,14 +1,14 @@
 package org.nextprot.api.web.service.impl;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.service.GitHubService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Testing the github service
@@ -50,4 +50,9 @@ public class GitHubServiceIntegrationTest extends WebIntegrationBaseTest {
 		assertTrue(!content.isEmpty());
 	}
 
+	@Test
+	public void test() throws Exception {
+		String content = ghService.getPage("pages", "copyright");
+		assertTrue(!content.isEmpty());
+	}
 }
