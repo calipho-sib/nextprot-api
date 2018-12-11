@@ -77,6 +77,24 @@ public class SolrCoreQueryTest {
 		}
 	}
 
+	//http://kant:8983/solr/npentries1gold/select?q=id%3ANX_Q8TAA1&fl=id+filters+function_desc&wt=json&indent=true
+	// 1. check with monique if I have to change the description in https://api.nextprot.org/entry/NX_Q8TAA1/go-molecular-function.xml
+	// 2. check how it is done in the generic-annotation-section.html element line 214 (https://www.nextprot.org/entry/NX_Q8TAA1/)
+	// 3. change value 'function_desc' field in SolrInputDocument in SolrEntryDocumentFactory
+	@Test
+	public void testNegativeAnnotations() throws QueryConfiguration.MissingSortConfigException {
+
+		SolrCore<EntrySolrField> core = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID, EntrySolrField.FUNCTION_DESC), true);
+
+		Query<EntrySolrField> query = new Query<>(core).rows(1).addQuery("NX_Q8TAA1");
+
+		SearchResult response = executeQuery(query);
+		Assert.assertEquals(1, response.getFound());
+		@SuppressWarnings("unchecked")
+		List<String> funcDescs = (List<String>) response.getResults().get(0).get(EntrySolrField.FUNCTION_DESC.getName());
+		Assert.assertTrue(funcDescs.contains("Not ribonuclease activity"));
+	}
+
 	public static SolrCore<EntrySolrField> buildEntrySolrCore(String hostname, Set<EntrySolrField> fl, boolean isGold) {
 
 		return (isGold) ? new SolrGoldOnlyEntryCore("http://"+hostname+":8983/solr", fl) :
