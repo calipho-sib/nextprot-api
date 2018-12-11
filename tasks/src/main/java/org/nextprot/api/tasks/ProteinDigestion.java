@@ -18,6 +18,8 @@ import java.util.List;
 
 /**
  * Digest all neXtProt isoform sequences
+ *
+ * See also sources of mzjava-proteomics are available at https://bitbucket.org/sib-pig/mzjava-proteomics
  */
 public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentParser> {
 
