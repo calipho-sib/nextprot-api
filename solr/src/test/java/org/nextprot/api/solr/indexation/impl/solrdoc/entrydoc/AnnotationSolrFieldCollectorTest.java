@@ -18,6 +18,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,10 +63,14 @@ public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		annotationSolrFieldCollector = new AnnotationSolrFieldCollector(annotationService, terminologyService,
 				isoformService, overviewService);
 
-		AnnotationEvidence evidence = mockAnnotationEvidence("ECO:0000318", true);
-		Annotation annotation = mockAnnotation(AnnotationCategory.GO_MOLECULAR_FUNCTION, "ribonuclease activity", evidence);
+		AnnotationEvidence ev1 = mockAnnotationEvidence("ECO:0000318", true);
+		AnnotationEvidence ev2 = mockAnnotationEvidence("ECO:0000320", true);
+		AnnotationEvidence ev3 = mockAnnotationEvidence("ECO:0000501", false);
 
-		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(Arrays.asList(annotation));
+		Annotation a1 = mockAnnotation("ribonuclease activity", AnnotationCategory.GO_MOLECULAR_FUNCTION, QualityQualifier.GOLD, ev1, ev2);
+		Annotation a2 = mockAnnotation("nucleic acid binding", AnnotationCategory.GO_MOLECULAR_FUNCTION, QualityQualifier.SILVER, ev3);
+
+		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(Arrays.asList(a1, a2));
 	}
 
 	@Ignore
@@ -79,24 +84,30 @@ public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		Assert.assertTrue(FunctionInfoWithCanonicalFirst.contains("cellular glucose homeostasis"));
 	}
 
+	//http://kant:8983/solr/npentries1gold/select?q=id%3ANX_Q8TAA1&fl=id+filters+function_desc&wt=json&indent=true
+	// 1. check with monique if I have to change the description in https://api.nextprot.org/entry/NX_Q8TAA1/go-molecular-function.xml
+	// 2. check how it is done in the generic-annotation-section.html element line 214 (https://www.nextprot.org/entry/NX_Q8TAA1/)
+	// 3. change value 'function_desc' field in SolrInputDocument in SolrEntryDocumentFactory
 	@Test
 	public void testNX_Q8TAA1GOFunctionDesc() {
 
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
 		annotationSolrFieldCollector.collect(fields, "NX_Q8TAA1", true);
-		System.out.println(fields);
 		//noinspection unchecked
-		Assert.assertTrue(((List<String>)fields.get(EntrySolrField.FUNCTION_DESC.getName())).contains("Not ribonuclease activity"));
+		Assert.assertTrue(((List<String>)fields.get(EntrySolrField.FUNCTION_DESC)).contains("Not ribonuclease activity"));
+		//noinspection unchecked
+		Assert.assertTrue(((List<String>)fields.get(EntrySolrField.FUNCTION_DESC)).contains("nucleic acid binding"));
 	}
 
-	private static Annotation mockAnnotation(AnnotationCategory cat, String description, AnnotationEvidence evidence) {
+	private static Annotation mockAnnotation(String termName, AnnotationCategory cat, QualityQualifier quality, AnnotationEvidence... evidences) {
 
 		Annotation mock = Mockito.mock(Annotation.class);
 
 		when(mock.getAPICategory()).thenReturn(cat);
-		when(mock.getDescription()).thenReturn(description);
-		when(mock.getEvidences()).thenReturn(Arrays.asList(evidence));
+		when(mock.getCvTermName()).thenReturn(termName);
+		when(mock.getEvidences()).thenReturn(Arrays.asList(evidences));
+		when(mock.getQualityQualifier()).thenReturn(quality.name());
 
 		return mock;
 	}

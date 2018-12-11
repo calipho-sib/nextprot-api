@@ -53,6 +53,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 		// Function with canonical first
 		List<String> function_canonical = getFunctionInfoWithCanonicalFirst(entryAccession, annots);
+
 		for (String finfo : function_canonical) {
 			addEntrySolrFieldValue(fields, EntrySolrField.FUNCTION_DESC, finfo);
 			addEntrySolrFieldValue(fields, EntrySolrField.ANNOTATIONS, finfo);
@@ -354,28 +355,40 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 		//System.err.println("before: " + fInfoCanonical);
 		fInfoCanonical.addAll(fInfoNonCanonical);
 		//System.err.println("after: " + fInfoCanonical);
-		if (fInfoCanonical.size()==0) {
+		if (fInfoCanonical.isEmpty()) {
 			Set<Annotation> goFuncSet = new TreeSet<>((e1, e2) -> {
 
 				int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
 				c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
-				if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
-				if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
+				if (c == 0) c = e1.getAPICategory().compareTo(e2.getAPICategory());
+				if (c == 0) c = e1.getCvTermName().compareTo(e2.getCvTermName());
 				return c;
 			});
 			for (Annotation currannot : annots) {
-				String category = currannot.getCategory();
-				if(category.equals("go biological process") || category.equals("go molecular function")) {
-					goFuncSet.add(currannot); }
+				AnnotationCategory category = currannot.getAPICategory();
+				if (category == AnnotationCategory.GO_BIOLOGICAL_PROCESS || category == AnnotationCategory.GO_MOLECULAR_FUNCTION) {
+					goFuncSet.add(currannot);
+				}
 			}
 			int rescnt = 0;
 			for (Annotation resannot : goFuncSet) {
 				// Stick term's name in the returned list
-				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) // avoid unsignificant function if possible
+				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) {// avoid unsignificant function if possible
 					continue;
-				if(rescnt++ < 3) // return max 3 first annotation descriptions
-					fInfoCanonical.add(resannot.getCvTermName());
-				else break;
+				}
+				if(rescnt++ < 3) {// return max 3 first annotation descriptions
+
+					String info = resannot.getCvTermName();
+
+					if (resannot.getEvidences().stream().allMatch(e -> e.isNegativeEvidence())) {
+						info = "Not "+info;
+					}
+
+					fInfoCanonical.add(info);
+				}
+				else {
+					break;
+				}
 			}
 		}
 
