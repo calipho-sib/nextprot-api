@@ -51,7 +51,7 @@ public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentP
         for (String entryAccession : masterIdentifierService.findUniqueNames()) {
 
 	        // filter all isoform accessions that have an initiator methionine
-	        List<String> isoAccessionInitMeth = annotationService.findAnnotations(entryAccession).stream()
+	        List<String> isoAccessionInitMethList = annotationService.findAnnotations(entryAccession).stream()
 			        .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.INITIATOR_METHIONINE)
 			        .map(annotation -> annotation.getTargetingIsoformsMap().keySet())
 			        .flatMap(annotations -> annotations.stream())
@@ -60,7 +60,7 @@ public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentP
 	        for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
 
 	        	// the sequence of isoform proteins with initiator methionine should be truncated
-	        	String isoformSequence = (isoAccessionInitMeth.contains(isoform.getIsoformAccession()) ?
+	        	String isoformSequence = (isoAccessionInitMethList.contains(isoform.getIsoformAccession()) ?
 				        isoform.getSequence().substring(1) : isoform.getSequence());
 
 		        List<Peptide> peptides = digester.digest(new Protein(isoform.getIsoformAccession(), isoformSequence));
