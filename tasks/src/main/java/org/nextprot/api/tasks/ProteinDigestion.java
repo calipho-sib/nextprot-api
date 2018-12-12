@@ -10,11 +10,14 @@ import org.expasy.mzjava.proteomics.mol.digest.Protease;
 import org.expasy.mzjava.proteomics.mol.digest.ProteinDigester;
 import org.nextprot.api.commons.app.CommandLineSpringParser;
 import org.nextprot.api.commons.app.SpringBasedTask;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Digest all neXtProt isoform sequences
@@ -38,6 +41,7 @@ public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentP
 
 	    IsoformService isoformService = getBean(IsoformService.class);
         MasterIdentifierService masterIdentifierService = getBean(MasterIdentifierService.class);
+	    AnnotationService annotationService = getBean(AnnotationService.class);
 
 	    ProteinDigester digester = new ProteinDigester.Builder(Protease.TRYPSIN)
 			    .controller(new LengthDigestionController(7, 77))
@@ -46,9 +50,20 @@ public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentP
 
         for (String entryAccession : masterIdentifierService.findUniqueNames()) {
 
+	        // filter all isoform accessions that have an initiator methionine
+	        List<String> isoAccessionInitMeth = annotationService.findAnnotations(entryAccession).stream()
+			        .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.INITIATOR_METHIONINE)
+			        .map(annotation -> annotation.getTargetingIsoformsMap().keySet())
+			        .flatMap(annotations -> annotations.stream())
+			        .collect(Collectors.toList());
+
 	        for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
 
-		        List<Peptide> peptides = digester.digest(new Protein(isoform.getIsoformAccession(), isoform.getSequence()));
+	        	// the sequence of isoform proteins with initiator methionine should be truncated
+	        	String isoformSequence = (isoAccessionInitMeth.contains(isoform.getIsoformAccession()) ?
+				        isoform.getSequence().substring(1) : isoform.getSequence());
+
+		        List<Peptide> peptides = digester.digest(new Protein(isoform.getIsoformAccession(), isoformSequence));
 
 		        System.out.println(peptides);
 	        }
