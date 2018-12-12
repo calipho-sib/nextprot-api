@@ -26,6 +26,10 @@
 		<level value="WARN" />
 	</logger>
 
+    <logger name="org.nextprot.api.solr.service">
+        <level value="INFO" />
+    </logger>
+
     <logger name="org.nextprot.api.solr.indexation">
         <level value="INFO" />
     </logger>
