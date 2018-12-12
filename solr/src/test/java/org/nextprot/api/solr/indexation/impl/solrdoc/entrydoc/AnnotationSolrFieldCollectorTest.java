@@ -66,11 +66,13 @@ public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		AnnotationEvidence ev1 = mockAnnotationEvidence("ECO:0000318", true);
 		AnnotationEvidence ev2 = mockAnnotationEvidence("ECO:0000320", true);
 		AnnotationEvidence ev3 = mockAnnotationEvidence("ECO:0000501", false);
+		AnnotationEvidence ev4 = mockAnnotationEvidence("ECO:0000501", false);
 
 		Annotation a1 = mockAnnotation("ribonuclease activity", AnnotationCategory.GO_MOLECULAR_FUNCTION, QualityQualifier.GOLD, ev1, ev2);
 		Annotation a2 = mockAnnotation("nucleic acid binding", AnnotationCategory.GO_MOLECULAR_FUNCTION, QualityQualifier.SILVER, ev3);
+		Annotation a3 = mockAnnotation("RNA phosphodiester bond hydrolysis", AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD, ev4);
 
-		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(Arrays.asList(a1, a2));
+		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(Arrays.asList(a1, a2, a3));
 	}
 
 	@Ignore
@@ -94,10 +96,14 @@ public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		Map<EntrySolrField, Object> fields = new HashMap<>();
 
 		annotationSolrFieldCollector.collect(fields, "NX_Q8TAA1", true);
-		//noinspection unchecked
-		Assert.assertTrue(((List<String>)fields.get(EntrySolrField.FUNCTION_DESC)).contains("Not ribonuclease activity"));
-		//noinspection unchecked
-		Assert.assertTrue(((List<String>)fields.get(EntrySolrField.FUNCTION_DESC)).contains("nucleic acid binding"));
+
+		@SuppressWarnings("unchecked")
+		List<String> list = (List<String>) fields.get(EntrySolrField.FUNCTION_DESC);
+		Assert.assertEquals(3, list.size());
+
+		Assert.assertEquals("RNA phosphodiester bond hydrolysis", list.get(0));
+		Assert.assertEquals("Not ribonuclease activity", list.get(1));
+		Assert.assertEquals("nucleic acid binding", list.get(2));
 	}
 
 	private static Annotation mockAnnotation(String termName, AnnotationCategory cat, QualityQualifier quality, AnnotationEvidence... evidences) {
@@ -105,6 +111,7 @@ public class AnnotationSolrFieldCollectorTest extends AbstractUnitBaseTest {
 		Annotation mock = Mockito.mock(Annotation.class);
 
 		when(mock.getAPICategory()).thenReturn(cat);
+		when(mock.getCategory()).thenReturn(cat.getDbAnnotationTypeName());
 		when(mock.getCvTermName()).thenReturn(termName);
 		when(mock.getEvidences()).thenReturn(Arrays.asList(evidences));
 		when(mock.getQualityQualifier()).thenReturn(quality.name());

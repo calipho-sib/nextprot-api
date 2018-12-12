@@ -360,7 +360,7 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 
 				int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
 				c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
-				if (c == 0) c = e1.getAPICategory().compareTo(e2.getAPICategory());
+				if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
 				if (c == 0) c = e1.getCvTermName().compareTo(e2.getCvTermName());
 				return c;
 			});
