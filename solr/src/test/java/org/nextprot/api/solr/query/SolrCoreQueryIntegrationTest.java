@@ -20,13 +20,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SolrCoreQueryTest {
+public class SolrCoreQueryIntegrationTest {
 
     @Test
 	public void testRBRFamilyProteins() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> coreGoldOnly = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), true);
-		SolrCore<EntrySolrField> coreGoldAndSilver = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID), false);
+		SolrCore<EntrySolrField> coreGoldOnly = buildEntrySolrCore("crick", EnumSet.of(EntrySolrField.ID), true);
+		SolrCore<EntrySolrField> coreGoldAndSilver = buildEntrySolrCore("crick", EnumSet.of(EntrySolrField.ID), false);
 
 		for (SolrCore<EntrySolrField> core : Arrays.asList(coreGoldAndSilver, coreGoldOnly)) {
 
@@ -58,7 +58,7 @@ public class SolrCoreQueryTest {
 	@Test
 	public void testSortingInPLMode() throws QueryConfiguration.MissingSortConfigException {
 
-		SolrCore<EntrySolrField> core = buildEntrySolrCore("kant", EnumSet.of(EntrySolrField.ID, EntrySolrField.RECOMMENDED_GENE_NAMES), true);
+		SolrCore<EntrySolrField> core = buildEntrySolrCore("crick", EnumSet.of(EntrySolrField.ID, EntrySolrField.RECOMMENDED_GENE_NAMES), true);
 
 		Query<EntrySolrField> query = new Query<>(core).rows(50).addQuery("MSH6").sort(SortConfig.Criteria.GENE);
 		query.setQueryMode(QueryMode.PROTEIN_LIST_SEARCH);
