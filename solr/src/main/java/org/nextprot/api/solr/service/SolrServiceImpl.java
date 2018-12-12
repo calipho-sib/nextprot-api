@@ -324,7 +324,7 @@ public class SolrServiceImpl implements SolrService {
     }
 
 	private void logAndCollect(StringBuilder info, String message) {
-        LOGGER.info(message);
+        LOGGER.warn(message);
 		info.append(message).append("\n");
 	}
 }
