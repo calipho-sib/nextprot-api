@@ -8,4 +8,5 @@ public interface DigestionService {
 
 	Set<String> digest(String entryAccession, Protease protease, int minpeplen, int maxpeplen, int missedCleavage);
 	Set<String> digestAllWithTrypsin();
+	Protease[] getProteases();
 }

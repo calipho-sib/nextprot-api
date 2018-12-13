@@ -18,33 +18,35 @@ import java.util.Set;
 
 // See also sources of mzjava-proteomics are available at https://bitbucket.org/sib-pig/mzjava-proteomics
 @Controller
-@Api(name = "Protein Digestion", description = "Digest proteins with a protease", group = "Tools")
+@Api(name = "Protein digestion", description = "Digest proteins with proteases", group = "Tools")
 public class ProteinDigestionController {
 
 	@Autowired
 	private DigestionService digestionService;
 
 	@ResponseBody
-	@RequestMapping(value = "/protein/digest-all", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/protein/digest-all", verb = ApiVerb.GET, description = "digest all neXtProt proteins")
-	public Set<String> digestAllProteins(
-			@ApiQueryParam(name = "protease", description = "chose a protease to digest proteins", allowedvalues = { "trypsin" })
-			@RequestParam(value = "protease") String protease,
-			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
-			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
-			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length", allowedvalues = { "77" })
-			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen) {
+	@RequestMapping(value = "/digestion/available-protease-list", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/digestion/available-protease-list", verb = ApiVerb.GET, description = "list all available proteases")
+	public Protease[] listAllProteases() {
+
+		return digestionService.getProteases();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/digestion/digest-all-proteins", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt proteins with TRYPSIN")
+	public Set<String> digestAllProteins() {
 
 		return digestionService.digestAllWithTrypsin();
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/protein/digest/{entryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/protein/digest/{entryAccession}", verb = ApiVerb.GET, description = "digest a protein")
+	@RequestMapping(value = "/digestion/{entryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/digestion/{entryAccession}", verb = ApiVerb.GET, description = "digest a protein with specific protease")
 	public Set<String> digestProtein(
 			@ApiQueryParam(name = "entryAccession", description = "A neXtProt entry accession.", allowedvalues = { "NX_P01308" })
 			@RequestParam(value = "entryAccession") String entryAccession,
-			@ApiQueryParam(name = "protease", description = "chose a protease to digest proteins", allowedvalues = { "trypsin" })
+			@ApiQueryParam(name = "protease", description = "chose a protease to digest proteins", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease") String protease,
 			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
