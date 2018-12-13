@@ -14,6 +14,7 @@ import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ class DigestionServiceImpl implements DigestionService {
 				.collect(Collectors.toSet());
 	}
 
+	@Cacheable("all-tryptic-digests")
 	@Override
 	public Set<String> digestAllWithTrypsin() {
 
