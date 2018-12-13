@@ -12,11 +12,14 @@ import org.nextprot.api.commons.app.CommandLineSpringParser;
 import org.nextprot.api.commons.app.SpringBasedTask;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,26 +51,39 @@ public class ProteinDigestion extends SpringBasedTask<ProteinDigestion.ArgumentP
 			    .missedCleavageMax(2)
 			    .build();
 
-        for (String entryAccession : masterIdentifierService.findUniqueNames()) {
-
-	        // filter all isoform accessions that have an initiator methionine
-	        List<String> isoAccessionInitMethList = annotationService.findAnnotations(entryAccession).stream()
-			        .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.INITIATOR_METHIONINE)
-			        .map(annotation -> annotation.getTargetingIsoformsMap().keySet())
-			        .flatMap(annotations -> annotations.stream())
-			        .collect(Collectors.toList());
-
+	    Set<String> allEntries = masterIdentifierService.findUniqueNames();
+	    List<Peptide> allPeptides = new ArrayList<>();
+	    Integer ecnt = 0;
+	    
+	    System.err.println("Digesting " + allEntries.size() + " entries...");
+	    for (String entryAccession : allEntries) {
+        	//String entryAccession = "NX_Q14353";
+	    	// We digest mature chains and propeptides
+       	    List<Annotation> annotlist = annotationService.findAnnotations(entryAccession).stream()
+        			 .filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN || annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
+        			 .collect(Collectors.toList());
+       	    
 	        for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
-
-	        	// the sequence of isoform proteins with initiator methionine should be truncated
-	        	String isoformSequence = (isoAccessionInitMethList.contains(isoform.getIsoformAccession()) ?
-				        isoform.getSequence().substring(1) : isoform.getSequence());
-
-		        List<Peptide> peptides = digester.digest(new Protein(isoform.getIsoformAccession(), isoformSequence));
-
-		        System.out.println(peptides);
+	        	String isoformSequence = isoform.getSequence();
+	        	String isoformAcc = isoform.getIsoformAccession();	        	
+	        	 
+	        	 for (Annotation annot : annotlist) {
+	        		 Integer start = annot.getStartPositionForIsoform(isoformAcc);
+	        		 Integer end = annot.getEndPositionForIsoform(isoformAcc);
+	        		 if (start != null && end != null)
+	        		 digester.digest(new Protein(isoformAcc, isoformSequence.substring(start,end)), allPeptides);
+	        	 }
 	        }
+	        if(ecnt++ % 100 == 0) System.err.println(ecnt + " entries so far...");
         }
+	        
+	        // Collect the unique set of all peptides
+	        Set<String> uniqpeptides = allPeptides.stream()
+	        		.map(peptide -> peptide.toSymbolString())
+	        		.collect(Collectors.toSet());
+
+	        //System.out.println(uniqpeptides);
+	        System.err.println(uniqpeptides.size() + "unique peptides...");
     }
 
     /**
