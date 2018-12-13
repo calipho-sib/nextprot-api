@@ -49,6 +49,18 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.expasy.mzjava</groupId>
+            <artifactId>mzjava-proteomics</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.expasy.mzjava</groupId>
+            <artifactId>mzjava-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
 	</dependencies>
 
 
