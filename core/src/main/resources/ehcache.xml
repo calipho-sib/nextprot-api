@@ -72,6 +72,11 @@
 		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true"/>
 
+	<cache name="annot-wo-function-count" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true"/>
+
 	<!-- we have  20'000 proteins * 20 subpages = 400'000 urls -->
 	<!-- we have 200'000 terms    *  4 subpages = 800'000 urls -->
 	<!-- we have 400'000 publis   *  1  subpage = 400'000 urls -->
