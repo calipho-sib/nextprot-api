@@ -34,7 +34,7 @@ public class ProteinDigestionController {
 
 	@ResponseBody
 	@RequestMapping(value = "/digestion/digest-all-proteins", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt proteins with TRYPSIN")
+	//@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt proteins with TRYPSIN")
 	public Set<String> digestAllProteins() {
 
 		return digestionService.digestAllWithTrypsin();
