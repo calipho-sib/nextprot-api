@@ -94,7 +94,7 @@ class DigestionServiceImpl implements DigestionService {
 	private void digestProtein(String entryAccession, ProteinDigester digester, List<Peptide> peptides) {
 
 		// We digest mature chains and propeptides
-		annotationService.findAnnotations(entryAccession).parallelStream()
+		annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
 						annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
 				.forEach(annotation -> {
