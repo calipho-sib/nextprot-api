@@ -30,6 +30,7 @@ import static org.nextprot.api.core.service.annotation.comp.ByIsoformPositionCom
 @ActiveProfiles({ "dev" })
 public class DigestionServiceImplTest extends CoreUnitBaseTest {
 
+	// See also this post on good practice for mocking http://tedvinke.wordpress.com/2014/02/13/mockito-why-you-should-not-use-injectmocks-annotation-to-autowire-fields/
 	// Class under test
 	private DigestionService digestionService;
 
