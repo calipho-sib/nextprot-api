@@ -15,13 +15,23 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
-import org.nextprot.commons.statements.*;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
+import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,82 +55,20 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
     @Override
     public Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 
-        // TODO: additionnal field should be defined outside nextprot-api
-        if (source == NextProtSource.GlyConnect) {
-            rawStatements = setAdditionalFieldsForGlyConnectStatementsHACK(rawStatements, report);
-        }
-        else if (source == NextProtSource.BioEditor) {
-            rawStatements = updateAnnotDescriptionFieldForBioEditorStatementsHACK(rawStatements, report);
-        }
-
-        return new StatementTransformer(rawStatements, report).transform();
+        return new StatementTransformer(preProcess(source, report).process(rawStatements), report).transform();
     }
 
-    private Set<Statement> updateAnnotDescriptionFieldForBioEditorStatementsHACK(Set<Statement> statements, ReportBuilder report) {
+	// TODO: preprocessing should be defined outside nextprot-api
+    private PreProcessor preProcess(NextProtSource source, ReportBuilder report) {
 
-        Set<Statement> statementSet = new HashSet<>();
-
-        statements.forEach(rs -> {
-            if (rs.getValue(StatementField.ANNOT_DESCRIPTION) != null) {
-
-                String annotDescription = rs.getValue(StatementField.ANNOT_DESCRIPTION);
-
-                AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(StatementField.GENE_NAME));
-
-                try {
-                    statementSet.add(new StatementBuilder()
-                            .addMap(rs)
-                            .addField(StatementField.ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
-                            .build());
-                } catch (ParseException e) {
-
-                    throw new NextProtException("cannot update description for statement "+rs, e);
-                }
-            } else {
-
-                statementSet.add(rs);
-            }
-        });
-
-        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: reformat field ANNOT_DESCRIPTION");
-
-        return statementSet;
-    }
-
-    private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements, ReportBuilder report) {
-
-        Set<Statement> statementSet = new HashSet<>();
-        Set<Statement> invalidStatements = new HashSet<>();
-
-        statements.forEach(rs -> {
-            if (rs.getValue(StatementField.NEXTPROT_ACCESSION) != null) {
-                CvTerm cvterm = terminologyService.findCvTermByAccession(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
-
-                if (cvterm == null) {
-                    throw new NextProtException("invalid cv term "+ rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) + ", accession=" +
-                            rs.getValue(StatementField.NEXTPROT_ACCESSION) + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
-                }
-
-                statementSet.add(new StatementBuilder()
-                        .addMap(rs)
-                        .addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
-                        .addField(StatementField.RESOURCE_TYPE, "database")
-                        .addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
-                        .addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
-                        .build());
-            } else {
-                invalidStatements.add(rs);
-            }
-        });
-
-        if (!invalidStatements.isEmpty()) {
-            report.addWarning("Undefined neXtProt accessions: skipping " + invalidStatements.size() + " statements");
-        }
-
-        report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (ENTRY_ACCESSION, RESOURCE_TYPE, ANNOTATION_NAME, ANNOT_DESCRIPTION and STATEMENT_ID)");
-
-        return statementSet;
-    }
+		if (source == NextProtSource.GlyConnect) {
+			return new GlyConnectPreProcessor(report);
+		}
+		else if (source == NextProtSource.BioEditor) {
+			return new BioEditorPreProcessor(report);
+		}
+		return statements -> statements;
+	}
 
     private String buildAnnotationNameForGlyConnect(Statement statement) {
 
@@ -434,4 +382,109 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
             }
         }
     }
+
+	public interface PreProcessor {
+
+		Set<Statement> process(Set<Statement> statements);
+	}
+
+	private class GlyConnectPreProcessor implements PreProcessor {
+
+		private final ReportBuilder report;
+
+		private GlyConnectPreProcessor(ReportBuilder report) {
+			this.report = report;
+		}
+
+		@Override
+		public Set<Statement> process(Set<Statement> statements) {
+
+			Set<Statement> updated = setAdditionalFieldsForGlyConnectStatementsHACK(statements);
+
+			return updated;
+		}
+
+		private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements) {
+
+			Set<Statement> statementSet = new HashSet<>();
+			Set<Statement> invalidStatements = new HashSet<>();
+
+			statements.forEach(rs -> {
+				if (rs.getValue(StatementField.NEXTPROT_ACCESSION) != null) {
+					CvTerm cvterm = terminologyService.findCvTermByAccession(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
+
+					if (cvterm == null) {
+						throw new NextProtException("invalid cv term "+ rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) + ", accession=" +
+								rs.getValue(StatementField.NEXTPROT_ACCESSION) + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+					}
+
+					statementSet.add(new StatementBuilder()
+							.addMap(rs)
+							.addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
+							.addField(StatementField.RESOURCE_TYPE, "database")
+							.addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
+							.addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
+							.build());
+				} else {
+					invalidStatements.add(rs);
+				}
+			});
+
+			if (!invalidStatements.isEmpty()) {
+				report.addWarning("Undefined neXtProt accessions: skipping " + invalidStatements.size() + " statements");
+			}
+
+			report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (ENTRY_ACCESSION, RESOURCE_TYPE, ANNOTATION_NAME, ANNOT_DESCRIPTION and STATEMENT_ID)");
+
+			return statementSet;
+		}
+	}
+
+	private class BioEditorPreProcessor implements PreProcessor {
+
+		private final ReportBuilder report;
+
+		private BioEditorPreProcessor(ReportBuilder report) {
+			this.report = report;
+		}
+
+		@Override
+		public Set<Statement> process(Set<Statement> statements) {
+
+			Set<Statement> updated = updateAnnotDescriptionFieldForBioEditorStatementsHACK(statements);
+
+			return updated;
+		}
+
+		private Set<Statement> updateAnnotDescriptionFieldForBioEditorStatementsHACK(Set<Statement> statements) {
+
+			Set<Statement> statementSet = new HashSet<>();
+
+			statements.forEach(rs -> {
+				if (rs.getValue(StatementField.ANNOT_DESCRIPTION) != null) {
+
+					String annotDescription = rs.getValue(StatementField.ANNOT_DESCRIPTION);
+
+					AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(StatementField.GENE_NAME));
+
+					try {
+						statementSet.add(new StatementBuilder()
+								.addMap(rs)
+								.addField(StatementField.ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
+								.build());
+					} catch (ParseException e) {
+
+						throw new NextProtException("cannot update description for statement "+rs, e);
+					}
+				} else {
+
+					statementSet.add(rs);
+				}
+			});
+
+			report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: reformat field ANNOT_DESCRIPTION");
+
+			return statementSet;
+		}
+	}
 }
