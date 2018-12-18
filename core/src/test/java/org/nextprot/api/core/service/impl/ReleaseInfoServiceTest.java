@@ -26,10 +26,10 @@ import static org.mockito.Mockito.when;
 public class ReleaseInfoServiceTest {
 
     @Mock
-    private MasterIdentifierService masterIdentifierService = new MasterIdentifierServiceImpl();
+    private MasterIdentifierService masterIdentifierService;
 
     @Mock
-    private AnnotationServiceImpl annotationService = new AnnotationServiceImpl();
+    private AnnotationServiceImpl annotationService;
 
     @InjectMocks
     private ReleaseInfoServiceImpl releaseInfoService = new ReleaseInfoServiceImpl();
