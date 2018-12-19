@@ -29,6 +29,11 @@
 			<artifactId>nextprot-isoform-mapper</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.nextprot</groupId>
+            <artifactId>nextprot-api-rdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>
