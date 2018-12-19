@@ -32,9 +32,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class StatementTranformerServiceImpl implements StatementTransformerService {
+public class StatementTransformerServiceImpl implements StatementTransformerService {
 
-    private static Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
+    private static Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
 
 	@Autowired
     private IsoformService isoformService;
