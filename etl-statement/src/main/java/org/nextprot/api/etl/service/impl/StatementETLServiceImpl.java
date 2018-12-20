@@ -116,9 +116,7 @@ public class StatementETLServiceImpl implements StatementETLService {
     void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
         try {
-
             if (load) {
-
                 report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
                 long start = System.currentTimeMillis();
                 statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
@@ -236,7 +234,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			Set<Statement> filteredStatements = filterStatements(statements);
 
-			return setAdditionalFieldsForGlyConnectStatementsHACK(filteredStatements);
+			report.addInfo("Filtering " + filteredStatements.size() +  " GlyConnect raw statements over " + statements.size());
+
+			return setAdditionalFieldsForGlyConnectStatements(filteredStatements);
 		}
 
 		private Set<Statement> filterStatements(Set<Statement> statements) {
@@ -253,7 +253,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.collect(Collectors.toSet());
 		}
 
-		private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements) {
+		private Set<Statement> setAdditionalFieldsForGlyConnectStatements(Set<Statement> statements) {
 
 			Set<Statement> statementSet = new HashSet<>();
 			Set<Statement> invalidStatements = new HashSet<>();
@@ -299,35 +299,17 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			String format = "(entry:%s \"%d\"^^xsd:integer)";
 
-			String selectedPTM0528EntryPositions = statements.stream()
+			Set<Statement> ptm0528Statements = statements.stream()
 					.filter(statement -> statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION).equals("PTM-0528"))
+					.collect(Collectors.toSet());
+
+			String selectedPTM0528EntryPositions = ptm0528Statements.stream()
 					.map(statement -> String.format(format,
 							statement.getValue(StatementField.NEXTPROT_ACCESSION),
 							Integer.parseInt(statement.getValue(StatementField.LOCATION_BEGIN))))
 					.collect(Collectors.joining("\n"));
 
 			return "select distinct ?entry ?glypos where {\n" +
-					"values (?entry ?glypos) {\n" +
-					selectedPTM0528EntryPositions +
-					" }\n" +
-					"\n" +
-					"?entry :isoform ?iso.\n" +
-					"?iso :swissprotDisplayed true .\n" +
-					"\n" +
-					"{\n" +
-					"values ?forbidtopodom {\n" +
-					"cv:CVTO_0001\n" +
-					"cv:CVTO_0004\n" +
-					"cv:CVTO_0013\n" +
-					"cv:CVTO_0015\n" +
-					"cv:CVTO_0022\n" +
-					"} # topo check\n" +
-					"  ?iso :topology ?topodom .\n" +
-					"  ?topodom :term ?forbidtopodom; :start ?topodomstart; :end ?topodomend .\n" +
-					"  filter((?glypos >= ?topodomstart) && (?glypos <= ?topodomend))\n" +
-					"}\n" +
-					"  union\n" +
-					"{\n" +
 					"values ?forbiddom {\n" +
 					"cv:DO-00843\n" +
 					"cv:DO-00082\n" +
@@ -395,7 +377,28 @@ public class StatementETLServiceImpl implements StatementETLService {
 					"cv:DO-00692\n" +
 					"cv:DO-00697\n" +
 					"cv:DO-00707\n" +
-					"}  # domain check\n" +
+					"}\n" +
+					"values (?entry ?glypos) {\n" +
+					selectedPTM0528EntryPositions +
+					"}\n" +
+					"?entry :isoform ?iso.\n" +
+					"?iso :swissprotDisplayed true .\n" +
+					"\n" +
+					"{\n" +
+					"values ?forbidtopodom {\n" +
+					"cv:CVTO_0001\n" +
+					"cv:CVTO_0004\n" +
+					"cv:CVTO_0013\n" +
+					"cv:CVTO_0015\n" +
+					"cv:CVTO_0022\n" +
+					"} # topo check\n" +
+					"  ?iso :topology ?topodom .\n" +
+					"  ?topodom :term ?forbidtopodom; :start ?topodomstart; :end ?topodomend .\n" +
+					"  filter((?glypos >= ?topodomstart) && (?glypos <= ?topodomend))\n" +
+					"}\n" +
+					"  union\n" +
+					"{\n" +
+					"\n" +
 					"  ?iso :domain ?dom .\n" +
 					"  ?dom :term ?forbiddom; :start ?domstart; :end ?domend .\n" +
 					"  filter((?glypos >= ?domstart) && (?glypos <= ?domend))\n" +
@@ -419,9 +422,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			HttpSparqlService.SparqlResponse response = httpSparqlService.executeSparqlQuery(sparql);
 
-			List<String> entryList = response.getResults("entry");//.stream()
-					//.map(rdfEntry -> rdfEntry.split())
-			List<Integer> glyposList = response.castResults("glypos", v -> Integer.parseInt(v));
+			List<String> entryList = response.mapResults("entry", HttpSparqlService.SparqlResponse.newRdfEntryConv());
+			List<Integer> glyposList = response.mapResults("glypos", v -> Integer.parseInt(v));
 
 			Set<EntryPosition> entryPositions = new HashSet<>();
 			for (int i=0 ; i<entryList.size() ; i++) {
