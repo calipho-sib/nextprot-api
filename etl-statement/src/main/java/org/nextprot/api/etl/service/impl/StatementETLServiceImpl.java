@@ -419,8 +419,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			HttpSparqlService.SparqlResponse response = httpSparqlService.executeSparqlQuery(sparql);
 
-			List<String> entryList = response.getResults("entry");
-			List<Integer> glyposList = response.castResults("glypos", Integer.class);
+			List<String> entryList = response.getResults("entry");//.stream()
+					//.map(rdfEntry -> rdfEntry.split())
+			List<Integer> glyposList = response.castResults("glypos", v -> Integer.parseInt(v));
 
 			Set<EntryPosition> entryPositions = new HashSet<>();
 			for (int i=0 ; i<entryList.size() ; i++) {

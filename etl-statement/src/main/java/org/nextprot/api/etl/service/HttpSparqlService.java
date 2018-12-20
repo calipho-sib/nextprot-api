@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public interface HttpSparqlService {
 
@@ -28,7 +29,7 @@ public interface HttpSparqlService {
 			return results.get(var);
 		}
 
-		public <T> List<T> castResults(String var, Class<T> tClass) {
+		public <T> List<T> castResults(String var, Function<String, T> conv) {
 
 			List<T> tList = new ArrayList<>();
 
@@ -38,7 +39,7 @@ public interface HttpSparqlService {
 
 			for (String value : results.get(var)) {
 
-				tList.add(tClass.cast(value));
+				tList.add(conv.apply(value));
 			}
 
 			return tList;

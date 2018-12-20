@@ -164,7 +164,7 @@ public class HttpSparqlServiceImplTest {
 		Assert.assertEquals(Arrays.asList("http://nextprot.org/rdf/entry/NX_O75396", "http://nextprot.org/rdf/entry/NX_O95049",
 				"http://nextprot.org/rdf/entry/NX_Q76I76"), response.getResults("entry"));
 		Assert.assertEquals(Arrays.asList("172", "86", "339"), response.getResults("glypos"));
-		Assert.assertEquals(Arrays.asList(172, 86, 339), response.castResults("glypos", Integer.class));
+		Assert.assertEquals(Arrays.asList(172, 86, 339), response.castResults("glypos", v -> Integer.parseInt(v)));
 	}
 
 	private void checkExpectedValues(SparqlResponse response, List<String> expectedVars, int expectedRows) {
