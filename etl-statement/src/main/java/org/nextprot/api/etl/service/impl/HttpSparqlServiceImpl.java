@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,14 +52,10 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 			"PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>\n\n";
 
 	@Autowired
-	private SparqlEndpoint sparqlEndpoint = null;
-
-	static final String VARS = "vars";
-	static final String RESULTS = "results";
-	static final String ROWS = "rows";
+	private SparqlEndpoint sparqlEndpoint;
 
 	@Override
-	public Map<String, Object> executeSparqlQuery(String query) {
+	public SparqlResponse executeSparqlQuery(String query) {
 
 		return executeSparqlQuery(sparqlEndpoint.getUrl(), query);
 	}
@@ -68,23 +63,24 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 	// http://uat-web2:8890/sparql
 	// https://www.baeldung.com/httpclient-post-http-request
 	@Override
-	public Map<String, Object> executeSparqlQuery(String sparqlUrl, String query) {
+	public SparqlResponse executeSparqlQuery(String sparqlUrl, String query) {
 
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpPost post = new HttpPost(sparqlUrl);
 		post.setHeader("Accept", "application/sparql-results+json");
 
 		try {
-
 			List<NameValuePair> params = new ArrayList<>();
+
 			params.add(new BasicNameValuePair("query", PREFIX+query));
 			post.setEntity(new UrlEncodedFormEntity(params));
+
 			CloseableHttpResponse response = client.execute(post);
 			Map<String, Object> rawContent = readRawJsonOutput(response);
 
 			client.close();
 
-			return formatOutput(rawContent);
+			return sparqlResponse(rawContent);
 		} catch (IOException e) {
 
 			throw new NextProtException("could not search for sparql query (query="+query+")", e);
@@ -111,9 +107,9 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 		return new ObjectMapper().readValue(payload.toString(), Map.class);
 	}
 
-	private Map<String, Object> formatOutput(Map<String, Object> rawJson) {
+	private SparqlResponse sparqlResponse(Map<String, Object> rawJson) {
 
-		Map<String, Object> content = new HashMap<>();
+		SparqlResponse response = new SparqlResponse();
 
 		if (!rawJson.containsKey("head")) {
 			throw new NextProtException("missing 'head' key in json (json="+rawJson+")");
@@ -132,28 +128,15 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 		List<Map<String, Map<String, String>>> rawBindings =
 				(List<Map<String, Map<String, String>>>) rawResults.get("bindings");
 
-		List<String> vars = head.get(VARS);
-		content.put(VARS, vars);
-
-		Map<String, Object> results = new HashMap<>();
-		content.put(RESULTS, results);
-
-		for (String var : vars) {
-			results.put(var, new ArrayList<>());
-		}
-
 		for (Map<String, Map<String, String>> rawBinding : rawBindings) {
 
-			for (String var : vars) {
+			for (String var : head.get("vars")) {
 
-				//noinspection unchecked
-				((List<String>)results.get(var)).add(rawBinding.get(var).get("value"));
+				response.addResult(var, rawBinding.get(var).get("value"));
 			}
 		}
 
-		//noinspection unchecked
-		content.put(ROWS, ((List<String>)results.get(vars.get(0))).size());
-
-		return content;
+		return response;
 	}
+
 }

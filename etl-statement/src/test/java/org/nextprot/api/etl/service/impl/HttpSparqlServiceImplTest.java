@@ -7,9 +7,9 @@ import org.nextprot.api.etl.service.HttpSparqlService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static org.nextprot.api.etl.service.impl.HttpSparqlServiceImpl.*;
+import static org.nextprot.api.etl.service.HttpSparqlService.SparqlResponse;
+import static org.nextprot.api.etl.service.impl.HttpSparqlServiceImpl.SPARQL_DEFAULT_URL;
 
 public class HttpSparqlServiceImplTest {
 
@@ -18,14 +18,14 @@ public class HttpSparqlServiceImplTest {
 
 		HttpSparqlService sparqlService = new HttpSparqlServiceImpl();
 
-		Map<String, Object> results = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
+		SparqlResponse response = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
 				"select distinct ?entry where {\n" +
 				"  ?entry :isoform ?iso.\n" +
 				"  ?iso :keyword / :term cv:KW-0597.\n" +
 				"  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n" +
 				"}");
 
-		checkExpectedValues(results, Collections.singletonList("entry"), 5666);
+		checkExpectedValues(response, Collections.singletonList("entry"), 5666);
 	}
 
 	@Test
@@ -33,23 +33,21 @@ public class HttpSparqlServiceImplTest {
 
 		HttpSparqlService sparqlService = new HttpSparqlServiceImpl();
 
-		Map<String, Object> results = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
+		SparqlResponse response = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
 				"select distinct ?entry ?iso where {\n" +
 						"  ?entry :isoform ?iso.\n" +
 						"  ?iso :keyword / :term cv:KW-0597.\n" +
 						"  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n" +
 						"}");
 
-		checkExpectedValues(results, Arrays.asList("entry", "iso"), 13915);
+		checkExpectedValues(response, Arrays.asList("entry", "iso"), 13915);
 	}
 
-	private void checkExpectedValues(Map<String, Object> results, List<String> expectedVars, int expectedRows) {
+	private void checkExpectedValues(SparqlResponse response, List<String> expectedVars, int expectedRows) {
 
-		Assert.assertTrue(results.containsKey(VARS));
-		Assert.assertEquals(expectedVars, results.get(VARS));
-		Assert.assertTrue(results.containsKey(ROWS));
-		Assert.assertEquals(expectedRows, (int)results.get(ROWS));
-		Assert.assertTrue(results.containsKey(RESULTS));
-		Assert.assertEquals(expectedVars.size(), ((Map<String, Object>)results.get(RESULTS)).keySet().size());
+		Assert.assertTrue(!response.getVars().isEmpty());
+		Assert.assertEquals(expectedVars, response.getVars());
+		Assert.assertEquals(expectedRows, response.rows());
+		Assert.assertEquals(expectedVars.size(), response.getResults().keySet().size());
 	}
 }
