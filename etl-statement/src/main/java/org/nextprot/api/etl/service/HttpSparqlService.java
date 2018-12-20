@@ -29,7 +29,7 @@ public interface HttpSparqlService {
 			return results.get(var);
 		}
 
-		public <T> List<T> castResults(String var, Function<String, T> conv) {
+		public <T> List<T> mapResults(String var, Function<String, T> conv) {
 
 			List<T> tList = new ArrayList<>();
 
@@ -58,6 +58,11 @@ public interface HttpSparqlService {
 			}
 
 			return results.get(getVars().get(0)).size();
+		}
+
+		public static Function<String, String> newRdfEntryConv() {
+
+			return rdfEntry -> (rdfEntry.contains("/")) ? rdfEntry.substring(rdfEntry.lastIndexOf('/') + 1) : rdfEntry;
 		}
 	}
 }
