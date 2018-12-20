@@ -480,12 +480,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 		@Override
 		public Set<Statement> process(Set<Statement> statements) {
 
-			Set<Statement> updated = updateAnnotDescriptionFieldForBioEditorStatementsHACK(statements);
-
-			return updated;
+			return resetAnnotDescriptionFields(statements);
 		}
 
-		private Set<Statement> updateAnnotDescriptionFieldForBioEditorStatementsHACK(Set<Statement> statements) {
+		private Set<Statement> resetAnnotDescriptionFields(Set<Statement> statements) {
 
 			Set<Statement> statementSet = new HashSet<>();
 
