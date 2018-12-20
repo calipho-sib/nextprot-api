@@ -1,22 +1,17 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.collect.Sets;
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.sparql.core.Var;
-import com.hp.hpl.jena.sparql.engine.binding.Binding;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
+import org.nextprot.api.etl.service.HttpSparqlService;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementTransformerService;
-import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
@@ -28,9 +23,9 @@ import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,8 +33,6 @@ import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromEnt
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
-
-	private static final String ENTRY_SUFFIX_URI = "http://nextprot.org/rdf/entry/";
 
 	@Autowired
     private MasterIdentifierService masterIdentifierService;
@@ -52,7 +45,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private TerminologyService terminologyService;
 	@Autowired
-	private SparqlService sparqlService;
+	private HttpSparqlService httpSparqlService;
 
     @Override
     public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
@@ -246,6 +239,20 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return setAdditionalFieldsForGlyConnectStatementsHACK(filteredStatements);
 		}
 
+		private Set<Statement> filterStatements(Set<Statement> statements) {
+
+			Set<EntryPosition> entryPositionsToFilterOut = fetchEntryPositionsFromSparql(buildSparql(statements));
+
+			return statements.stream()
+					.filter(statement -> {
+						EntryPosition ep = new EntryPosition(statement.getValue(StatementField.NEXTPROT_ACCESSION),
+								Integer.parseInt(statement.getValue(StatementField.LOCATION_BEGIN)));
+
+						return !entryPositionsToFilterOut.contains(ep);
+					})
+					.collect(Collectors.toSet());
+		}
+
 		private Set<Statement> setAdditionalFieldsForGlyConnectStatementsHACK(Set<Statement> statements) {
 
 			Set<Statement> statementSet = new HashSet<>();
@@ -408,12 +415,28 @@ public class StatementETLServiceImpl implements StatementETLService {
 					"}  order by ?entry ?glypos ";
 		}
 
+		private Set<EntryPosition> fetchEntryPositionsFromSparql(String sparql) {
+
+			HttpSparqlService.SparqlResponse response = httpSparqlService.executeSparqlQuery(sparql);
+
+			List<String> entryList = response.getResults("entry");
+			List<Integer> glyposList = response.castResults("glypos", Integer.class);
+
+			Set<EntryPosition> entryPositions = new HashSet<>();
+			for (int i=0 ; i<entryList.size() ; i++) {
+
+				entryPositions.add(new EntryPosition(entryList.get(i), glyposList.get(i)));
+			}
+
+			return entryPositions;
+		}
+
 		private class EntryPosition {
 
 			private final String entry;
 			private final int position;
 
-			public EntryPosition(String entry, int position) {
+			private EntryPosition(String entry, int position) {
 
 				this.entry = entry;
 				this.position = position;
@@ -426,54 +449,20 @@ public class StatementETLServiceImpl implements StatementETLService {
 			public int getPosition() {
 				return position;
 			}
-		}
 
-		private List<EntryPosition> execSparql(String sparql) {
-
-			QueryExecution queryExecution = sparqlService.queryExecution(sparql);
-
-			List<EntryPosition> results = new ArrayList<>();
-
-			ResultSet rs = queryExecution.execSelect();
-
-			/**
-			 * This give an empty graph....
-			 * Model m = rs.getResourceModel();
-			 * Graph g = m.getGraph();
-			 * System.err.println("The graph is" + g);
-			 */
-
-			Var x = Var.alloc("entry");
-			while (rs.hasNext()) {
-				Binding b = rs.nextBinding();
-				Node entryNode = b.get(x);
-				if (entryNode == null) {
-					queryExecution.close();
-					throw new NextProtException("Bind your protein result to a variable called ?entry. Example: \"?entry :classifiedWith cv:KW-0813.\"");
-				} else if (entryNode.toString().indexOf(ENTRY_SUFFIX_URI) == -1) {
-					queryExecution.close();
-					throw new NextProtException("Any entry found in the output, however was found: " + entryNode.toString());
-				}
-
-				String entry = entryNode.toString().replace(ENTRY_SUFFIX_URI, "").trim();
-				results.add(new EntryPosition(entry, 0));
+			@Override
+			public boolean equals(Object o) {
+				if (this == o) return true;
+				if (o == null || getClass() != o.getClass()) return false;
+				EntryPosition that = (EntryPosition) o;
+				return position == that.position &&
+						Objects.equals(entry, that.entry);
 			}
-			queryExecution.close();
 
-			return results;
-		}
-
-		private Set<Statement> filterStatements(Set<Statement> statements) {
-
-			List<EntryPosition> results = execSparql(buildSparql(statements));
-
-			return statements.stream()
-					.filter(statement -> {
-						EntryPosition ep = new EntryPosition(statement.getValue(StatementField.NEXTPROT_ACCESSION), Integer.parseInt(statement.getValue(StatementField.LOCATION_BEGIN)));
-
-						return !results.contains(ep);
-					})
-					.collect(Collectors.toSet());
+			@Override
+			public int hashCode() {
+				return Objects.hash(entry, position);
+			}
 		}
 	}
 
