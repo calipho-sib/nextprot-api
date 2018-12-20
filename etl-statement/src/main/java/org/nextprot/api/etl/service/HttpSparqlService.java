@@ -13,24 +13,40 @@ public interface HttpSparqlService {
 
 	class SparqlResponse {
 
-		private final List<String> vars = new ArrayList<>();
 		private final Map<String, List<String>> results = new HashMap<>();
 
 		public List<String> getVars() {
-			return vars;
+
+			return new ArrayList<>(results.keySet());
 		}
 
-		public Map<String, List<String>> getResults() {
-			return results;
+		public List<String> getResults(String var) {
+
+			if (!results.containsKey(var)) {
+				return new ArrayList<>();
+			}
+			return results.get(var);
+		}
+
+		public <T> List<T> castResults(String var, Class<T> tClass) {
+
+			List<T> tList = new ArrayList<>();
+
+			if (!results.containsKey(var)) {
+				return tList;
+			}
+
+			for (String value : results.get(var)) {
+
+				tList.add(tClass.cast(value));
+			}
+
+			return tList;
 		}
 
 		public void addResult(String key, String value) {
 
-			if (!results.containsKey(key)) {
-				vars.add(key);
-				results.put(key, new ArrayList<>());
-			}
-
+			results.putIfAbsent(key, new ArrayList<>());
 			results.get(key).add(value);
 		}
 
@@ -40,7 +56,7 @@ public interface HttpSparqlService {
 				return 0;
 			}
 
-			return results.get(vars.get(0)).size();
+			return results.get(getVars().get(0)).size();
 		}
 	}
 }
