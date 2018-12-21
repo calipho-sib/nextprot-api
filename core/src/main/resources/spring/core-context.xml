@@ -44,11 +44,8 @@
 
 		<!-- Caching ehcache -->
 		<cache:annotation-driven />
-		<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-			<property name="cacheManager">
-				<ref local="ehcache" />
-			</property>
-		</bean>
+        <!-- https://www.concretepage.com/spring-4/spring-4-ehcache-configuration-example-with-cacheable-annotation -->
+		<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache"/>
 		<bean id="ehcache"
 			class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
 			p:configLocation="classpath:ehcache.xml" />
