@@ -1,13 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.dao.PeptideMappingDao;
@@ -18,6 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 class SequenceUnicityServiceImpl implements SequenceUnicityService {
@@ -103,7 +102,7 @@ class SequenceUnicityServiceImpl implements SequenceUnicityService {
 		return result;
 	}
 
-	private Map<String, SequenceUnicity> getUnicityMap(List<String> list) {
+	private synchronized Map<String, SequenceUnicity> getUnicityMap(List<String> list) {
 		Map<String, SequenceUnicity> result = new HashMap<>();
 
 		for (String row : list) {
