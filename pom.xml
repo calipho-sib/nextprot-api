@@ -199,6 +199,12 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+        <!-- https://stackoverflow.com/questions/38728757/java-lang-noclassdeffounderror-com-thoughtworks-xstream-io-naming-namecode-erro -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.9</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
