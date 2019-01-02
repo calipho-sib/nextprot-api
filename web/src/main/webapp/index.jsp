@@ -733,7 +733,7 @@
 	});
 	
 	function checkURLExistence() {
-		fetchdoc(window.location.href.replace("#", "") + '/jsondoc');
+		fetchdoc(window.location.href.replace("#", "") + 'jsondoc');
 	}
 	
 	$("#jsondocfetch").keypress(function(event) {
@@ -1135,7 +1135,11 @@
 	}
 
 	function fetchReleaseInfo() {
-		url = window.location.href.replace("#", "") + '/release-info'
+	    // https://stackoverflow.com/questions/48453980/spring-5-0-3-requestrejectedexception-the-request-was-rejected-because-the-url
+        // NOTE: the url below was in the form:
+        // https://api.nextprot.org//release-info.json and is now blocked for security reasons
+        // url = window.location.href.replace("#", "") + '/release-info.json';
+        url = window.location.href.replace("#", "") + 'release-info.json';
 
 		$.ajax({
 			url : url,
