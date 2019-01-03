@@ -125,7 +125,7 @@ public class IsoformPEFFHeaderBuilder {
     IsoformPEFFHeaderBuilder withProteinEvidenceFormat() {
 
         peff.setProteinEvidenceFormat(new SimplePEFFInformation(PEFFInformation.Key.PE,
-                String.valueOf(overview.getProteinExistences().getProteinExistence().getLevel())).format());
+                String.valueOf(overview.getProteinExistence().getLevel())).format());
 
         return this;
     }

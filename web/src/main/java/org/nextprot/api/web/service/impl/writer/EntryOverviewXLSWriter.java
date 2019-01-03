@@ -56,7 +56,7 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
             values[9] = entryReport.countPTMs();
             values[10] = booleanToYesNoString(entryReport.isMutagenesis());
             values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
-            values[12] = entry.getOverview().getProteinExistences().getProteinExistence().getDescription();
+            values[12] = entry.getOverview().getProteinExistence().getDescription();
 
             Record record = new Record(values);
 

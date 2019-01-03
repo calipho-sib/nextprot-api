@@ -55,8 +55,7 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 		for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
 
-			//ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
-			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
 
 			if (pe == proteinExistence) {
 				entries.add(entryAccession);

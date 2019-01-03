@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Resolve text content with placeholders
@@ -18,6 +19,7 @@ class ContentWithPlaceHolders {
 
 	private static final String OPENED_TAG = "\\$\\{";
 	private static final String CLOSED_TAG = "\\}";
+	private static final Pattern OPENED_TAG_PATTERN = Pattern.compile(OPENED_TAG, Pattern.MULTILINE);
 
 	private final String originalContent;
 	private String updatedContent;
@@ -58,6 +60,6 @@ class ContentWithPlaceHolders {
 
 	static boolean foundPlaceHolders(String content) {
 
-		return content.matches(OPENED_TAG);
+		return OPENED_TAG_PATTERN.matcher(content).find();
 	}
 }

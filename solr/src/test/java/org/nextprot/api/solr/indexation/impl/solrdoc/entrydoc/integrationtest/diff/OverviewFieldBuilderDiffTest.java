@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.ProteinExistence;
-import org.nextprot.api.core.domain.ProteinExistenceInferred;
-import org.nextprot.api.core.domain.ProteinExistences;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.SolrEntryFieldCollectorService;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.OverviewSolrFieldCollector;
@@ -62,12 +60,7 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
 		Overview overview = mock(Overview.class);
 
-		ProteinExistences pes = new ProteinExistences();
-		ProteinExistenceInferred pei = new ProteinExistenceInferred(pe,
-				ProteinExistenceInferred.ProteinExistenceRule.SP_PER_01);
-		pes.setProteinExistenceInferred(pei);
-
-		Mockito.when(overview.getProteinExistences()).thenReturn(pes);
+		Mockito.when(overview.getProteinExistence()).thenReturn(pe);
 		Mockito.when(overview.getMainGeneName()).thenReturn("roudoudou");
 
 		return overview;
