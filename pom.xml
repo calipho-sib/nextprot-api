@@ -181,6 +181,7 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring-security.version}</version>
 		</dependency>
+        <!-- https://spring.io/blog/2014/05/23/preview-spring-security-test-web-security -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
