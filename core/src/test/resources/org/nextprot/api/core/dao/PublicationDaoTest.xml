@@ -48,9 +48,9 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
 	<pubauthors pubauthor_id="100" publication_id="105" 
-		last_name="Dalton" fore_name="Joe" initials="" is_editor="0" rank="0" />
+		last_name="Dalton" fore_name="Joe"  is_editor="0" rank="0" />
 	<pubauthors pubauthor_id="101" publication_id="105" 
-		last_name="Dalton" fore_name="Jack" initials="" is_editor="0" rank="1" />
+		last_name="Dalton" fore_name="Jack"  is_editor="0" rank="1" />
 	
 	
 	<resources resource_id="106" cv_type_id="2"/>
@@ -58,7 +58,7 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
 	<pubauthors pubauthor_id="102" publication_id="106" 
-		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+		last_name="Luke" fore_name="Lucky"  is_editor="0" rank="0" />
 	
 	<!--  idem 106, but with different text date -->
 	<resources resource_id="107" cv_type_id="2"/>
@@ -66,7 +66,7 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1236"/>
 	<pubauthors pubauthor_id="103" publication_id="107" 
-		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+		last_name="Luke" fore_name="Lucky"  is_editor="0" rank="0" />
 	
 	<!--  idem 106, but with different type -->
 	<resources resource_id="108" cv_type_id="2"/>
@@ -74,7 +74,7 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1237"/>
 	<pubauthors pubauthor_id="104" publication_id="108" 
-		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+		last_name="Luke" fore_name="Lucky"  is_editor="0" rank="0" />
 
 
 	<!-- Publications linked to identifiers -->
