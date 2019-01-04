@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,14 +29,17 @@ public class SparqlProxyIntegrationTest extends MVCDBUnitBaseTest {
 
 	}
 
-
+	// TODO: FIXME
 	@Test
 	public void shouldRunASPAQRQLQueryIfQueryIsSet() throws Exception {
 
-		ResultActions result = this.mockMvc
-				//.perform(post("/sparql?query=SELECT%20(COUNT(*)%20AS%20%3Fno)%20%0Awhere%20%7B%20%3Fs%20%3Fp%20%3Fo%20%20%7D")
-				.perform(post("/sparql?query=SELECT (COUNT(*) AS ?no) * where { ?s ?p ?o }")
-				.accept(MediaType.APPLICATION_JSON, MediaType.ALL));
+		// SELECT (COUNT(*) AS ?no) where {
+		//  ?s ?p ?o
+		//}
+
+		ResultActions result = this.mockMvc.perform(
+				get("/sparql?query=SELECT%20(COUNT(*)%20AS%20%3Fno)%20%0Awhere%20%7B%20%3Fs%20%3Fp%20%3Fo%20%20%7D")
+						.contentType(MediaType.APPLICATION_JSON_UTF8));
 
 		result.andDo(print());
 		result.andExpect(status().isOk());
