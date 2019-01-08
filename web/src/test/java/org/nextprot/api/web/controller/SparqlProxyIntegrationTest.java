@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
@@ -14,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author dteixeira
  */
-
+@ActiveProfiles({"unit",  "unit-schema-user", "security"})
 public class SparqlProxyIntegrationTest extends MVCDBUnitBaseTest {
 
 
@@ -47,4 +48,27 @@ public class SparqlProxyIntegrationTest extends MVCDBUnitBaseTest {
 		result.andExpect(jsonPath("$.results.bindings[0].no.datatype").exists());
 		result.andExpect(jsonPath("$.results.bindings[0].no.value").exists());
 	}
+
+	// TODO: FIXME
+	/*
+	@Test
+	public void foo() throws Exception {
+
+		String payload = EntityUtils.toString(new UrlEncodedFormEntity(Collections.singletonList(
+				new BasicNameValuePair("query", "SELECT (COUNT(*) AS ?no) where {?s ?p ?o }")
+		)));
+
+		ResultActions result = this.mockMvc
+				.perform(post("/sparql")
+						.content(payload)
+						.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+						.accept(MediaType.APPLICATION_JSON, MediaType.ALL));
+
+		result.andDo(print());
+		result.andExpect(status().isOk());
+		result.andExpect(jsonPath("$.head.vars[0]", is("no")).exists());
+		result.andExpect(jsonPath("$.results.bindings[0].no.datatype").exists());
+		result.andExpect(jsonPath("$.results.bindings[0].no.value").exists());
+	}
+	*/
 }
