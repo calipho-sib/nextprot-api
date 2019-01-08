@@ -8,6 +8,7 @@ import org.expasy.mzjava.proteomics.mol.digest.LengthDigestionController;
 import org.expasy.mzjava.proteomics.mol.digest.Protease;
 import org.expasy.mzjava.proteomics.mol.digest.ProteinDigester;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -41,11 +43,22 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Set<String> digest(String entryAccession, Protease protease, int minpeplen, int maxpeplen, int missedCleavage) {
+	public Set<String> digest(String entryAccession, String proteaseName, int minpeplen, int maxpeplen, int missedCleavageCount) {
 
-		ProteinDigester digester = new ProteinDigester.Builder(protease)
+		if (missedCleavageCount < 0) {
+			throw new NextProtException("number of missed cleavages should be positive.");
+		}
+		else if (missedCleavageCount > 2) {
+			throw new NextProtException(missedCleavageCount+" missed cleavages is too high: cannot configure digestion with more than 2 missed cleavages.");
+		}
+
+		if (maxpeplen <= 0) {
+			throw new NextProtException("max peptide length should be greater than 1.");
+		}
+
+		ProteinDigester digester = new ProteinDigester.Builder(getProtease(proteaseName))
 				.controller(new LengthDigestionController(minpeplen, maxpeplen))
-				.missedCleavageMax(missedCleavage)
+				.missedCleavageMax(missedCleavageCount)
 				.build();
 
 		List<Peptide> peptides = new ArrayList<>();
@@ -86,9 +99,12 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Protease[] getProteases() {
+	public List<String> getProteaseNames() {
 
-		return Protease.values();
+		return Stream.of(Protease.values())
+				.map(protease -> getProteaseNameWithoutTypo(protease))
+				.sorted()
+				.collect(Collectors.toList());
 	}
 
 	private void digestProtein(String entryAccession, ProteinDigester digester, List<Peptide> peptides) {
@@ -113,5 +129,33 @@ class DigestionServiceImpl implements DigestionService {
 						}
 					}
 				});
+	}
+
+	private Protease getProtease(String proteaseName) {
+
+		if ("PEPSIN_PH_1_3".equals(proteaseName)) {
+			return Protease.PEPSINE_PH_1_3;
+		}
+		else if ("PEPSIN_PH_GT_2".equals(proteaseName)) {
+			return Protease.PEPSINE_PH_GT_2;
+		}
+		else if ("THERMOLYSIN".equals(proteaseName)) {
+			return Protease.THERMOLYSINE;
+		}
+		return Protease.valueOf(proteaseName);
+	}
+
+	private String getProteaseNameWithoutTypo(Protease protease) {
+
+		if (protease == Protease.PEPSINE_PH_1_3) {
+			return "PEPSIN_PH_1_3";
+		}
+		else if (protease == Protease.PEPSINE_PH_GT_2) {
+			return "PEPSIN_PH_GT_2";
+		}
+		else if (protease == Protease.THERMOLYSINE) {
+			return "THERMOLYSIN";
+		}
+		return protease.name();
 	}
 }
