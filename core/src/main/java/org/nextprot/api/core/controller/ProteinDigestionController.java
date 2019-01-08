@@ -34,7 +34,7 @@ public class ProteinDigestionController {
 
 	@ResponseBody
 	@RequestMapping(value = "/digestion/digest-all-proteins", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	//@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt proteins with TRYPSIN")
+	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt mature proteins with TRYPSIN")
 	public Set<String> digestAllProteins() {
 
 		return digestionService.digestAllWithTrypsin();
@@ -42,11 +42,11 @@ public class ProteinDigestionController {
 
 	@ResponseBody
 	@RequestMapping(value = "/digestion/{entryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/digestion/{entryAccession}", verb = ApiVerb.GET, description = "digest a protein with specific protease")
+	@ApiMethod(path = "/digestion/{entryAccession}", verb = ApiVerb.GET, description = "digest mature parts of a protein with a specific protease")
 	public Set<String> digestProtein(
 			@ApiQueryParam(name = "entryAccession", description = "A neXtProt entry accession.", allowedvalues = { "NX_P01308" })
 			@RequestParam(value = "entryAccession") String entryAccession,
-			@ApiQueryParam(name = "protease", description = "chose a protease to digest proteins", allowedvalues = { "TRYPSIN" })
+			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease") String protease,
 			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
