@@ -5,6 +5,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.DigestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ public class ProteinDigestionController {
 
 	@ResponseBody
 	@RequestMapping(value = "/digestion/digest-all-proteins", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt mature proteins with TRYPSIN")
+	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt mature proteins with TRYPSIN (with number of missed cleavage max of 2)")
 	public Set<String> digestAllProteins() {
 
 		return digestionService.digestAllWithTrypsin();
@@ -51,8 +52,15 @@ public class ProteinDigestionController {
 			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
 			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length", allowedvalues = { "77" })
-			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen) {
+			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen,
+			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (cannot be greater than 2)", allowedvalues = { "2" })
+			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages) {
 
-		return digestionService.digest(entryAccession, Protease.valueOf(protease.toUpperCase()), minPepLen, maxPepLen, 2);
+		if (maxMissedCleavages > 2) {
+
+			throw new NextProtException("Cannot configure digestion with such a high number of missed cleavages ("+maxMissedCleavages+")");
+		}
+
+		return digestionService.digest(entryAccession, Protease.valueOf(protease.toUpperCase()), minPepLen, maxPepLen, maxMissedCleavages);
 	}
 }
