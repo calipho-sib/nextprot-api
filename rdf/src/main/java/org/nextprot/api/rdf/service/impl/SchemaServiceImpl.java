@@ -1,8 +1,5 @@
 package org.nextprot.api.rdf.service.impl;
 
-import java.util.List;
-import java.util.Properties;
-
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
 import org.nextprot.api.rdf.domain.OWLDatabase;
@@ -15,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Properties;
 
 @Lazy
 @Service
@@ -34,7 +34,7 @@ public class SchemaServiceImpl implements SchemaService {
 	}
 
 	@Override
-	@Cacheable("schema")
+	@Cacheable(value = "schema", sync = true)
 	public List<OWLEvidence> findAllEvidence() {
 		return schemaDao.findAllEvidence();
 	}

@@ -21,7 +21,7 @@ public class EntryPageServiceImpl implements EntryPageService {
 
 	@Autowired EntryBuilderService entryBuilderService;
 
-	@Cacheable(value="page-display", key="#entryName")
+	@Cacheable(value="page-display", key="#entryName", sync = true)
 	@Override
 	public Map<String, Boolean> hasContentForPageDisplay(@ValidEntry String entryName) {
 

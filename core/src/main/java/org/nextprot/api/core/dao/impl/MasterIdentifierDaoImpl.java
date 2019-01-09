@@ -44,7 +44,7 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 	}
 	
 	@Override
-	@Cacheable("master-unique-names")
+	@Cacheable(value = "master-unique-names", sync = true)
 	public List<String> findUniqueNames() {
 		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names"), String.class);
 	}

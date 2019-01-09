@@ -24,7 +24,7 @@ public class EntryGeneReportServiceImpl implements EntryGeneReportService {
     @Autowired
     private GeneService geneService;
 
-    @Cacheable("entry-reports")
+    @Cacheable(value = "entry-reports", sync = true)
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
 

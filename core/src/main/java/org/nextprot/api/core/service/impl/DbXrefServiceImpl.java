@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
@@ -17,7 +16,11 @@ import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AntibodyResourceIdsService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
@@ -27,7 +30,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Lazy
@@ -177,7 +188,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 	@Override
-	@Cacheable("xrefs")
+	@Cacheable(value = "xrefs", sync = true)
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
 		// build a comparator for the tree set: order by database name, accession, case insensitive

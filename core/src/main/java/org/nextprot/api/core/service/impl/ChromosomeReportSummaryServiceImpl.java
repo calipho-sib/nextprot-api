@@ -13,7 +13,7 @@ public class ChromosomeReportSummaryServiceImpl implements ChromosomeReportSumma
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	@Cacheable("chromosome-summaries")
+	@Cacheable(value = "chromosome-summaries", sync = true)
 	@Override
 	public ChromosomeReport.Summary reportChromosomeSummary(String chromosome) {
 

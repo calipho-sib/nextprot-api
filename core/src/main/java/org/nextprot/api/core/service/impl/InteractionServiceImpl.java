@@ -1,7 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
-
 import org.nextprot.api.core.dao.InteractionDAO;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
@@ -25,7 +24,7 @@ class InteractionServiceImpl implements InteractionService {
 	@Autowired private MainNamesService mainNamesService;
 
 	@Override
-	@Cacheable("interactions")
+	@Cacheable(value = "interactions", sync = true)
 	public List<Interaction> findInteractionsByEntry(String entryName) {
 		List<Interaction> interactions = interactionDAO.findInteractionsByEntry(entryName);
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
@@ -34,7 +33,7 @@ class InteractionServiceImpl implements InteractionService {
 	}
 
 	@Override
-	@Cacheable("interactions-as-annot")
+	@Cacheable(value = "interactions-as-annot", sync = true)
 	public List<Annotation> findInteractionsAsAnnotationsByEntry(String entryName) {
 		List<Annotation> annots = new ArrayList<>();
 		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);

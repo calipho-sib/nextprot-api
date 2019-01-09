@@ -14,7 +14,7 @@ public class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	private EntryPropertiesDao entryPropertiesDao;
 
 	@Override
-	@Cacheable("entry-properties")
+	@Cacheable(value = "entry-properties", sync = true)
 	public EntryProperties findEntryProperties(String uniqueName) {
 
 		return entryPropertiesDao.findEntryProperties(uniqueName);

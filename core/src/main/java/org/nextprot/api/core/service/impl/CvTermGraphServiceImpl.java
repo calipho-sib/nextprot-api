@@ -15,7 +15,7 @@ class CvTermGraphServiceImpl implements CvTermGraphService {
 	private TerminologyService terminologyService;
 
 	@Override
-	@Cacheable("terminology-graph")
+	@Cacheable(value = "terminology-graph", sync = true)
 	public CvTermGraph findCvTermGraph(TerminologyCv terminologyCv) {
 
 		return new CvTermGraph(terminologyCv, terminologyService.findCvTermsByOntology(terminologyCv.name()));
