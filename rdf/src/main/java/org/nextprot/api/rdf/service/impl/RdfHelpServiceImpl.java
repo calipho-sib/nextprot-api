@@ -66,8 +66,8 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		long t0 = System.currentTimeMillis();
 		
 		Set<String> rdfTypesNames = getRdfTypesNames();
-		List<Future<RdfTypeInfo>> rdfFutureTypes = new ArrayList<Future<RdfTypeInfo>>();
-		List<RdfTypeInfo> rdfTypes = Collections.synchronizedList(new ArrayList<RdfTypeInfo>());
+		List<Future<RdfTypeInfo>> rdfFutureTypes = new ArrayList<>();
+		List<RdfTypeInfo> rdfTypes = Collections.synchronizedList(new ArrayList<>());
 
 		ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
 
