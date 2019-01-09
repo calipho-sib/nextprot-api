@@ -1,5 +1,24 @@
 package org.nextprot.api.rdf.service.impl;
 
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.rdf.domain.RdfConstants;
+import org.nextprot.api.rdf.domain.RdfTypeInfo;
+import org.nextprot.api.rdf.domain.TripleInfo;
+import org.nextprot.api.rdf.service.RdfHelpService;
+import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.rdf.utils.RdfPrefixUtils;
+import org.nextprot.api.rdf.utils.SparqlDictionary;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,26 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.rdf.domain.RdfConstants;
-import org.nextprot.api.rdf.domain.RdfTypeInfo;
-import org.nextprot.api.rdf.domain.TripleInfo;
-import org.nextprot.api.rdf.service.RdfHelpService;
-import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.rdf.utils.RdfPrefixUtils;
-import org.nextprot.api.rdf.utils.SparqlDictionary;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 //@Lazy
 @Service
@@ -60,9 +59,9 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		errorCount++;
 	}
 	
-	@Cacheable("rdfhelp")
+	@Cacheable(value = "rdfhelp", sync = true)
 	@Override
-	public synchronized List<RdfTypeInfo> getRdfTypeFullInfoList() {
+	public List<RdfTypeInfo> getRdfTypeFullInfoList() {
 
 		long t0 = System.currentTimeMillis();
 		
