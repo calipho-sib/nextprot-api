@@ -104,6 +104,10 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 		connection.setConnectTimeout(3000);
 		connection.connect();
 
-		return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
+		boolean up = connection.getResponseCode() == HttpURLConnection.HTTP_OK;
+
+		connection.disconnect();
+
+		return up;
 	}
 }

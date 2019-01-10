@@ -10,7 +10,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
 import org.nextprot.api.etl.service.impl.SequenceFeatureFactoryServiceMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
-import org.nextprot.api.etl.service.impl.StatementTranformerServiceImpl;
+import org.nextprot.api.etl.service.impl.StatementTransformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
@@ -31,7 +31,7 @@ public abstract class StatementETLBaseUnitTest {
 
 	protected StatementETLServiceImpl statementETLServiceMocked = null;
 
-	protected StatementTranformerServiceImpl transformerMockedService = null;
+	protected StatementTransformerServiceImpl transformerMockedService = null;
 	
 	@Before
 	public void init() {
@@ -54,7 +54,7 @@ public abstract class StatementETLBaseUnitTest {
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
 		
-		transformerMockedService = new StatementTranformerServiceImpl();
+		transformerMockedService = new StatementTransformerServiceImpl();
 		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
 		transformerMockedService.setIsoformService(isoformService);
 		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
