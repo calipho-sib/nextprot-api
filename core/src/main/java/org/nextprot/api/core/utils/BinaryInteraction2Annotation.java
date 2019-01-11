@@ -1,7 +1,6 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
@@ -18,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// TODO: SHOULD BE A SERVICE AS IT IS IMPOSSIBLE TO MOCK !!!
+// TODO: SHOULD BE A SERVICE AS IT IS DIFFICULT TO MOCK !!!
 public class BinaryInteraction2Annotation {
 
-	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms, MainNamesService mainNamesService) {
+	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms, MainNamesService mainNamesService) throws MissingInteractantEntryException {
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
@@ -144,7 +143,7 @@ public class BinaryInteraction2Annotation {
 		return interactant; // should never be null
 	}
 
-	static BioObject newBioObject(Interactant interactant, MainNamesService mainNamesService) {
+	static BioObject newBioObject(Interactant interactant, MainNamesService mainNamesService) throws MissingInteractantEntryException {
 
 		BioObject.BioType bioType = (interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN;
 
@@ -161,7 +160,7 @@ public class BinaryInteraction2Annotation {
 
 			if (!allMainNameEntries.containsKey(ac)) {
 
-				throw new NextProtException("Cannot create BioObject: entry accession "+ac + " does not exist in interactant " +interactant.toString());
+				throw new MissingInteractantEntryException(interactant);
 			}
 
 			String masterAc = allMainNameEntries.get(ac).getEntryAccession();
@@ -174,5 +173,13 @@ public class BinaryInteraction2Annotation {
 		}
 		if (interactant.getUrl()!=null) be.getProperties().put("url", interactant.getUrl());
 		return be;
+	}
+
+	public static class MissingInteractantEntryException extends Exception {
+
+		public MissingInteractantEntryException(Interactant interactant) {
+
+			super("entry accession "+interactant.getNextprotAccession() + " does not exist in interactant " +interactant.toString());
+		}
 	}
 }
