@@ -41,11 +41,11 @@ public class ProteinDigestionController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/digestion/{entryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/digestion/{entryAccession}", verb = ApiVerb.GET, description = "digest the mature protein with a specific protease")
+	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/digestion/{isoformOrEntryAccession}", verb = ApiVerb.GET, description = "digest the mature protein with a specific protease")
 	public Set<String> digestProtein(
-			@ApiQueryParam(name = "entryAccession", description = "A neXtProt entry accession.", allowedvalues = { "NX_P01308" })
-			@RequestParam(value = "entryAccession") String entryAccession,
+			@ApiQueryParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
+			@RequestParam(value = "isoformOrEntryAccession") String isoformOrEntryAccession,
 			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease") String protease,
 			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
@@ -55,6 +55,6 @@ public class ProteinDigestionController {
 			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (cannot be greater than 2)", allowedvalues = { "2" })
 			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages) {
 
-		return digestionService.digest(entryAccession, protease.toUpperCase(), minPepLen, maxPepLen, maxMissedCleavages);
+		return digestionService.digest(isoformOrEntryAccession, protease.toUpperCase(), minPepLen, maxPepLen, maxMissedCleavages);
 	}
 }
