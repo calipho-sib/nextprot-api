@@ -8,8 +8,13 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class ByIsoformPositionComparatorTest {
@@ -156,6 +161,7 @@ public class ByIsoformPositionComparatorTest {
 
         when(mock.getAnnotationId()).thenReturn(id);
         when(mock.getAPICategory()).thenReturn(cat);
+        when(mock.isAnnotationPositionalForIsoform(anyString())).thenReturn(true);
 
         Map<String, AnnotationIsoformSpecificity> map = new HashMap<>();
         for (TargetIsoform target : targets) {
