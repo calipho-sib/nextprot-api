@@ -1,10 +1,13 @@
 package org.nextprot.api.core.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -46,9 +50,9 @@ public class ProteinDigestionController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 	@ApiMethod(path = "/digestion/{isoformOrEntryAccession}", verb = ApiVerb.GET, description = "digest a protein with a specific protease")
-	public Set<String> digestProtein(
+	public String digestProtein(
 			@ApiQueryParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
 			@RequestParam(value = "isoformOrEntryAccession") String isoformOrEntryAccession,
 			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein", allowedvalues = { "TRYPSIN" })
@@ -60,7 +64,8 @@ public class ProteinDigestionController {
 			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (cannot be greater than 2)", allowedvalues = { "2" })
 			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages,
 			@ApiQueryParam(name = "digestmaturepartsonly", description = "digest mature parts of protein if true", allowedvalues = { "true" })
-			@RequestParam(value = "digestmaturepartsonly", required = false) Boolean digestmaturepartsonly) {
+			@RequestParam(value = "digestmaturepartsonly", required = false) Boolean digestmaturepartsonly,
+			HttpServletRequest request) {
 
 		ProteinDigesterBuilder builder = new ProteinDigesterBuilder()
 				.proteaseName(protease)
@@ -69,6 +74,20 @@ public class ProteinDigestionController {
 				.maxMissedCleavageCount(maxMissedCleavages)
 				.withMaturePartsOnly(digestmaturepartsonly);
 
-		return digestionService.digestProteins(isoformOrEntryAccession, builder);
+		Set<String> peptides = digestionService.digestProteins(isoformOrEntryAccession, builder);
+
+		if (request.getRequestURI().toLowerCase().endsWith(".json")) {
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				return mapper.writeValueAsString(peptides);
+			} catch (JsonProcessingException e) {
+				throw new NextProtException(e);
+			}
+		}
+		else {
+
+			return String.join(", ", peptides);
+		}
 	}
 }
