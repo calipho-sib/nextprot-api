@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
@@ -14,6 +15,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,8 +56,8 @@ public class ProteinDigestionController {
 	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 	@ApiMethod(path = "/digestion/{isoformOrEntryAccession}", verb = ApiVerb.GET, description = "digest a protein with a specific protease")
 	public String digestProtein(
-			@ApiQueryParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
-			@RequestParam(value = "isoformOrEntryAccession") String isoformOrEntryAccession,
+			@ApiPathParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
+			@PathVariable("isoformOrEntryAccession") String isoformOrEntryAccession,
 			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease") String protease,
 			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
@@ -92,7 +94,7 @@ public class ProteinDigestionController {
 				return String.join(", ", peptides);
 			}
 		} catch (ProteinDigestion.MissingIsoformException e) {
-			throw new NextProtException(e);
+			throw new NextProtException(e.getMessage());
 		}
 	}
 }

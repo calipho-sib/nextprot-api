@@ -14,7 +14,13 @@ public class ProteinDigesterBuilder {
 	private boolean maturePartsOnly = true;
 
 	public ProteinDigesterBuilder proteaseName(String proteaseName) {
-		this.protease = new ProteaseAdapter().getProtease(proteaseName.toUpperCase());
+		try {
+			this.protease = new ProteaseAdapter().getProtease(proteaseName.toUpperCase());
+		}
+		catch(IllegalArgumentException e) {
+
+			throw new NextProtException("unknown protease name: "+proteaseName + " (available proteases="+new ProteaseAdapter().getProteaseNames()+")");
+		}
 		return this;
 	}
 
