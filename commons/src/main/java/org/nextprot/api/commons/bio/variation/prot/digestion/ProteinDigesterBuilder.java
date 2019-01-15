@@ -7,14 +7,14 @@ import org.nextprot.api.commons.exception.NextProtException;
 
 public class ProteinDigesterBuilder {
 
-	private String proteaseName = Protease.TRYPSIN.name();
+	private Protease protease = Protease.TRYPSIN;
 	private int minpeplen = 7;
 	private int maxpeplen = 77;
 	private int missedCleavageCount = 2;
 	private boolean maturePartsOnly = true;
 
 	public ProteinDigesterBuilder proteaseName(String proteaseName) {
-		this.proteaseName = proteaseName.toUpperCase();
+		this.protease = new ProteaseAdapter().getProtease(proteaseName.toUpperCase());
 		return this;
 	}
 
@@ -53,7 +53,7 @@ public class ProteinDigesterBuilder {
 
 	public ProteinDigester build() {
 
-		return new ProteinDigester.Builder(new ProteaseAdapter().getProtease(proteaseName))
+		return new ProteinDigester.Builder(protease)
 				.controller(new LengthDigestionController(minpeplen, maxpeplen))
 				.missedCleavageMax(missedCleavageCount)
 				.build();

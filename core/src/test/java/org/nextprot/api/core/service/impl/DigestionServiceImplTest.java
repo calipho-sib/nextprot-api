@@ -50,6 +50,12 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		digestionService = new DigestionServiceImpl(annotationService, isoformService, masterIdentifierService);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldNotDigestWhenUnknownProtease() throws ProteinDigestion.MissingIsoformException {
+
+		digestionService.digestProteins("NX_P01308", new ProteinDigesterBuilder().proteaseName("roudoudou"));
+	}
+
     @Test
     public void shouldNotDigestWhenNoAnnotations() throws ProteinDigestion.MissingIsoformException {
 

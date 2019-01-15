@@ -16,4 +16,16 @@ public class ProteinDigesterBuilderTest {
 
 		new ProteinDigesterBuilder().minPepLen(7).maxPepLen(77).maxMissedCleavageCount(-2);
 	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldThrowErrorWhenGettingUnknownProtease() {
+
+		new ProteaseAdapter().getProtease("roudoudou");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void shouldNotDigestProteinWithUnknownProtease() {
+
+		new ProteinDigesterBuilder().proteaseName("roudoudou");
+	}
 }
