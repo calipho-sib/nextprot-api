@@ -3,22 +3,24 @@ package org.nextprot.api.core.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.expasy.mzjava.proteomics.mol.Peptide;
-import org.expasy.mzjava.proteomics.mol.Protein;
-import org.expasy.mzjava.proteomics.mol.digest.LengthDigestionController;
-import org.expasy.mzjava.proteomics.mol.digest.Protease;
 import org.expasy.mzjava.proteomics.mol.digest.ProteinDigester;
+import org.nextprot.api.commons.bio.variation.prot.digestion.AminoAcidSequenceDigestion;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteaseAdapter;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,27 +45,26 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Set<String> digest(String entryAccession, String proteaseName, int minpeplen, int maxpeplen, int missedCleavageCount) {
+	public Set<String> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) {
 
-		if (missedCleavageCount < 0) {
-			throw new NextProtException("number of missed cleavages should be positive.");
+		if (IsoformUtils.isIsoformAccession(isoformOrEntryAccession)) {
+			return digestIsoforms(Collections.singletonList(isoformOrEntryAccession), builder);
 		}
-		else if (missedCleavageCount > 2) {
-			throw new NextProtException(missedCleavageCount+" missed cleavages is too high: cannot configure digestion with more than 2 missed cleavages.");
+		else {
+			return digestIsoforms(isoformService.findIsoformsByEntryName(isoformOrEntryAccession).stream()
+					.map(isoform -> isoform.getIsoformAccession()).collect(Collectors.toList()), builder);
 		}
+	}
 
-		if (maxpeplen <= 0) {
-			throw new NextProtException("max peptide length should be greater than 1.");
-		}
-
-		ProteinDigester digester = new ProteinDigester.Builder(getProtease(proteaseName))
-				.controller(new LengthDigestionController(minpeplen, maxpeplen))
-				.missedCleavageMax(missedCleavageCount)
-				.build();
+	private Set<String> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) {
 
 		List<Peptide> peptides = new ArrayList<>();
 
-		digestProtein(entryAccession, digester, peptides);
+		ProteinDigestion digestion = (builder.withMaturePartsOnly()) ?
+				new MatureSequencesDigestion(builder.build()) : new WholeSequenceDigestion(builder.build());
+
+		isoformAccessions
+				.forEach(isoformAccession -> digestion.digest(isoformAccession, peptides));
 
 		return peptides.stream()
 				.map(peptide -> peptide.toSymbolString())
@@ -72,28 +73,26 @@ class DigestionServiceImpl implements DigestionService {
 
 	@Cacheable("all-tryptic-digests")
 	@Override
-	public Set<String> digestAllWithTrypsin() {
+	public Set<String> digestAllMatureProteinsWithTrypsin() {
 
-		ProteinDigester digester = new ProteinDigester.Builder(Protease.TRYPSIN)
-				.controller(new LengthDigestionController(7, 77))
-				.missedCleavageMax(2)
-				.build();
+		ProteinDigestion digestion = new MatureSequencesDigestion(new ProteinDigesterBuilder().build());
 
 		Set<String> allEntries = masterIdentifierService.findUniqueNames();
-		List<Peptide> allPeptides = new ArrayList<>();
-		int ecnt = 0;
+		List<Peptide> peptides = new ArrayList<>();
+		int processedEntries = 0;
 
-		LOGGER.info("Digesting " + allEntries.size() + " entries...");
+		LOGGER.info("Digesting mature proteins of " + allEntries.size() + " neXtProt entries...");
 		for (String entryAccession : allEntries) {
 
-			digestProtein(entryAccession, digester, allPeptides);
+			isoformService.findIsoformsByEntryName(entryAccession)
+					.forEach(isoform -> digestion.digest(isoform.getIsoformAccession(), peptides));
 
-			if(ecnt++ % 100 == 0) {
-				LOGGER.info(ecnt + " entries so far...");
+			if (processedEntries++ % 100 == 0) {
+				LOGGER.info(processedEntries + " entries processed");
 			}
 		}
 
-		return allPeptides.stream()
+		return peptides.stream()
 				.map(peptide -> peptide.toSymbolString())
 				.collect(Collectors.toSet());
 	}
@@ -101,61 +100,52 @@ class DigestionServiceImpl implements DigestionService {
 	@Override
 	public List<String> getProteaseNames() {
 
-		return Stream.of(Protease.values())
-				.map(protease -> getProteaseNameWithoutTypo(protease))
-				.sorted()
-				.collect(Collectors.toList());
+		return new ProteaseAdapter().getProteaseNames();
 	}
 
-	private void digestProtein(String entryAccession, ProteinDigester digester, List<Peptide> peptides) {
+	private class MatureSequencesDigestion extends AminoAcidSequenceDigestion {
 
-		// We digest mature chains and propeptides
-		annotationService.findAnnotations(entryAccession).stream()
-				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
-						annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
-				.forEach(annotation -> {
+		private MatureSequencesDigestion(ProteinDigester digester) {
+			super(digester);
+		}
 
-					for (String isoformAccession : annotation.getTargetingIsoformsMap().keySet()) {
+		@Override
+		public List<String> getIsoformSequences(String isoformAccession) {
 
-						Integer start = annotation.getStartPositionForIsoform(isoformAccession);
-						Integer end = annotation.getEndPositionForIsoform(isoformAccession);
+			String entryAccession = IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(isoformAccession);
 
-						if (start != null && end != null) {
+			return annotationService.findAnnotations(entryAccession).stream()
+					.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
+							annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
+					.filter(annotation -> annotation.isAnnotationPositionalForIsoform(isoformAccession))
+					.flatMap(annotation -> {
+							Integer start = annotation.getStartPositionForIsoform(isoformAccession);
+							Integer end = annotation.getEndPositionForIsoform(isoformAccession);
 
-							Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
-							String isoformSequence = isoform.getSequence();
+							if (start != null && end != null) {
 
-							digester.digest(new Protein(isoformAccession, isoformSequence.substring(start-1, end)), peptides);
+								Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
+								return Stream.of(isoform.getSequence().substring(start - 1, end));
+							}
+							return Stream.empty();
 						}
-					}
-				});
+					)
+					.collect(Collectors.toList());
+		}
 	}
 
-	private Protease getProtease(String proteaseName) {
+	private class WholeSequenceDigestion extends AminoAcidSequenceDigestion {
 
-		if ("PEPSIN_PH_1_3".equals(proteaseName)) {
-			return Protease.PEPSINE_PH_1_3;
+		private WholeSequenceDigestion(ProteinDigester digester) {
+			super(digester);
 		}
-		else if ("PEPSIN_PH_GT_2".equals(proteaseName)) {
-			return Protease.PEPSINE_PH_GT_2;
-		}
-		else if ("THERMOLYSIN".equals(proteaseName)) {
-			return Protease.THERMOLYSINE;
-		}
-		return Protease.valueOf(proteaseName);
-	}
 
-	private String getProteaseNameWithoutTypo(Protease protease) {
+		@Override
+		public List<String> getIsoformSequences(String isoformAccession) {
 
-		if (protease == Protease.PEPSINE_PH_1_3) {
-			return "PEPSIN_PH_1_3";
+			Isoform isoform = isoformService.findIsoform(isoformAccession);
+
+			return Collections.singletonList(isoform.getSequence());
 		}
-		else if (protease == Protease.PEPSINE_PH_GT_2) {
-			return "PEPSIN_PH_GT_2";
-		}
-		else if (protease == Protease.THERMOLYSINE) {
-			return "THERMOLYSIN";
-		}
-		return protease.name();
 	}
 }

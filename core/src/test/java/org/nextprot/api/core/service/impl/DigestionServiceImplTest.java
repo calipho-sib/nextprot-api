@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -49,24 +49,12 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		digestionService = new DigestionServiceImpl(annotationService, isoformService, masterIdentifierService);
 	}
 
-	@Test(expected = NextProtException.class)
-	public void shouldNotDigestProteinWhenNegativeMaxPepLength() {
-
-		digestionService.digest("NX_P01308", "TRYPSIN", 7, -77, 2);
-	}
-
-	@Test(expected = NextProtException.class)
-	public void shouldNotDigestProteinWhenNegativeMCs() {
-
-		digestionService.digest("NX_P01308", "TRYPSIN", 7, 77, -2);
-	}
-
     @Test
     public void shouldNotDigestWhenNoAnnotations() {
 
 	    Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
 
-	    Set<String> peptides = digestionService.digest("NX_P01308", "TRYPSIN", 7, 77, 2);
+	    Set<String> peptides = digestionService.digestProteins("NX_P01308", new ProteinDigesterBuilder());
 
 	    Assert.assertTrue(peptides.isEmpty());
     }
@@ -80,14 +68,25 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		annotations.add(mockAnnotation(2, AnnotationCategory.MATURATION_PEPTIDE, new ByIsoformPositionComparatorTest.TargetIsoform("NX_P01308-1", 57, 87)));
 		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(annotations);
 
-		Set<String> peptides = digestionService.digest("NX_P01308", "TRYPSIN", 7, 77, 2);
+		Set<String> peptides = digestionService.digestProteins("NX_P01308",
+				new ProteinDigesterBuilder().minPepLen(1).maxMissedCleavageCount(0));
 
-		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() >= 7 && peptide.length() <= 77));
+		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() > 0 && peptide.length() <= 77));
+		Assert.assertEquals(5, peptides.size());
+		Assert.assertTrue(peptides.containsAll(Arrays.asList("T", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ", "GIVEQCCTSICSLYQLENYCN",
+				"FVNQHLCGSHLVEALYLVCGER", "GFFYTPK")));
+	}
+
+	@Test
+	public void shouldDigestRawProteinSequences() {
+
+		Set<String> peptides = digestionService.digestProteins("NX_P01308",
+				new ProteinDigesterBuilder().withMaturePartsOnly(false).minPepLen(1).maxMissedCleavageCount(0));
+
+		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() > 0 && peptide.length() <= 77));
 		Assert.assertEquals(7, peptides.size());
-		// should find mature protein and propeptide
-		Assert.assertTrue(peptides.containsAll(Arrays.asList("FVNQHLCGSHLVEALYLVCGERGFFYTPKT", "GIVEQCCTSICSLYQLENYCN", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ")));
-		// should find digests
-		Assert.assertTrue(peptides.containsAll(Arrays.asList("FVNQHLCGSHLVEALYLVCGERGFFYTPK", "FVNQHLCGSHLVEALYLVCGER", "GFFYTPK", "GFFYTPKT")));
+		Assert.assertTrue(peptides.containsAll(Arrays.asList("MALWMR", "LLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGER",
+				"GFFYTPK", "TR", "R", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQK", "GIVEQCCTSICSLYQLENYCN")));
 	}
 
 	@Test
@@ -100,7 +99,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(annotations);
 		Mockito.when(masterIdentifierService.findUniqueNames()).thenReturn(Sets.newHashSet("NX_P01308"));
 
-		Set<String> peptides = digestionService.digestAllWithTrypsin();
+		Set<String> peptides = digestionService.digestAllMatureProteinsWithTrypsin();
 
 		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() >= 7 && peptide.length() <= 77));
 		Assert.assertEquals(7, peptides.size());
