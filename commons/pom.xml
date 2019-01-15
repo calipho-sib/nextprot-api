@@ -15,6 +15,21 @@
 	<description>Common utilities for the nextprot API</description>
 	<url>https://api.nextprot.org</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.expasy.mzjava</groupId>
+            <artifactId>mzjava-proteomics</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.expasy.mzjava</groupId>
+            <artifactId>mzjava-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+    </dependencies>
+
 	<build>
 		<finalName>nextprot-api-commons</finalName>
 		<plugins>
