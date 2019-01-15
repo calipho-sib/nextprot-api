@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
@@ -50,7 +51,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 	}
 
     @Test
-    public void shouldNotDigestWhenNoAnnotations() {
+    public void shouldNotDigestWhenNoAnnotations() throws ProteinDigestion.MissingIsoformException {
 
 	    Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
 
@@ -59,8 +60,28 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 	    Assert.assertTrue(peptides.isEmpty());
     }
 
+	@Test(expected = ProteinDigestion.MissingIsoformException.class)
+	public void shouldThrowErrorWhenUnknownIsoform() throws ProteinDigestion.MissingIsoformException {
+
+		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
+
+		Set<String> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder());
+
+		Assert.assertTrue(peptides.isEmpty());
+	}
+
+	@Test(expected = ProteinDigestion.MissingIsoformException.class)
+	public void shouldThrowErrorWhenUnknownIsoform2() throws ProteinDigestion.MissingIsoformException {
+
+		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
+
+		Set<String> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder().withMaturePartsOnly(false));
+
+		Assert.assertTrue(peptides.isEmpty());
+	}
+
 	@Test
-	public void shouldDigestMatureProteinAndPropeptides() {
+	public void shouldDigestMatureProteinAndPropeptides() throws ProteinDigestion.MissingIsoformException {
 
 		List<Annotation> annotations = new ArrayList<>();
 		annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new ByIsoformPositionComparatorTest.TargetIsoform("NX_P01308-1", 25, 54)));
@@ -78,7 +99,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 	}
 
 	@Test
-	public void shouldDigestRawProteinSequences() {
+	public void shouldDigestRawProteinSequences() throws ProteinDigestion.MissingIsoformException {
 
 		Set<String> peptides = digestionService.digestProteins("NX_P01308",
 				new ProteinDigesterBuilder().withMaturePartsOnly(false).minPepLen(1).maxMissedCleavageCount(0));

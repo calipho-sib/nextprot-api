@@ -7,6 +7,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
@@ -74,20 +75,24 @@ public class ProteinDigestionController {
 				.maxMissedCleavageCount(maxMissedCleavages)
 				.withMaturePartsOnly(digestmaturepartsonly);
 
-		Set<String> peptides = digestionService.digestProteins(isoformOrEntryAccession, builder);
+		try {
+			Set<String> peptides = digestionService.digestProteins(isoformOrEntryAccession, builder);
 
-		if (request.getRequestURI().toLowerCase().endsWith(".json")) {
-			ObjectMapper mapper = new ObjectMapper();
+			if (request.getRequestURI().toLowerCase().endsWith(".json")) {
+				ObjectMapper mapper = new ObjectMapper();
 
-			try {
-				return mapper.writeValueAsString(peptides);
-			} catch (JsonProcessingException e) {
-				throw new NextProtException(e);
+				try {
+					return mapper.writeValueAsString(peptides);
+				} catch (JsonProcessingException e) {
+					throw new NextProtException(e);
+				}
 			}
-		}
-		else {
+			else {
 
-			return String.join(", ", peptides);
+				return String.join(", ", peptides);
+			}
+		} catch (ProteinDigestion.MissingIsoformException e) {
+			throw new NextProtException(e);
 		}
 	}
 }

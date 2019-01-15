@@ -6,6 +6,14 @@ import java.util.List;
 
 public interface ProteinDigestion {
 
-	void digest(String isoformAccession, List<Peptide> peptides);
-	List<String> getIsoformSequences(String isoformAccession);
+	void digest(String isoformAccession, List<Peptide> peptides) throws MissingIsoformException;
+	List<String> getIsoformSequences(String isoformAccession) throws MissingIsoformException;
+
+	class MissingIsoformException extends Exception {
+
+		public MissingIsoformException(String accession) {
+
+			super("isoform "+ accession + " was not found");
+		}
+	}
 }

@@ -9,6 +9,7 @@ import org.nextprot.api.commons.bio.variation.prot.digestion.ProteaseAdapter;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -45,7 +46,7 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Set<String> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) {
+	public Set<String> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
 		if (IsoformUtils.isIsoformAccession(isoformOrEntryAccession)) {
 			return digestIsoforms(Collections.singletonList(isoformOrEntryAccession), builder);
@@ -56,15 +57,17 @@ class DigestionServiceImpl implements DigestionService {
 		}
 	}
 
-	private Set<String> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) {
+	private Set<String> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
 		List<Peptide> peptides = new ArrayList<>();
 
 		ProteinDigestion digestion = (builder.withMaturePartsOnly()) ?
 				new MatureSequencesDigestion(builder.build()) : new WholeSequenceDigestion(builder.build());
 
-		isoformAccessions
-				.forEach(isoformAccession -> digestion.digest(isoformAccession, peptides));
+		for (String isoformAccession : isoformAccessions) {
+
+			digestion.digest(isoformAccession, peptides);
+		}
 
 		return peptides.stream()
 				.map(peptide -> peptide.toSymbolString())
@@ -85,7 +88,13 @@ class DigestionServiceImpl implements DigestionService {
 		for (String entryAccession : allEntries) {
 
 			isoformService.findIsoformsByEntryName(entryAccession)
-					.forEach(isoform -> digestion.digest(isoform.getIsoformAccession(), peptides));
+					.forEach(isoform -> {
+						try {
+							digestion.digest(isoform.getIsoformAccession(), peptides);
+						} catch (ProteinDigestion.MissingIsoformException e) {
+							throw new NextProtException(e);
+						}
+					});
 
 			if (processedEntries++ % 100 == 0) {
 				LOGGER.info(processedEntries + " entries processed");
@@ -110,9 +119,17 @@ class DigestionServiceImpl implements DigestionService {
 		}
 
 		@Override
-		public List<String> getIsoformSequences(String isoformAccession) {
+		public List<String> getIsoformSequences(String isoformAccession) throws MissingIsoformException {
+
+			Isoform isoform = isoformService.findIsoform(isoformAccession);
+
+			if (isoform == null) {
+
+				throw new MissingIsoformException(isoformAccession);
+			}
 
 			String entryAccession = IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(isoformAccession);
+			String sequence = isoform.getSequence();
 
 			return annotationService.findAnnotations(entryAccession).stream()
 					.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
@@ -124,8 +141,7 @@ class DigestionServiceImpl implements DigestionService {
 
 							if (start != null && end != null) {
 
-								Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
-								return Stream.of(isoform.getSequence().substring(start - 1, end));
+								return Stream.of(sequence.substring(start - 1, end));
 							}
 							return Stream.empty();
 						}
@@ -141,9 +157,14 @@ class DigestionServiceImpl implements DigestionService {
 		}
 
 		@Override
-		public List<String> getIsoformSequences(String isoformAccession) {
+		public List<String> getIsoformSequences(String isoformAccession) throws MissingIsoformException {
 
 			Isoform isoform = isoformService.findIsoform(isoformAccession);
+
+			if (isoform == null) {
+
+				throw new MissingIsoformException(isoformAccession);
+			}
 
 			return Collections.singletonList(isoform.getSequence());
 		}

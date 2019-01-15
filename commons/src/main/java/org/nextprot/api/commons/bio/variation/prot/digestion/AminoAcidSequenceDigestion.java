@@ -16,7 +16,7 @@ public abstract class AminoAcidSequenceDigestion implements ProteinDigestion {
 	}
 
 	@Override
-	public void digest(String isoformAccession, List<Peptide> peptides) {
+	public void digest(String isoformAccession, List<Peptide> peptides) throws MissingIsoformException {
 
 		getIsoformSequences(isoformAccession).forEach(sequence -> digester.digest(new Protein(isoformAccession, sequence), peptides));
 	}
