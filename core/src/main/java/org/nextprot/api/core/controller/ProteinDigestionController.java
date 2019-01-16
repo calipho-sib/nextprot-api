@@ -54,24 +54,34 @@ public class ProteinDigestionController {
 	public String digestProtein(
 			@ApiPathParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
 			@PathVariable("isoformOrEntryAccession") String isoformOrEntryAccession,
-			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein", allowedvalues = { "TRYPSIN" })
-			@RequestParam(value = "protease") String protease,
-			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length", allowedvalues = { "7" })
+			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein (trypsin by default)", allowedvalues = { "TRYPSIN" })
+			@RequestParam(value = "protease", required = false) String protease,
+			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length (1 by default)", allowedvalues = { "1" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
-			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length", allowedvalues = { "77" })
+			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length")
 			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen,
-			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (cannot be greater than 2)", allowedvalues = { "2" })
+			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (0 by default, cannot be greater than 2)", allowedvalues = { "0" })
 			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages,
-			@ApiQueryParam(name = "digestmaturepartsonly", description = "digest mature parts of protein if true", allowedvalues = { "true" })
+			@ApiQueryParam(name = "digestmaturepartsonly", description = "digest mature parts of protein if true (true by default)", allowedvalues = { "true" })
 			@RequestParam(value = "digestmaturepartsonly", required = false) Boolean digestmaturepartsonly,
 			HttpServletRequest request) {
 
-		ProteinDigesterBuilder builder = new ProteinDigesterBuilder()
-				.proteaseName(protease)
-				.minPepLen(minPepLen)
-				.maxPepLen(maxPepLen)
-				.maxMissedCleavageCount(maxMissedCleavages)
-				.withMaturePartsOnly(digestmaturepartsonly);
+		ProteinDigesterBuilder builder = new ProteinDigesterBuilder();
+		if (protease != null) {
+			builder.proteaseName(protease);
+		}
+		if (minPepLen != null) {
+			builder.minPepLen(minPepLen);
+		}
+		if (maxPepLen != null) {
+			builder.maxPepLen(maxPepLen);
+		}
+		if (maxMissedCleavages != null) {
+			builder.maxMissedCleavageCount(maxMissedCleavages);
+		}
+		if (digestmaturepartsonly != null) {
+			builder.withMaturePartsOnly(digestmaturepartsonly);
+		}
 
 		try {
 			Set<String> peptides = digestionService.digestProteins(isoformOrEntryAccession, builder);
