@@ -6,9 +6,21 @@ import org.nextprot.api.commons.exception.NextProtException;
 public class ProteinDigesterBuilderTest {
 
 	@Test(expected = NextProtException.class)
+	public void shouldNotDigestProteinWhenNegativeMinPepLength() {
+
+		new ProteinDigesterBuilder().minPepLen(-7);
+	}
+
+	@Test(expected = NextProtException.class)
 	public void shouldNotDigestProteinWhenNegativeMaxPepLength() {
 
 		new ProteinDigesterBuilder().minPepLen(7).maxPepLen(-77);
+	}
+
+	@Test(expected = NextProtException.class)
+	public void shouldNotDigestProteinWhenMinPepGreaterThanMaxLength() {
+
+		new ProteinDigesterBuilder().minPepLen(7).maxPepLen(2).build();
 	}
 
 	@Test(expected = NextProtException.class)

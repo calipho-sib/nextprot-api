@@ -8,9 +8,9 @@ import org.nextprot.api.commons.exception.NextProtException;
 public class ProteinDigesterBuilder {
 
 	private Protease protease = Protease.TRYPSIN;
-	private int minpeplen = 7;
-	private int maxpeplen = 77;
-	private int missedCleavageCount = 2;
+	private int minpeplen = 1;
+	private int maxpeplen = Integer.MAX_VALUE;
+	private int missedCleavageCount = 0;
 	private boolean maturePartsOnly = true;
 
 	public ProteinDigesterBuilder proteaseName(String proteaseName) {
@@ -25,13 +25,16 @@ public class ProteinDigesterBuilder {
 	}
 
 	public ProteinDigesterBuilder minPepLen(int minpeplen) {
+		if (minpeplen <= 0) {
+			throw new NextProtException("min peptide length should be greater than 0.");
+		}
 		this.minpeplen = minpeplen;
 		return this;
 	}
 
 	public ProteinDigesterBuilder maxPepLen(int maxpeplen) {
 		if (maxpeplen <= 0) {
-			throw new NextProtException("max peptide length should be greater than 1.");
+			throw new NextProtException("max peptide length should be greater than 0.");
 		}
 		this.maxpeplen = maxpeplen;
 		return this;
@@ -58,6 +61,10 @@ public class ProteinDigesterBuilder {
 	}
 
 	public ProteinDigester build() {
+
+		if (minpeplen > maxpeplen) {
+			throw new NextProtException("max peptide length should be greater than min peptide length.");
+		}
 
 		return new ProteinDigester.Builder(protease)
 				.controller(new LengthDigestionController(minpeplen, maxpeplen))
