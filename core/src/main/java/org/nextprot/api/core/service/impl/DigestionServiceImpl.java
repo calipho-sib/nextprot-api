@@ -78,7 +78,8 @@ class DigestionServiceImpl implements DigestionService {
 	@Override
 	public Set<String> digestAllMatureProteinsWithTrypsin() {
 
-		ProteinDigestion digestion = new MatureSequencesDigestion(new ProteinDigesterBuilder().build());
+		ProteinDigestion digestion = new MatureSequencesDigestion(new ProteinDigesterBuilder()
+				.minPepLen(7).maxPepLen(77).maxMissedCleavageCount(2).build());
 
 		Set<String> allEntries = masterIdentifierService.findUniqueNames();
 		List<Peptide> peptides = new ArrayList<>();
