@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -50,7 +51,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		digestionService = new DigestionServiceImpl(annotationService, isoformService, masterIdentifierService);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NextProtException.class)
 	public void shouldNotDigestWhenUnknownProtease() throws ProteinDigestion.MissingIsoformException {
 
 		digestionService.digestProteins("NX_P01308", new ProteinDigesterBuilder().proteaseName("roudoudou"));

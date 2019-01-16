@@ -23,7 +23,7 @@ public class ProteinDigesterBuilderTest {
 		new ProteaseAdapter().getProtease("roudoudou");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NextProtException.class)
 	public void shouldNotDigestProteinWithUnknownProtease() {
 
 		new ProteinDigesterBuilder().proteaseName("roudoudou");
