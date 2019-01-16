@@ -14,19 +14,18 @@ import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
 // See also sources of mzjava-proteomics are available at https://bitbucket.org/sib-pig/mzjava-proteomics
-@Controller
+@RestController
 @Api(name = "Protein digestion", description = "Digest proteins with proteases", group = "Tools")
 public class ProteinDigestionController {
 
@@ -36,7 +35,6 @@ public class ProteinDigestionController {
 	@Autowired
 	private IsoformService isoformService;
 
-	@ResponseBody
 	@RequestMapping(value = "/digestion/available-protease-list", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ApiMethod(path = "/digestion/available-protease-list", verb = ApiVerb.GET, description = "list all available proteases")
 	public List<String> listAllProteases() {
@@ -44,15 +42,13 @@ public class ProteinDigestionController {
 		return digestionService.getProteaseNames();
 	}
 
-	@ResponseBody
 	@RequestMapping(value = "/digestion/digest-all-proteins", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt mature proteins with TRYPSIN (with a maximum of 2 missed cleavages)")
+	//@ApiMethod(path = "/digestion/digest-all-proteins", verb = ApiVerb.GET, description = "digest all neXtProt mature proteins with TRYPSIN (with a maximum of 2 missed cleavages)")
 	public Set<String> digestAllMatureProteins() {
 
 		return digestionService.digestAllMatureProteinsWithTrypsin();
 	}
 
-	@ResponseBody
 	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 	@ApiMethod(path = "/digestion/{isoformOrEntryAccession}", verb = ApiVerb.GET, description = "digest a protein with a specific protease")
 	public String digestProtein(
