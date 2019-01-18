@@ -8,7 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 public class ProteinDigesterBuilder {
 
 	private Protease protease = Protease.TRYPSIN;
-	private int minpeplen = 1;
+	private int minpeplen = 7;
 	private int maxpeplen = Integer.MAX_VALUE;
 	private int missedCleavageCount = 0;
 	private boolean maturePartsOnly = true;

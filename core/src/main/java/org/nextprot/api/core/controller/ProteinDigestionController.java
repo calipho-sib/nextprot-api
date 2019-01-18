@@ -56,7 +56,7 @@ public class ProteinDigestionController {
 			@PathVariable("isoformOrEntryAccession") String isoformOrEntryAccession,
 			@ApiQueryParam(name = "protease", description = "a protease to digest a protein (trypsin by default)", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease", required = false) String protease,
-			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length (1 by default)", allowedvalues = { "1" })
+			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length (7 by default)", allowedvalues = { "7" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
 			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length (none by default)")
 			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen,
