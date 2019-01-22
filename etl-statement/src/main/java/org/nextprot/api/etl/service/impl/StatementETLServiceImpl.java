@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.HttpSparqlService;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
@@ -281,7 +282,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					}
 					statementSet.add(new StatementBuilder()
 							.addMap(rs)
-							.addField(StatementField.ENTRY_ACCESSION, nextprotAccession)
+							.addField(StatementField.ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
 							.addField(StatementField.RESOURCE_TYPE, "database")
 							.addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
 							.addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
