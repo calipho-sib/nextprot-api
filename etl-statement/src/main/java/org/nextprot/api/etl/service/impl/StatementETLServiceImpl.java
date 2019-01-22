@@ -256,31 +256,45 @@ public class StatementETLServiceImpl implements StatementETLService {
 		private Set<Statement> setAdditionalFieldsForGlyConnectStatements(Set<Statement> statements) {
 
 			Set<Statement> statementSet = new HashSet<>();
-			Set<Statement> invalidStatements = new HashSet<>();
+			Set<Statement> missingNextProtAccessionStatements = new HashSet<>();
+			Set<Statement> missingCvTermAccessionStatements = new HashSet<>();
 
 			statements.forEach(rs -> {
-				if (rs.getValue(StatementField.NEXTPROT_ACCESSION) != null) {
-					CvTerm cvterm = terminologyService.findCvTermByAccession(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
+				String nextprotAccession = rs.getValue(StatementField.NEXTPROT_ACCESSION);
+				String cvTermAccession = rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+
+				if (isNullOrEmptyString(nextprotAccession)) {
+					missingNextProtAccessionStatements.add(rs);
+				}
+				else if (isNullOrEmptyString(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION))) {
+
+					report.addWarning("skipping missing cv term accession, accession=" + nextprotAccession +
+							", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+					missingCvTermAccessionStatements.add(rs);
+				}
+				else {
+					CvTerm cvterm = terminologyService.findCvTermByAccession(cvTermAccession);
 
 					if (cvterm == null) {
-						throw new NextProtException("invalid cv term "+ rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) + ", accession=" +
-								rs.getValue(StatementField.NEXTPROT_ACCESSION) + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+						throw new NextProtException("invalid cv term "+ cvTermAccession + ", accession=" +
+								nextprotAccession + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
 					}
-
 					statementSet.add(new StatementBuilder()
 							.addMap(rs)
-							.addField(StatementField.ENTRY_ACCESSION, rs.getValue(StatementField.NEXTPROT_ACCESSION))
+							.addField(StatementField.ENTRY_ACCESSION, nextprotAccession)
 							.addField(StatementField.RESOURCE_TYPE, "database")
 							.addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
 							.addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
 							.build());
-				} else {
-					invalidStatements.add(rs);
 				}
 			});
 
-			if (!invalidStatements.isEmpty()) {
-				report.addWarning("Undefined neXtProt accessions: skipping " + invalidStatements.size() + " statements");
+			if (!missingNextProtAccessionStatements.isEmpty()) {
+				report.addWarning("Undefined neXtProt accessions: skipping " + missingNextProtAccessionStatements.size() + " statements");
+			}
+
+			if (!missingCvTermAccessionStatements.isEmpty()) {
+				report.addWarning("Missing cv term accessions: skipping " + missingCvTermAccessionStatements.size() + " statements");
 			}
 
 			report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (ENTRY_ACCESSION, RESOURCE_TYPE, ANNOTATION_NAME, ANNOT_DESCRIPTION and STATEMENT_ID)");
@@ -293,6 +307,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return statement.getValue(StatementField.NEXTPROT_ACCESSION) +
 					"." + statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) +
 					"_" + statement.getValue(StatementField.LOCATION_BEGIN);
+		}
+
+		private boolean isNullOrEmptyString(String value) {
+
+			return value == null || value.isEmpty();
 		}
 
 		private String buildSparql(Set<Statement> statements) {
