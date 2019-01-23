@@ -1,7 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.net.URISyntaxException;
-
 import org.nextprot.api.web.service.PDBProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,14 +17,15 @@ public class PDBController {
 
 	@RequestMapping(value = "/pdb/{entry}",  method = { RequestMethod.GET }, produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String mirrorPDB(@PathVariable("entry") String entryName) throws URISyntaxException {
+	public String mirrorPDB(@PathVariable("entry") String entryName) {
+
 		return this.pdbProxyService.findPdbEntry(entryName);
 	}
 	
 	@RequestMapping(value = "/pdbx/{entry}",  method = { RequestMethod.GET }, produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String mirrorPDBX(@PathVariable("entry") String entryName) throws URISyntaxException {
+	public String mirrorPDBX(@PathVariable("entry") String entryName) {
+
 		return this.pdbProxyService.findPdbxEntry(entryName);
 	}
-	
 }

@@ -5,12 +5,10 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.web.service.PDBProxyService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 @Service
@@ -22,40 +20,24 @@ public class PDBProxyServiceImpl implements PDBProxyService {
 	@Cacheable(value = "pdb-proxy", sync = true)
 	public String findPdbEntry(String id) {
 
-		try {
-
-			 InputStream in = new URL(PDB_URL + id + ".pdb").openStream();
-			 return IOUtils.toString( in);
-
-		} catch (HttpClientErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		} catch (HttpServerErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		} catch (MalformedURLException e) {
-			throw new NextProtException(e.getMessage());
-		} catch (IOException e) {
-			throw new NextProtException(e.getMessage());
-		}
+		return readUrl(PDB_URL + id + ".pdb");
 	}
 
 	@Override
 	@Cacheable(value = "pdbx-proxy", sync = true)
 	public String findPdbxEntry(String id) {
 
-		try {
-
-			 InputStream in = new URL(PDB_URL + id + ".cif").openStream();
-			 return IOUtils.toString( in );
-
-		} catch (HttpClientErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		} catch (HttpServerErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		} catch (MalformedURLException e) {
-			throw new NextProtException(e.getMessage());
-		} catch (IOException e) {
-			throw new NextProtException(e.getMessage());
-		}
+		return readUrl(PDB_URL + id + ".cif");
 	}
 
+	private String readUrl(String url) {
+
+		try {
+			return IOUtils.toString(new InputStreamReader(new URL(url).openStream()));
+		} catch (HttpStatusCodeException e) {
+			throw new NextProtException(e.getResponseBodyAsString());
+		} catch (IOException e) {
+			throw new NextProtException(e.toString());
+		}
+	}
 }
