@@ -22,7 +22,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev","cache"})
+//@ActiveProfiles({ "dev","cache"})
 public class CatalyticActivityUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired

@@ -195,7 +195,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 		List<Annotation> mergedSmiAnnotations = CatalyticActivityUtils.mergeSmiAnnotations(smiAnnotations);
-		return smiAnnotations;
+		return mergedSmiAnnotations;
 	}
 	
 	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
