@@ -54,13 +54,13 @@ public class ProteinDigestionController {
 	public String digestProtein(
 			@ApiPathParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
 			@PathVariable("isoformOrEntryAccession") String isoformOrEntryAccession,
-			@ApiQueryParam(name = "protease", description = "chose a protease to digest a protein (trypsin by default)", allowedvalues = { "TRYPSIN" })
+			@ApiQueryParam(name = "protease", description = "a protease to digest a protein (trypsin by default)", allowedvalues = { "TRYPSIN" })
 			@RequestParam(value = "protease", required = false) String protease,
-			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length (1 by default)", allowedvalues = { "1" })
+			@ApiQueryParam(name = "minpeplen", description = "minimum peptide length (7 by default)", allowedvalues = { "7" })
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
-			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length")
+			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length (none by default)")
 			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen,
-			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (0 by default, cannot be greater than 2)", allowedvalues = { "0" })
+			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (0 by default, maximum 2)", allowedvalues = { "0" })
 			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages,
 			@ApiQueryParam(name = "digestmaturepartsonly", description = "digest mature parts of protein if true (true by default)", allowedvalues = { "true" })
 			@RequestParam(value = "digestmaturepartsonly", required = false) Boolean digestmaturepartsonly,

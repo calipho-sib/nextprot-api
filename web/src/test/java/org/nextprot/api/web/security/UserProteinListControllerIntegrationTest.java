@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,7 +60,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"my list\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"sheldon\",\"ownerName\":\"sheldon\"}";
 
 		// call UserProteinList createUserProteinList()
-		String responseString = this.mockMvc.perform(post("/user/me/lists").with(csrf()).contentType(MediaType.APPLICATION_JSON).
+		String responseString = this.mockMvc.perform(post("/user/me/lists").contentType(MediaType.APPLICATION_JSON).
 				content(content).header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -76,7 +75,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"my list\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"sheldon\",\"ownerName\":\"sheldon\"}";
 
 		// call UserProteinList createUserProteinList()
-		this.mockMvc.perform(post("/user/me/lists").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(content).accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(post("/user/me/lists").contentType(MediaType.APPLICATION_JSON).content(content).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isUnauthorized());
 	}
 
@@ -258,7 +257,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
 
 		// UserProteinList updateUserProteinListMetadata()
-		String responseString = this.mockMvc.perform(put("/user/me/lists/157").with(csrf()).header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -277,7 +276,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"leonardslist1\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\",\"NX_P05185\"],\"entriesCount\":2,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
 
 		// UserProteinList updateUserProteinListMetadata()
-		String responseString = this.mockMvc.perform(put("/user/me/lists/157").with(csrf()).header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -308,7 +307,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 		// UserProteinList updateUserProteinListMetadata()
 		this.mockMvc.perform(put("/user/me/lists/157")
-				.accept(MediaType.APPLICATION_JSON).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(content)).
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isUnauthorized());
 	}
 
@@ -320,7 +319,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserProteinList()
-		this.mockMvc.perform(delete("/user/me/lists/157").with(csrf()).header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(delete("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
@@ -340,7 +339,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreUnauthorizedToDeleteLeonardsProteinList() throws Exception {
 
 		// void deleteUserProteinList()
-		this.mockMvc.perform(delete("/user/me/lists/157").with(csrf())
+		this.mockMvc.perform(delete("/user/me/lists/157")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 	}
