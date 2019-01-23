@@ -37,4 +37,6 @@ public interface DbXrefService {
      * @throws DbXrefServiceImpl.MissingCvDatabaseException if database does not exist in table nextprot.cv_databases
      */
     long findXrefId(String database, String accession) throws DbXrefServiceImpl.MissingCvDatabaseException;
+
+	List<DbXref> findDbXrefsByMasterExcludingBed(String entryName);
 }

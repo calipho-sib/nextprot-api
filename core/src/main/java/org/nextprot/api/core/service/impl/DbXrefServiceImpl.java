@@ -172,6 +172,18 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Cacheable(value = "xrefs", sync = true)
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
+		return this.findDbXrefsByMaster(entryName, false);
+	}
+
+	@Override
+	public List<DbXref> findDbXrefsByMasterExcludingBed(String entryName) {
+		
+		return this.findDbXrefsByMaster(entryName, true);
+	}
+
+	
+	private List<DbXref> findDbXrefsByMaster(String entryName, boolean ignoreStatements) {
+		
 		// build a comparator for the tree set: order by database name, accession, case insensitive
 		Comparator<DbXref> comparator = (a, b) -> {
             int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
@@ -189,7 +201,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		xrefs.addAll(statementService.findDbXrefs(entryName));
+		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
@@ -202,7 +214,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
 	}
-
+	
+	
 	private void addPeptideXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<String> names = peptideNamesService.findAllPeptideNamesByMasterId(entryName);

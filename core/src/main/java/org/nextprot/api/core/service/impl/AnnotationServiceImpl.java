@@ -151,7 +151,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 		
-		annotations.addAll(this.createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(entryName, annotations));
+		annotations.addAll(this.createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(entryName, annotations, ignoreStatements));
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
@@ -183,9 +183,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
-	private List<Annotation> createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(String  entryName, List<Annotation> existingAnnotations) {
-		List<Annotation> smiAnnotations = new ArrayList<>();
-		List<DbXref> entryXrefs = xrefService.findDbXrefsByMaster(entryName);
+	private List<Annotation> createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(String  entryName, List<Annotation> existingAnnotations, boolean ignoreStatements) {
+		List<Annotation> smiAnnotations = new ArrayList<>();		
+		List<DbXref> entryXrefs = ignoreStatements ? xrefService.findDbXrefsByMasterExcludingBed(entryName) : xrefService.findDbXrefsByMaster(entryName) ;
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 		for (Annotation annot: existingAnnotations) {
 			if (AnnotationCategory.CATALYTIC_ACTIVITY == annot.getAPICategory()) {
