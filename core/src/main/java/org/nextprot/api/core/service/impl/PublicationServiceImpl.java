@@ -11,7 +11,12 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AuthorService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryPublicationService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.core.utils.PublicationComparator;
 import org.nextprot.commons.statements.StatementField;
@@ -19,7 +24,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -38,7 +52,7 @@ public class PublicationServiceImpl implements PublicationService {
 
     private Map<Long, List<EntryPublication>> entryPublicationsById;
 
-	@Cacheable("publications-get-by-id")
+	@Cacheable(value = "publications-get-by-id", sync = true)
 	public Publication findPublicationById(long id) {
 		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields
 		loadAuthorsAndXrefs(publication); // add non-basic fields to object
@@ -55,7 +69,7 @@ public class PublicationServiceImpl implements PublicationService {
     // TODO: Publications are already cached in publications-get-by-id - even worse, some publication are linked to more than 10000 entries!!!)
     // almost 5GB of cache here !!!
     @Override
-	@Cacheable("publications")
+	@Cacheable(value = "publications", sync = true)
 	public List<Publication> findPublicationsByEntryName(String uniqueName) {
 
 		Long masterId = masterIdentifierService.findIdByUniqueName(uniqueName);
@@ -173,7 +187,7 @@ public class PublicationServiceImpl implements PublicationService {
 	}
 
 	@Override
-	@Cacheable(value = "publications-by-id-and-accession")
+	@Cacheable(value = "publications-by-id-and-accession", sync = true)
 	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}
@@ -184,7 +198,7 @@ public class PublicationServiceImpl implements PublicationService {
         return statisticsService.getGlobalPublicationStatistics().getPublicationStatistics(publicationId);
     }
 
-    @Cacheable("entry-publications-by-pubid")
+    @Cacheable(value = "entry-publications-by-pubid", sync = true)
     @Override
     public List<EntryPublication> getEntryPublications(long pubId) {
 

@@ -68,7 +68,7 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 
 	@Override
-	@Cacheable("release-versions")
+	@Cacheable(value = "release-versions", sync = true)
 	public ReleaseInfoVersions findReleaseVersions() {
 		ReleaseInfoVersions ri = new ReleaseInfoVersions();
 		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
@@ -77,7 +77,7 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	}
 
 	@Override
-	@Cacheable("release-stats")
+	@Cacheable(value = "release-stats", sync = true)
 	public ReleaseInfoStats findReleaseStats() {
 
 		ReleaseInfoStats rs = new ReleaseInfoStats();
@@ -167,7 +167,7 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	}
 
 	@Override
-	@Cacheable("release-data-sources")
+	@Cacheable(value = "release-data-sources", sync = true)
 	public ReleaseInfoDataSources findReleaseDatasources() {
 
 		ReleaseInfoDataSources sources = new ReleaseInfoDataSources();

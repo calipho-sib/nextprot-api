@@ -1,7 +1,6 @@
 package org.nextprot.api.security.service.impl;
 
-import java.io.IOException;
-
+import com.auth0.Auth0User;
 import org.nextprot.api.security.service.NextprotAuth0Endpoint;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,12 +8,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
 import us.monoid.json.JSONException;
 import us.monoid.web.JSONResource;
 import us.monoid.web.Resty;
 
-import com.auth0.Auth0User;
+import java.io.IOException;
 
 @Lazy
 @Service
@@ -24,7 +22,7 @@ public class NextprotAuth0EndpointImpl implements InitializingBean, NextprotAuth
 	private String clientId = null;
 	private String clientDomain = null;
 
-	@Cacheable("user-auth")
+	@Cacheable(value = "user-auth", sync = true)
 	public Auth0User fetchUser(String accessToken) throws IOException, JSONException {
 		Resty resty = new Resty();
 

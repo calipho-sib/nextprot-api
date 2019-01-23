@@ -36,7 +36,7 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 
 
 	@Override
-	@Cacheable("sparql")
+	@Cacheable(value = "sparql", sync = true)
 	public List<String> findEntries(String sparql, String sparqlEndpointUrl, String sparqlTitle) {
 
 		String query = SparqlUtils.buildQuery(prefix, sparql);

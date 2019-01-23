@@ -137,7 +137,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	 */
 	@Override
 	@AllowedAnonymous
-	@Cacheable("nxq-tutorial-queries")
+	@Cacheable(value = "nxq-tutorial-queries", sync = true)
 	public List<UserQuery> getNxqTutorialQueries() {
 		List<UserQuery> qlist = sparqlQueryDictionary.getSparqlQueryList();
 		return UserQueryUtils.filterByTag(qlist, "tutorial");
@@ -150,7 +150,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	 */
 	@Override
 	@AllowedAnonymous
-	@Cacheable("nxq-queries")
+	@Cacheable(value = "nxq-queries", sync = true)
 	public List<UserQuery> getNxqQueries() {
 		return sparqlQueryDictionary.getSparqlQueryList();
 	}

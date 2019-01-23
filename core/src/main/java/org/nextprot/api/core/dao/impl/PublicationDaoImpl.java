@@ -14,15 +14,20 @@ import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Repository
@@ -124,7 +129,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new JdbcUtils.LongRowMapper("pub_id"));
 	}
 	
-	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
+	private static class PublicationRowMapper extends SingleColumnRowMapper<Publication> {
 
 		private final Map<Long, PublicationCvJournal> pubIdToJournalMap;
 

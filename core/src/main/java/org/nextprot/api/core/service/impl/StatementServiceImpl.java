@@ -5,7 +5,12 @@ import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.MainNamesService;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
+import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
@@ -14,7 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,7 +69,7 @@ public class StatementServiceImpl implements StatementService {
     }
 
 
-    @Cacheable("statement-entry-annotations")
+    @Cacheable(value = "statement-entry-annotations", sync = true)
     @Override
     public List<Annotation> getAnnotations(String entryAccession) {
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-
 import org.junit.Test;
 import org.nextprot.api.user.controller.PublicQueryController;
 import org.nextprot.api.user.controller.UserQueryController;
@@ -18,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,8 +42,9 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// call UserQuery createAdvancedQuery()
-		String responseString = this.mockMvc.perform(post("/user/me/queries").contentType(MediaType.APPLICATION_JSON).
+		String responseString = this.mockMvc.perform(post("/user/me/queries").with(csrf()).contentType(MediaType.APPLICATION_JSON).
 				content(content).header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
+				andDo(print()).
 				andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
 		UserQuery uq = new ObjectMapper().readValue(responseString, UserQuery.class);
@@ -57,7 +59,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// call UserQuery createAdvancedQuery()
-		this.mockMvc.perform(post("/user/me/queries").contentType(MediaType.APPLICATION_JSON).
+		this.mockMvc.perform(post("/user/me/queries").with(csrf()).contentType(MediaType.APPLICATION_JSON).
 				content(content).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isUnauthorized());
 	}
@@ -190,7 +192,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		String responseString = this.mockMvc.perform(put("/user/me/queries/123456789").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(put("/user/me/queries/123456789").with(csrf()).header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -246,7 +248,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query 2nd attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(put("/user/me/queries/123456789")
+		this.mockMvc.perform(put("/user/me/queries/123456789").with(csrf())
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isUnauthorized());
 	}
@@ -270,7 +272,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserQuery()
-		this.mockMvc.perform(delete("/user/me/queries/123456789").header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(delete("/user/me/queries/123456789").with(csrf()).header("Authorization", "Bearer " + leonardToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
@@ -290,7 +292,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	public void othersShouldNotBeAbleToDeleteLeonardsQuery() throws Exception {
 
 		// void deleteUserQuery()
-		this.mockMvc.perform(delete("/user/me/queries/123456789")
+		this.mockMvc.perform(delete("/user/me/queries/123456789").with(csrf())
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 	}

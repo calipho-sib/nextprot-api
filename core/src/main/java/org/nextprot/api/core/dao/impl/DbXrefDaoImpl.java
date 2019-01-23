@@ -10,15 +10,21 @@ import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class DbXrefDaoImpl implements DbXrefDao {
@@ -133,7 +139,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		});
 	}
 
-	private static class DbXRefRowMapper implements ParameterizedRowMapper<DbXref> {
+	private static class DbXRefRowMapper extends SingleColumnRowMapper<DbXref> {
 
 		private final String entryAccessionReferer;
 
@@ -168,7 +174,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		}
 	}
 
-	private static class DbXrefPropertyRowMapper implements ParameterizedRowMapper<DbXrefProperty> {
+	private static class DbXrefPropertyRowMapper extends SingleColumnRowMapper<DbXrefProperty> {
 
 		@Override
 		public DbXrefProperty mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -181,7 +187,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		}
 	}
 
-	private static class EnsemblInfosRowMapper implements ParameterizedRowMapper<DbXref.EnsemblInfos> {
+	private static class EnsemblInfosRowMapper extends SingleColumnRowMapper<DbXref.EnsemblInfos> {
 
 		@Override
 		public DbXref.EnsemblInfos mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -195,7 +201,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		}
 	}
 	
-	private static class PublicationDbXRefRowMapper implements ParameterizedRowMapper<PublicationDbXref> {
+	private static class PublicationDbXRefRowMapper extends SingleColumnRowMapper<PublicationDbXref> {
 
 		@Override
 		public PublicationDbXref mapRow(ResultSet resultSet, int row) throws SQLException {

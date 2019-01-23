@@ -5,10 +5,10 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -41,7 +41,7 @@ public class AuthorDaoImpl implements AuthorDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
 	}
 
-	private static class AuthorRowMapper implements ParameterizedRowMapper<PublicationAuthor> {
+	private static class AuthorRowMapper extends SingleColumnRowMapper<PublicationAuthor> {
 
 		private final long publicationId;
 
@@ -69,7 +69,7 @@ public class AuthorDaoImpl implements AuthorDao {
 		}
 	}
 	
-	private static class PublicationAuthorRowMapper implements ParameterizedRowMapper<PublicationAuthor> {
+	private static class PublicationAuthorRowMapper extends SingleColumnRowMapper<PublicationAuthor> {
 
 		@Override
 		public PublicationAuthor mapRow(ResultSet resultSet, int row) throws SQLException {

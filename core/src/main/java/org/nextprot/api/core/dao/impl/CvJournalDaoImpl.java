@@ -1,20 +1,20 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class CvJournalDaoImpl implements CvJournalDao {
@@ -44,7 +44,7 @@ public class CvJournalDaoImpl implements CvJournalDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("cvjournal-by-publication-ids"), params, new PublicationCvJournalRowMapper());
 	}
 	
-	private static class JournalRowMapper implements ParameterizedRowMapper<CvJournal> {
+	private static class JournalRowMapper extends SingleColumnRowMapper<CvJournal> {
 
 		@Override
 		public CvJournal mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -60,7 +60,7 @@ public class CvJournalDaoImpl implements CvJournalDao {
 	}
 	
 	// Why two row mappers (JournalRowMapper and PublicationCvJournalRowMapper) ?
-	private static class PublicationCvJournalRowMapper implements ParameterizedRowMapper<PublicationCvJournal>{
+	private static class PublicationCvJournalRowMapper extends SingleColumnRowMapper<PublicationCvJournal>{
 
 		@Override
 		public PublicationCvJournal mapRow(ResultSet resultSet, int row) throws SQLException {

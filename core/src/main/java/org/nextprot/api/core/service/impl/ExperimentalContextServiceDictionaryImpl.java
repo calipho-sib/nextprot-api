@@ -1,12 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
@@ -17,6 +10,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 
 @Lazy
 @Service
@@ -26,7 +26,7 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	@Autowired private TerminologyService terminologyService;
 	
 	@Override
-	@Cacheable("experimental-context-dictionary")
+	@Cacheable(value = "experimental-context-dictionary", sync = true)
 	public Map<Long, ExperimentalContext> getAllExperimentalContexts() {
 		
 		//long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");

@@ -101,12 +101,17 @@ public class IsoformUtils {
      */
     public static String findEntryAccessionFromIsoformAccession(String isoformAccession) {
 
-        if (!isoformAccession.contains("-")) {
+        if (!isIsoformAccession(isoformAccession)) {
             throw new NextProtException("Invalid neXtProt isoform accession: "+isoformAccession);
         }
 
         return isoformAccession.split("-")[0];
     }
+
+	public static boolean isIsoformAccession(String accession) {
+
+		return accession.matches("^NX_[^-]+-\\d+$");
+	}
 
     /**
      * Find the entry accession from an entry or isoform accession

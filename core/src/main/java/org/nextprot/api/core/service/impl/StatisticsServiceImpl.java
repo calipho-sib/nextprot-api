@@ -30,7 +30,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private ReleaseInfoService releaseInfoService;
 
-    @Cacheable("global-publication-statistics")
+    @Cacheable(value = "global-publication-statistics", sync = true)
     @Override
     public GlobalPublicationStatistics getGlobalPublicationStatistics() {
 

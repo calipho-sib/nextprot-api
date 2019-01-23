@@ -6,7 +6,11 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublications;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
+import org.nextprot.api.core.domain.publication.PublicationProperty;
+import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.domain.ui.page.PageView;
 import org.nextprot.api.core.domain.ui.page.impl.SequencePageView;
 import org.nextprot.api.core.service.AnnotationService;
@@ -17,7 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Service
@@ -34,7 +43,7 @@ public class EntryPublicationServiceImpl implements EntryPublicationService {
     @Autowired
     private PublicationService publicationService;
 
-    @Cacheable("entry-publications")
+    @Cacheable(value = "entry-publications", sync = true)
     @Override
     public EntryPublications findEntryPublications(String entryAccession) {
 

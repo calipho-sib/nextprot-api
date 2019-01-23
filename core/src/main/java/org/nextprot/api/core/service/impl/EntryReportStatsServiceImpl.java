@@ -51,7 +51,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     @Autowired
     private AnnotationService annotationService;
 
-    @Cacheable("entry-report-stats")
+    @Cacheable(value = "entry-report-stats", sync = true)
     @Override
     public EntryReportStats reportEntryStats(String entryAccession) {
 

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+
 @Service
 class SequenceUnicityServiceImpl implements SequenceUnicityService {
 
@@ -68,7 +69,7 @@ class SequenceUnicityServiceImpl implements SequenceUnicityService {
 	}
 
 	@Override
-	@Cacheable("peptide-name-unicity-map")
+	@Cacheable(value = "peptide-name-unicity-map", sync = true)
 	public Map<String, SequenceUnicity> getPeptideNameUnicityMap() {
 
 		LOGGER.info("Starting, thread: " + Thread.currentThread().getId());
@@ -85,8 +86,9 @@ class SequenceUnicityServiceImpl implements SequenceUnicityService {
 		return result;
 	}
 
+	// https://www.foreach.be/blog/spring-cache-annotations-some-tips-tricks
 	@Override
-	@Cacheable("antibody-name-unicity-map")
+	@Cacheable(value = "antibody-name-unicity-map", sync = true)
 	public Map<String, SequenceUnicity> getAntibodyNameUnicityMap() {
 		LOGGER.info("Starting, thread: " + Thread.currentThread().getId());
 
@@ -102,7 +104,7 @@ class SequenceUnicityServiceImpl implements SequenceUnicityService {
 		return result;
 	}
 
-	private synchronized Map<String, SequenceUnicity> getUnicityMap(List<String> list) {
+	private Map<String, SequenceUnicity> getUnicityMap(List<String> list) {
 		Map<String, SequenceUnicity> result = new HashMap<>();
 
 		for (String row : list) {

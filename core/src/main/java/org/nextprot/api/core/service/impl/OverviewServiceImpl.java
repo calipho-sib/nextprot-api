@@ -5,7 +5,11 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.EntityNameService;
+import org.nextprot.api.core.service.FamilyService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.ProteinExistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -27,7 +31,7 @@ class OverviewServiceImpl implements OverviewService {
 	@Autowired private ProteinExistenceService proteinExistenceService;
 
 	@Override
-	@Cacheable("overview")
+	@Cacheable(value = "overview", sync = true)
 	public Overview findOverviewByEntry(String uniqueName) {
 		Overview overview = new Overview();
 		List<History> history = this.historyDao.findHistoryByEntry(uniqueName);

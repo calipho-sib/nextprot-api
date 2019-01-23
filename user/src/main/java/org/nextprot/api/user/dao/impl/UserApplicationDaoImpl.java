@@ -10,9 +10,9 @@ import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -142,7 +142,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	 * 
 	 * @author dteixeira
 	 */
-	private static class UserApplicationRowMapper implements ParameterizedRowMapper<UserApplication> {
+	private static class UserApplicationRowMapper extends SingleColumnRowMapper<UserApplication> {
 
 		public UserApplication mapRow(ResultSet resultSet, int row) throws SQLException {
 

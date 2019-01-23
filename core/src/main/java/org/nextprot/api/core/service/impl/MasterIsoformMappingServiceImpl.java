@@ -1,11 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformSpecificity;
@@ -14,9 +9,14 @@ import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-//import org.biojavax.bio.seq.io.UniProtCommentParser.Isoform;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+//import org.biojavax.bio.seq.io.UniProtCommentParser.Isoform;
 
 @Service
 class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
@@ -25,7 +25,7 @@ class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
 	@Autowired private IsoformService isoformService ;
 	
 	@Override
-	@Cacheable("master-isoform-mapping")
+	@Cacheable(value = "master-isoform-mapping", sync = true)
 	public List<IsoformSpecificity> findMasterIsoformMappingByEntryName(String entryName) {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

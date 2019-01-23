@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Cacheable(value = "read-user", key = "#username")
+	@Cacheable(value = "read-user", key = "#username", sync = true)
 	@AllowedAnonymous
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {

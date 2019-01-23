@@ -19,7 +19,7 @@ class GeneServiceImpl implements GeneService {
     private GeneIdentifierService geneIdentifierService;
 
 	@Override
-	@Cacheable("chromosomal-locations")
+	@Cacheable(value = "chromosomal-locations", sync = true)
 	public List<ChromosomalLocation> findChromosomalLocationsByEntry(String entryName) {
 		List<ChromosomalLocation> chroms = geneDAO.findChromosomalLocationsByEntryName(entryName);
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming

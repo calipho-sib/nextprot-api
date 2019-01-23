@@ -733,7 +733,7 @@
 	});
 	
 	function checkURLExistence() {
-		fetchdoc(window.location.href.replace("#", "") + '/jsondoc');
+		fetchdoc(window.location.href.replace("#", "") + 'jsondoc');
 	}
 	
 	$("#jsondocfetch").keypress(function(event) {
@@ -917,15 +917,18 @@
 							printResponse(data, res, this.url);
 							
 							var errorMsg;
-							if (res.status == 0) {
+							if (res.status === 0) {
 								errorMsg="The API is not accessible";
-							} else if (res.status == 401 || (status == 403)) {
+							} else if (res.status === 400) {
+                                errorMsg="Bad request: invalid syntax";
+                            } else if (res.status === 401 || (res.status === 403)) {
 								errorMsg="You are not authorized to access the resource. Please login or review your privileges.";
-				            } else if (res.status == 404) {
-				            	errorMsg="URL not found";
+				            } else if (res.status === 404) {
+				            	errorMsg="Not found";
 				            } else if (res.status >= 500) {
-				            	errorMsg="Some error occured: " + res.statusText;
+				            	errorMsg="Some error occurred: " + res.statusText;
 				            }
+							console.log(data, res);
 							alert("Error: " + errorMsg);
 						}
 					});
@@ -1135,7 +1138,11 @@
 	}
 
 	function fetchReleaseInfo() {
-		url = window.location.href.replace("#", "") + '/release-info'
+	    // https://stackoverflow.com/questions/48453980/spring-5-0-3-requestrejectedexception-the-request-was-rejected-because-the-url
+        // NOTE: the url below was in the form:
+        // https://api.nextprot.org//release-info.json and is now blocked for security reasons
+        // url = window.location.href.replace("#", "") + '/release-info.json';
+        url = window.location.href.replace("#", "") + 'release-info.json';
 
 		$.ajax({
 			url : url,

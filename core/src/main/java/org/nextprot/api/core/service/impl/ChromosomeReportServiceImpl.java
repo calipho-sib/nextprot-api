@@ -56,7 +56,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
     @Autowired
 	private OverviewService overviewService;
 
-	@Cacheable("chromosome-reports")
+	@Cacheable(value = "chromosome-reports", sync = true)
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
@@ -88,7 +88,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
-	@Cacheable("nacetylated-master-unique-names-by-chromosome")
+	@Cacheable(value = "nacetylated-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findNAcetylatedEntries(String chromosome) {
 
@@ -99,7 +99,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	}
 
-	@Cacheable("phospho-master-unique-names-by-chromosome")
+	@Cacheable(value = "phospho-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findPhosphorylatedEntries(String chromosome) {
 
@@ -109,7 +109,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.collect(Collectors.toList());
 	}
 
-	@Cacheable("unconfirmed-ms-master-unique-names-by-chromosome")
+	@Cacheable(value = "unconfirmed-ms-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 

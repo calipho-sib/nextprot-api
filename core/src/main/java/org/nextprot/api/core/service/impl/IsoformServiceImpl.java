@@ -7,9 +7,19 @@ import com.google.common.collect.Multimaps;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.EntityName;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.SlimIsoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.EntityNameService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.service.impl.peff.IsoformPEFFHeaderBuilder;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -50,7 +60,7 @@ class IsoformServiceImpl implements IsoformService {
     private EntryBuilderService entryBuilderService;
 
 	@Override
-	@Cacheable("isoforms")
+	@Cacheable(value = "isoforms", sync = true)
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
 		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
 		List<EntityName> synonyms = isoformDAO.findIsoformsSynonymsByEntryName(entryName);
@@ -110,7 +120,7 @@ class IsoformServiceImpl implements IsoformService {
     }
 
     @Override
-	@Cacheable("peff-by-isoform")
+	@Cacheable(value = "peff-by-isoform", sync = true)
 	public IsoformPEFFHeader formatPEFFHeader(String isoformAccession) {
 
 	    String entryAccession = findEntryAccessionFromIsoformAccession(isoformAccession);
@@ -134,19 +144,19 @@ class IsoformServiceImpl implements IsoformService {
 	}
 
 	@Override
-	@Cacheable("equivalent-isoforms")
+	@Cacheable(value = "equivalent-isoforms", sync = true)
 	public List<Set<String>> getSetsOfEquivalentIsoforms() {
 		return isoformDAO.findSetsOfEquivalentIsoforms();
 	}
 
 	@Override
-	@Cacheable("entries-having-equivalent-isoforms")
+	@Cacheable(value = "entries-having-equivalent-isoforms", sync = true)
 	public List<Set<String>> getSetsOfEntriesHavingAnEquivalentIsoform() {
 		return isoformDAO.findSetsOfEntriesHavingAnEquivalentIsoform();
 	}
 
 	@Override
-	@Cacheable("isoforms-md5")
+	@Cacheable(value = "isoforms-md5", sync = true)
 	public List<SlimIsoform> findListOfIsoformAcMd5Sequence() {
 		return isoformDAO.findOrderedListOfIsoformAcMd5SequenceFieldMap();
 	}

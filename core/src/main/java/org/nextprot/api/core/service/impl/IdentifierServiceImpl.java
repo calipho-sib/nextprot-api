@@ -1,7 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.core.dao.IdentifierDao;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.core.service.IdentifierService;
@@ -10,7 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 @Lazy
 @Service
@@ -19,7 +18,7 @@ class IdentifierServiceImpl implements IdentifierService {
 	@Autowired private IdentifierDao identifierDao;
 	
 	@Override
-	@Cacheable("identifiers")
+	@Cacheable(value = "identifiers", sync = true)
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
 		
 		List<Identifier> identifiers = this.identifierDao.findIdentifiersByMaster(uniqueName);

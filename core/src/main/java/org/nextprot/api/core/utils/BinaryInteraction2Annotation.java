@@ -5,16 +5,22 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.MainNames;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.MainNamesService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-
+// TODO: SHOULD BE A SERVICE AS IT IS DIFFICULT TO MOCK !!!
 public class BinaryInteraction2Annotation {
 
-	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms, MainNamesService mainNamesService) {
+	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms, MainNamesService mainNamesService) throws MissingInteractantEntryException {
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
@@ -137,7 +143,7 @@ public class BinaryInteraction2Annotation {
 		return interactant; // should never be null
 	}
 
-	static BioObject newBioObject(Interactant interactant, MainNamesService mainNamesService) {
+	static BioObject newBioObject(Interactant interactant, MainNamesService mainNamesService) throws MissingInteractantEntryException {
 
 		BioObject.BioType bioType = (interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN;
 
@@ -149,15 +155,31 @@ public class BinaryInteraction2Annotation {
 		if (interactant.getGenename()!=null) be.getProperties().put("geneName", interactant.getGenename());
 		if (interactant.isNextprot()) {
 			String ac = interactant.getNextprotAccession();
-			String masterAc = mainNamesService.findIsoformOrEntryMainName().get(ac).getEntryAccession();
-			String proteinName = mainNamesService.findIsoformOrEntryMainName().get(masterAc).getName();
+
+			Map<String, MainNames> allMainNameEntries = mainNamesService.findIsoformOrEntryMainName();
+
+			if (!allMainNameEntries.containsKey(ac)) {
+
+				throw new MissingInteractantEntryException(interactant);
+			}
+
+			String masterAc = allMainNameEntries.get(ac).getEntryAccession();
+			String proteinName = allMainNameEntries.get(masterAc).getName();
 			be.getProperties().put("proteinName", proteinName);
 			if (interactant.isIsoform()) {
-				String isoName = mainNamesService.findIsoformOrEntryMainName().get(ac).getName();
+				String isoName = allMainNameEntries.get(ac).getName();
 				be.getProperties().put("isoformName", isoName);
 			}
 		}
 		if (interactant.getUrl()!=null) be.getProperties().put("url", interactant.getUrl());
 		return be;
+	}
+
+	public static class MissingInteractantEntryException extends Exception {
+
+		public MissingInteractantEntryException(Interactant interactant) {
+
+			super("entry accession "+interactant.getNextprotAccession() + " does not exist in interactant " +interactant.toString());
+		}
 	}
 }

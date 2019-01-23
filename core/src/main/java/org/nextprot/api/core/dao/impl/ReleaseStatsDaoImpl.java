@@ -8,8 +8,8 @@ import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -44,7 +44,7 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper());
 	}
 
-	private static class ReleaseInfoRowMapper implements ParameterizedRowMapper<ReleaseContentsDataSource> {
+	private static class ReleaseInfoRowMapper extends SingleColumnRowMapper<ReleaseContentsDataSource> {
 
 		private ReleaseDataSources datasource;
 		
@@ -68,7 +68,7 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 		}
 	}
 
-	private static class ReleaseStatsTagRowMapper implements ParameterizedRowMapper<ReleaseStatsTag> {
+	private static class ReleaseStatsTagRowMapper extends SingleColumnRowMapper<ReleaseStatsTag> {
 
 		@Override
 		public ReleaseStatsTag mapRow(ResultSet resultSet, int row) throws SQLException {

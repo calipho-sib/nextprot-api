@@ -7,7 +7,7 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
 	<pubauthors pubauthor_id="102" publication_id="106" 
-		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="1" />
+		last_name="Luke" fore_name="Lucky" is_editor="0" rank="1" />
 	<pubauthors pubauthor_id="103" publication_id="106" 
 		last_name="Montana" fore_name="Toni" initials="T.M." is_editor="0" rank="2"/>		
 		
@@ -17,5 +17,5 @@
 		datasource_id="4" 
 		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
 	<pubauthors pubauthor_id="104" publication_id="107" 
-		last_name="Solo" fore_name="Han" initials="" is_editor="0" rank="1" />
+		last_name="Solo" fore_name="Han" is_editor="0" rank="1" />
 </dataset>

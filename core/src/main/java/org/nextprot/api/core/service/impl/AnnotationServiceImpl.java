@@ -78,7 +78,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private EntityNameService entityNameService;
 	
 	@Override
-	@Cacheable("annotations")
+	@Cacheable(value = "annotations", sync = true)
 	public List<Annotation> findAnnotations(String entryName) {
 		return findAnnotations(entryName,false);
 	}

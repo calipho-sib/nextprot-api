@@ -3,24 +3,29 @@ package org.nextprot.api.core.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.expasy.mzjava.proteomics.mol.Peptide;
-import org.expasy.mzjava.proteomics.mol.Protein;
-import org.expasy.mzjava.proteomics.mol.digest.LengthDigestionController;
-import org.expasy.mzjava.proteomics.mol.digest.Protease;
 import org.expasy.mzjava.proteomics.mol.digest.ProteinDigester;
+import org.nextprot.api.commons.bio.variation.prot.digestion.AminoAcidSequenceDigestion;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteaseAdapter;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -41,16 +46,28 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Set<String> digest(String entryAccession, Protease protease, int minpeplen, int maxpeplen, int missedCleavage) {
+	public Set<String> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
-		ProteinDigester digester = new ProteinDigester.Builder(protease)
-				.controller(new LengthDigestionController(minpeplen, maxpeplen))
-				.missedCleavageMax(missedCleavage)
-				.build();
+		if (IsoformUtils.isIsoformAccession(isoformOrEntryAccession)) {
+			return digestIsoforms(Collections.singletonList(isoformOrEntryAccession), builder);
+		}
+		else {
+			return digestIsoforms(isoformService.findIsoformsByEntryName(isoformOrEntryAccession).stream()
+					.map(isoform -> isoform.getIsoformAccession()).collect(Collectors.toList()), builder);
+		}
+	}
+
+	private Set<String> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
 		List<Peptide> peptides = new ArrayList<>();
 
-		digestProtein(entryAccession, digester, peptides);
+		ProteinDigestion digestion = (builder.withMaturePartsOnly()) ?
+				new MatureSequencesDigestion(builder.build()) : new WholeSequenceDigestion(builder.build());
+
+		for (String isoformAccession : isoformAccessions) {
+
+			digestion.digest(isoformAccession, peptides);
+		}
 
 		return peptides.stream()
 				.map(peptide -> peptide.toSymbolString())
@@ -59,59 +76,98 @@ class DigestionServiceImpl implements DigestionService {
 
 	@Cacheable("all-tryptic-digests")
 	@Override
-	public Set<String> digestAllWithTrypsin() {
+	public Set<String> digestAllMatureProteinsWithTrypsin() {
 
-		ProteinDigester digester = new ProteinDigester.Builder(Protease.TRYPSIN)
-				.controller(new LengthDigestionController(7, 77))
-				.missedCleavageMax(2)
-				.build();
+		ProteinDigestion digestion = new MatureSequencesDigestion(new ProteinDigesterBuilder()
+				.minPepLen(7).maxPepLen(77).maxMissedCleavageCount(2).build());
 
 		Set<String> allEntries = masterIdentifierService.findUniqueNames();
-		List<Peptide> allPeptides = new ArrayList<>();
-		int ecnt = 0;
+		List<Peptide> peptides = new ArrayList<>();
+		int processedEntries = 0;
 
-		LOGGER.info("Digesting " + allEntries.size() + " entries...");
+		LOGGER.info("Digesting mature proteins of " + allEntries.size() + " neXtProt entries...");
 		for (String entryAccession : allEntries) {
 
-			digestProtein(entryAccession, digester, allPeptides);
+			isoformService.findIsoformsByEntryName(entryAccession)
+					.forEach(isoform -> {
+						try {
+							digestion.digest(isoform.getIsoformAccession(), peptides);
+						} catch (ProteinDigestion.MissingIsoformException e) {
+							throw new NextProtException(e);
+						}
+					});
 
-			if(ecnt++ % 100 == 0) {
-				LOGGER.info(ecnt + " entries so far...");
+			if (processedEntries++ % 100 == 0) {
+				LOGGER.info(processedEntries + " entries processed");
 			}
 		}
 
-		return allPeptides.stream()
+		return peptides.stream()
 				.map(peptide -> peptide.toSymbolString())
 				.collect(Collectors.toSet());
 	}
 
 	@Override
-	public Protease[] getProteases() {
+	public List<String> getProteaseNames() {
 
-		return Protease.values();
+		return new ProteaseAdapter().getProteaseNames();
 	}
 
-	private void digestProtein(String entryAccession, ProteinDigester digester, List<Peptide> peptides) {
+	private class MatureSequencesDigestion extends AminoAcidSequenceDigestion {
 
-		// We digest mature chains and propeptides
-		annotationService.findAnnotations(entryAccession).stream()
-				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
-						annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
-				.forEach(annotation -> {
+		private MatureSequencesDigestion(ProteinDigester digester) {
+			super(digester);
+		}
 
-					for (String isoformAccession : annotation.getTargetingIsoformsMap().keySet()) {
+		@Override
+		public List<String> getIsoformSequences(String isoformAccession) throws MissingIsoformException {
 
-						Integer start = annotation.getStartPositionForIsoform(isoformAccession);
-						Integer end = annotation.getEndPositionForIsoform(isoformAccession);
+			Isoform isoform = isoformService.findIsoform(isoformAccession);
 
-						if (start != null && end != null) {
+			if (isoform == null) {
 
-							Isoform isoform = isoformService.findIsoformByName(entryAccession, isoformAccession);
-							String isoformSequence = isoform.getSequence();
+				throw new MissingIsoformException(isoformAccession);
+			}
 
-							digester.digest(new Protein(isoformAccession, isoformSequence.substring(start-1, end)), peptides);
+			String entryAccession = IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(isoformAccession);
+			String sequence = isoform.getSequence();
+
+			return annotationService.findAnnotations(entryAccession).stream()
+					.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MATURE_PROTEIN ||
+							annotation.getAPICategory() == AnnotationCategory.MATURATION_PEPTIDE)
+					.filter(annotation -> annotation.isAnnotationPositionalForIsoform(isoformAccession))
+					.flatMap(annotation -> {
+							Integer start = annotation.getStartPositionForIsoform(isoformAccession);
+							Integer end = annotation.getEndPositionForIsoform(isoformAccession);
+
+							if (start != null && end != null) {
+
+								return Stream.of(sequence.substring(start - 1, end));
+							}
+							return Stream.empty();
 						}
-					}
-				});
+					)
+					.collect(Collectors.toList());
+		}
+	}
+
+	private class WholeSequenceDigestion extends AminoAcidSequenceDigestion {
+
+		private WholeSequenceDigestion(ProteinDigester digester) {
+			super(digester);
+		}
+
+		@Override
+		public List<String> getIsoformSequences(String isoformAccession) throws MissingIsoformException {
+
+			Isoform isoform = isoformService.findIsoform(isoformAccession);
+
+			if (isoform == null) {
+
+				throw new MissingIsoformException(isoformAccession);
+			}
+
+			return Collections.singletonList(isoform.getSequence());
+		}
 	}
 }

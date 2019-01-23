@@ -27,7 +27,7 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	private OverviewService overviewService;
 
 	@Override
-	@Cacheable("all-gene-names")
+	@Cacheable(value = "all-gene-names", sync = true)
 	public Set<String> findGeneNames() {
 
 		/*Set<String> entryNames = masterIdentifierService.findUniqueNames();
@@ -41,7 +41,7 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	}
 
 	@Override
-	@Cacheable("gene-names-by-accession")
+	@Cacheable(value = "gene-names-by-accession", sync = true)
 	public List<String> findGeneNamesByEntryAccession(String entryAccession) {
 
         List<String> geneNames = new ArrayList<>();
@@ -62,7 +62,7 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	}
 
 	@Override
-	@Cacheable("all-entry-gene-names")
+	@Cacheable(value = "all-entry-gene-names", sync = true)
 	public Map<String, List<String>> findEntryGeneNames() {
 
 		return geneIdentifierDao.findEntryGeneNames();
