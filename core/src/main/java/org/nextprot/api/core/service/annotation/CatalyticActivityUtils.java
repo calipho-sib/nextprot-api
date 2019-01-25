@@ -112,12 +112,12 @@ public class CatalyticActivityUtils {
 	public static DbXref findXrefFromProperty(String propName, String propValue, List<DbXref> xrefs) {
 		
 		// format of the property value "some_label<space>[<ac>]+
-		
 		String db = "participant".equals(propName) ? "CHEBI" : ("reaction".equals(propName) ? "RHEA" : "unexpected");
 		if ("unexpected".equals(db)) throw new NextProtException("Unexpected catalytic activity property name:" + propName);
 
-		int pos1 = propValue.indexOf(db+":");
-		int pos2 = propValue.indexOf("]");
+		int pos1 = propValue.lastIndexOf(db+":");
+		int pos2 = propValue.lastIndexOf("]");
+		//System.out.println("--- propName:" + propName + " - propValue:" + propValue + " - pos1:" + pos1 + " - pos2:" + pos2);
 		String ac = propValue.substring(pos1,pos2);
 		for (DbXref x : xrefs ) {
 			if (x.getAccession().equals(ac)) return x;

@@ -145,6 +145,7 @@ public class CatalyticActivityUtilsTest extends CoreUnitBaseTest {
     	xrefs.add(newXref(1001L, "SomeDb:12345", 	"SomeDb", 	null, null));
     	xrefs.add(newXref(1002L, "CHEBI:456216", 	"ChEBI", 	"name", "ADP(3-)"));
     	xrefs.add(newXref(1003L, "RHEA:46608",		"Rhea", 	null, null));
+    	xrefs.add(newXref(1004L, "CHEBI:138444", 	"ChEBI", 	"name", null));
     	
     	DbXref x2 = CatalyticActivityUtils.findXrefFromProperty("participant", "ADP(3-) [CHEBI:456216]", xrefs);
     	assertEquals("CHEBI:456216", x2.getAccession());
@@ -166,6 +167,11 @@ public class CatalyticActivityUtilsTest extends CoreUnitBaseTest {
     		assertTrue(e.getMessage().startsWith("Unexpected catalytic activity property name"));
     	}
     	
+		String value = "O(3)-(beta-D-GlcA-(1->3)-poly[beta-D-GalNAc-(1->4)-beta-D-GlcA-(1->3)]-beta-D-GalNAc-(1->4)-beta-D-GlcA-(1->3)-beta-D-Gal-(1->3)-beta-D-Gal-(1->4)-beta-D-Xyl)-L-serine polyanionic residue [CHEBI:138444]";
+		x2 = CatalyticActivityUtils.findXrefFromProperty("participant", value, xrefs);
+    	assertEquals("CHEBI:138444", x2.getAccession());
+    	assertEquals("ChEBI", x2.getDatabaseName());
+    	assertEquals(new Long(1004L), x2.getDbXrefId());
     	
     }
 
