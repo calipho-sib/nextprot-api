@@ -23,4 +23,4 @@
 @prefix unipage: <http://www.uniprot.org/uniprot/> .
 @prefix proteoform: <http://nextprot.org/rdf/proteoform/> .
 @prefix chebi: <http://purl.obolibrary.org/obo/> .
-
+@prefix drugbankdrugs: <http://wifo5-04.informatik.uni-mannheim.de/drugbank/resource/drugs/> .

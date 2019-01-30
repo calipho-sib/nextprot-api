@@ -50,6 +50,7 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 			"PREFIX uniprot: <http://purl.uniprot.org/uniprot/>\n" +
 			"PREFIX unipage: <http://www.uniprot.org/uniprot/>\n" +
 			"PREFIX chebi: <http://purl.obolibrary.org/obo/>\n" +
+			"PREFIX drugbankdrugs: <http://wifo5-04.informatik.uni-mannheim.de/drugbank/resource/drugs/>\n" +
 			"PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>\n\n";
 
 	@Autowired

@@ -23,5 +23,4 @@ PREFIX uniprot: <http://purl.uniprot.org/uniprot/>
 PREFIX unipage: <http://www.uniprot.org/uniprot/>
 PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>
 PREFIX chebi: <http://purl.obolibrary.org/obo/>
-
-
+PREFIX drugbankdrugs: <http://wifo5-04.informatik.uni-mannheim.de/drugbank/resource/drugs/>
