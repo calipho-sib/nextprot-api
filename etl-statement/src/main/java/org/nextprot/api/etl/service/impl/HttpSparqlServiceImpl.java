@@ -49,6 +49,7 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
 			"PREFIX uniprot: <http://purl.uniprot.org/uniprot/>\n" +
 			"PREFIX unipage: <http://www.uniprot.org/uniprot/>\n" +
+			"PREFIX chebi: <http://purl.obolibrary.org/obo/>\n" +
 			"PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>\n\n";
 
 	@Autowired
