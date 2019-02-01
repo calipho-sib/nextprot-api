@@ -56,7 +56,7 @@ public class AnnotationCategoryTest {
 
 	@Test
 	public void testEnzymeRegulationParents() {
-		AnnotationCategory cat = AnnotationCategory.getByDbAnnotationTypeName("enzyme regulation");
+		AnnotationCategory cat = AnnotationCategory.getByDbAnnotationTypeName("activity regulation");
 		Assert.assertTrue(cat.getParent() == AnnotationCategory.GENERIC_INTERACTION);
 	}
 	
@@ -239,7 +239,7 @@ public class AnnotationCategoryTest {
 	
 	@Test
 	public void testEnzymeRegulationAllParents() {
-		Set<AnnotationCategory> cs = AnnotationCategory.ENZYME_REGULATION.getAllParents();
+		Set<AnnotationCategory> cs = AnnotationCategory.ACTIVITY_REGULATION.getAllParents();
 		Assert.assertTrue(cs.contains(AnnotationCategory.GENERIC_INTERACTION));
 		Assert.assertTrue(cs.contains(AnnotationCategory.GENERAL_ANNOTATION));
 		Assert.assertTrue(cs.contains(AnnotationCategory.ROOT));
@@ -248,7 +248,7 @@ public class AnnotationCategoryTest {
 	
 	@Test
 	public void testEnzymeRegulationAllParentsButRoot() {
-		Set<AnnotationCategory> cs = AnnotationCategory.ENZYME_REGULATION.getAllParentsButRoot();
+		Set<AnnotationCategory> cs = AnnotationCategory.ACTIVITY_REGULATION.getAllParentsButRoot();
 		Assert.assertTrue(cs.contains(AnnotationCategory.GENERIC_INTERACTION));
 		Assert.assertTrue(cs.contains(AnnotationCategory.GENERAL_ANNOTATION));
 		Assert.assertEquals(2, cs.size());

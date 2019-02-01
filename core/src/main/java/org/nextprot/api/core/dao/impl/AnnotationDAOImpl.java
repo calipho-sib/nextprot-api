@@ -85,9 +85,15 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			
 			String category = rs.getString("category");			
 			
+			
+			
     		if ("biotechnology".equals(category)) {
 				category= AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
 				
+			// see issue #1656
+    		} else if ("enzyme regulation".equals(category)) {
+					category= AnnotationCategory.ACTIVITY_REGULATION.getDbAnnotationTypeName();
+					
 			} else if ("transmembrane region".equals(category)) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51748) category = AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();

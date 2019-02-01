@@ -936,7 +936,7 @@
 						<xs:enumeration value="domain-info"/>
                         <xs:enumeration value="electrophysiological-parameter"/>
 						<xs:enumeration value="enzyme-classification"/>
-						<xs:enumeration value="enzyme-regulation"/>
+						<xs:enumeration value="activity-regulation"/>
 						<xs:enumeration value="expression-info"/>
 						<xs:enumeration value="expression-profile"/>
 						<xs:enumeration value="function-info"/>

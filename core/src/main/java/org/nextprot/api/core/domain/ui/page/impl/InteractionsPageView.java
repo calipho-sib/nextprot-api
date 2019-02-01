@@ -22,7 +22,7 @@ public class InteractionsPageView extends PageViewBase {
 		return Arrays.asList(
 				
 				AnnotationCategory.INTERACTION_INFO, 
-				AnnotationCategory.ENZYME_REGULATION,
+				AnnotationCategory.ACTIVITY_REGULATION,
 				AnnotationCategory.GO_MOLECULAR_FUNCTION, // further refined
 				AnnotationCategory.BINARY_INTERACTION,
 				AnnotationCategory.COFACTOR,
