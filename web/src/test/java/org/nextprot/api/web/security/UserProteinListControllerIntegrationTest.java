@@ -102,26 +102,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		assertEquals(23, list.get(1).getOwnerId());
 	}
 
-	/* This test is not relevant anymore 
-	@Test
-	public void sheldonIsForbiddenToLookAtLeonardsProteinLists() throws Exception {
-
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
-
-		// call List<UserProteinList> getUserProteinLists()
-		this.mockMvc.perform(get("/user/me/lists/157").
-				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
-	}
-
-	@Test
-	public void othersAreUnauthorizedToLookAtLeonardsProteinLists() throws Exception {
-
-		// call List<UserProteinList> getUserProteinLists()
-		this.mockMvc.perform(get("/user/me/lists").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
-	}*/
-
 	// --------------------------------- GET PROTEINS LIST ------------------------------------------------
 
 	@Test
@@ -189,36 +169,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		this.mockMvc.perform(get("/lists/Abc1").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
-
-	// --------------------------------- GET PROTEINS ACC NUMBERS -----------------------------------------
-	/* Test is not applicable
-	@Test
-	public void leonardShouldBeAbleToLookAtHisOwnProteinListAccessionNumbers() throws Exception {
-
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
-
-		// call Set<String> getUserProteinListAccessionNumbers()
-		String responseString = this.mockMvc.perform(get("/user/me/lists/leonardslist1/accnums").header("Authorization", "Bearer " + leonardToken)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString();
-
-		Set<String> accessionNumbers = new ObjectMapper().readValue(responseString, new TypeReference<Set<String>>() { });
-
-		assertEquals(Sets.newHashSet("NX_Q14239","NX_Q8N5Z0","NX_P05185"), accessionNumbers);
-	}
-
-	@Test
-	public void sheldonIsForbiddenToLookAtLeonardsProteinListAccessionNumbers() throws Exception {
-
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
-
-		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/me/lists/157/accnums").
-				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
-	}*/
-
 
 	// --------------------------------- GET COMBINED PROTEIN LIST ----------------------------------------
 

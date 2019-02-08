@@ -24,8 +24,8 @@ import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static org.nextprot.api.solr.query.SolrCoreQueryTest.buildEntrySolrCore;
-import static org.nextprot.api.solr.query.SolrCoreQueryTest.executeQuery;
+import static org.nextprot.api.solr.query.SolrCoreQueryIntegrationTest.buildEntrySolrCore;
+import static org.nextprot.api.solr.query.SolrCoreQueryIntegrationTest.executeQuery;
 
 // Those tests compare query results from different solr instances
 @Ignore

@@ -139,7 +139,8 @@ public enum AnnotationCategory implements Serializable {
 	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "Catalytic activity", GENERIC_FUNCTION),
 	COFACTOR(1035, "cofactor", "cofactor", "Cofactor", GENERIC_INTERACTION),
 	COFACTOR_INFO(226874, "cofactor information", "cofactorInfo", "Cofactor information", GENERIC_INTERACTION),
-	ENZYME_REGULATION(1036, "enzyme regulation", "enzymeRegulation", "Enzyme regulation", GENERIC_INTERACTION),
+	//ENZYME_REGULATION(1036, "enzyme regulation", "enzymeRegulation", "Enzyme regulation", GENERIC_INTERACTION), 
+	ACTIVITY_REGULATION(-177, "activity regulation", "activityRegulation", "Activity regulation", GENERIC_INTERACTION), // replaces old ENZYME_REGULATION
 	TRANSPORT_ACTIVITY(-25, "transport activity", "transportActivity", "Transport activity", GENERIC_FUNCTION),
 	PATHWAY(1038, "pathway", "pathway", "Pathway", GENERIC_FUNCTION),
 	GO_MOLECULAR_FUNCTION(1061, "go molecular function", "goMolecularFunction", "GO molecular function", GENERIC_FUNCTION),

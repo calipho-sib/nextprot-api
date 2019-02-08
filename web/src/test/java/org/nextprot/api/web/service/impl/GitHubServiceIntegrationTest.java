@@ -49,10 +49,4 @@ public class GitHubServiceIntegrationTest extends WebIntegrationBaseTest {
 		String content = ghService.getPage("pages", "what-is-new");
 		assertTrue(!content.isEmpty());
 	}
-
-	@Test
-	public void test() throws Exception {
-		String content = ghService.getPage("pages", "copyright");
-		assertTrue(!content.isEmpty());
-	}
 }

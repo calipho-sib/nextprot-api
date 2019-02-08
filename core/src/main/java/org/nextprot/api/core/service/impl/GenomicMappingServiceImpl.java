@@ -3,7 +3,11 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.utils.StreamUtils;
 import org.nextprot.api.core.dao.GeneDAO;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.GeneRegion;
+import org.nextprot.api.core.domain.GenomicMapping;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.IsoformGeneMapping;
+import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.SimpleExon;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IsoformService;
@@ -14,7 +18,15 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -30,7 +42,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private final Comparator<Isoform> isoformComparator = new IsoformUtils.IsoformComparator();
 
 	@Override
-	//@Cacheable("genomic-mappings")
+	//@Cacheable(value="genomic-mappings", sync=true)
 	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
 		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");

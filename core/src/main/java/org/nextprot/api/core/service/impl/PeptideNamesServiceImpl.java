@@ -9,7 +9,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Lazy
 @Service
@@ -19,7 +23,7 @@ class PeptideNamesServiceImpl implements PeptideNamesService {
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	
 	@Override
-	@Cacheable("all-peptide-names")
+	@Cacheable(value = "all-peptide-names", sync = true)
 	public List<String> findAllPeptideNamesByMasterId(String uniqueName) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
 		List<Map<String,Object>> allMapping = this.peptideMappingDao.findPeptideMappingAnnotationsByMasterId(masterId, true, true);

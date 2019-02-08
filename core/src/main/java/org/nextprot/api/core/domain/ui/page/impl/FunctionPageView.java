@@ -25,7 +25,7 @@ public class FunctionPageView extends PageViewBase {
 				AnnotationCategory.FUNCTION_INFO,
 				AnnotationCategory.CATALYTIC_ACTIVITY,
 				AnnotationCategory.TRANSPORT_ACTIVITY,
-				AnnotationCategory.ENZYME_REGULATION,
+				AnnotationCategory.ACTIVITY_REGULATION,
 				AnnotationCategory.COFACTOR,
 				AnnotationCategory.COFACTOR_INFO,
 				AnnotationCategory.ABSORPTION_MAX,

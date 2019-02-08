@@ -9,7 +9,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Lazy
 @Service
@@ -37,7 +41,7 @@ class FamilyServiceImpl implements FamilyService {
 	@Autowired private FamilyDao familyDao;
 	
 	@Override
-	@Cacheable("families")
+	@Cacheable(value = "families", sync = true)
 	public List<Family> findFamilies(String uniqueName) {
 		List<Family> families = familyDao.findFamilies(uniqueName);
 		for (Family child: families) {

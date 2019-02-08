@@ -1,15 +1,14 @@
 package org.nextprot.api.integration.tests.rdf;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class PepXIntegrationTest extends WebIntegrationBaseTest {
 
@@ -18,7 +17,10 @@ public class PepXIntegrationTest extends WebIntegrationBaseTest {
 	@Test
 	public void shouldReturnSomePeptidesForUniquenessCheckerTool() throws Exception {
 
-		String content = this.mockMvc.perform(get("/entries/search/peptide").param("peptide", "CLLCALK").param("modeIL", "true")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+		String content = this.mockMvc.perform(get("/entries/search/peptide")
+						.param("peptide", "CLLCALK")
+						.param("modeIL", "true"))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8)).andReturn()
 				.getResponse().getContentAsString();
 		ObjectMapper om = new ObjectMapper();
 		JsonNode actualObj = om.readTree(content);

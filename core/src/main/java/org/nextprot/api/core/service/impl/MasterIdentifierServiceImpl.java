@@ -25,7 +25,7 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	private OverviewService overviewService;
 
 	@Override
-	@Cacheable("master-unique-names-chromossome")
+	@Cacheable(value = "master-unique-names-chromossome", sync = true)
 	public List<String> findUniqueNamesOfChromosome(String chromosome) {
 		return this.masterIdentifierDao.findUniqueNamesOfChromosome(chromosome);
 	}
@@ -36,27 +36,26 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	}
 
 	@Override
-	@Cacheable("master-unique-name")
+	@Cacheable(value = "master-unique-name", sync = true)
 	public Long findIdByUniqueName(String uniqueName) {
 		return this.masterIdentifierDao.findIdByUniqueName(uniqueName);
 	}
 
 	@Override
-	@Cacheable(value="entry-accession-by-gene-name",key="{  #geneName, #withSynonyms }")
+	@Cacheable(value="entry-accession-by-gene-name",key="{  #geneName, #withSynonyms }", sync = true)
 	public Set<String> findEntryAccessionByGeneName(String geneName, boolean withSynonyms) {
 		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName, withSynonyms));
 	}
 
 	@Override
-	@Cacheable(value="entry-accession-by-protein-existence")
+	@Cacheable(value="entry-accession-by-protein-existence", sync = true)
 	public List<String> findEntryAccessionsByProteinExistence(ProteinExistence proteinExistence) {
 
 		List<String> entries = new ArrayList<>();
 
 		for (String entryAccession : masterIdentifierDao.findUniqueNames()) {
 
-			//ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
-			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
 
 			if (pe == proteinExistence) {
 				entries.add(entryAccession);

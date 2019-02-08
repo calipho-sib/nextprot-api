@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
-
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
@@ -17,7 +16,11 @@ import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AntibodyResourceIdsService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
@@ -27,7 +30,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Lazy
@@ -98,7 +109,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		}
 		
 		annotation.setEvidences(Collections.singletonList(newAnnotationEvidence(annotation)));
-		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
+		annotation.addTargetingIsoforms(AnnotationUtils.newNonPositionalAnnotationIsoformSpecificityList(isoforms, annotation));
 
 		return annotation;
 	}
@@ -131,26 +142,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return evidence;
 	}
 
-	// build isoform specificity from isoforms and annotations and link them to annotations
-	private List<AnnotationIsoformSpecificity> newAnnotationIsoformSpecificityList(List<Isoform> isoforms, Annotation xrefAnnotation) {
 
-		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
-
-		for (Isoform iso: isoforms) {
-
-			AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
-
-			isospec.setAnnotationId(xrefAnnotation.getAnnotationId());
-			isospec.setFirstPosition(null); //According to PAM on Tuesday th 16th in the presence of Pascale and Frederic Nikitin
-			isospec.setLastPosition(null);
-			isospec.setIsoformAccession(iso.getIsoformAccession());
-			isospec.setSpecificity("UNKNOWN");
-
-			isospecs.add(isospec);
-		}
-
-		return isospecs;
-	}
 
 	@Override
 	/** Convert dbxrefs of type XrefAnnotationMapping into annotation for the given entry */
@@ -177,8 +169,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 	@Override
-	@Cacheable("xrefs")
+	@Cacheable(value = "xrefs", sync = true)
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
+		
+		return this.findDbXrefsByMaster(entryName, false);
+	}
+
+	@Override
+	public List<DbXref> findDbXrefsByMasterExcludingBed(String entryName) {
+		
+		return this.findDbXrefsByMaster(entryName, true);
+	}
+
+	
+	private List<DbXref> findDbXrefsByMaster(String entryName, boolean ignoreStatements) {
 		
 		// build a comparator for the tree set: order by database name, accession, case insensitive
 		Comparator<DbXref> comparator = (a, b) -> {
@@ -197,7 +201,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		xrefs.addAll(statementService.findDbXrefs(entryName));
+		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
@@ -210,7 +214,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
 	}
-
+	
+	
 	private void addPeptideXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<String> names = peptideNamesService.findAllPeptideNamesByMasterId(entryName);

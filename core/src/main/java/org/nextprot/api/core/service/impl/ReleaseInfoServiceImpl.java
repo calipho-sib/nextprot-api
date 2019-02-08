@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
 import org.nextprot.api.core.domain.ProteinExistence;
@@ -10,6 +11,7 @@ import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoStats;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
@@ -25,9 +27,15 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.nextprot.api.commons.constants.AnnotationCategory.*;
 
 @Service
 class ReleaseInfoServiceImpl implements ReleaseInfoService {
@@ -38,11 +46,29 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Autowired private Environment env;
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private AnnotationService annotationService;
 
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
+	private static final Set<String> NON_FUNCTIONAL_GO_ACC = new HashSet<>(Arrays.asList(
+			// GO_MOLECULAR_FUNCTION
+			"GO:0005524",	// ATP binding
+			"GO:0000287",	// magnesium ion binding
+			"GO:0005515",	// protein binding
+			"GO:0042802",	// identical protein binding
+			"GO:0008270",	// zinc ion binding
+			"GO:0005509",	// calcium ion binding
+			"GO:0003676",	// nucleic acid binding
+			"GO:0003824",	// catalytic activity
+			"GO:0046914",	// transition metal ion binding
+			"GO:0046872",	// metal ion binding
+			// GO_BIOLOGICAL_PROCESS
+			"GO:0051260",	// protein homooligomerization
+			"GO:0007165",	// signal transduction
+			"GO:0035556"));	// intracellular signal transduction
+
 
 	@Override
-	@Cacheable("release-versions")
+	@Cacheable(value = "release-versions", sync = true)
 	public ReleaseInfoVersions findReleaseVersions() {
 		ReleaseInfoVersions ri = new ReleaseInfoVersions();
 		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
@@ -51,7 +77,7 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	}
 
 	@Override
-	@Cacheable("release-stats")
+	@Cacheable(value = "release-stats", sync = true)
 	public ReleaseInfoStats findReleaseStats() {
 
 		ReleaseInfoStats rs = new ReleaseInfoStats();
@@ -111,8 +137,37 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		}
 	}
 
+	@Cacheable("annot-wo-function-count")
+	public ReleaseStatsTag getAnnotationWithoutFunctionTag() {
+
+		// We filter out entries with annotation of one of these categories
+		final Set<AnnotationCategory> notAllowedCategories =
+				Stream.of(FUNCTION_INFO, CATALYTIC_ACTIVITY, TRANSPORT_ACTIVITY, PATHWAY).collect(Collectors.toSet());
+
+		// We filter out entries with GO MF or GO BP which are not one of notFunctionGoAcc
+		final Set<AnnotationCategory> allowedCategories =
+				Stream.of(GO_MOLECULAR_FUNCTION, GO_BIOLOGICAL_PROCESS).collect(Collectors.toSet());
+
+		long count = masterIdentifierService.findUniqueNames().parallelStream()
+											.map(ac -> annotationService.findAnnotations(ac))
+											.filter(annotList -> annotList.stream().noneMatch(
+													a -> notAllowedCategories.contains(a.getAPICategory())))
+											.filter(annotList -> annotList.stream().noneMatch(
+													a -> allowedCategories.contains(a.getAPICategory())
+															&& !NON_FUNCTIONAL_GO_ACC.contains(a.getCvTermAccessionCode())))
+											.count();
+
+		ReleaseStatsTag releaseStatsTag = new ReleaseStatsTag();
+		releaseStatsTag.setTag("WO_FUNCTION_MASTER");
+		releaseStatsTag.setDescription("Entries without annotated function");
+		releaseStatsTag.setCount((int) count);
+		releaseStatsTag.setSortOrder(225);
+		releaseStatsTag.setCategroy("Annotations");
+		return releaseStatsTag;
+	}
+
 	@Override
-	@Cacheable("release-data-sources")
+	@Cacheable(value = "release-data-sources", sync = true)
 	public ReleaseInfoDataSources findReleaseDatasources() {
 
 		ReleaseInfoDataSources sources = new ReleaseInfoDataSources();

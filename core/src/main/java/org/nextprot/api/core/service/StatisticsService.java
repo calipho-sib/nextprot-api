@@ -15,8 +15,8 @@ public interface StatisticsService {
         ISOFORM_COUNT(Collections.singleton("ISOFORM")),
         VARIANT_COUNT(Collections.singleton("PROTEIN_SEQUENCE_VARIANT")),
         PTM_COUNT(Collections.singleton("PROTEIN_PTM")),
-        MISSING_PROTEIN_COUNT(new HashSet<>(Arrays.asList("TRANSCRIPT_LEVEL_MASTER", "HOMOLOGY_MASTER", "PREDICTED_MASTER")));
-        // TODO add PROTEIN_WITH_NO_FUNCTION_ANNOTATED_COUNT when it's added into release-stats and see StatisticsServiceImpl.getStatsByPlaceholder()
+        MISSING_PROTEIN_COUNT(new HashSet<>(Arrays.asList("TRANSCRIPT_LEVEL_MASTER", "HOMOLOGY_MASTER", "PREDICTED_MASTER"))),
+        PROTEIN_WITH_NO_FUNCTION_ANNOTATED_COUNT(new HashSet<>());
 
         Set<String> dbTags;
 

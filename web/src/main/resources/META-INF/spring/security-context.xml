@@ -2,9 +2,9 @@
 	xmlns:security="http://www.springframework.org/schema/security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/security
-http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- For the dev purpose the authentication is not activated -->
 	<beans profile="!security">
@@ -12,6 +12,7 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 			class="org.springframework.security.authentication.TestingAuthenticationProvider" />
 
 		<security:http auto-config="true">
+            <security:csrf disabled="true" />
 			<security:intercept-url pattern="/url-not-in-use/**" access="ROLE_USER" />
 		</security:http>
 
@@ -21,7 +22,6 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 				ref="authenticator" />
 		</security:authentication-manager>
 	</beans>
-
 
 	<!-- For the unit testing and production environment the authentication the security is activated -->
 	<beans profile="security">
@@ -33,7 +33,8 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		<bean id="auth0EntryPoint" class="com.auth0.spring.security.auth0.Auth0AuthenticationEntryPoint" />
 
 		<security:http auto-config="true" use-expressions="true" pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
-			<security:intercept-url pattern="/**" access="permitAll" />
+            <security:csrf disabled="true" />
+            <security:intercept-url pattern="/**" access="permitAll" />
 			<security:custom-filter ref="auth0Filter" after="SECURITY_CONTEXT_FILTER"></security:custom-filter>
 		</security:http>
 

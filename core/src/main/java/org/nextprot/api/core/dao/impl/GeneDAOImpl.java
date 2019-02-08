@@ -3,13 +3,17 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.GeneDAO;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.ChromosomalLocation;
+import org.nextprot.api.core.domain.GeneRegion;
+import org.nextprot.api.core.domain.GenomicMapping;
+import org.nextprot.api.core.domain.IsoformGeneMapping;
+import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.SimpleExon;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -44,7 +48,7 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static class ChromosomalLocationRowMapper implements ParameterizedRowMapper<ChromosomalLocation> {
+	private static class ChromosomalLocationRowMapper extends SingleColumnRowMapper<ChromosomalLocation> {
 
 		@Override
 		public ChromosomalLocation mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -75,7 +79,7 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static class GenomicMappingRowMapper implements ParameterizedRowMapper<GenomicMapping> {
+	private static class GenomicMappingRowMapper extends SingleColumnRowMapper<GenomicMapping> {
 
 		@Override
 		public GenomicMapping mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -98,7 +102,7 @@ public class GeneDAOImpl implements GeneDAO {
 		return list.stream().collect(Collectors.groupingBy(TranscriptGeneMapping::getIsoformName, Collectors.toList()));
 	}
 	
-	private static class TranscriptRowMapper implements ParameterizedRowMapper<TranscriptGeneMapping> {
+	private static class TranscriptRowMapper extends SingleColumnRowMapper<TranscriptGeneMapping> {
 
 		@Override
 		public TranscriptGeneMapping mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -136,7 +140,7 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static class ExonMapper implements ParameterizedRowMapper<SimpleExon> {
+	private static class ExonMapper extends SingleColumnRowMapper<SimpleExon> {
 
 		@Override
 		public SimpleExon mapRow(ResultSet resultSet, int row) throws SQLException {

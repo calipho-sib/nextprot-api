@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.indexation.impl.service;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.SolrEntryFieldCollectorService;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.AnnotationSolrFieldCollector;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.CVSolrFieldCollector;
@@ -89,7 +91,6 @@ public class SolrEntryFieldCollectorServiceImplTest {
 
 		AnnotationSolrFieldCollector annotationSolrFieldCollector = new AnnotationSolrFieldCollector(annotationService, terminologyService, isoformService, overviewService);
 
-
 		solrEntryFieldCollectorServiceImpl = new SolrEntryFieldCollectorServiceImpl(Arrays.asList(
 				annotationSolrFieldCollector,
 				chromosomeSolrFieldCollector,
@@ -106,11 +107,14 @@ public class SolrEntryFieldCollectorServiceImplTest {
 		));
 	}
 
-	// TODO: USELESS TEST
 	@Test
 	public void buildSolrDoc() {
 
 		// MSH6
 		SolrInputDocument doc = solrEntryFieldCollectorServiceImpl.buildSolrDoc("NX_P52701", true);
+		Assert.assertEquals("Evidence_at_protein_level", doc.getFieldValue(EntrySolrField.PROTEIN_EXISTENCE.getName()));
+		Assert.assertEquals(1, doc.getFieldValue(EntrySolrField.PE_LEVEL.getName()));
+		Assert.assertEquals("P52701", doc.getFieldValue(EntrySolrField.RECOMMENDED_AC.getName()));
+		Assert.assertEquals("NX_P52701", doc.getFieldValue(EntrySolrField.ID.getName()));
 	}
 }

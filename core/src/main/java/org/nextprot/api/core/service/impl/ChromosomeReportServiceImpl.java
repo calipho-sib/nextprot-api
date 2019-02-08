@@ -5,18 +5,28 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.ChromosomeNotFoundException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryGeneReportService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -46,7 +56,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
     @Autowired
 	private OverviewService overviewService;
 
-	@Cacheable("chromosome-reports")
+	@Cacheable(value = "chromosome-reports", sync = true)
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
@@ -78,7 +88,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
-	@Cacheable("nacetylated-master-unique-names-by-chromosome")
+	@Cacheable(value = "nacetylated-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findNAcetylatedEntries(String chromosome) {
 
@@ -89,7 +99,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	}
 
-	@Cacheable("phospho-master-unique-names-by-chromosome")
+	@Cacheable(value = "phospho-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findPhosphorylatedEntries(String chromosome) {
 
@@ -99,7 +109,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.collect(Collectors.toList());
 	}
 
-	@Cacheable("unconfirmed-ms-master-unique-names-by-chromosome")
+	@Cacheable(value = "unconfirmed-ms-master-unique-names-by-chromosome", sync = true)
 	@Override
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
@@ -130,8 +140,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         for (String entry : chromosomeEntries) {
 
-			//ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
-			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistences().getProteinExistence();
+			ProteinExistence pe = overviewService.findOverviewByEntry(entry).getProteinExistence();
 
 			if (!pe2entries.containsKey(pe)) {
 

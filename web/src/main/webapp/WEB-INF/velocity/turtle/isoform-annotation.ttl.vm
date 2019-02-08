@@ -22,9 +22,29 @@ annotation:$annotation-uri a :$annotation-type;
     rdf:type :Xref ;
     :provenance db:$bioObject.database ;
     :accession "$bioObject.accession"^^xsd:string ;
+#set($UNESCAPED_CDATA=false)
+#set($UNESCAPED_CDATA = $bioObject.getPropertyValue("chemical name"))
+#if($UNESCAPED_CDATA)
+    rdfs:label "$UNESCAPED_CDATA"^^xsd:string ;
+#end
+#set($UNESCAPED_CDATA=false)
+#set($UNESCAPED_CDATA = $bioObject.getPropertyValue("geneName"))
+#if($UNESCAPED_CDATA)
+    rdfs:label "$UNESCAPED_CDATA"^^xsd:string ;
+#end
+#set($UNESCAPED_CDATA=false)
 #if($bioType == "PROTEIN")
     skos:exactMatch uniprot:$bioObject.accession ;
 #end ## biotype
+#if($bioType == "CHEMICAL")
+#if($bioObject.database == "ChEBI")
+   skos:exactMatch chebi:$StringUtils.slug($bioObject.accession) ;
+#end
+#if($bioObject.database == "DrugBank")
+   skos:exactMatch drugbankdrugs:$bioObject.accession ;
+#end
+#end ## biotype
+
   ] ;
 #elseif($resourceType == "INTERNAL")
 #if($bioType == "PROTEIN")

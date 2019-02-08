@@ -64,7 +64,7 @@ public class GitHubServiceImpl implements GitHubService {
 	}
 	
 	@Override
-	@Cacheable(value = "github-pages")
+	@Cacheable(value = "github-pages", sync = true)
 	public String getPage(String folder, String page) {
 		
 		String finalPage = page;
@@ -120,7 +120,7 @@ public class GitHubServiceImpl implements GitHubService {
 	}
 
 	@Override
-	@Cacheable(value = "github-tree")
+	@Cacheable(value = "github-tree", sync = true)
 	public GHTree getTree() {
 		
 		try {
@@ -137,7 +137,7 @@ public class GitHubServiceImpl implements GitHubService {
 
 
 	@Override
-	@Cacheable(value = "github-news")
+	@Cacheable(value = "github-news", sync = true)
 	public List<NextProtNews> getNews() {
 
 		List<NextProtNews> news = new ArrayList<>();

@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,30 +25,30 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllPublications() {
 		
-		boolean missingPublications = false;
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
+		List<String> missingPublications = new ArrayList<>();
+
+		List<String> pubmeds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
 				StatementField.REFERENCE_ACCESSION, 
 				new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
 		
-		//System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
-		for(String p : pubmedIds) {
-			if(p != null){ 
-				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
-				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-                // TODO: remove the following line after next release data jan 2018
-                if(!"23248292".equals(pubmedId)){
-					if(pub == null){
+		for (String pubmed : pubmeds) {
+			if (pubmed != null){
+				String pubmedId = pubmed.replace("(PubMed,", "").replace(")", "");
+
+                if (pubmedId.isEmpty()) {
+	                System.err.println("FOUND EMPTY PUBLICATION " + pubmed + ", FIX THIS IN NEXT RELEASE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Probably related to: https://issues.isb-sib.ch/browse/NEXTPROT-1369");
+                }
+                else {
+	                Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+
+	                if (publication == null) {
 						System.err.println("Can t find publication for " + pubmedId); 
-                        missingPublications = true;
+                        missingPublications.add(pubmedId);
 					}
-				}else {
-					System.err.println("FOUND EMPTY PUBLICATION " + pubmedId + ", FIX THIS IN NEXT RELEASE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Probably related to: https://issues.isb-sib.ch/browse/NEXTPROT-1369");
 				}
 			}
-		};
-		if(missingPublications)
-			Assert.fail();
-		
+		}
+		Assert.assertTrue(missingPublications.isEmpty());
 	}
 
 	@Test

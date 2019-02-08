@@ -2,12 +2,23 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.EntryReportStats;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.IsoformPEFFHeader;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.PublicationCategory;
 import org.nextprot.api.core.domain.publication.PublicationProperty;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryPublicationService;
+import org.nextprot.api.core.service.EntryReportStatsService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -40,7 +51,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     @Autowired
     private AnnotationService annotationService;
 
-    @Cacheable("entry-report-stats")
+    @Cacheable(value = "entry-report-stats", sync = true)
     @Override
     public EntryReportStats reportEntryStats(String entryAccession) {
 
@@ -183,7 +194,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     
     private void setProteinExistence(String entryAccession, EntryReportStats report) {
 
-        ProteinExistence proteinExistence = overviewService.findOverviewByEntry(entryAccession).getProteinExistences().getProteinExistence();
+        ProteinExistence proteinExistence = overviewService.findOverviewByEntry(entryAccession).getProteinExistence();
         if (proteinExistence == null) {
             throw new NextProtException("undefined existence level for neXtProt entry "+ entryAccession);
         }

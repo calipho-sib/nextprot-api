@@ -12,7 +12,7 @@ public class HpaXrefURLResolverTest {
     @Before
     public void setup() {
 
-        resolver = new HpaXrefURLResolver();
+        resolver = new HpaXrefURLResolver(18);
     }
 
     // entry/NX_Q9BXA6/xref.json

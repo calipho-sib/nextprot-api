@@ -30,7 +30,7 @@ public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
 	
 	@Ignore
 	@Test
-	public void shouldWork() {
+	public void shouldWork() throws BinaryInteraction2Annotation.MissingInteractantEntryException {
 		String entryName = "NX_P38398";
 		List<Annotation> annots = new ArrayList<>();
 		List<Isoform> isoforms = this.isoformService.findIsoformsByEntryName(entryName);

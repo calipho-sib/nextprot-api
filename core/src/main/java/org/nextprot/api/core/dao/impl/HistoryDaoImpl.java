@@ -7,10 +7,10 @@ import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -32,7 +32,7 @@ public class HistoryDaoImpl implements HistoryDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("history-by-entry"), namedParameters, new HistoryEntryRowMapper());
 	}
 	
-	private static class HistoryEntryRowMapper implements ParameterizedRowMapper<History> {
+	private static class HistoryEntryRowMapper extends SingleColumnRowMapper<History> {
 
 		@Override
 		public History mapRow(ResultSet resultSet, int row) throws SQLException {

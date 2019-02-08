@@ -19,7 +19,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +52,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
-	@Cacheable("terminology-ancestor-sets")
+	@Cacheable(value = "terminology-ancestor-sets", sync = true)
 	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession) {
 		Set<String> result = new TreeSet<>();
 		
@@ -62,7 +68,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable("terminology-by-ontology")
+	@Cacheable(value = "terminology-by-ontology", sync = true)
 	public List<CvTerm> findCvTermsByOntology(String ontology) {
 		List<CvTerm> terms = terminologyDao.findTerminologyByOntology(ontology);
 		// returns a immutable list when the result is cacheable (this prevents
@@ -72,7 +78,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable("terminology-all")
+	@Cacheable(value = "terminology-all", sync = true)
 	public List<CvTerm> findAllCVTerms() {
 		List<CvTerm> terms = terminologyDao.findAllTerminology();
 		// returns a immutable list when the result is cacheable (this prevents
@@ -83,7 +89,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable("enzyme-terminology") // TODO there should be an utiliy method on
+	@Cacheable(value = "enzyme-terminology", sync = true) // TODO there should be an utiliy method on
 										// entry to get the enzymes...
 	public List<CvTerm> findEnzymeByMaster(String entryName) {
 		Set<String> accessions = new HashSet<String>(terminologyDao.findEnzymeAcsByMaster(entryName));
@@ -112,7 +118,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable("terminology-names")
+	@Cacheable(value = "terminology-names", sync = true)
 	public List<String> findTerminologyNamesList() {
 		return new ImmutableList.Builder<String>().addAll(terminologyDao.findTerminologyNamesList()).build();
 	}

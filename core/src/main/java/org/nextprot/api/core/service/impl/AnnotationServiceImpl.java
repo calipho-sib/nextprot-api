@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -15,6 +16,7 @@ import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
@@ -36,6 +38,7 @@ import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +78,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private EntityNameService entityNameService;
 	
 	@Override
-	@Cacheable("annotations")
+	@Cacheable(value = "annotations", sync = true)
 	public List<Annotation> findAnnotations(String entryName) {
 		return findAnnotations(entryName,false);
 	}
@@ -113,12 +117,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
-			// Isoforms
-			List<AnnotationIsoformSpecificity> isoforms = annotationDAO.findAnnotationIsoformsByAnnotationIds(annotationIds);
-			Multimap<Long, AnnotationIsoformSpecificity> isoformsByAnnotationId = Multimaps.index(isoforms, new AnnotationIsoformFunction());
+			// Isoform specificities
+			List<AnnotationIsoformSpecificity> isospecs = annotationDAO.findAnnotationIsoformsByAnnotationIds(annotationIds);
+			Multimap<Long, AnnotationIsoformSpecificity> isospecsByAnnotationId = Multimaps.index(isospecs, new AnnotationIsoformFunction());
 	
 			for (Annotation annotation : annotations) {
-				annotation.addTargetingIsoforms(new ArrayList<>(isoformsByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.addTargetingIsoforms(new ArrayList<>(isospecsByAnnotationId.get(annotation.getAnnotationId())));
 			}
 	
 			// Properties
@@ -147,6 +151,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 		
+		annotations.addAll(this.createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(entryName, annotations, ignoreStatements));
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
@@ -178,6 +183,20 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
+	private List<Annotation> createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(String  entryName, List<Annotation> existingAnnotations, boolean ignoreStatements) {
+		List<Annotation> smiAnnotations = new ArrayList<>();		
+		List<DbXref> entryXrefs = ignoreStatements ? xrefService.findDbXrefsByMasterExcludingBed(entryName) : xrefService.findDbXrefsByMaster(entryName) ;
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
+		for (Annotation annot: existingAnnotations) {
+			if (AnnotationCategory.CATALYTIC_ACTIVITY == annot.getAPICategory()) {
+				smiAnnotations.addAll(
+						CatalyticActivityUtils.createSMIAnnotations(
+								entryName, isoforms, annot, entryXrefs)); 
+			}
+		}
+		List<Annotation> mergedSmiAnnotations = CatalyticActivityUtils.mergeSmiAnnotations(smiAnnotations);
+		return mergedSmiAnnotations;
+	}
 	
 	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
 		
@@ -195,7 +214,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				annot.addProperty(prop);
 				String descr = annot.getDescription();
 				if (descr != null && !annot.getCvTermName().equals(descr)) {
-					// 3 cases: "Main location", "Additional localtion" or "Note=..."
+					// 3 cases: "Main location", "Additional location" or "Note=..."
 					if (descr.startsWith("Note=")) descr=descr.substring(5); 
 					prop = new AnnotationProperty();
 					prop.setAnnotationId(annot.getAnnotationId());

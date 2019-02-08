@@ -6,7 +6,11 @@ import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.SequenceUnicity;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
@@ -15,7 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
@@ -27,7 +35,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 
 	@Override
-	@Cacheable("natural-peptide-mapping-annotations")
+	@Cacheable(value = "natural-peptide-mapping-annotations", sync = true)
 	public List<Annotation> findNaturalPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {
 		
 		return findPeptideMappingAnnotationsByMasterUniqueName(uniqueName,true);
@@ -35,7 +43,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 	
 	@Override
-	@Cacheable("srm-peptide-mapping-annotations")
+	@Cacheable(value = "srm-peptide-mapping-annotations", sync = true)
 	public List<Annotation> findSyntheticPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {
 		
 		return findPeptideMappingAnnotationsByMasterUniqueName(uniqueName,false);

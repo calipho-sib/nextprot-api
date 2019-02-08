@@ -30,7 +30,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private ReleaseInfoService releaseInfoService;
 
-    @Cacheable("global-publication-statistics")
+    @Cacheable(value = "global-publication-statistics", sync = true)
     @Override
     public GlobalPublicationStatistics getGlobalPublicationStatistics() {
 
@@ -68,7 +68,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         final List<ReleaseStatsTag> releaseStatsTags = releaseInfoService.findReleaseStats().getTagStatistics();
 
-        return stat.stream().collect(Collectors.toMap(Function.identity(), s -> sumTagCounts(releaseStatsTags, s.getDbTags())));
+        Map<Counter, Integer> map = stat.stream()
+                                            .filter(c -> !c.getDbTags().isEmpty())
+                                            .collect(Collectors.toMap(
+                                                    Function.identity(),
+                                                    s -> sumTagCounts(releaseStatsTags, s.getDbTags())));
+        map.put(Counter.PROTEIN_WITH_NO_FUNCTION_ANNOTATED_COUNT, releaseInfoService.getAnnotationWithoutFunctionTag().getCount());
+        return map;
     }
 
     private int sumTagCounts(final List<ReleaseStatsTag> releaseStatsTags, final Set<String> statNames) {

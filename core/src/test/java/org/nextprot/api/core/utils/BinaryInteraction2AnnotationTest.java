@@ -1,13 +1,15 @@
 package org.nextprot.api.core.utils;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.Interactant;
+import org.nextprot.api.core.domain.MainNames;
+import org.nextprot.api.core.service.MainNamesService;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.nextprot.api.core.domain.*;
-import org.nextprot.api.core.service.MainNamesService;
 
 public class BinaryInteraction2AnnotationTest {
 
@@ -48,7 +50,7 @@ public class BinaryInteraction2AnnotationTest {
 	
 	
     @Test
-    public void testConvertEvidenceToBioEntry()  {
+    public void testConvertEvidenceToBioEntry() throws BinaryInteraction2Annotation.MissingInteractantEntryException {
     	
     	
 
@@ -67,7 +69,7 @@ public class BinaryInteraction2AnnotationTest {
     }
 
     @Test
-    public void testConvertEvidenceToBioIsoform()  {
+    public void testConvertEvidenceToBioIsoform() throws BinaryInteraction2Annotation.MissingInteractantEntryException {
 
         Interactant interactant = new Interactant();
 
@@ -84,7 +86,7 @@ public class BinaryInteraction2AnnotationTest {
     }
 
     @Test
-    public void testConvertEvidenceToExternalBioEntry()  {
+    public void testConvertEvidenceToExternalBioEntry() throws BinaryInteraction2Annotation.MissingInteractantEntryException {
 
         Interactant interactant = new Interactant();
 

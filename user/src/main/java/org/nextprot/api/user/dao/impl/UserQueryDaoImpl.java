@@ -14,16 +14,23 @@ import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Repository
 @Lazy
@@ -259,7 +266,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		return userQueryList;
 	}
 
-	private static class UserQueryRowMapper implements ParameterizedRowMapper<UserQuery> {
+	private static class UserQueryRowMapper extends SingleColumnRowMapper<UserQuery> {
 
 		public UserQuery mapRow(ResultSet resultSet, int row) throws SQLException {
 
@@ -297,7 +304,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		}
 	}
 
-	private static class UserQueryTagRowMapper implements ParameterizedRowMapper<Tag> {
+	private static class UserQueryTagRowMapper extends SingleColumnRowMapper<Tag> {
 
 		public Tag mapRow(ResultSet resultSet, int row) throws SQLException {
 

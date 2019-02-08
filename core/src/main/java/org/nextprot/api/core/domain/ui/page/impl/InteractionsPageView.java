@@ -22,7 +22,7 @@ public class InteractionsPageView extends PageViewBase {
 		return Arrays.asList(
 				
 				AnnotationCategory.INTERACTION_INFO, 
-				AnnotationCategory.ENZYME_REGULATION,
+				AnnotationCategory.ACTIVITY_REGULATION,
 				AnnotationCategory.GO_MOLECULAR_FUNCTION, // further refined
 				AnnotationCategory.BINARY_INTERACTION,
 				AnnotationCategory.COFACTOR,
@@ -50,7 +50,7 @@ public class InteractionsPageView extends PageViewBase {
 	@Override
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 
-		return Arrays.asList(BINDING_DB, DIP, INT_ACT, MINT, STRING, SIGNA_LINK, BIO_GRID, SIGNOR, CORUM, COMPLEX_PORTAL);
+		return Arrays.asList(BINDING_DB, DIP, INT_ACT, MINT, STRING, SIGNA_LINK, BIO_GRID, SIGNOR, CORUM, COMPLEX_PORTAL, RHEA);
 	}
 
 	@Override

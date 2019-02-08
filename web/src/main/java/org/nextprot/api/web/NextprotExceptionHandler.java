@@ -3,12 +3,18 @@ package org.nextprot.api.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.*;
+import org.nextprot.api.commons.exception.ConcurrentRequestsException;
+import org.nextprot.api.commons.exception.EntryNotFoundException;
+import org.nextprot.api.commons.exception.EntrySetNotFoundException;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -86,14 +92,22 @@ public class NextprotExceptionHandler {
 		return getResponseError(ex);
 	}
 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	@ResponseBody
+	public RestErrorResponse handle(MissingServletRequestParameterException ex) {
+		LOGGER.error("Missing parameter: " + ex.getLocalizedMessage());
+		ex.printStackTrace();
+		return getResponseError(ex);
+	}
+
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public RestErrorResponse handle(Exception ex) {
-		String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
-		LOGGER.error("unexpected error occurred:" + code + "\t" + ex.getLocalizedMessage());
+		LOGGER.error("unexpected error occurred:" + ex.getLocalizedMessage());
 		ex.printStackTrace();
-		return getResponseErrorMsg("Oops something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
+		return getResponseError(ex);
 	}
 
 	@ResponseStatus(HttpStatus.NOT_FOUND)
@@ -127,7 +141,7 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseBody
 	public RestErrorResponse handle(AccessDeniedException ex) {
-		LOGGER.warn("Some error occured " + ex.getLocalizedMessage());
+		LOGGER.warn("An error occurred: " + ex.getLocalizedMessage());
 		return getResponseError(ex);
 	}
 
@@ -135,7 +149,7 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	@ResponseBody
 	public RestErrorResponse handle(DataIntegrityViolationException ex) {
-		LOGGER.warn("Data Integration violation occured " + ex.getLocalizedMessage());
+		LOGGER.warn("Data Integration violation occurred " + ex.getLocalizedMessage());
 		ex.printStackTrace();
 		return getResponseErrorMsg("conflict with another resource (try to use a different name)");
 	}

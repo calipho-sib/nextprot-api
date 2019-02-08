@@ -1,8 +1,5 @@
 package org.nextprot.api.rdf.service.impl;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
@@ -15,6 +12,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 @Service
 public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 
@@ -22,7 +22,7 @@ public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 	private SparqlEndpoint sparqlEndpoint;
 
 	@Override
-	@Cacheable("sparql-proxy")
+	@Cacheable(value = "sparql-proxy", sync = true)
 	public ResponseEntity<String> sparql(String queryString) {
 		return sparqlInternal(queryString);
 	}
