@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:        2019/02/01
+    Modified annotation category: activity-regulation (replaces enzyme-regulation)
+
     Date:		2018/03/27
     2 parameters of <exon> are now optional: parameters 'accession' and 'database' of exon tag are optional
 
@@ -914,6 +917,7 @@
 						<xs:enumeration value="absorption-max"/>
 						<xs:enumeration value="absorption-note"/>
 						<xs:enumeration value="active-site"/>
+						<xs:enumeration value="activity-regulation"/>
 						<xs:enumeration value="allergen"/>
 						<xs:enumeration value="antibody-mapping"/>
 						<xs:enumeration value="beta-strand"/>
@@ -936,7 +940,6 @@
 						<xs:enumeration value="domain-info"/>
                         <xs:enumeration value="electrophysiological-parameter"/>
 						<xs:enumeration value="enzyme-classification"/>
-						<xs:enumeration value="activity-regulation"/>
 						<xs:enumeration value="expression-info"/>
 						<xs:enumeration value="expression-profile"/>
 						<xs:enumeration value="function-info"/>
