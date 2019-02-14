@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 
-// Should mock deps and unit test this service
+// TODO: Should mock deps and unit test this service
 @ActiveProfiles({ "dev","cache"})
 public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
         
@@ -179,6 +179,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
 	}
 
+	@Ignore
 	@Test
 	public void shouldNotFindInferenceRule() {
 

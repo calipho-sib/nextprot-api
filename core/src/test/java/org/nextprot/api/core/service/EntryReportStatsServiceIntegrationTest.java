@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO: this class should be refactored as unit test with mocked services
+// TODO: Should mock deps and unit test this service
 @ActiveProfiles({ "dev","cache" })
 public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 
