@@ -19,9 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
@@ -203,8 +201,8 @@ having sum(a.cnt)=1
 
 			if (xref.getDbXrefId() == 16387756) {
 
-				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
-				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM", xref.getResolvedUrl());
+				Assert.assertEquals("http://doua.prabi.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM6", xref.getLinkUrl());
+				Assert.assertEquals("http://doua.prabi.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM6", xref.getResolvedUrl());
 
                 break;
 			}
