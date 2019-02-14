@@ -58,6 +58,6 @@ public class HttpSparqlServiceImplTest {
 
 		Assert.assertTrue(!response.getVars().isEmpty());
 		Assert.assertEquals(expectedVars, response.getVars());
-		Assert.assertEquals(expectedRows, response.rows());
+		Assert.assertTrue(response.rows() >= expectedRows);
 	}
 }
