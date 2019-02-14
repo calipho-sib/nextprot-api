@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO: this class should be refactored as unit test with mocked services
 @ActiveProfiles({ "dev","cache" })
 public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 
@@ -55,6 +56,7 @@ public class EntryReportStatsServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(1, reports.size());
 	}
 
+	@Ignore
     @Test
     public void NX_P01308ShouldHaveAlsoPubInfos() {
 
