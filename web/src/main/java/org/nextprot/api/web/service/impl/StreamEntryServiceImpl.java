@@ -175,7 +175,7 @@ public class StreamEntryServiceImpl implements StreamEntryService {
 		} else if (queryRequest.getQuery() != null) { // search and add filters
 			return "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
 		} else if (queryRequest.getSparql() != null) { // search and add filters
-			return "nextprot-sparql-" + queryRequest.getSparql() + "-" + viewName + "." + format.getExtension();
+			return "nextprot-sparql-" + viewName + "." + format.getExtension();
 		} else if (queryRequest.getChromosome() != null) { // search and add filters
 			return "nextprot-chromosome-" + queryRequest.getChromosome() + "-" + viewName + "." + format.getExtension();
 		} else {
