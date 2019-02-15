@@ -23,3 +23,6 @@ Some plan may need to tune JVM before running jmeter:
 
 jmeter -n -t plans/on-alpha-querying-titin-by-5-users-twice.jmx -l /tmp/titin.out -e -o /tmp/report
 
+## another example with parameters
+
+jmeter -n -t plans/on-alpha-querying-annotations.jmx -Jthreads=1 -Jcount=1 -Jentry=NX_P52701 -Joutputdir=/tmp
