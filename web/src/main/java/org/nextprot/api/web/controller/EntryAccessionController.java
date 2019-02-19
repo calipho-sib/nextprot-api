@@ -22,7 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @Api(name = "Entry Accessions", description = "Retrieves nextProt entry accession numbers")
@@ -39,7 +42,30 @@ public class EntryAccessionController {
         try {
             writeEntries(masterIdentifierService.findUniqueNames(), mediaType, response);
         } catch (IOException e) {
-            throw new NextProtException("cannot export entries by ProteinExistence in "+mediaType.getExtension()+" format", e);
+            throw new NextProtException("cannot get all entries in "+mediaType.getExtension()+" format", e);
+        }
+    }
+
+    //@ApiMethod(path = "/entry-accessions/random/{n}", verb = ApiVerb.GET, description = "Retrieves n random neXtProt entry accession numbers", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = "/entry-accessions/random/{n}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE} )
+    public void getRandomEntryAccessions(HttpServletRequest request,
+                                         //@ApiPathParam(name = "n", description = "the number of random entry accessions",  allowedvalues = { "1"})
+                                         @PathVariable("n")  int n, HttpServletResponse response) {
+
+        NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+        try {
+            List<String> allShuffledAccessions = new ArrayList<>(masterIdentifierService.findUniqueNames());
+
+            if (n <= 0 || n > allShuffledAccessions.size()) {
+                throw new NextProtException("invalid n value (n="+ n +"): cannot get random entries from invalid n value (n should positive and less equal than "+ allShuffledAccessions.size()+")");
+            }
+
+            Collections.shuffle(allShuffledAccessions);
+
+            writeEntries(allShuffledAccessions.subList(0, n), mediaType, response);
+        } catch (IOException e) {
+            throw new NextProtException("cannot get random entries in "+mediaType.getExtension()+" format", e);
         }
     }
 
