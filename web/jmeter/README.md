@@ -19,10 +19,26 @@ Some plan may need to tune JVM before running jmeter:
 
 `export JVM_ARGS="-Xms1024m -Xmx4G"`
 
-## a real example:
+## Some examples:
 
-jmeter -n -t plans/on-alpha-querying-titin-by-5-users-twice.jmx -l /tmp/titin.out -e -o /tmp/report
+* jmeter -n -t plans/examples/on-alpha-querying-titin-by-5-users-twice.jmx -l /tmp/titin.out -e -o /tmp/report
+* jmeter -n -t plans/examples/on-alpha-querying-annotations.jmx -Jthreads=1 -Jcount=1 -Jentry=NX_P52701 -Joutputdir=/tmp
 
-## another example with parameters
+## The function view plan
 
-jmeter -n -t plans/on-alpha-querying-annotations.jmx -Jthreads=1 -Jcount=1 -Jentry=NX_P52701 -Joutputdir=/tmp
+In this scenario, all api calls done from the function view ()
+
+jmeter -n -t plans/testing-function-view.jmx -Jrandom_accessions_count=5
+jmeter -n -t plans/testing-function-view.jmx -Jusers=5 -Jrampup=10 -Jaccessions_input=plans/input/accessions.txt
+
+Params:
+* api: the api (default=alpha-api.nextprot.org)
+* users: the number of simulated users executing this plan (default=1)
+* rampup (in seconds): the amount of time it takes for jmeter to execute all the users' tasks (default=10")
+* ntimes: the number of times this plan is executed by each user (default=1)
+* delay (in milliseconds): the pause duration between each api calls 
+* accessions_input: the file containing one entry accession by line
+* random_accessions_count: the number of entry accessions randomly fetched from the api (if accessions_input is not defined) 
+* output_dir: the output directory of summary reports testing-function-view.csv
+
+We also could defined params for connect and response timeouts (actuals are 5" and 30")
