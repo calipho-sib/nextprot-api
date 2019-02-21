@@ -2,7 +2,11 @@
 
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+		 Name="CM1"
+		 maxBytesLocalHeap="2G"
+		 maxBytesLocalOffHeap="10G"
+		 maxBytesLocalDisk="50G">
 
 	<!-- Use always copy on write and read -->
 
