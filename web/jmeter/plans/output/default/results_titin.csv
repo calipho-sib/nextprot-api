@@ -1,0 +1,18 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,SampleCount,ErrorCount,IdleTime,Connect
+1551114735354,12,Read accessions from file,200,OK,Get entry accessions from file 1-1,true,,0,0,1,1,null,0,1,0,0,0
+1551114735392,12,Getting shared accessions,200,OK,Executing function view api calls 2-1,true,,0,0,1,1,null,0,1,0,0,0
+1551114735443,173,GO-BIOLOGICAL-PROCESS,200,OK,Executing function view api calls 2-1,true,,729401,226,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/GO-BIOLOGICAL-PROCESS.json,167,1,0,0,36
+1551114735718,125,GO-MOLECULAR-FUNCTION,200,OK,Executing function view api calls 2-1,true,,820809,226,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/GO-MOLECULAR-FUNCTION.json,115,1,0,0,1
+1551114735945,126,FUNCTION-INFO,200,OK,Executing function view api calls 2-1,true,,506317,218,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/FUNCTION-INFO.json,120,1,0,0,1
+1551114736173,169,Xrefs,200,OK,Executing function view api calls 2-1,true,,2735,222,1,1,http://alpha-api.nextprot.org/page-view/function/NX_Q8WZ42/xref.json,168,1,0,0,1
+1551114736447,7,Overview,200,OK,Executing function view api calls 2-1,true,,13603,213,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/overview.json,7,1,0,0,1
+1551114736555,124,FUNCTION-INFO,200,OK,Executing function view api calls 2-1,true,,506317,218,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/FUNCTION-INFO.json,118,1,0,0,1
+1551114736781,129,CATALYTIC-ACTIVITY,200,OK,Executing function view api calls 2-1,true,,513539,223,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/CATALYTIC-ACTIVITY.json,123,1,0,0,1
+1551114737011,128,TRANSPORT-ACTIVITY,200,OK,Executing function view api calls 2-1,true,,493041,223,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/TRANSPORT-ACTIVITY.json,121,1,0,0,1
+1551114737241,110,ACTIVITY-REGULATION,200,OK,Executing function view api calls 2-1,true,,506075,224,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/ACTIVITY-REGULATION.json,106,1,0,0,1
+1551114737453,117,COFACTOR,200,OK,Executing function view api calls 2-1,true,,501746,213,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/COFACTOR.json,112,1,0,0,1
+1551114737671,110,COFACTOR-INFO,200,OK,Executing function view api calls 2-1,true,,493041,218,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/COFACTOR-INFO.json,106,1,0,0,1
+1551114737882,407,BIOPHYSICOCHEMICAL-PROPERTY,200,OK,Executing function view api calls 2-1,true,,493041,232,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/BIOPHYSICOCHEMICAL-PROPERTY.json,401,1,0,0,1
+1551114738390,125,PATHWAY,200,OK,Executing function view api calls 2-1,true,,509211,212,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/PATHWAY.json,118,1,0,0,1
+1551114738616,121,ALLERGEN,200,OK,Executing function view api calls 2-1,true,,493041,213,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/ALLERGEN.json,114,1,0,0,1
+1551114738839,119,CAUTION,200,OK,Executing function view api calls 2-1,true,,493041,212,1,1,http://alpha-api.nextprot.org/entry/NX_Q8WZ42/CAUTION.json,112,1,0,0,1
