@@ -24,8 +24,8 @@
 	3) New bio-type value added: "entry-annotation" (used to link to other annotations)
 	Version history: https://github.com/calipho-sib/nextprot-api/blob/master/web/src/main/webapp/nextprot-export-v2.xsd
 
-	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
-	Distributed under the Creative Commons Attribution-NoDerivs License
+	Copyright (c) 2016-2019 SIB Swiss Institute of Bioinformatics
+	Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0)
 *******************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.1">
 

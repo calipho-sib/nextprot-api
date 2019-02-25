@@ -49,7 +49,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
                 "\n" +
                 "Copyrighted by the SIB Swiss Institute of Bioinformatics\n" +
                 "\n" +
-                "Distributed under the Creative Commons Attribution-NoDerivs License\n" +
+                "Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0)\n" +
                 "----------------------------------------------------------------------------\n");
     }
 
