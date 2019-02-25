@@ -43,7 +43,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	@Override
 	// TODO normally only terminology + accession is supposed to be unique !!!!
 	// SHOULD USE findTermByAccessionAndTerminology
-	@Cacheable(value = "terminology-by-accession", sync = true)
+	@Cacheable(value = "term-by-accession", sync = true)
 	public CvTerm findTerminologyByAccession(String accession) {
 		Set<String> acs = new HashSet<>();
 		acs.add(accession);

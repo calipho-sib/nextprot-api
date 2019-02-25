@@ -31,7 +31,7 @@ In this scenario, all api calls done from the function view ()
 jmeter -n -t plans/testing-function-view.jmx -Jrandom_accessions_count=5
 jmeter -n -t plans/testing-function-view.jmx -Jusers=5 -Jrampup=10 -Jaccessions_input=plans/input/accessions.txt
 
-Params:
+Params (see also https://www.novatec-gmbh.de/en/blog/how-to-pass-command-line-properties-to-a-jmeter-testplan):
 * api: the api (default=alpha-api.nextprot.org)
 * users: the number of simulated users executing this plan (default=1)
 * rampup (in seconds): the amount of time it takes for jmeter to execute all the users' tasks (default=10")

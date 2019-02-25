@@ -3,14 +3,12 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,24 +48,8 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	}
 
-	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
-	@Cacheable(value = "terminology-ancestor-sets", sync = true)
-	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession) {
-		Set<String> result = new TreeSet<>();
-		
-		for(Tree<CvTerm> tree : trees){
-			List<Node<CvTerm>> nodes = TerminologyUtils.getNodeListByName(tree, accession);
-			for (Node<CvTerm> node : nodes) {
-				appendAncestor(node, result);
-			}
-		}
-
-		result.remove(accession); // a term is not it's own ancestor
-		return result;
-	}
-
 	@Override
-	@Cacheable(value = "terminology-by-ontology", sync = true)
+	@Cacheable(value = "term-by-ontology", sync = true)
 	public List<CvTerm> findCvTermsByOntology(String ontology) {
 		List<CvTerm> terms = terminologyDao.findTerminologyByOntology(ontology);
 		// returns a immutable list when the result is cacheable (this prevents
@@ -78,7 +59,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	@Cacheable(value = "terminology-all", sync = true)
+	@Cacheable(value = "all-terms", sync = true)
 	public List<CvTerm> findAllCVTerms() {
 		List<CvTerm> terms = terminologyDao.findAllTerminology();
 		// returns a immutable list when the result is cacheable (this prevents

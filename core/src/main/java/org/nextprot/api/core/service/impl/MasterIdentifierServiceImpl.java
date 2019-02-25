@@ -25,7 +25,7 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 	private OverviewService overviewService;
 
 	@Override
-	@Cacheable(value = "master-unique-names-chromossome", sync = true)
+	@Cacheable(value = "master-unique-names-chromosome", sync = true)
 	public List<String> findUniqueNamesOfChromosome(String chromosome) {
 		return this.masterIdentifierDao.findUniqueNamesOfChromosome(chromosome);
 	}
