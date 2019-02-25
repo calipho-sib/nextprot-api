@@ -9,7 +9,12 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="delay" elementType="Argument">
             <stringProp name="Argument.name">delay</stringProp>
-            <stringProp name="Argument.value">${__P(delay,1000)}</stringProp>
+            <stringProp name="Argument.value">${__P(delay,100)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="delay_random" elementType="Argument">
+            <stringProp name="Argument.name">delay_random</stringProp>
+            <stringProp name="Argument.value">${__P(delay_random, 0)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="random_accessions_count" elementType="Argument">
@@ -86,12 +91,6 @@ lineReader.close();</stringProp>
           </BeanShellSampler>
           <hashTree/>
         </hashTree>
-        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
-          <boolProp name="displayJMeterProperties">false</boolProp>
-          <boolProp name="displayJMeterVariables">true</boolProp>
-          <boolProp name="displaySystemProperties">false</boolProp>
-        </DebugSampler>
-        <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Executing function view api calls" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -232,7 +231,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -263,7 +262,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -294,7 +293,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -336,7 +335,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -378,7 +377,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -409,7 +408,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -440,7 +439,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -471,7 +470,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -502,7 +501,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -533,7 +532,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -564,7 +563,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -595,7 +594,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -626,7 +625,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -657,7 +656,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -688,7 +687,7 @@ while (e.hasMoreElements()) {
           <hashTree>
             <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
               <stringProp name="ConstantTimer.delay">${delay}</stringProp>
-              <stringProp name="RandomTimer.range">10</stringProp>
+              <stringProp name="RandomTimer.range">${delay_random}</stringProp>
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
@@ -745,10 +744,10 @@ while (e.hasMoreElements()) {
             <code>true</code>
             <message>true</message>
             <threadName>true</threadName>
-            <dataType>true</dataType>
+            <dataType>false</dataType>
             <encoding>false</encoding>
-            <assertions>true</assertions>
-            <subresults>true</subresults>
+            <assertions>false</assertions>
+            <subresults>false</subresults>
             <responseData>false</responseData>
             <samplerData>false</samplerData>
             <xml>false</xml>
@@ -760,12 +759,14 @@ while (e.hasMoreElements()) {
             <assertionsResultsToSave>0</assertionsResultsToSave>
             <bytes>true</bytes>
             <sentBytes>true</sentBytes>
+            <url>true</url>
             <threadCounts>true</threadCounts>
+            <sampleCount>true</sampleCount>
             <idleTime>true</idleTime>
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">${output_dir}/summary.csv</stringProp>
+        <stringProp name="filename">${output_dir}/results.csv</stringProp>
       </ResultCollector>
       <hashTree/>
     </hashTree>
