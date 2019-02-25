@@ -16,6 +16,7 @@ import org.nextprot.api.core.service.exon.ExonsAnalysisWithLogging;
 import org.nextprot.api.core.service.exon.TranscriptExonsCategorizer;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private final Comparator<Isoform> isoformComparator = new IsoformUtils.IsoformComparator();
 
 	@Override
-	//@Cacheable(value="genomic-mappings", sync=true)
+	@Cacheable(value="genomic-mappings", sync=true)
 	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
 		Objects.requireNonNull(entryName, "The entry name "+entryName +" is not defined");

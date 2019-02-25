@@ -2,7 +2,6 @@ package org.nextprot.api.core.service;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
-import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 
@@ -51,9 +50,6 @@ public interface TerminologyService {
 	List<CvTerm> findCvTermsByAccessions(Set<String> terminologyAccessions);
 
 	List<String> findTerminologyNamesList();
-
-	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
-	Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession);
 
 	/**
 	 * Get the list of xref(s) accession found for the specific database
