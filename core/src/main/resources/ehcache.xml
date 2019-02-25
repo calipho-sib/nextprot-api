@@ -11,8 +11,7 @@
 
 	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 	
-	<cache name="master-unique-names-chromossome"
-		maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
+	<cache name="master-unique-names-chromosome" maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
 	<cache name="terminology-names" maxEntriesLocalHeap="50" eternal="true" statistics="true"/>
 
