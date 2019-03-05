@@ -1,4 +1,4 @@
-# Apache JMeter
+# Load testing with Apache JMeter
 
 The Apache JMeter™ is designed to load test functional behavior and measure performance.
 
@@ -44,3 +44,12 @@ Params (see also https://www.novatec-gmbh.de/en/blog/how-to-pass-command-line-pr
 * output_dir: the output directory of summary reports testing-function-view.csv
 
 We also could defined params for connect and response timeouts (actuals are 5" and 30")
+
+## How to launch jvisualvm from distant machine (and redirect x11 to local machine)
+
+Let's take the example of uat-web2 (alpha)
+
+1. Connect with ssh (ssh -X npteam@uat-web2)
+2. Execute jvisualvm from command line
+3. As the GUI opens, you should select the correct jvm
+4. run your jmeter plan and profile nextprot-api web app
