@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:        2019/02/01
+    Modified annotation category: activity-regulation (replaces enzyme-regulation)
+
     Date:		2018/03/27
     2 parameters of <exon> are now optional: parameters 'accession' and 'database' of exon tag are optional
 
@@ -21,8 +24,8 @@
 	3) New bio-type value added: "entry-annotation" (used to link to other annotations)
 	Version history: https://github.com/calipho-sib/nextprot-api/blob/master/web/src/main/webapp/nextprot-export-v2.xsd
 
-	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
-	Distributed under the Creative Commons Attribution-NoDerivs License
+	Copyright (c) 2016-2019 SIB Swiss Institute of Bioinformatics
+	Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0)
 *******************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.1">
 
@@ -914,6 +917,7 @@
 						<xs:enumeration value="absorption-max"/>
 						<xs:enumeration value="absorption-note"/>
 						<xs:enumeration value="active-site"/>
+						<xs:enumeration value="activity-regulation"/>
 						<xs:enumeration value="allergen"/>
 						<xs:enumeration value="antibody-mapping"/>
 						<xs:enumeration value="beta-strand"/>
@@ -936,7 +940,6 @@
 						<xs:enumeration value="domain-info"/>
                         <xs:enumeration value="electrophysiological-parameter"/>
 						<xs:enumeration value="enzyme-classification"/>
-						<xs:enumeration value="activity-regulation"/>
 						<xs:enumeration value="expression-info"/>
 						<xs:enumeration value="expression-profile"/>
 						<xs:enumeration value="function-info"/>

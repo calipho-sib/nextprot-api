@@ -4,8 +4,8 @@
 
 	Date:		2016/03/03
 
-	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
-	Distributed under the Creative Commons Attribution-NoDerivs License
+	Copyright (c) 2016-2019 SIB Swiss Institute of Bioinformatics
+	Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0)
 *******************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
 

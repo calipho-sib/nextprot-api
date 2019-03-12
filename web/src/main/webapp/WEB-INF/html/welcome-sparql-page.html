@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="np" ng-controller="npCtrl as nm" xmlns:flash="">
+<html lang="en" ng-app="np" ng-controller="npCtrl as nm">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -228,11 +228,7 @@
             <!-- ngInclude:  --><div ng-include="" src="getSideMenuPartial()" class="ng-scope"><ul class="topmenu topmenu-responsive news-sidebar ng-scope" ng-controller="HelpCtrl">
     <li class="active ng-scope" ng-controller="NewsCtrl">
                 <ul id="scn" class="submenu-news collapse in">
-                    <li ng-repeat="n in news" ng-class="activePage('/news/new-release-with-electrophysiology-data-in-the-phenotypes-view-and-revamped-interactions-view')" class="ng-scope active">
-                        <a href="news/new-release-with-electrophysiology-data-in-the-phenotypes-view-and-revamped-interactions-view">
-                            <div class="news-description ng-binding">SPARQL endpoint</div>
-                        </a>
-                    </li>
+                    <div class="news-description ng-binding">SPARQL endpoint</div>
                 </ul>
     </li>
 </ul></div>
