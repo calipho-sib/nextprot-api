@@ -1162,18 +1162,11 @@
 
         var hostname=window.location.hostname;
         
-        var regexp = /(alpha|dev|build|vit)-api\.nextprot\.org/g;
+        var regexp = /(alpha|dev|build|delta|vit)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
         
         if (match != null) {
-        	if (match[1]==="vit") {
-				if (resource==="search") return "https://vit-www.nextprot.org";
-				if (resource==="snorql") return "http://vit-snorql.nextprot.org";
-				if (resource==="api") return "https://vit-api.nextprot.org";
-        	} else {
-                return "http://" + match[1] + "-" + resource + ".nextprot.org"
-        	}
-        	
+           return "http://" + match[1] + "-" + resource + ".nextprot.org"
         }
     }
 
