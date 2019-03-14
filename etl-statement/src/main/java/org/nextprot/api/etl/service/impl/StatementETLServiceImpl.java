@@ -56,9 +56,9 @@ public class StatementETLServiceImpl implements StatementETLService {
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
-        //rawStatements = rawStatements.stream()
-        //        .filter(rs -> rs.getValue(StatementField.ENTRY_ACCESSION).equals("NX_Q8NEV4"))
-        //        .collect(Collectors.toSet());
+        rawStatements = rawStatements.stream()
+                .filter(rs -> rs.getValue(StatementField.NEXTPROT_ACCESSION).equals("NX_Q6S545"))
+                .collect(Collectors.toSet());
 
         if (rawStatements.isEmpty()) {
 
@@ -103,7 +103,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 		else if (source == NextProtSource.BioEditor) {
 			return new BioEditorPreProcessor(report);
 		}
-		return stmts -> stmts;
+		return new BuildStatementIdPreProcessor();
+		// stmts -> stmts;
 	}
 
     Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
@@ -220,6 +221,21 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public interface PreTransformProcessor {
 
 		Set<Statement> process(Set<Statement> statements);
+	}
+
+	private class BuildStatementIdPreProcessor implements PreTransformProcessor {
+
+		@Override
+		public Set<Statement> process(Set<Statement> statements) {
+
+			Set<Statement> statementSet = new HashSet<>();
+
+			statements.forEach(rs -> statementSet.add(new StatementBuilder()
+					.addMap(rs)
+					.build()));
+
+			return statementSet;
+		}
 	}
 
 	private class GlyConnectPreProcessor implements PreTransformProcessor {
