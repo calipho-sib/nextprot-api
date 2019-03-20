@@ -11,7 +11,6 @@ import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -50,8 +49,8 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 		
 		 ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
-		List<Statement> dbStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, "NX_P52701");
-		dbStatements.addAll(statementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_P52701"));
+		List<Statement> dbStatements = statementDao.findNormalStatements("NX_P52701");
+		dbStatements.addAll(statementDao.findProteoformStatements("NX_P52701"));
 		
 		Assert.assertEquals(dbStatements.size(), mappedStatements.size());
 		
@@ -70,8 +69,8 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 
         ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
-        List<Statement> dbStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, "NX_P52701");
-        dbStatements.addAll(statementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_P52701"));
+        List<Statement> dbStatements = statementDao.findNormalStatements("NX_P52701");
+        dbStatements.addAll(statementDao.findProteoformStatements("NX_P52701"));
 
         Assert.assertEquals(dbStatements.size(), mappedStatements.size());
 

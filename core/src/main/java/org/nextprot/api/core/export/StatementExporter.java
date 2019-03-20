@@ -1,18 +1,23 @@
 package org.nextprot.api.core.export;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.AnnotationType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StatementExporter {
@@ -73,7 +78,7 @@ public class StatementExporter {
 
     private void fetchAndAppendStatementsFromEntryAccession(String entryAccession, StringBuilder sb) {
 
-        List<Statement> statements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession).stream()
+        List<Statement> statements = statementDao.findNormalStatements(entryAccession).stream()
                 .filter(statement -> config.categories.contains(AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY))))
                 .collect(Collectors.toList());
 

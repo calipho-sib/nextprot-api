@@ -14,7 +14,6 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -49,14 +48,14 @@ public class StatementServiceImpl implements StatementService {
 
     private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
 
-        List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ENTRY, entryAccession);
+        List<Statement> proteoformStatements = statementDao.findProteoformStatements(entryAccession);
 
         //Collect all subjects
         List<String> subjectAnnotIds = proteoformStatements.stream().map(s ->
                 Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","))
         ).flatMap(Collection::stream).collect(Collectors.toList());
 
-        List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
+        List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(subjectAnnotIds);
 
         return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
@@ -64,7 +63,7 @@ public class StatementServiceImpl implements StatementService {
 
 
     private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
-        List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
+        List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
         return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildAnnotationList(entryAccession, normalStatements);
     }
 
@@ -82,7 +81,7 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public Set<DbXref> findDbXrefs(String entryAccession) {
 
-        return statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession).stream()
+        return statementDao.findNormalStatements(entryAccession).stream()
                 .map(statement -> Optional.ofNullable(createDbXref(statement)))
                 .flatMap(xref -> xref.map(Stream::of).orElseGet(Stream::empty))
                 .collect(Collectors.toSet());
