@@ -1,19 +1,19 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.commons.statements.Statement;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Set;
 
 abstract class StatementExtractorBase implements StatementExtractorService {
 
-	protected Set<Statement> deserialize(InputStream content) {
+	protected Collection<Statement> deserialize(InputStream content) {
 
 		ObjectMapper mapper = new ObjectMapper();
 

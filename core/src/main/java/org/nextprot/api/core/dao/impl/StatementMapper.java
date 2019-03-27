@@ -1,22 +1,30 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.schema.NXFlatTableSchema;
 import org.springframework.jdbc.core.RowMapper;
 
-public class StatementMapper implements RowMapper<Statement>
-{
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class StatementMapper implements RowMapper<Statement> {
 	public Statement mapRow(ResultSet rs, int rowNum) throws SQLException {
-		StatementBuilder sfbuilder = StatementBuilder.createNew();
-		for(StatementField key : StatementField.values()){
-			String value = rs.getString(key.name());
-			sfbuilder.addField(key, value);
+
+		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSetMetaData(rs.getMetaData());
+
+		StatementBuilder sfbuilder = StatementBuilder.createNew()
+				.withSchema(schema);
+
+		for(StatementField key : schema.getFields()) {
+
+			String value = rs.getString(key.getName());
+			if (value != null) {
+				sfbuilder.addField(key, value);
+			}
 		}
-		return sfbuilder.build();
+		return sfbuilder.generateHashAndBuild();
 	}
 	
 }

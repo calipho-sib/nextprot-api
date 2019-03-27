@@ -18,13 +18,20 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.nextprot.api.commons.constants.IdentifierOffset.NXFLAT_ANNOTATION_ID_COUNTER;
+import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
 
 abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
@@ -59,9 +66,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         List<Annotation> annotations = new ArrayList<>();
 
-        Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
+        Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(ANNOTATION_ID)));
 
-        Map<String, List<Statement>> impactStatementsBySubject = proteoformStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOTATION_IDS)));
+        Map<String, List<Statement>> impactStatementsBySubject = proteoformStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(SUBJECT_ANNOTATION_IDS)));
 
         impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 
@@ -128,18 +135,18 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         AnnotationEvidence evidence = new AnnotationEvidence();
 
-        if (s.getValue(StatementField.RESOURCE_TYPE) == null) {
+        if (s.getValue(RESOURCE_TYPE) == null) {
             throw new NextProtException("resource type undefined");
         }
-        evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
+        evidence.setResourceType(s.getValue(RESOURCE_TYPE));
         evidence.setResourceAssociationType("evidence");
-        evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
+        evidence.setQualityQualifier(s.getValue(EVIDENCE_QUALITY));
 
         setResourceId(s, evidence);
 
-        AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-        AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
-        AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+        AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(EVIDENCE_INTENSITY), "intensity");
+        AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+        AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 
         //Set properties which are not null
         evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
@@ -147,17 +154,17 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 .collect(Collectors.toList())
         );
 
-        String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+        String statementEvidenceCode = s.getValue(EVIDENCE_CODE);
         evidence.setEvidenceCodeAC(statementEvidenceCode);
         if (statementEvidenceCode != null) {
             CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
             evidence.setEvidenceCodeName(term.getName());
         }
-        evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
-        evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
+        evidence.setAssignedBy(s.getValue(ASSIGNED_BY));
+        evidence.setAssignmentMethod(s.getValue(ASSIGMENT_METHOD));
         evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
-        evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
-        evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
+        evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(IS_NEGATIVE)));
+        evidence.setNote(s.getValue(EVIDENCE_NOTE));
 
         //TODO create experimental contexts!
 
@@ -172,8 +179,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             evidence.setResourceId(findPublicationId(s));
         } else if (resourceType.equals("database")) {
             evidence.setResourceId(findXrefId(s));
-            evidence.setResourceAccession(s.getValue(StatementField.REFERENCE_ACCESSION));
-            evidence.setResourceDb(s.getValue(StatementField.REFERENCE_DATABASE));
+            evidence.setResourceAccession(s.getValue(REFERENCE_ACCESSION));
+            evidence.setResourceDb(s.getValue(REFERENCE_DATABASE));
         } else {
             throw new NextProtException("Cannot set resource id: resource type " + resourceType + " is not supported");
         }
@@ -185,8 +192,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     protected void setVariantAttributes(Annotation annotation, Statement variantStatement) {
 
-        String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
-        String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
+        String original = variantStatement.getValue(VARIANT_ORIGINAL_AMINO_ACID);
+        String variant = variantStatement.getValue(VARIANT_VARIATION_AMINO_ACID);
         AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
         annotation.setVariant(annotationVariant);
 
@@ -194,8 +201,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     long findPublicationId(Statement statement) {
 
-        String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
-        String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
+        String referenceDB = statement.getValue(REFERENCE_DATABASE);
+        String referenceAC = statement.getValue(REFERENCE_ACCESSION);
 
         Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
         if (publication == null) {
@@ -211,8 +218,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     long findXrefId(Statement statement) {
 
-        String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
-        String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
+        String referenceDB = statement.getValue(REFERENCE_DATABASE);
+        String referenceAC = statement.getValue(REFERENCE_ACCESSION);
 
         try {
             return dbXrefService.findXrefId(referenceDB, referenceAC);
@@ -234,7 +241,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     public List<Annotation> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
 
         List<Annotation> annotations = new ArrayList<>();
-        Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
+        Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(ANNOTATION_ID)));
 
         flatStatementsByAnnotationHash.forEach((key, statements) -> {
 
@@ -242,10 +249,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             Statement firstStatement = statements.get(0);
 
-            annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
+            annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
             annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
-            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
+            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(ANNOTATION_CATEGORY)));
             annotation.setAnnotationCategory(category);
 
             if (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)) {
@@ -255,9 +262,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             setIsoformName(annotation, isoformName);
 
-            annotation.setDescription(firstStatement.getValue(StatementField.ANNOT_DESCRIPTION));
+            annotation.setDescription(firstStatement.getValue(ANNOT_DESCRIPTION));
 
-            String cvTermAccession = firstStatement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+            String cvTermAccession = firstStatement.getValue(ANNOT_CV_TERM_ACCESSION);
 
             //Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
             if (!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)) {
@@ -275,7 +282,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 //Case of Protein propert and mammalian phenotypes
                 annotation.setEvidences(new ArrayList<>());
 
-                boolean foundGold = statements.stream().anyMatch(s -> s.getValue(StatementField.EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
+                boolean foundGold = statements.stream().anyMatch(s -> s.getValue(EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
                 if (foundGold) {
                     annotation.setQualityQualifier("GOLD");
                 } else {
@@ -302,19 +309,19 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
                 } else {
                     LOGGER.error("cv term was expected to be found " + cvTermAccession);
-                    annotation.setCvTermName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_NAME));
-                    annotation.setCvApiName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+                    annotation.setCvTermName(firstStatement.getValue(ANNOT_CV_TERM_NAME));
+                    annotation.setCvApiName(firstStatement.getValue(ANNOT_CV_TERM_TERMINOLOGY));
                 }
             }
 
-            annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
-            annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
+            annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
+            annotation.setAnnotationName(firstStatement.getValue(ANNOTATION_NAME));
 
             //Check this with PAM (does it need to be a human readable stuff)
-            annotation.setUniqueName(firstStatement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
+            annotation.setUniqueName(firstStatement.getValue(ANNOTATION_ID)); //Does it need a name?
 
-            String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
-            String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+            String bioObjectAnnotationHash = firstStatement.getValue(OBJECT_ANNOTATION_IDS);
+            String bioObjectAccession = firstStatement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
 
             if ((bioObjectAnnotationHash != null && !bioObjectAnnotationHash.isEmpty()) ||
                     (bioObjectAccession != null && !bioObjectAccession.isEmpty())) {
@@ -330,10 +337,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
 
-        String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
-        String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
-        String bioObjectType = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
-        String bioObjectName = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME);
+        String bioObjectAnnotationHash = firstStatement.getValue(OBJECT_ANNOTATION_IDS);
+        String bioObjectAccession = firstStatement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
+        String bioObjectType = firstStatement.getValue(BIOLOGICAL_OBJECT_TYPE);
+        String bioObjectName = firstStatement.getValue(BIOLOGICAL_OBJECT_NAME);
 
         BioObject bioObject;
 

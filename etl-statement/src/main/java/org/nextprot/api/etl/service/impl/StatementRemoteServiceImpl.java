@@ -6,12 +6,14 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.reader.JsonReader;
 import org.springframework.stereotype.Service;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,7 +28,7 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for a Gene. Example for msh2:
 	// http://kant.isb-sib.ch:9000/bioeditor/gene/msh2/statements
-	public Set<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName) throws IOException {
+	public Collection<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName) throws IOException {
 
 		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 		if (!jsonFileName.endsWith(".json")) {
@@ -34,7 +36,9 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 		}
 
 		if (isServiceUp(urlString)) {
-			return deserialize(getInputStreamFromUrl(urlString));
+
+			return new JsonReader(source.getSchema()).readStatements(getInputStreamFromUrl(urlString));
+			//return deserialize(getInputStreamFromUrl(urlString));
 		}
 
 		return new HashSet<>();
@@ -42,7 +46,7 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for all data (CAREFUL WITH THIS ONE)
 	// http://kant.isb-sib.ch:9000/bioeditor/statements
-	public Set<Statement> getStatementsForSource(NextProtSource source, String release) throws IOException {
+	public Collection<Statement> getStatementsForSource(NextProtSource source, String release) throws IOException {
 
 		Set<Statement> statements = new LinkedHashSet<>();
         getJsonFilenamesForRelease(source, release)

@@ -14,12 +14,19 @@ import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
-import org.nextprot.commons.statements.*;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.TargetIsoformSet;
+import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.nextprot.commons.statements.StatementField.*;
+import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
 
 // TODO: This statics methods smell bad and should be refactored as a meaningful class
 public class StatementTransformationUtil {
@@ -31,11 +38,11 @@ public class StatementTransformationUtil {
         Optional<String> isoSpecificAccession = getOptionalIsoformAccession(statement);
 
         // Currently we don't create normal annotations (not associated with variant) in the bioeditor
-        List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
+        List<String> isoformAccessions = getIsoformAccessionsForEntryAccession(statement.getValue(ENTRY_ACCESSION), isoformService);
         IsoformPositions isoformPositions = new IsoformPositions();
 
         if (!isoformAccessions.isEmpty()) {
-            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY));
+            AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(ANNOTATION_CATEGORY));
 
             // POSITIONAL ANNOTATIONS
             if (category.isChildOf(AnnotationCategory.POSITIONAL_ANNOTATION) && category != AnnotationCategory.PTM_INFO) {
@@ -162,7 +169,7 @@ public class StatementTransformationUtil {
 			boolean allOk = true;
 
 			for (Statement s : subjectsForThisProteoform) {
-				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(StatementField.TARGET_ISOFORMS));
+				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(TARGET_ISOFORMS));
 				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream().filter(ti -> ti.getIsoformAccession().equals(isoformAccession)).collect(Collectors.toList());
 
 				if (targetIsoformsFiltered.isEmpty()) {
@@ -300,14 +307,14 @@ public class StatementTransformationUtil {
 
         return StatementBuilder.createNew()
                 .addMap(variationStatement)
-                .addField(StatementField.RAW_STATEMENT_ID, variationStatement.getStatementId()) // Keep statement
-                .addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
-                .addField(StatementField.LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
-                .addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
-                .addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()))
-                .addField(StatementField.ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
-                .addField(StatementField.TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
-                .buildWithAnnotationHash();
+                .addField(RAW_STATEMENT_ID, variationStatement.getStatementId()) // Keep statement
+                .addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
+                .addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
+                .addField(LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
+                .addField(LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()))
+                .addField(ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
+                .addField(TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
+                .generateAllHashesAndBuild();
     }
 
     public static class IsoformPositions {

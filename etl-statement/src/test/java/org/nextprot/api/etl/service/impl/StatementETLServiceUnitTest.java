@@ -4,13 +4,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
-import org.nextprot.commons.statements.*;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.TargetIsoformSet;
+import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.NXFlatTableStatementField.*;
 
 public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 
@@ -19,9 +24,9 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		Set<Statement> subjectStatements = new HashSet<>(
 				Arrays.asList(StatementBuilder.createNew()
-						.addField(StatementField.ENTRY_ACCESSION, "NX_Q15858")
-						.addField(StatementField.ANNOTATION_NAME, "SCN9A-iso3-p.Ile848Thr")
-				.build()));
+						.addField(ENTRY_ACCESSION, "NX_Q15858")
+						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Ile848Thr")
+				.generateHashAndBuild()));
 		
 		List<Statement> variantOnEntry = 
 				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
@@ -31,7 +36,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		//It should return only one statement with target isoforms
 		Assert.assertTrue(variantOnEntry.size() == 1);
 		
-		String targetIsoformsString = variantOnEntry.iterator().next().getValue(StatementField.TARGET_ISOFORMS);
+		String targetIsoformsString = variantOnEntry.iterator().next().getValue(TARGET_ISOFORMS);
 
 		Set<TargetIsoformStatementPosition> targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(targetIsoformsString);
 		
@@ -48,13 +53,13 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		Set<Statement> rawSubjectStatements = new HashSet<>(
 				Arrays.asList(StatementBuilder.createNew()
-						.addField(StatementField.ENTRY_ACCESSION, "NX_Q15858")
-						.addField(StatementField.ANNOTATION_NAME, "SCN9A-iso3-p.Met932Leu")
-				.build(),
+						.addField(ENTRY_ACCESSION, "NX_Q15858")
+						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Met932Leu")
+				.generateHashAndBuild(),
 				StatementBuilder.createNew()
-						.addField(StatementField.ENTRY_ACCESSION, "NX_Q15858")
-						.addField(StatementField.ANNOTATION_NAME, "SCN9A-iso3-p.Val991Leu")
-				.build()));
+						.addField(ENTRY_ACCESSION, "NX_Q15858")
+						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Val991Leu")
+				.generateHashAndBuild()));
 		
 		
 		List<Statement> subjectStatements = 
@@ -62,8 +67,8 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 						isoformMappingServiceMocked, rawSubjectStatements, "NX_Q15858");
 
 		Statement proteoformStatement = StatementBuilder.createNew()
-				.addField(StatementField.ENTRY_ACCESSION, "NX_Q15858")
-				.build();
+				.addField(ENTRY_ACCESSION, "NX_Q15858")
+				.generateHashAndBuild();
 		
 		{
 
@@ -87,7 +92,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		}
 		
 	}
-	
+
 
 	
 }

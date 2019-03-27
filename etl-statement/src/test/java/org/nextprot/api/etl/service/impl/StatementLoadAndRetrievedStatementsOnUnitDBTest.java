@@ -18,8 +18,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 @Ignore
@@ -40,12 +40,13 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
+		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 		
 		statementETLService.setStatementExtractorService(extractor);
 		statementETLService.setStatementTransformerService(transformerMockedService);
 
-		Set<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService)
+				.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		
 		 ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
@@ -60,12 +61,12 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
     public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() throws IOException {
 
         StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-        Set<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
+	    Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
 
         statementETLService.setStatementExtractorService(extractor);
         statementETLService.setStatementTransformerService(transformerMockedService);
 
-        Set<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
+	    Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
 
         ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
