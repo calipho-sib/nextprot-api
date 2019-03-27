@@ -15,12 +15,12 @@ import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementTransformerServiceImpl implements StatementTransformerService {
@@ -46,7 +48,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
     private SequenceFeatureFactoryService sequenceFeatureFactoryService;
 
     @Override
-    public Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
+    public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
         return new StatementTransformer(rawStatements, report).transform();
     }
@@ -65,12 +67,12 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
     class StatementTransformer {
 
-        private final Set<Statement> rawStatements;
+        private final Collection<Statement> rawStatements;
         private final ReportBuilder report;
         private final Map<String, Statement> sourceStatementsById;
         private final Set<String> trackedStatementIds;
 
-        StatementTransformer(Set<Statement> rawStatements, ReportBuilder report) {
+        StatementTransformer(Collection<Statement> rawStatements, ReportBuilder report) {
 
             Preconditions.checkNotNull(rawStatements);
             Preconditions.checkNotNull(report);
@@ -96,10 +98,10 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
                     mappedStatements.addAll(transformTripletStatement(statement));
                 }
-                else if (!trackedStatementIds.contains(statement.getValue(StatementField.STATEMENT_ID))) {
+                else if (!trackedStatementIds.contains(statement.getValue(STATEMENT_ID))) {
 
                     transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
-                    trackedStatementIds.add(statement.getValue(StatementField.STATEMENT_ID));
+                    trackedStatementIds.add(statement.getValue(STATEMENT_ID));
                 }
             }
 
@@ -129,7 +131,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
             trackStatementIds(originalStatement, subjectStatements);
 
             Statement subjectStatement = subjectStatements.iterator().next();
-            String firstSubjectEntryAccession = subjectStatement.getValue(StatementField.ENTRY_ACCESSION);
+            String firstSubjectEntryAccession = subjectStatement.getValue(ENTRY_ACCESSION);
             String firstSubjectIsoformName = getFirstSubjectIsoformName(subjectStatements);
 
             if (firstSubjectIsoformName == null) {
@@ -150,14 +152,14 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
         private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
 
             trackedStatementIds.addAll(subjectStatements.stream()
-                    .map(statement -> statement.getValue(StatementField.STATEMENT_ID))
+                    .map(statement -> statement.getValue(STATEMENT_ID))
                     .collect(Collectors.toList()));
-            trackedStatementIds.add(originalStatement.getValue(StatementField.STATEMENT_ID));
+            trackedStatementIds.add(originalStatement.getValue(STATEMENT_ID));
         }
 
         private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
 
-            String category = simpleStatement.getValue(StatementField.ANNOTATION_CATEGORY);
+            String category = simpleStatement.getValue(ANNOTATION_CATEGORY);
 
             if (category.equals(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
                 throw new NextProtException("Not expecting phenotypic variation at this stage.");
@@ -168,25 +170,26 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
             if (!isoformPositions.hasTargetIsoforms()) {
 
-                LOGGER.warn("Skipping statement "+simpleStatement.getValue(StatementField.ANNOTATION_NAME) + " (source="+simpleStatement.getValue(StatementField.ASSIGNED_BY)+")");
+                LOGGER.warn("Skipping statement "+simpleStatement.getValue(ANNOTATION_NAME) + " (source="+simpleStatement.getValue(ASSIGNED_BY)+")");
                 return Optional.empty();
             }
 
             StatementBuilder builder = StatementBuilder.createNew()
                     .addMap(simpleStatement)
-                    .addField(StatementField.RAW_STATEMENT_ID, simpleStatement.getStatementId());
+                    .addField(RAW_STATEMENT_ID, simpleStatement.getStatementId());
 
             if (isoformPositions.hasExactPositions()) {
-                builder.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
-                        .addField(StatementField.LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
-                        .addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
-                        .addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
+                builder.addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
+                        .addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
+                        .addField(LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
+                        .addField(LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
             }
 
             return Optional.of(builder
-                    .addField(StatementField.ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
-                    .addField(StatementField.TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
-                    .buildWithAnnotationHash());
+                    .addField(ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
+                    .addField(TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
+                    .withAnnotationHash()
+                    .build());
         }
 
         private Set<Statement> getSubjects(String[] subjectIds) {
@@ -209,8 +212,8 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
         private String getIsoAccession(Statement statement) {
 
-            String featureName = statement.getValue(StatementField.ANNOTATION_NAME);
-            String featureType = statement.getValue(StatementField.ANNOTATION_CATEGORY);
+            String featureName = statement.getValue(ANNOTATION_NAME);
+            String featureType = statement.getValue(ANNOTATION_CATEGORY);
 
             try {
                 return sequenceFeatureFactoryService.newSequenceFeature(featureName, featureType).getIsoform().getIsoformAccession();
@@ -248,7 +251,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 String targetIsoformsForObject;
                 String targetIsoformsForPhenotype;
 
-                String entryAccession = subjectStatements.get(0).getValue(StatementField.ENTRY_ACCESSION);
+                String entryAccession = subjectStatements.get(0).getValue(ENTRY_ACCESSION);
 
                 List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
                 NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
@@ -277,29 +280,32 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
                 if (objectStatement != null) {
 
-                    trackedStatementIds.add(objectStatement.getValue(StatementField.STATEMENT_ID));
+                    trackedStatementIds.add(objectStatement.getValue(STATEMENT_ID));
                     objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
-                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
-                            .buildWithAnnotationHash();
+                            .addField(TARGET_ISOFORMS, targetIsoformsForObject)
+                            .withAnnotationHash()
+                            .build();
 
                     phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype)
+                            .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype)
                             .addSubjects(subjectStatements).addObject(objectIsoStatement)
-                            .removeField(StatementField.STATEMENT_ID)
-                            .removeField(StatementField.SUBJECT_STATEMENT_IDS)
-                            .removeField(StatementField.OBJECT_STATEMENT_IDS)
-                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
-                            .buildWithAnnotationHash();
+                            .removeField(STATEMENT_ID)
+                            .removeField(SUBJECT_STATEMENT_IDS)
+                            .removeField(OBJECT_STATEMENT_IDS)
+                            .addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
+                            .withAnnotationHash()
+                            .build();
                 } else {
 
                     phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-                            .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
+                            .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
                             .addSubjects(subjectStatements)
-                            .removeField(StatementField.STATEMENT_ID)
-                            .removeField(StatementField.SUBJECT_STATEMENT_IDS)
-                            .removeField(StatementField.OBJECT_STATEMENT_IDS)
-                            .addField(StatementField.RAW_STATEMENT_ID, originalStatement.getStatementId())
-                            .buildWithAnnotationHash();
+                            .removeField(STATEMENT_ID)
+                            .removeField(SUBJECT_STATEMENT_IDS)
+                            .removeField(OBJECT_STATEMENT_IDS)
+                            .addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
+                            .withAnnotationHash()
+                            .build();
                 }
 
                 //Load subjects
@@ -320,7 +326,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
         private String getFirstSubjectIsoformName(Set<Statement> subjects) {
 
             Set<String> isoforms = subjects.stream()
-                    .map(s -> s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME)))
+                    .map(s -> s.getValue(NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(ANNOTATION_NAME)))
                     .collect(Collectors.toSet());
 
             if (isoforms.size() != 1) {
@@ -343,7 +349,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
         private boolean isSubjectIsoSpecific(Set<Statement> subjects) {
 
             long isoSpecificSize = subjects.stream()
-                    .filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(StatementField.ANNOTATION_NAME)))
+                    .filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(ANNOTATION_NAME)))
                     .count();
 
             if (isoSpecificSize == 0) {

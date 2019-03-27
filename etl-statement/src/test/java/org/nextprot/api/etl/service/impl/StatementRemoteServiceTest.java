@@ -7,6 +7,7 @@ import org.nextprot.commons.statements.Statement;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 
@@ -24,7 +25,7 @@ public class StatementRemoteServiceTest {
 	public void shouldExtractRemoteStatementsForAGene() throws IOException {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Set<Statement> statements = srsi.getStatementsFromJsonFile(NextProtSource.BioEditor, RELEASE, "AAK1@strauss");
+		Collection<Statement> statements = srsi.getStatementsFromJsonFile(NextProtSource.BioEditor, RELEASE, "AAK1@strauss");
 		Assert.isTrue(!statements.isEmpty());
 	}
 
@@ -33,7 +34,7 @@ public class StatementRemoteServiceTest {
 	public void shouldExtractRemoteStatementsForAllGenes() throws IOException {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Set<Statement> statements = srsi.getStatementsForSource(NextProtSource.BioEditor, RELEASE);
+		Collection<Statement> statements = srsi.getStatementsForSource(NextProtSource.BioEditor, RELEASE);
 		Assert.isTrue(!statements.isEmpty());
 	}
 

@@ -16,7 +16,6 @@ import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +23,7 @@ import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession;
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -57,7 +58,7 @@ public class StatementETLServiceImpl implements StatementETLService {
         report.addInfoWithElapsedTime("Finished extraction");
 
         rawStatements = rawStatements.stream()
-                .filter(rs -> rs.getValue(StatementField.NEXTPROT_ACCESSION).equals("NX_Q6S545"))
+                .filter(rs -> rs.getValue(NEXTPROT_ACCESSION).equals("NX_Q6S545"))
                 .collect(Collectors.toSet());
 
         if (rawStatements.isEmpty()) {
@@ -71,7 +72,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	    rawStatements = preTransformStatements(source, rawStatements, report);
 	    report.addInfoWithElapsedTime("Finished pre transformation treatments");
 
-        Set<Statement> mappedStatements = transformStatements(source, rawStatements, report);
+	    Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
         report.addInfoWithElapsedTime("Finished transformation");
 
         loadStatements(source, rawStatements, mappedStatements, load, report);
@@ -107,15 +108,15 @@ public class StatementETLServiceImpl implements StatementETLService {
 		// stmts -> stmts;
 	}
 
-    Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
+	Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
-        Set<Statement> statements = statementTransformerService.transformStatements(source, rawStatements, report);
+	    Collection<Statement> statements = statementTransformerService.transformStatements(source, rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
         return statements;
     }
 
-    void loadStatements(NextProtSource source, Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
+    void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
         try {
             if (load) {
@@ -139,7 +140,7 @@ public class StatementETLServiceImpl implements StatementETLService {
         }
     }
 
-    private Set<Statement> filterValidStatements(Set<Statement> rawStatements, ReportBuilder report) {
+    private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, ReportBuilder report) {
 
         Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
         Set<String> statementEntryAccessions = rawStatements.stream()
@@ -160,9 +161,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     private String extractEntryAccession(Statement statement) {
 
-        return (statement.getValue(StatementField.ENTRY_ACCESSION) != null) ?
-                statement.getValue(StatementField.ENTRY_ACCESSION) :
-                findEntryAccessionFromEntryOrIsoformAccession(statement.getValue(StatementField.NEXTPROT_ACCESSION));
+        return (statement.getValue(ENTRY_ACCESSION) != null) ?
+                statement.getValue(ENTRY_ACCESSION) :
+                findEntryAccessionFromEntryOrIsoformAccession(statement.getValue(NEXTPROT_ACCESSION));
     }
 
     @Override
@@ -262,8 +263,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			return statements.stream()
 					.filter(statement -> {
-						EntryPosition ep = new EntryPosition(statement.getValue(StatementField.NEXTPROT_ACCESSION),
-								Integer.parseInt(statement.getValue(StatementField.LOCATION_BEGIN)));
+						EntryPosition ep = new EntryPosition(statement.getValue(NEXTPROT_ACCESSION),
+								Integer.parseInt(statement.getValue(LOCATION_BEGIN)));
 
 						return !entryPositionsToFilterOut.contains(ep);
 					})
@@ -277,16 +278,16 @@ public class StatementETLServiceImpl implements StatementETLService {
 			Set<Statement> missingCvTermAccessionStatements = new HashSet<>();
 
 			statements.forEach(rs -> {
-				String nextprotAccession = rs.getValue(StatementField.NEXTPROT_ACCESSION);
-				String cvTermAccession = rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+				String nextprotAccession = rs.getValue(NEXTPROT_ACCESSION);
+				String cvTermAccession = rs.getValue(ANNOT_CV_TERM_ACCESSION);
 
 				if (isNullOrEmptyString(nextprotAccession)) {
 					missingNextProtAccessionStatements.add(rs);
 				}
-				else if (isNullOrEmptyString(rs.getValue(StatementField.ANNOT_CV_TERM_ACCESSION))) {
+				else if (isNullOrEmptyString(rs.getValue(ANNOT_CV_TERM_ACCESSION))) {
 
 					report.addWarning("skipping missing cv term accession, accession=" + nextprotAccession +
-							", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+							", ref database=GlyConnect, ref accession=" + rs.getValue(REFERENCE_ACCESSION));
 					missingCvTermAccessionStatements.add(rs);
 				}
 				else {
@@ -294,14 +295,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 					if (cvterm == null) {
 						throw new NextProtException("invalid cv term "+ cvTermAccession + ", accession=" +
-								nextprotAccession + ", ref database=GlyConnect, ref accession=" + rs.getValue(StatementField.REFERENCE_ACCESSION));
+								nextprotAccession + ", ref database=GlyConnect, ref accession=" + rs.getValue(REFERENCE_ACCESSION));
 					}
 					statementSet.add(new StatementBuilder()
 							.addMap(rs)
-							.addField(StatementField.ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
-							.addField(StatementField.RESOURCE_TYPE, "database")
-							.addField(StatementField.ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
-							.addField(StatementField.ANNOT_DESCRIPTION, cvterm.getDescription())
+							.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
+							.addField(RESOURCE_TYPE, "database")
+							.addField(ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
+							.addField(ANNOT_DESCRIPTION, cvterm.getDescription())
 							.build());
 				}
 			});
@@ -321,9 +322,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		private String buildAnnotationNameForGlyConnect(Statement statement) {
 
-			return statement.getValue(StatementField.NEXTPROT_ACCESSION) +
-					"." + statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION) +
-					"_" + statement.getValue(StatementField.LOCATION_BEGIN);
+			return statement.getValue(NEXTPROT_ACCESSION) +
+					"." + statement.getValue(ANNOT_CV_TERM_ACCESSION) +
+					"_" + statement.getValue(LOCATION_BEGIN);
 		}
 
 		private boolean isNullOrEmptyString(String value) {
@@ -336,13 +337,13 @@ public class StatementETLServiceImpl implements StatementETLService {
 			String format = "(entry:%s \"%d\"^^xsd:integer)";
 
 			Set<Statement> ptm0528Statements = statements.stream()
-					.filter(statement -> statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION).equals("PTM-0528"))
+					.filter(statement -> statement.getValue(ANNOT_CV_TERM_ACCESSION).equals("PTM-0528"))
 					.collect(Collectors.toSet());
 
 			String selectedPTM0528EntryPositions = ptm0528Statements.stream()
 					.map(statement -> String.format(format,
-							statement.getValue(StatementField.NEXTPROT_ACCESSION),
-							Integer.parseInt(statement.getValue(StatementField.LOCATION_BEGIN))))
+							statement.getValue(NEXTPROT_ACCESSION),
+							Integer.parseInt(statement.getValue(LOCATION_BEGIN))))
 					.collect(Collectors.joining("\n"));
 
 			return "select distinct ?entry ?glypos where {\n" +
@@ -524,16 +525,16 @@ public class StatementETLServiceImpl implements StatementETLService {
 			Set<Statement> statementSet = new HashSet<>();
 
 			statements.forEach(rs -> {
-				if (rs.getValue(StatementField.ANNOT_DESCRIPTION) != null) {
+				if (rs.getValue(ANNOT_DESCRIPTION) != null) {
 
-					String annotDescription = rs.getValue(StatementField.ANNOT_DESCRIPTION);
+					String annotDescription = rs.getValue(ANNOT_DESCRIPTION);
 
-					AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(StatementField.GENE_NAME));
+					AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(GENE_NAME));
 
 					try {
 						statementSet.add(new StatementBuilder()
 								.addMap(rs)
-								.addField(StatementField.ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
+								.addField(ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
 								.build());
 					} catch (ParseException e) {
 

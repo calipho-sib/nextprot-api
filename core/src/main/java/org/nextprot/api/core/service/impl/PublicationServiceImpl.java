@@ -19,7 +19,6 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.core.utils.PublicationComparator;
-import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 
 @Service
@@ -81,9 +82,9 @@ public class PublicationServiceImpl implements PublicationService {
 		Arrays.asList(XrefDatabase.DOI, XrefDatabase.PUB_MED).forEach(db -> {
 
 			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
-					StatementField.REFERENCE_ACCESSION,
-					new StatementSimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
-					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db.getName()));
+					REFERENCE_ACCESSION,
+					new StatementSimpleWhereClauseQueryDSL(ENTRY_ACCESSION, uniqueName),
+					new StatementSimpleWhereClauseQueryDSL(REFERENCE_DATABASE, db.getName()));
 				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db.getName(), npPublicationsXrefs));
 		});
 

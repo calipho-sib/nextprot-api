@@ -8,12 +8,13 @@ import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 
@@ -28,8 +29,8 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		List<String> missingPublications = new ArrayList<>();
 
 		List<String> pubmeds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
-				StatementField.REFERENCE_ACCESSION, 
-				new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
+				REFERENCE_ACCESSION,
+				new StatementSimpleWhereClauseQueryDSL(REFERENCE_DATABASE, "PubMed"));
 		
 		for (String pubmed : pubmeds) {
 			if (pubmed != null){
@@ -99,7 +100,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	public void shouldFindAllTerms() {
 		
 		boolean missingTerms = false;
-		List<String> terms = statementDao.findAllDistinctValuesforField(StatementField.ANNOT_CV_TERM_ACCESSION);
+		List<String> terms = statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION);
 		//System.out.println("Found " + terms.size() + " distinct terms");
 		for(String t : terms) {
 			if(t != null){

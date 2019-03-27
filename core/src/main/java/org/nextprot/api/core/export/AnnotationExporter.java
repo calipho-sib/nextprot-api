@@ -1,20 +1,28 @@
 package org.nextprot.api.core.export;
 
-import org.nextprot.api.core.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.commons.statements.StatementField;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.GENE_NAME;
 
 public class AnnotationExporter {
 
@@ -44,7 +52,7 @@ public class AnnotationExporter {
 
     public String exportAllGeneStatementsAsTsvString() {
 
-        List<String> geneNames = statementDao.findAllDistinctValuesforField(StatementField.GENE_NAME);
+        List<String> geneNames = statementDao.findAllDistinctValuesforField(GENE_NAME);
 
         return exportAnnotationStatsAsTsvString(geneNames);
     }

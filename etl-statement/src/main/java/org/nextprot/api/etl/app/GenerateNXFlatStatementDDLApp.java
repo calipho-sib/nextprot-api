@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.app;
 
-import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.StatementTableNames;
+import org.nextprot.commons.statements.specs.CoreStatementField;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,17 +21,17 @@ public class GenerateNXFlatStatementDDLApp {
 		StringBuffer sb = new StringBuffer();
 		sb.append("DROP TABLE IF EXISTS nxflat." + tableName + ";\n");
 		sb.append("CREATE TABLE nxflat." + tableName + " (\n");
-		for (int i = 0; i < StatementField.values().length; i++) {
-			sb.append("\t" + StatementField.values()[i].name() + " VARCHAR(10000)");
-			if (i + 1 < StatementField.values().length) {
+		for (int i = 0; i < CoreStatementField.values().length; i++) {
+			sb.append("\t" + CoreStatementField.values()[i].name() + " VARCHAR(10000)");
+			if (i + 1 < CoreStatementField.values().length) {
 				sb.append(",");
 			}
 			sb.append("\n");
 		}
 		sb.append(");\n");
 
-		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ENTRY_AC_IDX ON nxflat." + tableName + " ( " + StatementField.ENTRY_ACCESSION.name() + " );\n");
-		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ANNOT_ID_IDX ON nxflat." + tableName + " ( " + StatementField.ANNOTATION_ID.name() + " );\n");
+		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ENTRY_AC_IDX ON nxflat." + tableName + " ( " + CoreStatementField.ENTRY_ACCESSION.name() + " );\n");
+		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ANNOT_ID_IDX ON nxflat." + tableName + " ( " + CoreStatementField.ANNOTATION_ID.name() + " );\n");
 		sb.append("\n\n");
 
 		return sb.toString();

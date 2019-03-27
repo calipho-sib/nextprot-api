@@ -6,7 +6,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.specs.StatementField;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 public class StatementExporter {
 
@@ -51,7 +53,7 @@ public class StatementExporter {
         StringBuilder sb = new StringBuilder();
 
         // header row
-        sb.append(config.fields.stream().map(Enum::name).collect(Collectors.joining("\t"))).append("\n");
+        sb.append(config.fields.stream().map(field -> field.getName()).collect(Collectors.joining("\t"))).append("\n");
 
         Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName, false);
 
@@ -63,7 +65,7 @@ public class StatementExporter {
 
     public Map<String, String> exportAllGeneStatementsAsTsvString() {
 
-        List<String> geneNames = statementDao.findAllDistinctValuesforField(StatementField.GENE_NAME);
+        List<String> geneNames = statementDao.findAllDistinctValuesforField(GENE_NAME);
 
         Map<String, String> map = new HashMap<>(geneNames.size());
 
@@ -79,7 +81,7 @@ public class StatementExporter {
     private void fetchAndAppendStatementsFromEntryAccession(String entryAccession, StringBuilder sb) {
 
         List<Statement> statements = statementDao.findNormalStatements(entryAccession).stream()
-                .filter(statement -> config.categories.contains(AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY))))
+                .filter(statement -> config.categories.contains(AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(ANNOTATION_CATEGORY))))
                 .collect(Collectors.toList());
 
         if (!statements.isEmpty()) {
@@ -102,16 +104,16 @@ public class StatementExporter {
     public static class Config {
 
         private final Set<AnnotationCategory> categories;
-        private final List<StatementField> fields = Arrays.asList(StatementField.GENE_NAME,
-                StatementField.NEXTPROT_ACCESSION,
-                StatementField.ANNOTATION_CATEGORY,
-                StatementField.ANNOTATION_NAME,
-                StatementField.VARIANT_ORIGINAL_AMINO_ACID,
-                StatementField.VARIANT_VARIATION_AMINO_ACID,
-                StatementField.LOCATION_BEGIN_MASTER,
-                StatementField.LOCATION_END_MASTER,
-                StatementField.LOCATION_BEGIN,
-                StatementField.LOCATION_END
+        private final List<StatementField> fields = Arrays.asList(GENE_NAME,
+                NEXTPROT_ACCESSION,
+                ANNOTATION_CATEGORY,
+                ANNOTATION_NAME,
+                VARIANT_ORIGINAL_AMINO_ACID,
+                VARIANT_VARIATION_AMINO_ACID,
+                LOCATION_BEGIN_MASTER,
+                LOCATION_END_MASTER,
+                LOCATION_BEGIN,
+                LOCATION_END
         );
 
         public Config() {
