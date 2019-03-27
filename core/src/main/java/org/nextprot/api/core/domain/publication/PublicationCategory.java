@@ -1,7 +1,7 @@
 package org.nextprot.api.core.domain.publication;
 
 
-import org.nextprot.api.commons.utils.EnumConstantDictionary;
+import org.nextprot.commons.utils.EnumConstantDictionary;
 
 import java.util.Map;
 
