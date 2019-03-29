@@ -1,13 +1,16 @@
 package org.nextprot.api.etl;
 
 
+import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.NXFlatTableSchema;
+import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
-public enum NextProtSource {
+public enum NextProtSource implements StatementSpecifications {
 
 	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", NXFlatTableSchema.build()),
 	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", NXFlatTableSchema.build()),
@@ -35,7 +38,33 @@ public enum NextProtSource {
 		return statementsUrl;
 	}
 
-	public StatementSpecifications getStatementSpecifications() {
-		return specifications;
+	@Override
+	public StatementField getField(String fieldName) {
+
+		return specifications.getField(fieldName);
+	}
+
+	@Override
+	public boolean hasField(String fieldName) {
+
+		return specifications.hasField(fieldName);
+	}
+
+	@Override
+	public Collection<StatementField> getFields() {
+
+		return specifications.getFields();
+	}
+
+	@Override
+	public int size() {
+
+		return specifications.size();
+	}
+
+	@Override
+	public CompositeField searchCompositeFieldOrNull(StatementField field) {
+
+		return specifications.searchCompositeFieldOrNull(field);
 	}
 }
