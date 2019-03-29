@@ -305,8 +305,7 @@ public class StatementTransformationUtil {
 
         IsoformPositions isoformPositions = calcIsoformPositions(variationStatement, result);
 
-        return StatementBuilder.createNew()
-                .addMap(variationStatement)
+        return new StatementBuilder(variationStatement)
                 .addField(RAW_STATEMENT_ID, variationStatement.getStatementId()) // Keep statement
                 .addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
                 .addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))

@@ -231,9 +231,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			Set<Statement> statementSet = new HashSet<>();
 
-			statements.forEach(rs -> statementSet.add(new StatementBuilder()
-					.addMap(rs)
-					.build()));
+			statements.forEach(rs -> statementSet.add(new StatementBuilder(rs).build()));
 
 			return statementSet;
 		}
@@ -297,8 +295,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						throw new NextProtException("invalid cv term "+ cvTermAccession + ", accession=" +
 								nextprotAccession + ", ref database=GlyConnect, ref accession=" + rs.getValue(REFERENCE_ACCESSION));
 					}
-					statementSet.add(new StatementBuilder()
-							.addMap(rs)
+					statementSet.add(new StatementBuilder(rs)
 							.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
 							.addField(RESOURCE_TYPE, "database")
 							.addField(ANNOTATION_NAME, buildAnnotationNameForGlyConnect(rs))
@@ -532,8 +529,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(GENE_NAME));
 
 					try {
-						statementSet.add(new StatementBuilder()
-								.addMap(rs)
+						statementSet.add(new StatementBuilder(rs)
 								.addField(ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
 								.build());
 					} catch (ParseException e) {

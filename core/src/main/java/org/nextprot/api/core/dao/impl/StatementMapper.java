@@ -14,7 +14,7 @@ public class StatementMapper implements RowMapper<Statement> {
 
 		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSetMetaData(rs.getMetaData());
 
-		StatementBuilder sfbuilder = StatementBuilder.createNew()
+		StatementBuilder sfbuilder = new StatementBuilder()
 				.withSpecifications(schema);
 
 		for(StatementField key : schema.getFields()) {

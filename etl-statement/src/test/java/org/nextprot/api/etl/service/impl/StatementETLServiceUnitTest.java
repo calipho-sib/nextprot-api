@@ -23,7 +23,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 	public void shouldComputeCorrectTargetIsoformsForVariants() throws Exception {
 		
 		Set<Statement> subjectStatements = new HashSet<>(
-				Arrays.asList(StatementBuilder.createNew()
+				Arrays.asList(new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Ile848Thr")
 				.build()));
@@ -52,11 +52,11 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 
 		
 		Set<Statement> rawSubjectStatements = new HashSet<>(
-				Arrays.asList(StatementBuilder.createNew()
+				Arrays.asList(new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Met932Leu")
 				.build(),
-				StatementBuilder.createNew()
+				new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Val991Leu")
 				.build()));
@@ -66,7 +66,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 				StatementTransformationUtil.getPropagatedStatementVariantsForEntry(
 						isoformMappingServiceMocked, rawSubjectStatements, "NX_Q15858");
 
-		Statement proteoformStatement = StatementBuilder.createNew()
+		Statement proteoformStatement = new StatementBuilder()
 				.addField(ENTRY_ACCESSION, "NX_Q15858")
 				.build();
 		

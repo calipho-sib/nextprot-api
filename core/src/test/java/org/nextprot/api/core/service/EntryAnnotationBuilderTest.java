@@ -20,7 +20,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
     @Test
     public void shouldFindCorrectPublicationId() {
 
-        Statement sb1 = StatementBuilder.createNew()
+        Statement sb1 = new StatementBuilder()
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "123").build();
 
@@ -31,7 +31,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
     @Test(expected = NextProtException.class)
     public void shouldThrowAnExceptionIfInModeStrictAndPublicationIsNotFound() {
 
-        Statement sb1 = StatementBuilder.createNew()
+        Statement sb1 = new StatementBuilder()
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "000").build();
         StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService);
@@ -46,7 +46,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
     @Test
     public void shouldReturnOneSingleAnnotationIfTheInfoIsTheSameAndItIsComingFromDifferentSources() {
 
-        Statement sb1 = StatementBuilder.createNew()
+        Statement sb1 = new StatementBuilder()
                 .addCompulsoryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
                 .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
                 .addField(REFERENCE_DATABASE, "PubMed")
@@ -57,8 +57,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
                 .addField(ASSIGNED_BY, "TUTU")
                 .addSourceInfo("CAVA-VP0920190912", "BioEditor").withAnnotationHash().build();
 
-        Statement sb2 = StatementBuilder.createNew().
-                addCompulsoryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
+        Statement sb2 = new StatementBuilder()
+                .addCompulsoryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "123")
                 .addField(RESOURCE_TYPE, "publication")
@@ -84,8 +84,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
     @Test(expected = NextProtException.class)
     public void shouldReturnAnExceptionIf2AnnotationsAreExpectedInsteadOfOne() {
 
-        Statement sb1 = StatementBuilder.createNew().
-                addCompulsoryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
+        Statement sb1 = new StatementBuilder()
+                .addCompulsoryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "123")
                 .addField(RESOURCE_TYPE, "publication")
@@ -93,8 +93,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
                 .withAnnotationHash()
                 .build();
 
-        Statement sb2 = StatementBuilder.createNew().
-                addCompulsoryFields("NX_P99999", "NX_P99999", "go-cellular-component", QualityQualifier.GOLD)
+        Statement sb2 = new StatementBuilder()
+                .addCompulsoryFields("NX_P99999", "NX_P99999", "go-cellular-component", QualityQualifier.GOLD)
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "123")
                 .addTargetIsoformsField(new TargetIsoformSet())
@@ -111,8 +111,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
     @Test
     public void shouldReturnCorrectEcoName() {
 
-        Statement sb1 = StatementBuilder.createNew().
-                addCompulsoryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
+        Statement sb1 = new StatementBuilder()
+                .addCompulsoryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
                 .addField(EVIDENCE_CODE, "ECO:00001")
                 .addField(REFERENCE_DATABASE, "PubMed")
                 .addField(REFERENCE_ACCESSION, "123")

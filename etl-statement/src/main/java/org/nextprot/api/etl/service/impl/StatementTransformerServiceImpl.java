@@ -174,8 +174,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 return Optional.empty();
             }
 
-            StatementBuilder builder = StatementBuilder.createNew()
-                    .addMap(simpleStatement)
+            StatementBuilder builder = new StatementBuilder(simpleStatement)
                     .addField(RAW_STATEMENT_ID, simpleStatement.getStatementId());
 
             if (isoformPositions.hasExactPositions()) {
@@ -281,12 +280,12 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 if (objectStatement != null) {
 
                     trackedStatementIds.add(objectStatement.getValue(STATEMENT_ID));
-                    objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
+                    objectIsoStatement = new StatementBuilder(objectStatement)
                             .addField(TARGET_ISOFORMS, targetIsoformsForObject)
                             .withAnnotationHash()
                             .build();
 
-                    phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
+                    phenotypeIsoStatement = new StatementBuilder(originalStatement)
                             .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype)
                             .addSubjects(subjectStatements).addObject(objectIsoStatement)
                             .removeField(STATEMENT_ID)
@@ -297,7 +296,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                             .build();
                 } else {
 
-                    phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
+                    phenotypeIsoStatement = new StatementBuilder(originalStatement)
                             .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
                             .addSubjects(subjectStatements)
                             .removeField(STATEMENT_ID)
