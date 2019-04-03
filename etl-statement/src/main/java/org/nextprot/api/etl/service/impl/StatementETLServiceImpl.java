@@ -104,6 +104,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 		else if (source == NextProtSource.BioEditor) {
 			return new BioEditorPreProcessor(report);
 		}
+		else if (source == NextProtSource.GnomAD) {
+			return new GnomADPreProcessor(report);
+		}
 		return new BuildStatementIdPreProcessor();
 		// stmts -> stmts;
 	}
@@ -234,6 +237,26 @@ public class StatementETLServiceImpl implements StatementETLService {
 			statements.forEach(rs -> statementSet.add(new StatementBuilder(rs).build()));
 
 			return statementSet;
+		}
+	}
+	private class GnomADPreProcessor implements PreTransformProcessor {
+
+    	private final ReportBuilder report;
+
+		private GnomADPreProcessor(ReportBuilder report) {
+			this.report = report;
+		}
+
+		@Override
+		public Set<Statement> process(Set<Statement> statements) {
+
+			return statements.stream()
+					.filter(rs -> rs.hasField(NEXTPROT_ACCESSION.getName()))
+					.map(rs -> {
+						String nextprotAccession = rs.getValue(NEXTPROT_ACCESSION);
+						return new StatementBuilder(rs).addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession)).build();
+					})
+					.collect(Collectors.toSet());
 		}
 	}
 
