@@ -90,6 +90,25 @@ public class StatementETLServiceImpl implements StatementETLService {
         return statements;
     }
 
+	private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, ReportBuilder report) {
+
+		Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
+		Set<String> statementEntryAccessions = rawStatements.stream()
+				.map(statement -> extractEntryAccession(statement))
+				.collect(Collectors.toSet());
+
+		Sets.SetView<String> invalidStatementEntryAccessions = Sets.difference(statementEntryAccessions, allValidEntryAccessions);
+
+		if (!invalidStatementEntryAccessions.isEmpty()) {
+
+			report.addWarning("Error: skipping statements with invalid entry accessions " + invalidStatementEntryAccessions);
+		}
+
+		return rawStatements.stream()
+				.filter(statement -> allValidEntryAccessions.contains(extractEntryAccession(statement)))
+				.collect(Collectors.toSet());
+	}
+
 	Set<Statement> preTransformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
 
 		return preProcess(source, report).process(rawStatements);
@@ -141,25 +160,6 @@ public class StatementETLServiceImpl implements StatementETLService {
         } catch (SQLException e) {
             throw new NextProtException("Failed to load in source " + source + ":" + e);
         }
-    }
-
-    private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, ReportBuilder report) {
-
-        Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
-        Set<String> statementEntryAccessions = rawStatements.stream()
-                .map(statement -> extractEntryAccession(statement))
-                .collect(Collectors.toSet());
-
-        Sets.SetView<String> invalidStatementEntryAccessions = Sets.difference(statementEntryAccessions, allValidEntryAccessions);
-
-        if (!invalidStatementEntryAccessions.isEmpty()) {
-
-            report.addWarning("Error: skipping statements with invalid entry accessions " + invalidStatementEntryAccessions);
-        }
-
-        return rawStatements.stream()
-                .filter(statement -> allValidEntryAccessions.contains(extractEntryAccession(statement)))
-                .collect(Collectors.toSet());
     }
 
     private String extractEntryAccession(Statement statement) {
