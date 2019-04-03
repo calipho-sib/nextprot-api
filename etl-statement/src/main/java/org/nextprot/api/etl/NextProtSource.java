@@ -2,7 +2,7 @@ package org.nextprot.api.etl;
 
 
 import org.nextprot.commons.statements.specs.CompositeField;
-import org.nextprot.commons.statements.specs.NXFlatTableSchema;
+import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
 
@@ -12,9 +12,9 @@ import java.util.Collections;
 
 public enum NextProtSource implements StatementSpecifications {
 
-	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", NXFlatTableSchema.build()),
-	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", NXFlatTableSchema.build()),
-	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", new NXFlatTableSchema.Builder()
+	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", new Specifications.Builder().build()),
+	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", new Specifications.Builder().build()),
+	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", new Specifications.Builder()
 			.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
 			.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
 			.build())
