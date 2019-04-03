@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.app;
 
 import org.nextprot.commons.statements.constants.StatementTableNames;
-import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.NXFlatTableSchema;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,39 +10,18 @@ import java.io.FileWriter;
 public class GenerateNXFlatStatementDDLApp {
 
 	public static String generateDDL() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(generateOneTable(StatementTableNames.ENTRY_TABLE));
-		sb.append(generateOneTable(StatementTableNames.RAW_TABLE));
-		return sb.toString();
-	}
 
-	private static String generateOneTable(String tableName) {
+		NXFlatTableSchema schema = new NXFlatTableSchema();
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("DROP TABLE IF EXISTS nxflat." + tableName + ";\n");
-		sb.append("CREATE TABLE nxflat." + tableName + " (\n");
-		for (int i = 0; i < CoreStatementField.values().length; i++) {
-			sb.append("\t" + CoreStatementField.values()[i].name() + " VARCHAR(10000)");
-			if (i + 1 < CoreStatementField.values().length) {
-				sb.append(",");
-			}
-			sb.append("\n");
-		}
-		sb.append(");\n");
-
-		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ENTRY_AC_IDX ON nxflat." + tableName + " ( " + CoreStatementField.ENTRY_ACCESSION.name() + " );\n");
-		sb.append("CREATE INDEX " + tableName.substring(0, 10) + "_ANNOT_ID_IDX ON nxflat." + tableName + " ( " + CoreStatementField.ANNOTATION_ID.name() + " );\n");
-		sb.append("\n\n");
-
+		sb.append(schema.generateCreateTableInSQL(StatementTableNames.ENTRY_TABLE));
+		sb.append(schema.generateCreateTableInSQL(StatementTableNames.RAW_TABLE));
 		return sb.toString();
-
 	}
-
 	
 	public static void main(String[] args) throws Exception {
 		String ddl = generateDDL();
-
-		File file = new File("../commons/src/main/resources/nxflat-statements-schema.ddl");
+		File file = new File("etl-statement/src/main/resources/nxflat-statements-schema.ddlsss");
 	    if (!file.exists()) {
             file.createNewFile();
         }
@@ -53,7 +32,5 @@ public class GenerateNXFlatStatementDDLApp {
 		bw.close();
 		
 		System.out.println("nxflat ddl written to " + file.getAbsolutePath());
-
 	}
-	
 }
