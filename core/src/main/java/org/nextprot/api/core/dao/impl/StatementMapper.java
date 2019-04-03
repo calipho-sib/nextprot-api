@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class StatementMapper implements RowMapper<Statement> {
 	public Statement mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSetMetaData(rs.getMetaData());
+		NXFlatTableSchema schema = NXFlatTableSchema.fromResultSet(rs);
 
 		StatementBuilder sfbuilder = new StatementBuilder()
 				.withSpecifications(schema);
