@@ -57,9 +57,9 @@ public class StatementETLServiceImpl implements StatementETLService {
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
-        rawStatements = rawStatements.stream()
+        /*rawStatements = rawStatements.stream()
                 .filter(rs -> rs.getValue(NEXTPROT_ACCESSION).equals("NX_Q6S545"))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet());*/
 
         if (rawStatements.isEmpty()) {
 
