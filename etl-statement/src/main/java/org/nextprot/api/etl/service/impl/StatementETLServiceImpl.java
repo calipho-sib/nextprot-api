@@ -121,13 +121,12 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return new GlyConnectPreProcessor(report);
 		}
 		else if (source == NextProtSource.BioEditor) {
-			return new BioEditorPreProcessor(report);
+			return new BioEditorPreProcessor();
 		}
 		else if (source == NextProtSource.GnomAD) {
-			return new GnomADPreProcessor(report);
+			return new GnomADPreProcessor();
 		}
-		return new BuildStatementIdPreProcessor();
-		// stmts -> stmts;
+		return new StatementIdBuilder();
 	}
 
 	Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
@@ -227,25 +226,17 @@ public class StatementETLServiceImpl implements StatementETLService {
 		Set<Statement> process(Set<Statement> statements);
 	}
 
-	private class BuildStatementIdPreProcessor implements PreTransformProcessor {
+	private class StatementIdBuilder implements PreTransformProcessor {
 
 		@Override
 		public Set<Statement> process(Set<Statement> statements) {
 
-			Set<Statement> statementSet = new HashSet<>();
-
-			statements.forEach(rs -> statementSet.add(new StatementBuilder(rs).build()));
-
-			return statementSet;
+			return statements.stream()
+					.map(rs -> new StatementBuilder(rs).build())
+					.collect(Collectors.toSet());
 		}
 	}
 	private class GnomADPreProcessor implements PreTransformProcessor {
-
-    	private final ReportBuilder report;
-
-		private GnomADPreProcessor(ReportBuilder report) {
-			this.report = report;
-		}
 
 		@Override
 		public Set<Statement> process(Set<Statement> statements) {
@@ -528,46 +519,38 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	private class BioEditorPreProcessor implements PreTransformProcessor {
 
-		private final ReportBuilder report;
-
-		private BioEditorPreProcessor(ReportBuilder report) {
-			this.report = report;
-		}
-
 		@Override
 		public Set<Statement> process(Set<Statement> statements) {
 
-			return resetAnnotDescriptionFields(statements);
+			// TODO: should moved to BioEditor code instead
+			return statements.stream()
+					.map(rs -> updateDescription(rs))
+					.collect(Collectors.toSet());
 		}
+	}
 
-		private Set<Statement> resetAnnotDescriptionFields(Set<Statement> statements) {
+	/**
+	 * Update the annot description if needed then recompute the statement_id
+	 */
+	private Statement updateDescription(Statement statement) {
 
-			Set<Statement> statementSet = new HashSet<>();
+		String description = statement.getValue(ANNOT_DESCRIPTION);
 
-			statements.forEach(rs -> {
-				if (rs.getValue(ANNOT_DESCRIPTION) != null) {
+		if (description != null) {
 
-					String annotDescription = rs.getValue(ANNOT_DESCRIPTION);
+			try {
+				AnnotationDescriptionParser parser = new AnnotationDescriptionParser(statement.getValue(GENE_NAME));
+				String newDescription = parser.parse(description).format();
 
-					AnnotationDescriptionParser parser = new AnnotationDescriptionParser(rs.getValue(GENE_NAME));
+				return (description.equals(newDescription)) ? statement : new StatementBuilder(statement)
+						.addField(ANNOT_DESCRIPTION, newDescription)
+						.removeField(STATEMENT_ID)
+						.build();
+			} catch (ParseException e) {
 
-					try {
-						statementSet.add(new StatementBuilder(rs)
-								.addField(ANNOT_DESCRIPTION, parser.parse(annotDescription).format())
-								.build());
-					} catch (ParseException e) {
-
-						throw new NextProtException("cannot update description for statement "+rs, e);
-					}
-				} else {
-
-					statementSet.add(rs);
-				}
-			});
-
-			report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " BioEditor statements: reformat field ANNOT_DESCRIPTION");
-
-			return statementSet;
+				throw new NextProtException("cannot update description for statement " + statement, e);
+			}
 		}
+		return statement;
 	}
 }
