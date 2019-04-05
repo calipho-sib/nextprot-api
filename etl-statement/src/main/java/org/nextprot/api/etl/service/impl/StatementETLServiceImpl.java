@@ -544,6 +544,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 				return (description.equals(newDescription)) ? statement : new StatementBuilder(statement)
 						.addField(ANNOT_DESCRIPTION, newDescription)
+						.addDebugInfo("ANNOT_DESCRIPTION has changed -> STATEMENT_ID was recomputed")
 						.removeField(STATEMENT_ID)
 						.build();
 			} catch (ParseException e) {
