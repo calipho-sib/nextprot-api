@@ -42,7 +42,7 @@ public class GenerateNXFlatStatementDDLApp {
 	public static void main(String[] args) throws Exception {
 		String ddl = generateDDL();
 
-		File file = new File("../commons/src/main/resources/nxflat-statements-schema.ddl");
+		File file = new File("commons/src/main/resources/nxflat-statements-schema.ddl");
 	    if (!file.exists()) {
             file.createNewFile();
         }
