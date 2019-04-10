@@ -282,6 +282,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                     trackedStatementIds.add(objectStatement.getValue(STATEMENT_ID));
                     objectIsoStatement = new StatementBuilder(objectStatement)
                             .addField(TARGET_ISOFORMS, targetIsoformsForObject)
+                            .addField(RAW_STATEMENT_ID, objectStatement.getStatementId())
                             .withAnnotationHash()
                             .build();
 
