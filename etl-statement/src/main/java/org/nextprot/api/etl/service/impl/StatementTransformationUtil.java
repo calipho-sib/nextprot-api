@@ -21,7 +21,6 @@ import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -169,7 +168,19 @@ public class StatementTransformationUtil {
 			String name = null;
 			boolean allOk = true;
 
-			subjectsForThisProteoform.sort(Comparator.comparingInt(s -> Integer.parseInt(s.getValue(LOCATION_BEGIN))));
+			subjectsForThisProteoform.sort((s1, s2) -> {
+
+				int cmp = Integer.parseInt(s1.getValue(LOCATION_BEGIN)) - Integer.parseInt(s2.getValue(LOCATION_BEGIN));
+
+				if (cmp == 0) {
+					cmp = s1.getValue(VARIANT_ORIGINAL_AMINO_ACID).compareTo(s2.getValue(VARIANT_ORIGINAL_AMINO_ACID));
+					if (cmp == 0) {
+						return s1.getValue(VARIANT_VARIATION_AMINO_ACID).compareTo(s2.getValue(VARIANT_VARIATION_AMINO_ACID));
+					}
+				}
+
+				return cmp;
+			});
 
 			for (Statement s : subjectsForThisProteoform) {
 				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(StatementField.TARGET_ISOFORMS));
