@@ -12,6 +12,7 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -136,5 +137,21 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 
 		Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
+	}
+
+	@Test
+	public void testSCN5aTargetIsoforms() {
+
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
+		Set<Statement> rawStatements = sle.getStatementsFromJsonFile(null, null, "scn5a-target-isoform-test");
+
+		Set<Statement> statements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+
+		Optional<Statement> statement = statements.stream()
+				.filter(s -> s.getStatementId().equals("001728fae5ad76cd21cf686937500df0"))
+				.findFirst();
+
+		Assert.assertTrue(statement.isPresent());
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q14524-1\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso1-p.Arg1027Gln + SCN5A-iso1-p.Thr1304Met\"},{\"isoformAccession\":\"NX_Q14524-2\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso2-p.Arg1027Gln + SCN5A-iso2-p.Thr1303Met\"},{\"isoformAccession\":\"NX_Q14524-3\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso3-p.Arg1027Gln + SCN5A-iso3-p.Thr1303Met\"},{\"isoformAccession\":\"NX_Q14524-4\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso4-p.Arg1027Gln + SCN5A-iso4-p.Thr1304Met\"},{\"isoformAccession\":\"NX_Q14524-5\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso5-p.Arg1027Gln + SCN5A-iso5-p.Thr1250Met\"},{\"isoformAccession\":\"NX_Q14524-6\",\"specificity\":\"UNKNOWN\",\"name\":\"SCN5A-iso6-p.Arg1027Gln + SCN5A-iso6-p.Thr1304Met\"}]", statement.get().getValue(StatementField.TARGET_ISOFORMS));
 	}
 }

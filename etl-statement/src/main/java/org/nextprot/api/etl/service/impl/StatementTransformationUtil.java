@@ -14,9 +14,18 @@ import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
-import org.nextprot.commons.statements.*;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
+import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.nextprot.commons.statements.StatementField.*;
@@ -153,7 +162,6 @@ public class StatementTransformationUtil {
 			isoformsToBeConsidered.addAll(isoformAccessions);
 		}
 
-
 		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
 		for (String isoformAccession : isoformsToBeConsidered) {
@@ -161,9 +169,14 @@ public class StatementTransformationUtil {
 			String name = null;
 			boolean allOk = true;
 
+			subjectsForThisProteoform.sort(Comparator.comparingInt(s -> Integer.parseInt(s.getValue(LOCATION_BEGIN))));
+
 			for (Statement s : subjectsForThisProteoform) {
 				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(StatementField.TARGET_ISOFORMS));
-				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream().filter(ti -> ti.getIsoformAccession().equals(isoformAccession)).collect(Collectors.toList());
+
+				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream()
+						.filter(ti -> ti.getIsoformAccession().equals(isoformAccession))
+						.collect(Collectors.toList());
 
 				if (targetIsoformsFiltered.isEmpty()) {
 					LOGGER.debug("(skip) Could not map to isoform " + isoformAccession);
