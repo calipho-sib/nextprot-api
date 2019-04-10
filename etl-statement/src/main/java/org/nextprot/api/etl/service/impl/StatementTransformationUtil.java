@@ -18,8 +18,10 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
+import org.nextprot.commons.statements.specs.CoreStatementField;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -160,7 +162,6 @@ public class StatementTransformationUtil {
 			isoformsToBeConsidered.addAll(isoformAccessions);
 		}
 
-
 		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
 		for (String isoformAccession : isoformsToBeConsidered) {
@@ -168,9 +169,14 @@ public class StatementTransformationUtil {
 			String name = null;
 			boolean allOk = true;
 
+			subjectsForThisProteoform.sort(Comparator.comparingInt(s -> Integer.parseInt(s.getValue(LOCATION_BEGIN))));
+
 			for (Statement s : subjectsForThisProteoform) {
-				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(TARGET_ISOFORMS));
-				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream().filter(ti -> ti.getIsoformAccession().equals(isoformAccession)).collect(Collectors.toList());
+				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(CoreStatementField.TARGET_ISOFORMS));
+
+				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream()
+						.filter(ti -> ti.getIsoformAccession().equals(isoformAccession))
+						.collect(Collectors.toList());
 
 				if (targetIsoformsFiltered.isEmpty()) {
 					LOGGER.debug("(skip) Could not map to isoform " + isoformAccession);
