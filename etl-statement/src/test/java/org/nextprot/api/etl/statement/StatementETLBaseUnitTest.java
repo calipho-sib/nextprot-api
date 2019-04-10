@@ -45,12 +45,19 @@ public abstract class StatementETLBaseUnitTest {
 		List<Isoform> isoformsNX_Q15858 = Arrays.asList(mockIsoform("NX_Q15858-1", "Iso 1", true), mockIsoform("NX_Q15858-2", "Iso 2", false), mockIsoform("NX_Q15858-3", "Iso 3", false), mockIsoform("NX_Q15858-4", "Iso 4", false));
 		List<Isoform> isoformsNX_P12111 = Arrays.asList(mockIsoform("NX_P12111-1", "Iso 1", true), mockIsoform("NX_P12111-2", "Iso 2", false), mockIsoform("NX_P12111-3", "Iso 3", false), mockIsoform("NX_P12111-4", "Iso 4", false));
 		List<Isoform> isoformsNX_Q9Y4L1 = Arrays.asList(mockIsoform("NX_Q9Y4L1-1", "Iso 1", true), mockIsoform("NX_Q9Y4L1-2", "Iso 2", false));
+		List<Isoform> isoformsNX_Q14524 = Arrays.asList(mockIsoform("NX_Q14524-1", "Iso 1", true),
+				mockIsoform("NX_Q14524-2", "Iso 2", false),
+				mockIsoform("NX_Q14524-3", "Iso 3", false),
+				mockIsoform("NX_Q14524-4", "Iso 4", false),
+				mockIsoform("NX_Q14524-5", "Iso 5", false),
+				mockIsoform("NX_Q14524-6", "Iso 6", false));
 
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoformsNX_P43246);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P52701")).thenReturn(isoformsNX_P52701);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q15858")).thenReturn(isoformsNX_Q15858);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P12111")).thenReturn(isoformsNX_P12111);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q9Y4L1")).thenReturn(isoformsNX_Q9Y4L1);
+		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q14524")).thenReturn(isoformsNX_Q14524);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
 		
