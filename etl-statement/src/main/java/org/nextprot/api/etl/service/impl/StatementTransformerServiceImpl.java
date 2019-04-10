@@ -287,7 +287,8 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
                     phenotypeIsoStatement = new StatementBuilder(originalStatement)
                             .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype)
-                            .addSubjects(subjectStatements).addObject(objectIsoStatement)
+                            .addSubjects(subjectStatements)
+                            .addObject(objectIsoStatement)
                             .removeField(STATEMENT_ID)
                             .removeField(SUBJECT_STATEMENT_IDS)
                             .removeField(OBJECT_STATEMENT_IDS)

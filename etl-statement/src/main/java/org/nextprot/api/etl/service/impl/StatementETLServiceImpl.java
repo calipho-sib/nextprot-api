@@ -57,10 +57,6 @@ public class StatementETLServiceImpl implements StatementETLService {
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
-        /*rawStatements = rawStatements.stream()
-                .filter(rs -> rs.getValue(NEXTPROT_ACCESSION).equals("NX_Q6S545"))
-                .collect(Collectors.toSet());*/
-
         if (rawStatements.isEmpty()) {
 
             report.addWarning("ETL interruption: could not extract raw statements from " + source.name()
@@ -545,7 +541,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 				return (description.equals(newDescription)) ? statement : new StatementBuilder(statement)
 						.addField(ANNOT_DESCRIPTION, newDescription)
 						.addDebugInfo("ANNOT_DESCRIPTION has changed -> STATEMENT_ID was recomputed")
-						.removeField(STATEMENT_ID)
 						.build();
 			} catch (ParseException e) {
 
