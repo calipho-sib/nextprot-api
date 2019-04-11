@@ -127,6 +127,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
             Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
             trackStatementIds(originalStatement, subjectStatements);
+            trackedStatementIds.add(originalStatement.getObjectStatementId());
 
             Statement subjectStatement = subjectStatements.iterator().next();
             String firstSubjectEntryAccession = subjectStatement.getValue(StatementField.ENTRY_ACCESSION);
@@ -277,7 +278,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
                 if (objectStatement != null) {
 
-                    trackedStatementIds.add(objectStatement.getValue(StatementField.STATEMENT_ID));
                     objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
                             .addField(StatementField.RAW_STATEMENT_ID, objectStatement.getStatementId())
