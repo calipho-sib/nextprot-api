@@ -24,7 +24,7 @@ public enum CvDatabasePreferredLink {
 	EXPRESSION_ATLAS("http://www.ebi.ac.uk/gxa/search?geneQuery=%09%s"),
 	GENEVESTIGATOR("http://genevisible.com/tissues/HS/UniProt/%s"),
 	GERMONLINE("http://www.germonline.org/Homo_sapiens/geneview?gene=%s"),
-	GLY_CONNECT("https://glyconnect.expasy.org/protein/%s"),
+	GLY_CONNECT("https://glyconnect.expasy.org/browser/proteins/%s"),
 	HPA_GENE(ReleaseDataSources.HPA.getUrl()+"%s"),
 	HPA_SUBCELL(ReleaseDataSources.HPA.getUrl()+"%s"),
 	HPA_ANTIBODY(ReleaseDataSources.HPA.getUrl()+ "search/%s"),
