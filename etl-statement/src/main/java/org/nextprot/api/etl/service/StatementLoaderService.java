@@ -1,10 +1,10 @@
 package org.nextprot.api.etl.service;
 
+import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.commons.statements.Statement;
+
 import java.sql.SQLException;
 import java.util.Set;
-
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.constants.NextProtSource;
 
 public interface StatementLoaderService {
 

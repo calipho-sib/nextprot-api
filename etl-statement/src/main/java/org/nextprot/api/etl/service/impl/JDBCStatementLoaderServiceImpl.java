@@ -1,21 +1,21 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.service.StatementLoaderService;
+import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.StatementTableNames;
+import org.nextprot.commons.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.etl.service.StatementLoaderService;
-import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.NextProtSource;
-import org.nextprot.commons.statements.constants.StatementTableNames;
-import org.nextprot.commons.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {

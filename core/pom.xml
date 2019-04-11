@@ -15,13 +15,6 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-commons</artifactId>
-			<version>LATEST</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-commons</artifactId>

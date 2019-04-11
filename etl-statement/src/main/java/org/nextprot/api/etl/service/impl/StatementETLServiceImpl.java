@@ -8,6 +8,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.HttpSparqlService;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
@@ -16,7 +17,6 @@ import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,10 +55,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
-
-        //rawStatements = rawStatements.stream()
-        //        .filter(rs -> rs.getValue(StatementField.ENTRY_ACCESSION).equals("NX_Q8NEV4"))
-        //        .collect(Collectors.toSet());
 
         if (rawStatements.isEmpty()) {
 
@@ -103,7 +99,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 		else if (source == NextProtSource.BioEditor) {
 			return new BioEditorPreProcessor(report);
 		}
-		return stmts -> stmts;
+		return new BuildStatementIdPreProcessor();
+		// stmts -> stmts;
 	}
 
     Set<Statement> transformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
@@ -220,6 +217,21 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public interface PreTransformProcessor {
 
 		Set<Statement> process(Set<Statement> statements);
+	}
+
+	private class BuildStatementIdPreProcessor implements PreTransformProcessor {
+
+		@Override
+		public Set<Statement> process(Set<Statement> statements) {
+
+			Set<Statement> statementSet = new HashSet<>();
+
+			statements.forEach(rs -> statementSet.add(new StatementBuilder()
+					.addMap(rs)
+					.build()));
+
+			return statementSet;
+		}
 	}
 
 	private class GlyConnectPreProcessor implements PreTransformProcessor {
