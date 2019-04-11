@@ -151,7 +151,8 @@ public class StatementTransformationUtil {
                 .collect(Collectors.toList());
 	}
 
-	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
+	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform,
+	                                                                            boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
 
 		List<String> isoformsToBeConsidered = new ArrayList<>();
 
@@ -167,18 +168,6 @@ public class StatementTransformationUtil {
 
 			String name = null;
 			boolean allOk = true;
-
-			subjectsForThisProteoform.sort((s1, s2) -> {
-				int cmp = Integer.parseInt(s1.getValue(LOCATION_BEGIN)) - Integer.parseInt(s2.getValue(LOCATION_BEGIN));
-
-				if (cmp == 0) {
-					cmp = s1.getValue(VARIANT_ORIGINAL_AMINO_ACID).compareTo(s2.getValue(VARIANT_ORIGINAL_AMINO_ACID));
-					if (cmp == 0) {
-						return s1.getValue(VARIANT_VARIATION_AMINO_ACID).compareTo(s2.getValue(VARIANT_VARIATION_AMINO_ACID));
-					}
-				}
-				return cmp;
-			});
 
 			for (Statement s : subjectsForThisProteoform) {
 				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(CoreStatementField.TARGET_ISOFORMS));
@@ -226,7 +215,7 @@ public class StatementTransformationUtil {
 
 		for (Statement subject : multipleSubjects) {
 
-			if (subject.getValue(ANNOTATION_CATEGORY).equals("variant")) {
+			if (subject.getValue(ANNOTATION_CATEGORY).equals("variant") || subject.getValue(ANNOTATION_CATEGORY).equals("mutagenesis")) {
 
 				FeatureQueryResult featureQueryResult;
 				featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
@@ -239,7 +228,7 @@ public class StatementTransformationUtil {
 				}
 			}
 			else {
-				LOGGER.error("skip subject "+subject.getStatementId()+": not a variant, category="+subject.getValue(ANNOTATION_CATEGORY));
+				LOGGER.error("skip subject "+subject.getStatementId()+": not a variant nor a mutagenesis, category="+subject.getValue(ANNOTATION_CATEGORY));
 			}
 		}
 

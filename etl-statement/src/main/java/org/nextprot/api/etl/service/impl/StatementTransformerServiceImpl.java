@@ -2,7 +2,6 @@ package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,335 +29,322 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.commons.constants.AnnotationCategory.PHENOTYPIC_VARIATION;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementTransformerServiceImpl implements StatementTransformerService {
 
-    private static Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
+	private static Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
 
 	@Autowired
-    private IsoformService isoformService;
-
-    @Autowired
-    private IsoformMappingService isoformMappingService;
+	private IsoformService isoformService;
+
+	@Autowired
+	private IsoformMappingService isoformMappingService;
+
+	@Autowired
+	private SequenceFeatureFactoryService sequenceFeatureFactoryService;
+
+	@Override
+	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
-    @Autowired
-    private SequenceFeatureFactoryService sequenceFeatureFactoryService;
+		return new StatementTransformer(rawStatements, report).transform();
+	}
 
-    @Override
-    public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
+	public void setIsoformMappingService(IsoformMappingService isoformMappingService) {
+		this.isoformMappingService = isoformMappingService;
+	}
 
-        return new StatementTransformer(rawStatements, report).transform();
-    }
+	public void setIsoformService(IsoformService isoformService) {
+		this.isoformService = isoformService;
+	}
 
-    public void setIsoformMappingService(IsoformMappingService isoformMappingService) {
-        this.isoformMappingService = isoformMappingService;
-    }
+	public void setSequenceFeatureFactoryService(SequenceFeatureFactoryService sequenceFeatureFactoryService) {
+		this.sequenceFeatureFactoryService = sequenceFeatureFactoryService;
+	}
 
-    public void setIsoformService(IsoformService isoformService) {
-        this.isoformService = isoformService;
-    }
+	class StatementTransformer {
 
-    public void setSequenceFeatureFactoryService(SequenceFeatureFactoryService sequenceFeatureFactoryService) {
-        this.sequenceFeatureFactoryService = sequenceFeatureFactoryService;
-    }
+		private final Collection<Statement> rawStatements;
+		private final ReportBuilder report;
+		private final Map<String, Statement> rawStatementsById;
+		private final Set<String> trackedRawStatementIds;
 
-    class StatementTransformer {
+		StatementTransformer(Collection<Statement> rawStatements, ReportBuilder report) {
 
-        private final Collection<Statement> rawStatements;
-        private final ReportBuilder report;
-        private final Map<String, Statement> sourceStatementsById;
-        private final Set<String> trackedStatementIds;
+			Preconditions.checkNotNull(rawStatements);
+			Preconditions.checkNotNull(report);
 
-        StatementTransformer(Collection<Statement> rawStatements, ReportBuilder report) {
+			if (rawStatements.isEmpty()) {
+				throw new NextProtException("missing raw statements");
+			}
+			this.rawStatements = rawStatements;
+			this.report = report;
+			this.rawStatementsById = rawStatements.stream()
+					.collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
+			trackedRawStatementIds = new HashSet<>();
+		}
 
-            Preconditions.checkNotNull(rawStatements);
-            Preconditions.checkNotNull(report);
+		private Set<Statement> transform() {
 
-            if (rawStatements.isEmpty()) {
-                throw new NextProtException("missing raw statements");
-            }
-            this.rawStatements = rawStatements;
-            this.report = report;
-            this.sourceStatementsById = rawStatements.stream()
-                    .collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
-            trackedStatementIds = new HashSet<>();
-        }
+			Set<Statement> mappedStatements = new HashSet<>();
+			trackedRawStatementIds.clear();
 
-        private Set<Statement> transform() {
+			for (Statement rawStatement : rawStatements) {
 
-            Set<Statement> mappedStatements = new HashSet<>();
-            trackedStatementIds.clear();
+				if (isPhenotypicVariation(rawStatement)) {
 
-            for (Statement statement : rawStatements) {
+					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
+				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) {
 
-                if (isTripletStatement(statement)) {
+					transformSimpleStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
+					trackedRawStatementIds.add(rawStatement.getStatementId());
+				}
+			}
 
-                    mappedStatements.addAll(transformTripletStatement(statement));
-                }
-                else if (!trackedStatementIds.contains(statement.getValue(STATEMENT_ID))) {
+			return mappedStatements;
+		}
 
-                    transformSimpleStatement(statement).ifPresent(s -> mappedStatements.add(s));
-                    trackedStatementIds.add(statement.getValue(STATEMENT_ID));
-                }
-            }
+		/**
+		 * <h3> Phenotypic variation stmt</h3>
+		 *
+		 * <h3>Example</h3>
+		 * MSH6-p.Ser144Ile decreases mismatch repair (BED CAVA-VP011468)
+		 * <p>
+		 * The sentence above has 3 stmts:
+		 * 1. stmt SUBJECT(s) (ex: VARIANT: MSH6-p.Ser144Ile)
+		 * 2. stmt OBJECT (ex: GO: mismatch repair)
+		 * 3. a stmt VERB, ANNOT_CV_TERM (ex: stmt 1. decreases stmt 2.)
+		 **/
+		private Set<Statement> transformPhenotypicVariationStatement(Statement rawStatement) {
 
-            return mappedStatements;
-        }
+			Set<Statement> rawStatementSubjects = getRawStatementSubjects(rawStatement.getSubjectStatementIdsArray());
+			if (rawStatementSubjects == null || rawStatementSubjects.isEmpty()) {
+				throw new NextProtException("missing subject statement in phenotypic-variation statement "+rawStatement);
+			}
+			Statement rawStatementObject = rawStatementsById.get(rawStatement.getObjectStatementId());
+			if (rawStatementObject == null) {
+				throw new NextProtException("missing object statement in phenotypic-variation statement "+rawStatement);
+			}
 
-        /**
-         * <h3> Triplet stmt</h3>
-         * 1. reference (via fields SUBJECT_STATEMENT_IDS or OBJECT_STATEMENT_IDS) a subject that is other(s) stmt(s) (ex: variant)
-         * 2. (optionally) refers to an object that is another stmt
-         *
-         * <h3>Example</h3>
-         * MSH6-p.Ser144Ile decreases mismatch repair (BED CAVA-VP011468)
-         * <p>
-         * The sentence above has 3 stmts:
-         * 1. stmt SUBJECT (ex: VARIANT: MSH6-p.Ser144Ile)
-         * 2. stmt OBJECT (ex: GO: mismatch repair)
-         * 3. a stmt VERB (ex: stmt 1. decreases stmt 2.)
-         **/
-        private Set<Statement> transformTripletStatement(Statement originalStatement) {
+			// keep track of processed statements
+			trackStatementId(rawStatement);
+			trackStatementIds(rawStatementSubjects);
+			trackStatementId(rawStatementObject);
 
-            if (!isTripletStatement(originalStatement)) {
-                throw new IllegalStateException("should be a triplet type statement: " + originalStatement);
-            }
+			Statement subjectStatement = rawStatementSubjects.iterator().next();
+			String firstSubjectEntryAccession = subjectStatement.getValue(ENTRY_ACCESSION);
 
-            Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
-            trackStatementIds(originalStatement, subjectStatements);
+			String isoformSpecificAccession = null;
+			boolean isIsoSpecific = isSubjectIsoSpecific(rawStatementSubjects);
 
-            Statement subjectStatement = subjectStatements.iterator().next();
-            String firstSubjectEntryAccession = subjectStatement.getValue(ENTRY_ACCESSION);
-            String firstSubjectIsoformName = getFirstSubjectIsoformName(subjectStatements);
+			if (isIsoSpecific) {
+				isoformSpecificAccession = getIsoAccession(subjectStatement);
+			}
 
-            if (firstSubjectIsoformName == null) {
-                throw new NextProtException("Isoform name is not defined, something wrong occurred when checking for iso specificity");
-            }
+			return transformPhenotypicVariationStatement(rawStatement, rawStatementSubjects, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+		}
 
-            String isoformSpecificAccession = null;
-            boolean isIsoSpecific = isSubjectIsoSpecific(subjectStatements);
+		private void trackStatementId(Statement rawStatement) {
 
-            if (isIsoSpecific) {
+			trackedRawStatementIds.add(rawStatement.getStatementId());
+		}
 
-                isoformSpecificAccession = getIsoAccession(subjectStatement);
-            }
+		private void trackStatementIds(Collection<Statement> rawStatements) {
 
-            return transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
-        }
+			rawStatements.forEach(statement -> trackedRawStatementIds.add(statement.getStatementId()));
+		}
 
-        private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
+		private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
 
-            trackedStatementIds.addAll(subjectStatements.stream()
-                    .map(statement -> statement.getValue(STATEMENT_ID))
-                    .collect(Collectors.toList()));
-            trackedStatementIds.add(originalStatement.getValue(STATEMENT_ID));
-        }
+			String category = simpleStatement.getValue(ANNOTATION_CATEGORY);
 
-        private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
+			if (category.equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
+				throw new NextProtException("Not expecting phenotypic variation at this stage.");
+			}
 
-            String category = simpleStatement.getValue(ANNOTATION_CATEGORY);
+			StatementTransformationUtil.IsoformPositions isoformPositions =
+					StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
 
-            if (category.equals(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
-                throw new NextProtException("Not expecting phenotypic variation at this stage.");
-            }
+			if (!isoformPositions.hasTargetIsoforms()) {
 
-            StatementTransformationUtil.IsoformPositions isoformPositions =
-                    StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
+				LOGGER.warn("Skipping statement " + simpleStatement.getValue(ANNOTATION_NAME) + " (source=" + simpleStatement.getValue(ASSIGNED_BY) + ")");
+				return Optional.empty();
+			}
 
-            if (!isoformPositions.hasTargetIsoforms()) {
+			StatementBuilder builder = new StatementBuilder(simpleStatement)
+					.addField(RAW_STATEMENT_ID, simpleStatement.getStatementId());
 
-                LOGGER.warn("Skipping statement "+simpleStatement.getValue(ANNOTATION_NAME) + " (source="+simpleStatement.getValue(ASSIGNED_BY)+")");
-                return Optional.empty();
-            }
+			if (isoformPositions.hasExactPositions()) {
+				builder.addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
+						.addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
+						.addField(LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
+						.addField(LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
+			}
 
-            StatementBuilder builder = new StatementBuilder(simpleStatement)
-                    .addField(RAW_STATEMENT_ID, simpleStatement.getStatementId());
+			return Optional.of(builder
+					.addField(ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
+					.addField(TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
+					.withAnnotationHash()
+					.build());
+		}
 
-            if (isoformPositions.hasExactPositions()) {
-                builder.addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
-                        .addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
-                        .addField(LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
-                        .addField(LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
-            }
+		private Set<Statement> getRawStatementSubjects(String[] subjectIds) {
 
-            return Optional.of(builder
-                    .addField(ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
-                    .addField(TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
-                    .withAnnotationHash()
-                    .build());
-        }
+			Set<Statement> variants = new HashSet<>();
+			for (String subjectId : subjectIds) {
+				Statement subjectStatement = rawStatementsById.get(subjectId);
+				if (subjectStatement == null) {
+					throw new NextProtException("Subject " + subjectId + " not present in the given list");
+				}
+				variants.add(subjectStatement);
+			}
+			return variants;
+		}
 
-        private Set<Statement> getSubjects(String[] subjectIds) {
+		private boolean isPhenotypicVariation(Statement statement) {
 
-            Set<Statement> variants = new HashSet<>();
-            for (String subjectId : subjectIds) {
-                Statement subjectStatement = sourceStatementsById.get(subjectId);
-                if (subjectStatement == null) {
-                    throw new NextProtException("Subject " + subjectId + " not present in the given list");
-                }
-                variants.add(subjectStatement);
-            }
-            return variants;
-        }
+			return statement.getValue(ANNOTATION_CATEGORY).equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName());
+		}
 
-        private boolean isTripletStatement(Statement statement) {
+		private String getIsoAccession(Statement statement) {
 
-            return statement.getSubjectStatementIds() != null && !statement.getSubjectStatementIds().isEmpty();
-        }
-
-        private String getIsoAccession(Statement statement) {
+			String featureName = statement.getValue(ANNOTATION_NAME);
+			String featureType = statement.getValue(ANNOTATION_CATEGORY);
 
-            String featureName = statement.getValue(ANNOTATION_NAME);
-            String featureType = statement.getValue(ANNOTATION_CATEGORY);
+			try {
+				return sequenceFeatureFactoryService.newSequenceFeature(featureName, featureType).getIsoform().getIsoformAccession();
+			} catch (Exception e) {
+				throw new NextProtException(e);
+			}
+		}
 
-            try {
-                return sequenceFeatureFactoryService.newSequenceFeature(featureName, featureType).getIsoform().getIsoformAccession();
-            } catch (Exception e) {
-                throw new NextProtException(e);
-            }
-        }
-
-        // TODO: WTF ??? do we really need a map to store just a key -> value ??? NO!!!
-        private Map<String, List<Statement>> getSubjectsTransformed(Set<Statement> subjectStatements, String nextprotAccession) {
+		private Set<Statement> transformPhenotypicVariationStatement(Statement originalStatement, Set<Statement> subjectStatementSet, String nextprotAccession,
+		                                                 boolean isIsoSpecific, String isoSpecificAccession) {
+			Set<Statement> statementsToLoad = new HashSet<>();
 
-            Map<String, List<Statement>> variantsOnIsoform = new HashMap<>();
+			// 1. transform subjects: add mapping infos on each subjects
+			List<Statement> transformedSubjectStatements = transformSubjects(subjectStatementSet, nextprotAccession);
 
-            List<Statement> result = StatementTransformationUtil.getPropagatedStatementVariantsForEntry(isoformMappingService, subjectStatements, nextprotAccession);
-            variantsOnIsoform.put(nextprotAccession, result);
+			TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement =
+					computeTargetIsoformSetOfPhenotypicVariationStatement(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
 
-            return variantsOnIsoform;
-        }
+			// 2. transform object
+			Statement objectStatement = transformObject(originalStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
 
-        private Set<Statement> transformTripletStatement(Statement originalStatement, Set<Statement> subjectStatementSet, String nextprotAccession,
-                                           boolean isIsoSpecific, String isoSpecificAccession) {
-
-            Set<Statement> statementsToLoad = new HashSet<>();
-
-            //In case of entry variants have the target isoform property filled
-            for (Map.Entry<String, List<Statement>> entry : getSubjectsTransformed(subjectStatementSet, nextprotAccession).entrySet()) {
-
-                List<Statement> subjectStatements = entry.getValue();
-
-                if (subjectStatements.isEmpty()) {
-                    report.addWarning("Empty subjects are not allowed for " + entry.getKey() + " skipping... case for 1 variant");
-                    continue;
-                }
-
-                String targetIsoformsForObject;
-                String targetIsoformsForPhenotype;
-
-                String entryAccession = subjectStatements.get(0).getValue(ENTRY_ACCESSION);
-
-                List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-                NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
-
-                List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
-
-                TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, isIsoSpecific, isoSpecificAccession, isoformNames);
-                targetIsoformsForPhenotype = targetIsoformsForPhenotypeSet.serializeToJsonString();
-
-                Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
-
-                //Load objects
-                Statement phenotypeIsoStatement;
-                Statement objectIsoStatement = null;
-                Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
-
-                if (isIsoSpecific) {//If it is iso specific
-                    for (TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet) {
-                        targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
-                    }
-                    targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
-                } else {
-                    targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement, isoformService, isoformMappingService)
-                            .getTargetIsoformSet().serializeToJsonString();
-                }
-
-                if (objectStatement != null) {
-
-                    trackedStatementIds.add(objectStatement.getValue(STATEMENT_ID));
-                    objectIsoStatement = new StatementBuilder(objectStatement)
-                            .addField(TARGET_ISOFORMS, targetIsoformsForObject)
-                            .addField(RAW_STATEMENT_ID, objectStatement.getStatementId())
-                            .withAnnotationHash()
-                            .build();
-
-                    phenotypeIsoStatement = new StatementBuilder(originalStatement)
-                            .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype)
-                            .addSubjects(subjectStatements)
-                            .addObject(objectIsoStatement)
-                            .removeField(STATEMENT_ID)
-                            .removeField(SUBJECT_STATEMENT_IDS)
-                            .removeField(OBJECT_STATEMENT_IDS)
-                            .addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
-                            .withAnnotationHash()
-                            .build();
-                } else {
-
-                    phenotypeIsoStatement = new StatementBuilder(originalStatement)
-                            .addField(TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-                            .addSubjects(subjectStatements)
-                            .removeField(STATEMENT_ID)
-                            .removeField(SUBJECT_STATEMENT_IDS)
-                            .removeField(OBJECT_STATEMENT_IDS)
-                            .addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
-                            .withAnnotationHash()
-                            .build();
-                }
-
-                //Load subjects
-                statementsToLoad.addAll(subjectStatements);
-
-                //Load VPs
-                statementsToLoad.add(phenotypeIsoStatement);
-
-                //Load objects
-                if (objectIsoStatement != null) {
-                    statementsToLoad.add(objectIsoStatement);
-                }
-            }
-
-            return statementsToLoad;
-        }
-
-        private String getFirstSubjectIsoformName(Set<Statement> subjects) {
-
-            Set<String> isoforms = subjects.stream()
-                    .map(s -> s.getValue(NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(ANNOTATION_NAME)))
-                    .collect(Collectors.toSet());
-
-            if (isoforms.size() != 1) {
-                throw new NextProtException("Mixing iso numbers for subjects is not allowed");
-            }
-            String isoform = isoforms.iterator().next();
-            if (isoform == null) {
-                throw new NextProtException("Not iso specific subjects are not allowed on isOnSameIsoform");
-            }
-
-            return isoform;
-        }
-
-        /**
-         * Returns an exception if there are mixes between subjects
-         *
-         * @param subjects
-         * @return
-         */
-        private boolean isSubjectIsoSpecific(Set<Statement> subjects) {
-
-            long isoSpecificSize = subjects.stream()
-                    .filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(ANNOTATION_NAME)))
-                    .count();
-
-            if (isoSpecificSize == 0) {
-                return false;
-            } else if (isoSpecificSize == subjects.size()) {
-                return true;
-            } else {
-                throw new NextProtException("Mixing iso specific subjects with non-iso specific variants is not allowed");
-            }
-        }
-    }
+			Statement phenotypeVariationStatement = new StatementBuilder(originalStatement)
+					.addField(TARGET_ISOFORMS, targetIsoformsSetForPhenotypicVariationStatement.serializeToJsonString())
+					.addSubjects(transformedSubjectStatements)
+					.addObject(objectStatement)
+					.removeField(STATEMENT_ID)
+					.removeField(SUBJECT_STATEMENT_IDS)
+					.removeField(OBJECT_STATEMENT_IDS)
+					.addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
+					.withAnnotationHash()
+					.build();
+
+			//add VPs
+			statementsToLoad.add(phenotypeVariationStatement);
+
+			//add object statement
+			statementsToLoad.add(objectStatement);
+
+			//add subject statements
+			statementsToLoad.addAll(transformedSubjectStatements);
+
+			return statementsToLoad;
+		}
+
+		private Statement transformObject(Statement originalStatement, boolean isIsoSpecific, TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement) {
+
+			Statement originalObjectStatement = rawStatementsById.get(originalStatement.getObjectStatementId());
+
+			TargetIsoformSet targetIsoformsForObjectStatement =
+					computeTargetIsoformForObject(isIsoSpecific, originalObjectStatement, targetIsoformsSetForPhenotypicVariationStatement);
+
+			return new StatementBuilder(originalObjectStatement)
+					.addField(TARGET_ISOFORMS, targetIsoformsForObjectStatement.serializeToJsonString())
+					.addField(RAW_STATEMENT_ID, originalObjectStatement.getStatementId())
+					.withAnnotationHash()
+					.build();
+		}
+
+		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet, String nextprotAccession) {
+
+			//In case of entry variants have the target isoform property filled
+			List<Statement> transformedSubjectStatements =
+					StatementTransformationUtil.transformVariantStatementsComputeMappings(isoformMappingService, subjectStatementSet, nextprotAccession);
+
+			if (transformedSubjectStatements.isEmpty()) {
+				report.addWarning("Empty subjects are not allowed for " + nextprotAccession + " skipping... case for 1 variant");
+			}
+
+			return transformedSubjectStatements.stream()
+					.sorted((s1, s2) -> {
+						int cmp = Integer.parseInt(s1.getValue(LOCATION_BEGIN)) - Integer.parseInt(s2.getValue(LOCATION_BEGIN));
+
+						if (cmp == 0) {
+							cmp = s1.getValue(VARIANT_ORIGINAL_AMINO_ACID).compareTo(s2.getValue(VARIANT_ORIGINAL_AMINO_ACID));
+							if (cmp == 0) {
+								return s1.getValue(VARIANT_VARIATION_AMINO_ACID).compareTo(s2.getValue(VARIANT_VARIATION_AMINO_ACID));
+							}
+						}
+						return cmp;
+					})
+					.collect(Collectors.toList());
+		}
+
+		private TargetIsoformSet computeTargetIsoformSetOfPhenotypicVariationStatement(List<Statement> transformedSubjectStatements, boolean isIsoSpecific, String isoSpecificAccession) {
+
+			String entryAccession = transformedSubjectStatements.get(0).getValue(ENTRY_ACCESSION);
+
+			List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
+			NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
+
+			List<String> isoformNames = isoforms.stream()
+					.map(Isoform::getIsoformAccession)
+					.collect(Collectors.toList());
+
+			return StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession, isoformNames);
+		}
+
+		private TargetIsoformSet computeTargetIsoformForObject(boolean isIsoSpecific, Statement originalObjectStatement, TargetIsoformSet targetIsoformsSetOfPhenotypicVariation) {
+			TargetIsoformSet targetIsoformsForObject;
+
+			if (isIsoSpecific) {//If it is iso specific
+				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
+
+				for (TargetIsoformStatementPosition tisp : targetIsoformsSetOfPhenotypicVariation) {
+					targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
+				}
+				targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet);
+			} else {
+				targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(originalObjectStatement, isoformService, isoformMappingService)
+						.getTargetIsoformSet();
+			}
+			return targetIsoformsForObject;
+		}
+
+		/**
+		 * Returns an exception if there are mixes between subjects
+		 *
+		 * @param subjects
+		 * @return
+		 */
+		private boolean isSubjectIsoSpecific(Set<Statement> subjects) {
+
+			long isoSpecificSize = subjects.stream()
+					.filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(ANNOTATION_NAME)))
+					.count();
+
+			if (isoSpecificSize == 0) {
+				return false;
+			} else if (isoSpecificSize == subjects.size()) {
+				return true;
+			} else {
+				throw new NextProtException("Mixing iso specific subjects with non-iso specific variants is not allowed");
+			}
+		}
+	}
 }
