@@ -128,11 +128,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				throw new NextProtException("missing object statement in phenotypic-variation statement "+rawStatement);
 			}
 
-			// keep track of processed statements
-			trackStatementId(rawStatement);
-			trackStatementIds(rawStatementSubjects);
-			trackStatementId(rawStatementObject);
-
 			Statement subjectStatement = rawStatementSubjects.iterator().next();
 			String firstSubjectEntryAccession = subjectStatement.getValue(ENTRY_ACCESSION);
 
@@ -146,14 +141,9 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			return transformPhenotypicVariationStatement(rawStatement, rawStatementSubjects, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
 		}
 
-		private void trackStatementId(Statement rawStatement) {
+		private void trackStatementId(String statementId) {
 
-			trackedRawStatementIds.add(rawStatement.getStatementId());
-		}
-
-		private void trackStatementIds(Collection<Statement> rawStatements) {
-
-			rawStatements.forEach(statement -> trackedRawStatementIds.add(statement.getStatementId()));
+			trackedRawStatementIds.add(statementId);
 		}
 
 		private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
@@ -246,12 +236,21 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 			//add VPs
 			statementsToLoad.add(phenotypeVariationStatement);
+			trackStatementId(phenotypeVariationStatement.getValue(RAW_STATEMENT_ID));
 
 			//add object statement
-			statementsToLoad.add(objectStatement);
+			if (!trackedRawStatementIds.contains(objectStatement.getValue(RAW_STATEMENT_ID))) {
+				statementsToLoad.add(objectStatement);
+				trackStatementId(objectStatement.getValue(RAW_STATEMENT_ID));
+			}
 
 			//add subject statements
-			statementsToLoad.addAll(transformedSubjectStatements);
+			transformedSubjectStatements.stream()
+					.filter(subjectStatement -> !trackedRawStatementIds.contains(subjectStatement.getValue(RAW_STATEMENT_ID)))
+					.forEach(subjectStatement -> {
+						statementsToLoad.add(subjectStatement);
+						trackStatementId(subjectStatement.getValue(RAW_STATEMENT_ID));
+					});
 
 			return statementsToLoad;
 		}
