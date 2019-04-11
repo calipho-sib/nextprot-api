@@ -220,20 +220,26 @@ public class StatementTransformationUtil {
 	}
 
 	// TODO: handle ptm type features propagation
-	static List<Statement> getPropagatedStatementVariantsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
+	static List<Statement> transformVariantStatementsComputeMappings(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
 
 		List<Statement> result = new ArrayList<>();
 
 		for (Statement subject : multipleSubjects) {
 
-			FeatureQueryResult featureQueryResult;
-			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
-			if (featureQueryResult.isSuccess()) {
-				result.add(mapVariationStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
-			} else {
-				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
-				String message = "Failure for " + subject.getStatementId() + " " + failure.getError().getMessage();
-				LOGGER.error(message);
+			if (subject.getValue(ANNOTATION_CATEGORY).equals("variant")) {
+
+				FeatureQueryResult featureQueryResult;
+				featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
+				if (featureQueryResult.isSuccess()) {
+					result.add(buildStatementWithMappings(subject, (FeatureQuerySuccess) featureQueryResult));
+				} else {
+					FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
+					String message = "Failure for " + subject.getStatementId() + " " + failure.getError().getMessage();
+					LOGGER.error(message);
+				}
+			}
+			else {
+				LOGGER.error("skip subject "+subject.getStatementId()+": not a variant, category="+subject.getValue(ANNOTATION_CATEGORY));
 			}
 		}
 
@@ -316,7 +322,7 @@ public class StatementTransformationUtil {
 		return isoformPositions;
 	}
 
-    private static Statement mapVariationStatementToEntry(Statement variationStatement, FeatureQuerySuccess result) {
+    private static Statement buildStatementWithMappings(Statement variationStatement, FeatureQuerySuccess result) {
 
         IsoformPositions isoformPositions = calcIsoformPositions(variationStatement, result);
 
