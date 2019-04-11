@@ -126,8 +126,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
             }
 
             Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
-            trackStatementIds(originalStatement, subjectStatements);
-            trackedStatementIds.add(originalStatement.getObjectStatementId());
 
             Statement subjectStatement = subjectStatements.iterator().next();
             String firstSubjectEntryAccession = subjectStatement.getValue(StatementField.ENTRY_ACCESSION);
@@ -145,7 +143,12 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 isoformSpecificAccession = getIsoAccession(subjectStatement);
             }
 
-            return transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+            Set<Statement> statements = transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+
+            trackStatementIds(originalStatement, subjectStatements);
+            trackedStatementIds.add(originalStatement.getObjectStatementId());
+
+            return statements;
         }
 
         private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
@@ -304,13 +307,15 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 }
 
                 //Load subjects
-                statementsToLoad.addAll(subjectStatements);
+                subjectStatements.stream()
+                        .filter(statement -> !trackedStatementIds.contains(statement.getValue(StatementField.RAW_STATEMENT_ID)))
+                        .forEach(statement -> statementsToLoad.add(statement));
 
                 //Load VPs
                 statementsToLoad.add(phenotypeIsoStatement);
 
                 //Load objects
-                if (objectIsoStatement != null) {
+                if (objectIsoStatement != null && !trackedStatementIds.contains(objectIsoStatement.getValue(StatementField.RAW_STATEMENT_ID))) {
                     statementsToLoad.add(objectIsoStatement);
                 }
             }
