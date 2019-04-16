@@ -21,6 +21,7 @@ import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -212,13 +213,13 @@ public class StatementTransformationUtil {
 	 * Compute the locations on all isoforms of subjects statements
 	 */
 	// TODO: handle ptm type features propagation
-	static List<Statement> transformVariantAndMutagenesisSet(Set<Statement> subjects, String nextprotAccession, IsoformMappingService isoformMappingService) {
+	static List<Statement> transformVariantAndMutagenesisSet(Collection<Statement> subjects, IsoformMappingService isoformMappingService) {
 
 		List<Statement> result = new ArrayList<>();
 
 		for (Statement subject : subjects) {
 
-			Statement transformedStatement = transformVariantOrMutagenesis(subject, nextprotAccession, isoformMappingService);
+			Statement transformedStatement = transformVariantOrMutagenesis(subject, isoformMappingService);
 
 			if (transformedStatement != null) {
 
@@ -233,12 +234,12 @@ public class StatementTransformationUtil {
 		}
 	}
 
-	private static Statement transformVariantOrMutagenesis(Statement subject, String nextprotAccession, IsoformMappingService isoformMappingService) {
+	private static Statement transformVariantOrMutagenesis(Statement subject, IsoformMappingService isoformMappingService) {
 
 		if (subject.getValue(ANNOTATION_CATEGORY).equals("variant") || subject.getValue(ANNOTATION_CATEGORY).equals("mutagenesis")) {
 
 			FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(
-					new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
+					new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", subject.getValue(ENTRY_ACCESSION)));
 
 			if (featureQueryResult.isSuccess()) {
 				return buildStatementWithLocations(subject, (FeatureQuerySuccess) featureQueryResult);

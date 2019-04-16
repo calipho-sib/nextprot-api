@@ -9,8 +9,9 @@ import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,17 +21,18 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 
 	@Test
-	public void shouldComputeCorrectTargetIsoformsForVariants() throws Exception {
+	public void shouldComputeCorrectTargetIsoformsForVariants() {
 		
-		Set<Statement> subjectStatements = new HashSet<>(
-				Arrays.asList(new StatementBuilder()
+		List<Statement> subjectStatements =
+				Collections.singletonList(new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Ile848Thr")
-				.build()));
+						.addField(ANNOTATION_CATEGORY, "variant")
+						.build());
 		
 		List<Statement> variantOnEntry = 
 				StatementTransformationUtil.transformVariantAndMutagenesisSet(
-						subjectStatements, "NX_Q15858",isoformMappingServiceMocked);
+						subjectStatements,isoformMappingServiceMocked);
 
 
 		//It should return only one statement with target isoforms
@@ -48,51 +50,38 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 	}
 	
 	@Test
-	public void shouldComputeCorrectTargetIsoformsForProteoformAnnotations() throws Exception {
+	public void shouldComputeCorrectTargetIsoformsForProteoformAnnotations() {
 
-		
-		Set<Statement> rawSubjectStatements = new HashSet<>(
-				Arrays.asList(new StatementBuilder()
+		List<Statement> rawSubjectStatements = new ArrayList<>(
+				Arrays.asList(
+						new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Met932Leu")
-				.build(),
-				new StatementBuilder()
+						.addField(ANNOTATION_CATEGORY, "variant")
+						.build(),
+						new StatementBuilder()
 						.addField(ENTRY_ACCESSION, "NX_Q15858")
 						.addField(ANNOTATION_NAME, "SCN9A-iso3-p.Val991Leu")
-				.build()));
-		
-		
-		List<Statement> subjectStatements = 
-				StatementTransformationUtil.transformVariantAndMutagenesisSet(
-						rawSubjectStatements, "NX_Q15858", isoformMappingServiceMocked);
+						.addField(ANNOTATION_CATEGORY, "variant")
+						.build()));
 
-		Statement proteoformStatement = new StatementBuilder()
-				.addField(ENTRY_ACCESSION, "NX_Q15858")
-				.build();
-		
-		{
+		List<Statement> subjectStatements =
+				StatementTransformationUtil.transformVariantAndMutagenesisSet(rawSubjectStatements, isoformMappingServiceMocked);
 
-		    Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, true, "NX_Q15858-3", Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
-			
-		    Assert.assertTrue(result.size() == 1);
-		    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso3-p.Met932Leu + SCN9A-iso3-p.Val991Leu"));
-		    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.SPECIFIC.name()));
+		Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(
+				subjectStatements, true, "NX_Q15858-3", Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
 
-		}
-	
+	    Assert.assertTrue(result.size() == 1);
+	    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso3-p.Met932Leu + SCN9A-iso3-p.Val991Leu"));
+	    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.SPECIFIC.name()));
 
-		{
 
-			Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, false, null, Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
-		
-		    System.err.println(result.size());
-		    Assert.assertEquals(result.size(), 2); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3
-		    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso1-p.Met943Leu + SCN9A-iso1-p.Val1002Leu"));
-		    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.UNKNOWN.name()));
-		}
-		
+		result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, false, null,
+				Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
+
+	    System.err.println(result.size());
+	    Assert.assertEquals(result.size(), 2); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3
+	    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso1-p.Met943Leu + SCN9A-iso1-p.Val1002Leu"));
+	    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.UNKNOWN.name()));
 	}
-
-
-	
 }

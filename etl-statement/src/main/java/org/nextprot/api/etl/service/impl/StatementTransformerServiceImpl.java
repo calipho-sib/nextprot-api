@@ -128,17 +128,14 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				throw new NextProtException("missing object statement in phenotypic-variation statement "+pvStatement);
 			}
 
-			Statement subjectStatement = rawStatementSubjects.iterator().next();
-			String firstSubjectEntryAccession = subjectStatement.getValue(ENTRY_ACCESSION);
-
 			String isoformSpecificAccession = null;
-			boolean isIsoSpecific = isSubjectIsoSpecific(rawStatementSubjects);
+			boolean isIsoSpecific = isSubjectsIsoSpecific(rawStatementSubjects);
 
 			if (isIsoSpecific) {
-				isoformSpecificAccession = getIsoAccession(subjectStatement);
+				isoformSpecificAccession = getIsoAccession(rawStatementSubjects.iterator().next());
 			}
 
-			return transformPhenotypicVariationStatement(pvStatement, rawStatementSubjects, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+			return transformPhenotypicVariationStatement(pvStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
 		}
 
 		private void trackStatementId(String statementId) {
@@ -210,12 +207,16 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			}
 		}
 
-		private Set<Statement> transformPhenotypicVariationStatement(Statement originalStatement, Set<Statement> subjectStatementSet, String nextprotAccession,
+		private Set<Statement> transformPhenotypicVariationStatement(Statement originalStatement, Set<Statement> subjectStatementSet,
 		                                                 boolean isIsoSpecific, String isoSpecificAccession) {
 			Set<Statement> statementsToLoad = new HashSet<>();
 
 			// 1. transform subjects: add mapping infos on each subjects
-			List<Statement> transformedSubjectStatements = transformSubjects(subjectStatementSet, nextprotAccession);
+			List<Statement> transformedSubjectStatements = transformSubjects(subjectStatementSet);
+
+			if (transformedSubjectStatements.isEmpty()) {
+				report.addWarning("Empty subjects are not allowed for " + originalStatement.getValue(ENTRY_ACCESSION) + " skipping... case for 1 variant");
+			}
 
 			TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement =
 					computeTargetIsoformSetOfPhenotypicVariationStatement(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
@@ -269,13 +270,13 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 					.build();
 		}
 
-		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet, String nextprotAccession) {
+		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet) {
 
 			List<Statement> transformedSubjectStatements =
-					StatementTransformationUtil.transformVariantAndMutagenesisSet(subjectStatementSet, nextprotAccession, isoformMappingService);
+					StatementTransformationUtil.transformVariantAndMutagenesisSet(subjectStatementSet, isoformMappingService);
 
 			if (transformedSubjectStatements.isEmpty()) {
-				report.addWarning("Empty subjects are not allowed for " + nextprotAccession + " skipping... case for 1 variant");
+				return transformedSubjectStatements;
 			}
 
 			return transformedSubjectStatements.stream()
@@ -324,13 +325,8 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			return targetIsoformsForObject;
 		}
 
-		/**
-		 * Returns an exception if there are mixes between subjects
-		 *
-		 * @param subjects
-		 * @return
-		 */
-		private boolean isSubjectIsoSpecific(Set<Statement> subjects) {
+		// FIXME: this return bad results because SequenceVariantUtils.isIsoSpecific is wrong
+		private boolean isSubjectsIsoSpecific(Set<Statement> subjects) {
 
 			long isoSpecificSize = subjects.stream()
 					.filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(ANNOTATION_NAME)))
