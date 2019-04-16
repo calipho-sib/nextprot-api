@@ -90,7 +90,8 @@ public class StatementServiceImpl implements StatementService {
 
     private DbXref createDbXref(Statement statement) {
 
-        if (statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
+        if (statement.hasField(REFERENCE_DATABASE.getName()) &&
+                statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
 
             return newGlyConnectXref(statement);
         }
