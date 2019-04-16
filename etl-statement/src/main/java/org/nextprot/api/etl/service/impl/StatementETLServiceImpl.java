@@ -241,7 +241,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.filter(rs -> rs.hasField(NEXTPROT_ACCESSION.getName()))
 					.map(rs -> {
 						String nextprotAccession = rs.getValue(NEXTPROT_ACCESSION);
-						return new StatementBuilder(rs).addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession)).build();
+						return new StatementBuilder(rs)
+								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
+								.addField(RESOURCE_TYPE, "database")
+								.build();
 					})
 					.collect(Collectors.toSet());
 		}
