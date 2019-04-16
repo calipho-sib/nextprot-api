@@ -117,15 +117,15 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		 * 2. stmt OBJECT (ex: GO: mismatch repair)
 		 * 3. a stmt VERB, ANNOT_CV_TERM (ex: stmt 1. decreases stmt 2.)
 		 **/
-		private Set<Statement> transformPhenotypicVariationStatement(Statement pvStatement) {
+		private Set<Statement> transformPhenotypicVariationStatement(Statement rawPhenotypicVariationStatement) {
 
-			Set<Statement> rawStatementSubjects = getRawStatementSubjects(pvStatement.getSubjectStatementIdsArray());
+			Set<Statement> rawStatementSubjects = getRawStatementSubjects(rawPhenotypicVariationStatement.getSubjectStatementIdsArray());
 			if (rawStatementSubjects == null || rawStatementSubjects.isEmpty()) {
-				throw new NextProtException("missing subject statement in phenotypic-variation statement "+pvStatement);
+				throw new NextProtException("missing subject statement in phenotypic-variation statement "+rawPhenotypicVariationStatement);
 			}
-			Statement rawStatementObject = rawStatementsById.get(pvStatement.getObjectStatementId());
+			Statement rawStatementObject = rawStatementsById.get(rawPhenotypicVariationStatement.getObjectStatementId());
 			if (rawStatementObject == null) {
-				throw new NextProtException("missing object statement in phenotypic-variation statement "+pvStatement);
+				throw new NextProtException("missing object statement in phenotypic-variation statement "+rawPhenotypicVariationStatement);
 			}
 
 			String isoformSpecificAccession = null;
@@ -135,7 +135,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				isoformSpecificAccession = getIsoAccession(rawStatementSubjects.iterator().next());
 			}
 
-			return transformPhenotypicVariationStatement(pvStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
+			return transformPhenotypicVariationStatement(rawPhenotypicVariationStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
 		}
 
 		private void trackStatementId(String statementId) {
@@ -207,7 +207,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			}
 		}
 
-		private Set<Statement> transformPhenotypicVariationStatement(Statement originalStatement, Set<Statement> subjectStatementSet,
+		private Set<Statement> transformPhenotypicVariationStatement(Statement rawPhenotypicVariationStatement, Set<Statement> subjectStatementSet,
 		                                                 boolean isIsoSpecific, String isoSpecificAccession) {
 			Set<Statement> statementsToLoad = new HashSet<>();
 
@@ -215,23 +215,23 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			List<Statement> transformedSubjectStatements = transformSubjects(subjectStatementSet);
 
 			if (transformedSubjectStatements.isEmpty()) {
-				report.addWarning("Empty subjects are not allowed for " + originalStatement.getValue(ENTRY_ACCESSION) + " skipping... case for 1 variant");
+				report.addWarning("Empty subjects are not allowed for " + rawPhenotypicVariationStatement.getValue(ENTRY_ACCESSION) + " skipping... case for 1 variant");
 			}
 
 			TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement =
 					computeTargetIsoformSetOfPhenotypicVariationStatement(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
 
 			// 2. transform object
-			Statement objectStatement = transformObject(originalStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
+			Statement objectStatement = transformObject(rawPhenotypicVariationStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
 
-			Statement phenotypeVariationStatement = new StatementBuilder(originalStatement)
+			Statement phenotypeVariationStatement = new StatementBuilder(rawPhenotypicVariationStatement)
 					.addField(TARGET_ISOFORMS, targetIsoformsSetForPhenotypicVariationStatement.serializeToJsonString())
 					.addSubjects(transformedSubjectStatements)
 					.addObject(objectStatement)
 					.removeField(STATEMENT_ID)
 					.removeField(SUBJECT_STATEMENT_IDS)
 					.removeField(OBJECT_STATEMENT_IDS)
-					.addField(RAW_STATEMENT_ID, originalStatement.getStatementId())
+					.addField(RAW_STATEMENT_ID, rawPhenotypicVariationStatement.getStatementId())
 					.withAnnotationHash()
 					.build();
 
