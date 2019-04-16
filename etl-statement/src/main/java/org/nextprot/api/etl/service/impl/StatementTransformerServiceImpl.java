@@ -117,15 +117,15 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		 * 2. stmt OBJECT (ex: GO: mismatch repair)
 		 * 3. a stmt VERB, ANNOT_CV_TERM (ex: stmt 1. decreases stmt 2.)
 		 **/
-		private Set<Statement> transformPhenotypicVariationStatement(Statement rawStatement) {
+		private Set<Statement> transformPhenotypicVariationStatement(Statement pvStatement) {
 
-			Set<Statement> rawStatementSubjects = getRawStatementSubjects(rawStatement.getSubjectStatementIdsArray());
+			Set<Statement> rawStatementSubjects = getRawStatementSubjects(pvStatement.getSubjectStatementIdsArray());
 			if (rawStatementSubjects == null || rawStatementSubjects.isEmpty()) {
-				throw new NextProtException("missing subject statement in phenotypic-variation statement "+rawStatement);
+				throw new NextProtException("missing subject statement in phenotypic-variation statement "+pvStatement);
 			}
-			Statement rawStatementObject = rawStatementsById.get(rawStatement.getObjectStatementId());
+			Statement rawStatementObject = rawStatementsById.get(pvStatement.getObjectStatementId());
 			if (rawStatementObject == null) {
-				throw new NextProtException("missing object statement in phenotypic-variation statement "+rawStatement);
+				throw new NextProtException("missing object statement in phenotypic-variation statement "+pvStatement);
 			}
 
 			Statement subjectStatement = rawStatementSubjects.iterator().next();
@@ -138,7 +138,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				isoformSpecificAccession = getIsoAccession(subjectStatement);
 			}
 
-			return transformPhenotypicVariationStatement(rawStatement, rawStatementSubjects, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+			return transformPhenotypicVariationStatement(pvStatement, rawStatementSubjects, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
 		}
 
 		private void trackStatementId(String statementId) {
@@ -271,9 +271,8 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet, String nextprotAccession) {
 
-			//In case of entry variants have the target isoform property filled
 			List<Statement> transformedSubjectStatements =
-					StatementTransformationUtil.transformVariantStatementsComputeMappings(isoformMappingService, subjectStatementSet, nextprotAccession);
+					StatementTransformationUtil.transformVariantAndMutagenesisSet(subjectStatementSet, nextprotAccession, isoformMappingService);
 
 			if (transformedSubjectStatements.isEmpty()) {
 				report.addWarning("Empty subjects are not allowed for " + nextprotAccession + " skipping... case for 1 variant");

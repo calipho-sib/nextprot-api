@@ -208,39 +208,54 @@ public class StatementTransformationUtil {
 
 	}
 
+	/**
+	 * Compute the locations on all isoforms of subjects statements
+	 */
 	// TODO: handle ptm type features propagation
-	static List<Statement> transformVariantStatementsComputeMappings(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
+	static List<Statement> transformVariantAndMutagenesisSet(Set<Statement> subjects, String nextprotAccession, IsoformMappingService isoformMappingService) {
 
 		List<Statement> result = new ArrayList<>();
 
-		for (Statement subject : multipleSubjects) {
+		for (Statement subject : subjects) {
 
-			if (subject.getValue(ANNOTATION_CATEGORY).equals("variant") || subject.getValue(ANNOTATION_CATEGORY).equals("mutagenesis")) {
+			Statement transformedStatement = transformVariantOrMutagenesis(subject, nextprotAccession, isoformMappingService);
 
-				FeatureQueryResult featureQueryResult;
-				featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
-				if (featureQueryResult.isSuccess()) {
-					result.add(buildStatementWithMappings(subject, (FeatureQuerySuccess) featureQueryResult));
-				} else {
-					FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
-					String message = "Failure for " + subject.getStatementId() + " " + failure.getError().getMessage();
-					LOGGER.error(message);
-				}
-			}
-			else {
-				LOGGER.error("skip subject "+subject.getStatementId()+": not a variant nor a mutagenesis, category="+subject.getValue(ANNOTATION_CATEGORY));
+			if (transformedStatement != null) {
+
+				result.add(transformedStatement);
 			}
 		}
 
-		if (result.size() == multipleSubjects.size()) {
+		if (result.size() == subjects.size()) {
 			return result;
 		} else {
 			return new ArrayList<>(); // return an empty list
 		}
-
 	}
 
-    static IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result) {
+	private static Statement transformVariantOrMutagenesis(Statement subject, String nextprotAccession, IsoformMappingService isoformMappingService) {
+
+		if (subject.getValue(ANNOTATION_CATEGORY).equals("variant") || subject.getValue(ANNOTATION_CATEGORY).equals("mutagenesis")) {
+
+			FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(
+					new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", nextprotAccession));
+
+			if (featureQueryResult.isSuccess()) {
+				return buildStatementWithLocations(subject, (FeatureQuerySuccess) featureQueryResult);
+			} else {
+				String message = "Failure for " + subject.getStatementId() + " " +
+						((FeatureQueryFailure) featureQueryResult).getError().getMessage();
+				LOGGER.error(message);
+			}
+		}
+		else {
+			LOGGER.error("skip subject "+subject.getStatementId()+": not a variant nor a mutagenesis, category="+subject.getValue(ANNOTATION_CATEGORY));
+		}
+		return null;
+	}
+
+
+	static IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result) {
 
 	    return calcIsoformPositions(variationStatement, result, IsoTargetSpecificity.UNKNOWN);
     }
@@ -311,7 +326,7 @@ public class StatementTransformationUtil {
 		return isoformPositions;
 	}
 
-    private static Statement buildStatementWithMappings(Statement variationStatement, FeatureQuerySuccess result) {
+    private static Statement buildStatementWithLocations(Statement variationStatement, FeatureQuerySuccess result) {
 
         IsoformPositions isoformPositions = calcIsoformPositions(variationStatement, result);
 

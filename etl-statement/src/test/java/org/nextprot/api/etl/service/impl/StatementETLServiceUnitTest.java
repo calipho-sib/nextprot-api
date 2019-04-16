@@ -29,8 +29,8 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 				.build()));
 		
 		List<Statement> variantOnEntry = 
-				StatementTransformationUtil.transformVariantStatementsComputeMappings(
-						isoformMappingServiceMocked, subjectStatements, "NX_Q15858");
+				StatementTransformationUtil.transformVariantAndMutagenesisSet(
+						subjectStatements, "NX_Q15858",isoformMappingServiceMocked);
 
 
 		//It should return only one statement with target isoforms
@@ -63,8 +63,8 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		
 		
 		List<Statement> subjectStatements = 
-				StatementTransformationUtil.transformVariantStatementsComputeMappings(
-						isoformMappingServiceMocked, rawSubjectStatements, "NX_Q15858");
+				StatementTransformationUtil.transformVariantAndMutagenesisSet(
+						rawSubjectStatements, "NX_Q15858", isoformMappingServiceMocked);
 
 		Statement proteoformStatement = new StatementBuilder()
 				.addField(ENTRY_ACCESSION, "NX_Q15858")
