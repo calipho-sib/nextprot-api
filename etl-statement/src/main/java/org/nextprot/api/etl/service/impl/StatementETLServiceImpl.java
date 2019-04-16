@@ -57,6 +57,11 @@ public class StatementETLServiceImpl implements StatementETLService {
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
+        // Load a sample of gnomad
+        /*rawStatements = rawStatements.stream()
+		        .filter(statement -> statement.getValue(NEXTPROT_ACCESSION).equals("NX_P10323"))
+		        .collect(Collectors.toSet());*/
+
         if (rawStatements.isEmpty()) {
 
             report.addWarning("ETL interruption: could not extract raw statements from " + source.name()
@@ -244,6 +249,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						return new StatementBuilder(rs)
 								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
 								.addField(RESOURCE_TYPE, "database")
+								.addField(REFERENCE_DATABASE, NextProtSource.GnomAD.getSourceName())
 								.build();
 					})
 					.collect(Collectors.toSet());
