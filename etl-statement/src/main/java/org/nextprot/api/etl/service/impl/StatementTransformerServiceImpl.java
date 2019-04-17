@@ -1,15 +1,11 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
-import org.apache.log4j.Logger;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
@@ -23,7 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -35,29 +30,19 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 @Service
 public class StatementTransformerServiceImpl implements StatementTransformerService {
 
-	private static Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
-
-	@Autowired
-	private IsoformService isoformService;
-
-	@Autowired
-	private IsoformMappingService isoformMappingService;
-
 	@Autowired
 	private SequenceFeatureFactoryService sequenceFeatureFactoryService;
+
+	@Autowired
+	private SimpleStatementTransformerService simpleStatementTransformerService;
+
+	@Autowired
+	private StatementIsoformPositionServiceImpl statementIsoformPositionService;
 
 	@Override
 	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		return new StatementTransformer(rawStatements, report).transform();
-	}
-
-	public void setIsoformMappingService(IsoformMappingService isoformMappingService) {
-		this.isoformMappingService = isoformMappingService;
-	}
-
-	public void setIsoformService(IsoformService isoformService) {
-		this.isoformService = isoformService;
 	}
 
 	public void setSequenceFeatureFactoryService(SequenceFeatureFactoryService sequenceFeatureFactoryService) {
@@ -98,7 +83,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
 				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) {
 
-					transformSimpleStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
+					simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
 					trackedRawStatementIds.add(rawStatement.getStatementId());
 				}
 			}
@@ -143,39 +128,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			trackedRawStatementIds.add(statementId);
 		}
 
-		private Optional<Statement> transformSimpleStatement(Statement simpleStatement) {
 
-			String category = simpleStatement.getValue(ANNOTATION_CATEGORY);
-
-			if (category.equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
-				throw new NextProtException("Not expecting phenotypic variation at this stage.");
-			}
-
-			StatementTransformationUtil.IsoformPositions isoformPositions =
-					StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(simpleStatement, isoformService, isoformMappingService);
-
-			if (!isoformPositions.hasTargetIsoforms()) {
-
-				LOGGER.warn("Skipping statement " + simpleStatement.getValue(ANNOTATION_NAME) + " (source=" + simpleStatement.getValue(ASSIGNED_BY) + ")");
-				return Optional.empty();
-			}
-
-			StatementBuilder builder = new StatementBuilder(simpleStatement)
-					.addField(RAW_STATEMENT_ID, simpleStatement.getStatementId());
-
-			if (isoformPositions.hasExactPositions()) {
-				builder.addField(LOCATION_BEGIN, String.valueOf(isoformPositions.getBeginPositionOfCanonicalOrIsoSpec()))
-						.addField(LOCATION_END, String.valueOf(isoformPositions.getEndPositionOfCanonicalOrIsoSpec()))
-						.addField(LOCATION_BEGIN_MASTER, String.valueOf(isoformPositions.getMasterBeginPosition()))
-						.addField(LOCATION_END_MASTER, String.valueOf(isoformPositions.getMasterEndPosition()));
-			}
-
-			return Optional.of(builder
-					.addField(ISOFORM_CANONICAL, isoformPositions.getCanonicalIsoform())
-					.addField(TARGET_ISOFORMS, isoformPositions.getTargetIsoformSet().serializeToJsonString())
-					.withAnnotationHash()
-					.build());
-		}
 
 		private Set<Statement> getRawStatementSubjects(String[] subjectIds) {
 
@@ -219,7 +172,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			}
 
 			TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement =
-					computeTargetIsoformSetOfPhenotypicVariationStatement(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
+					statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
 
 			// 2. transform object
 			Statement objectStatement = transformObject(rawPhenotypicVariationStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
@@ -273,7 +226,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet) {
 
 			List<Statement> transformedSubjectStatements =
-					StatementTransformationUtil.transformVariantAndMutagenesisSet(subjectStatementSet, isoformMappingService);
+					simpleStatementTransformerService.transformVariantAndMutagenesisSet(subjectStatementSet);
 
 			if (transformedSubjectStatements.isEmpty()) {
 				return transformedSubjectStatements;
@@ -294,20 +247,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 					.collect(Collectors.toList());
 		}
 
-		private TargetIsoformSet computeTargetIsoformSetOfPhenotypicVariationStatement(List<Statement> transformedSubjectStatements, boolean isIsoSpecific, String isoSpecificAccession) {
-
-			String entryAccession = transformedSubjectStatements.get(0).getValue(ENTRY_ACCESSION);
-
-			List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-			NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
-
-			List<String> isoformNames = isoforms.stream()
-					.map(Isoform::getIsoformAccession)
-					.collect(Collectors.toList());
-
-			return StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession, isoformNames);
-		}
-
 		private TargetIsoformSet computeTargetIsoformForObject(boolean isIsoSpecific, Statement originalObjectStatement, TargetIsoformSet targetIsoformsSetOfPhenotypicVariation) {
 			TargetIsoformSet targetIsoformsForObject;
 
@@ -319,7 +258,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				}
 				targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet);
 			} else {
-				targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(originalObjectStatement, isoformService, isoformMappingService)
+				targetIsoformsForObject = statementIsoformPositionService.computeIsoformPositionsForNormalAnnotation(originalObjectStatement)
 						.getTargetIsoformSet();
 			}
 			return targetIsoformsForObject;

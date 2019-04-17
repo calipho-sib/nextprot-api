@@ -30,9 +30,8 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 						.addField(ANNOTATION_CATEGORY, "variant")
 						.build());
 		
-		List<Statement> variantOnEntry = 
-				StatementTransformationUtil.transformVariantAndMutagenesisSet(
-						subjectStatements,isoformMappingServiceMocked);
+		List<Statement> variantOnEntry =
+				simpleStatementTransformerService.transformVariantAndMutagenesisSet(subjectStatements);
 
 
 		//It should return only one statement with target isoforms
@@ -66,18 +65,17 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 						.build()));
 
 		List<Statement> subjectStatements =
-				StatementTransformationUtil.transformVariantAndMutagenesisSet(rawSubjectStatements, isoformMappingServiceMocked);
+				simpleStatementTransformerService.transformVariantAndMutagenesisSet(rawSubjectStatements);
 
-		Set<TargetIsoformStatementPosition> result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(
-				subjectStatements, true, "NX_Q15858-3", Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
+		Set<TargetIsoformStatementPosition> result = statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(
+				subjectStatements, true, "NX_Q15858-3");
 
 	    Assert.assertTrue(result.size() == 1);
 	    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso3-p.Met932Leu + SCN9A-iso3-p.Val991Leu"));
 	    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.SPECIFIC.name()));
 
 
-		result = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(subjectStatements, false, null,
-				Arrays.asList("NX_Q15858-1", "NX_Q15858-2", "NX_Q15858-3", "NX_Q15858-4"));
+		result = statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(subjectStatements, false, null);
 
 	    System.err.println(result.size());
 	    Assert.assertEquals(result.size(), 2); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3

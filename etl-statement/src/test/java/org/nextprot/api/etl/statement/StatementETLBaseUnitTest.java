@@ -1,15 +1,17 @@
 package org.nextprot.api.etl.statement;
 
 import org.junit.Before;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
+import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.impl.SequenceFeatureFactoryServiceMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
+import org.nextprot.api.etl.service.impl.StatementIsoformPositionServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementTransformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
@@ -25,13 +27,22 @@ import static org.mockito.Mockito.when;
 
 public abstract class StatementETLBaseUnitTest {
 
-	@Mock private IsoformService isoformService;
+	@InjectMocks
+	protected StatementIsoformPositionServiceImpl statementIsoformPositionService = new StatementIsoformPositionServiceImpl();
 
-	@Mock protected IsoformMappingService isoformMappingServiceMocked;
+	@Mock
+	private IsoformService isoformService;
 
-	protected StatementETLServiceImpl statementETLServiceMocked = null;
+	@Mock
+	protected IsoformMappingService isoformMappingServiceMocked;
 
-	protected StatementTransformerServiceImpl transformerMockedService = null;
+	@Mock
+	protected SimpleStatementTransformerService simpleStatementTransformerService;
+
+	protected StatementETLServiceImpl statementETLServiceMocked;
+
+	@InjectMocks
+	protected StatementTransformerServiceImpl transformerMockedService;
 	
 	@Before
 	public void init() {
@@ -60,12 +71,10 @@ public abstract class StatementETLBaseUnitTest {
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q14524")).thenReturn(isoformsNX_Q14524);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
-		
+
 		transformerMockedService = new StatementTransformerServiceImpl();
-		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
-		transformerMockedService.setIsoformService(isoformService);
 		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
-		
+
 		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
 	}
 
