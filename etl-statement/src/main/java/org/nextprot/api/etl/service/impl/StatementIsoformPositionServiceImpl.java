@@ -2,7 +2,6 @@ package org.nextprot.api.etl.service.impl;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.domain.Isoform;
@@ -23,7 +22,7 @@ import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,68 +87,17 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 		return isoformPositions;
 	}
 
-	private IsoformPositions buildTargetIsoformStatementPositions(AnnotationCategory category, Statement statement,
-	                                                              boolean isoSpecific) {
-		String featureType = deduceFeatureType(category);
-
-		if (featureType == null) {
-			throw new NextProtException("Cannot build target isoform for statement "+ statement);
-		}
-
-		IsoformPositions isoformPositions = new IsoformPositions();
-
-		String featureName = statement.getValue(ANNOTATION_NAME);
-		SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());
-		FeatureQueryResult result;
-		IsoTargetSpecificity isoTargetSpecificity;
-
-		if (isoSpecific) {
-			result = isoformMappingService.propagateFeature(query);
-			isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
-		}
-		else {
-			result = isoformMappingService.validateFeature(query);
-			isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
-		}
-
-		if (result.isSuccess()) {
-
-			isoformPositions = calcIsoformPositions(statement, (FeatureQuerySuccess) result, isoTargetSpecificity);
-		}
-		else {
-			ExceptionWithReason.Reason error = ((FeatureQueryFailure) result).getError();
-
-			String errorMessage = "ERROR: cannot compute target isoforms: isoform=" + statement.getValue(NEXTPROT_ACCESSION) + ", statement=" +
-					statement.getValue(GENE_NAME) + " | " + statement.getValue(ANNOT_SOURCE_ACCESSION) + " | " + statement.getValue(ANNOTATION_NAME) +
-					"(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error=" + error.getMessage();
-
-			LOGGER.error(errorMessage);
-			//throw new NextProtException(errorMessage);
-		}
-
-		return isoformPositions;
-	}
-
 	@Override
-	public TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform,
+	public TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> transformedSubjectStatements,
 	                                                                     boolean isIsoSpecific, String isoSpecificAccession) {
 
-		String entryAccession = subjectsForThisProteoform.get(0).getEntryAccession();
+		String entryAccession = transformedSubjectStatements.get(0).getEntryAccession();
 
-		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-		NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
-
-		List<String> isoformAccessions = isoforms.stream()
-				.map(Isoform::getIsoformAccession)
-				.collect(Collectors.toList());
-
-		List<String> isoformsToBeConsidered = new ArrayList<>();
-
-		if (isIsoSpecific) {
-			isoformsToBeConsidered.add(isoSpecificAccession);
-		} else {
-			isoformsToBeConsidered.addAll(isoformAccessions);
-		}
+		List<String> isoformsToBeConsidered = (isIsoSpecific) ?
+				Collections.singletonList(isoSpecificAccession) :
+				isoformService.findIsoformsByEntryName(entryAccession).stream()
+						.map(Isoform::getIsoformAccession)
+						.collect(Collectors.toList());
 
 		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
@@ -158,7 +106,7 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 			String name = null;
 			boolean allOk = true;
 
-			for (Statement s : subjectsForThisProteoform) {
+			for (Statement s : transformedSubjectStatements) {
 				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(CoreStatementField.TARGET_ISOFORMS));
 
 				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream()
@@ -203,7 +151,7 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 		if (subject.getValue(ANNOTATION_CATEGORY).equals("variant") || subject.getValue(ANNOTATION_CATEGORY).equals("mutagenesis")) {
 
 			FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(
-					new SingleFeatureQuery(subject.getValue(ANNOTATION_NAME), "variant", subject.getValue(ENTRY_ACCESSION)));
+					SingleFeatureQuery.variant(subject.getValue(ANNOTATION_NAME), subject.getValue(ENTRY_ACCESSION)));
 
 			if (featureQueryResult.isSuccess()) {
 				return calcIsoformPositions(subject, (FeatureQuerySuccess) featureQueryResult);
@@ -219,8 +167,49 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 		return null;
 	}
 
+	private IsoformPositions buildTargetIsoformStatementPositions(AnnotationCategory category, Statement statement,
+	                                                              boolean isoSpecific) {
+		String featureType = deduceFeatureType(category);
 
-	IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result) {
+		if (featureType == null) {
+			throw new NextProtException("Cannot build target isoform for statement "+ statement);
+		}
+
+		IsoformPositions isoformPositions = new IsoformPositions();
+
+		String featureName = statement.getValue(ANNOTATION_NAME);
+		SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());
+		FeatureQueryResult result;
+		IsoTargetSpecificity isoTargetSpecificity;
+
+		if (!isoSpecific) {
+			result = isoformMappingService.propagateFeature(query);
+			isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
+		}
+		else {
+			result = isoformMappingService.validateFeature(query);
+			isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
+		}
+
+		if (result.isSuccess()) {
+
+			isoformPositions = calcIsoformPositions(statement, (FeatureQuerySuccess) result, isoTargetSpecificity);
+		}
+		else {
+			ExceptionWithReason.Reason error = ((FeatureQueryFailure) result).getError();
+
+			String errorMessage = "ERROR: cannot compute target isoforms: isoform=" + statement.getValue(NEXTPROT_ACCESSION) + ", statement=" +
+					statement.getValue(GENE_NAME) + " | " + statement.getValue(ANNOT_SOURCE_ACCESSION) + " | " + statement.getValue(ANNOTATION_NAME) +
+					"(format='GENE | BIOEDITOR ANNOT ACCESSION | PTM'), error=" + error.getMessage();
+
+			LOGGER.error(errorMessage);
+			//throw new NextProtException(errorMessage);
+		}
+
+		return isoformPositions;
+	}
+
+	private IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result) {
 
 		return calcIsoformPositions(variationStatement, result, IsoTargetSpecificity.UNKNOWN);
 	}
@@ -231,7 +220,7 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 	 * @param result
 	 * @return
 	 */
-	IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result, IsoTargetSpecificity isoTargetSpecificity) {
+	private IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result, IsoTargetSpecificity isoTargetSpecificity) {
 
 		IsoformPositions isoformPositions = new IsoformPositions();
 		TargetIsoformSet targetIsoforms = new TargetIsoformSet();
@@ -290,8 +279,6 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 
 		return isoformPositions;
 	}
-
-
 
 	private static String deduceFeatureType(AnnotationCategory category) {
 

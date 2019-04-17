@@ -42,8 +42,8 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
 		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 		
-		statementETLService.setStatementExtractorService(extractor);
-		statementETLService.setStatementTransformerService(transformerMockedService);
+		//statementETLService.setStatementExtractorService(extractor);
+		//statementETLService.setStatementTransformerService(transformerMockedService);
 
 		Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService)
 				.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
@@ -63,8 +63,8 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
         StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
 	    Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
 
-        statementETLService.setStatementExtractorService(extractor);
-        statementETLService.setStatementTransformerService(transformerMockedService);
+        //statementETLService.setStatementExtractorService(extractor);
+        //statementETLService.setStatementTransformerService(transformerMockedService);
 
 	    Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
 

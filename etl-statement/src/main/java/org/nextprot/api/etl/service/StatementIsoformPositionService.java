@@ -13,7 +13,7 @@ public interface StatementIsoformPositionService {
 
 	IsoformPositions computeIsoformPositionsForNormalAnnotation(Statement statement);
 
-	TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> subjectsForThisProteoform,
+	TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(List<Statement> transformedSubjectStatements,
 	                                                              boolean isIsoSpecific, String isoSpecificAccession);
 
 	IsoformPositions computeIsoformPositionsForVariantOrMutagenesis(Statement subject);

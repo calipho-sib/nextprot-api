@@ -9,10 +9,9 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
-import org.nextprot.api.etl.service.impl.SequenceFeatureFactoryServiceMockImpl;
+import org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementIsoformPositionServiceImpl;
-import org.nextprot.api.etl.service.impl.StatementTransformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
@@ -36,13 +35,13 @@ public abstract class StatementETLBaseUnitTest {
 	@Mock
 	protected IsoformMappingService isoformMappingServiceMocked;
 
-	@Mock
-	protected SimpleStatementTransformerService simpleStatementTransformerService;
+	@InjectMocks
+	protected SimpleStatementTransformerService simpleStatementTransformerService = new SimpleStatementTransformerServiceImpl();
 
 	protected StatementETLServiceImpl statementETLServiceMocked;
 
-	@InjectMocks
-	protected StatementTransformerServiceImpl transformerMockedService;
+	//@InjectMocks
+	//protected StatementTransformerServiceImpl transformerMockedService;
 	
 	@Before
 	public void init() {
@@ -70,15 +69,15 @@ public abstract class StatementETLBaseUnitTest {
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q9Y4L1")).thenReturn(isoformsNX_Q9Y4L1);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q14524")).thenReturn(isoformsNX_Q14524);
 
-		statementETLServiceMocked = new StatementETLServiceImpl();
+		//statementETLServiceMocked = new StatementETLServiceImpl();
 
-		transformerMockedService = new StatementTransformerServiceImpl();
-		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
+		//transformerMockedService = new StatementTransformerServiceImpl();
+		//transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
 
-		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
+		//statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
 	}
 
-	private void mockIsoMapperService() {
+	public void mockIsoMapperService() {
 
 		{
 			SingleFeatureQuerySuccessImpl result1 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);

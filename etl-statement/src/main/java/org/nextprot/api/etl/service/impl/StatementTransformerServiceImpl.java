@@ -45,10 +45,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		return new StatementTransformer(rawStatements, report).transform();
 	}
 
-	public void setSequenceFeatureFactoryService(SequenceFeatureFactoryService sequenceFeatureFactoryService) {
-		this.sequenceFeatureFactoryService = sequenceFeatureFactoryService;
-	}
-
 	class StatementTransformer {
 
 		private final Collection<Statement> rawStatements;
@@ -120,6 +116,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				isoformSpecificAccession = getIsoAccession(rawStatementSubjects.iterator().next());
 			}
 
+			// FIXME: deduce isIsoSpecific from isoAccession existence
 			return transformPhenotypicVariationStatement(rawPhenotypicVariationStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
 		}
 
@@ -127,8 +124,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 			trackedRawStatementIds.add(statementId);
 		}
-
-
 
 		private Set<Statement> getRawStatementSubjects(String[] subjectIds) {
 
@@ -226,7 +221,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		private List<Statement> transformSubjects(Set<Statement> subjectStatementSet) {
 
 			List<Statement> transformedSubjectStatements =
-					simpleStatementTransformerService.transformVariantAndMutagenesisSet(subjectStatementSet);
+					simpleStatementTransformerService.transformSubjects(subjectStatementSet);
 
 			if (transformedSubjectStatements.isEmpty()) {
 				return transformedSubjectStatements;

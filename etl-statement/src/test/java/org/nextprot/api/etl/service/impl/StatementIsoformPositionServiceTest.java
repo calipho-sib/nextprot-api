@@ -14,6 +14,7 @@ import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.TargetIsoformSet;
@@ -26,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Met932LeuStatement;
+import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Val991LeuStatement;
 import static org.nextprot.api.etl.statement.StatementETLBaseUnitTest.mockIsoform;
 import static org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
@@ -69,6 +72,40 @@ public class StatementIsoformPositionServiceTest {
 		TargetIsoformStatementPosition pos1 = targetIsoforms.stream().filter(ti -> ti.getIsoformAccession().equals("NX_Q15858-1")).collect(Collectors.toList()).get(0);
 		Assert.assertEquals(859, (int) pos1.getBegin());
 		Assert.assertEquals("SCN9A-iso1-p.Ile859Thr", pos1.getName());
+	}
+
+	@Test
+	public void shouldComputeCorrectTargetIsoformsForProteoformAnnotations() {
+
+		List<Statement> transformedSubjects = Arrays.asList(
+				expectedSCN9Aiso3Met932LeuStatement(),
+				expectedSCN9Aiso3Val991LeuStatement()
+		);
+
+		Set<TargetIsoformStatementPosition> result =
+				statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(
+						transformedSubjects, true, "NX_Q15858-3");
+
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("SCN9A-iso3-p.Met932Leu + SCN9A-iso3-p.Val991Leu", result.iterator().next().getName());
+		Assert.assertEquals(result.iterator().next().getSpecificity(), IsoTargetSpecificity.SPECIFIC.name());
+	}
+
+	@Test
+	public void shouldComputeCorrectTargetIsoformsForProteoformAnnotationsNonIsoSpec() {
+
+		List<Statement> transformedSubjects = Arrays.asList(
+				expectedSCN9Aiso3Met932LeuStatement(),
+				expectedSCN9Aiso3Val991LeuStatement()
+		);
+
+		Set<TargetIsoformStatementPosition> result =
+				statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(
+						transformedSubjects, false, null);
+
+		Assert.assertEquals( 2, result.size()); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3
+		Assert.assertEquals("SCN9A-iso1-p.Met943Leu + SCN9A-iso1-p.Val1002Leu", result.iterator().next().getName());
+		Assert.assertEquals(result.iterator().next().getSpecificity(), IsoTargetSpecificity.UNKNOWN.name());
 	}
 
 	private SingleFeatureQuerySuccessImpl mockSingleFeatureQuerySuccess(IsoformFeatureResult... isoformFeatureResults) {
