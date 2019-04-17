@@ -64,13 +64,13 @@ public class SimpleStatementTransformerServiceImpl implements SimpleStatementTra
 	 */
 	// TODO: handle ptm type features propagation
 	@Override
-	public List<Statement> transformVariantAndMutagenesisSet(Collection<Statement> subjects) {
+	public List<Statement> transformSubjects(Collection<Statement> subjects) {
 
 		List<Statement> result = new ArrayList<>();
 
 		for (Statement subject : subjects) {
 
-			Statement transformedStatement = buildStatementWithLocations(subject);
+			Statement transformedStatement = transformSubject(subject);
 
 			if (transformedStatement != null) {
 
@@ -85,7 +85,8 @@ public class SimpleStatementTransformerServiceImpl implements SimpleStatementTra
 		}
 	}
 
-	private Statement buildStatementWithLocations(Statement variationStatement) {
+	@Override
+	public Statement transformSubject(Statement variationStatement) {
 
 		IsoformPositions isoformPositions = statementIsoformPositionService.computeIsoformPositionsForNormalAnnotation(variationStatement);
 

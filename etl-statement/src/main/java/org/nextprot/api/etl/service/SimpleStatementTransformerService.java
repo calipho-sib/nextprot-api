@@ -8,7 +8,11 @@ import java.util.Optional;
 
 public interface SimpleStatementTransformerService {
 
+	// FIXME: redundant with transformSubject ?
 	Optional<Statement> transformStatement(Statement rawStatement);
 
-	List<Statement> transformVariantAndMutagenesisSet(Collection<Statement> subjects);
+	// FIXME: redundant with transformStatement ?
+	Statement transformSubject(Statement rawStatement);
+
+	List<Statement> transformSubjects(Collection<Statement> subjects);
 }
