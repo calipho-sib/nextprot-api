@@ -8,7 +8,6 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -25,8 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"unit", "build"})
-@DirtiesContext
+@ActiveProfiles({"dev", "build"})
 @ContextConfiguration("classpath:spring/core-context.xml")
 public class StatementTransformerServiceIntegrationTest {
 

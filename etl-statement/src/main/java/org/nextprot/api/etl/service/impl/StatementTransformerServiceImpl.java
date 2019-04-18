@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
+import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
@@ -37,7 +38,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 	private SimpleStatementTransformerService simpleStatementTransformerService;
 
 	@Autowired
-	private StatementIsoformPositionServiceImpl statementIsoformPositionService;
+	private StatementIsoformPositionService statementIsoformPositionService;
 
 	@Override
 	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
