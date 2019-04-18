@@ -17,7 +17,7 @@
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
   "SOURCE" : "BioEditor",
-  "STATEMENT_ID" : "ST_1",
+  "STATEMENT_ID" : "618d18ace63f83f7904e6cdd7acd5e2f",
   "VARIANT_ORIGINAL_AMINO_ACID" : "K",
   "VARIANT_VARIATION_AMINO_ACID" : "T"
 },
@@ -39,7 +39,7 @@
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
   "SOURCE" : "BioEditor",
-  "STATEMENT_ID" : "ST_2",
+  "STATEMENT_ID" : "3c4d9e0c643a1527e7803a7e0a9e674d",
   "VARIANT_ORIGINAL_AMINO_ACID" : "D",
   "VARIANT_VARIATION_AMINO_ACID" : "E"
 },
@@ -61,13 +61,13 @@
   "EVIDENCE_NOTE" : "Additional experimental evidence:immunohistochemistry evidence used in manual assertion, natural variation mutant evidence used in manual assertion\n",
   "EVIDENCE_QUALITY" : "SILVER",
   "GENE_NAME" : "MSH2",
-  "OBJECT_STATEMENT_IDS" : "ST_4",
+  "OBJECT_STATEMENT_IDS" : "10e34847c39ba3cca5abae14aefd4925",
   "REFERENCE_ACCESSION" : "16885385",
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
   "SOURCE" : "BioEditor",
-  "STATEMENT_ID" : "ST_3",
-  "SUBJECT_STATEMENT_IDS" : "ST_1,ST_2"
+  "STATEMENT_ID" : "467fa8fc0f7c09e8ed4c913b59be2cdf",
+  "SUBJECT_STATEMENT_IDS" : "618d18ace63f83f7904e6cdd7acd5e2f,3c4d9e0c643a1527e7803a7e0a9e674d"
 },
 //This is the object annotation
 {
@@ -86,6 +86,6 @@
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
   "SOURCE" : "BioEditor",
-  "STATEMENT_ID" : "ST_4"
+  "STATEMENT_ID" : "10e34847c39ba3cca5abae14aefd4925"
 }
 ]
