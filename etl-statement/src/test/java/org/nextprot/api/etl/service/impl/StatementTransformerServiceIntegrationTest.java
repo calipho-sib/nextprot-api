@@ -1,11 +1,17 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.StatementField;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,24 +24,37 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
-public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles({"unit", "build"})
+@DirtiesContext
+@ContextConfiguration("classpath:spring/core-context.xml")
+public class StatementTransformerServiceIntegrationTest {
 
-	private List<Statement> filterStatementsBy(Collection<Statement> statements, StatementField field, String value){
-		return statements.stream().filter(s -> value.equalsIgnoreCase(s.getValue(field))).collect(Collectors.toList());
-	}
+	@Autowired
+	private StatementTransformerService statementTransformerService;
 
-	// TODO: try to understand why it failed
 	@Test
 	public void rawStatementsShouldBeWellConvertedToMappedStatements() throws IOException {
 
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh2-multiple-mutant");
 
-		Collection<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements =
+				statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 
-		int rawStatementsCount = rawStatements.stream().map(s -> s.getValue(STATEMENT_ID)).distinct().collect(Collectors.toList()).size();
-		int mappedStatementsCount = rawStatements.stream().map(s -> s.getValue(STATEMENT_ID)).distinct().collect(Collectors.toList()).size();
-		int annotationsCount = mappedStatements.stream().map(s -> s.getValue(ANNOTATION_ID)).distinct().collect(Collectors.toList()).size();
+		int rawStatementsCount = (int) rawStatements.stream()
+				.map(s -> s.getValue(STATEMENT_ID))
+				.distinct()
+				.count();
+		int mappedStatementsCount = (int) rawStatements.stream()
+				.map(s -> s.getValue(STATEMENT_ID))
+				.distinct()
+				.count();
+
+		int annotationsCount = (int) mappedStatements.stream()
+				.map(s -> s.getValue(ANNOTATION_ID))
+				.distinct()
+				.count();
 
 		assertEquals(5, rawStatementsCount);
 		assertEquals(5, mappedStatementsCount);
@@ -57,8 +76,9 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 
 		assertEquals(refAnnots.size(), 2);
 		assertEquals(refAnnots, varAnnots);
-
 	}
 
-
+	private List<Statement> filterStatementsBy(Collection<Statement> statements, StatementField field, String value){
+		return statements.stream().filter(s -> value.equalsIgnoreCase(s.getValue(field))).collect(Collectors.toList());
+	}
 }
