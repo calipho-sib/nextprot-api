@@ -2,14 +2,19 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.TargetIsoformSet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -20,7 +25,13 @@ import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
 import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOTATION_CATEGORY;
 import static org.nextprot.commons.statements.specs.CoreStatementField.TARGET_ISOFORMS;
 
-public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles({"dev", "build"})
+@ContextConfiguration("classpath:spring/core-context.xml")
+public class StatementTransformServiceTest {
+
+	@Autowired
+	private StatementTransformerService statementTransformerService;
 
 	/**
 	 * It is not allowed to have a subject composed by variants in different genes 
@@ -32,7 +43,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 			Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
-			statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+			statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 			
 			fail();
 			
@@ -40,25 +51,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 			
 			Assert.assertEquals("Mixing iso numbers for subjects is not allowed", e.getMessage());
 			Assert.assertEquals(NextProtException.class, e.getClass());
-			
 		}
-
-	}
-	
-	static class AnnotationCategoryPredicate implements Predicate<Statement>{
-		
-		private AnnotationCategory category = null;
-		public AnnotationCategoryPredicate(AnnotationCategory category){
-			this.category = category;
-		}
-
-		@Override
-		public boolean test(Statement s) {
-			String sCat = s.getValue(ANNOTATION_CATEGORY);
-			AnnotationCategory sCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(sCat));
-			return sCategory.equals(category);
-		}
-	
 	}
 	
 	/**
@@ -78,7 +71,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
-		Collection<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		
 		Statement variantMappedStatement = mappedStatements.stream()
 				.filter(new AnnotationCategoryPredicate(VARIANT))
@@ -119,7 +112,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "scn9a-variant-iso-spec");
 
 		//Variant 
-		Collection<Statement> mappedStatements = statementETLServiceMocked.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 		Statement variantMappedStatement = mappedStatements.stream()
                 .filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT))
                 .findFirst()
@@ -139,5 +132,20 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 
 		Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
+	}
+
+	static class AnnotationCategoryPredicate implements Predicate<Statement>{
+
+		private AnnotationCategory category = null;
+		public AnnotationCategoryPredicate(AnnotationCategory category){
+			this.category = category;
+		}
+
+		@Override
+		public boolean test(Statement s) {
+			String sCat = s.getValue(ANNOTATION_CATEGORY);
+			AnnotationCategory sCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(sCat));
+			return sCategory.equals(category);
+		}
 	}
 }
