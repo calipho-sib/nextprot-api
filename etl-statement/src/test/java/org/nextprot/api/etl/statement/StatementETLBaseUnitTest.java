@@ -100,6 +100,7 @@ public abstract class StatementETLBaseUnitTest {
 			Mockito.when(result2.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data2 = new HashMap<>();
 
+			// Let's say this one can not be propagated on 2 and 4
 			Arrays.asList(new IsoformFeatureResult("NX_Q15858-1", "Iso 1", 943, 943, 2917, 2919, true, "SCN9A-iso1-p.Met943Leu"),
 					new IsoformFeatureResult("NX_Q15858-2", "Iso 2", 943, 943, 2917, 2919, false, "SCN9A-iso2-p.Met943Leu"),
 					new IsoformFeatureResult("NX_Q15858-3", "Iso 3", 932, 932, 2917, 2919, false, "SCN9A-iso3-p.Met932Leu"),
