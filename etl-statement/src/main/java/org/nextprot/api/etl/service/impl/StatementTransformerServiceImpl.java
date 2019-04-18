@@ -136,8 +136,37 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				}
 				variants.add(subjectStatement);
 			}
+
+			checkSubjects(variants);
+
 			return variants;
 		}
+
+		// FIXME: SequenceVariantUtils.getIsoformName gives wrong results
+		private String checkSubjects(Set<Statement> subjects) {
+
+			Set<String> isoforms = subjects.stream()
+					.map(s -> {
+						try {
+							return sequenceFeatureFactoryService.newSequenceFeature(s.getValue(ANNOTATION_NAME),
+									s.getAnnotationCategory()).getIsoform().getIsoformAccession();
+						} catch (Exception e) {
+							throw new NextProtException(e.getMessage());
+						}
+					})
+					.collect(Collectors.toSet());
+
+			if (isoforms.size() != 1) {
+				throw new NextProtException("Mixing iso numbers for subjects is not allowed");
+			}
+			String isoform = isoforms.iterator().next();
+			if (isoform == null) {
+				throw new NextProtException("Not iso specific subjects are not allowed on isOnSameIsoform");
+			}
+
+			return isoform;
+		}
+
 
 		private boolean isPhenotypicVariation(Statement statement) {
 
