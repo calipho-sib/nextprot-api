@@ -8,6 +8,7 @@ import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import static org.nextprot.api.commons.constants.AnnotationCategory.PHENOTYPIC_VARIATION;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
+@Service
 public class SimpleStatementTransformerServiceImpl implements SimpleStatementTransformerService {
 
 	private static Logger LOGGER = Logger.getLogger(SimpleStatementTransformerServiceImpl.class);
