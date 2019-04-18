@@ -108,7 +108,7 @@ public class SimpleStatementTransformerServiceTest {
 		}
 	}
 
-	public static Statement expectedSCN9Aiso3Met932LeuStatement() {
+	static Statement expectedSCN9Aiso3Met932LeuStatement() {
 
 		return new StatementBuilder()
 				.addField(ENTRY_ACCESSION, "NX_Q15858")
@@ -119,11 +119,11 @@ public class SimpleStatementTransformerServiceTest {
 				.addField(LOCATION_END, "943")
 				.addField(LOCATION_BEGIN_MASTER, "98972")
 				.addField(LOCATION_END_MASTER, "98974")
-				.addField(TARGET_ISOFORMS, "[{\"isoformAccession\":\"NX_Q15858-1\",\"specificity\":\"UNKNOWN\",\"begin\":943,\"end\":943,\"name\":\"SCN9A-iso1-p.Met943Leu\"},{\"isoformAccession\":\"NX_Q15858-2\",\"specificity\":\"UNKNOWN\",\"begin\":943,\"end\":943,\"name\":\"SCN9A-iso2-p.Met943Leu\"},{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"UNKNOWN\",\"begin\":932,\"end\":932,\"name\":\"SCN9A-iso3-p.Met932Leu\"},{\"isoformAccession\":\"NX_Q15858-4\",\"specificity\":\"UNKNOWN\",\"begin\":932,\"end\":932,\"name\":\"SCN9A-iso4-p.Met932Leu\"}]")
+				.addField(TARGET_ISOFORMS, expectedSCN9Aiso3Met932LeuIsoformPositions().getTargetIsoformSet().serializeToJsonString())
 				.build();
 	}
 
-	public static Statement expectedSCN9Aiso3Val991LeuStatement() {
+	static Statement expectedSCN9Aiso3Val991LeuStatement() {
 
 		return new StatementBuilder()
 				.addField(ENTRY_ACCESSION, "NX_Q15858")
@@ -134,11 +134,11 @@ public class SimpleStatementTransformerServiceTest {
 				.addField(LOCATION_END, "1002")
 				.addField(LOCATION_BEGIN_MASTER, "103256")
 				.addField(LOCATION_END_MASTER, "103258")
-				.addField(TARGET_ISOFORMS, "[{\"isoformAccession\":\"NX_Q15858-1\",\"specificity\":\"UNKNOWN\",\"begin\":1002,\"end\":1002,\"name\":\"SCN9A-iso1-p.Val1002Leu\"},{\"isoformAccession\":\"NX_Q15858-2\",\"specificity\":\"UNKNOWN\",\"begin\":1002,\"end\":1002,\"name\":\"SCN9A-iso2-p.Val1002Leu\"},{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"UNKNOWN\",\"begin\":991,\"end\":991,\"name\":\"SCN9A-iso3-p.Val991Leu\"},{\"isoformAccession\":\"NX_Q15858-4\",\"specificity\":\"UNKNOWN\",\"begin\":991,\"end\":991,\"name\":\"SCN9A-iso4-p.Val991Leu\"}]")
+				.addField(TARGET_ISOFORMS, expectedSCN9Aiso3Val991LeuIsoformPositions().getTargetIsoformSet().serializeToJsonString())
 				.build();
 	}
 
-	private IsoformPositions expectedSCN9Aiso3Met932LeuIsoformPositions() {
+	private static IsoformPositions expectedSCN9Aiso3Met932LeuIsoformPositions() {
 
 		IsoformPositions isoformPositions = new IsoformPositions();
 		TargetIsoformSet targetIsoforms = new TargetIsoformSet();
@@ -156,14 +156,12 @@ public class SimpleStatementTransformerServiceTest {
 		return isoformPositions;
 	}
 
-	private IsoformPositions expectedSCN9Aiso3Val991LeuIsoformPositions() {
+	private static IsoformPositions expectedSCN9Aiso3Val991LeuIsoformPositions() {
 
 		IsoformPositions isoformPositions = new IsoformPositions();
 		TargetIsoformSet targetIsoforms = new TargetIsoformSet();
 		targetIsoforms.add(new TargetIsoformStatementPosition("NX_Q15858-1", 1002, 1002, "UNKNOWN", "SCN9A-iso1-p.Val1002Leu"));
-		targetIsoforms.add(new TargetIsoformStatementPosition("NX_Q15858-2", 1002, 1002, "UNKNOWN", "SCN9A-iso2-p.Val1002Leu"));
 		targetIsoforms.add(new TargetIsoformStatementPosition("NX_Q15858-3", 991, 991, "UNKNOWN", "SCN9A-iso3-p.Val991Leu"));
-		targetIsoforms.add(new TargetIsoformStatementPosition("NX_Q15858-4", 991, 991, "UNKNOWN", "SCN9A-iso4-p.Val991Leu"));
 		isoformPositions.setCanonicalIsoform("NX_Q15858-1");
 		isoformPositions.setBeginPositionOfCanonicalOrIsoSpec(1002);
 		isoformPositions.setEndPositionOfCanonicalOrIsoSpec(1002);

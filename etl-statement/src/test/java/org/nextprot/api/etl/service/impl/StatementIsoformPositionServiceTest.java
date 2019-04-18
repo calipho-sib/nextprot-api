@@ -144,6 +144,7 @@ public class StatementIsoformPositionServiceTest {
 						new IsoformFeatureResult("NX_Q15858-3", "Iso 3", 932, 932, 2917, 2919, false, "SCN9A-iso3-p.Met932Leu"),
 						new IsoformFeatureResult("NX_Q15858-4", "Iso 4", 932, 932, 2917, 2919, false, "SCN9A-iso4-p.Met932Leu")
 				),
+				// Let's say this one can not be propagated on 2 and 4
 				mockSingleFeatureQuerySuccess(
 						new IsoformFeatureResult("NX_Q15858-1", "Iso 1", 1002, 1002, 3094, 3096, true, "SCN9A-iso1-p.Val1002Leu"),
 						new IsoformFeatureResult("NX_Q15858-3", "Iso 3", 991, 991, 3094, 3096, false, "SCN9A-iso3-p.Val991Leu")
