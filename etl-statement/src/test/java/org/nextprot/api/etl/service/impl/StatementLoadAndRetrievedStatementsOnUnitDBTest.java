@@ -1,15 +1,14 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
+import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
-import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -18,62 +17,102 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"unit", "unit-schema-nxflat", "build"})
+@ActiveProfiles({"dev", "build"})
 @DirtiesContext
 @ContextConfiguration("classpath:spring/core-context.xml")
-public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementETLBaseUnitTest {
-	
+public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
+
 	@Autowired
 	private StatementETLService statementETLService;
 
-	@Autowired
-	private StatementDao statementDao;
+	private StatementLoaderServiceMocked statementLoaderService;
 
-	
+	@Before
+	public void setup() {
+		statementLoaderService = new StatementLoaderServiceMocked();
+		statementETLService.setStatementLoadService(statementLoaderService);
+	}
+
+	private static class StatementLoaderServiceMocked implements StatementLoaderService {
+
+		private Collection<Statement> rsColl = new ArrayList<>();
+		private Collection<Statement> msColl = new ArrayList<>();
+
+		@Override
+		public void loadRawStatementsForSource(Collection<Statement> statements, NextProtSource source) {
+			rsColl.addAll(statements);
+		}
+
+		@Override
+		public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, NextProtSource source) {
+			msColl.addAll(statements);
+		}
+
+		public Collection<Statement> getRsColl() {
+			return rsColl;
+		}
+
+		public Collection<Statement> getMsColl() {
+			return msColl;
+		}
+	}
+
 	@Test
 	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
 		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
-		
-		//statementETLService.setStatementExtractorService(extractor);
-		//statementETLService.setStatementTransformerService(transformerMockedService);
 
-		Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService)
-				.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
-		
-		 ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+		Collection<Statement> mappedStatements =
+				statementETLService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 
-		List<Statement> dbStatements = statementDao.findNormalStatements("NX_P52701");
-		dbStatements.addAll(statementDao.findProteoformStatements("NX_P52701"));
-		
-		Assert.assertEquals(dbStatements.size(), mappedStatements.size());
-		
+		statementETLService.loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+
+		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
+		Collection<Statement> loadedMS = statementLoaderService.getMsColl();
+
+		Assert.assertEquals(rawStatements.size(), loadedRS.size());
+		Assert.assertEquals(mappedStatements.size(), loadedMS.size());
 	}
 
-    @Test
-    public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() throws IOException {
+	@Test
+	public void shouldExtractButNotLoad() throws IOException {
 
-        StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-	    Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
+		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
+		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 
-        //statementETLService.setStatementExtractorService(extractor);
-        //statementETLService.setStatementTransformerService(transformerMockedService);
+		Collection<Statement> mappedStatements =
+				statementETLService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
 
-	    Collection<Statement> mappedStatements = ((StatementETLServiceImpl) statementETLService).transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
+		statementETLService.loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, false, new ReportBuilder());
 
-        ((StatementETLServiceImpl) statementETLService).loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
+		Collection<Statement> loadedMS = statementLoaderService.getMsColl();
 
-        List<Statement> dbStatements = statementDao.findNormalStatements("NX_P52701");
-        dbStatements.addAll(statementDao.findProteoformStatements("NX_P52701"));
+		Assert.assertTrue(loadedRS.isEmpty());
+		Assert.assertTrue(loadedMS.isEmpty());
+	}
 
-        Assert.assertEquals(dbStatements.size(), mappedStatements.size());
+	@Test
+	public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() throws IOException {
 
-    }
+		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
+			Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(NextProtSource.GlyConnect, "2017-07-19", "few-entries");
+
+		Collection<Statement> mappedStatements =
+				statementETLService.transformStatements(NextProtSource.GlyConnect, rawStatements, new ReportBuilder());
+
+		statementETLService.loadStatements(NextProtSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+
+		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
+		Collection<Statement> loadedMS = statementLoaderService.getMsColl();
+
+		Assert.assertEquals(rawStatements.size(), loadedRS.size());
+		Assert.assertEquals(mappedStatements.size(), loadedMS.size());
+	}
 }

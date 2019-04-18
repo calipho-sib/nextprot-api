@@ -49,7 +49,12 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private HttpSparqlService httpSparqlService;
 
-    @Override
+	@Override
+	public void setStatementLoadService(StatementLoaderService statementLoadService) {
+		this.statementLoadService = statementLoadService;
+	}
+
+	@Override
     public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
@@ -70,9 +75,6 @@ public class StatementETLServiceImpl implements StatementETLService {
             return report.toString();
         }
 
-	    rawStatements = preTransformStatements(source, rawStatements, report);
-	    report.addInfoWithElapsedTime("Finished pre transformation treatments");
-
 	    Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
         report.addInfoWithElapsedTime("Finished transformation");
 
@@ -83,7 +85,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     }
 
-    Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
+    @Override
+    public Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
 
         Set<Statement> statements = filterValidStatements(statementExtractorService.getStatementsForSource(source, release), report);
         report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
@@ -110,7 +113,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				.collect(Collectors.toSet());
 	}
 
-	Set<Statement> preTransformStatements(NextProtSource source, Set<Statement> rawStatements, ReportBuilder report) {
+	Set<Statement> preTransformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		return preProcess(source, report).process(rawStatements);
 	}
@@ -130,15 +133,20 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return new StatementIdBuilder();
 	}
 
-	Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
+	@Override
+	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
-	    Collection<Statement> statements = statementTransformerService.transformStatements(source, rawStatements, report);
+		rawStatements = preTransformStatements(source, rawStatements, report);
+		report.addInfoWithElapsedTime("Finished pre transformation treatments");
+
+		Collection<Statement> statements = statementTransformerService.transformStatements(source, rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
         return statements;
     }
 
-    void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
+	@Override
+	public void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
         try {
             if (load) {
@@ -209,13 +217,13 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public interface PreTransformProcessor {
 
-		Set<Statement> process(Set<Statement> statements);
+		Set<Statement> process(Collection<Statement> statements);
 	}
 
 	private class StatementIdBuilder implements PreTransformProcessor {
 
 		@Override
-		public Set<Statement> process(Set<Statement> statements) {
+		public Set<Statement> process(Collection<Statement> statements) {
 
 			return statements.stream()
 					.map(rs -> new StatementBuilder(rs).build())
@@ -225,7 +233,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private class GnomADPreProcessor implements PreTransformProcessor {
 
 		@Override
-		public Set<Statement> process(Set<Statement> statements) {
+		public Set<Statement> process(Collection<Statement> statements) {
 
 			return statements.stream()
 					.filter(rs -> rs.hasField(NEXTPROT_ACCESSION.getName()))
@@ -250,7 +258,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		}
 
 		@Override
-		public Set<Statement> process(Set<Statement> statements) {
+		public Set<Statement> process(Collection<Statement> statements) {
 
 			Set<Statement> filteredStatements = filterStatements(statements);
 
@@ -259,7 +267,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return setAdditionalFieldsForGlyConnectStatements(filteredStatements);
 		}
 
-		private Set<Statement> filterStatements(Set<Statement> statements) {
+		private Set<Statement> filterStatements(Collection<Statement> statements) {
 
 			Set<EntryPosition> entryPositionsToFilterOut = fetchEntryPositionsFromSparql(buildSparql(statements));
 
@@ -333,7 +341,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return value == null || value.isEmpty();
 		}
 
-		private String buildSparql(Set<Statement> statements) {
+		private String buildSparql(Collection<Statement> statements) {
 
 			String format = "(entry:%s \"%d\"^^xsd:integer)";
 
@@ -510,7 +518,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private class BioEditorPreProcessor implements PreTransformProcessor {
 
 		@Override
-		public Set<Statement> process(Set<Statement> statements) {
+		public Set<Statement> process(Collection<Statement> statements) {
 
 			// TODO: should moved to BioEditor code instead
 			return statements.stream()
