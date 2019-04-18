@@ -169,21 +169,6 @@ public class StatementETLServiceImpl implements StatementETLService {
                 findEntryAccessionFromEntryOrIsoformAccession(statement.getValue(NEXTPROT_ACCESSION));
     }
 
-    @Override
-    public void setStatementExtractorService(StatementExtractorService statementExtractorService) {
-        this.statementExtractorService = statementExtractorService;
-    }
-
-    @Override
-    public void setStatementTransformerService(StatementTransformerService statementTransformerService) {
-        this.statementTransformerService = statementTransformerService;
-    }
-
-    @Override
-    public void setStatementLoadService(StatementLoaderService statementLoadService) {
-        this.statementLoadService = statementLoadService;
-    }
-
     /**
      * Adds synchronisation to StringBuilder
      */
