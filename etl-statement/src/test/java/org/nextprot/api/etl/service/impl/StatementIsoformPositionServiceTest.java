@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.domain.IsoformPositions;
@@ -27,9 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.mockito.Mockito.when;
 import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Met932LeuStatement;
 import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Val991LeuStatement;
-import static org.nextprot.api.etl.statement.StatementETLBaseUnitTest.mockIsoform;
 import static org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
@@ -178,5 +179,20 @@ public class StatementIsoformPositionServiceTest {
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P12111")).thenReturn(isoformsNX_P12111);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q9Y4L1")).thenReturn(isoformsNX_Q9Y4L1);
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q14524")).thenReturn(isoformsNX_Q14524);
+	}
+
+	private static Isoform mockIsoform(String accession, String name, boolean canonical) {
+
+		Isoform isoform = Mockito.mock(Isoform.class);
+		when(isoform.getUniqueName()).thenReturn(accession);
+		when(isoform.getIsoformAccession()).thenReturn(accession);
+		when(isoform.isCanonicalIsoform()).thenReturn(canonical);
+
+		EntityName entityName = Mockito.mock(EntityName.class);
+		when(entityName.getName()).thenReturn(name);
+
+		when(isoform.getMainEntityName()).thenReturn(entityName);
+
+		return isoform;
 	}
 }
