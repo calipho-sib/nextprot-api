@@ -53,6 +53,10 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 		return statementsUrl;
 	}
 
+	public StatementSpecifications getSpecifications() {
+		return specifications;
+	}
+
 	@Override
 	public StatementField getField(String fieldName) {
 
