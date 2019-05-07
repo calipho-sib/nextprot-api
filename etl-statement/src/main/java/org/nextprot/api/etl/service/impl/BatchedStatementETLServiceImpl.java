@@ -5,10 +5,10 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.service.BatchedStatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
-import org.nextprot.api.etl.service.StreamingStatementETLService;
 import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.reader.JsonStreamingReader;
@@ -29,7 +29,7 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACC
 import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
 
 @Service
-public class StreamingStatementETLServiceImpl implements StreamingStatementETLService {
+public class BatchedStatementETLServiceImpl implements BatchedStatementETLService {
 
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;

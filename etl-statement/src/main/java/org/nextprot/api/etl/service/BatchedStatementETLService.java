@@ -8,7 +8,7 @@ import org.nextprot.commons.statements.Statement;
 import java.io.IOException;
 import java.util.Collection;
 
-public interface StreamingStatementETLService {
+public interface BatchedStatementETLService {
 
 	String etlStatements(NextProtSource source, String release, boolean load) throws IOException;
 
