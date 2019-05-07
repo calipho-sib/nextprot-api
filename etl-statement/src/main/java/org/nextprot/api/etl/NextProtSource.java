@@ -1,6 +1,10 @@
 package org.nextprot.api.etl;
 
 
+import org.nextprot.api.commons.app.ApplicationContextProvider;
+import org.nextprot.api.etl.service.StatementETLService;
+import org.nextprot.api.etl.service.impl.MultipleBatchesStatementETLService;
+import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService;
 import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
@@ -8,6 +12,7 @@ import org.nextprot.commons.statements.specs.StatementSpecifications;
 import org.nextprot.commons.utils.EnumConstantDictionary;
 import org.nextprot.commons.utils.EnumDictionarySupplier;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +25,8 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", new Specifications.Builder()
 			.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
 			.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
-			.build())
+			.build(),
+			ApplicationContextProvider.getApplicationContext().getBean(MultipleBatchesStatementETLService.class))
 	;
 
 	private static EnumConstantDictionary<NextProtSource> dictionaryOfConstants =
@@ -35,14 +41,22 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 				}
 			};
 
-	private String sourceName;
-	private String statementsUrl;
-	private StatementSpecifications specifications;
+	private final String sourceName;
+	private final String statementsUrl;
+	private final StatementSpecifications specifications;
+	private final StatementETLService etlService;
 
 	NextProtSource(String sourceName, String statementsUrl, StatementSpecifications specifications) {
+
+		this(sourceName, statementsUrl, specifications,
+				ApplicationContextProvider.getApplicationContext().getBean(SingleBatchStatementETLService.class));
+	}
+
+	NextProtSource(String sourceName, String statementsUrl, StatementSpecifications specifications, StatementETLService etlService) {
 		this.sourceName = sourceName;
 		this.statementsUrl = statementsUrl;
 		this.specifications = specifications;
+		this.etlService = etlService;
 	}
 
 	public String getSourceName() {
@@ -96,5 +110,10 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 	public static NextProtSource valueOfKey(String value) {
 
 		return dictionaryOfConstants.valueOfKey(value);
+	}
+
+	public String extractTransformLoadStatements(String release, boolean load) throws IOException {
+
+		return etlService.extractTransformLoadStatements(this, release, load);
 	}
 }
