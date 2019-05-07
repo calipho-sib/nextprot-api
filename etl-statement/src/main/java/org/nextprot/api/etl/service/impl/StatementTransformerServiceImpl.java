@@ -2,7 +2,6 @@ package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.api.etl.service.StatementTransformerService;
@@ -41,7 +40,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 	private StatementIsoformPositionService statementIsoformPositionService;
 
 	@Override
-	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
+	public Collection<Statement> transformStatements(Collection<Statement> rawStatements, ReportBuilder report) {
 
 		return new StatementTransformer(rawStatements, report).transform();
 	}

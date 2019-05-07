@@ -139,7 +139,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		rawStatements = preTransformStatements(source, rawStatements, report);
 		report.addInfoWithElapsedTime("Finished pre transformation treatments");
 
-		Collection<Statement> statements = statementTransformerService.transformStatements(source, rawStatements, report);
+		Collection<Statement> statements = statementTransformerService.transformStatements(rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
         return statements;
