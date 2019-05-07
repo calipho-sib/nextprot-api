@@ -10,12 +10,13 @@ import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParse
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementETLService;
-import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
+import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.reader.JsonReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -41,8 +43,8 @@ public class SingleBatchStatementETLService implements StatementETLService {
 
 	@Autowired
     private MasterIdentifierService masterIdentifierService;
-    @Autowired
-    private StatementExtractorService statementExtractorService;
+	@Autowired
+	private StatementSourceService statementSourceService;
     @Autowired
     private StatementTransformerService statementTransformerService;
     @Autowired
@@ -51,11 +53,6 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	private TerminologyService terminologyService;
 	@Autowired
 	private HttpSparqlService httpSparqlService;
-
-	public void setStatementLoadService(StatementLoaderService statementLoadService) {
-		this.statementLoadService = statementLoadService;
-	}
-
 	@Override
     public String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException {
 
@@ -63,11 +60,6 @@ public class SingleBatchStatementETLService implements StatementETLService {
 
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
-
-        // Load a sample of gnomad
-        /*rawStatements = rawStatements.stream()
-		        .filter(statement -> statement.getValue(NEXTPROT_ACCESSION).equals("NX_P10323"))
-		        .collect(Collectors.toSet());*/
 
         if (rawStatements.isEmpty()) {
 
@@ -89,10 +81,21 @@ public class SingleBatchStatementETLService implements StatementETLService {
 
     public Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
 
-        Set<Statement> statements = filterValidStatements(statementExtractorService.getStatementsForSource(source, release), report);
+        Set<Statement> statements = filterValidStatements(fetchAllStatements(source, release), report);
         report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
 
         return statements;
+    }
+
+    private List<Statement> fetchAllStatements(NextProtSource source, String release) throws IOException {
+
+	    List<Statement> statements = new ArrayList<>();
+	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
+
+		    JsonReader reader = new JsonReader(source.getSpecifications());
+		    statements.addAll(reader.readStatements(statementSourceService.getStatementsAsJsonString(source, release, jsonFilename)));
+	    }
+	    return statements;
     }
 
 	private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, ReportBuilder report) {
@@ -168,6 +171,10 @@ public class SingleBatchStatementETLService implements StatementETLService {
             throw new NextProtException("Failed to load in source " + source + ":" + e);
         }
     }
+
+	public void setStatementLoadService(StatementLoaderService statementLoadService) {
+		this.statementLoadService = statementLoadService;
+	}
 
     private String extractEntryAccession(Statement statement) {
 
