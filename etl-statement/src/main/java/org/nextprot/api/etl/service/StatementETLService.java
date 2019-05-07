@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.service;
 
 
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 
 import java.io.IOException;
 
@@ -10,5 +10,5 @@ import java.io.IOException;
  */
 public interface StatementETLService {
 
-	String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException;
+	String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException;
 }

@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
@@ -53,7 +53,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 	private StatementLoaderService statementLoadService;
 
 	@Override
-	public String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException {
+	public String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException {
 
 		SingleBatchStatementETLService.ReportBuilder report = new SingleBatchStatementETLService.ReportBuilder();
 
@@ -90,7 +90,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 		return statements;
 	}
 
-	private void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, SingleBatchStatementETLService.ReportBuilder report) {
+	private void loadStatements(StatementSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, SingleBatchStatementETLService.ReportBuilder report) {
 
 		try {
 			report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());

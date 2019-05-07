@@ -4,7 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.springframework.stereotype.Service;
 import sun.net.www.protocol.http.HttpURLConnection;
@@ -23,7 +23,7 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 	private static final Log LOGGER = LogFactory.getLog(StatementSourceServiceImpl.class);
 
 	@Override
-	public Set<String> getJsonFilenamesForRelease(NextProtSource source, String release) throws IOException {
+	public Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException {
 
 		Set<String> jsonFilenames = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
@@ -50,7 +50,7 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 	}
 
 	@Override
-	public String getStatementsAsJsonString(NextProtSource source, String release, String jsonFileName) throws IOException {
+	public String getStatementsAsJsonString(StatementSource source, String release, String jsonFileName) throws IOException {
 
 		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 		if (!jsonFileName.endsWith(".json")) {

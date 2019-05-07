@@ -1,6 +1,6 @@
 package org.nextprot.api.etl.service;
 
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 
 import java.io.IOException;
 import java.util.Set;
@@ -10,7 +10,7 @@ import java.util.Set;
  */
 public interface StatementSourceService {
 
-	Set<String> getJsonFilenamesForRelease(NextProtSource source, String release) throws IOException;
+	Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException;
 
-	String getStatementsAsJsonString(NextProtSource source, String release, String jsonFileName) throws IOException;
+	String getStatementsAsJsonString(StatementSource source, String release, String jsonFileName) throws IOException;
 }

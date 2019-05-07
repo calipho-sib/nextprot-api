@@ -18,23 +18,31 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public enum NextProtSource implements StatementSpecifications, EnumDictionarySupplier<NextProtSource> {
+public enum StatementSource implements StatementSpecifications, EnumDictionarySupplier<StatementSource> {
 
-	BioEditor("neXtProt", "http://kant.sib.swiss:9001/bioeditor", new Specifications.Builder().build()),
-	GlyConnect("GlyConnect", "http://kant.sib.swiss:9001/glyconnect", new Specifications.Builder().build()),
-	GnomAD("gnomAD", "http://kant.sib.swiss:9001/gnomad", new Specifications.Builder()
-			.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
-			.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
-			.build(),
+	BioEditor("neXtProt",
+			"http://kant.sib.swiss:9001/bioeditor",
+			new Specifications.Builder().build()),
+
+	GlyConnect("GlyConnect",
+			"http://kant.sib.swiss:9001/glyconnect",
+			new Specifications.Builder().build()),
+
+	GnomAD("gnomAD",
+			"http://kant.sib.swiss:9001/gnomad",
+			new Specifications.Builder()
+					.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
+					.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
+					.build(),
 			ApplicationContextProvider.getApplicationContext().getBean(MultipleBatchesStatementETLService.class))
 	;
 
-	private static EnumConstantDictionary<NextProtSource> dictionaryOfConstants =
-			new EnumConstantDictionary<NextProtSource>(NextProtSource.class, values()) {
+	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
+			new EnumConstantDictionary<StatementSource>(StatementSource.class, values()) {
 				@Override
-				protected void updateDictionaryOfConstants(Map<String, NextProtSource> dictionary) {
+				protected void updateDictionaryOfConstants(Map<String, StatementSource> dictionary) {
 
-					for (NextProtSource source : values()) {
+					for (StatementSource source : values()) {
 						dictionary.put(source.toString().toLowerCase(), source);
 						dictionary.put(source.toString().toUpperCase(), source);
 					}
@@ -46,13 +54,13 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 	private final StatementSpecifications specifications;
 	private final StatementETLService etlService;
 
-	NextProtSource(String sourceName, String statementsUrl, StatementSpecifications specifications) {
+	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications) {
 
 		this(sourceName, statementsUrl, specifications,
 				ApplicationContextProvider.getApplicationContext().getBean(SingleBatchStatementETLService.class));
 	}
 
-	NextProtSource(String sourceName, String statementsUrl, StatementSpecifications specifications, StatementETLService etlService) {
+	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications, StatementETLService etlService) {
 		this.sourceName = sourceName;
 		this.statementsUrl = statementsUrl;
 		this.specifications = specifications;
@@ -102,12 +110,12 @@ public enum NextProtSource implements StatementSpecifications, EnumDictionarySup
 	}
 
 	@Override
-	public EnumConstantDictionary<NextProtSource> getEnumConstantDictionary() {
+	public EnumConstantDictionary<StatementSource> getEnumConstantDictionary() {
 
 		return dictionaryOfConstants;
 	}
 
-	public static NextProtSource valueOfKey(String value) {
+	public static StatementSource valueOfKey(String value) {
 
 		return dictionaryOfConstants.valueOfKey(value);
 	}

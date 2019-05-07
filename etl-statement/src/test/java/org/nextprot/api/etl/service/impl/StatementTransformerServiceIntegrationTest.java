@@ -2,7 +2,7 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
@@ -35,7 +35,7 @@ public class StatementTransformerServiceIntegrationTest {
 	public void rawStatementsShouldBeWellConvertedToMappedStatements() throws IOException {
 
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh2-multiple-mutant");
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.BioEditor, null, "msh2-multiple-mutant");
 
 		Collection<Statement> mappedStatements =
 				statementTransformerService.transformStatements(rawStatements, new ReportBuilder());

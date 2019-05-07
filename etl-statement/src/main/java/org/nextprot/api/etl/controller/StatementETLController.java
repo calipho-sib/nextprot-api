@@ -5,7 +5,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,7 @@ public class StatementETLController {
 		}
 
 		try {
-			NextProtSource statementSource = NextProtSource.valueOfKey(source);
+			StatementSource statementSource = StatementSource.valueOfKey(source);
 
 			return statementSource.extractTransformLoadStatements(release, load);
 		} catch (IOException e) {

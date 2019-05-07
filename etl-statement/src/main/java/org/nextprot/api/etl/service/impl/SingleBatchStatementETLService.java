@@ -8,7 +8,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
@@ -54,7 +54,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	@Autowired
 	private HttpSparqlService httpSparqlService;
 	@Override
-    public String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException {
+    public String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
 
@@ -79,7 +79,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 
     }
 
-    public Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
+    public Set<Statement> extractStatements(StatementSource source, String release, ReportBuilder report) throws IOException {
 
         Set<Statement> statements = filterValidStatements(fetchAllStatements(source, release), report);
         report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
@@ -87,7 +87,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
         return statements;
     }
 
-    private List<Statement> fetchAllStatements(NextProtSource source, String release) throws IOException {
+    private List<Statement> fetchAllStatements(StatementSource source, String release) throws IOException {
 
 	    List<Statement> statements = new ArrayList<>();
 	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
@@ -117,27 +117,27 @@ public class SingleBatchStatementETLService implements StatementETLService {
 				.collect(Collectors.toSet());
 	}
 
-	Set<Statement> preTransformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
+	Set<Statement> preTransformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		return preProcess(source, report).process(rawStatements);
 	}
 
 	// TODO: preprocessing should be defined outside nextprot-api
-	private PreTransformProcessor preProcess(NextProtSource source, ReportBuilder report) {
+	private PreTransformProcessor preProcess(StatementSource source, ReportBuilder report) {
 
-		if (source == NextProtSource.GlyConnect) {
+		if (source == StatementSource.GlyConnect) {
 			return new GlyConnectPreProcessor(report);
 		}
-		else if (source == NextProtSource.BioEditor) {
+		else if (source == StatementSource.BioEditor) {
 			return new BioEditorPreProcessor();
 		}
-		else if (source == NextProtSource.GnomAD) {
+		else if (source == StatementSource.GnomAD) {
 			return new GnomADPreProcessor();
 		}
 		return new StatementIdBuilder();
 	}
 
-	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
+	public Collection<Statement> transformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		rawStatements = preTransformStatements(source, rawStatements, report);
 		report.addInfoWithElapsedTime("Finished pre transformation treatments");
@@ -148,7 +148,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
         return statements;
     }
 
-	public void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
+	public void loadStatements(StatementSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
         try {
             if (load) {
@@ -248,7 +248,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 						return new StatementBuilder(rs)
 								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
 								.addField(RESOURCE_TYPE, "database")
-								.addField(REFERENCE_DATABASE, NextProtSource.GnomAD.getSourceName())
+								.addField(REFERENCE_DATABASE, StatementSource.GnomAD.getSourceName())
 								.build();
 					})
 					.collect(Collectors.toSet());

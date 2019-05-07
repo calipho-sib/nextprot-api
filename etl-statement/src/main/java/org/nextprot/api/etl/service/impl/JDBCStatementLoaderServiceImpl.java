@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.StatementTableNames;
@@ -31,16 +31,16 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	
 
 	@Override
-	public void loadRawStatementsForSource(Collection<Statement> statements, NextProtSource source) throws SQLException {
+	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
 		load(statements, rawTable, source);
 	}
 
 	@Override
-	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, NextProtSource source) throws SQLException {
+	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
 		load(statements, entryTable, source);
 	}
 	
-	private void load(Collection<Statement> statements, String tableName, NextProtSource source) throws SQLException {
+	private void load(Collection<Statement> statements, String tableName, StatementSource source) throws SQLException {
 
 		List<StatementField> fields = source.getFields().stream()
 				.filter(field -> field instanceof CoreStatementField || field instanceof CompositeField)
