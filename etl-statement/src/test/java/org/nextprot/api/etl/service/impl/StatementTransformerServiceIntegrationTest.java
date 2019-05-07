@@ -38,7 +38,7 @@ public class StatementTransformerServiceIntegrationTest {
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh2-multiple-mutant");
 
 		Collection<Statement> mappedStatements =
-				statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+				statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 
 		int rawStatementsCount = (int) rawStatements.stream()
 				.map(s -> s.getValue(STATEMENT_ID))

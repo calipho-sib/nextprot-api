@@ -43,7 +43,7 @@ public class StatementTransformServiceTest {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 			Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
-			statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+			statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 			
 			fail();
 			
@@ -71,7 +71,7 @@ public class StatementTransformServiceTest {
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
-		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 		
 		Statement variantMappedStatement = mappedStatements.stream()
 				.filter(new AnnotationCategoryPredicate(VARIANT))
@@ -112,7 +112,7 @@ public class StatementTransformServiceTest {
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(NextProtSource.BioEditor, null, "scn9a-variant-iso-spec");
 
 		//Variant 
-		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(NextProtSource.BioEditor, rawStatements, new ReportBuilder());
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 		Statement variantMappedStatement = mappedStatements.stream()
                 .filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT))
                 .findFirst()
