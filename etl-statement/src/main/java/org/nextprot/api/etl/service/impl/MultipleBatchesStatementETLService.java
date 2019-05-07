@@ -53,7 +53,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 	private StatementLoaderService statementLoadService;
 
 	@Override
-	public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
+	public String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException {
 
 		SingleBatchStatementETLService.ReportBuilder report = new SingleBatchStatementETLService.ReportBuilder();
 

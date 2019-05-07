@@ -57,7 +57,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	}
 
 	@Override
-    public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
+    public String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
 

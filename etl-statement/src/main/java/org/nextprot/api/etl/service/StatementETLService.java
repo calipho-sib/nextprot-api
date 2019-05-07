@@ -10,5 +10,5 @@ import java.io.IOException;
  */
 public interface StatementETLService {
 
-	String etlStatements(NextProtSource source, String release, boolean load) throws IOException;
+	String extractTransformLoadStatements(NextProtSource source, String release, boolean load) throws IOException;
 }

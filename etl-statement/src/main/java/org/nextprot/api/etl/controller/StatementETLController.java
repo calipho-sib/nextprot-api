@@ -42,7 +42,7 @@ public class StatementETLController {
 		}
 
 		try {
-			return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOfKey(source), release, load);
+			return statementSourceCollectorAndLoaderService.extractTransformLoadStatements(NextProtSource.valueOfKey(source), release, load);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}
