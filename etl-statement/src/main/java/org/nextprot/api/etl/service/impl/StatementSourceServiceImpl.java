@@ -25,7 +25,7 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 	@Override
 	public Set<String> getJsonFilenamesForRelease(NextProtSource source, String release) throws IOException {
 
-		Set<String> jsonFileName = new TreeSet<>();
+		Set<String> jsonFilenames = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
 		LOGGER.info("Requesting " + urlString);
 
@@ -38,7 +38,7 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 					Pattern pattern = Pattern.compile("href\\=\\\"(.*.json)\\\"", Pattern.MULTILINE);
 					Matcher matcher = pattern.matcher(content);
 					while (matcher.find()) {
-						jsonFileName.add(matcher.group(1));
+						jsonFilenames.add(matcher.group(1));
 					}
 				}
 			} catch (IOException e) {
@@ -46,11 +46,11 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 			}
 		}
 
-		return jsonFileName;
+		return jsonFilenames;
 	}
 
 	@Override
-	public String getStatementJsonContent(NextProtSource source, String release, String jsonFileName) throws IOException {
+	public String getStatementsAsJsonString(NextProtSource source, String release, String jsonFileName) throws IOException {
 
 		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 		if (!jsonFileName.endsWith(".json")) {

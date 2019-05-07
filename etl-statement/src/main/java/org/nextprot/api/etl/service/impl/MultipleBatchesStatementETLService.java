@@ -29,7 +29,7 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACC
 import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
 
 /**
- * ETL Pipeline with Batch Processing
+ * Process statements in multiple ETL batches from json sources to nxflat db
  */
 @Service
 public class MultipleBatchesStatementETLService implements StatementETLService {
@@ -60,7 +60,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 		// traverse all json files
 		for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
-			String jsonContent = statementSourceService.getStatementJsonContent(source, release, jsonFilename);
+			String jsonContent = statementSourceService.getStatementsAsJsonString(source, release, jsonFilename);
 
 			JsonStreamingReader reader = new JsonStreamingReader(new StringReader(jsonContent), source.getSpecifications());
 
