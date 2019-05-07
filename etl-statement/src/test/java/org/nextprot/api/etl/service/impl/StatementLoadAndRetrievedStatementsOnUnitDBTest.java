@@ -5,10 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.etl.NextProtSource;
-import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
-import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
+import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,7 +27,7 @@ import java.util.Collection;
 public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
 
 	@Autowired
-	private StatementETLService statementETLService;
+	private SingleBatchStatementETLService statementETLService;
 
 	private StatementLoaderServiceMocked statementLoaderService;
 

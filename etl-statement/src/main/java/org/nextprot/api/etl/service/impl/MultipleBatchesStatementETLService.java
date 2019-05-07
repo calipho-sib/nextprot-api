@@ -5,7 +5,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.etl.NextProtSource;
-import org.nextprot.api.etl.service.BatchedStatementETLService;
+import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
@@ -28,8 +28,11 @@ import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromEnt
 import static org.nextprot.commons.statements.specs.CoreStatementField.ENTRY_ACCESSION;
 import static org.nextprot.commons.statements.specs.CoreStatementField.NEXTPROT_ACCESSION;
 
+/**
+ * ETL Pipeline with Batch Processing
+ */
 @Service
-public class BatchedStatementETLServiceImpl implements BatchedStatementETLService {
+public class MultipleBatchesStatementETLService implements StatementETLService {
 
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
@@ -52,7 +55,7 @@ public class BatchedStatementETLServiceImpl implements BatchedStatementETLServic
 	@Override
 	public String etlStatements(NextProtSource source, String release, boolean load) throws IOException {
 
-		StatementETLServiceImpl.ReportBuilder report = new StatementETLServiceImpl.ReportBuilder();
+		SingleBatchStatementETLService.ReportBuilder report = new SingleBatchStatementETLService.ReportBuilder();
 
 		// traverse all json files
 		for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
@@ -76,8 +79,7 @@ public class BatchedStatementETLServiceImpl implements BatchedStatementETLServic
 		return report.toString();
 	}
 
-	@Override
-	public Collection<Statement> buildMappedStatements(Collection<Statement> rawStatements, StatementETLServiceImpl.ReportBuilder report) {
+	private Collection<Statement> buildMappedStatements(Collection<Statement> rawStatements, SingleBatchStatementETLService.ReportBuilder report) {
 
 		//rawStatements = preTransformStatements(source, rawStatements, report);
 		//report.addInfoWithElapsedTime("Finished pre transformation treatments");
@@ -88,8 +90,7 @@ public class BatchedStatementETLServiceImpl implements BatchedStatementETLServic
 		return statements;
 	}
 
-	@Override
-	public void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, StatementETLServiceImpl.ReportBuilder report) {
+	private void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, SingleBatchStatementETLService.ReportBuilder report) {
 
 		try {
 			report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
@@ -109,7 +110,7 @@ public class BatchedStatementETLServiceImpl implements BatchedStatementETLServic
 		}
 	}
 
-	private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, StatementETLServiceImpl.ReportBuilder report) {
+	private Set<Statement> filterValidStatements(Collection<Statement> rawStatements, SingleBatchStatementETLService.ReportBuilder report) {
 
 		Set<String> allValidEntryAccessions = masterIdentifierService.findUniqueNames();
 		Set<String> statementEntryAccessions = rawStatements.stream()

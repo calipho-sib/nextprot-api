@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementTransformerService;
-import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
+import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;

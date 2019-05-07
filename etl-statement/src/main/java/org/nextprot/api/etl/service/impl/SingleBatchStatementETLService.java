@@ -33,8 +33,11 @@ import java.util.stream.Collectors;
 import static org.nextprot.api.core.utils.IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
+/**
+ * Extract all raw statements then transform them to mapped statements then load all statements to db
+ */
 @Service
-public class StatementETLServiceImpl implements StatementETLService {
+public class SingleBatchStatementETLService implements StatementETLService {
 
 	@Autowired
     private MasterIdentifierService masterIdentifierService;
@@ -49,7 +52,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private HttpSparqlService httpSparqlService;
 
-	@Override
 	public void setStatementLoadService(StatementLoaderService statementLoadService) {
 		this.statementLoadService = statementLoadService;
 	}
@@ -85,7 +87,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
     }
 
-    @Override
     public Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) throws IOException {
 
         Set<Statement> statements = filterValidStatements(statementExtractorService.getStatementsForSource(source, release), report);
@@ -133,7 +134,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return new StatementIdBuilder();
 	}
 
-	@Override
 	public Collection<Statement> transformStatements(NextProtSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		rawStatements = preTransformStatements(source, rawStatements, report);
@@ -145,7 +145,6 @@ public class StatementETLServiceImpl implements StatementETLService {
         return statements;
     }
 
-	@Override
 	public void loadStatements(NextProtSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
         try {
@@ -182,7 +181,7 @@ public class StatementETLServiceImpl implements StatementETLService {
      */
     public static class ReportBuilder {
 
-        private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
+        private static final Logger LOGGER = Logger.getLogger(SingleBatchStatementETLService.class);
         long start;
         private StringBuilder builder; //Needs to use buffer to guarantee synchronisation
 
