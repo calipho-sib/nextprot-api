@@ -7,6 +7,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.reader.JsonReader;
 import org.springframework.stereotype.Service;
 import sun.net.www.protocol.http.HttpURLConnection;
 
@@ -37,7 +38,7 @@ public class StatementRemoteServiceImpl implements StatementExtractorService {
 
 		if (isServiceUp(urlString)) {
 
-			return source.jsonReader().readStatements(getInputStreamFromUrl(urlString));
+			return new JsonReader(source.getSpecifications()).readStatements(getInputStreamFromUrl(urlString));
 		}
 
 		return new HashSet<>();
