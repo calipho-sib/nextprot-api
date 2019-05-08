@@ -172,15 +172,19 @@ public class EntryPublicationController {
                     .orElse(null);
 
             // Inserts the selected on the top of the list
-            eps.remove(selectedEntryPublication);
-            eps.add(0, selectedEntryPublication);
+            if(selectedEntryPublication != null) {
+                eps.remove(selectedEntryPublication);
+                eps.add(0, selectedEntryPublication);
+            }
         }
 
         // Does the paging on entry publications
         if(start != null && rows != null) {
             int startIndex = Integer.parseInt(start);
-            int endIndex = startIndex + Integer.parseInt(rows);
-            eps = eps.subList(startIndex, endIndex);
+            int endIndex = startIndex + Integer.parseInt(rows) - 1;
+            if(eps.size() > endIndex ) {
+                eps = eps.subList(startIndex, endIndex);
+            }
         }
 
         QueryRequest qr = new QueryRequest();
