@@ -56,10 +56,6 @@ public class StatementETLServiceImpl implements StatementETLService {
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
-        rawStatements = rawStatements.stream()
-                .filter(rs -> rs.getValue(StatementField.NEXTPROT_ACCESSION).equals("NX_Q6S545"))
-                .collect(Collectors.toSet());
-
         if (rawStatements.isEmpty()) {
 
             report.addWarning("ETL interruption: could not extract raw statements from " + source.name()

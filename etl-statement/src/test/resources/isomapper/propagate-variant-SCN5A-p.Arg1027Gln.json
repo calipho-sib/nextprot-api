@@ -1,0 +1,119 @@
+{
+  "query" : {
+    "accession" : "NX_Q14524",
+    "feature" : "SCN5A-p.Arg1027Gln",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_Q14524-1" : {
+      "isoformAccession" : "NX_Q14524-1",
+      "isoformName" : "Iso 1",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso1-p.Arg1027Gln",
+      "canonical" : true,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    },
+    "NX_Q14524-2" : {
+      "isoformAccession" : "NX_Q14524-2",
+      "isoformName" : "Iso 2",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso2-p.Arg1027Gln",
+      "canonical" : false,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    },
+    "NX_Q14524-3" : {
+      "isoformAccession" : "NX_Q14524-3",
+      "isoformName" : "Iso 3",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso3-p.Arg1027Gln",
+      "canonical" : false,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    },
+    "NX_Q14524-4" : {
+      "isoformAccession" : "NX_Q14524-4",
+      "isoformName" : "Iso 4",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso4-p.Arg1027Gln",
+      "canonical" : false,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    },
+    "NX_Q14524-5" : {
+      "isoformAccession" : "NX_Q14524-5",
+      "isoformName" : "Iso 5",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso5-p.Arg1027Gln",
+      "canonical" : false,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    },
+    "NX_Q14524-6" : {
+      "isoformAccession" : "NX_Q14524-6",
+      "isoformName" : "Iso 6",
+      "beginIsoformPosition" : 1027,
+      "endIsoformPosition" : 1027,
+      "beginMasterPosition" : 3097,
+      "endMasterPosition" : 3099,
+      "isoSpecificFeature" : "SCN5A-iso6-p.Arg1027Gln",
+      "canonical" : false,
+      "mapped" : true,
+      "variation" : {
+        "original" : "R",
+        "variant" : "Q",
+        "startPosition" : 1027,
+        "endPosition" : 1027,
+        "type" : "substitution"
+      }
+    }
+  },
+  "success" : true
+}
