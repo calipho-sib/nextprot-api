@@ -155,14 +155,37 @@ public class EntryPublicationController {
     public PublicationView getEntryPublicationsByPubId(
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId,
-            @ApiQueryParam(name = "limit", description = "The maximum number of returned results",  allowedvalues = { "500" })
-            @RequestParam(value = "limit", required = false) String limit) {
+            @ApiQueryParam(name = "start", description = "Starting row of the results")
+            @RequestParam(value = "start", required = false) String start,
+            @ApiQueryParam(name = "rows", description = "No of rows from the start of the results")
+            @RequestParam(value = "rows", required = false) String rows,
+            @ApiQueryParam(name = "entry", description = "The maximum number of returned results")
+            @RequestParam(value = "entry", required = false) String entry) {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
 
+        if(entry != null) {
+            // Extracts the selected entry publication
+            EntryPublication selectedEntryPublication = eps.stream()
+                    .filter((entryPublication) -> entryPublication.getEntryAccession().equals(entry))
+                    .findAny()
+                    .orElse(null);
+
+            // Inserts the selected on the top of the list
+            eps.remove(selectedEntryPublication);
+            eps.add(0, selectedEntryPublication);
+        }
+
+        // Does the paging on entry publications
+        if(start != null && rows != null) {
+            int startIndex = Integer.parseInt(start);
+            int endIndex = startIndex + Integer.parseInt(rows);
+            eps = eps.subList(startIndex, endIndex);
+        }
+
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
-        qr.setRows((limit != null) ? limit : "500");
+        qr.setRows(rows == null ? "100" : rows);
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
