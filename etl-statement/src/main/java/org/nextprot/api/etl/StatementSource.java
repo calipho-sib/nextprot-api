@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public enum StatementSource implements StatementSpecifications, EnumDictionarySupplier<StatementSource> {
 
@@ -34,7 +35,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 					.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
 					.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
 					.build(),
-			ApplicationContextProvider.getApplicationContext().getBean(MultipleBatchesStatementETLService.class))
+			() -> ApplicationContextProvider.getApplicationContext().getBean(MultipleBatchesStatementETLService.class))
 	;
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
@@ -52,19 +53,19 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	private final String sourceName;
 	private final String statementsUrl;
 	private final StatementSpecifications specifications;
-	private final StatementETLService etlService;
+	private final Supplier<StatementETLService> etlServiceSupplier;
 
 	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications) {
 
 		this(sourceName, statementsUrl, specifications,
-				ApplicationContextProvider.getApplicationContext().getBean(SingleBatchStatementETLService.class));
+				() -> ApplicationContextProvider.getApplicationContext().getBean(SingleBatchStatementETLService.class));
 	}
 
-	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications, StatementETLService etlService) {
+	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications, Supplier<StatementETLService> etlServiceSupplier) {
 		this.sourceName = sourceName;
 		this.statementsUrl = statementsUrl;
 		this.specifications = specifications;
-		this.etlService = etlService;
+		this.etlServiceSupplier = etlServiceSupplier;
 	}
 
 	public String getSourceName() {
@@ -122,6 +123,6 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 
 	public String extractTransformLoadStatements(String release, boolean load) throws IOException {
 
-		return etlService.extractTransformLoadStatements(this, release, load);
+		return etlServiceSupplier.get().extractTransformLoadStatements(this, release, load);
 	}
 }
