@@ -230,11 +230,11 @@ public class PublicationServiceImpl implements PublicationService {
 
     public List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> eps, int start, int rows ) {
 		// Does the paging on entry publications
-		if((start > 0 && start < eps.size()) && (start + rows < eps.size())) {
-			int endIndex = start + rows;
+		int endIndex = start + rows;
+		if(start > 0 && start < eps.size() && endIndex < eps.size()) {
 			return eps.subList(start, endIndex);
 		}
-		return null;
+		return eps;
 	}
 
 	/**
