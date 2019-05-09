@@ -231,7 +231,7 @@ public class PublicationServiceImpl implements PublicationService {
     public List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> eps, int start, int rows ) {
 		// Does the paging on entry publications
 		int endIndex = start + rows;
-		if(start > 0 && start < eps.size() && endIndex < eps.size()) {
+		if(start >= 0 && start < eps.size() && endIndex < eps.size()) {
 			return eps.subList(start, endIndex);
 		}
 		return eps;
