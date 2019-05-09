@@ -227,4 +227,34 @@ public class PublicationServiceImpl implements PublicationService {
 
         return map;
     }
+
+    public List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> eps, int start, int rows ) {
+		// Does the paging on entry publications
+		if((start > 0 && start < eps.size()) && (start + rows < eps.size())) {
+			int endIndex = start + rows;
+			return eps.subList(start, endIndex);
+		}
+		return null;
+	}
+
+	/**
+	 * Moves up the given entry if exists in the list
+	 * @param eps : EntryPublication list
+	 */
+	public List<EntryPublication> prioritizeEntry(List<EntryPublication> eps, String entry) {
+		if(entry != null) {
+			// Extracts the selected entry publication
+			EntryPublication selectedEntryPublication = eps.stream()
+					.filter((entryPublication) -> entryPublication.getEntryAccession().equals(entry))
+					.findFirst()
+					.orElse(null);
+
+			// Inserts the selected on the top of the list
+			if(selectedEntryPublication != null) {
+				eps.remove(selectedEntryPublication);
+				eps.add(0, selectedEntryPublication);
+			}
+		}
+		return eps;
+	}
 }

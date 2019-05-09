@@ -48,4 +48,21 @@ public interface PublicationService {
      * @return the list of associated EntryPublications
      */
     List<EntryPublication> getEntryPublications(long publicationId);
+
+	/**
+	 *
+	 * @param start start of the list
+	 * @param rows  Number of rows from the start of the list
+	 * @param eps EntryPublication list
+	 * @return A sublist of the given EntryPublication list
+	 */
+    List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> entryPublications, int start, int rows);
+
+
+	/**
+	 * Moves the given entry in the top of the list
+	 * @param entryPublications
+	 * @param entry
+	 */
+	List<EntryPublication> prioritizeEntry(List<EntryPublication> entryPublications, String entry);
 }

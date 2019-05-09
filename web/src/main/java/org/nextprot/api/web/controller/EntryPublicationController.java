@@ -164,27 +164,16 @@ public class EntryPublicationController {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
 
+        // If an entry is specified move it up in the list
         if(entry != null) {
-            // Extracts the selected entry publication
-            EntryPublication selectedEntryPublication = eps.stream()
-                    .filter((entryPublication) -> entryPublication.getEntryAccession().equals(entry))
-                    .findAny()
-                    .orElse(null);
-
-            // Inserts the selected on the top of the list
-            if(selectedEntryPublication != null) {
-                eps.remove(selectedEntryPublication);
-                eps.add(0, selectedEntryPublication);
-            }
+            publicationService.prioritizeEntry(eps, entry);
         }
 
-        // Does the paging on entry publications
+        // Retrieves the corresponding sublist
         if(start != null && rows != null) {
             int startIndex = Integer.parseInt(start);
-            int endIndex = startIndex + Integer.parseInt(rows) - 1;
-            if(eps.size() > endIndex ) {
-                eps = eps.subList(startIndex, endIndex);
-            }
+            int numberOfRows = Integer.parseInt(rows);
+            eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
         }
 
         QueryRequest qr = new QueryRequest();
