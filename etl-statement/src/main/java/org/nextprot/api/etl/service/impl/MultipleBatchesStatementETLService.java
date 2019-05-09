@@ -3,13 +3,11 @@ package org.nextprot.api.etl.service.impl;
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MasterIdentifierService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
-import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.reader.JsonStreamingReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +34,6 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
-
-	@Autowired
-	private TerminologyService terminologyService;
-
-	@Autowired
-	private HttpSparqlService httpSparqlService;
 
 	@Autowired
 	private StatementSourceService statementSourceService;
