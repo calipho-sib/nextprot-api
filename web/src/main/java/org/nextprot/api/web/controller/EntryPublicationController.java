@@ -163,6 +163,7 @@ public class EntryPublicationController {
             @RequestParam(value = "entry", required = false) String entry) {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
+        int relatedEntryCount = eps.size();
 
         // If an entry is specified move it up in the list
         if(entry != null) {
@@ -193,7 +194,7 @@ public class EntryPublicationController {
         try {
             SearchResult searchResult = solrQueryService.executeQuery(q);
 
-            view.setRelatedEntryCount(eps.size());
+            view.setRelatedEntryCount(relatedEntryCount);
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
 
         } catch (QueryConfiguration.MissingSortConfigException e) {
