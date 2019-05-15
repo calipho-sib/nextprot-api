@@ -12,5 +12,5 @@ public interface StatementSourceService {
 
 	Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException;
 
-	String getStatementsAsJsonString(StatementSource source, String release, String jsonFileName) throws IOException;
+	String getStatementsAsJsonArray(StatementSource source, String release, String jsonFileName) throws IOException;
 }

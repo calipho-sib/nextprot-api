@@ -50,7 +50,7 @@ public class StatementSourceServiceImpl implements StatementSourceService {
 	}
 
 	@Override
-	public String getStatementsAsJsonString(StatementSource source, String release, String jsonFileName) throws IOException {
+	public String getStatementsAsJsonArray(StatementSource source, String release, String jsonFileName) throws IOException {
 
 		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 		if (!jsonFileName.endsWith(".json")) {

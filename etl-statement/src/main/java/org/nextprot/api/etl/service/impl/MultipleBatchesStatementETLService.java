@@ -52,7 +52,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 		// traverse all json files
 		for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
-			String jsonContent = statementSourceService.getStatementsAsJsonString(source, release, jsonFilename);
+			String jsonContent = statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename);
 
 			JsonStreamingReader reader = new JsonStreamingReader(new StringReader(jsonContent), source.getSpecifications());
 

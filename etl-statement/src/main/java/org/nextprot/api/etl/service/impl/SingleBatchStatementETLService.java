@@ -93,7 +93,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
 		    JsonReader reader = new JsonReader(source.getSpecifications());
-		    statements.addAll(reader.readStatements(statementSourceService.getStatementsAsJsonString(source, release, jsonFilename)));
+		    statements.addAll(reader.readStatements(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename)));
 	    }
 	    return statements;
     }
