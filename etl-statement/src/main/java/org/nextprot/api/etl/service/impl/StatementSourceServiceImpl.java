@@ -16,11 +16,18 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Service
 public class StatementSourceServiceImpl implements StatementSourceService {
 
 	private static final Log LOGGER = LogFactory.getLog(StatementSourceServiceImpl.class);
+
+	public Stream<String> getJsonArrayStreamForRelease(StatementSource source, String release) throws IOException {
+
+
+		return null;
+	}
 
 	@Override
 	public Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException {

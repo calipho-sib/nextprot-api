@@ -54,11 +54,11 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 
 			String jsonContent = statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename);
 
-			JsonStreamingReader reader = new JsonStreamingReader(new StringReader(jsonContent), source.getSpecifications());
+			JsonStreamingReader reader = new JsonStreamingReader(new StringReader(jsonContent), source.getSpecifications(), 10);
 
 			while (reader.hasNextStatement()) {
 
-				Set<Statement> rawStatements = filterValidStatements(reader.readStatements(10), report);
+				Set<Statement> rawStatements = filterValidStatements(reader.readStatements(), report);
 
 				Collection<Statement> mappedStatements = buildMappedStatements(rawStatements, report);
 

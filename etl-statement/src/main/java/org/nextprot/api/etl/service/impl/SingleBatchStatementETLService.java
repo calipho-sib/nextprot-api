@@ -92,8 +92,9 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	    List<Statement> statements = new ArrayList<>();
 	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
-		    JsonReader reader = new JsonReader(source.getSpecifications());
-		    statements.addAll(reader.readStatements(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename)));
+		    JsonReader reader = new JsonReader(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename),
+				    source.getSpecifications());
+		    statements.addAll(reader.readStatements());
 	    }
 	    return statements;
     }

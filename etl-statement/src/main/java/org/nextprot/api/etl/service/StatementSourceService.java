@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public interface StatementSourceService {
 
+	//Stream<String> getJsonArrayStreamForRelease(StatementSource source, String release) throws IOException;
+
 	Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException;
 
 	String getStatementsAsJsonArray(StatementSource source, String release, String jsonFileName) throws IOException;
