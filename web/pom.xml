@@ -263,6 +263,7 @@
 				<version>2.7</version>
 				<configuration>
 					<updateReleaseInfo>true</updateReleaseInfo>
+					<skip>false</skip>
 				</configuration>
 			</plugin>
 		</plugins>
