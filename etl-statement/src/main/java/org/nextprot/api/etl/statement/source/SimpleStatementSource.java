@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class SimpleStatementSource implements StatementSourceNew {
+public class SimpleStatementSource implements StatementSource {
 
 	private final Specifications specifications;
 	private final URL url;

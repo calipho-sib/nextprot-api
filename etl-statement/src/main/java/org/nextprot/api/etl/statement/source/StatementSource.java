@@ -6,7 +6,7 @@ import org.nextprot.commons.statements.specs.Specifications;
 
 import java.io.IOException;
 
-public interface StatementSourceNew {
+public interface StatementSource {
 
 	Specifications specifications();
 
