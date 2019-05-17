@@ -2,7 +2,7 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.StatementSourceEnum;
 import org.nextprot.commons.statements.Statement;
 import org.springframework.util.Assert;
 
@@ -25,7 +25,7 @@ public class StatementRemoteServiceTest {
 	public void shouldExtractRemoteStatementsForAGene() throws IOException {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Collection<Statement> statements = srsi.getStatementsFromJsonFile(StatementSource.BioEditor, RELEASE, "AAK1@strauss");
+		Collection<Statement> statements = srsi.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, RELEASE, "AAK1@strauss");
 		Assert.isTrue(!statements.isEmpty());
 	}
 
@@ -34,7 +34,7 @@ public class StatementRemoteServiceTest {
 	public void shouldExtractRemoteStatementsForAllGenes() throws IOException {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Collection<Statement> statements = srsi.getStatementsForSource(StatementSource.BioEditor, RELEASE);
+		Collection<Statement> statements = srsi.getStatementsForSource(StatementSourceEnum.BioEditor, RELEASE);
 		Assert.isTrue(!statements.isEmpty());
 	}
 
@@ -43,7 +43,7 @@ public class StatementRemoteServiceTest {
 	public void shouldGetGeneNamesAndEnvironment() throws IOException {
 
 		StatementRemoteServiceImpl srsi = new StatementRemoteServiceImpl();
-		Set<String> geneNames = srsi.getJsonFilenamesForRelease(StatementSource.BioEditor, RELEASE);
+		Set<String> geneNames = srsi.getJsonFilenamesForRelease(StatementSourceEnum.BioEditor, RELEASE);
 		Assert.isTrue(geneNames.size() > 10);
 	}
 

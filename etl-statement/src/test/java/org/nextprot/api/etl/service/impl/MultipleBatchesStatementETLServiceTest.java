@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.service.MasterIdentifierService;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.StatementSourceEnum;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
@@ -39,7 +39,7 @@ public class MultipleBatchesStatementETLServiceTest {
 	@Test
 	public void extractTransformLoadStatements() throws IOException {
 
-		String log = multipleBatchesStatementETLService.extractTransformLoadStatements(StatementSource.BioEditor, "X", true);
+		String log = multipleBatchesStatementETLService.extractTransformLoadStatements(StatementSourceEnum.BioEditor, "X", true);
 
 		System.out.println(log);
 	}

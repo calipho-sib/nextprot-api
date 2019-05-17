@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public enum StatementSource implements StatementSpecifications, EnumDictionarySupplier<StatementSource> {
+public enum StatementSourceEnum implements StatementSpecifications, EnumDictionarySupplier<StatementSourceEnum> {
 
 	BioEditor("neXtProt",
 			"http://kant.sib.swiss:9001/bioeditor",
@@ -38,12 +38,12 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 			() -> ApplicationContextProvider.getApplicationContext().getBean(MultipleBatchesStatementETLService.class))
 	;
 
-	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
-			new EnumConstantDictionary<StatementSource>(StatementSource.class, values()) {
+	private static EnumConstantDictionary<StatementSourceEnum> dictionaryOfConstants =
+			new EnumConstantDictionary<StatementSourceEnum>(StatementSourceEnum.class, values()) {
 				@Override
-				protected void updateDictionaryOfConstants(Map<String, StatementSource> dictionary) {
+				protected void updateDictionaryOfConstants(Map<String, StatementSourceEnum> dictionary) {
 
-					for (StatementSource source : values()) {
+					for (StatementSourceEnum source : values()) {
 						dictionary.put(source.toString().toLowerCase(), source);
 						dictionary.put(source.toString().toUpperCase(), source);
 					}
@@ -55,13 +55,13 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	private final StatementSpecifications specifications;
 	private final Supplier<StatementETLService> etlServiceSupplier;
 
-	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications) {
+	StatementSourceEnum(String sourceName, String statementsUrl, StatementSpecifications specifications) {
 
 		this(sourceName, statementsUrl, specifications,
 				() -> ApplicationContextProvider.getApplicationContext().getBean(SingleBatchStatementETLService.class));
 	}
 
-	StatementSource(String sourceName, String statementsUrl, StatementSpecifications specifications, Supplier<StatementETLService> etlServiceSupplier) {
+	StatementSourceEnum(String sourceName, String statementsUrl, StatementSpecifications specifications, Supplier<StatementETLService> etlServiceSupplier) {
 		this.sourceName = sourceName;
 		this.statementsUrl = statementsUrl;
 		this.specifications = specifications;
@@ -111,12 +111,12 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	}
 
 	@Override
-	public EnumConstantDictionary<StatementSource> getEnumConstantDictionary() {
+	public EnumConstantDictionary<StatementSourceEnum> getEnumConstantDictionary() {
 
 		return dictionaryOfConstants;
 	}
 
-	public static StatementSource valueOfKey(String value) {
+	public static StatementSourceEnum valueOfKey(String value) {
 
 		return dictionaryOfConstants.valueOfKey(value);
 	}

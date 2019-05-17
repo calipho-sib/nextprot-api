@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.StatementSourceEnum;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
@@ -43,12 +43,12 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
 		private Collection<Statement> msColl = new ArrayList<>();
 
 		@Override
-		public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) {
+		public void loadRawStatementsForSource(Collection<Statement> statements, StatementSourceEnum source) {
 			rsColl.addAll(statements);
 		}
 
 		@Override
-		public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source) {
+		public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSourceEnum source) {
 			msColl.addAll(statements);
 		}
 
@@ -65,12 +65,12 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
 	public void shouldExtractLoadAndRetrieveStatementsForBioEditor() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
+		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 
 		Collection<Statement> mappedStatements =
-				statementETLService.transformStatements(StatementSource.BioEditor, rawStatements, new ReportBuilder());
+				statementETLService.transformStatements(StatementSourceEnum.BioEditor, rawStatements, new ReportBuilder());
 
-		statementETLService.loadStatements(StatementSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+		statementETLService.loadStatements(StatementSourceEnum.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
 		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
 		Collection<Statement> loadedMS = statementLoaderService.getMsColl();
@@ -83,12 +83,12 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
 	public void shouldExtractButNotLoad() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSource.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
+		Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 
 		Collection<Statement> mappedStatements =
-				statementETLService.transformStatements(StatementSource.BioEditor, rawStatements, new ReportBuilder());
+				statementETLService.transformStatements(StatementSourceEnum.BioEditor, rawStatements, new ReportBuilder());
 
-		statementETLService.loadStatements(StatementSource.BioEditor, rawStatements, mappedStatements, false, new ReportBuilder());
+		statementETLService.loadStatements(StatementSourceEnum.BioEditor, rawStatements, mappedStatements, false, new ReportBuilder());
 
 		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
 		Collection<Statement> loadedMS = statementLoaderService.getMsColl();
@@ -101,12 +101,12 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest {
 	public void shouldExtractLoadAndRetrieveStatementsForGlyConnect() throws IOException {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-			Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSource.GlyConnect, "2017-07-19", "few-entries");
+			Collection<Statement> rawStatements = extractor.getStatementsFromJsonFile(StatementSourceEnum.GlyConnect, "2017-07-19", "few-entries");
 
 		Collection<Statement> mappedStatements =
-				statementETLService.transformStatements(StatementSource.GlyConnect, rawStatements, new ReportBuilder());
+				statementETLService.transformStatements(StatementSourceEnum.GlyConnect, rawStatements, new ReportBuilder());
 
-		statementETLService.loadStatements(StatementSource.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
+		statementETLService.loadStatements(StatementSourceEnum.BioEditor, rawStatements, mappedStatements, true, new ReportBuilder());
 
 		Collection<Statement> loadedRS = statementLoaderService.getRsColl();
 		Collection<Statement> loadedMS = statementLoaderService.getMsColl();

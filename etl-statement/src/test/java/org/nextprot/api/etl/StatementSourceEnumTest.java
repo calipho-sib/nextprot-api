@@ -3,29 +3,29 @@ package org.nextprot.api.etl;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class StatementSourceTest {
+public class StatementSourceEnumTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotFindValueOfLowerCase() {
 
-		StatementSource.valueOf("gnomad");
+		StatementSourceEnum.valueOf("gnomad");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldNotFindValueOfUpperCase() {
 
-		StatementSource.valueOf("GNOMAD");
+		StatementSourceEnum.valueOf("GNOMAD");
 	}
 
 	@Test
 	public void shouldFindValueOfLowerCaseKey() {
 
-		Assert.assertEquals(StatementSource.GnomAD, StatementSource.valueOfKey("gnomad"));
+		Assert.assertEquals(StatementSourceEnum.GnomAD, StatementSourceEnum.valueOfKey("gnomad"));
 	}
 
 	@Test
 	public void shouldFindValueOfUpperCaseKey() {
 
-		Assert.assertEquals(StatementSource.GnomAD, StatementSource.valueOfKey("GNOMAD"));
+		Assert.assertEquals(StatementSourceEnum.GnomAD, StatementSourceEnum.valueOfKey("GNOMAD"));
 	}
 }

@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.StatementSourceEnum;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
@@ -41,7 +41,7 @@ public class StatementTransformServiceTest {
 	
 		try {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-			Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.BioEditor, null, "msh2-msh6-multiple-mutants-on-different-genes");
+			Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, null, "msh2-msh6-multiple-mutants-on-different-genes");
 
 			statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 			
@@ -68,7 +68,7 @@ public class StatementTransformServiceTest {
 	public void shouldPropagateVariantsOnlyToMappableIsoforms() throws IOException {
 
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.BioEditor, null, "msh6-variant-on-iso1-but-not-on-iso2");
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
 		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
@@ -109,7 +109,7 @@ public class StatementTransformServiceTest {
 	public void shouldPropagateVariantButNotPhenotypicVariationOnIsoSpecificVPAnnotations() throws IOException {
 		
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.BioEditor, null, "scn9a-variant-iso-spec");
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSourceEnum.BioEditor, null, "scn9a-variant-iso-spec");
 
 		//Variant 
 		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
