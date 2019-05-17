@@ -16,7 +16,7 @@ import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.reader.JsonReader;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,7 +92,7 @@ public class SingleBatchStatementETLService implements StatementETLService {
 	    List<Statement> statements = new ArrayList<>();
 	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
-		    JsonReader reader = new JsonReader(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename),
+		    JsonStatementReader reader = new JsonStatementReader(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename),
 				    source.getSpecifications());
 		    statements.addAll(reader.readStatements());
 	    }

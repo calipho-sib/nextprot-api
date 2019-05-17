@@ -9,7 +9,7 @@ import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.reader.JsonStreamingReader;
+import org.nextprot.commons.statements.reader.StreamingJsonStatementReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +54,7 @@ public class MultipleBatchesStatementETLService implements StatementETLService {
 
 			String jsonContent = statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename);
 
-			JsonStreamingReader reader = new JsonStreamingReader(new StringReader(jsonContent), source.getSpecifications(), 10);
+			StreamingJsonStatementReader reader = new StreamingJsonStatementReader(new StringReader(jsonContent), source.getSpecifications(), 10);
 
 			while (reader.hasNextStatement()) {
 

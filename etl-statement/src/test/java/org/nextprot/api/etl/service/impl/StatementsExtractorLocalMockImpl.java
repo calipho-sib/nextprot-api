@@ -5,7 +5,7 @@ import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementDictionary;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.reader.JsonReader;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -20,7 +20,7 @@ public class StatementsExtractorLocalMockImpl implements StatementExtractorServi
 		String content = sd.getStatements(jsonFilename);
 		String removedComments = content.replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "$1");
 
-		return new JsonReader(removedComments, source.getSpecifications()).readStatements();
+		return new JsonStatementReader(removedComments, source.getSpecifications()).readStatements();
 	}
 
 	@Override
