@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.SimpleExon;
+import org.nextprot.api.core.domain.exon.SimpleExonWithSequence;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,4 +25,7 @@ public interface GeneDAO {
 	List<SimpleExon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
 
 	Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames);
+
+	List<SimpleExonWithSequence> findExonsOfGene(String geneName);
+
 }

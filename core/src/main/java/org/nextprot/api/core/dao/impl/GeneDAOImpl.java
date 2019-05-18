@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.SimpleExon;
+import org.nextprot.api.core.domain.exon.SimpleExonWithSequence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,6 +31,7 @@ public class GeneDAOImpl implements GeneDAO {
 	@Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired private DataSourceServiceLocator dsLocator;
+	
 	
 
 	@Override
@@ -140,21 +142,31 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
+	private static void mapExon(ResultSet resultSet, SimpleExon exon) throws SQLException {
+		GeneRegion geneRegion = new GeneRegion(resultSet.getString("gene_name"),
+				resultSet.getInt("first_position"),
+				resultSet.getInt("last_position"));
+		exon.setTranscriptName(resultSet.getString("transcript_name"));
+		exon.setNameDeduceAccession(resultSet.getString("exon"));
+		exon.setRank(resultSet.getInt("rank")+1);
+		exon.setGeneRegion(geneRegion);
+	}
+	
 	private static class ExonMapper extends SingleColumnRowMapper<SimpleExon> {
-
 		@Override
 		public SimpleExon mapRow(ResultSet resultSet, int row) throws SQLException {
 			SimpleExon exon = new SimpleExon();
+			mapExon(resultSet,exon);
+			return exon;
+		}
+	}
 
-			GeneRegion geneRegion = new GeneRegion(resultSet.getString("gene_name"),
-					resultSet.getInt("first_position"),
-					resultSet.getInt("last_position"));
-
-			exon.setTranscriptName(resultSet.getString("transcript_name"));
-			exon.setNameDeduceAccession(resultSet.getString("exon"));
-			exon.setRank(resultSet.getInt("rank")+1);
-			exon.setGeneRegion(geneRegion);
-
+	private static class ExonWithSequenceMapper extends SingleColumnRowMapper<SimpleExonWithSequence> {
+		@Override
+		public SimpleExonWithSequence mapRow(ResultSet resultSet, int row) throws SQLException {
+			SimpleExonWithSequence exon = new SimpleExonWithSequence();
+			mapExon(resultSet,exon);
+			exon.setSequence(resultSet.getString("sequence"));
 			return exon;
 		}
 	}
@@ -188,5 +200,13 @@ public class GeneDAOImpl implements GeneDAO {
 
 		return isoformMappings.values().stream()
 				.collect(Collectors.groupingBy(IsoformGeneMapping::getIsoformAccession, Collectors.toList()));
+	}
+
+	@Override
+	public List<SimpleExonWithSequence> findExonsOfGene(String geneName) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource("geneName", geneName);
+		return new NamedParameterJdbcTemplate(
+				dsLocator.getDataSource()).query(
+						sqlDictionary.getSQLQuery("exons-of-gene"), namedParameters, new ExonWithSequenceMapper());
 	}
 }
