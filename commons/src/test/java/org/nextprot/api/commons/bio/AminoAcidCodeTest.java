@@ -1,5 +1,10 @@
 package org.nextprot.api.commons.bio;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -202,4 +207,27 @@ public class AminoAcidCodeTest {
         Assert.assertTrue(AminoAcidCode.XLE.match(AminoAcidCode.ISOLEUCINE));
         Assert.assertTrue(AminoAcidCode.XLE.match(AminoAcidCode.LEUCINE));
     }
+    
+    @Test
+    public void All_64_Codons_Should_Translate_To_21_AminoAcids() {
+    	List<String> nulist = new ArrayList<>() ;
+    	nulist.add("A"); nulist.add("C"); nulist.add("G"); nulist.add("T");
+    	int codonCnt = 0;
+    	Set<String> aas = new HashSet<>();
+    	for (String nu1:  nulist) {
+        	for (String nu2:  nulist) {
+            	for (String nu3:  nulist) {
+            		codonCnt++;
+            		String codon = nu1 + nu2 + nu3;
+                	AminoAcidCode aa = AminoAcidCode.valueOfAminoAcidFromCodon(codon);
+                	aas.add(aa.get3LetterCode());
+                	//System.out.println(""+cnt + ":" + codon + " = " + aa);
+            	}
+        	}
+    	}
+    	Assert.assertEquals(64, codonCnt);
+    	Assert.assertEquals(21, aas.size());
+    	
+    }
+
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.exon.SimpleExon;
 import org.nextprot.api.core.domain.exon.SimpleExonWithSequence;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ public class GeneExonMappingServiceIntegrationTest extends CoreUnitBaseTest {
     	Assert.assertEquals(249, ex.getGeneRegion().getLastPosition());
     	Assert.assertEquals("NX_ENSE00001860500", ex.getName());
     	Assert.assertEquals("CTTAAAAAAAAAAAAACCAAAAAAACCCAAAGCATAACTACTTTTGCAGCTGAACGTGACTGTGGCGTGCAGGAAGTGGAGCATTGGCATGAAGTGGCTCCTAGTGGCTGCTTGGCGCACGCCAGCTGCCCTCCTCTGACTCCAGTGGCACCTGGGGGCCTGGCCTCACTGACGGGAGAACATTGGCGTGAAGGCTGCTGGCGACTGGGCCAGCATTCATTGTGAAGACCGGAGGGACACACCCTGCTG", ex.getSequence());
+    	
     }
     
     

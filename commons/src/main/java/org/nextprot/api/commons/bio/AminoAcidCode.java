@@ -34,8 +34,8 @@ public enum AminoAcidCode {
     ASPARTIC_ACID("Asp", "D"),
     SERINE("Ser", "S"),
     THREONINE("Thr", "T"),
-    SELENOCYSTEINE("Sec", "U"),
-    PYRROLYSINE("Pyl", "O"),
+    SELENOCYSTEINE("Sec", "U"),		// encoded by TGA codon like STOP, 45 isoforms contain it
+    PYRROLYSINE("Pyl", "O"),      	// encoded by TAG codon like STOP  NO isoforms contains it
     STOP("Ter", "*"),
     // ambiguous amino-acids
     ASX("Asx", "B"),
@@ -68,8 +68,77 @@ public enum AminoAcidCode {
     private static final Map<AminoAcidCode, Set<AminoAcidCode>> AMINO_ACID_AMBIGUITIES;
     private static final Set<AminoAcidCode> NON_AMBIGUOUS_AMINO_ACIDS;
     private static final Set<AminoAcidCode> AMBIGUOUS_AMINO_ACIDS;
+    private static final Map<String,AminoAcidCode> CODON_AMINO_ACID_MAP = new HashMap<>(); 
 
     static {
+    	
+    	CODON_AMINO_ACID_MAP.put("GCA", ALANINE);
+    	CODON_AMINO_ACID_MAP.put("GCC", ALANINE);
+    	CODON_AMINO_ACID_MAP.put("GCG", ALANINE);
+    	CODON_AMINO_ACID_MAP.put("GCT", ALANINE);
+    	CODON_AMINO_ACID_MAP.put("TGC", CYSTEINE);
+    	CODON_AMINO_ACID_MAP.put("TGT", CYSTEINE);
+    	CODON_AMINO_ACID_MAP.put("GAC", ASPARTIC_ACID);
+    	CODON_AMINO_ACID_MAP.put("GAT", ASPARTIC_ACID);
+    	CODON_AMINO_ACID_MAP.put("GAA", GLUTAMIC_ACID);
+    	CODON_AMINO_ACID_MAP.put("GAG", GLUTAMIC_ACID);
+    	CODON_AMINO_ACID_MAP.put("TTC", PHENYLALANINE);
+    	CODON_AMINO_ACID_MAP.put("TTT", PHENYLALANINE);
+    	CODON_AMINO_ACID_MAP.put("GGA", GLYCINE);
+    	CODON_AMINO_ACID_MAP.put("GGC", GLYCINE);
+    	CODON_AMINO_ACID_MAP.put("GGG", GLYCINE);
+    	CODON_AMINO_ACID_MAP.put("GGT", GLYCINE);
+    	CODON_AMINO_ACID_MAP.put("CAC", HISTIDINE);
+    	CODON_AMINO_ACID_MAP.put("CAT", HISTIDINE);
+    	CODON_AMINO_ACID_MAP.put("ATA", ISOLEUCINE);
+    	CODON_AMINO_ACID_MAP.put("ATC", ISOLEUCINE);
+    	CODON_AMINO_ACID_MAP.put("ATT", ISOLEUCINE);
+    	CODON_AMINO_ACID_MAP.put("AAA", LYSINE);
+    	CODON_AMINO_ACID_MAP.put("AAG", LYSINE);
+    	CODON_AMINO_ACID_MAP.put("CTA", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("CTC", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("CTG", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("CTT", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("TTA", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("TTG", LEUCINE);
+    	CODON_AMINO_ACID_MAP.put("ATG", METHIONINE);
+    	CODON_AMINO_ACID_MAP.put("AAC", ASPARAGINE);
+    	CODON_AMINO_ACID_MAP.put("AAT", ASPARAGINE);
+    	CODON_AMINO_ACID_MAP.put("CCA", PROLINE);
+    	CODON_AMINO_ACID_MAP.put("CCC", PROLINE);
+    	CODON_AMINO_ACID_MAP.put("CCG", PROLINE);
+    	CODON_AMINO_ACID_MAP.put("CCT", PROLINE);
+    	CODON_AMINO_ACID_MAP.put("CAA", GLUTAMINE);
+    	CODON_AMINO_ACID_MAP.put("CAG", GLUTAMINE);
+    	CODON_AMINO_ACID_MAP.put("AGA", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("AGG", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("CGA", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("CGC", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("CGG", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("CGT", ARGININE);
+    	CODON_AMINO_ACID_MAP.put("AGC", SERINE);
+    	CODON_AMINO_ACID_MAP.put("AGT", SERINE);
+    	CODON_AMINO_ACID_MAP.put("TCA", SERINE);
+    	CODON_AMINO_ACID_MAP.put("TCC", SERINE);
+    	CODON_AMINO_ACID_MAP.put("TCG", SERINE);
+    	CODON_AMINO_ACID_MAP.put("TCT", SERINE);
+    	CODON_AMINO_ACID_MAP.put("ACA", THREONINE);
+    	CODON_AMINO_ACID_MAP.put("ACC", THREONINE);
+    	CODON_AMINO_ACID_MAP.put("ACG", THREONINE);
+    	CODON_AMINO_ACID_MAP.put("ACT", THREONINE);
+    	CODON_AMINO_ACID_MAP.put("GTA", VALINE);
+    	CODON_AMINO_ACID_MAP.put("GTC", VALINE);
+    	CODON_AMINO_ACID_MAP.put("GTG", VALINE);
+    	CODON_AMINO_ACID_MAP.put("GTT", VALINE);
+    	CODON_AMINO_ACID_MAP.put("TGG", TRYPTOPHAN);
+    	CODON_AMINO_ACID_MAP.put("TAC", TYROSINE);
+    	CODON_AMINO_ACID_MAP.put("TAT", TYROSINE);
+    	CODON_AMINO_ACID_MAP.put("TAA", STOP);
+    	CODON_AMINO_ACID_MAP.put("TAG", STOP);   // or PYRROLYSINE    : NO isoforms contain it
+    	CODON_AMINO_ACID_MAP.put("TGA", STOP);   // or SELENOCYSTEINE : 45 isoforms contain it
+
+    	
+    	
         NON_AMBIGUOUS_AMINO_ACIDS = ImmutableSet.copyOf(EnumSet.of(GLYCINE, PROLINE, ALANINE, VALINE, LEUCINE, ISOLEUCINE, METHIONINE, CYSTEINE,
                 PHENYLALANINE, TYROSINE, THREONINE, TRYPTOPHAN, HISTIDINE, LYSINE, ARGININE, GLUTAMINE, ASPARAGINE,
                 GLUTAMIC_ACID, ASPARTIC_ACID, SERINE, THREONINE, SELENOCYSTEINE, PYRROLYSINE, STOP));
@@ -274,4 +343,24 @@ public enum AminoAcidCode {
             throw new IllegalArgumentException("unknown 1-letter code amino-acid "+code1, e);
         }
     }
+    
+    /**
+     * Get an instance of AminoAcidCode given a codon
+     * @param codon a String of three characters representing three nucleotides letters
+     * @return an AminoAcidCode
+     * @throws IllegalArgumentException if codon is not found
+     */
+    public static AminoAcidCode valueOfAminoAcidFromCodon(String codon) {
+
+    	AminoAcidCode aa = CODON_AMINO_ACID_MAP.get(codon);
+    	if (aa != null) {
+            return aa;
+        } else {
+            throw new IllegalArgumentException("unknown codon "+ codon);
+        }
+    }
+    
+    
+    
+    
 }
