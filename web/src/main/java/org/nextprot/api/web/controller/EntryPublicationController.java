@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -163,6 +160,10 @@ public class EntryPublicationController {
             @RequestParam(value = "entry", required = false) String entry) {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
+        eps = eps.stream()
+                .sorted(Comparator.comparing(EntryPublication::getEntryAccession))
+                .collect(Collectors.toList());
+
         int relatedEntryCount = eps.size();
 
         // If an entry is specified move it up in the list
@@ -171,24 +172,30 @@ public class EntryPublicationController {
         }
 
         // Retrieves the corresponding sublist
+        int startIndex = 0;
+        int numberOfRows = 100;
         if(start != null && rows != null) {
-            int startIndex = Integer.parseInt(start);
-            int numberOfRows = Integer.parseInt(rows);
-            eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
+            startIndex = Integer.parseInt(start);
+            numberOfRows = Integer.parseInt(rows);
         }
-
+        eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
+        for(EntryPublication e: eps) {
+            System.out.println(e.getEntryAccession());
+        }
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
         qr.setRows(rows == null ? "100" : rows);
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
-        // return the n first results
-        view.addEntryPublicationList(eps.stream()
-                .limit(Integer.parseInt(qr.getRows()))
-                .collect(Collectors.toList()));
+        view.addEntryPublicationList(eps);
 
-        qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
+        Set<String> entryAccessions = eps.stream()
+                .map(EntryPublication::getEntryAccession)
+                .collect(Collectors.toSet());
+
+        // Only queries SOLR with the selected, sorted list of entry accessions
+        qr.setEntryAccessionSet(entryAccessions);
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         try {
