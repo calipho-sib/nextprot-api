@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -163,6 +160,10 @@ public class EntryPublicationController {
             @RequestParam(value = "entry", required = false) String entry) {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
+        eps = eps.stream()
+                .sorted(Comparator.comparing(EntryPublication::getEntryAccession))
+                .collect(Collectors.toList());
+
         int relatedEntryCount = eps.size();
 
         // If an entry is specified move it up in the list
@@ -188,7 +189,7 @@ public class EntryPublicationController {
 
         // Sort the entry publication list
         List<EntryPublication> entryPublicationList = eps.stream()
-                .sorted()
+                .sorted(Comparator.comparing(EntryPublication::getEntryAccession))
                 .collect(Collectors.toList());
         view.addEntryPublicationList(entryPublicationList);
 
