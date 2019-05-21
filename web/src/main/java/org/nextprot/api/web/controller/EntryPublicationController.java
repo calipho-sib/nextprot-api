@@ -171,11 +171,13 @@ public class EntryPublicationController {
         }
 
         // Retrieves the corresponding sublist
+        int startIndex = 0;
+        int numberOfRows = 100;
         if(start != null && rows != null) {
-            int startIndex = Integer.parseInt(start);
-            int numberOfRows = Integer.parseInt(rows);
-            eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
+            startIndex = Integer.parseInt(start);
+            numberOfRows = Integer.parseInt(rows);
         }
+        eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
 
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
@@ -183,12 +185,19 @@ public class EntryPublicationController {
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
-        // return the n first results
-        view.addEntryPublicationList(eps.stream()
-                .limit(Integer.parseInt(qr.getRows()))
-                .collect(Collectors.toList()));
 
-        qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
+        // Sort the entry publication list
+        List<EntryPublication> entryPublicationList = eps.stream()
+                .sorted()
+                .collect(Collectors.toList());
+        view.addEntryPublicationList(entryPublicationList);
+
+        Set<String> entryAccessions = entryPublicationList.stream()
+                .map(EntryPublication::getEntryAccession)
+                .collect(Collectors.toSet());
+
+        // Only queries SOLR with the selected, sorted list of entry accessions
+        qr.setEntryAccessionSet(entryAccessions);
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         try {
