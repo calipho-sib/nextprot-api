@@ -95,6 +95,13 @@ public class GeneDAOImpl implements GeneDAO {
 		}
 	}
 
+	private static class GeneRegionRowMapper extends SingleColumnRowMapper<GeneRegion> {
+		@Override
+		public GeneRegion mapRow(ResultSet resultSet, int row) throws SQLException {
+			return mapGeneRegion(resultSet);
+		}
+	}
+
 	@Override
 	public Map<String, List<TranscriptGeneMapping>> findTranscriptMappingsByIsoformName(Collection<String> isoformNames) {
 
@@ -142,14 +149,18 @@ public class GeneDAOImpl implements GeneDAO {
 
 	}
 	
-	private static void mapExon(ResultSet resultSet, SimpleExon exon) throws SQLException {
-		GeneRegion geneRegion = new GeneRegion(resultSet.getString("gene_name"),
+	private static GeneRegion mapGeneRegion(ResultSet resultSet) throws SQLException {
+		return new GeneRegion(
+				resultSet.getString("gene_name"),
 				resultSet.getInt("first_position"),
 				resultSet.getInt("last_position"));
+	}
+	
+	private static void mapExon(ResultSet resultSet, SimpleExon exon) throws SQLException {
 		exon.setTranscriptName(resultSet.getString("transcript_name"));
 		exon.setNameDeduceAccession(resultSet.getString("exon"));
 		exon.setRank(resultSet.getInt("rank")+1);
-		exon.setGeneRegion(geneRegion);
+		exon.setGeneRegion(mapGeneRegion(resultSet));
 	}
 	
 	private static class ExonMapper extends SingleColumnRowMapper<SimpleExon> {
@@ -208,5 +219,14 @@ public class GeneDAOImpl implements GeneDAO {
 		return new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 						sqlDictionary.getSQLQuery("exons-of-gene"), namedParameters, new ExonWithSequenceMapper());
+	}
+
+	@Override
+	public List<GeneRegion> findMasterGeneRegions(String entryName) {
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource("entryName", entryName);
+		return new NamedParameterJdbcTemplate(
+				dsLocator.getDataSource()).query(
+						sqlDictionary.getSQLQuery("entry-gene-master-mapping-for-alignment"), 
+						namedParameters, new GeneRegionRowMapper());
 	}
 }
