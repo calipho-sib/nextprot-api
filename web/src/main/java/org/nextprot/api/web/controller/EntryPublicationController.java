@@ -179,7 +179,9 @@ public class EntryPublicationController {
             numberOfRows = Integer.parseInt(rows);
         }
         eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
-
+        for(EntryPublication e: eps) {
+            System.out.println(e.getEntryAccession());
+        }
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
         qr.setRows(rows == null ? "100" : rows);
@@ -188,10 +190,11 @@ public class EntryPublicationController {
         view.setPublication(publicationService.findPublicationById(publicationId));
         view.addEntryPublicationList(eps);
 
-        // Only queries SOLR with the selected, sorted list of entry accessions
         Set<String> entryAccessions = eps.stream()
                 .map(EntryPublication::getEntryAccession)
                 .collect(Collectors.toSet());
+
+        // Only queries SOLR with the selected, sorted list of entry accessions
         qr.setEntryAccessionSet(entryAccessions);
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
