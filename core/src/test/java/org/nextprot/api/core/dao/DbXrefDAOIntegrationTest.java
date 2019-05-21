@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao;
 
 import com.google.common.base.Function;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.utils.CollectionTester;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,6 +74,32 @@ limit 100
         Assert.assertFalse(id.isPresent());
     }
 
+    @Ignore
+    @Test
+    public void shouldFindSomeGenerifBackLinks() {
+    	
+        Map<String,String> map;
+        
+        map = xrefdao.getGeneRifBackLinks(48948592);
+        Assert.assertTrue(map.size()>=1);
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/27665733#sib-d197745eed8bdca966e29f3f6f57f1a5", 
+        		map.get("NX_Q15116"));
+
+        map = xrefdao.getGeneRifBackLinks(6908510);
+        Assert.assertTrue(map.size()>1);
+        Assert.assertTrue(map.containsKey("NX_P62633"));
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/17672918#sib-262ccf729076a39de874ef544d6d4349", 
+        		map.get("NX_Q8NHM5"));
+        
+
+        
+        
+    }
+
+    
+    
     private static DbXref mockDbXref(long id, String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
 
 		DbXref dbxref = Mockito.mock(DbXref.class);

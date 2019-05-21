@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -330,4 +331,31 @@ public class DbXrefDaoImpl implements DbXrefDao {
         }
         return Optional.of(list.get(0));
     }
+    
+    
+	private static class EntryBkLinkRowMapper extends SingleColumnRowMapper<String> {
+		@Override
+		public String mapRow(ResultSet resultSet, int row) throws SQLException {
+			String entry=resultSet.getString("entry");
+			String bklink=resultSet.getString("bklink");
+			return entry + "|" + bklink;
+		}
+	}
+    
+
+	@Override
+	public Map<String, String> getGeneRifBackLinks(long pubId) {
+		final String sql = "select pubid,entry,bklink from nextprot.europepmc_backlinks where pubid = :pubid";
+		SqlParameterSource namedParams = new MapSqlParameterSource("pubid", pubId);
+		NamedParameterJdbcTemplate sqlTemplate = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
+		List<String> list = sqlTemplate.query(sql, namedParams, new EntryBkLinkRowMapper() );
+		Map<String,String> map = new HashMap<>();
+		for (String pair: list) {
+			String[] splitPair = pair.split("\\|");
+			String entry = splitPair[0];
+			String bklink= splitPair[1];
+			map.put(entry, bklink);
+		}
+		return map;
+	}
 }

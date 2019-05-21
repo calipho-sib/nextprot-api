@@ -7,6 +7,7 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DbXrefService {
 
@@ -39,4 +40,11 @@ public interface DbXrefService {
     long findXrefId(String database, String accession) throws DbXrefServiceImpl.MissingCvDatabaseException;
 
 	List<DbXref> findDbXrefsByMasterExcludingBed(String entryName);
+	
+	/**
+	 * To be used to override the default link for GeneRIF labels attached to publication-entry pairs
+	 * @param pubId a valid resource_id identifying a publication (internal publication id)
+	 * @return a Map with an entry accession as the key and an URL as a link to a EuropePMC web page
+	 */
+	Map<String,String> getGeneRifBackLinks(long pubId);
 }
