@@ -7,15 +7,8 @@ import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublicationView;
-import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.domain.publication.PublicationCategory;
-import org.nextprot.api.core.domain.publication.PublicationView;
-import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.EntryPublicationViewService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
@@ -52,6 +45,8 @@ public class EntryPublicationController {
     private QueryBuilderService queryBuilderService;
     @Autowired
     private EntryPublicationViewService entryPublicationViewService;
+    @Autowired
+    private DbXrefService dbXrefService;
 
 	@ApiMethod(path = "/entry-publications/entry/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -188,6 +183,8 @@ public class EntryPublicationController {
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
+        // Adds the generif backlinks
+        publicationService.addGenerXrefLinks(eps, publicationId);
         view.addEntryPublicationList(eps);
 
         Set<String> entryAccessions = eps.stream()
@@ -232,6 +229,17 @@ public class EntryPublicationController {
             @PathVariable("accession") String accession) {
 
         return publicationService.findPublicationByDatabaseAndAccession(database, accession);
+    }
+
+    @ApiMethod(path = "/publication/generif/pubid/{pubid}", verb = ApiVerb.GET, description = "Get generif references of a publication",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publication/generif/pubid/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Map<String, String> getPublicationReferences(
+            @ApiPathParam(name = "pubid", description = "A publication Id", allowedvalues = { "48948592" })
+            @PathVariable("pubid") long publicationId ) {
+
+        return dbXrefService.getGeneRifBackLinks(publicationId);
     }
 
     private enum StatisticsType {

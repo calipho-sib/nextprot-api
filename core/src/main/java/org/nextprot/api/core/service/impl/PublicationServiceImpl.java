@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.service.AuthorService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryPublicationService;
@@ -256,5 +257,27 @@ public class PublicationServiceImpl implements PublicationService {
 			}
 		}
 		return eps;
+	}
+
+	@Override
+	public void addGenerXrefLinks(List<EntryPublication> eps, long publicationId) {
+		// Adds the generif back links to the entries
+		Map<String, String> backLinkMap =  dbXrefService.getGeneRifBackLinks(publicationId);
+		eps.stream()
+				.map((entryPublication) -> {
+					String backLink = backLinkMap.get(entryPublication.getEntryAccession());
+					PublicationDirectLink generifDirectLink = entryPublication.getDirectLinks()
+							.stream()
+							.filter((directLink) -> {
+								return "GeneRif".equals(directLink.getDatabase()) ;
+							})
+							.findFirst()
+							.orElse(null);
+					if(generifDirectLink != null) {
+						generifDirectLink.setLink(backLink);
+					}
+					return entryPublication;
+				})
+				.collect(Collectors.toList());
 	}
 }

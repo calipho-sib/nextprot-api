@@ -53,7 +53,7 @@ public interface PublicationService {
 	 *
 	 * @param start start of the list
 	 * @param rows  Number of rows from the start of the list
-	 * @param eps EntryPublication list
+	 * @param entryPublications EntryPublication list
 	 * @return A sublist of the given EntryPublication list
 	 */
     List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> entryPublications, int start, int rows);
@@ -65,4 +65,11 @@ public interface PublicationService {
 	 * @param entry
 	 */
 	List<EntryPublication> prioritizeEntry(List<EntryPublication> entryPublications, String entry);
+
+	/**
+	 * Adds the generif back links to the publi
+	 * @param entryPublications
+	 * @param publicationId
+	 */
+	void addGenerXrefLinks(List<EntryPublication> entryPublications, long publicationId);
 }
