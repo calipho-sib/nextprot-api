@@ -1,27 +1,36 @@
 package org.nextprot.api.etl.statement.source;
 
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.reader.StreamingJsonStatementReader;
-import org.nextprot.commons.statements.specs.Specifications;
+import org.nextprot.commons.statements.reader.BufferableStatementReader;
+import org.nextprot.commons.statements.reader.BufferedJsonStatementReader;
+import org.nextprot.commons.statements.specs.StatementSpecifications;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.List;
 
-public class SimpleStatementSource implements StatementSource {
+public class SimpleStatementSource implements BufferableStatementReader {
 
-	private final Specifications specifications;
+	private final StatementSpecifications specifications;
 	private final URL url;
-	private StreamingJsonStatementReader reader;
+	private final int bufferSize;
+	private BufferableStatementReader reader;
 
-	public SimpleStatementSource(Specifications specifications, URL url) {
+	public SimpleStatementSource(StatementSpecifications specifications, URL url) {
+
+		this(specifications, url, 1);
+	}
+
+	public SimpleStatementSource(StatementSpecifications specifications, URL url, int bufferSize) {
 
 		this.specifications = specifications;
 		this.url = url;
+		this.bufferSize = bufferSize;
 	}
 
 	@Override
-	public Specifications specifications() {
+	public StatementSpecifications getSpecifications() {
 
 		return specifications;
 	}
@@ -29,8 +38,8 @@ public class SimpleStatementSource implements StatementSource {
 	private synchronized void lazyReaderCreation() throws IOException {
 
 		if (reader == null) {
-			reader = new StreamingJsonStatementReader(new InputStreamReader(url.openStream()),
-					specifications, 1);
+			reader = new BufferedJsonStatementReader(new InputStreamReader(url.openStream()),
+					specifications, bufferSize);
 		}
 	}
 
@@ -39,7 +48,7 @@ public class SimpleStatementSource implements StatementSource {
 
 		lazyReaderCreation();
 
-		return reader.readOneStatement().orElse(null);
+		return reader.nextStatement();
 	}
 
 	@Override
@@ -47,6 +56,18 @@ public class SimpleStatementSource implements StatementSource {
 
 		lazyReaderCreation();
 
-		return reader.hasNextStatement();
+		return reader.hasStatement();
+	}
+
+	@Override
+	public List<Statement> readStatements() throws IOException {
+
+		return reader.readStatements();
+	}
+
+	@Override
+	public int readStatements(List<Statement> buffer) throws IOException {
+
+		return reader.readStatements(buffer);
 	}
 }
