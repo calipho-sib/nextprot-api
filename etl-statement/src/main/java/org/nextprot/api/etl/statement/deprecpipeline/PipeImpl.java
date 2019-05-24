@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.pipeline;
+package org.nextprot.api.etl.statement.deprecpipeline;
 
 import org.nextprot.commons.statements.Statement;
 

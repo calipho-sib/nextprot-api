@@ -1,8 +1,10 @@
-package org.nextprot.api.etl.statement.pipeline;
+package org.nextprot.api.etl.statement.deprecpipeline;
 
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.etl.statement.pipeline.MockStatementPump;
+import org.nextprot.api.etl.statement.pipeline.StatementPump;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.specs.CoreStatementField;

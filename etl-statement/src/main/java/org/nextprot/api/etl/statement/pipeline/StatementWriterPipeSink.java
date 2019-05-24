@@ -1,7 +1,6 @@
-package org.nextprot.api.etl.statement.charpipeline;
+package org.nextprot.api.etl.statement.pipeline;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * This class is a sink for data from a pipe of threads.  It can be connected
@@ -10,14 +9,13 @@ import java.io.Writer;
  * pipe.  It writes the characters into a specified Writer (such as a
  * FileWriter).
  **/
-public class WriterPipeSink extends Pipe {
-	protected Writer out;  // The stream to write data to
+public class StatementWriterPipeSink extends Pipe {
 
 	/**
 	 * To create a WriterPipeSink, just specify what Writer characters
 	 * from the pipe should be written to
 	 **/
-	public WriterPipeSink(Writer out) throws IOException {
+	public StatementWriterPipeSink() throws IOException {
 		super();  // Create a terminal Pipe with no sink attached.
 		this.out = out;
 	}

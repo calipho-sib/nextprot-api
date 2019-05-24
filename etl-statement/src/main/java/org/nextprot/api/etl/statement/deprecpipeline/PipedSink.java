@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.pipeline;
+package org.nextprot.api.etl.statement.deprecpipeline;
 
 public abstract class PipedSink extends ConcurrentPipe {
 

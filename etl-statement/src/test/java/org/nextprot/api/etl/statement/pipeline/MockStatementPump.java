@@ -22,8 +22,24 @@ public class MockStatementPump implements Pump<Statement> {
 	}
 
 	@Override
+	public int capacity() {
+
+		return 10;
+	}
+
+	@Override
+	public int pump(List<Statement> collector) throws IOException {
+
+		return 0;
+	}
+
+	@Override
 	public boolean isEmpty() throws IOException {
 
-		return false;
+		return iterator.hasNext();
+	}
+
+	@Override
+	public void close() throws IOException {
 	}
 }

@@ -5,18 +5,31 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 
-public class ExampleFilter extends SimpleFilter {
+import java.io.IOException;
 
-	public ExampleFilter(Pipe input, Pipe output) {
+public class ExampleFilter extends PipeFilter {
 
-		super(input, output);
+	public ExampleFilter(Pipe pipe) throws IOException {
+
+		super(pipe);
 	}
 
-	protected Statement transformStatement(Statement in) {
-		delayForDebug(100);
+	@Override
+	public String getName() {
+		return "ExampleFilter";
+	}
 
-		return new StatementBuilder(in)
-				.addField(new CustomStatementField("sponge"), "bob")
-				.build();
+	@Override
+	public void filter(PipedStatementReader in, PipedStatementWriter out) throws IOException {
+
+		Statement statement;
+		while((statement = in.read()) != null) {
+			System.out.println(Thread.currentThread().getName()
+					+ ": filter statement "+ statement.getStatementId());
+
+			out.write(new StatementBuilder(statement)
+					.addField(new CustomStatementField("FILTER"), "ExampleFilter")
+					.build());
+		}
 	}
 }

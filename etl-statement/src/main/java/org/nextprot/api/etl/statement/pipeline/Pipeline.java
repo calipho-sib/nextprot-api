@@ -1,5 +1,7 @@
 package org.nextprot.api.etl.statement.pipeline;
 
+import org.nextprot.api.etl.statement.deprecpipeline.PipedFilter;
+import org.nextprot.api.etl.statement.deprecpipeline.PipedSink;
 import org.nextprot.commons.statements.Statement;
 
 import java.util.ArrayList;
@@ -9,9 +11,9 @@ import java.util.function.Function;
 
 public class Pipeline {
 
-	private PipedSource pipedSource;
-	private List<PipedFilter> filters;
-	private PipedSink sink;
+	private StatementReaderPipeSource pipedSource;
+	private List<PipeFilter> filters;
+	private Pipe sink;
 
 	public Pipeline(DataCollector dataCollector) {
 
@@ -54,31 +56,31 @@ public class Pipeline {
 
 	public static class DataCollector {
 
-		private PipedSource pipedSource;
-		private List<PipedFilter> filters = new ArrayList<>();
-		private PipedSink sink;
+		private StatementReaderPipeSource pipedSource;
+		private List<PipeFilter> filters = new ArrayList<>();
+		private Pipe sink;
 
-		public PipedSource getPipedSource() {
+		public StatementReaderPipeSource getPipedSource() {
 			return pipedSource;
 		}
 
-		public void setPipedSource(PipedSource pipedSource) {
+		public void setPipedSource(StatementReaderPipeSource pipedSource) {
 			this.pipedSource = pipedSource;
 		}
 
-		public List<PipedFilter> getFilters() {
+		public List<PipeFilter> getFilters() {
 			return filters;
 		}
 
-		public void addFilter(PipedFilter filter) {
+		public void addFilter(PipeFilter filter) {
 			this.filters.add(filter);
 		}
 
-		public PipedSink getSink() {
+		public Pipe getSink() {
 			return sink;
 		}
 
-		public void setSink(PipedSink sink) {
+		public void setSink(NxFlatTableSink sink) {
 			this.sink = sink;
 		}
 	}

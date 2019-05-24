@@ -1,6 +1,4 @@
-package org.nextprot.api.etl.statement.pipeline2;
-
-import org.nextprot.api.etl.statement.pipeline.StatementPump;
+package org.nextprot.api.etl.statement.pipeline;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

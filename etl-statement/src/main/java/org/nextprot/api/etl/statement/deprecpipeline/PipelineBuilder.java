@@ -1,5 +1,6 @@
-package org.nextprot.api.etl.statement.pipeline;
+package org.nextprot.api.etl.statement.deprecpipeline;
 
+import org.nextprot.api.etl.statement.pipeline.Pump;
 import org.nextprot.commons.statements.Statement;
 
 import java.util.function.BiFunction;
