@@ -4,6 +4,7 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.reader.BufferableStatementReader;
 
 import java.io.IOException;
+import java.util.List;
 
 public class StatementPump implements Pump<Statement> {
 
@@ -18,6 +19,12 @@ public class StatementPump implements Pump<Statement> {
 	public Statement pump() throws IOException {
 
 		return reader.nextStatement();
+	}
+
+	@Override
+	public int pump(List<Statement> collector) throws IOException {
+
+		return reader.readStatements(collector);
 	}
 
 	@Override
