@@ -70,4 +70,9 @@ public class SimpleStatementSource implements BufferableStatementReader {
 
 		return reader.readStatements(buffer);
 	}
+
+	@Override
+	public void close() throws IOException {
+		reader.close();
+	}
 }
