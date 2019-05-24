@@ -16,7 +16,7 @@ import java.io.IOException;
  **/
 public abstract class Pipe implements Runnable {
 
-	protected boolean hasStarted;
+	private boolean hasStarted;
 	protected Pipe sink = null;
 	protected PipedStatementWriter out = null;
 	protected PipedStatementReader in;
