@@ -14,34 +14,41 @@ import java.io.IOException;
  * class defines operations that operate on the whole chain of threads,
  * rather than a single thread.
  **/
-public abstract class Pipe extends Thread {
+public abstract class Pipe implements Runnable {
 
+	protected boolean hasStarted;
 	protected Pipe sink = null;
 	protected PipedStatementWriter out = null;
-	protected PipedStatementReader in = null;
+	protected PipedStatementReader in;
+	private Thread thread;
 
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
 	 **/
-	public Pipe(Pipe sink) throws IOException {
+	public Pipe(Pipe sink, PipedStatementReader pipedReader) throws IOException {
 		this.sink = sink;
+		this.in = pipedReader;
 		out = new PipedStatementWriter();
 		out.connect(sink.getReader());
 	}
+
+	public abstract String getName();
 
 	/**
 	 * This constructor is for creating terminal Pipe threads--i.e. those
 	 * sinks that are at the end of the pipe, and are not connected to any
 	 * other threads.
 	 **/
-	public Pipe() { super(); }
+	public Pipe(PipedStatementReader pipedReader) {
+		super();
+		this.in = pipedReader;
+	}
 
 	/**
 	 * This protected method requests a Pipe threads to create and return
 	 * a PipedReader thread so that another Pipe thread can connect to it.
 	 **/
 	protected PipedStatementReader getReader() {
-		if (in == null) in = new PipedStatementReader();
 		return in;
 	}
 
@@ -51,31 +58,21 @@ public abstract class Pipe extends Thread {
 	 * This one calls start() on all threads in sink-to-source order.
 	 **/
 	public void startPipe() {
-		if (sink != null) sink.startPipe();
-		this.start();
-	}
-
-	/** Call resume() on all threads in the pipe, in sink-to-source order */
-	public void resumePipe() {
-		if (sink != null)  sink.resumePipe();
-		this.resume();
-	}
-
-	/** Call stop() on all threads in the pipe, in source-to-sink order */
-	public void stopPipe() {
-		this.stop();
-		if (sink != null) sink.stopPipe();
-	}
-
-	/** Call suspend() on all threads in the pipe, in source-to-sink order */
-	public void suspendPipe() {
-		this.suspend();
-		if (sink != null) sink.suspendPipe();
+		if (sink != null) {
+			sink.startPipe();
+		}
+		if (!hasStarted) {
+			hasStarted = true;
+			thread = new Thread(this, getName());
+			thread.start();
+			System.out.println("Open pipe "+getName());
+		}
 	}
 
 	/** Wait for all threads in the pipe to terminate */
 	public void joinPipe() throws InterruptedException {
 		if (sink != null) sink.joinPipe();
-		this.join();
+		thread.join();
+		System.out.println("Join pipe "+getName());
 	}
 }

@@ -1,14 +1,13 @@
 package org.nextprot.api.etl.statement.pipeline2;
 
 import org.nextprot.api.etl.statement.pipeline.StatementPump;
-import org.nextprot.commons.statements.reader.BufferableStatementReader;
-import org.nextprot.commons.statements.reader.BufferedJsonStatementReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 
-public class Pipes {
+public class PipeTest {
 	/**
 	 * This class contains a test program for the pipe classes below.
 	 * It also demonstrates how you typically use these pipes classes.
@@ -29,14 +28,13 @@ public class Pipes {
 
 			URL url = new URL("http://kant.sib.swiss:9001/glyconnect/2019-01-22/all-entries.json");
 
-			// Create a Reader to read data from, and a Writer to send data to.
-			BufferableStatementReader in = new BufferedJsonStatementReader(
-					new InputStreamReader(url.openStream()));
+			Reader reader = new InputStreamReader(url.openStream());
 
 			// Now build up the pipe, starting with the sink, and working
 			// backwards, through various filters, until we reach the source
 			NxFlatTableSink sink = new NxFlatTableSink(NxFlatTableSink.Table.entry_mapped_statements);
-			StatementReaderPipeSource source = new StatementReaderPipeSource(new StatementPump(in), sink);
+			ExampleFilter filter = new ExampleFilter(sink);
+			StatementReaderPipeSource source = new StatementReaderPipeSource(new StatementPump(reader, 10), filter);
 
 			// Start the pipe -- start each of the threads in the pipe running.
 			// This call returns quickly, since the each component of the pipe

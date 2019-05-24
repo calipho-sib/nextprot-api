@@ -14,7 +14,8 @@ import java.util.List;
  * the source of data is the specified Reader object (such as a FileReader).
  **/
 public class StatementReaderPipeSource extends Pipe {
-	protected Pump<Statement> pump;  // The Reader we take data from
+
+	protected Pump<Statement> pump;
 
 	/**
 	 * To create a ReaderPipeSource, specify the Reader that data comes from
@@ -22,7 +23,7 @@ public class StatementReaderPipeSource extends Pipe {
 	 **/
 	public StatementReaderPipeSource(Pump<Statement> pump, Pipe sink)
 			throws IOException {
-		super(sink);
+		super(sink, null);
 		this.pump = pump;
 	}
 
@@ -30,16 +31,33 @@ public class StatementReaderPipeSource extends Pipe {
 	 * This is the thread body.  When the pipe is started, this method copies
 	 * statements from the Reader into the pipe
 	 **/
+	@Override
 	public void run() {
 		try {
-			List<Statement> collector = new ArrayList<>(50);
+			List<Statement> collector = new ArrayList<>();
 			int stmtsRead;
-			while((stmtsRead = pump.pump(collector)) != -1)
+			while((stmtsRead = pump.pump(collector)) != -1) {
+				System.out.println(Thread.currentThread().getName()
+						+ ": about to spill "+ stmtsRead + " statements...");
+
 				out.write(collector, 0, stmtsRead);
+
+				collector.clear();
+			}
 		}
-		catch (IOException e) {}
+		catch (IOException e) {
+			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
+		}
 		// When done with the data, close the Reader and the pipe
-		finally { try { in.close(); out.close(); } catch (IOException e) {} }
+		finally {
+			try {
+				pump.close();
+				out.close();
+			}
+			catch (IOException e) {
+				System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
+			}
+		}
 	}
 
 	/**
@@ -48,6 +66,11 @@ public class StatementReaderPipeSource extends Pipe {
 	 * that it is never called, we throw an Error if it is.
 	 **/
 	protected PipedStatementReader getReader() {
-		throw new Error("Can't connect to a ReaderPipeSource!");
+		throw new Error("Can't connect to a PipedStatementReader!");
+	}
+
+	@Override
+	public String getName() {
+		return "Source";
 	}
 }

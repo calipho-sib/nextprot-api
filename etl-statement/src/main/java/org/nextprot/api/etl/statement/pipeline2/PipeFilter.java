@@ -10,13 +10,12 @@ import java.io.IOException;
  **/
 public abstract class PipeFilter extends Pipe {
 
-	public PipeFilter(Pipe sink) throws IOException { super(sink); }
+	public PipeFilter(Pipe sink) throws IOException {
+		super(sink, new PipedStatementReader(1));
+	}
 
 	@Override
 	public void run() {
-
-		System.out.println(Thread.currentThread().getName()
-				+ " filter a statement");
 
 		try {
 			filter(in, out);

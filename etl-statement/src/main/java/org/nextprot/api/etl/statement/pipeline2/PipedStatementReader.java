@@ -10,8 +10,6 @@ import java.util.List;
  */
 public class PipedStatementReader {
 
-	private static final int DEFAULT_PIPE_SIZE = 1024;
-
 	private boolean closedByWriter = false;
 	private boolean closedByReader = false;
 	private boolean connected = false;
@@ -42,30 +40,21 @@ public class PipedStatementReader {
 	 */
 	private int out = 0;
 
-	public PipedStatementReader(PipedStatementWriter src) throws IOException {
-
-		this(src, DEFAULT_PIPE_SIZE);
-	}
-
 	public PipedStatementReader(PipedStatementWriter src, int pipeSize) throws IOException {
 
 		initPipe(pipeSize);
 		connect(src);
 	}
 
-	public PipedStatementReader() {
-		initPipe(DEFAULT_PIPE_SIZE);
+	public PipedStatementReader(int capacity) {
+		initPipe(capacity);
 	}
 
-	public PipedStatementReader(int pipeSize) {
-		initPipe(pipeSize);
-	}
-
-	private void initPipe(int pipeSize) {
-		if (pipeSize <= 0) {
+	private void initPipe(int capacity) {
+		if (capacity <= 0) {
 			throw new IllegalArgumentException("Pipe size <= 0");
 		}
-		buffer = new Statement[pipeSize];
+		buffer = new Statement[capacity];
 	}
 
 	/**

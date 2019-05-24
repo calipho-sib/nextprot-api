@@ -24,6 +24,8 @@ public class ExampleFilter extends PipeFilter {
 
 		Statement statement;
 		while((statement = in.read()) != null) {
+			System.out.println(Thread.currentThread().getName()
+					+ ": filter statement "+ statement.getStatementId());
 
 			out.write(new StatementBuilder(statement)
 					.addField(new CustomStatementField("FILTER"), "ExampleFilter")
