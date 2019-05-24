@@ -4,7 +4,7 @@ import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
 
-public class NxFlatTableSink extends Pipe {
+public class NxFlatTableSink extends Sink {
 
 	enum Table {
 
@@ -15,7 +15,7 @@ public class NxFlatTableSink extends Pipe {
 	private final Table table;
 
 	public NxFlatTableSink(Table table) {
-		super(new PipedStatementReader(1));
+		super(1);
 
 		this.table = table;
 	}
@@ -48,10 +48,5 @@ public class NxFlatTableSink extends Pipe {
 				System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
 			}
 		}
-	}
-
-	@Override
-	public String getName() {
-		return "Sink";
 	}
 }
