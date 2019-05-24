@@ -11,7 +11,11 @@ import java.io.IOException;
 public abstract class PipeFilter extends Pipe {
 
 	public PipeFilter(Pipe sink) throws IOException {
-		super(sink, new PipedStatementReader(1));
+		this(sink, 1);
+	}
+
+	public PipeFilter(Pipe sink, int capacity) throws IOException {
+		super(sink, new PipedStatementReader(capacity));
 	}
 
 	@Override
