@@ -344,8 +344,22 @@ public class DbXrefDaoImpl implements DbXrefDao {
     
 
 	@Override
+	/**
+	 * Returns a map with an entry accession as the key and a backlink URL as the value
+	 * Only the first backlink URL for each entry is kept
+	 * The incoming result set is sorted so that for each entry we get first MEDline abstract, 
+	 * then PMC abstract and finally articles in full text.
+	 * This order is chosen cos the the sentence related to the GeneRif is always highlighted
+	 * in the abstracts (MEDline and PMC), always in the PMC full text articles and only sometimes 
+	 * in the MEDline articles for copyright reasons 
+	 */
 	public Map<String, String> getGeneRifBackLinks(long pubId) {
-		final String sql = "select pubid,entry,bklink from nextprot.europepmc_backlinks where pubid = :pubid";
+		final String sql = 
+				"select pubid,entry,bklink,annotsection " + 
+				"from nextprot.europepmc_backlinks " + 
+				"where pubid = :pubid " + 
+				"order by entry, annotsection, substring(bklink,0,34) desc";
+		
 		SqlParameterSource namedParams = new MapSqlParameterSource("pubid", pubId);
 		NamedParameterJdbcTemplate sqlTemplate = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
 		List<String> list = sqlTemplate.query(sql, namedParams, new EntryBkLinkRowMapper() );
@@ -354,7 +368,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			String[] splitPair = pair.split("\\|");
 			String entry = splitPair[0];
 			String bklink= splitPair[1];
-			map.put(entry, bklink);
+			if (!map.containsKey(entry)) map.put(entry, bklink); // store only first entry-backlink key-value
 		}
 		return map;
 	}
