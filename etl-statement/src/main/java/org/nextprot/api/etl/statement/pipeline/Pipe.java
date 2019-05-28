@@ -68,14 +68,17 @@ public abstract class Pipe implements Runnable {
 			hasStarted = true;
 			thread = new Thread(this, getName());
 			thread.start();
-			System.out.println("Open pipe "+getName());
+			System.out.println("Pipe "+getName()+": opened");
 		}
 	}
 
 	/** Wait for all threads in the pipe to terminate */
-	public void joinPipe() throws InterruptedException {
-		if (receiver != null) receiver.joinPipe();
+	public void waitUntilAllPipesComplete() throws InterruptedException {
+
+		if (receiver != null) {
+			receiver.waitUntilAllPipesComplete();
+		}
 		thread.join();
-		System.out.println("Join pipe "+getName());
+		System.out.println("Pipe "+getName()+": closed");
 	}
 }

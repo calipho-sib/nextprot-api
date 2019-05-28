@@ -46,7 +46,11 @@ public class PipeTest {
 			source.openPipe();
 
 			// Wait for the pipe to complete
-			try { source.joinPipe(); } catch (InterruptedException e) {}
+			try {
+				source.waitUntilAllPipesComplete();
+			}
+			catch (InterruptedException e) {}
+
 			System.out.println("Done.");
 		}
 	}
