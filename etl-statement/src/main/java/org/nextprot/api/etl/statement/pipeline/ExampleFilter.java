@@ -7,11 +7,11 @@ import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.io.IOException;
 
-public class ExampleFilter extends PipeFilter {
+public class ExampleFilter extends Filter {
 
-	public ExampleFilter(Pipe pipe) throws IOException {
+	public ExampleFilter(int capacity) {
 
-		super(pipe);
+		super(capacity);
 	}
 
 	@Override
