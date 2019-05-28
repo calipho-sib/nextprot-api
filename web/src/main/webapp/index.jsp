@@ -53,7 +53,7 @@
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="https://www.nextprot.org">Search</a></li>
-							<li><a href="http://snorql.nextprot.org">Snorql</a></li>
+							<li><a href="http://snorql.nextprot.org">SNORQL</a></li>
 							<li><a href="https://api.nextprot.org">API</a></li>
 						</ul></li>
 
