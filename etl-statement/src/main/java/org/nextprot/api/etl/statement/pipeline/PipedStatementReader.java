@@ -117,16 +117,6 @@ public class PipedStatementReader {
 		}
 	}
 
-	/**
-	 * Receives data into an array of statements.  This method will
-	 * block until some input is available.
-	 */
-	synchronized void receive(Statement[] statements, int off, int len)  throws IOException {
-		while (--len >= 0) {
-			receive(statements[off++]);
-		}
-	}
-
 	synchronized void receive(List<Statement> statements, int off, int len)  throws IOException {
 		while (--len >= 0) {
 			receive(statements.get(off++));

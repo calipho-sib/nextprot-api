@@ -64,7 +64,7 @@ public class PipedStatementWriter {
 	 * stream, but the thread is no longer alive, then an
 	 * <code>IOException</code> is thrown.
 	 *
-	 * @param      sbuf  the data.
+	 * @param      buffer  the data.
 	 * @param      off   the start offset in the data.
 	 * @param      len   the number of statements to write.
 	 * @exception  IOException  if the pipe is
@@ -72,22 +72,13 @@ public class PipedStatementWriter {
 	 *          {@link #connect(PipedStatementReader) unconnected}, closed
 	 *          or an I/O error occurs.
 	 */
-	public void write(Statement[] sbuf, int off, int len) throws IOException {
+	public void write(List<Statement> buffer, int off, int len) throws IOException {
 		if (sink == null) {
 			throw new IOException("Pipe not connected");
-		} else if ((off | len | (off + len) | (sbuf.length - (off + len))) < 0) {
+		} else if ((off | len | (off + len) | (buffer.size() - (off + len))) < 0) {
 			throw new IndexOutOfBoundsException();
 		}
-		sink.receive(sbuf, off, len);
-	}
-
-	public void write(List<Statement> sbuf, int off, int len) throws IOException {
-		if (sink == null) {
-			throw new IOException("Pipe not connected");
-		} else if ((off | len | (off + len) | (sbuf.size() - (off + len))) < 0) {
-			throw new IndexOutOfBoundsException();
-		}
-		sink.receive(sbuf, off, len);
+		sink.receive(buffer, off, len);
 	}
 
 	/**
