@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.statement.pipeline;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * A Pipe is a kind of thread that is connected to another (possibly null)
@@ -73,12 +74,26 @@ public abstract class Pipe implements Runnable {
 	}
 
 	/** Wait for all threads in the pipe to terminate */
-	public void waitUntilAllPipesComplete() throws InterruptedException {
+	public void waitForThePipesToComplete() throws InterruptedException {
 
 		if (receiver != null) {
-			receiver.waitUntilAllPipesComplete();
+			receiver.waitForThePipesToComplete();
 		}
 		thread.join();
 		System.out.println("Pipe "+getName()+": closed");
+	}
+
+	public void openPipe(List<Thread> threads) {
+
+		if (receiver != null) {
+			receiver.openPipe(threads);
+		}
+		if (!hasStarted) {
+			hasStarted = true;
+			Thread thread = new Thread(this, getName());
+			thread.start();
+			threads.add(thread);
+			System.out.println("Pipe "+getName()+": opened");
+		}
 	}
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * always be at the beginning, or "source" of the pipe.  For this class,
  * the source of data is the specified Reader object (such as a FileReader).
  **/
-public class Source extends Pipe {
+public class PipedSource extends Pipe {
 
 	protected Pump<Statement> pump;
 
@@ -20,7 +20,7 @@ public class Source extends Pipe {
 	 * To create a ReaderPipeSource, specify the Reader that data comes from
 	 * and the Pipe sink that it should be sent to.
 	 **/
-	public Source(Pump<Statement> pump) {
+	public PipedSource(Pump<Statement> pump) {
 		super(null);
 		this.pump = pump;
 	}

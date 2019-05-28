@@ -5,35 +5,32 @@ import org.nextprot.commons.statements.Statement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Pipeline {
 
-	private Source source;
-	private List<Filter> filters;
-	private Sink sink;
+	private PipedSource source;
+	private List<Thread> threads;
 
 	public Pipeline(DataCollector dataCollector) throws IOException {
 
 		source = dataCollector.getSource();
-
-		Pipe src = source;
-		filters = dataCollector.getFilters();
-
-		for (Filter filter : filters) {
-
-			src.connect(filter);
-			src = filter;
-		}
-
-		sink = dataCollector.getSink();
-		src.connect(sink);
 	}
 
-	public void start() {
+	public void open() {
 
-		source.openPipe();
+		threads = new ArrayList<>();
+
+		source.openPipe(threads);
+	}
+
+	/** Wait for all threads in the pipe to terminate */
+	public void waitForThePipesToComplete() throws InterruptedException {
+
+		for (Thread thread : threads) {
+			thread.join();
+			System.out.println("Pipe "+thread.getName()+": completed");
+		}
 	}
 
 	public interface Builder {
@@ -50,45 +47,27 @@ public class Pipeline {
 
 		interface Filter {
 
-			Filter filter(BiFunction<Pipe, Pipe, org.nextprot.api.etl.statement.pipeline.Filter> filterProvider);
+			Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException;
 
-			Builder.Terminate sink(Function<Pipe, Sink> sinkProvider);
+			Builder.Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException;
 		}
 
 		interface Terminate {
 
-			Pipeline build();
+			Pipeline build() throws IOException;
 		}
 	}
 
 	public static class DataCollector {
 
-		private Source source;
-		private List<Filter> filters = new ArrayList<>();
-		private Sink sink;
+		private PipedSource source;
 
-		public Source getSource() {
+		public PipedSource getSource() {
 			return source;
 		}
 
-		public void setSource(Source source) {
+		public void setSource(PipedSource source) {
 			this.source = source;
-		}
-
-		public List<Filter> getFilters() {
-			return filters;
-		}
-
-		public void addFilter(Filter filter) {
-			this.filters.add(filter);
-		}
-
-		public Sink getSink() {
-			return sink;
-		}
-
-		public void setSink(Sink sink) {
-			this.sink = sink;
 		}
 	}
 }

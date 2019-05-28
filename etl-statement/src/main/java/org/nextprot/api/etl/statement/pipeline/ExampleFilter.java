@@ -7,7 +7,7 @@ import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.io.IOException;
 
-public class ExampleFilter extends Filter {
+public class ExampleFilter extends PipedFilter {
 
 	public ExampleFilter(int capacity) {
 

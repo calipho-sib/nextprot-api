@@ -4,9 +4,9 @@ package org.nextprot.api.etl.statement.pipeline;
 import java.io.IOException;
 
 
-public abstract class Filter extends Pipe {
+public abstract class PipedFilter extends Pipe {
 
-	Filter(int capacity) {
+	PipedFilter(int capacity) {
 		super(new PipedInputPort(capacity));
 	}
 

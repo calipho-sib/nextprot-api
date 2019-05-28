@@ -2,6 +2,9 @@ package org.nextprot.api.etl.statement.pipeline;
 
 import org.nextprot.commons.statements.Statement;
 
+import java.io.IOException;
+import java.util.function.Function;
+
 public class PipelineBuilder implements Pipeline.Builder.Source {
 
 	private final Pipeline.DataCollector dataCollector = new Pipeline.DataCollector();
@@ -9,14 +12,13 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 	@Override
 	public Pipeline.Builder.Filter source(Pump<Statement> pump) {
 
-		final Source source = new Source(pump);
-
+		final PipedSource source = new PipedSource(pump);
 		dataCollector.setSource(source);
 
-		return null; //new Filter(dataCollector.getPipedSource());
+		return new Filter(source);
 	}
 
-	/*public class Filter implements Pipeline.Builder.Filter {
+	public class Filter implements Pipeline.Builder.Filter {
 
 		private final Pipe source;
 
@@ -26,19 +28,19 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 		}
 
 		@Override
-		public Pipeline.Builder.Filter filter(BiFunction<Pipe, Pipe, PipeFilter> filterProvider) {
+		public Pipeline.Builder.Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException {
 
-			PipedFilter pipedFilter = filterProvider.apply(source, pipeTo);
-
-			dataCollector.addFilter(pipedFilter);
+			PipedFilter pipedFilter = filterProvider.apply(dataCollector.getSource().pump.capacity());
+			source.connect(pipedFilter);
 
 			return new Filter(pipedFilter);
 		}
 
 		@Override
-		public Pipeline.Builder.Terminate sink(Function<Pipe, Sink> sinkProvider) {
+		public Pipeline.Builder.Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException {
 
-			dataCollector.setSink(sinkProvider.apply(pipeFrom));
+			PipedSink sink = sinkProvider.apply(1);
+			source.connect(sink);
 
 			return new Filter.Terminate();
 		}
@@ -46,11 +48,11 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 		public class Terminate implements Pipeline.Builder.Terminate {
 
 			@Override
-			public Pipeline build() {
+			public Pipeline build() throws IOException {
 
 				return new Pipeline(dataCollector);
 			}
 		}
-	}*/
+	}
 
 }

@@ -4,7 +4,7 @@ import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
 
-public class NxFlatTableSink extends Sink {
+public class NxFlatTableSink extends PipedSink {
 
 	enum Table {
 

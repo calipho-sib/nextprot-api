@@ -1,8 +1,8 @@
 package org.nextprot.api.etl.statement.pipeline;
 
-public abstract class Sink extends Pipe {
+public abstract class PipedSink extends Pipe {
 
-	public Sink(int readerCapacity) {
+	public PipedSink(int readerCapacity) {
 
 		super(new PipedInputPort(readerCapacity));
 	}
