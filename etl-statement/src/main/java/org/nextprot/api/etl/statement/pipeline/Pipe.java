@@ -17,32 +17,34 @@ import java.io.IOException;
 public abstract class Pipe implements Runnable {
 
 	private boolean hasStarted;
-	protected Pipe sink = null;
+
 	protected PipedStatementWriter out = null;
 	protected PipedStatementReader in;
+
+	// the 2 followings should go to pipeline, the creation of thread also
+	private Pipe receiver = null;
 	private Thread thread;
 
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
 	 **/
-	public Pipe(Pipe sink, PipedStatementReader pipedReader) throws IOException {
-		this.sink = sink;
+	public Pipe(PipedStatementReader pipedReader) {
 		this.in = pipedReader;
+	}
+
+	/**
+	 * Connect this pipe with the receiver pipe
+	 * @param receiver
+	 * @throws IOException
+	 */
+	public void connect(Pipe receiver) throws IOException {
+
+		this.receiver = receiver;
 		out = new PipedStatementWriter();
-		out.connect(sink.getReader());
+		out.connect(receiver.getReader());
 	}
 
 	public abstract String getName();
-
-	/**
-	 * This constructor is for creating terminal Pipe threads--i.e. those
-	 * sinks that are at the end of the pipe, and are not connected to any
-	 * other threads.
-	 **/
-	public Pipe(PipedStatementReader pipedReader) {
-		super();
-		this.in = pipedReader;
-	}
 
 	/**
 	 * This protected method requests a Pipe threads to create and return
@@ -58,8 +60,9 @@ public abstract class Pipe implements Runnable {
 	 * This one calls start() on all threads in sink-to-source order.
 	 **/
 	public void startPipe() {
-		if (sink != null) {
-			sink.startPipe();
+
+		if (receiver != null) {
+			receiver.startPipe();
 		}
 		if (!hasStarted) {
 			hasStarted = true;
@@ -71,7 +74,7 @@ public abstract class Pipe implements Runnable {
 
 	/** Wait for all threads in the pipe to terminate */
 	public void joinPipe() throws InterruptedException {
-		if (sink != null) sink.joinPipe();
+		if (receiver != null) receiver.joinPipe();
 		thread.join();
 		System.out.println("Join pipe "+getName());
 	}
