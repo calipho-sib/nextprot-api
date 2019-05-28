@@ -3,19 +3,11 @@ package org.nextprot.api.etl.statement.pipeline;
 
 import java.io.IOException;
 
-/**
- * This abstract class simplifies (somewhat) the task of writing a
- * filter pipe--i.e. one that reads data from one Pipe thread, filters
- * it somehow, and writes the results to some other Pipe.
- **/
-public abstract class PipeFilter extends Pipe {
 
-	public PipeFilter(Pipe sink) throws IOException {
-		this(sink, 1);
-	}
+public abstract class Filter extends Pipe {
 
-	public PipeFilter(Pipe sink, int capacity) throws IOException {
-		super(sink, new PipedStatementReader(capacity));
+	Filter(int capacity) {
+		super(new PipedStatementReader(capacity));
 	}
 
 	@Override
@@ -36,6 +28,5 @@ public abstract class PipeFilter extends Pipe {
 		}
 	}
 
-	/** The method that subclasses must implement to do the filtering */
 	abstract public void filter(PipedStatementReader in, PipedStatementWriter out) throws IOException;
 }
