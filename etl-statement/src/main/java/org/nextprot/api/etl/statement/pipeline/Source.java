@@ -63,8 +63,8 @@ public class Source extends Pipe {
 	 * is a source thread, this method should never be called.  To make sure
 	 * that it is never called, we throw an Error if it is.
 	 **/
-	protected PipedStatementReader getReader() {
-		throw new Error("Can't connect to a PipedStatementReader!");
+	protected PipedInputPort getInputPort() {
+		throw new Error("Can't connect to a PipedInputPort!");
 	}
 
 	@Override

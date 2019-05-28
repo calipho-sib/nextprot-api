@@ -20,7 +20,7 @@ public class ExampleFilter extends Filter {
 	}
 
 	@Override
-	public void filter(PipedStatementReader in, PipedStatementWriter out) throws IOException {
+	public void filter(PipedInputPort in, PipedOutputPort out) throws IOException {
 
 		Statement statement;
 		while((statement = in.read()) != null) {

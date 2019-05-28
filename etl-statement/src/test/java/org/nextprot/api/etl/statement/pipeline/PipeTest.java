@@ -43,7 +43,7 @@ public class PipeTest {
 			// This call returns quickly, since the each component of the pipe
 			// is its own thread
 			System.out.println("Starting the source pipe...");
-			source.startPipe();
+			source.openPipe();
 
 			// Wait for the pipe to complete
 			try { source.joinPipe(); } catch (InterruptedException e) {}

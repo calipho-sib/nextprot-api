@@ -4,7 +4,7 @@ public abstract class Sink extends Pipe {
 
 	public Sink(int readerCapacity) {
 
-		super(new PipedStatementReader(readerCapacity));
+		super(new PipedInputPort(readerCapacity));
 	}
 
 	@Override

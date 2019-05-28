@@ -18,8 +18,8 @@ public abstract class Pipe implements Runnable {
 
 	private boolean hasStarted;
 
-	protected PipedStatementWriter out = null;
-	protected PipedStatementReader in;
+	protected PipedOutputPort out = null;
+	protected PipedInputPort in;
 
 	// the 2 followings should go to pipeline, the creation of thread also
 	private Pipe receiver = null;
@@ -28,8 +28,8 @@ public abstract class Pipe implements Runnable {
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
 	 **/
-	public Pipe(PipedStatementReader pipedReader) {
-		this.in = pipedReader;
+	public Pipe(PipedInputPort inputPort) {
+		this.in = inputPort;
 	}
 
 	/**
@@ -40,17 +40,17 @@ public abstract class Pipe implements Runnable {
 	public void connect(Pipe receiver) throws IOException {
 
 		this.receiver = receiver;
-		out = new PipedStatementWriter();
-		out.connect(receiver.getReader());
+		out = new PipedOutputPort();
+		out.connect(receiver.getInputPort());
 	}
 
 	public abstract String getName();
 
 	/**
 	 * This protected method requests a Pipe threads to create and return
-	 * a PipedReader thread so that another Pipe thread can connect to it.
+	 * a PipedInputPort thread so that another Pipe thread can connect to it.
 	 **/
-	protected PipedStatementReader getReader() {
+	protected PipedInputPort getInputPort() {
 		return in;
 	}
 
@@ -59,10 +59,10 @@ public abstract class Pipe implements Runnable {
 	 * that operate on the entire pipe of threads.
 	 * This one calls start() on all threads in sink-to-source order.
 	 **/
-	public void startPipe() {
+	public void openPipe() {
 
 		if (receiver != null) {
-			receiver.startPipe();
+			receiver.openPipe();
 		}
 		if (!hasStarted) {
 			hasStarted = true;

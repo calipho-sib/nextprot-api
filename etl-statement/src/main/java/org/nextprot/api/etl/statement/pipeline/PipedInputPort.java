@@ -10,7 +10,7 @@ import java.util.List;
  *
  * Note: this class is a variation of PipedReader, it reads Statements instead of char
  */
-public class PipedStatementReader {
+public class PipedInputPort {
 
 	private boolean closedByWriter = false;
 	private boolean closedByReader = false;
@@ -42,7 +42,7 @@ public class PipedStatementReader {
 	 */
 	private int out = 0;
 
-	public PipedStatementReader(int capacity) {
+	public PipedInputPort(int capacity) {
 		initPipe(capacity);
 	}
 
@@ -76,7 +76,7 @@ public class PipedStatementReader {
 	 * @param      src   The piped writer to connect to.
 	 * @exception  IOException  if an I/O error occurs.
 	 */
-	public void connect(PipedStatementWriter src) throws IOException {
+	public void connect(PipedOutputPort src) throws IOException {
 		src.connect(this);
 	}
 
@@ -143,7 +143,7 @@ public class PipedStatementReader {
 	 *             stream is reached.
 	 * @exception  IOException  if the pipe is
 	 *          <a href=PipedInputStream.html#BROKEN> <code>broken</code></a>,
-	 *          {@link #connect(PipedStatementWriter) unconnected}, closed,
+	 *          {@link #connect(PipedOutputPort) unconnected}, closed,
 	 *          or an I/O error occurs.
 	 */
 	public synchronized Statement read()  throws IOException {
@@ -194,7 +194,7 @@ public class PipedStatementReader {
 	 *             the stream has been reached.
 	 * @exception  IOException  if the pipe is
 	 *                  <a href=PipedInputStream.html#BROKEN> <code>broken</code></a>,
-	 *                  {@link #connect(PipedStatementWriter) unconnected}, closed,
+	 *                  {@link #connect(PipedOutputPort) unconnected}, closed,
 	 *                  or an I/O error occurs.
 	 */
 	public synchronized int read(Statement[] sbuf, int off, int len)  throws IOException {
@@ -235,7 +235,7 @@ public class PipedStatementReader {
 	 *
 	 * @exception  IOException  if the pipe is
 	 *                  <a href=PipedInputStream.html#BROKEN> <code>broken</code></a>,
-	 *                  {@link #connect(PipedStatementWriter) unconnected}, or closed.
+	 *                  {@link #connect(PipedOutputPort) unconnected}, or closed.
 	 */
 	public synchronized boolean ready() throws IOException {
 

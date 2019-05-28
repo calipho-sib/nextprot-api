@@ -7,7 +7,7 @@ import java.io.IOException;
 public abstract class Filter extends Pipe {
 
 	Filter(int capacity) {
-		super(new PipedStatementReader(capacity));
+		super(new PipedInputPort(capacity));
 	}
 
 	@Override
@@ -28,5 +28,5 @@ public abstract class Filter extends Pipe {
 		}
 	}
 
-	abstract public void filter(PipedStatementReader in, PipedStatementWriter out) throws IOException;
+	abstract public void filter(PipedInputPort in, PipedOutputPort out) throws IOException;
 }

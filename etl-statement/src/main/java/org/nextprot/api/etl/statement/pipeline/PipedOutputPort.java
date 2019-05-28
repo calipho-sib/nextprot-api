@@ -10,15 +10,15 @@ import java.util.List;
  *
  * Note: this class is a variation of PipedWriter, it writes Statements instead of char
  */
-public class PipedStatementWriter {
+public class PipedOutputPort {
 
-	private PipedStatementReader sink;
+	private PipedInputPort sink;
 
 	private boolean closed = false;
 
-	public PipedStatementWriter() { }
+	public PipedOutputPort() { }
 
-	public synchronized void connect(PipedStatementReader snk) throws IOException {
+	public synchronized void connect(PipedInputPort snk) throws IOException {
 
 		if (snk == null) {
 			throw new NullPointerException();
@@ -45,7 +45,7 @@ public class PipedStatementWriter {
 	 * @param      statement  the <code>statement</code> to be written.
 	 * @exception  IOException  if the pipe is
 	 *          <a href=PipedOutputStream.html#BROKEN> <code>broken</code></a>,
-	 *          {@link #connect(PipedStatementReader) unconnected}, closed
+	 *          {@link #connect(PipedInputPort) unconnected}, closed
 	 *          or an I/O error occurs.
 	 */
 	public void write(Statement statement)  throws IOException {
@@ -69,7 +69,7 @@ public class PipedStatementWriter {
 	 * @param      len   the number of statements to write.
 	 * @exception  IOException  if the pipe is
 	 *          <a href=PipedOutputStream.html#BROKEN> <code>broken</code></a>,
-	 *          {@link #connect(PipedStatementReader) unconnected}, closed
+	 *          {@link #connect(PipedInputPort) unconnected}, closed
 	 *          or an I/O error occurs.
 	 */
 	public void write(List<Statement> buffer, int off, int len) throws IOException {
