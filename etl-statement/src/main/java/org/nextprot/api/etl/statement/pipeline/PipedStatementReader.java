@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Piped statement-input streams.
+ *
+ * Note: this class is a variation of PipedReader, it reads Statements instead of char
  */
 public class PipedStatementReader {
 
@@ -39,12 +41,6 @@ public class PipedStatementReader {
 	 * character of data will be read by this piped reader.
 	 */
 	private int out = 0;
-
-	public PipedStatementReader(PipedStatementWriter src, int pipeSize) throws IOException {
-
-		initPipe(pipeSize);
-		connect(src);
-	}
 
 	public PipedStatementReader(int capacity) {
 		initPipe(capacity);

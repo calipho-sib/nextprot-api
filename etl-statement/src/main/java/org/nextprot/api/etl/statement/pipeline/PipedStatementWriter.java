@@ -5,16 +5,16 @@ import org.nextprot.commons.statements.Statement;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Piped statement-output streams.
+ *
+ * Note: this class is a variation of PipedWriter, it writes Statements instead of char
+ */
 public class PipedStatementWriter {
 
 	private PipedStatementReader sink;
 
 	private boolean closed = false;
-
-	public PipedStatementWriter(PipedStatementReader snk) throws IOException {
-
-		connect(snk);
-	}
 
 	public PipedStatementWriter() { }
 
