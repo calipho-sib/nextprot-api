@@ -174,9 +174,6 @@ public class EntryPublicationController {
             numberOfRows = Integer.parseInt(rows);
         }
         eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
-        for(EntryPublication e: eps) {
-            System.out.println(e.getEntryAccession());
-        }
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
         qr.setRows(rows == null ? "100" : rows);

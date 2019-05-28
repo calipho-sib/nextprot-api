@@ -266,6 +266,10 @@ public class PublicationServiceImpl implements PublicationService {
 		eps.stream()
 				.map((entryPublication) -> {
 					String backLink = backLinkMap.get(entryPublication.getEntryAccession());
+					if(backLink == null) {
+						return entryPublication;
+					}
+					// Extracts the Generif link to be replaced
 					PublicationDirectLink generifDirectLink = entryPublication.getDirectLinks()
 							.stream()
 							.filter((directLink) -> {
