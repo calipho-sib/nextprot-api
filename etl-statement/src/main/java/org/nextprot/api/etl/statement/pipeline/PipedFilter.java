@@ -31,5 +31,5 @@ public abstract class PipedFilter extends Pipe {
 	 * @return false if end of flow token has been received
 	 * @throws IOException
 	 */
-	abstract public boolean filter(PipedInputPort in, PipedOutputPort out) throws IOException;
+	protected abstract boolean filter(PipedInputPort in, PipedOutputPort out) throws IOException;
 }

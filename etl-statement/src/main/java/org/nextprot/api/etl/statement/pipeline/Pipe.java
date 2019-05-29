@@ -111,6 +111,6 @@ public abstract class Pipe implements Runnable {
 		}
 	}
 
-	public abstract void handleFlow() throws IOException;
-	public abstract String getName();
+	protected abstract void handleFlow() throws IOException;
+	protected abstract String getName();
 }

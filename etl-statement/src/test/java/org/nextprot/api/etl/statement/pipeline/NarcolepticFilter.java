@@ -9,7 +9,7 @@ import java.io.IOException;
  * This filter just transmit statements from PipedInputPort to PipedInputPort
  * and take a nap
  */
-public class NarcolepticFilter extends PipedFilter {
+class NarcolepticFilter extends PipedFilter {
 
 	private static int COUNT = 0;
 
