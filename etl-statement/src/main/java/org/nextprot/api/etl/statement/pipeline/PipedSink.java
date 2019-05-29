@@ -8,8 +8,8 @@ public abstract class PipedSink extends Pipe {
 	}
 
 	@Override
-	public String getName() {
+	public void connect(Pipe receiver) {
 
-		return "Sink";
+		throw new Error("It is a sink, can't connect to a PipedOutputPort!");
 	}
 }

@@ -27,6 +27,7 @@ public class PipedSource extends Pipe {
 
 		List<Statement> collector = new ArrayList<>();
 		int stmtsRead;
+
 		while((stmtsRead = pump.pump(collector)) != -1) {
 			System.out.println(Thread.currentThread().getName()
 					+ ": about to spill "+ stmtsRead + " statements...");
@@ -35,8 +36,8 @@ public class PipedSource extends Pipe {
 
 			collector.clear();
 		}
-		// sending end of flow token
-		out.write(null);
+
+		out.write(END_OF_FLOW_TOKEN);
 	}
 
 	@Override
@@ -56,6 +57,7 @@ public class PipedSource extends Pipe {
 	 * that it is never called, we throw an Error if it is.
 	 **/
 	protected PipedInputPort getInputPort() {
-		throw new Error("Can't connect to a PipedInputPort!");
+
+		throw new Error("It is a Source, can't connect to a PipedInputPort!");
 	}
 }

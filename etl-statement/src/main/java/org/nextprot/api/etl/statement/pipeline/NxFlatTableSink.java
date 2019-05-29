@@ -7,7 +7,6 @@ import java.io.IOException;
 public class NxFlatTableSink extends PipedSink {
 
 	enum Table {
-
 		raw_statements,
 		entry_mapped_statements
 	}
@@ -18,6 +17,12 @@ public class NxFlatTableSink extends PipedSink {
 		super(1);
 
 		this.table = table;
+	}
+
+	@Override
+	public String getName() {
+
+		return "NxFlatSink";
 	}
 
 	@Override

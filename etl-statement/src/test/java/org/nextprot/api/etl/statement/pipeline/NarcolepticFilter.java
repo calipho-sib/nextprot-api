@@ -46,7 +46,7 @@ class NarcolepticFilter extends PipedFilter {
 
 			out.write(buffer[i]);
 
-			if (buffer[i] == null) {
+			if (buffer[i] == END_OF_FLOW_TOKEN) {
 
 				return true;
 			} else {
