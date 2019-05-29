@@ -58,44 +58,16 @@ public abstract class Pipe implements Runnable {
 		return in;
 	}
 
-	/**
-	 * This and the following methods provide versions of basic Thread methods
-	 * that operate on the entire pipe of threads.
-	 * This one calls start() on all threads in sink-to-source order.
-	 **/
-	public void openPipe() {
+	public void openPipe(List<Thread> collector) {
 
 		if (receiver != null) {
-			receiver.openPipe();
-		}
-		if (!hasStarted) {
-			hasStarted = true;
-			thread = new Thread(this, getName());
-			thread.start();
-			System.out.println("Pipe "+getName()+": opened");
-		}
-	}
-
-	/** Wait for all threads in the pipe to terminate */
-	public void waitForThePipesToComplete() throws InterruptedException {
-
-		if (receiver != null) {
-			receiver.waitForThePipesToComplete();
-		}
-		thread.join();
-		System.out.println("Pipe "+getName()+": closed");
-	}
-
-	public void openPipe(List<Thread> threads) {
-
-		if (receiver != null) {
-			receiver.openPipe(threads);
+			receiver.openPipe(collector);
 		}
 		if (!hasStarted) {
 			hasStarted = true;
 			Thread thread = new Thread(this, getName());
 			thread.start();
-			threads.add(thread);
+			collector.add(thread);
 			System.out.println("Pipe "+getName()+": opened");
 		}
 	}

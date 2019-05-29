@@ -34,7 +34,7 @@ public class Pipeline {
 
 		for (Thread thread : threads) {
 			thread.join();
-			System.out.println("Pipe " + thread.getName() + ": completed");
+			System.out.println("Pipe " + thread.getName() + ": died");
 		}
 		monitorable.ended();
 	}

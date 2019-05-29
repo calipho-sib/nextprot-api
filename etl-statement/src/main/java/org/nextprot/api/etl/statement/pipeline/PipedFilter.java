@@ -22,6 +22,7 @@ public abstract class PipedFilter extends Pipe {
 
 				endOfFlow.set(filter(in, out));
 			}
+			System.out.println(Thread.currentThread().getName() + ": end of flow");
 		} catch (IOException e) {
 			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
 		}
@@ -29,6 +30,7 @@ public abstract class PipedFilter extends Pipe {
 			try {
 				in.close();
 				out.close();
+				System.out.println(Thread.currentThread().getName() + ": ports closed");
 			} catch (IOException e) {
 				System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
 			}

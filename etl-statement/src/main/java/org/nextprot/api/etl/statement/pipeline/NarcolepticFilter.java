@@ -44,15 +44,16 @@ public class NarcolepticFilter extends PipedFilter {
 
 		for (int i=0 ; i<numOfStatements ; i++) {
 
+			out.write(buffer[i]);
+
 			if (buffer[i] == null) {
 
 				return true;
+			} else {
+
+				System.out.println(Thread.currentThread().getName()
+						+ ": filter statement "+ buffer[i].getStatementId());
 			}
-
-			System.out.println(Thread.currentThread().getName()
-					+ ": filter statement "+ buffer[i].getStatementId());
-
-			out.write(buffer[i]);
 		}
 
 		if (takeANapInMillis > 0) {
