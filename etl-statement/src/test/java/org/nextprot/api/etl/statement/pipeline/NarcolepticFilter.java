@@ -1,6 +1,9 @@
 package org.nextprot.api.etl.statement.pipeline;
 
 
+import org.nextprot.api.etl.statement.pipeline.pipes.PipedFilter;
+import org.nextprot.api.etl.statement.pipeline.ports.PipedInputPort;
+import org.nextprot.api.etl.statement.pipeline.ports.PipedOutputPort;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;

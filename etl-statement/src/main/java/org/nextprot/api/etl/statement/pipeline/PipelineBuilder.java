@@ -1,61 +1,62 @@
 package org.nextprot.api.etl.statement.pipeline;
 
+import org.nextprot.api.etl.statement.pipeline.pipes.PipedSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
 import java.util.function.Function;
 
-public class PipelineBuilder implements Pipeline.Start {
+public class PipelineBuilder implements Pipeline.StartStep {
 
 	private final Pipeline.DataCollector dataCollector = new Pipeline.DataCollector();
 
 	@Override
-	public Pipeline.Source start(Pipeline.Monitorable monitorable) {
+	public Pipeline.SourceStep start(Pipeline.Monitorable monitorable) {
 
 		dataCollector.setMonitorable(monitorable);
 		return new Source();
 	}
 
-	public class Source implements Pipeline.Source {
+	public class Source implements Pipeline.SourceStep {
 
 		@Override
-		public Pipeline.Filter source(Pump<Statement> pump) {
+		public Pipeline.FilterStep source(Pump<Statement> pump) {
 
 			final PipedSource source = new PipedSource(pump);
 			dataCollector.setSource(source);
 
-			return new Filter(source);
+			return new FilterStep(source);
 		}
 	}
 
-	public class Filter implements Pipeline.Filter {
+	public class FilterStep implements Pipeline.FilterStep {
 
 		private final Pipe source;
 
-		Filter(Pipe source) {
+		FilterStep(Pipe source) {
 
 			this.source = source;
 		}
 
 		@Override
-		public Pipeline.Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException {
+		public Pipeline.FilterStep filter(Function<Integer, Filter> filterProvider) throws IOException {
 
-			PipedFilter pipedFilter = filterProvider.apply(dataCollector.getSource().pump.capacity());
+			Filter pipedFilter = filterProvider.apply(dataCollector.getSource().getPump().capacity());
 			source.connect(pipedFilter);
 
-			return new Filter(pipedFilter);
+			return new FilterStep(pipedFilter);
 		}
 
 		@Override
-		public Pipeline.Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException {
+		public Pipeline.TerminateStep sink(Function<Integer, Sink> sinkProvider) throws IOException {
 
-			PipedSink sink = sinkProvider.apply(1);
+			Sink sink = sinkProvider.apply(1);
 			source.connect(sink);
 
-			return new Filter.Terminate();
+			return new TerminateStep();
 		}
 
-		public class Terminate implements Pipeline.Terminate {
+		public class TerminateStep implements Pipeline.TerminateStep {
 
 			@Override
 			public Pipeline build() {

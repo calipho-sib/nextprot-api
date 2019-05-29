@@ -1,5 +1,6 @@
 package org.nextprot.api.etl.statement.pipeline;
 
+import org.nextprot.api.etl.statement.pipeline.pipes.PipedSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
@@ -39,28 +40,28 @@ public class Pipeline {
 		monitorable.ended();
 	}
 
-	interface Start {
+	interface StartStep {
 
-		default Source start() {
+		default SourceStep start() {
 			return start(new Deaf());
 		}
 
-		Source start(Monitorable monitorable);
+		SourceStep start(Monitorable monitorable);
 	}
 
-	interface Source {
+	interface SourceStep {
 
-		Filter source(Pump<Statement> pump);
+		FilterStep source(Pump<Statement> pump);
 	}
 
-	interface Filter {
+	interface FilterStep {
 
-		Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException;
+		FilterStep filter(Function<Integer, Filter> filterProvider) throws IOException;
 
-		Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException;
+		TerminateStep sink(Function<Integer, Sink> sinkProvider) throws IOException;
 	}
 
-	interface Terminate {
+	interface TerminateStep {
 
 		Pipeline build() throws IOException;
 	}

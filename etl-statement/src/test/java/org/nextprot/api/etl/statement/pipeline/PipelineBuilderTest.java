@@ -2,6 +2,8 @@ package org.nextprot.api.etl.statement.pipeline;
 
 
 import org.junit.Test;
+import org.nextprot.api.etl.statement.pipeline.pipes.NxFlatTableSink;
+import org.nextprot.api.etl.statement.pipeline.pipes.PipedSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
@@ -16,7 +18,7 @@ public class PipelineBuilderTest {
 
 		URL url = new URL("http://kant.sib.swiss:9001/glyconnect/2019-01-22/all-entries.json");
 		Reader reader = new InputStreamReader(url.openStream());
-		Pump<Statement> pump = new StatementPump(reader, 10);
+		Pump<Statement> pump = new PipedSource.StatementPump(reader, 10);
 
 		Pipeline pipeline = new PipelineBuilder()
 				.start()

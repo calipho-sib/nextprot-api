@@ -3,6 +3,7 @@ package org.nextprot.api.etl.statement.pipeline;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.etl.statement.pipeline.pipes.PipedSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ public class StatementPumpTest {
 	@Test
 	public void pump() throws IOException {
 
-		StatementPump pump = new StatementPump(mockReader());
+		PipedSource.StatementPump pump = new PipedSource.StatementPump(mockReader());
 
 		Assert.assertNotNull(pump.pump());
 		Assert.assertNull(pump.pump());
@@ -22,7 +23,7 @@ public class StatementPumpTest {
 	@Test
 	public void isNotEmpty() throws IOException {
 
-		StatementPump pump = new StatementPump(mockReader());
+		PipedSource.StatementPump pump = new PipedSource.StatementPump(mockReader());
 
 		Assert.assertFalse(pump.isEmpty());
 	}
@@ -30,7 +31,7 @@ public class StatementPumpTest {
 	@Test
 	public void isEmptyAfterOnePump() throws IOException {
 
-		StatementPump pump = new StatementPump(mockReader());
+		PipedSource.StatementPump pump = new PipedSource.StatementPump(mockReader());
 
 		Assert.assertFalse(pump.isEmpty());
 		Assert.assertTrue(pump.isEmpty());

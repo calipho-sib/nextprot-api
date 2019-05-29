@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.pipeline;
+package org.nextprot.api.etl.statement.pipeline.pipes;
 
 import org.nextprot.commons.statements.Statement;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class NxFlatTableSink extends PipedSink {
 
-	enum Table {
+	public enum Table {
 		raw_statements,
 		entry_mapped_statements
 	}
