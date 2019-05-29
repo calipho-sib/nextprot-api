@@ -21,8 +21,8 @@ public class PipelineBuilderTest {
 		Pipeline pipeline = new PipelineBuilder()
 				.start()
 				.source(pump)
-				.filter((c) -> new NarcolepticFilter(c))
-				.filter((c) -> new NarcolepticFilter(c))
+				.filter((sw) -> new NarcolepticFilter(sw))
+				.filter((sw) -> new NarcolepticFilter(sw))
 				.sink((c) -> new NxFlatTableSink(NxFlatTableSink.Table.entry_mapped_statements))
 				.build();
 

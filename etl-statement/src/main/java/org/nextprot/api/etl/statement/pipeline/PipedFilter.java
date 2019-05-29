@@ -8,9 +8,9 @@ public abstract class PipedFilter extends Pipe {
 
 	private final ThreadLocal<Boolean> endOfFlow;
 
-	PipedFilter(int crossSection) {
+	PipedFilter(int sectionWidth) {
 
-		super(crossSection);
+		super(sectionWidth);
 		endOfFlow = ThreadLocal.withInitial(() -> false);
 	}
 

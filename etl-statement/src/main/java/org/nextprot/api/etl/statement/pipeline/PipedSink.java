@@ -2,9 +2,9 @@ package org.nextprot.api.etl.statement.pipeline;
 
 public abstract class PipedSink extends Pipe {
 
-	protected PipedSink(int crossSection) {
+	protected PipedSink(int sectionWidth) {
 
-		super(crossSection);
+		super(sectionWidth);
 	}
 
 	@Override

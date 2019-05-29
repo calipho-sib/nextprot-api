@@ -19,7 +19,7 @@ public abstract class Pipe implements Runnable {
 
 	private boolean hasStarted;
 
-	private final int crossSection;
+	private final int sectionWidth;
 	protected PipedOutputPort out = null;
 	protected PipedInputPort in;
 
@@ -29,9 +29,9 @@ public abstract class Pipe implements Runnable {
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
 	 **/
-	public Pipe(int crossSection) {
-		this.crossSection = crossSection;
-		this.in = new PipedInputPort(crossSection);
+	public Pipe(int sectionWidth) {
+		this.sectionWidth = sectionWidth;
+		this.in = new PipedInputPort(sectionWidth);
 	}
 
 	/**
@@ -46,9 +46,9 @@ public abstract class Pipe implements Runnable {
 		out.connect(receiver.getInputPort());
 	}
 
-	public int getCrossSection() {
+	public int getSectionWidth() {
 
-		return crossSection;
+		return sectionWidth;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public abstract class Pipe implements Runnable {
 			Thread thread = new Thread(this, getName());
 			thread.start();
 			collector.add(thread);
-			System.out.println("Pipe "+getName()+": opened");
+			System.out.println("Pipe "+getName()+": opened (section width="+sectionWidth+")");
 		}
 
 		if (receiver != null) {
