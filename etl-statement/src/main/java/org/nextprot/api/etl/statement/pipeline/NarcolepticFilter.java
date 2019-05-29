@@ -14,10 +14,11 @@ public class NarcolepticFilter extends PipedFilter {
 	private static int COUNT = 0;
 
 	private final int takeANapInMillis;
+	private final int id;
 
 	public NarcolepticFilter(int crossSection) {
 
-		this(crossSection, 1000);
+		this(crossSection, -1);
 	}
 
 	public NarcolepticFilter(int crossSection, int takeANapInMillis) {
@@ -25,13 +26,13 @@ public class NarcolepticFilter extends PipedFilter {
 		super(crossSection);
 		this.takeANapInMillis = takeANapInMillis;
 
-		COUNT++;
+		id = ++COUNT;
 	}
 
 	@Override
 	public String getName() {
 
-		return getClass().getSimpleName()+"-"+COUNT;
+		return getClass().getSimpleName()+"-"+id;
 	}
 
 	@Override
