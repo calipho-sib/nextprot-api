@@ -4,21 +4,18 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A Pipe is a kind of thread that is connected to another (possibly null)
- * thread, known as its "sink".  If it has a sink, it creates a PipedStatementWriter
- * stream through which it can write statements to that sink.  It connects
- * its PipedStatementWriter stream to a corresponding PipedStatementReader stream in the sink.
- * It asks the sink to create and return such a PipedStatementReader stream by calling
- * the getReader() method of the sink.
+ * A Pipe is a kind of thread that is connectable to another thread,
+ * known as its "receiver". If so, it creates a PipedOutputPort stream
+ * through which it can write statements to that receiver.
  *
- * In once sense, a Pipe is just a linked list of threads, and the Pipe
- * class defines operations that operate on the whole chain of threads,
- * rather than a single thread.
+ * It connects its PipedOutputPort stream to a corresponding PipedInputPort
+ * stream in the receiver.
  **/
 public abstract class Pipe implements Runnable {
 
 	private boolean hasStarted;
 
+	private final int crossSection;
 	protected PipedOutputPort out = null;
 	protected PipedInputPort in;
 
@@ -29,8 +26,9 @@ public abstract class Pipe implements Runnable {
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
 	 **/
-	public Pipe(PipedInputPort inputPort) {
-		this.in = inputPort;
+	public Pipe(int crossSection) {
+		this.crossSection = crossSection;
+		this.in = new PipedInputPort(crossSection);
 	}
 
 	/**
@@ -46,6 +44,11 @@ public abstract class Pipe implements Runnable {
 	}
 
 	public abstract String getName();
+
+	public int getCrossSection() {
+
+		return crossSection;
+	}
 
 	/**
 	 * This protected method requests a Pipe threads to create and return

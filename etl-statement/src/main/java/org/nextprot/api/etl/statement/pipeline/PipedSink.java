@@ -2,9 +2,9 @@ package org.nextprot.api.etl.statement.pipeline;
 
 public abstract class PipedSink extends Pipe {
 
-	public PipedSink(int readerCapacity) {
+	protected PipedSink(int crossSection) {
 
-		super(new PipedInputPort(readerCapacity));
+		super(crossSection);
 	}
 
 	@Override

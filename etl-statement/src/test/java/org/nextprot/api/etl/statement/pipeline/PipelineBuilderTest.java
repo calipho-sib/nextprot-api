@@ -22,7 +22,7 @@ public class PipelineBuilderTest {
 
 		PipedSource source = new PipedSource(pump);
 
-		ExampleFilter filter = new ExampleFilter(10);
+		NarcolepticFilter filter = new NarcolepticFilter(10, -1);
 		source.connect(filter);
 
 		NxFlatTableSink sink = new NxFlatTableSink(NxFlatTableSink.Table.entry_mapped_statements);
@@ -52,8 +52,8 @@ public class PipelineBuilderTest {
 
 		Pipeline pipeline = new PipelineBuilder()
 				.source(pump)
-				.filter((c) -> new ExampleFilter(c))
-				.filter((c) -> new ExampleFilter(c))
+				.filter((c) -> new NarcolepticFilter(c))
+				.filter((c) -> new NarcolepticFilter(c))
 				.sink((c) -> new NxFlatTableSink(NxFlatTableSink.Table.entry_mapped_statements))
 				.build();
 

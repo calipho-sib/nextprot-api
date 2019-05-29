@@ -7,30 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is a source of data for a pipe of threads.  It connects to
- * a sink, but cannot serve as a sink for any other Pipe.  That is, it must
- * always be at the beginning, or "source" of the pipe.  For this class,
- * the source of data is the specified Reader object (such as a FileReader).
+ * This class is a source of data for a pipe of threads.
+ * It pumps statements and send them in a connected receiver
+ * but cannot serve as a receiver for any other Pipe: it must always be at the beginning,
+ * or "source" of the pipe.
  **/
 public class PipedSource extends Pipe {
 
 	protected Pump<Statement> pump;
 
-	/**
-	 * To create a ReaderPipeSource, specify the Reader that data comes from
-	 * and the Pipe sink that it should be sent to.
-	 **/
 	public PipedSource(Pump<Statement> pump) {
-		super(null);
+
+		super(pump.capacity());
 		this.pump = pump;
 	}
 
-	/**
-	 * This is the thread body.  When the pipe is started, this method copies
-	 * statements from the Reader into the pipe
-	 **/
 	@Override
 	public void run() {
+
 		try {
 			List<Statement> collector = new ArrayList<>();
 			int stmtsRead;
@@ -42,6 +36,9 @@ public class PipedSource extends Pipe {
 
 				collector.clear();
 			}
+			// sending end of flow token
+			System.out.println("end of flow");
+			out.write(null);
 		}
 		catch (IOException e) {
 			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());

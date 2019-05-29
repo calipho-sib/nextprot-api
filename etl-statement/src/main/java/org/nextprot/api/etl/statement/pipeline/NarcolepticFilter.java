@@ -2,41 +2,44 @@ package org.nextprot.api.etl.statement.pipeline;
 
 
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.io.IOException;
 
+/**
+ * This filter just transmit statements from PipedInputPort to PipedInputPort
+ * and take a nap
+ */
 public class NarcolepticFilter extends PipedFilter {
 
-	private static int COUNT;
+	private static int COUNT = 0;
 
-	private final int takeRestInMillis;
+	private final int takeANapInMillis;
 
 	public NarcolepticFilter(int crossSection) {
 
 		this(crossSection, 1000);
 	}
 
-	public NarcolepticFilter(int crossSection, int takeRestInMillis) {
+	public NarcolepticFilter(int crossSection, int takeANapInMillis) {
 
 		super(crossSection);
-		COUNT++;
+		this.takeANapInMillis = takeANapInMillis;
 
-		this.takeRestInMillis = takeRestInMillis;
+		COUNT++;
 	}
 
 	@Override
 	public String getName() {
-		return "ExampleFilter-"+COUNT;
+
+		return getClass().getSimpleName()+"-"+COUNT;
 	}
 
 	@Override
 	public boolean filter(PipedInputPort in, PipedOutputPort out) throws IOException {
 
-		Statement[] buffer = new Statement[crossSection];
+		Statement[] buffer = new Statement[getCrossSection()];
 
-		int numOfStatements = in.read(buffer, 0, crossSection);
+		int numOfStatements = in.read(buffer, 0, getCrossSection());
 
 		for (int i=0 ; i<numOfStatements ; i++) {
 
@@ -48,14 +51,14 @@ public class NarcolepticFilter extends PipedFilter {
 			System.out.println(Thread.currentThread().getName()
 					+ ": filter statement "+ buffer[i].getStatementId());
 
-			out.write(new StatementBuilder(buffer[i])
-					.addField(new CustomStatementField("FILTER"), "ExampleFilter")
-					.build());
+			out.write(buffer[i]);
 		}
 
-		if (takeRestInMillis > 0) {
+		if (takeANapInMillis > 0) {
 			try {
-				Thread.sleep(takeRestInMillis);
+				System.out.println(Thread.currentThread().getName()
+						+ ": filter statement take a nap");
+				Thread.sleep(takeANapInMillis);
 			} catch (InterruptedException e) {
 				System.err.println(e.getMessage());
 			}
