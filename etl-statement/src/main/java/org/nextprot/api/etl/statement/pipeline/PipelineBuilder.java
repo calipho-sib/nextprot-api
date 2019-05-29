@@ -5,20 +5,30 @@ import org.nextprot.commons.statements.Statement;
 import java.io.IOException;
 import java.util.function.Function;
 
-public class PipelineBuilder implements Pipeline.Builder.Source {
+public class PipelineBuilder implements Pipeline.Start {
 
 	private final Pipeline.DataCollector dataCollector = new Pipeline.DataCollector();
 
 	@Override
-	public Pipeline.Builder.Filter source(Pump<Statement> pump) {
+	public Pipeline.Source start(Pipeline.Monitorable monitorable) {
 
-		final PipedSource source = new PipedSource(pump);
-		dataCollector.setSource(source);
-
-		return new Filter(source);
+		dataCollector.setMonitorable(monitorable);
+		return new Source();
 	}
 
-	public class Filter implements Pipeline.Builder.Filter {
+	public class Source implements Pipeline.Source {
+
+		@Override
+		public Pipeline.Filter source(Pump<Statement> pump) {
+
+			final PipedSource source = new PipedSource(pump);
+			dataCollector.setSource(source);
+
+			return new Filter(source);
+		}
+	}
+
+	public class Filter implements Pipeline.Filter {
 
 		private final Pipe source;
 
@@ -28,7 +38,7 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 		}
 
 		@Override
-		public Pipeline.Builder.Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException {
+		public Pipeline.Filter filter(Function<Integer, PipedFilter> filterProvider) throws IOException {
 
 			PipedFilter pipedFilter = filterProvider.apply(dataCollector.getSource().pump.capacity());
 			source.connect(pipedFilter);
@@ -37,7 +47,7 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 		}
 
 		@Override
-		public Pipeline.Builder.Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException {
+		public Pipeline.Terminate sink(Function<Integer, PipedSink> sinkProvider) throws IOException {
 
 			PipedSink sink = sinkProvider.apply(1);
 			source.connect(sink);
@@ -45,10 +55,10 @@ public class PipelineBuilder implements Pipeline.Builder.Source {
 			return new Filter.Terminate();
 		}
 
-		public class Terminate implements Pipeline.Builder.Terminate {
+		public class Terminate implements Pipeline.Terminate {
 
 			@Override
-			public Pipeline build() throws IOException {
+			public Pipeline build() {
 
 				return new Pipeline(dataCollector);
 			}

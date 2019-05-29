@@ -51,9 +51,10 @@ public class PipelineBuilderTest {
 		Pump<Statement> pump = new StatementPump(reader, 10);
 
 		Pipeline pipeline = new PipelineBuilder()
+				.start()
 				.source(pump)
 				.filter((c) -> new NarcolepticFilter(c))
-				.filter((c) -> new NarcolepticFilter(c))
+				//.filter((c) -> new NarcolepticFilter(c))
 				.sink((c) -> new NxFlatTableSink(NxFlatTableSink.Table.entry_mapped_statements))
 				.build();
 
