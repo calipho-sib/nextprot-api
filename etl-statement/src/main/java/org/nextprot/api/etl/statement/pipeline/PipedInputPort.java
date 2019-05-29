@@ -3,6 +3,7 @@ package org.nextprot.api.etl.statement.pipeline;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.List;
 
 /**
@@ -42,15 +43,15 @@ public class PipedInputPort {
 	 */
 	private int out = 0;
 
-	public PipedInputPort(int capacity) {
-		initPipe(capacity);
+	public PipedInputPort(int crossSection) {
+		initPipe(crossSection);
 	}
 
-	private void initPipe(int capacity) {
-		if (capacity <= 0) {
+	private void initPipe(int crossSection) {
+		if (crossSection <= 0) {
 			throw new IllegalArgumentException("Pipe size <= 0");
 		}
-		buffer = new Statement[capacity];
+		buffer = new Statement[crossSection];
 	}
 
 	/**
@@ -146,7 +147,7 @@ public class PipedInputPort {
 	 *          {@link #connect(PipedOutputPort) unconnected}, closed,
 	 *          or an I/O error occurs.
 	 */
-	public synchronized Statement read()  throws IOException {
+	public synchronized Statement read() throws IOException {
 
 		checkPipes();
 
@@ -165,7 +166,7 @@ public class PipedInputPort {
 			try {
 				wait(1000);
 			} catch (InterruptedException ex) {
-				throw new java.io.InterruptedIOException();
+				throw new InterruptedIOException();
 			}
 		}
 		Statement ret = buffer[out++];
@@ -208,7 +209,7 @@ public class PipedInputPort {
 			return 0;
 		}
 
-		/* possibly wait on the first character */
+		/* possibly wait on the first statement */
 		Statement statement = read();
 		if (statement == null) {
 			return -1;
