@@ -6,20 +6,21 @@ import java.io.IOException;
 
 public abstract class PipedFilter extends Pipe {
 
+	private final ThreadLocal<Boolean> endOfFlow;
+
 	PipedFilter(int crossSection) {
 
 		super(crossSection);
+		endOfFlow = ThreadLocal.withInitial(() -> false);
 	}
 
 	@Override
 	public void run() {
 
 		try {
-			boolean endOfFlow = false;
+			while(!endOfFlow.get()) {
 
-			while(!endOfFlow) {
-
-				endOfFlow = filter(in, out);
+				endOfFlow.set(filter(in, out));
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
