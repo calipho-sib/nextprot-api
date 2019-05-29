@@ -21,7 +21,6 @@ public abstract class Pipe implements Runnable {
 
 	// the 2 followings should go to pipeline, the creation of thread also
 	private Pipe receiver = null;
-	private Thread thread;
 
 	/**
 	 * Create a Pipe and connect it to the specified Pipe
@@ -43,8 +42,6 @@ public abstract class Pipe implements Runnable {
 		out.connect(receiver.getInputPort());
 	}
 
-	public abstract String getName();
-
 	public int getCrossSection() {
 
 		return crossSection;
@@ -60,9 +57,6 @@ public abstract class Pipe implements Runnable {
 
 	public void openPipe(List<Thread> collector) {
 
-		if (receiver != null) {
-			receiver.openPipe(collector);
-		}
 		if (!hasStarted) {
 			hasStarted = true;
 			Thread thread = new Thread(this, getName());
@@ -70,5 +64,53 @@ public abstract class Pipe implements Runnable {
 			collector.add(thread);
 			System.out.println("Pipe "+getName()+": opened");
 		}
+
+		if (receiver != null) {
+			receiver.openPipe(collector);
+		}
 	}
+
+	@Override
+	public void run() {
+
+		try {
+			handleFlow();
+			endOfFlow();
+		}
+		catch (IOException e) {
+			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
+		}
+		// When done with the data, close the pipe and flush the Writer
+		finally {
+			try {
+				closePipe();
+			} catch (IOException e) {
+				System.err.println(Thread.currentThread().getName() + ": could not close the pipe, e="+e.getMessage());
+			}
+		}
+	}
+
+	protected void endOfFlow() {
+
+		System.out.println(Thread.currentThread().getName() + ": end of flow");
+	}
+
+	protected void closePipe() throws IOException {
+
+		try {
+			if (in != null) {
+				in.close();
+				System.out.println(Thread.currentThread().getName() + ": input port closed");
+			}
+			if (out != null) {
+				out.close();
+				System.out.println(Thread.currentThread().getName() + ": output port closed");
+			}
+		} catch (IOException e) {
+			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
+		}
+	}
+
+	public abstract void handleFlow() throws IOException;
+	public abstract String getName();
 }

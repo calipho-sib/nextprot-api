@@ -23,36 +23,31 @@ public class PipedSource extends Pipe {
 	}
 
 	@Override
-	public void run() {
+	public void handleFlow() throws IOException {
 
-		try {
-			List<Statement> collector = new ArrayList<>();
-			int stmtsRead;
-			while((stmtsRead = pump.pump(collector)) != -1) {
-				System.out.println(Thread.currentThread().getName()
-						+ ": about to spill "+ stmtsRead + " statements...");
+		List<Statement> collector = new ArrayList<>();
+		int stmtsRead;
+		while((stmtsRead = pump.pump(collector)) != -1) {
+			System.out.println(Thread.currentThread().getName()
+					+ ": about to spill "+ stmtsRead + " statements...");
 
-				out.write(collector, 0, stmtsRead);
+			out.write(collector, 0, stmtsRead);
 
-				collector.clear();
-			}
-			// sending end of flow token
-			System.out.println("end of flow");
-			out.write(null);
+			collector.clear();
 		}
-		catch (IOException e) {
-			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
-		}
-		// When done with the data, close the Reader and the pipe
-		finally {
-			try {
-				pump.close();
-				out.close();
-			}
-			catch (IOException e) {
-				System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
-			}
-		}
+		// sending end of flow token
+		out.write(null);
+	}
+
+	@Override
+	public String getName() {
+		return "Source";
+	}
+
+	protected void closePipe() throws IOException {
+
+		pump.close();
+		super.closePipe();
 	}
 
 	/**
@@ -62,10 +57,5 @@ public class PipedSource extends Pipe {
 	 **/
 	protected PipedInputPort getInputPort() {
 		throw new Error("Can't connect to a PipedInputPort!");
-	}
-
-	@Override
-	public String getName() {
-		return "Source";
 	}
 }

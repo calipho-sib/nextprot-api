@@ -15,31 +15,18 @@ public abstract class PipedFilter extends Pipe {
 	}
 
 	@Override
-	public void run() {
+	public void handleFlow() throws IOException {
 
-		try {
-			while(!endOfFlow.get()) {
+		while (!endOfFlow.get()) {
 
-				endOfFlow.set(filter(in, out));
-			}
-			System.out.println(Thread.currentThread().getName() + ": end of flow");
-		} catch (IOException e) {
-			System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
-		}
-		finally {
-			try {
-				in.close();
-				out.close();
-				System.out.println(Thread.currentThread().getName() + ": ports closed");
-			} catch (IOException e) {
-				System.err.println(e.getMessage() + " in thread " + Thread.currentThread().getName());
-			}
+			endOfFlow.set(filter(in, out));
 		}
 	}
 
 	/**
 	 * Filter statements coming from input port to output port
-	 * @param in input port
+	 *
+	 * @param in  input port
 	 * @param out output port
 	 * @return false if end of flow token has been received
 	 * @throws IOException
