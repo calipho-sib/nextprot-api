@@ -1,5 +1,7 @@
 package org.nextprot.api.etl.statement.pipeline;
 
+import org.nextprot.commons.statements.Statement;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
  * stream in the receiver.
  **/
 public abstract class Pipe implements Runnable {
+
+	static final Statement END_OF_FLOW_TOKEN = null;
 
 	private boolean hasStarted;
 
