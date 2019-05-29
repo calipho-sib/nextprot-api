@@ -7,6 +7,7 @@ import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -17,7 +18,6 @@ import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
-import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -126,7 +126,6 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
             }
 
             Set<Statement> subjectStatements = getSubjects(originalStatement.getSubjectStatementIdsArray());
-            trackStatementIds(originalStatement, subjectStatements);
 
             Statement subjectStatement = subjectStatements.iterator().next();
             String firstSubjectEntryAccession = subjectStatement.getValue(StatementField.ENTRY_ACCESSION);
@@ -144,7 +143,12 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 isoformSpecificAccession = getIsoAccession(subjectStatement);
             }
 
-            return transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+            Set<Statement> statements = transformTripletStatement(originalStatement, subjectStatements, firstSubjectEntryAccession, isIsoSpecific, isoformSpecificAccession);
+
+            trackStatementIds(originalStatement, subjectStatements);
+            trackedStatementIds.add(originalStatement.getObjectStatementId());
+
+            return statements;
         }
 
         private void trackStatementIds(Statement originalStatement, Set<Statement> subjectStatements) {
@@ -277,9 +281,9 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
                 if (objectStatement != null) {
 
-                    trackedStatementIds.add(objectStatement.getValue(StatementField.STATEMENT_ID));
                     objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
                             .addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
+                            .addField(StatementField.RAW_STATEMENT_ID, objectStatement.getStatementId())
                             .buildWithAnnotationHash();
 
                     phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
@@ -303,13 +307,15 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
                 }
 
                 //Load subjects
-                statementsToLoad.addAll(subjectStatements);
+                subjectStatements.stream()
+                        .filter(statement -> !trackedStatementIds.contains(statement.getValue(StatementField.RAW_STATEMENT_ID)))
+                        .forEach(statement -> statementsToLoad.add(statement));
 
                 //Load VPs
                 statementsToLoad.add(phenotypeIsoStatement);
 
                 //Load objects
-                if (objectIsoStatement != null) {
+                if (objectIsoStatement != null && !trackedStatementIds.contains(objectIsoStatement.getValue(StatementField.RAW_STATEMENT_ID))) {
                     statementsToLoad.add(objectIsoStatement);
                 }
             }

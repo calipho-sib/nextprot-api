@@ -10,8 +10,10 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.service.impl.PublicationServiceImpl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
@@ -41,9 +43,41 @@ public class PublicationServiceTest {
 	@Mock
 	private StatementDao statementDao; 	// injected in PublicationServiceImpl
 
+	@Mock
+	private List<EntryPublication> eps;
+
 	@Before
 	public void init() {
+
 		MockitoAnnotations.initMocks(this);
+
+		eps = new ArrayList<>();
+
+		EntryPublication ep1 = new EntryPublication(
+				"NX_P02675",
+				50174690
+		);
+
+		EntryPublication ep2 = new EntryPublication(
+				"NX_O75912",
+				50175394
+		);
+
+		EntryPublication ep3 = new EntryPublication(
+				"NX_P08246",
+				51283737
+		);
+
+		EntryPublication ep4 = new EntryPublication(
+				"NX_P02462",
+				51283731
+		);
+
+		eps.add(ep1);
+		eps.add(ep2);
+		eps.add(ep3);
+		eps.add(ep4);
+
 	}
 
 	@Test
@@ -113,5 +147,25 @@ public class PublicationServiceTest {
 		assertEquals("Pretty Revue of Science", publications.get(0).getJournalResourceLocator().getName());
 		assertEquals("Revue of Science", publications.get(1).getJournalResourceLocator().getName());
 		
+	}
+
+	@Test
+	public void testGetEntryPublicationPage() {
+		assertNotEquals("NX_P08246", eps.get(0).getEntryAccession());
+		assertEquals("NX_P08246", this.publicationService.prioritizeEntry(eps, "NX_P08246").get(0).getEntryAccession() );
+		assertEquals("NX_O75912", this.publicationService.prioritizeEntry(eps, "NX_O75912").get(0).getEntryAccession() );
+
+	}
+
+	@Test
+	public void testGetEntryPublicationsSublist() {
+		List<EntryPublication> sublist = this.publicationService.getEntryPublicationsSublist(eps, 1,2);
+		assertEquals(2, sublist.size());
+		assertEquals("NX_O75912", sublist.get(0).getEntryAccession());
+		assertEquals("NX_P08246", sublist.get(1).getEntryAccession());
+
+		sublist = this.publicationService.getEntryPublicationsSublist(eps, 2,1);
+		assertEquals(1, sublist.size());
+		assertEquals("NX_P08246", sublist.get(0).getEntryAccession());
 	}
 }

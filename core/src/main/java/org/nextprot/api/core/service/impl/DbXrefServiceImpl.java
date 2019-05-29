@@ -341,4 +341,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 	        super("Missing cv database "+ database+ " in table nextprot.cv_databases");
         }
     }
+
+	@Override
+	public Map<String, String> getGeneRifBackLinks(long pubId) {
+		return dbXRefDao.getGeneRifBackLinks(pubId);
+	}
 }

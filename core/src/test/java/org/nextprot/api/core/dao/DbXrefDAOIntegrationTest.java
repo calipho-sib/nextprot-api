@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao;
 
 import com.google.common.base.Function;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.utils.CollectionTester;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,6 +74,45 @@ limit 100
         Assert.assertFalse(id.isPresent());
     }
 
+    @Ignore
+    @Test
+    public void shouldFindSomeGenerifBackLinks() {
+    	
+        Map<String,String> map;
+        
+        // check we get at least one correct entry-link map entry
+        map = xrefdao.getGeneRifBackLinks(48948592);
+        Assert.assertTrue(map.size()>=1);
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/27665733#sib-d197745eed8bdca966e29f3f6f57f1a5", 
+        		map.get("NX_Q15116"));
+
+        // check we get at least one correct entry-link map entry
+        map = xrefdao.getGeneRifBackLinks(6908510);
+        Assert.assertTrue(map.size()>1);
+        Assert.assertTrue(map.containsKey("NX_P62633"));
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/17672918#sib-262ccf729076a39de874ef544d6d4349", 
+        		map.get("NX_Q8NHM5"));
+        
+        // check order of data returned on multiple links for each entry
+        map = xrefdao.getGeneRifBackLinks(29155442);
+        Assert.assertTrue(map.size()==2);
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/23349856#sib-81b0ed8b9fd9e499203584651bd84010", 
+        		map.get("NX_P68871"));
+        Assert.assertEquals(
+        		"http://europepmc.org/abstract/MED/23349856#sib-0a4c3ca3995e10f9a988b064490d6c73", 
+        		map.get("NX_P69905"));
+        
+        
+
+        
+        
+    }
+
+    
+    
     private static DbXref mockDbXref(long id, String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
 
 		DbXref dbxref = Mockito.mock(DbXref.class);

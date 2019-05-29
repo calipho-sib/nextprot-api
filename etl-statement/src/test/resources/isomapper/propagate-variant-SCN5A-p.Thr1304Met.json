@@ -1,0 +1,77 @@
+{
+  "query" : {
+    "accession" : "NX_Q14524",
+    "feature" : "SCN5A-p.Thr1304Met",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_Q14524-1" : {
+      "isoformAccession" : "NX_Q14524-1",
+      "isoformName" : "Iso 1",
+      "beginIsoformPosition" : 1304,
+      "endIsoformPosition" : 1304,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso1-p.Thr1304Met",
+      "canonical" : true,
+      "mapped" : true
+    },
+    "NX_Q14524-2" : {
+      "isoformAccession" : "NX_Q14524-2",
+      "isoformName" : "Iso 2",
+      "beginIsoformPosition" : 1303,
+      "endIsoformPosition" : 1303,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso2-p.Thr1303Met",
+      "canonical" : false,
+      "mapped" : true
+    },
+    "NX_Q14524-3" : {
+      "isoformAccession" : "NX_Q14524-3",
+      "isoformName" : "Iso 3",
+      "beginIsoformPosition" : 1303,
+      "endIsoformPosition" : 1303,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso3-p.Thr1303Met",
+      "canonical" : false,
+      "mapped" : true
+    },
+    "NX_Q14524-4" : {
+      "isoformAccession" : "NX_Q14524-4",
+      "isoformName" : "Iso 4",
+      "beginIsoformPosition" : 1304,
+      "endIsoformPosition" : 1304,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso4-p.Thr1304Met",
+      "canonical" : false,
+      "mapped" : true
+    },
+    "NX_Q14524-5" : {
+      "isoformAccession" : "NX_Q14524-5",
+      "isoformName" : "Iso 5",
+      "beginIsoformPosition" : 1250,
+      "endIsoformPosition" : 1250,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso5-p.Thr1250Met",
+      "canonical" : false,
+      "mapped" : true
+    },
+    "NX_Q14524-6" : {
+      "isoformAccession" : "NX_Q14524-6",
+      "isoformName" : "Iso 6",
+      "beginIsoformPosition" : 1304,
+      "endIsoformPosition" : 1304,
+      "beginMasterPosition" : 3928,
+      "endMasterPosition" : 3930,
+      "isoSpecificFeature" : "SCN5A-iso6-p.Thr1304Met",
+      "canonical" : false,
+      "mapped" : true
+    }
+  },
+  "success" : true
+}

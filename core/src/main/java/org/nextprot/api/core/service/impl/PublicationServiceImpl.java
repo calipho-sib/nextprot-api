@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.publication.PublicationDirectLink;
 import org.nextprot.api.core.service.AuthorService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryPublicationService;
@@ -227,4 +228,60 @@ public class PublicationServiceImpl implements PublicationService {
 
         return map;
     }
+
+    public List<EntryPublication> getEntryPublicationsSublist(List<EntryPublication> eps, int start, int rows ) {
+		// Does the paging on entry publications
+		int endIndex = start + rows;
+		if(start >= 0 && start < eps.size() && endIndex < eps.size()) {
+			return eps.subList(start, endIndex);
+		}
+		return eps;
+	}
+
+	/**
+	 * Moves up the given entry if exists in the list
+	 * @param eps : EntryPublication list
+	 */
+	public List<EntryPublication> prioritizeEntry(List<EntryPublication> eps, String entry) {
+		if(entry != null) {
+			// Extracts the selected entry publication
+			EntryPublication selectedEntryPublication = eps.stream()
+					.filter((entryPublication) -> entryPublication.getEntryAccession().equals(entry))
+					.findFirst()
+					.orElse(null);
+
+			// Inserts the selected on the top of the list
+			if(selectedEntryPublication != null) {
+				eps.remove(selectedEntryPublication);
+				eps.add(0, selectedEntryPublication);
+			}
+		}
+		return eps;
+	}
+
+	@Override
+	public void addGenerXrefLinks(List<EntryPublication> eps, long publicationId) {
+		// Adds the generif back links to the entries
+		Map<String, String> backLinkMap =  dbXrefService.getGeneRifBackLinks(publicationId);
+		eps.stream()
+				.map((entryPublication) -> {
+					String backLink = backLinkMap.get(entryPublication.getEntryAccession());
+					if(backLink == null) {
+						return entryPublication;
+					}
+					// Extracts the Generif link to be replaced
+					PublicationDirectLink generifDirectLink = entryPublication.getDirectLinks()
+							.stream()
+							.filter((directLink) -> {
+								return "GeneRif".equals(directLink.getDatabase()) ;
+							})
+							.findFirst()
+							.orElse(null);
+					if(generifDirectLink != null) {
+						generifDirectLink.setLink(backLink);
+					}
+					return entryPublication;
+				})
+				.collect(Collectors.toList());
+	}
 }

@@ -1,11 +1,11 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Test;
+import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.NextProtSource;
 
 import java.util.Arrays;
 import java.util.List;

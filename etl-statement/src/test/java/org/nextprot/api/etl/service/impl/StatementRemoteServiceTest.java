@@ -2,8 +2,8 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.util.Assert;
 
 import java.io.IOException;

@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service;
 
-import org.nextprot.commons.statements.constants.NextProtSource;
+
+import org.nextprot.api.etl.NextProtSource;
 
 import java.io.IOException;
 

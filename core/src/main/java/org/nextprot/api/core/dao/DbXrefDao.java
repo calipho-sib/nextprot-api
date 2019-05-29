@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.PublicationDbXref;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ public interface DbXrefDao {
 	Set<DbXref> findPeptideXrefs(List<String> peptideNames);
 	Set<DbXref> findEntryInteractionInteractantsXrefs(String entryName);
 	Set<DbXref> findAntibodyXrefs(List<Long> ids);
+	Map<String,String> getGeneRifBackLinks(long pubId);
 
 	/**
      * Find a xref id given an accession number an a database name

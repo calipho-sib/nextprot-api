@@ -7,15 +7,8 @@ import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EntryPublication;
-import org.nextprot.api.core.domain.publication.EntryPublicationView;
-import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
-import org.nextprot.api.core.domain.publication.PublicationCategory;
-import org.nextprot.api.core.domain.publication.PublicationView;
-import org.nextprot.api.core.service.EntryPublicationService;
-import org.nextprot.api.core.service.EntryPublicationViewService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.core.domain.publication.*;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.solr.core.Entity;
 import org.nextprot.api.solr.query.Query;
 import org.nextprot.api.solr.query.QueryConfiguration;
@@ -32,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,6 +45,8 @@ public class EntryPublicationController {
     private QueryBuilderService queryBuilderService;
     @Autowired
     private EntryPublicationViewService entryPublicationViewService;
+    @Autowired
+    private DbXrefService dbXrefService;
 
 	@ApiMethod(path = "/entry-publications/entry/{entry}/category/{category}", verb = ApiVerb.GET, description = "Exports publications associated with a neXtProt entry and a publication category",
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -155,29 +147,55 @@ public class EntryPublicationController {
     public PublicationView getEntryPublicationsByPubId(
             @ApiPathParam(name = "pubid", description = "A publication id", allowedvalues = { "630194" })
             @PathVariable("pubid") long publicationId,
-            @ApiQueryParam(name = "limit", description = "The maximum number of returned results",  allowedvalues = { "500" })
-            @RequestParam(value = "limit", required = false) String limit) {
+            @ApiQueryParam(name = "start", description = "Starting row of the results")
+            @RequestParam(value = "start", required = false) String start,
+            @ApiQueryParam(name = "rows", description = "No of rows from the start of the results")
+            @RequestParam(value = "rows", required = false) String rows,
+            @ApiQueryParam(name = "entry", description = "The maximum number of returned results")
+            @RequestParam(value = "entry", required = false) String entry) {
 
         List<EntryPublication> eps = publicationService.getEntryPublications(publicationId);
+        eps = eps.stream()
+                .sorted(Comparator.comparing(EntryPublication::getEntryAccession))
+                .collect(Collectors.toList());
 
+        int relatedEntryCount = eps.size();
+
+        // If an entry is specified move it up in the list
+        if(entry != null) {
+            publicationService.prioritizeEntry(eps, entry);
+        }
+
+        // Retrieves the corresponding sublist
+        int startIndex = 0;
+        int numberOfRows = 100;
+        if(start != null && rows != null) {
+            startIndex = Integer.parseInt(start);
+            numberOfRows = Integer.parseInt(rows);
+        }
+        eps = publicationService.getEntryPublicationsSublist(eps, startIndex, numberOfRows);
         QueryRequest qr = new QueryRequest();
         qr.setQuality("gold");
-        qr.setRows((limit != null) ? limit : "500");
+        qr.setRows(rows == null ? "100" : rows);
 
         PublicationView view = new PublicationView();
         view.setPublication(publicationService.findPublicationById(publicationId));
-        // return the n first results
-        view.addEntryPublicationList(eps.stream()
-                .limit(Integer.parseInt(qr.getRows()))
-                .collect(Collectors.toList()));
+        // Adds the generif backlinks
+        publicationService.addGenerXrefLinks(eps, publicationId);
+        view.addEntryPublicationList(eps);
 
-        qr.setEntryAccessionSet(view.getEntryPublicationMap().keySet());
+        Set<String> entryAccessions = eps.stream()
+                .map(EntryPublication::getEntryAccession)
+                .collect(Collectors.toSet());
+
+        // Only queries SOLR with the selected, sorted list of entry accessions
+        qr.setEntryAccessionSet(entryAccessions);
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         try {
             SearchResult searchResult = solrQueryService.executeQuery(q);
 
-            view.setRelatedEntryCount(eps.size());
+            view.setRelatedEntryCount(relatedEntryCount);
             searchResult.getResults().forEach(result -> view.putEntrySolrResult(result));
 
         } catch (QueryConfiguration.MissingSortConfigException e) {
@@ -208,6 +226,17 @@ public class EntryPublicationController {
             @PathVariable("accession") String accession) {
 
         return publicationService.findPublicationByDatabaseAndAccession(database, accession);
+    }
+
+    @ApiMethod(path = "/publication/generif/pubid/{pubid}", verb = ApiVerb.GET, description = "Get generif references of a publication",
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/publication/generif/pubid/{pubid}", method = { RequestMethod.GET })
+    @ResponseBody
+    public Map<String, String> getPublicationReferences(
+            @ApiPathParam(name = "pubid", description = "A publication Id", allowedvalues = { "48948592" })
+            @PathVariable("pubid") long publicationId ) {
+
+        return dbXrefService.getGeneRifBackLinks(publicationId);
     }
 
     private enum StatisticsType {

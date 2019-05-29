@@ -1,9 +1,9 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.etl.NextProtSource;
 import org.nextprot.api.etl.service.StatementDictionary;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.constants.NextProtSource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;

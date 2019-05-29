@@ -53,7 +53,7 @@
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="https://www.nextprot.org">Search</a></li>
-							<li><a href="http://snorql.nextprot.org">Snorql</a></li>
+							<li><a href="http://snorql.nextprot.org">SNORQL</a></li>
 							<li><a href="https://api.nextprot.org">API</a></li>
 						</ul></li>
 
@@ -1162,18 +1162,11 @@
 
         var hostname=window.location.hostname;
         
-        var regexp = /(alpha|dev|build|vit)-api\.nextprot\.org/g;
+        var regexp = /(alpha|dev|build|delta|vit)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
         
         if (match != null) {
-        	if (match[1]==="vit") {
-				if (resource==="search") return "https://vit-www.nextprot.org";
-				if (resource==="snorql") return "http://vit-snorql.nextprot.org";
-				if (resource==="api") return "https://vit-api.nextprot.org";
-        	} else {
-                return "http://" + match[1] + "-" + resource + ".nextprot.org"
-        	}
-        	
+           return "http://" + match[1] + "-" + resource + ".nextprot.org"
         }
     }
 
