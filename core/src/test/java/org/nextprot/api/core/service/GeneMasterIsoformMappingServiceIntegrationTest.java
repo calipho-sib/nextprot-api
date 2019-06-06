@@ -203,10 +203,10 @@ public class GeneMasterIsoformMappingServiceIntegrationTest extends CoreUnitBase
     			
     		// region starts in exon but upper bound is beyond exon upper bound
     		} else if (rgp1 >= exp1 && rgp2 > exp2) {
-    		}
 		
         	// region starts in exon but upper bound is beyond exon upper bound
     		} else if (rgp1 >= exp1 && rgp2 > exp2) {
+
     		}
     	}
     	return sb.toString();
