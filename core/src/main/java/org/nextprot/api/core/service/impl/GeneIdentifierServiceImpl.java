@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.dao.GeneIdentifierDao;
+import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
@@ -66,5 +67,11 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	public Map<String, List<String>> findEntryGeneNames() {
 
 		return geneIdentifierDao.findEntryGeneNames();
+	}
+
+	@Override
+	public String findEntryGeneNamesByChromosomeLocation(ChromosomalLocation chromosomalLocation) {
+		String geneName = geneIdentifierDao.findGeneNameByChromosomalLocation(chromosomalLocation);
+		return geneName;
 	}
 }
