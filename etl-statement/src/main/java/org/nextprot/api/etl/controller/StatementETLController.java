@@ -5,7 +5,9 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.StatementSourceEnum;
+import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.service.StatementETLService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,9 @@ import java.io.IOException;
 //@ApiAuthBasic(roles={"ROLE_ADMIN"})
 public class StatementETLController {
 
+	@Autowired
+	private StatementETLService statementETLService;
+
 	@ApiMethod(path = "/etl/{source}/{release}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/etl/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
@@ -37,9 +42,7 @@ public class StatementETLController {
 		}
 
 		try {
-			StatementSourceEnum statementSource = StatementSourceEnum.valueOfKey(source);
-
-			return statementSource.extractTransformLoadStatements(release, load);
+			return statementETLService.extractTransformLoadStatements(StatementSource.valueOfKey(source), release, load);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}

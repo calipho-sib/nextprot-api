@@ -5,7 +5,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.api.etl.service.StatementTransformerService;
-import org.nextprot.api.etl.service.impl.SingleBatchStatementETLService.ReportBuilder;
+import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
