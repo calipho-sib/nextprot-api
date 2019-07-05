@@ -1,5 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.etl.service.StatementETLService;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 // TODO: Those tests should be rewritten
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"dev", "build"})
 @DirtiesContext
