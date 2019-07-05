@@ -72,12 +72,32 @@
 	<annotations annotation_id="14" unique_name="AN_P12345_014" identifier_id="10"
 		cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB5 and AB4."
 		datasource_id="1" cv_quality_qualifier_id="1"/>
-		
+
 	<annotation_resource_assoc annotation_id="10" resource_id="10" cv_qualifier_type_id="1" cv_type_id="1"/>
- 	<resources resource_id="20"/> 
 	<db_xrefs accession="AC_TEST1" resource_id="20" description="some description of an evidence"/>
-	
-<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
+
+	<!-- Variant annotation-->
+	<sequence_identifiers identifier_id="100002" cv_type_id="1" unique_name="NX_P20000" />
+	<sequence_identifiers identifier_id="100003" cv_type_id="2" unique_name="NX_P20000-1" />
+	<bio_sequences bio_sequence_id="235253" bio_sequence="JHGJHGD"  md5="92835729857" identifier_id="100002" cv_type_id="1"  />
+	<identifier_synonyms synonym_id="2378424" identifier_id="100002" synonym_name="Synonym of NX_P20000-1" cv_type_id="1" is_main="true" cv_qualifier_id="1" />
+	<mapping_annotations  annotation_id="10000100002" reference_identifier_id="100002" mapped_identifier_id="100002" cv_type_id="4" />
+	<identifier_properties identifier_property_id="8762377" identifier_id="100002" property_value="NX_P20000-1" cv_property_name_id="11" />
+
+
+	<resources resource_id="1000022" cv_type_id="1" />
+	<cv_databases cv_id="342" cv_name="gnomAD" cv_category_id="12" link_url="https://gnomad.broadinstitute.org/variant/%s" url="https://gnomad.broadinstitute.org/" link_type="Explicit" />
+	<cv_terms cv_id="1027" db_xref_id="1000022" cv_category_id="1" cv_name="sequence variant"/>
+	<db_xrefs accession="rs868068454" resource_id="1000022" description="variants from dbSNP" cv_database_id="342"/>
+	<identifier_resource_assoc assoc_id="345345346" identifier_id="100002" resource_id="1000022" datasource_id="2" cv_type_id="1" cv_quality_qualifier_id="10" />
+	<annotations annotation_id="57175054" unique_name="AN_Q4KMP7_000685" identifier_id="100002"
+				 cv_annotation_discriminator_id="15" cv_annotation_type_id="1027"  cv_term_id="1027" description="In Ref. 3; CAG46469."
+				 datasource_id="7" cv_quality_qualifier_id="50" />
+	<annotation_resource_assoc annotation_id="15" resource_id="21" cv_qualifier_type_id="1" cv_type_id="1"/>
+	<annotation_synonyms cv_type_id = "10" annotation_id = "57175054" synonym_name = "Synonym"/>
+	<variants variant_sequence = "T" original_sequence="A" annotation_id="57175054" />
+
+	<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
 <!-- 	<cv_resource_assoc_types cv_id="2" cv_name="relative" description="The resource is an information relative to the data (xref on prosite for domain)" /> -->
 <!-- 	<cv_resource_assoc_types cv_id="3" cv_name="evidence" description="The resource is an evidence of the data (experimental set for tissue specificity)" /> -->
 <!-- 	<cv_resource_assoc_types cv_id="4" cv_name="mapping" description="The resource is equivalent or similar to the original" /> -->

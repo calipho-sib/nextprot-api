@@ -14,29 +14,13 @@ import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.CvTermGraph;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
-import org.nextprot.api.core.service.CvTermGraphService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntityNameService;
-import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.MdataService;
-import org.nextprot.api.core.service.PeptideMappingService;
-import org.nextprot.api.core.service.StatementService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
@@ -48,13 +32,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
@@ -76,6 +54,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private CvTermGraphService cvTermGraphService;
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	@Autowired private EntityNameService entityNameService;
+	@Autowired private VariantFrequencyService variantFrequencyService;
 	
 	@Override
 	@Cacheable(value = "annotations", sync = true)
@@ -158,6 +137,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
 		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
+
+		// Adds the variant frequencies to variant annotations
+		addGnomeADVariantFrequencies(annotations);
 
 		if (!ignoreStatements) {
 
@@ -345,6 +327,29 @@ public class AnnotationServiceImpl implements AnnotationService {
 		}
 
 		return specs;
+	}
+
+	private List<Annotation> addGnomeADVariantFrequencies(List<Annotation> annotations) {
+		annotations.stream()
+				.filter(annotation -> AnnotationCategory.VARIANT.getApiTypeName() == annotation.getCategory())
+				.map(annotation -> {
+					// Gets the annotation evidence referring to dbSNP
+					return annotation.getEvidences().stream()
+							.filter((annotationEvidence -> annotationEvidence.getResourceDb() == "dbSNP"))
+							.map(annotationEvidence -> {
+								String evidenceCodeAC = annotationEvidence.getEvidenceCodeAC();
+								VariantFrequency variantFrequency = variantFrequencyService.findVariantFrequencyByRSID(evidenceCodeAC);
+
+								// Adds the variant frequency as an annotation property
+								AnnotationProperty variantFrequencyProperty = new AnnotationProperty();
+								variantFrequencyProperty.setName("Allele Frequency");
+								variantFrequencyProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
+								variantFrequencyProperty.setAnnotationId(annotation.getAnnotationId());
+								annotation.addProperty(variantFrequencyProperty);
+								return annotation;
+							});
+				});
+		return annotations;
 	}
 
 	@Override
