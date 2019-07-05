@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.service.impl;
+package org.nextprot.api.rdf.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.NameValuePair;
@@ -9,7 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.service.HttpSparqlService;
+import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

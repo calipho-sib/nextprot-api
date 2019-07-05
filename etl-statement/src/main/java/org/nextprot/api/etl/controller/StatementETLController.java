@@ -5,7 +5,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,7 +25,7 @@ import java.io.IOException;
 public class StatementETLController {
 
 	@Autowired
-	StatementETLService statementSourceCollectorAndLoaderService;
+	private StatementETLService statementETLService;
 
 	@ApiMethod(path = "/etl/{source}/{release}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/etl/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -42,7 +42,7 @@ public class StatementETLController {
 		}
 
 		try {
-			return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
+			return statementETLService.extractTransformLoadStatements(StatementSource.valueOfKey(source), release, load);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}

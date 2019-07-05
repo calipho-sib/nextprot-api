@@ -1,11 +1,13 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.StatementTableNames;
+import org.nextprot.commons.statements.specs.CompositeField;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Service
 public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
@@ -27,30 +31,32 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	
 
 	@Override
-	public void loadRawStatementsForSource(Set<Statement> statements, NextProtSource source) throws SQLException {
+	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
 		load(statements, rawTable, source);
 	}
 
 	@Override
-	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Set<Statement> statements, NextProtSource source) throws SQLException {
+	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
 		load(statements, entryTable, source);
 	}
 	
-	private void load(Set<Statement> statements, String tableName, NextProtSource source) throws SQLException {
-		
+	private void load(Collection<Statement> statements, String tableName, StatementSource source) throws SQLException {
+
+		List<StatementField> fields = source.getFields().stream()
+				.filter(field -> field instanceof CoreStatementField || field instanceof CompositeField)
+				.collect(Collectors.toList());
+
 		java.sql.Statement deleteStatement = null;
 		PreparedStatement pstmt = null;
 		
 		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection()) {
 
-			
 			deleteStatement = conn.createStatement();
 			deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
 
-			
-			String columnNames = StringUtils.mkString(StatementField.values(), "", ",", "");
+			String columnNames = StringUtils.mkString(fields, "", ",", "");
 			List<String> bindVariablesList = new ArrayList<>();
-			for (int i=0 ; i<StatementField.values().length; i++) {
+			for (int i=0 ; i<fields.size(); i++) {
 				bindVariablesList.add("?");
 			}
 			String bindVariables = StringUtils.mkString(bindVariablesList, "",",", "");
@@ -60,17 +66,21 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 			);
 
 			for (Statement s : statements) {
-				for (int i = 0; i < StatementField.values().length; i++) {
-					StatementField sf = StatementField.values()[i];
-					String value = null;
-					if(StatementField.SOURCE.equals(sf)){
+				int i=0;
+				for (StatementField sf : fields) {
+					String value;
+					if (CoreStatementField.SOURCE.equals(sf)){
 						value = source.getSourceName();
-					}else value = s.getValue(sf); 
+					}
+					else {
+						value = s.getValue(sf);
+					}
 					if (value != null) {
 						pstmt.setString(i + 1, value.replace("'", "''"));
 					} else {
 						pstmt.setNull(i + 1, java.sql.Types.VARCHAR);
 					}
+					i++;
 				}
 				pstmt.addBatch();
 			}
@@ -87,10 +97,6 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 			if(pstmt  != null){
 				pstmt.close();
 			}
-
 		}
-		
 	}
-
-
 }

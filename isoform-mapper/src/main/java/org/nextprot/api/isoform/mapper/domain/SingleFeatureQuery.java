@@ -34,6 +34,11 @@ public class SingleFeatureQuery extends BaseFeatureQuery {
         this.featureType = featureType;
     }
 
+    public static SingleFeatureQuery variant(String feature, String accession) {
+
+        return new SingleFeatureQuery(feature, "variant", accession);
+    }
+
     public void checkFeatureQuery() throws FeatureQueryException {
 
         super.checkFeatureQuery();

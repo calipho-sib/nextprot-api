@@ -13,8 +13,6 @@ import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementServiceImpl implements StatementService {
@@ -49,14 +49,14 @@ public class StatementServiceImpl implements StatementService {
 
     private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
 
-        List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ENTRY, entryAccession);
+        List<Statement> proteoformStatements = statementDao.findProteoformStatements(entryAccession);
 
         //Collect all subjects
         List<String> subjectAnnotIds = proteoformStatements.stream().map(s ->
-                Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","))
+                Arrays.asList(s.getValue(SUBJECT_ANNOTATION_IDS).split(","))
         ).flatMap(Collection::stream).collect(Collectors.toList());
 
-        List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
+        List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(subjectAnnotIds);
 
         return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
@@ -64,7 +64,7 @@ public class StatementServiceImpl implements StatementService {
 
 
     private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
-        List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
+        List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
         return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildAnnotationList(entryAccession, normalStatements);
     }
 
@@ -82,7 +82,7 @@ public class StatementServiceImpl implements StatementService {
     @Override
     public Set<DbXref> findDbXrefs(String entryAccession) {
 
-        return statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession).stream()
+        return statementDao.findNormalStatements(entryAccession).stream()
                 .map(statement -> Optional.ofNullable(createDbXref(statement)))
                 .flatMap(xref -> xref.map(Stream::of).orElseGet(Stream::empty))
                 .collect(Collectors.toSet());
@@ -90,7 +90,8 @@ public class StatementServiceImpl implements StatementService {
 
     private DbXref createDbXref(Statement statement) {
 
-        if (statement.getValue(StatementField.REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
+        if (statement.hasField(REFERENCE_DATABASE.getName()) &&
+                statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
 
             return newGlyConnectXref(statement);
         }
@@ -101,7 +102,7 @@ public class StatementServiceImpl implements StatementService {
     private DbXref newGlyConnectXref(Statement statement) {
 
         String referenceDB = XrefDatabase.GLY_CONNECT.getName();
-        String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
+        String referenceAC = statement.getValue(REFERENCE_ACCESSION);
 
         try {
             DbXref dbXRef = new DbXref();

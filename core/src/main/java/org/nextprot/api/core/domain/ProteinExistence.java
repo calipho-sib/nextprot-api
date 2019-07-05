@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.nextprot.api.commons.utils.EnumConstantDictionary;
+import org.nextprot.commons.utils.EnumConstantDictionary;
 
 import java.io.IOException;
 import java.util.ArrayList;
