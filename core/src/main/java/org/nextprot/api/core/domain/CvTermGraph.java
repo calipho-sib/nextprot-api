@@ -3,7 +3,7 @@ package org.nextprot.api.core.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.graph.IntGraph;
+import org.nextprot.commons.graph.IntGraph;
 
 import java.io.Serializable;
 import java.util.ArrayList;
