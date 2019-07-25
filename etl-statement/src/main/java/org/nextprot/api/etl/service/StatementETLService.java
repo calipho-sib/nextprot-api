@@ -1,17 +1,23 @@
 package org.nextprot.api.etl.service;
 
 
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 
 import java.io.IOException;
 
+/**
+ * Extract, transform, load Statements from Json data source to nxflat database
+ */
 public interface StatementETLService {
-    
-	String etlStatements(NextProtSource source, String release, boolean load) throws IOException;
 
-	void setStatementExtractorService(StatementExtractorService statementExtractorService);
 
-	void setStatementTransformerService(StatementTransformerService statementTransformerService);
-
-	void setStatementLoadService(StatementLoaderService statementLoadService);
+		/**
+		 * Extract/Transform/Load statements provided by a source
+		 * @param source the statement source
+		 * @param release the source release
+		 * @param load load to db if true
+		 * @return the log message
+		 * @throws IOException
+		 */
+	String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException;
 }

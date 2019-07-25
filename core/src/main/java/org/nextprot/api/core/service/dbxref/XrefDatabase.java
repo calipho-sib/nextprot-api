@@ -1,8 +1,8 @@
 package org.nextprot.api.core.service.dbxref;
 
 
-import org.nextprot.api.commons.utils.EnumConstantDictionary;
-import org.nextprot.api.commons.utils.EnumDictionarySupplier;
+import org.nextprot.commons.utils.EnumConstantDictionary;
+import org.nextprot.commons.utils.EnumDictionarySupplier;
 
 import java.util.Map;
 

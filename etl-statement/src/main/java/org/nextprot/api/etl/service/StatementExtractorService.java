@@ -1,13 +1,13 @@
 package org.nextprot.api.etl.service;
 
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 
 public interface StatementExtractorService {
 
-	Set<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName) throws IOException;
-	Set<Statement> getStatementsForSource(NextProtSource source, String release) throws IOException;
+	Collection<Statement> getStatementsFromJsonFile(StatementSource source, String release, String jsonFileName) throws IOException;
+	Collection<Statement> getStatementsForSource(StatementSource source, String release) throws IOException;
 }

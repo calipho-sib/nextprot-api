@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.statement.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -23,6 +24,8 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 	}*/
 
 	// TODO: this test do nothing and f90790567dc0650b5737fa62332bb38a does not exist
+	//TODO to unignore
+	@Ignore
 	@Test
 	public void findAllNormalAnnotations() {
 

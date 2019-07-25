@@ -11,7 +11,6 @@ import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuil
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.DigestionService;
-import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +30,6 @@ public class ProteinDigestionController {
 
 	@Autowired
 	private DigestionService digestionService;
-
-	@Autowired
-	private IsoformService isoformService;
 
 	@RequestMapping(value = "/digestion/available-protease-list", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ApiMethod(path = "/digestion/available-protease-list", verb = ApiVerb.GET, description = "list all available proteases")
@@ -60,7 +56,7 @@ public class ProteinDigestionController {
 			@RequestParam(value = "minpeplen", required = false) Integer minPepLen,
 			@ApiQueryParam(name = "maxpeplen", description = "maximum peptide length (none by default)")
 			@RequestParam(value = "maxpeplen", required = false) Integer maxPepLen,
-			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (0 by default, maximum 2)", allowedvalues = { "0" })
+			@ApiQueryParam(name = "maxmissedcleavages", description = "maximum number of missed cleavages (0 by default)", allowedvalues = { "0" })
 			@RequestParam(value = "maxmissedcleavages", required = false) Integer maxMissedCleavages,
 			@ApiQueryParam(name = "digestmaturepartsonly", description = "digest mature parts of protein if true (true by default)", allowedvalues = { "true" })
 			@RequestParam(value = "digestmaturepartsonly", required = false) Boolean digestmaturepartsonly,
