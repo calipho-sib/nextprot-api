@@ -8,6 +8,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -57,7 +59,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	@Autowired private EntityNameService entityNameService;
 	@Autowired private VariantFrequencyService variantFrequencyService;
-	
+
+	private static final Log LOGGER = LogFactory.getLog(AnnotationServiceImpl.class);
+
 	@Override
 	@Cacheable(value = "annotations", sync = true)
 	public List<Annotation> findAnnotations(String entryName) {
@@ -394,6 +398,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 											// variant amino acid sequence do not match
 											// Should log this
 											// Should we check for other isoforms of the corresponding entry
+											LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " +annotation.getVariant().getVariant());
+											LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA "  + variantFrequency.getVariantAminoAcid());
+
 										}
 									}
 

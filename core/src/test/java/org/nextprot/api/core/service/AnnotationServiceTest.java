@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
  * @author pam
  */
 
+
 @ActiveProfiles({"unit", "unit-schema-nextprot"})
 @DatabaseSetup(value="AnnotationMVCTest.xml", type = DatabaseOperation.CLEAN_INSERT)
 public class AnnotationServiceTest extends CoreUnitBaseTest {
