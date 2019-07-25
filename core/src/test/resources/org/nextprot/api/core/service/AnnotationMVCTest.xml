@@ -87,7 +87,7 @@
 
 
 	<resources resource_id="1000022" cv_type_id="112" />
-	<cv_databases cv_id="342" cv_name="gnomAD" cv_category_id="12" link_url="https://gnomad.broadinstitute.org/variant/%s" url="https://gnomad.broadinstitute.org/" link_type="Explicit" />
+	<cv_databases cv_id="342" cv_name="dbSNP" cv_category_id="12" link_url="https://gnomad.broadinstitute.org/variant/%s" url="https://gnomad.broadinstitute.org/" link_type="Explicit" />
 	<cv_terms cv_id="1027" db_xref_id="1000022" cv_category_id="2000" cv_name="sequence variant"/>
 	<db_xrefs accession="rs750276597" resource_id="1000022" description="variants from dbSNP" cv_database_id="342"/>
 	<cv_term_categories cv_id="2000" cv_api_name="APINAME"/>
