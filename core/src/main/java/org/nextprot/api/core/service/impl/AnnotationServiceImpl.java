@@ -8,6 +8,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import org.apache.commons.lang.StringUtils;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
@@ -34,6 +35,7 @@ import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
@@ -99,7 +101,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			// Isoform specificities
 			List<AnnotationIsoformSpecificity> isospecs = annotationDAO.findAnnotationIsoformsByAnnotationIds(annotationIds);
 			Multimap<Long, AnnotationIsoformSpecificity> isospecsByAnnotationId = Multimaps.index(isospecs, new AnnotationIsoformFunction());
-	
+
 			for (Annotation annotation : annotations) {
 				annotation.addTargetingIsoforms(new ArrayList<>(isospecsByAnnotationId.get(annotation.getAnnotationId())));
 			}
@@ -140,7 +142,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		// Adds the variant frequencies to variant annotations
 		addGnomeADVariantFrequencies(annotations);
-
 		if (!ignoreStatements) {
 
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
@@ -330,26 +331,90 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	private List<Annotation> addGnomeADVariantFrequencies(List<Annotation> annotations) {
-		annotations.stream()
-				.filter(annotation -> AnnotationCategory.VARIANT.getApiTypeName() == annotation.getCategory())
+		// Get all the gnomeAd variants for all the variations with dbSNPIds
+		Set<String> dbSNPIds = new HashSet<>();
+		List<Annotation> variantAnnotations = annotations.stream()
+				.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 				.map(annotation -> {
 					// Gets the annotation evidence referring to dbSNP
-					return annotation.getEvidences().stream()
-							.filter((annotationEvidence -> annotationEvidence.getResourceDb() == "dbSNP"))
-							.map(annotationEvidence -> {
-								String evidenceCodeAC = annotationEvidence.getEvidenceCodeAC();
-								VariantFrequency variantFrequency = variantFrequencyService.findVariantFrequencyByRSID(evidenceCodeAC);
+					List<String> dbSNPIdsForAnnotation = annotation.getEvidences().stream()
+							.filter((annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb())))
+							.map(annotationEvidence -> annotationEvidence.getEvidenceCodeAC())
+							.collect(Collectors.toList());
+					dbSNPIds.addAll(dbSNPIdsForAnnotation);
+					return annotation;
+				})
+				.collect(Collectors.toList());
 
-								// Adds the variant frequency as an annotation property
-								AnnotationProperty variantFrequencyProperty = new AnnotationProperty();
-								variantFrequencyProperty.setName("Allele Frequency");
-								variantFrequencyProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
-								variantFrequencyProperty.setAnnotationId(annotation.getAnnotationId());
-								annotation.addProperty(variantFrequencyProperty);
-								return annotation;
+		// Get all the gnomeAd variants given the dbSNPIds
+		Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
+		List<AnnotationEvidence> newEvidences = new ArrayList<>();
+		List<AnnotationProperty> newProperties = new ArrayList<>();
+		List<Annotation> annotationWithGnomadVariants = variantAnnotations.stream()
+				.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
+				.map(annotation -> {
+					List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
+					annotationEvidences.stream()
+							.filter((annotationEvidence -> annotationEvidence.getResourceDb().equals("gnomAD")))
+							.forEach(annotationEvidence -> {
+								String dbSNPId = annotationEvidence.getEvidenceCodeAC();
+								// Do the consistency checks before attaching the variant frequencies
+								String annotationVariantOriginal = annotation.getVariant().getOriginal();
+								String annotationVariantVariant = annotation.getVariant().getVariant();
+
+								// TODO: should we check the position, if so how and on which isoform
+								// Get variant frequency for this annotation
+								List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
+								variantFrequencyList.forEach(variantFrequency -> {
+									String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
+									String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
+
+									// Gnomead variant amino acids are in three letter code, need to be converted
+									String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
+									String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
+									// Check if the variant is the same
+									if(gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)){
+										if(gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
+											// Adds evidence
+											AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
+											gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
+											gnomadEvidence.setAssignedBy("gnomAD");
+											gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
+											gnomadEvidence.setResourceDb("gnomAd");
+											gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
+											newEvidences.add(gnomadEvidence);
+
+											// Adds a property
+											AnnotationProperty gnomadProperty = new AnnotationProperty();
+											gnomadProperty.setAnnotationId(annotation.getAnnotationId());
+											gnomadProperty.setName("GnomAD Allele Frequency");
+											gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
+											newProperties.add(gnomadProperty);
+										} else {
+											// variant amino acid sequence do not match
+											// Should log this
+											// Should we check for other isoforms of the corresponding entry
+										}
+									}
+
+								});
 							});
-				});
-		return annotations;
+					return annotation;
+				})
+				.collect(() -> new ArrayList<Annotation>(),
+						 (c, e) -> {
+							newEvidences.forEach((annotationEvidence -> {
+								e.getEvidences().add(annotationEvidence);
+							}));
+							newProperties.forEach((annotationProperty -> {
+								e.addProperty(annotationProperty);
+							}));
+							c.add(e);
+						 },
+						 (c1, c2) -> c1.addAll(c2));
+
+		// Adds properties and evidences
+		return annotationWithGnomadVariants;
 	}
 
 	@Override

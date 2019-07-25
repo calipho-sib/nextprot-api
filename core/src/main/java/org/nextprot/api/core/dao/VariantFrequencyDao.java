@@ -1,8 +1,11 @@
 package org.nextprot.api.core.dao;
 
 import org.nextprot.api.core.domain.VariantFrequency;
+import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Variant Frequency DAO interface
@@ -11,14 +14,15 @@ public interface VariantFrequencyDao {
 
     /**
      * Returns the variant frequncy given a dbSNP Id
-     * @param RSID
-     * @return
+     * @param dbSNPId
+     * @return List of variant frequencies
      */
-    VariantFrequency findVariantFrequency(String RSID);
+    List<VariantFrequency> findVariantFrequency(String dbSNPId, AnnotationVariant variant);
 
     /**
-     * Inserts a variant frequency
-     * @param variantFrequency
+     * Returns a list of variant frequencies given a dbSNP Id list
+     * @param dbSNPId
+     * @return List of variant frequencies
      */
-    void insertVariantFrequency(List<VariantFrequency> variantFrequency);
+    Map<String, List<VariantFrequency>> findVariantFrequency(Set<String> dbSNPId);
 }

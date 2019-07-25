@@ -175,7 +175,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
             evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
             evidence.setEvidenceId(resultSet.getLong("evidence_id"));
             evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
-            evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
+            //evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
             evidence.setEvidenceCodeAC(resultSet.getString("eco_ac"));
             evidence.setEvidenceCodeName(resultSet.getString("eco_name"));
             return evidence;

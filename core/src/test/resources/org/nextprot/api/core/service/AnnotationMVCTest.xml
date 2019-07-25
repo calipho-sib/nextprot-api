@@ -6,6 +6,7 @@
 
 	<sequence_identifiers identifier_id="10000" cv_type_id="1" unique_name="NX_P10000" />
 	<sequence_identifiers identifier_id="100001" cv_type_id="2" unique_name="NX_P10000-1" />
+
 	<bio_sequences bio_sequence_id="235252" bio_sequence="JHGJHGD"  md5="92835729857" identifier_id="100001" cv_type_id="1"  />
 	<identifier_synonyms synonym_id="2378423" identifier_id="100001" synonym_name="Synonym of NX_P10000-1" cv_type_id="1" is_main="true" cv_qualifier_id="1" />
 	<mapping_annotations  annotation_id="10000100001" reference_identifier_id="10000" mapped_identifier_id="100001" cv_type_id="4" />
@@ -85,17 +86,26 @@
 	<identifier_properties identifier_property_id="8762377" identifier_id="100002" property_value="NX_P20000-1" cv_property_name_id="11" />
 
 
-	<resources resource_id="1000022" cv_type_id="1" />
+	<resources resource_id="1000022" cv_type_id="112" />
 	<cv_databases cv_id="342" cv_name="gnomAD" cv_category_id="12" link_url="https://gnomad.broadinstitute.org/variant/%s" url="https://gnomad.broadinstitute.org/" link_type="Explicit" />
-	<cv_terms cv_id="1027" db_xref_id="1000022" cv_category_id="1" cv_name="sequence variant"/>
-	<db_xrefs accession="rs868068454" resource_id="1000022" description="variants from dbSNP" cv_database_id="342"/>
+	<cv_terms cv_id="1027" db_xref_id="1000022" cv_category_id="2000" cv_name="sequence variant"/>
+	<db_xrefs accession="rs750276597" resource_id="1000022" description="variants from dbSNP" cv_database_id="342"/>
+	<cv_term_categories cv_id="2000" cv_api_name="APINAME"/>
+	<cv_quality_qualifiers cv_id="5555"/>
+	<cv_resource_types cv_id="112"/>
+	<cv_qualifier_types cv_id="500"/>
+
+
 	<identifier_resource_assoc assoc_id="345345346" identifier_id="100002" resource_id="1000022" datasource_id="2" cv_type_id="1" cv_quality_qualifier_id="10" />
 	<annotations annotation_id="57175054" unique_name="AN_Q4KMP7_000685" identifier_id="100002"
 				 cv_annotation_discriminator_id="15" cv_annotation_type_id="1027"  cv_term_id="1027" description="In Ref. 3; CAG46469."
-				 datasource_id="7" cv_quality_qualifier_id="50" />
-	<annotation_resource_assoc annotation_id="15" resource_id="21" cv_qualifier_type_id="1" cv_type_id="1"/>
+				 datasource_id="7" cv_quality_qualifier_id="5555" />
+	<annotation_protein_assoc annotation_id="57175054" protein_id="100003" assoc_id="24" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="24" position_id="24"/>
+	<annotation_resource_assoc annotation_id="57175054" resource_id="1000022" cv_qualifier_type_id="500" cv_type_id="3" is_negative_evidence="false" evidence_code_id="1027"/>
 	<annotation_synonyms cv_type_id = "10" annotation_id = "57175054" synonym_name = "Synonym"/>
-	<variants variant_sequence = "T" original_sequence="A" annotation_id="57175054" />
+	<variants variant_sequence = "V" original_sequence="I" annotation_id="57175054" />
+
 
 	<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
 <!-- 	<cv_resource_assoc_types cv_id="2" cv_name="relative" description="The resource is an information relative to the data (xref on prosite for domain)" /> -->
