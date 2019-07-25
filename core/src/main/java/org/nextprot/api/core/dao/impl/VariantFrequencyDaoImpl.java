@@ -1,16 +1,13 @@
 package org.nextprot.api.core.dao.impl;
 
-import apple.laf.JRSUIConstants;
-import com.hp.hpl.jena.sparql.core.Var;
+
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.VariantFrequencyDao;
 import org.nextprot.api.core.domain.VariantFrequency;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
