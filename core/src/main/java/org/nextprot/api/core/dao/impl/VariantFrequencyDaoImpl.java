@@ -1,11 +1,14 @@
 package org.nextprot.api.core.dao.impl;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.VariantFrequencyDao;
 import org.nextprot.api.core.domain.VariantFrequency;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,6 +28,9 @@ public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
 
     @Autowired
     private DataSourceServiceLocator dataSourceLocator;
+
+    private static final Log LOGGER = LogFactory.getLog(AnnotationServiceImpl.class);
+
 
     /**
      * Return the variant frequency given the RSID
@@ -57,12 +63,14 @@ public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
         parameters.addValue("dbsnp_ids", dbSNPIds);
 
         // Queries for variants with dbsnp ids
-        System.out.print("parameters " + parameters);
+        LOGGER.info("parameters " + parameters);
         List<Map<String, Object>> rows = new NamedParameterJdbcTemplate(dataSourceLocator.getStatementsDataSource())
                 .queryForList(sqlDictionary.getSQLQuery("variant-frequencies-by-dbSNP"), parameters);
         if(rows != null) {
+            LOGGER.info("Results returned " + rows.size());
             return buildVariantFrequencies(rows);
         } else {
+            LOGGER.info("No results returned");
             return null;
         }
     }
