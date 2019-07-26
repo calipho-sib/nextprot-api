@@ -355,17 +355,19 @@ public class AnnotationServiceImpl implements AnnotationService {
 		if(dbSNPIds.size() > 0 ) {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			variantFrequencies.keySet().forEach(variantKey -> {
-				LOGGER.info("Variant key " + variantKey +" Variant frequencies found " + variantFrequencies.get(variantKey).size())
+				LOGGER.info("Variant key " + variantKey +" Variant frequencies found " + variantFrequencies.get(variantKey).size());
 			});
 			List<AnnotationEvidence> newEvidences = new ArrayList<>();
 			List<AnnotationProperty> newProperties = new ArrayList<>();
 			annotationWithGnomadVariants = variantAnnotations.stream()
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 					.map(annotation -> {
+						LOGGER.info("Variant annotations  " + variantAnnotations.size());
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
 						annotationEvidences.stream()
 								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
 								.forEach(annotationEvidence -> {
+									LOGGER.info("Evidence with dbsnp  " + annotationEvidence.getEvidenceCodeAC());
 									String dbSNPId = annotationEvidence.getEvidenceCodeAC();
 									// Do the consistency checks before attaching the variant frequencies
 									String annotationVariantOriginal = annotation.getVariant().getOriginal();
