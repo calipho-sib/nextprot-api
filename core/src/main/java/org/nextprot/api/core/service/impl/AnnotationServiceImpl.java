@@ -376,7 +376,10 @@ public class AnnotationServiceImpl implements AnnotationService {
 									// TODO: should we check the position, if so how and on which isoform
 									// Get variant frequency for this annotation
 									List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
+									LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
 									variantFrequencyList.forEach(variantFrequency -> {
+										LOGGER.info("Processing variant "+ variantFrequency.getGnomadAccession() + " "+ variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
+
 										String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
 										String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
 
@@ -386,6 +389,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 										// Check if the variant is the same
 										if(gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)){
 											if(gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
+												LOGGER.info("GNOMAD variant matches with annotation variant for "+ variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 												// Adds evidence
 												AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
 												gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
