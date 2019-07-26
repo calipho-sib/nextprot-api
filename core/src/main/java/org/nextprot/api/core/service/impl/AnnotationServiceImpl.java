@@ -343,19 +343,17 @@ public class AnnotationServiceImpl implements AnnotationService {
 					// Gets the annotation evidence referring to dbSNP
 					List<String> dbSNPIdsForAnnotation = annotation.getEvidences().stream()
 							.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
-							.map(annotationEvidence -> annotationEvidence.getEvidenceCodeAC())
+							.map(annotationEvidence -> annotationEvidence.getResourceAccession())
 							.collect(Collectors.toList());
 					dbSNPIds.addAll(dbSNPIdsForAnnotation);
 					return annotation;
 				})
 				.collect(Collectors.toList());
-		LOGGER.info("DBSNP" + dbSNPIds.toArray().toString());
+		LOGGER.info("DBSNP to search for" + dbSNPIds.size());
 
 		// Get all the gnomeAd variants given the dbSNPIds
 		List<Annotation> annotationWithGnomadVariants = null;
 		if(dbSNPIds.size() > 0 ) {
-
-			LOGGER.info("DBSNP IDs " + java.util.Arrays.toString(dbSNPIds.toArray()));
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			if(variantFrequencies == null) {
 				LOGGER.info("No GNOMAD variants found for given dbsnpids " + dbSNPIds.toArray().toString());
