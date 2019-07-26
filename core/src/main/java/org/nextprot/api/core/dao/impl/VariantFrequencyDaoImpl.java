@@ -57,6 +57,7 @@ public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
         parameters.addValue("dbsnp_ids", dbSNPIds);
 
         // Queries for variants with dbsnp ids
+        System.out.print("parameters " + parameters);
         List<Map<String, Object>> rows = new NamedParameterJdbcTemplate(dataSourceLocator.getStatementsDataSource())
                 .queryForList(sqlDictionary.getSQLQuery("variant-frequencies-by-dbSNP"), parameters);
         if(rows != null) {

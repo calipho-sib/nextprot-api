@@ -354,6 +354,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		// Get all the gnomeAd variants given the dbSNPIds
 		List<Annotation> annotationWithGnomadVariants = null;
 		if(dbSNPIds.size() > 0 ) {
+
+			LOGGER.info("DBSNP IDs " + java.util.Arrays.toString(dbSNPIds.toArray()));
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			if(variantFrequencies == null) {
 				LOGGER.info("No GNOMAD variants found for given dbsnpids " + dbSNPIds.toArray().toString());
@@ -428,7 +430,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											}
 										});
 									} else {
-										LOGGER.info("No GNOMAD variants found for given variant annotations " + dbSNPIds.toArray().toString());
+										LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
 									}
 								});
 						return annotation;
