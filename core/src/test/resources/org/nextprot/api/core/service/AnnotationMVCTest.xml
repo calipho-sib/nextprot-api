@@ -6,7 +6,6 @@
 
 	<sequence_identifiers identifier_id="10000" cv_type_id="1" unique_name="NX_P10000" />
 	<sequence_identifiers identifier_id="100001" cv_type_id="2" unique_name="NX_P10000-1" />
-
 	<bio_sequences bio_sequence_id="235252" bio_sequence="JHGJHGD"  md5="92835729857" identifier_id="100001" cv_type_id="1"  />
 	<identifier_synonyms synonym_id="2378423" identifier_id="100001" synonym_name="Synonym of NX_P10000-1" cv_type_id="1" is_main="true" cv_qualifier_id="1" />
 	<mapping_annotations  annotation_id="10000100001" reference_identifier_id="10000" mapped_identifier_id="100001" cv_type_id="4" />
@@ -72,8 +71,8 @@
 
 	<annotations annotation_id="14" unique_name="AN_P12345_014" identifier_id="10"
 		cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB5 and AB4."
-		datasource_id="1" cv_quality_qualifier_id="1"/>
-
+		datasource_id="1" cv_quality_qualifier_id="1" />
+		
 	<annotation_resource_assoc annotation_id="10" resource_id="10" cv_qualifier_type_id="1" cv_type_id="1"/>
 	<db_xrefs accession="AC_TEST1" resource_id="20" description="some description of an evidence"/>
 

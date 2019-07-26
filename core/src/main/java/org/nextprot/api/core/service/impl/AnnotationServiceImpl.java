@@ -361,7 +361,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 					.map(annotation -> {
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
 						annotationEvidences.stream()
-								.filter((annotationEvidence -> annotationEvidence.getResourceDb().equals("dbSNP")))
+								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
 								.forEach(annotationEvidence -> {
 									String dbSNPId = annotationEvidence.getEvidenceCodeAC();
 									// Do the consistency checks before attaching the variant frequencies
