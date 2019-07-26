@@ -29,7 +29,7 @@ public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
     @Autowired
     private DataSourceServiceLocator dataSourceLocator;
 
-    private static final Log LOGGER = LogFactory.getLog(AnnotationServiceImpl.class);
+    private static final Log LOGGER = LogFactory.getLog(VariantFrequencyDaoImpl.class);
 
 
     /**

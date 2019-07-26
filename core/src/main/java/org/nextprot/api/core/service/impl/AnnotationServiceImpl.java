@@ -370,7 +370,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 			annotationWithGnomadVariants = variantAnnotations.stream()
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 					.map(annotation -> {
-						LOGGER.info("Variant annotations  " + variantAnnotations.size());
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
 						annotationEvidences.stream()
 								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
