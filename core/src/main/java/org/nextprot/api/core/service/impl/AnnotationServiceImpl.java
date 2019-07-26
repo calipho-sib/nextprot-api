@@ -376,46 +376,49 @@ public class AnnotationServiceImpl implements AnnotationService {
 									// TODO: should we check the position, if so how and on which isoform
 									// Get variant frequency for this annotation
 									List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
-									LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
-									variantFrequencyList.forEach(variantFrequency -> {
-										LOGGER.info("Processing variant "+ variantFrequency.getGnomadAccession() + " "+ variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
+									if(variantFrequencyList != null ) {
 
-										String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
-										String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
+										LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
+										variantFrequencyList.forEach(variantFrequency -> {
+											LOGGER.info("Processing variant " + variantFrequency.getGnomadAccession() + " " + variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
 
-										// Gnomead variant amino acids are in three letter code, need to be converted
-										String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
-										String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
-										// Check if the variant is the same
-										if(gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)){
-											if(gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
-												LOGGER.info("GNOMAD variant matches with annotation variant for "+ variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
-												// Adds evidence
-												AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
-												gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
-												gnomadEvidence.setAssignedBy("gnomAD");
-												gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
-												gnomadEvidence.setResourceDb("gnomAD");
-												gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
-												newEvidences.add(gnomadEvidence);
+											String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
+											String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
 
-												// Adds a property
-												AnnotationProperty gnomadProperty = new AnnotationProperty();
-												gnomadProperty.setAnnotationId(annotation.getAnnotationId());
-												gnomadProperty.setName("GnomAD Allele Frequency");
-												gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
-												newProperties.add(gnomadProperty);
-											} else {
-												// variant amino acid sequence do not match
-												// Should log this
-												// Should we check for other isoforms of the corresponding entry
-												LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " +annotation.getVariant().getVariant());
-												LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA "  + variantFrequency.getVariantAminoAcid());
+											// Gnomead variant amino acids are in three letter code, need to be converted
+											String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
+											String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
+											// Check if the variant is the same
+											if (gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)) {
+												if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
+													LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
+													// Adds evidence
+													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
+													gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
+													gnomadEvidence.setAssignedBy("gnomAD");
+													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
+													gnomadEvidence.setResourceDb("gnomAD");
+													gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
+													newEvidences.add(gnomadEvidence);
 
+													// Adds a property
+													AnnotationProperty gnomadProperty = new AnnotationProperty();
+													gnomadProperty.setAnnotationId(annotation.getAnnotationId());
+													gnomadProperty.setName("GnomAD Allele Frequency");
+													gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
+													newProperties.add(gnomadProperty);
+												} else {
+													// variant amino acid sequence do not match
+													// Should log this
+													// Should we check for other isoforms of the corresponding entry
+													LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " + annotation.getVariant().getVariant());
+													LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA " + variantFrequency.getVariantAminoAcid());
+												}
 											}
-										}
-
-									});
+										});
+									} else {
+										LOGGER.info("No GNOMAD variants found for given variant annotations " + dbSNPIds.toArray().toString());
+									}
 								});
 						return annotation;
 					})
