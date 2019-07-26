@@ -350,10 +350,16 @@ public class AnnotationServiceImpl implements AnnotationService {
 				})
 				.collect(Collectors.toList());
 		LOGGER.info("DBSNP" + dbSNPIds.toArray().toString());
+
 		// Get all the gnomeAd variants given the dbSNPIds
 		List<Annotation> annotationWithGnomadVariants = null;
 		if(dbSNPIds.size() > 0 ) {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
+			if(variantFrequencies == null) {
+				LOGGER.info("No GNOMAD variants found for given dbsnpids " + dbSNPIds.toArray().toString());
+				return annotations;
+			}
+
 			variantFrequencies.keySet().forEach(variantKey -> {
 				LOGGER.info("Variant key " + variantKey +" Variant frequencies found " + variantFrequencies.get(variantKey).size());
 			});
@@ -389,8 +395,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 											String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
 											String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
 											// Check if the variant is the same
+											// THis is the check which has to make profound considering all/most of the possibilities
+											LOGGER.info("Isoform map "+annotation.getTargetingIsoformsMap().keySet().toArray().toString());
 											if (gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)) {
 												if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
+
 													LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 													// Adds evidence
 													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
@@ -414,6 +423,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 													LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " + annotation.getVariant().getVariant());
 													LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA " + variantFrequency.getVariantAminoAcid());
 												}
+											} else {
+												LOGGER.info("GNOMAD variant does not match with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 											}
 										});
 									} else {
