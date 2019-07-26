@@ -373,8 +373,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 						annotationEvidences.stream()
 								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
 								.forEach(annotationEvidence -> {
-									LOGGER.info("Evidence with dbsnp  " + annotationEvidence.getEvidenceCodeAC());
-									String dbSNPId = annotationEvidence.getEvidenceCodeAC();
+									String dbSNPId = annotationEvidence.getResourceAccession();
+									LOGGER.info("Evidence with dbsnp  " + dbSNPId);
 									// Do the consistency checks before attaching the variant frequencies
 									String annotationVariantOriginal = annotation.getVariant().getOriginal();
 									String annotationVariantVariant = annotation.getVariant().getVariant();
