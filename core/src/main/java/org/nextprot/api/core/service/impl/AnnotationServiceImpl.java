@@ -403,9 +403,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 													// Adds evidence
 													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
 													gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
+													gnomadEvidence.setEvidenceCodeOntology(annotationEvidence.getEvidenceCodeOntology());
+													gnomadEvidence.setEvidenceCodeName(annotationEvidence.getEvidenceCodeName());
 													gnomadEvidence.setAssignedBy("gnomAD");
-													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
 													gnomadEvidence.setResourceDb("gnomAD");
+													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
 													gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
 													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 													newEvidences.add(gnomadEvidence);
