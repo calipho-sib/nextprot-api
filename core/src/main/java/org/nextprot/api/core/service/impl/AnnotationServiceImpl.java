@@ -145,7 +145,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		// Adds the variant frequencies to variant annotations
-		annotations = addGnomeADVariantFrequencies(annotations);
+		addGnomeADVariantFrequencies(annotations);
 		if (!ignoreStatements) {
 
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
@@ -334,7 +334,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return specs;
 	}
 
-	private List<Annotation> addGnomeADVariantFrequencies(List<Annotation> annotations) {
+	private void addGnomeADVariantFrequencies(List<Annotation> annotations) {
+		LOGGER.info("Processing " + annotations.size() + " annotations");
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
 		Set<String> dbSNPIds = new HashSet<>();
 		List<Annotation> variantAnnotations = annotations.stream()
@@ -349,10 +350,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 					return annotation;
 				})
 				.collect(Collectors.toList());
-		LOGGER.info("DBSNP to search for" + dbSNPIds.size());
+		LOGGER.info("DBSNPs to search for " + dbSNPIds.size());
 
 		// Get all the gnomeAd variants given the dbSNPIds
 		List<Annotation> annotationWithGnomadVariants = null;
+		Map<Annotation, List<AnnotationEvidence>> newEvidences = new HashMap<>();
+		Map<Annotation, List<AnnotationProperty>> newProperties = new HashMap<>();
 		if(dbSNPIds.size() > 0 ) {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			if(variantFrequencies == null) {
@@ -363,9 +366,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 			variantFrequencies.keySet().forEach(variantKey -> {
 				LOGGER.info("Variant key " + variantKey +" Variant frequencies found " + variantFrequencies.get(variantKey).size());
 			});
-			List<AnnotationEvidence> newEvidences = new ArrayList<>();
-			List<AnnotationProperty> newProperties = new ArrayList<>();
-			annotationWithGnomadVariants = variantAnnotations.stream()
+
+			variantAnnotations.stream()
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 					.map(annotation -> {
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
@@ -410,7 +412,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
 													gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
 													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
-													newEvidences.add(gnomadEvidence);
+													if(newEvidences.get(annotation) == null) {
+														List<AnnotationEvidence> evidenceList = new ArrayList<>();
+														evidenceList.add(gnomadEvidence);
+														newEvidences.put(annotation, evidenceList);
+													} else {
+														newEvidences.get(annotation).add(gnomadEvidence);
+													}
 
 													// Adds a property
 													AnnotationProperty gnomadProperty = new AnnotationProperty();
@@ -436,25 +444,21 @@ public class AnnotationServiceImpl implements AnnotationService {
 								});
 						return annotation;
 					})
-					.collect(() -> new ArrayList<Annotation>(),
-							(c, e) -> {
-								newEvidences.forEach((annotationEvidence -> {
-									e.getEvidences().add(annotationEvidence);
-								}));
-								newProperties.forEach((annotationProperty -> {
-									e.addProperty(annotationProperty);
-								}));
-								c.add(e);
-							},
-							(c1, c2) -> c1.addAll(c2));
+					.collect(Collectors.toList());
 		} else {
 			LOGGER.info("No DBSNP ids for given annotations");
 		}
 
 
 		// Adds properties and evidences
-		LOGGER.info("Annotations with gnomad variants " + annotationWithGnomadVariants.size());
-		return annotationWithGnomadVariants;
+		newEvidences.keySet().stream()
+				.map((annotation -> {
+					LOGGER.info("Adding gnomad evidences to annotation " + annotation.getAnnotationId());
+					annotation.getEvidences().addAll(newEvidences.get(annotation));
+					return annotation;
+				}));
+		LOGGER.info("Annotations with gnomad variant frequencies " + newEvidences.keySet().size());
+		//return annotationWithGnomadVariants;
 	}
 
 	@Override
