@@ -410,6 +410,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setResourceDb("gnomAD");
 													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
 													gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
+													gnomadEvidence.setResourceAssociationType(annotationEvidence.getResourceAssociationType()); // Should this be changed?
+													gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
+													gnomadEvidence.setQualityQualifier("GOLD");
 													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 													if(newEvidences.get(annotation) == null) {
 														List<AnnotationEvidence> evidenceList = new ArrayList<>();
