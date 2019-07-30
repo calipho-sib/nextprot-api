@@ -465,7 +465,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 		newProperties.keySet().stream()
 				.forEach((annotation -> {
 					LOGGER.info("Adding gnomad property to annotation " + annotation.getAnnotationId());
-					annotation.getProperties().addAll(newProperties.get(annotation));
+					List<AnnotationProperty> property = newProperties.get(annotation);
+					if(property != null) {
+						annotation.getProperties().addAll(newProperties.get(annotation));
+					} else {
+						LOGGER.warn("Unexpected property ");
+					}
 				}));
 
 		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
