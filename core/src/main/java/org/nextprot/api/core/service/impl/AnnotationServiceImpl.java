@@ -145,7 +145,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		// Adds the variant frequencies to variant annotations
-		addGnomeADVariantFrequencies(annotations);
+		annotations = addGnomeADVariantFrequencies(annotations);
 		if (!ignoreStatements) {
 
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
@@ -449,6 +449,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 
 		// Adds properties and evidences
+		LOGGER.info("Annotations with gnomad variants " + annotationWithGnomadVariants.size());
 		return annotationWithGnomadVariants;
 	}
 
