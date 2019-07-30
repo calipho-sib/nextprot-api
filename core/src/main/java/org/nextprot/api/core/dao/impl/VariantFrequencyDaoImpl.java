@@ -99,6 +99,7 @@ public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
         String dbSNPId = row.get("dbsnp_id").toString();
         variantFrequency.setDbsnpId(dbSNPId);
         variantFrequency.setSource("gnomeAD");
+        variantFrequency.setGnomadAccession(row.get("gnomad_ac").toString());
         variantFrequency.setChromosome(row.get("chr").toString());
         variantFrequency.setChromosomePosition(Integer.parseInt(row.get("chrpos").toString()));
         variantFrequency.setOriginalNucleotide(row.get("ori_nuc").toString());
