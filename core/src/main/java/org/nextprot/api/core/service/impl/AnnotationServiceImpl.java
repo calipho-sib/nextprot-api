@@ -407,6 +407,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
 													gnomadEvidence.setResourceDb("gnomAD");
 													gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
+													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 													newEvidences.add(gnomadEvidence);
 
 													// Adds a property
@@ -414,6 +415,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadProperty.setAnnotationId(annotation.getAnnotationId());
 													gnomadProperty.setName("GnomAD Allele Frequency");
 													gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
+													LOGGER.info("Add property " + gnomadProperty.getAnnotationId() + " " + gnomadProperty.getValue());
 													newProperties.add(gnomadProperty);
 												} else {
 													// variant amino acid sequence do not match
