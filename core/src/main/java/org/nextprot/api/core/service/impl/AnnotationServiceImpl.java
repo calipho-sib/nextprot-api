@@ -360,7 +360,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			if(variantFrequencies == null) {
 				LOGGER.info("No GNOMAD variants found for given dbsnpids " + dbSNPIds.toArray().toString());
-				return annotations;
 			}
 
 			variantFrequencies.keySet().forEach(variantKey -> {
@@ -426,7 +425,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadProperty.setName("GnomAD Allele Frequency");
 													gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
 													LOGGER.info("Add property " + gnomadProperty.getAnnotationId() + " " + gnomadProperty.getValue());
-													newProperties.add(gnomadProperty);
+													if(newProperties.get(annotation) == null ) {
+														List<AnnotationProperty> propertyList = new ArrayList<>();
+														propertyList.add(gnomadProperty);
+														newProperties.put(annotation, propertyList);
+													} else {
+														newProperties.get(annotation).add(gnomadProperty);
+													}
 												} else {
 													// variant amino acid sequence do not match
 													// Should log this
