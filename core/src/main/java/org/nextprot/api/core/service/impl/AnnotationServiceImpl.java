@@ -466,17 +466,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 				.forEach((annotation -> {
 					LOGGER.info("Adding gnomad property to annotation " + annotation.getAnnotationId());
 					List<AnnotationProperty> propertyList = newProperties.get(annotation);
-					if(propertyList != null) {
-						annotation.getProperties().addAll(propertyList);
-					} else {
-						LOGGER.warn("Unexpected property ");
-					}
+					// Since properties are unmodifiable collection has to add properties one by one
+					propertyList.forEach((annotationProperty) -> {
+						annotation.addProperty(annotationProperty);
+					});
 				}));
 
 		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
-
-
-		//return annotationWithGnomadVariants;
 	}
 
 	@Override
