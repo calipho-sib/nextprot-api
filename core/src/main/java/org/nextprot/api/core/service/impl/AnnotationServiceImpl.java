@@ -457,12 +457,20 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		// Adds properties and evidences
 		newEvidences.keySet().stream()
-				.map((annotation -> {
+				.forEach((annotation -> {
 					LOGGER.info("Adding gnomad evidences to annotation " + annotation.getAnnotationId());
 					annotation.getEvidences().addAll(newEvidences.get(annotation));
-					return annotation;
 				}));
-		LOGGER.info("Annotations with gnomad variant frequencies " + newEvidences.keySet().size());
+
+		newProperties.keySet().stream()
+				.forEach((annotation -> {
+					LOGGER.info("Adding gnomad property to annotation " + annotation.getAnnotationId());
+					annotation.getProperties().addAll(newProperties.get(annotation));
+				}));
+
+		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
+
+
 		//return annotationWithGnomadVariants;
 	}
 
