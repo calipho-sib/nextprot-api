@@ -204,7 +204,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
 
 		// Injects the dbxrefs for gnomad variants
-		List<Annotation> annotations = annotationService.findAnnotations(entryName);
+		/*List<Annotation> annotations = annotationService.findAnnotations(entryName);
 		LOGGER.info("Generating xrefs for variant annotations " + annotations.size());
 		List<DbXref> gnomADXrefs = new ArrayList<>();
 		annotations.stream()
@@ -234,7 +234,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 							   });
 				   });
 		LOGGER.info("Gnomad xrefs created " + gnomADXrefs.size());
-		xrefs.addAll(gnomADXrefs);
+		xrefs.addAll(gnomADXrefs);*/
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
