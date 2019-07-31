@@ -414,6 +414,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
 													gnomadEvidence.setQualityQualifier("GOLD");
 													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
+
+													AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
+													evidenceProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
+													evidenceProperty.setPropertyName("GnomAD Allel Frequency");
+													evidenceProperty.setPropertyValue(new Double(variantFrequency.getAllelFrequency()).toString());
+
 													if(newEvidences.get(annotation) == null) {
 														List<AnnotationEvidence> evidenceList = new ArrayList<>();
 														evidenceList.add(gnomadEvidence);
@@ -422,19 +428,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 														newEvidences.get(annotation).add(gnomadEvidence);
 													}
 
-													// Adds a property
-													AnnotationProperty gnomadProperty = new AnnotationProperty();
-													gnomadProperty.setAnnotationId(annotation.getAnnotationId());
-													gnomadProperty.setName("GnomAD Allele Frequency");
-													gnomadProperty.setValue(new Double(variantFrequency.getAllelFrequency()).toString());
-													LOGGER.info("Add property " + gnomadProperty.getAnnotationId() + " " + gnomadProperty.getValue());
-													if(newProperties.get(annotation) == null ) {
-														List<AnnotationProperty> propertyList = new ArrayList<>();
-														propertyList.add(gnomadProperty);
-														newProperties.put(annotation, propertyList);
-													} else {
-														newProperties.get(annotation).add(gnomadProperty);
-													}
 												} else {
 													// variant amino acid sequence do not match
 													// Should log this
@@ -463,16 +456,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 				.forEach((annotation -> {
 					LOGGER.info("Adding gnomad evidences to annotation " + annotation.getAnnotationId());
 					annotation.getEvidences().addAll(newEvidences.get(annotation));
-				}));
-
-		newProperties.keySet().stream()
-				.forEach((annotation -> {
-					LOGGER.info("Adding gnomad property to annotation " + annotation.getAnnotationId());
-					List<AnnotationProperty> propertyList = newProperties.get(annotation);
-					// Since properties are unmodifiable collection has to add properties one by one
-					propertyList.forEach((annotationProperty) -> {
-						annotation.addProperty(annotationProperty);
-					});
 				}));
 
 		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
