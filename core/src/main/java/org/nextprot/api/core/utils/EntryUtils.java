@@ -1,5 +1,7 @@
 package org.nextprot.api.core.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -8,6 +10,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 
 public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
+	private static final Log LOGGER = LogFactory.getLog(EntryUtils.class);
 
 
 	public static String getEntryName(String nextprotAccession) {
@@ -219,11 +223,13 @@ public class EntryUtils implements Serializable{
 
 
 	public static List<DbXref> getGnomADXrefs(List<Annotation> annotations, DbXrefService xrefService) {
+		LOGGER.info("Annotations to process " + annotations.size());
 		List<DbXref> gnomADXrefs = new ArrayList<>();
 		annotations.stream()
 				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 				   .forEach(annotation -> {
 				   		// Generates dbxref for all evidence
+					   LOGGER.info("Generating xref for annotation " + annotation.getAnnotationId());
 					   annotation.getEvidences()
 							   .stream()
 							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
@@ -244,6 +250,7 @@ public class EntryUtils implements Serializable{
 							   		}
 							   });
 				   });
+		LOGGER.info("GNOMAD xrefs generated " + gnomADXrefs.size());
 		return gnomADXrefs;
 	}
 	

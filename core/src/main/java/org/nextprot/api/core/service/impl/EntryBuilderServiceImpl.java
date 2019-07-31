@@ -1,5 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -35,7 +37,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private EntryPropertiesService entryPropertiesService;
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
-		
+
+	private static final Log LOGGER = LogFactory.getLog(EntryBuilderServiceImpl.class);
+
+
 	@Override
 	public Entry build(EntryConfig entryConfig) {
 	
@@ -61,6 +66,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				List<Annotation> annotations = annotationService.findAnnotations(entryName);
 				List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
 				List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
+				LOGGER.info("dbxrefs " + dbXrefs.size() + " gnomad xrefs " + gnomAddbXrefs.size());
 				dbXrefs.addAll(gnomAddbXrefs);
 				entry.setXrefs(dbXrefs);
 			}
