@@ -353,9 +353,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		LOGGER.info("DBSNPs to search for " + dbSNPIds.size());
 
 		// Get all the gnomeAd variants given the dbSNPIds
-		List<Annotation> annotationWithGnomadVariants = null;
 		Map<Annotation, List<AnnotationEvidence>> newEvidences = new HashMap<>();
-		Map<Annotation, List<AnnotationProperty>> newProperties = new HashMap<>();
 		if(dbSNPIds.size() > 0 ) {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
 			if(variantFrequencies == null) {

@@ -5,22 +5,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.AntibodyResourceIdsService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PeptideNamesService;
-import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
@@ -52,6 +47,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 	@Autowired private StatementService statementService;
+	@Autowired private AnnotationService annotationService;
 
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
@@ -202,6 +198,31 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
+
+		// Injects the dbxrefs for gnomad variants
+		List<Annotation> annotations = annotationService.findAnnotations(entryName);
+		List<DbXref> gnomADXrefs = new ArrayList<>();
+		annotations.stream()
+				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
+				   .map(annotation -> {
+				   		// Generates dbxref for all evidence
+					   annotation.getEvidences().stream()
+							   					.filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
+							                    .map(annotationEvidence -> {
+													DbXref gnomadXref = new DbXref();
+													gnomadXref.setAccession(annotationEvidence.getResourceAccession());
+													gnomadXref.setDatabaseCategory("Variant databases");
+													gnomadXref.setDatabaseName("gnomAD");
+													gnomadXref.setUrl("https://gnomad.broadinstitute.org");
+													gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());
+													gnomadXref.setProperties(new ArrayList<>());
+													gnomADXrefs.add(gnomadXref);
+													return annotationEvidence;
+												});
+					   return annotation;
+				   });
+		xrefs.addAll(gnomADXrefs);
+
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
