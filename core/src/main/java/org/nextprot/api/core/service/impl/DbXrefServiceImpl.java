@@ -7,7 +7,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
@@ -49,9 +48,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 	@Autowired private StatementService statementService;
-	@Autowired private AnnotationService annotationService;
-
-	private static final Log LOGGER = LogFactory.getLog(DbXrefServiceImpl.class);
 
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
@@ -202,39 +198,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
-
-		// Injects the dbxrefs for gnomad variants
-		/*List<Annotation> annotations = annotationService.findAnnotations(entryName);
-		LOGGER.info("Generating xrefs for variant annotations " + annotations.size());
-		List<DbXref> gnomADXrefs = new ArrayList<>();
-		annotations.stream()
-				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
-				   .forEach(annotation -> {
-				   		// Generates dbxref for all evidence
-					   LOGGER.info("Annotation " + annotation.getAnnotationId());
-					   annotation.getEvidences()
-							   .stream()
-							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
-							   .forEach(annotationEvidence -> {
-							   		DbXref gnomadXref = new DbXref();
-							   		try {
-							   			long xrefId = findXrefId("gnomAD", annotationEvidence.getResourceAccession());
-							   			LOGGER.info("XREF id generated " + xrefId);
-							   			gnomadXref.setDbXrefId(xrefId);
-							   			gnomadXref.setAccession(annotationEvidence.getResourceAccession());
-							   			gnomadXref.setDatabaseCategory("Variant databases");
-							   			gnomadXref.setDatabaseName("gnomAD");
-							   			gnomadXref.setUrl("https://gnomad.broadinstitute.org");
-							   			gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());
-							   			gnomadXref.setProperties(new ArrayList<>());
-							   			gnomADXrefs.add(gnomadXref);
-							   		} catch(Exception e) {
-							   			LOGGER.error("Could not generate dbxref for " + annotationEvidence.getResourceDb() + " " + annotationEvidence.getResourceAccession());
-							   		}
-							   });
-				   });
-		LOGGER.info("Gnomad xrefs created " + gnomADXrefs.size());
-		xrefs.addAll(gnomADXrefs);*/
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);

@@ -1,17 +1,14 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.ProteinExistence;
-import org.nextprot.api.core.domain.Proteoform;
-import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ import java.util.stream.Collectors;
 public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
 
-	
+
 	public static String getEntryName(String nextprotAccession) {
 		String entryAccession = nextprotAccession;
 		if((nextprotAccession != null) && (nextprotAccession.length() > 0) && (nextprotAccession.contains("-"))){
@@ -218,6 +215,36 @@ public class EntryUtils implements Serializable{
 		// get PE according to current rules
 		ProteinExistence np2PE = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2);
 		return np2PE != ProteinExistence.PROTEIN_LEVEL && wouldUpgradeToPE1AccordingToOldRule(e);
+	}
+
+
+	public static List<DbXref> getGnomADXrefs(List<Annotation> annotations, DbXrefService xrefService) {
+		List<DbXref> gnomADXrefs = new ArrayList<>();
+		annotations.stream()
+				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
+				   .forEach(annotation -> {
+				   		// Generates dbxref for all evidence
+					   annotation.getEvidences()
+							   .stream()
+							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
+							   .forEach(annotationEvidence -> {
+							   		DbXref gnomadXref = new DbXref();
+							   		try {
+							   			long xrefId = xrefService.findXrefId("gnomAD", annotationEvidence.getResourceAccession());
+							   			gnomadXref.setDbXrefId(xrefId);
+							   			gnomadXref.setAccession(annotationEvidence.getResourceAccession());
+							   			gnomadXref.setDatabaseCategory("Variant databases");
+							   			gnomadXref.setDatabaseName("gnomAD");
+							   			gnomadXref.setUrl("https://gnomad.broadinstitute.org");
+							   			gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());
+							   			gnomadXref.setProperties(new ArrayList<>());
+							   			gnomADXrefs.add(gnomadXref);
+							   		} catch(Exception e) {
+							   			e.printStackTrace();
+							   		}
+							   });
+				   });
+		return gnomADXrefs;
 	}
 	
 }

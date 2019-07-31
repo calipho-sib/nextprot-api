@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
@@ -56,7 +57,12 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setPublications(this.publicationService.findPublicationsByEntryName(entryName));
 			}
 			if(entryConfig.hasXrefs()){
-				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
+				// Generates the gnomad xrefs
+				List<Annotation> annotations = annotationService.findAnnotations(entryName);
+				List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
+				List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
+				dbXrefs.addAll(gnomAddbXrefs);
+				entry.setXrefs(dbXrefs);
 			}
 			if(entryConfig.hasIdentifiers()){
 				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
