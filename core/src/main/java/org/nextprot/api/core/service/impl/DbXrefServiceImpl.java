@@ -204,18 +204,18 @@ public class DbXrefServiceImpl implements DbXrefService {
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
 
 		// Injects the dbxrefs for gnomad variants
-		/*List<Annotation> annotations = annotationService.findAnnotations(entryName);
+		List<Annotation> annotations = annotationService.findAnnotations(entryName);
 		LOGGER.info("Generating xrefs for variant annotations " + annotations.size());
 		List<DbXref> gnomADXrefs = new ArrayList<>();
 		annotations.stream()
 				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
-				   .map(annotation -> {
+				   .forEach(annotation -> {
 				   		// Generates dbxref for all evidence
 					   LOGGER.info("Annotation " + annotation.getAnnotationId());
 					   annotation.getEvidences()
 							   .stream()
 							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
-							   .map(annotationEvidence -> {
+							   .forEach(annotationEvidence -> {
 							   		DbXref gnomadXref = new DbXref();
 							   		try {
 							   			long xrefId = findXrefId("gnomAD", annotationEvidence.getResourceAccession());
@@ -228,16 +228,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 							   			gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());
 							   			gnomadXref.setProperties(new ArrayList<>());
 							   			gnomADXrefs.add(gnomadXref);
-							   			return annotationEvidence;
 							   		} catch(Exception e) {
 							   			LOGGER.error("Could not generate dbxref for " + annotationEvidence.getResourceDb() + " " + annotationEvidence.getResourceAccession());
-							   			return null;
 							   		}
 							   });
-					   return annotation;
 				   });
 		LOGGER.info("Gnomad xrefs created " + gnomADXrefs.size());
-		xrefs.addAll(gnomADXrefs);*/
+		xrefs.addAll(gnomADXrefs);
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
