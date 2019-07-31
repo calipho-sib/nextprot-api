@@ -456,6 +456,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 				.forEach((annotation -> {
 					LOGGER.info("Adding gnomad evidences to annotation " + annotation.getAnnotationId());
 					annotation.getEvidences().addAll(newEvidences.get(annotation));
+					// Sets the quality to GOLD
+					annotation.setQualityQualifier("GOLD");
 				}));
 
 		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
