@@ -205,18 +205,22 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		// Injects the dbxrefs for gnomad variants
 		List<Annotation> annotations = annotationService.findAnnotations(entryName);
+		LOGGER.info("Generating xrefs for variant annotations " + annotations.size());
 		List<DbXref> gnomADXrefs = new ArrayList<>();
 		annotations.stream()
 				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 				   .map(annotation -> {
 				   		// Generates dbxref for all evidence
+					   LOGGER.info("Annotation " + annotation.getAnnotationId());
 					   annotation.getEvidences()
 							   .stream()
 							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
 							   .map(annotationEvidence -> {
 							   		DbXref gnomadXref = new DbXref();
 							   		try {
-							   			gnomadXref.setDbXrefId(findXrefId("gnomAD", annotationEvidence.getResourceAccession()));
+							   			long xrefId = findXrefId("gnomAD", annotationEvidence.getResourceAccession());
+							   			LOGGER.info("XREF id generated " + xrefId);
+							   			gnomadXref.setDbXrefId(xrefId);
 							   			gnomadXref.setAccession(annotationEvidence.getResourceAccession());
 							   			gnomadXref.setDatabaseCategory("Variant databases");
 							   			gnomadXref.setDatabaseName("gnomAD");
