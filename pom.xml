@@ -82,6 +82,12 @@
             <version>LATEST</version>
         </dependency>
 
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-pipelines</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
 		<!--
 			Third party libraries
 		-->
