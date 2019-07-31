@@ -401,6 +401,16 @@ public class AnnotationServiceImpl implements AnnotationService {
 													LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 													// Adds evidence
 													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
+													long xrefId = -1;
+													try {
+														xrefService.findXrefId("gnomAD", variantFrequency.getGnomadAccession());
+													} catch(Exception e) {
+														e.printStackTrace();
+														LOGGER.error("Unable to create xref ID ");
+													}
+													if(xrefId != -1) {
+														gnomadEvidence.setResourceId(xrefId);
+													}
 													gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
 													gnomadEvidence.setEvidenceCodeOntology(annotationEvidence.getEvidenceCodeOntology());
 													gnomadEvidence.setEvidenceCodeName(annotationEvidence.getEvidenceCodeName());
