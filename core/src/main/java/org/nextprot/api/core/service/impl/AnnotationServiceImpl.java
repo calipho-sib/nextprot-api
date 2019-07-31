@@ -415,10 +415,14 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setQualityQualifier("GOLD");
 													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 
+													// Adds an evidence property and add it to the evidence
 													AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
 													evidenceProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
 													evidenceProperty.setPropertyName("GnomAD Allel Frequency");
 													evidenceProperty.setPropertyValue(new Double(variantFrequency.getAllelFrequency()).toString());
+													List<AnnotationEvidenceProperty> evidencePropertyList = new ArrayList<>();
+													evidencePropertyList.add(evidenceProperty);
+													gnomadEvidence.setProperties(evidencePropertyList);
 
 													if(newEvidences.get(annotation) == null) {
 														List<AnnotationEvidence> evidenceList = new ArrayList<>();
