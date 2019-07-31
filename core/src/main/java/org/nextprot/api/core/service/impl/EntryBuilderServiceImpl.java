@@ -67,8 +67,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
 				List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
 				LOGGER.info("dbxrefs " + dbXrefs.size() + " gnomad xrefs " + gnomAddbXrefs.size());
-				dbXrefs.addAll(gnomAddbXrefs);
-				entry.setXrefs(dbXrefs);
+				gnomAddbXrefs.addAll(dbXrefs);
+				entry.setXrefs(gnomAddbXrefs);
 			}
 			if(entryConfig.hasIdentifiers()){
 				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
