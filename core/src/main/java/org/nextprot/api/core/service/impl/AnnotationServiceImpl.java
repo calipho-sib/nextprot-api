@@ -336,6 +336,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 	private void addGnomeADVariantFrequencies(List<Annotation> annotations) {
 		LOGGER.info("Processing " + annotations.size() + " annotations");
+		final ArrayList<String> logs = new ArrayList<>();
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
 		Set<String> dbSNPIds = new HashSet<>();
 		List<Annotation> variantAnnotations = annotations.stream()
@@ -366,39 +367,60 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			variantAnnotations.stream()
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
-					.map(annotation -> {
+					.forEach(annotation -> {
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
+						logs.add("annotation:"+annotation.getAnnotationId());
+						logs.add("--");
 						annotationEvidences.stream()
 								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
 								.forEach(annotationEvidence -> {
 									String dbSNPId = annotationEvidence.getResourceAccession();
-									LOGGER.info("Evidence with dbsnp  " + dbSNPId);
+									//LOGGER.info("Evidence with dbsnp  " + dbSNPId);
+									logs.add("dbsnpid:"+dbSNPId);
+
 									// Do the consistency checks before attaching the variant frequencies
 									String annotationVariantOriginal = annotation.getVariant().getOriginal();
 									String annotationVariantVariant = annotation.getVariant().getVariant();
+									logs.add("annotationvariantoriginalAA:"+annotation.getVariant().getOriginal());
+									logs.add("annotationvariantvariantAA:"+annotation.getVariant().getVariant());
+									logs.add("--");
+									Map<String, AnnotationIsoformSpecificity> isoformMap = annotation.getTargetingIsoformsMap();
+									isoformMap
+											.keySet()
+											.forEach((isoformKey) -> {
+												AnnotationIsoformSpecificity isoform = isoformMap.get(isoformKey);
+												logs.add("isoform:"+isoform.getName());
+												logs.add("isofirstpos:" + isoform.getFirstPosition());
+												logs.add("isolastpos:" + isoform.getLastPosition());
+											});
 
 									// TODO: should we check the position, if so how and on which isoform
 									// Get variant frequency for this annotation
 									List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
 									if(variantFrequencyList != null ) {
-
-										LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
+										logs.add("gnomadvariants:"+variantFrequencyList.size());
+										//LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
 										variantFrequencyList.forEach(variantFrequency -> {
-											LOGGER.info("Processing variant " + variantFrequency.getGnomadAccession() + " " + variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
-
+											//LOGGER.info("Processing variant " + variantFrequency.getGnomadAccession() + " " + variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
 											String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
 											String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
 
 											// Gnomead variant amino acids are in three letter code, need to be converted
 											String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
 											String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
+
+											logs.add("gnomadaccession:"+variantFrequency.getGnomadAccession());
+											logs.add("gnomadoriginalAA:"+gnomeadOriginalAA1Letter);
+											logs.add("gnomadvariantAA:"+gnomeadVariantAA1Letter);
+											logs.add("gnomadvariantposition:" + variantFrequency.getIsoformPosition());
+
 											// Check if the variant is the same
 											// THis is the check which has to make profound considering all/most of the possibilities
 											LOGGER.info("Isoform map "+annotation.getTargetingIsoformsMap().keySet().toArray().toString());
 											if (gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)) {
 												if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
-
-													LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
+													logs.add("VariantMatch:true");
+													//LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 													// Adds evidence
 													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
 													long xrefId = -1;
@@ -422,7 +444,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 													gnomadEvidence.setResourceAssociationType(annotationEvidence.getResourceAssociationType()); // Should this be changed?
 													gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
 													gnomadEvidence.setQualityQualifier("GOLD");
-													LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
+													//LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 
 													// Adds an evidence property and add it to the evidence
 													AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
@@ -445,20 +467,24 @@ public class AnnotationServiceImpl implements AnnotationService {
 													// variant amino acid sequence do not match
 													// Should log this
 													// Should we check for other isoforms of the corresponding entry
-													LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " + annotation.getVariant().getVariant());
-													LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA " + variantFrequency.getVariantAminoAcid());
+													logs.add("VariantMatchPartial:true");
+													//LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " + annotation.getVariant().getVariant());
+													//LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA " + variantFrequency.getVariantAminoAcid());
 												}
 											} else {
-												LOGGER.info("GNOMAD variant does not match with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
+												logs.add("VariantMatch:false");
+												//LOGGER.info("GNOMAD variant does not match with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
 											}
 										});
 									} else {
-										LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
+										logs.add("gnomadvariants:"+variantFrequencyList.size());
+										//LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
 									}
 								});
-						return annotation;
-					})
-					.collect(Collectors.toList());
+						String logString = logs.stream()
+								.collect(Collectors.joining(", ", "[", "]"));
+						LOGGER.info(logString);
+					});
 		} else {
 			LOGGER.info("No DBSNP ids for given annotations");
 		}
