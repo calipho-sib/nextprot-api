@@ -409,6 +409,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 														LOGGER.error("Unable to create xref ID ");
 													}
 													if(xrefId != -1) {
+														LOGGER.info("Generated xref id " + xrefId);
 														gnomadEvidence.setResourceId(xrefId);
 													}
 													gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
