@@ -478,7 +478,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											}
 										});
 									} else {
-										logs.add("gnomadvariants:"+variantFrequencyList.size());
+										logs.add("gnomadvariants:"+0);
 										//LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
 									}
 								});
