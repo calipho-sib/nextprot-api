@@ -335,6 +335,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	private void addGnomeADVariantFrequencies(List<Annotation> annotations) {
+		double start = System.currentTimeMillis();
 		LOGGER.info("Processing " + annotations.size() + " annotations");
 		final ArrayList<String> logs = new ArrayList<>();
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
@@ -498,8 +499,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 					// Sets the quality to GOLD
 					annotation.setQualityQualifier("GOLD");
 				}));
-
-		LOGGER.info("Annotations with gnomad evidences " + newEvidences.keySet().size());
+		double time = System.currentTimeMillis() - start;
+		LOGGER.info("MatchedGnomADVariants:" + newEvidences.keySet().size());
+		LOGGER.info("ElapsedTime:" + time);
 	}
 
 	@Override
