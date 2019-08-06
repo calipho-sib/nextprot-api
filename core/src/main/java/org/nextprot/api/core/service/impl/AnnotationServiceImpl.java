@@ -417,10 +417,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 											// Check if the variant is the same
 											// THis is the check which has to make profound considering all/most of the possibilities
-											LOGGER.info("Isoform map "+annotation.getTargetingIsoformsMap().keySet().toArray().toString());
 											annotation.getTargetingIsoformsMap()
 													.forEach((key, isoformSpecificity) -> {
-														if(isoformSpecificity.getFirstPosition() == isoformSpecificity.getLastPosition()) { // only consider this simple case for now
+														if(isoformSpecificity.getFirstPosition().equals(isoformSpecificity.getLastPosition())) { // only consider this simple case for now
 															if(variantFrequency.getIsoformPosition() == isoformSpecificity.getFirstPosition() ) {
 																// Positions match
 																LOGGER.info("Variant position " + variantFrequency.getIsoformPosition() + " matches with  annotation isoform " + isoformSpecificity.getName());
