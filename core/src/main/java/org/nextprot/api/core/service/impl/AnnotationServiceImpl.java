@@ -428,7 +428,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 																logs.add("VariantMatchIsoform:"+key);
 																matched = true;
 															} else {
-																logs.add("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition())
+																logs.add("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition());
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
