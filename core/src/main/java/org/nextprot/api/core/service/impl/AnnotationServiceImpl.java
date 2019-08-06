@@ -426,7 +426,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 													AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
 													long xrefId = -1;
 													try {
-														xrefService.findXrefId("gnomAD", variantFrequency.getGnomadAccession());
+														xrefId = xrefService.findXrefId("gnomAD", variantFrequency.getGnomadAccession());
 													} catch(Exception e) {
 														e.printStackTrace();
 														LOGGER.error("Unable to create xref ID ");
@@ -434,6 +434,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 													if(xrefId != -1) {
 														LOGGER.info("Generated xref id " + xrefId);
 														gnomadEvidence.setResourceId(xrefId);
+													} else {
+														LOGGER.info("XREF could not be generated");
 													}
 													gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
 													gnomadEvidence.setEvidenceCodeOntology(annotationEvidence.getEvidenceCodeOntology());
