@@ -419,15 +419,24 @@ public class AnnotationServiceImpl implements AnnotationService {
 											// Tis is the check which has to make profound considering all/most of the possibilities
 											annotation.getTargetingIsoformsMap()
 													.forEach((key, isoformSpecificity) -> {
+														boolean matched = false;
 														if(isoformSpecificity.getFirstPosition().equals(isoformSpecificity.getLastPosition())) { // only consider this simple case for now
 															if(variantFrequency.getIsoformPosition() == isoformSpecificity.getFirstPosition() ) {
 																// Positions match
 																LOGGER.info("Variant position " + variantFrequency.getIsoformPosition() + " matches with  annotation isoform " + key);
 																logs.add("VariantPositionMatch:true");
-																logs.add("VariantMatchIsoform:"+isoformSpecificity.getName());
+																logs.add("VariantMatchIsoform:"+key);
+																matched = true;
+															} else {
+																logs.add("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition())
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
+														}
+
+														if(!matched) {
+															logs.add("VariantPositionMatch:false");
+															LOGGER.info("Non of the isoform positions matched with the gnomad variant position");
 														}
 													});
 
