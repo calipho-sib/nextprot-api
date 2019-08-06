@@ -229,7 +229,6 @@ public class EntryUtils implements Serializable{
 				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 				   .forEach(annotation -> {
 				   		// Generates dbxref for all evidence
-					   LOGGER.info("Generating xref for annotation " + annotation.getAnnotationId());
 					   annotation.getEvidences()
 							   .stream()
 							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
