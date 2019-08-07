@@ -145,7 +145,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		// Adds the variant frequencies to variant annotations
-		addGnomeADVariantFrequencies(annotations);
+		addGnomeADVariantFrequencies(entryName, annotations);
 		if (!ignoreStatements) {
 
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
@@ -334,10 +334,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return specs;
 	}
 
-	private void addGnomeADVariantFrequencies(List<Annotation> annotations) {
+	private void addGnomeADVariantFrequencies(String entryName, List<Annotation> annotations) {
 		double start = System.currentTimeMillis();
-		LOGGER.info("Processing " + annotations.size() + " annotations");
+		LOGGER.info("Processing " + entryName + ": "+ annotations.size() + " annotations");
 		final ArrayList<String> logs = new ArrayList<>();
+		logs.add("entry:"+ entryName);
+		logs.add("--");
+
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
 		Set<String> dbSNPIds = new HashSet<>();
 		List<Annotation> variantAnnotations = annotations.stream()
