@@ -390,7 +390,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											.keySet()
 											.forEach((isoformKey) -> {
 												AnnotationIsoformSpecificity isoform = isoformMap.get(isoformKey);
-												logs.add("isoform:"+isoform.getName());
+												logs.add("isoform:"+key);
 												logs.add("isofirstpos:" + isoform.getFirstPosition());
 												logs.add("isolastpos:" + isoform.getLastPosition());
 											});
