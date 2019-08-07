@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class PepXIntegrationTest extends WebIntegrationBaseTest {
 
@@ -31,4 +32,18 @@ public class PepXIntegrationTest extends WebIntegrationBaseTest {
 		Assert.assertTrue(peptideName.contains("\"CLLCALK\""));
 	}
 
+	@Test
+	public void shouldReturnSomePeptidesForProteinDigestionTool() throws Exception {
+
+		String content = this.mockMvc.perform(post("/entries/search/peptide-list")
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.content("[\"NDVVPTMAQGVLEYK\",\"TKMGLYYSYFK\"]"))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8)).andReturn()
+				.getResponse().getContentAsString();
+		ObjectMapper om = new ObjectMapper();
+		JsonNode actualObj = om.readTree(content);
+
+		Assert.assertEquals(6, actualObj.size());
+	}
 }
