@@ -35,7 +35,7 @@ public class PepXIntegrationTest extends WebIntegrationBaseTest {
 	@Test
 	public void shouldReturnSomePeptidesForProteinDigestionTool() throws Exception {
 
-		String content = this.mockMvc.perform(post("/entries/search/peptide-list")
+		String content = this.mockMvc.perform(post("/entries/search/peptide-post")
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON)
 						.content("[\"NDVVPTMAQGVLEYK\",\"TKMGLYYSYFK\"]"))
