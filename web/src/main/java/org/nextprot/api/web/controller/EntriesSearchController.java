@@ -39,8 +39,8 @@ public class EntriesSearchController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "peptide-list", method = { RequestMethod.POST }, consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "peptide-list", verb = ApiVerb.POST, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptides, taking into account variants. Leucine and isoleucine are considered to be equivalent.")
+	@RequestMapping(value = "peptide-post", method = { RequestMethod.POST }, consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "peptide-post", verb = ApiVerb.POST, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptides, taking into account variants. Leucine and isoleucine are considered to be equivalent.")
 	// TODO: add description of body
 	public List<Entry> pepx(@ApiBodyObject @RequestBody List<String> peptideList) {
 		NPreconditions.checkNotNull(peptideList, "The peptide list must be not null");
