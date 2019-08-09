@@ -470,7 +470,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         String logPop = "";
                                                                         do{
                                                                             logPop = logStack.pop();
-                                                                        }while(!"LISOFORM".equals(logPop));
+                                                                        }while(!logPop.startsWith("LISOFORM"));
 
                                                                     } else {
                                                                         // variant amino acid sequence do not match
@@ -485,7 +485,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         String logPop = "";
                                                                         do{
                                                                             logPop = logStack.pop();
-                                                                        }while(!"LISOFORM".equals(logPop));
+                                                                        }while(!logPop.startsWith("LISOFORM"));
                                                                     }
                                                                 } else {
                                                                     logStack.push("VariantAAMatch:false");
@@ -496,7 +496,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                     String logPop = "";
                                                                     do{
                                                                         logPop = logStack.pop();
-                                                                    }while(!"LISOFORM".equals(logPop));
+                                                                    }while(!logPop.startsWith("LISOFORM"));
                                                                 }
 															} else {
 																logStack.push("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition());
@@ -507,7 +507,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                 String logPop = "";
                                                                 do{
                                                                     logPop = logStack.pop();
-                                                                }while(!"LISOFORM".equals(logPop));
+                                                                }while(!logPop.startsWith("LISOFORM"));
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
@@ -519,7 +519,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                             String logPop = "";
                                                             do{
                                                                 logPop = logStack.pop();
-                                                            }while(!"LISOFORM".equals(logPop));
+                                                            }while(!logPop.startsWith("LISOFORM"));
 														}
 													});
 										});
@@ -532,17 +532,17 @@ public class AnnotationServiceImpl implements AnnotationService {
                                         String logPop = "";
                                         do{
                                             logPop = logStack.pop();
-                                        }while(!"LISOFORM".equals(logPop));
+                                        }while(!logPop.startsWith("LISOFORM"));
                                     }
 									String logPop = "";
                                     do{
                                         logPop = logStack.pop();
-                                    }while(!"LANNOTEV".equals(logPop));
+                                    }while(!logPop.startsWith("LANNOTEV"));
 								});
 						String logPop = "";
                         do{
                             logPop = logStack.pop();
-                        }while(!"LANNOT".equals(logPop));
+                        }while(!logPop.startsWith("LANNOT"));
 					});
 		} else {
 		    logStack.push("DBSNPEvidence:0");
