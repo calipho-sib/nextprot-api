@@ -470,6 +470,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         String logPop = "";
                                                                         do{
                                                                             logPop = logStack.pop();
+                                                                            LOGGER.info(logPop);
+
                                                                         }while(!logPop.startsWith("LISOFORM"));
 
                                                                     } else {
@@ -485,6 +487,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         String logPop = "";
                                                                         do{
                                                                             logPop = logStack.pop();
+                                                                            LOGGER.info(logPop);
+
                                                                         }while(!logPop.startsWith("LISOFORM"));
                                                                     }
                                                                 } else {
@@ -496,6 +500,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                     String logPop = "";
                                                                     do{
                                                                         logPop = logStack.pop();
+                                                                        LOGGER.info(logPop);
+
                                                                     }while(!logPop.startsWith("LISOFORM"));
                                                                 }
 															} else {
@@ -507,6 +513,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                 String logPop = "";
                                                                 do{
                                                                     logPop = logStack.pop();
+                                                                    LOGGER.info(logPop);
+
                                                                 }while(!logPop.startsWith("LISOFORM"));
 															}
 														} else {
@@ -519,6 +527,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                             String logPop = "";
                                                             do{
                                                                 logPop = logStack.pop();
+                                                                LOGGER.info(logPop);
+
                                                             }while(!logPop.startsWith("LISOFORM"));
 														}
 													});
@@ -532,16 +542,20 @@ public class AnnotationServiceImpl implements AnnotationService {
                                         String logPop = "";
                                         do{
                                             logPop = logStack.pop();
+                                            LOGGER.info(logPop);
                                         }while(!logPop.startsWith("LISOFORM"));
                                     }
 									String logPop = "";
                                     do{
                                         logPop = logStack.pop();
+                                        LOGGER.info(logPop);
+
                                     }while(!logPop.startsWith("LANNOTEV"));
 								});
 						String logPop = "";
                         do{
                             logPop = logStack.pop();
+                            LOGGER.info(logPop);
                         }while(!logPop.startsWith("LANNOT"));
 					});
 		} else {
