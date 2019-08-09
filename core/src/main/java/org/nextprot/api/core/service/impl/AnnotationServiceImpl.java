@@ -501,10 +501,10 @@ public class AnnotationServiceImpl implements AnnotationService {
 										//LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
 									}
 								});
-						String logString = logs.stream()
-								.collect(Collectors.joining(", ", "[", "]"));
-						LOGGER.info(logString);
 					});
+            String logString = logs.stream()
+                    .collect(Collectors.joining(", ", "[", "]"));
+            LOGGER.info(logString);
 		} else {
 		    logs.add("DBSNPEvidence:0");
 			LOGGER.info("No DBSNP ids for given annotations");
