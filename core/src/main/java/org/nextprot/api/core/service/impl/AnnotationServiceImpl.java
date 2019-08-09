@@ -338,7 +338,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		double start = System.currentTimeMillis();
 		LOGGER.info("Processing " + entryName + ": "+ annotations.size() + " annotations");
 		final ArrayList<String> logs = new ArrayList<>();
-		logs.add("entry:"+ entryName);
+		Stack<String> logStack = new Stack<>();
+		logStack.push("LEEntry:"+ entryName);
 
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
 		Set<String> dbSNPIds = new HashSet<>();
@@ -360,9 +361,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		Map<Annotation, List<AnnotationEvidence>> newEvidences = new HashMap<>();
 		if(dbSNPIds.size() > 0 ) {
 			Map<String, List<VariantFrequency>> variantFrequencies = variantFrequencyService.findVariantFrequenciesByDBSNP(dbSNPIds);
-			logs.add("DBSNPEvidence:" + dbSNPIds.size());
 			if(variantFrequencies == null) {
-			    logs.add("GNOMADVARIANTS:0");
 				LOGGER.info("No GNOMAD variants found for given dbsnpids " + dbSNPIds.toArray().toString());
 			}
 
@@ -370,28 +369,27 @@ public class AnnotationServiceImpl implements AnnotationService {
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 					.forEach(annotation -> {
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
-						logs.add("annotation:"+annotation.getAnnotationId());
+						logStack.push("LANNOT:"+annotation.getAnnotationId());
 						annotationEvidences.stream()
 								.filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
 								.forEach(annotationEvidence -> {
 									String dbSNPId = annotationEvidence.getResourceAccession();
-									//LOGGER.info("Evidence with dbsnp  " + dbSNPId);
-									logs.add("dbsnpid:"+dbSNPId);
+                                    logStack.push("LANNOTEV:"+dbSNPId);
 
 									// Do the consistency checks before attaching the variant frequencies
 									String annotationVariantOriginal = annotation.getVariant().getOriginal();
 									String annotationVariantVariant = annotation.getVariant().getVariant();
-									logs.add("annotationvariantoriginalAA:"+annotation.getVariant().getOriginal());
-									logs.add("annotationvariantvariantAA:"+annotation.getVariant().getVariant());
+
+									logStack.push("annotationvariantoriginalAA:"+annotation.getVariant().getOriginal());
+									logStack.push("annotationvariantvariantAA:"+annotation.getVariant().getVariant());
 									Map<String, AnnotationIsoformSpecificity> isoformMap = annotation.getTargetingIsoformsMap();
 
 									// Get variant frequency for this annotation
 									List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
 									if(variantFrequencyList != null ) {
-										logs.add("gnomadvariants:"+variantFrequencyList.size());
-										//LOGGER.info("GNOMAD frequencies " + variantFrequencyList.toArray().toString());
 										variantFrequencyList.forEach(variantFrequency -> {
-											//LOGGER.info("Processing variant " + variantFrequency.getGnomadAccession() + " " + variantFrequency.getOriginalAminoAcid() + " -> " + variantFrequency.getVariantAminoAcid());
+                                            logStack.push("LGNADVar:"+variantFrequencyList.size());
+
 											String gnomeadOriginalAA = variantFrequency.getOriginalAminoAcid();
 											String gnomeadVariantAA = variantFrequency.getVariantAminoAcid();
 
@@ -399,31 +397,27 @@ public class AnnotationServiceImpl implements AnnotationService {
 											String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
 											String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
 
-											logs.add("gnomadaccession:"+variantFrequency.getGnomadAccession());
-											logs.add("gnomadoriginalAA:"+gnomeadOriginalAA1Letter);
-											logs.add("gnomadvariantAA:"+gnomeadVariantAA1Letter);
-											logs.add("gnomadvariantposition:" + variantFrequency.getIsoformPosition());
+											logStack.push("gnomadaccession:"+variantFrequency.getGnomadAccession());
+											logStack.push("gnomadoriginalAA:"+gnomeadOriginalAA1Letter);
+											logStack.push("gnomadvariantAA:"+gnomeadVariantAA1Letter);
+											logStack.push("gnomadvariantposition:" + variantFrequency.getIsoformPosition());
 
 											// Check if the variant is the same
 											// Tis is the check which has to make profound considering all/most of the possibilities
 											annotation.getTargetingIsoformsMap()
 													.forEach((key, isoformSpecificity) -> {
-													    boolean matched = false;
-                                                        logs.add("isoform:"+key);
-                                                        logs.add("isofirstpos:" + isoformSpecificity.getFirstPosition());
-                                                        logs.add("isolastpos:" + isoformSpecificity.getLastPosition());
+                                                        logStack.push("LISOFORM:"+key);
+                                                        logStack.push("isofirstpos:" + isoformSpecificity.getFirstPosition());
+                                                        logStack.push("isolastpos:" + isoformSpecificity.getLastPosition());
 														if(isoformSpecificity.getFirstPosition().equals(isoformSpecificity.getLastPosition())) { // only consider this simple case for now
 															if(variantFrequency.getIsoformPosition() == isoformSpecificity.getFirstPosition() ) {
                                                                 logs.add("isPositionRange:false");
                                                                 // Positions match
 																LOGGER.info("Variant position " + variantFrequency.getIsoformPosition() + " matches with  annotation isoform " + key);
-																logs.add("VariantPositionMatch:true");
-																logs.add("VariantMatchIsoform:"+key);
+																logStack.push("VariantPositionMatch:true");
 
                                                                 if (gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)) {
                                                                     if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
-                                                                        logs.add("VariantAAMatch:true");
-                                                                        matched = true;
                                                                         //LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
                                                                         // Adds evidence
                                                                         AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
@@ -449,7 +443,6 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         gnomadEvidence.setResourceAssociationType(annotationEvidence.getResourceAssociationType()); // Should this be changed?
                                                                         gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
                                                                         gnomadEvidence.setQualityQualifier("GOLD");
-                                                                        //LOGGER.info("Add an evidence " + gnomadEvidence.getEvidenceCodeAC() + " " + gnomadEvidence.getAnnotationId() + " " + gnomadEvidence.getResourceAccession());
 
                                                                         // Adds an evidence property and add it to the evidence
                                                                         AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
@@ -467,62 +460,94 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         } else {
                                                                             newEvidences.get(annotation).add(gnomadEvidence);
                                                                         }
-                                                                        logs.add(0, "entry:"+entryName);
-                                                                        String logString = logs.stream()
+
+                                                                        // Generates the flat log line for this particular case
+                                                                        logStack.push("VariantAAMatch:true");
+                                                                        String logString = logStack.stream()
                                                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                        logs.removeAll(logs);
                                                                         LOGGER.info(logString);
+                                                                        // Should pop until remove all logs for this isoform
+                                                                        String logPop = "";
+                                                                        do{
+                                                                            logPop = logStack.pop();
+                                                                        }while(!"LISOFORM".equals(logPop));
+
                                                                     } else {
                                                                         // variant amino acid sequence do not match
                                                                         // Should log this
                                                                         // Should we check for other isoforms of the corresponding entry
 
-                                                                        logs.add("VariantAAOriginalMatch:true");
-                                                                        logs.add(0, "entry:"+entryName);
-                                                                        String logString = logs.stream()
+                                                                        logStack.push("VariantAAOriginalMatch:true");
+                                                                        String logString = logStack.stream()
                                                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                        logs.removeAll(logs);
                                                                         LOGGER.info(logString);
+                                                                        // Should pop until remove all logs for this isoform
+                                                                        String logPop = "";
+                                                                        do{
+                                                                            logPop = logStack.pop();
+                                                                        }while(!"LISOFORM".equals(logPop));
                                                                     }
                                                                 } else {
-                                                                    logs.add("VariantAAMatch:false");
-                                                                    logs.add(0, "entry:"+entryName);
-                                                                    String logString = logs.stream()
+                                                                    logStack.push("VariantAAMatch:false");
+                                                                    String logString = logStack.stream()
                                                                             .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                    logs.removeAll(logs);
                                                                     LOGGER.info(logString);
-                                                                    //LOGGER.info("GNOMAD variant does not match with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
+                                                                    // Should pop until remove all logs for this isoform
+                                                                    String logPop = "";
+                                                                    do{
+                                                                        logPop = logStack.pop();
+                                                                    }while(!"LISOFORM".equals(logPop));
                                                                 }
 															} else {
-																logs.add("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition());
-                                                                logs.add(0, "entry:"+entryName);
-                                                                String logString = logs.stream()
+																logStack.push("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition());
+                                                                String logString = logStack.stream()
                                                                         .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                logs.removeAll(logs);
                                                                 LOGGER.info(logString);
+                                                                // Should pop until remove all logs for this isoform
+                                                                String logPop = "";
+                                                                do{
+                                                                    logPop = logStack.pop();
+                                                                }while(!"LISOFORM".equals(logPop));
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
-                                                            logs.add("isPositionRange:true");
-                                                            logs.add(0, "entry:"+entryName);
-                                                            String logString = logs.stream()
+                                                            logStack.push("isPositionRange:true");
+                                                            String logString = logStack.stream()
                                                                     .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                            logs.removeAll(logs);
                                                             LOGGER.info(logString);
+                                                            // Should pop until remove all logs for this isoform
+                                                            String logPop = "";
+                                                            do{
+                                                                logPop = logStack.pop();
+                                                            }while(!"LISOFORM".equals(logPop));
 														}
 													});
 										});
 									} else {
-										logs.add("gnomadvariants:"+0);
-										//LOGGER.info("No GNOMAD variants found for given variant annotations " + annotation.getAnnotationId() + " dbsnp " + dbSNPId);
-									}
+										logStack.push("gnomadvariants:"+0);
+                                        String logString = logStack.stream()
+                                                .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
+                                        LOGGER.info(logString);
+                                        // Should pop until remove all logs for this isoform
+                                        String logPop = "";
+                                        do{
+                                            logPop = logStack.pop();
+                                        }while(!"LISOFORM".equals(logPop));
+                                    }
+									String logPop = "";
+                                    do{
+                                        logPop = logStack.pop();
+                                    }while(!"LANNOTEV".equals(logPop));
 								});
+						String logPop = "";
+                        do{
+                            logPop = logStack.pop();
+                        }while(!"LANNOT".equals(logPop));
 					});
 		} else {
-		    logs.add("DBSNPEvidence:0");
+		    logStack.push("DBSNPEvidence:0");
 			LOGGER.info("No DBSNP ids for given annotations");
 		}
-
 
 		// Adds properties and evidences
 		newEvidences.keySet().stream()
