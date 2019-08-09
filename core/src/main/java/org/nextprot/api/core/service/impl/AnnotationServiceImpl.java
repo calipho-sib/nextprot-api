@@ -383,7 +383,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 									String annotationVariantVariant = annotation.getVariant().getVariant();
 									logs.add("annotationvariantoriginalAA:"+annotation.getVariant().getOriginal());
 									logs.add("annotationvariantvariantAA:"+annotation.getVariant().getVariant());
-									logs.add("--");
 									Map<String, AnnotationIsoformSpecificity> isoformMap = annotation.getTargetingIsoformsMap();
 
 									// Get variant frequency for this annotation
@@ -477,6 +476,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         // variant amino acid sequence do not match
                                                                         // Should log this
                                                                         // Should we check for other isoforms of the corresponding entry
+
                                                                         logs.add("VariantAAOriginalMatch:true");
                                                                         logs.add(0, "entry:"+entryName);
                                                                         String logString = logs.stream()
@@ -509,16 +509,6 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                     .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                             logs.removeAll(logs);
                                                             LOGGER.info(logString);
-														}
-
-														if(!matched) {
-															logs.add("VariantPositionMatch:false");
-                                                            logs.add(0, "entry:"+entryName);
-                                                            String logString = logs.stream()
-                                                                    .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                            logs.removeAll(logs);
-                                                            LOGGER.info(logString);
-                                                            LOGGER.info("Non of the isoform positions matched with the gnomad variant position");
 														}
 													});
 										});
