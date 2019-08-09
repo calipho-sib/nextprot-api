@@ -370,6 +370,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 					.filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
 					.forEach(annotation -> {
 						List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
+                        logs.add("--");
 						logs.add("annotation:"+annotation.getAnnotationId());
 						logs.add("--");
 						annotationEvidences.stream()
@@ -402,6 +403,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											String gnomeadOriginalAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadOriginalAA).get1LetterCode();
 											String gnomeadVariantAA1Letter = AminoAcidCode.valueOfAminoAcid(gnomeadVariantAA).get1LetterCode();
 
+                                            logs.add("--");
 											logs.add("gnomadaccession:"+variantFrequency.getGnomadAccession());
 											logs.add("gnomadoriginalAA:"+gnomeadOriginalAA1Letter);
 											logs.add("gnomadvariantAA:"+gnomeadVariantAA1Letter);
@@ -412,6 +414,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											annotation.getTargetingIsoformsMap()
 													.forEach((key, isoformSpecificity) -> {
 													    boolean matched = false;
+                                                        logs.add("--");
                                                         logs.add("isoform:"+key);
                                                         logs.add("isofirstpos:" + isoformSpecificity.getFirstPosition());
                                                         logs.add("isolastpos:" + isoformSpecificity.getLastPosition());
