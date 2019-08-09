@@ -411,7 +411,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 											// Tis is the check which has to make profound considering all/most of the possibilities
 											annotation.getTargetingIsoformsMap()
 													.forEach((key, isoformSpecificity) -> {
-														boolean matched = false;
+													    boolean matched = false;
                                                         logs.add("isoform:"+key);
                                                         logs.add("isofirstpos:" + isoformSpecificity.getFirstPosition());
                                                         logs.add("isolastpos:" + isoformSpecificity.getLastPosition());
@@ -421,11 +421,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 																LOGGER.info("Variant position " + variantFrequency.getIsoformPosition() + " matches with  annotation isoform " + key);
 																logs.add("VariantPositionMatch:true");
 																logs.add("VariantMatchIsoform:"+key);
-																matched = true;
 
                                                                 if (gnomeadOriginalAA1Letter.equals(annotationVariantOriginal)) {
                                                                     if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
                                                                         logs.add("VariantAAMatch:true");
+                                                                        matched = true;
                                                                         //LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
                                                                         // Adds evidence
                                                                         AnnotationEvidence gnomadEvidence = new AnnotationEvidence();
@@ -437,7 +437,6 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                             LOGGER.error("Unable to create xref ID ");
                                                                         }
                                                                         if(xrefId != -1) {
-                                                                            LOGGER.info("Generated xref id " + xrefId);
                                                                             gnomadEvidence.setResourceId(xrefId);
                                                                         } else {
                                                                             LOGGER.info("XREF could not be generated");
@@ -470,14 +469,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         } else {
                                                                             newEvidences.get(annotation).add(gnomadEvidence);
                                                                         }
-                                                                        return;
                                                                     } else {
                                                                         // variant amino acid sequence do not match
                                                                         // Should log this
                                                                         // Should we check for other isoforms of the corresponding entry
                                                                         logs.add("VariantAAOriginalMatch:true");
-                                                                        //LOGGER.info("Processing the annotation " + annotation.getAnnotationId() + " Original AA " + annotation.getVariant().getOriginal() + " Variant AA " + annotation.getVariant().getVariant());
-                                                                        //LOGGER.info("Cannot match the variant " + variantFrequency.getGnomadAccession() + " Original AA" + variantFrequency.getOriginalAminoAcid() + " Variant AA " + variantFrequency.getVariantAminoAcid());
                                                                     }
                                                                 } else {
                                                                     logs.add("VariantAAMatch:false");
