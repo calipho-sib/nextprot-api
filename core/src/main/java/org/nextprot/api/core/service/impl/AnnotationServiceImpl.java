@@ -468,11 +468,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         LOGGER.info(logString);
                                                                         // Should pop until remove all logs for this isoform
                                                                         String logPop = "";
-                                                                        do{
+                                                                        do {
                                                                             logPop = logStack.pop();
                                                                             LOGGER.info(logPop);
 
-                                                                        }while(!logPop.startsWith("LISOFORM"));
+                                                                        } while(!logPop.startsWith("LISOFORM"));
 
                                                                     } else {
                                                                         // variant amino acid sequence do not match
@@ -485,11 +485,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         LOGGER.info(logString);
                                                                         // Should pop until remove all logs for this isoform
                                                                         String logPop = "";
-                                                                        do{
+                                                                        do {
                                                                             logPop = logStack.pop();
                                                                             LOGGER.info(logPop);
 
-                                                                        }while(!logPop.startsWith("LISOFORM"));
+                                                                        } while(!logPop.startsWith("LISOFORM"));
                                                                     }
                                                                 } else {
                                                                     logStack.push("VariantAAMatch:false");
@@ -511,11 +511,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                 LOGGER.info(logString);
                                                                 // Should pop until remove all logs for this isoform
                                                                 String logPop = "";
-                                                                do{
+                                                                do {
                                                                     logPop = logStack.pop();
                                                                     LOGGER.info(logPop);
 
-                                                                }while(!logPop.startsWith("LISOFORM"));
+                                                                } while(!logPop.startsWith("LISOFORM"));
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
@@ -525,11 +525,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                             LOGGER.info(logString);
                                                             // Should pop until remove all logs for this isoform
                                                             String logPop = "";
-                                                            do{
+                                                            do {
                                                                 logPop = logStack.pop();
                                                                 LOGGER.info(logPop);
-
-                                                            }while(!logPop.startsWith("LISOFORM"));
+                                                                LOGGER.info(logPop.startsWith("LISOFORM"));
+                                                            } while(!logPop.startsWith("LISOFORM"));
 														}
 													});
 										});
@@ -540,23 +540,22 @@ public class AnnotationServiceImpl implements AnnotationService {
                                         LOGGER.info(logString);
                                         // Should pop until remove all logs for this isoform
                                         String logPop = "";
-                                        do{
+                                        do {
                                             logPop = logStack.pop();
                                             LOGGER.info(logPop);
-                                        }while(!logPop.startsWith("LISOFORM"));
+                                        } while(!logPop.startsWith("LISOFORM"));
                                     }
 									String logPop = "";
-                                    do{
+                                    do {
                                         logPop = logStack.pop();
                                         LOGGER.info(logPop);
-
-                                    }while(!logPop.startsWith("LANNOTEV"));
+                                    } while(!logPop.startsWith("LANNOTEV"));
 								});
 						String logPop = "";
-                        do{
+                        do {
                             logPop = logStack.pop();
                             LOGGER.info(logPop);
-                        }while(!logPop.startsWith("LANNOT"));
+                        } while(!logPop.startsWith("LANNOT"));
 					});
 		} else {
 		    logStack.push("DBSNPEvidence:0");
