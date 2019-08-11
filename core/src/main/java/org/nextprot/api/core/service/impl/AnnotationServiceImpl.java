@@ -441,7 +441,8 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
                                                                         gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
                                                                         gnomadEvidence.setResourceAssociationType(annotationEvidence.getResourceAssociationType()); // Should this be changed?
-                                                                        gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
+                                                                        LOGGER.info(annotationEvidence.getResourceType());
+																		gnomadEvidence.setResourceType(annotationEvidence.getResourceType()); // Should this be changed ?
                                                                         gnomadEvidence.setQualityQualifier("GOLD");
 
                                                                         // Adds an evidence property and add it to the evidence
