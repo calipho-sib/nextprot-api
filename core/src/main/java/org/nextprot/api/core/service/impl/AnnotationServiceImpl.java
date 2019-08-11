@@ -339,7 +339,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		LOGGER.info("Processing " + entryName + ": "+ annotations.size() + " annotations");
 		final ArrayList<String> logs = new ArrayList<>();
 		Stack<String> logStack = new Stack<>();
-		logStack.push("LEEntry:"+ entryName);
+		logStack.push("LENTRY:"+ entryName);
 
 		// Get all the gnomeAd variants for all the variations with dbSNPIds
 		Set<String> dbSNPIds = new HashSet<>();
@@ -471,6 +471,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         do {
                                                                             logPop = logStack.pop();
                                                                             LOGGER.info(logPop);
+                                                                            LOGGER.info(logPop.startsWith("LISOFORM"));
 
                                                                         } while(!logPop.startsWith("LISOFORM"));
 
@@ -538,12 +539,6 @@ public class AnnotationServiceImpl implements AnnotationService {
                                         String logString = logStack.stream()
                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                         LOGGER.info(logString);
-                                        // Should pop until remove all logs for this isoform
-                                        String logPop = "";
-                                        do {
-                                            logPop = logStack.pop();
-                                            LOGGER.info(logPop);
-                                        } while(!logPop.startsWith("LISOFORM"));
                                     }
 									String logPop = "";
                                     do {
@@ -559,6 +554,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 					});
 		} else {
 		    logStack.push("DBSNPEvidence:0");
+            String logPop = "";
+            do {
+                logPop = logStack.pop();
+                LOGGER.info(logPop);
+            } while(!logPop.startsWith("LENTRY"));
 			LOGGER.info("No DBSNP ids for given annotations");
 		}
 
