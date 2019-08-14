@@ -410,6 +410,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                         logStack.push("isofirstpos:" + isoformSpecificity.getFirstPosition());
                                                         logStack.push("isolastpos:" + isoformSpecificity.getLastPosition());
 														if(isoformSpecificity.getFirstPosition().equals(isoformSpecificity.getLastPosition())) { // only consider this simple case for now
+															logStack.push("missense:true");
 															if(variantFrequency.getIsoformPosition() == isoformSpecificity.getFirstPosition() ) {
                                                                 logs.add("isPositionRange:false");
                                                                 // Positions match
@@ -463,8 +464,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         }
 
                                                                         // Generates the flat log line for this particular case
-                                                                        logStack.push("VariantAAMatch:true");
-                                                                        String logString = logStack.stream()
+                                                                        logStack.push("VariantAAOriginalMatch:true");
+																		logStack.push("VariantAAVariantMatch:true");
+																		logStack.push("VariantMatch:true");
+
+																		String logString = logStack.stream()
                                                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                                         LOGGER.info(logString);
                                                                         // Should pop until remove all logs for this isoform
@@ -479,7 +483,9 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         // Should we check for other isoforms of the corresponding entry
 
                                                                         logStack.push("VariantAAOriginalMatch:true");
-                                                                        String logString = logStack.stream()
+																		logStack.push("VariantAAVariantMatch:false");
+																		logStack.push("VariantMatch:false");
+																		String logString = logStack.stream()
                                                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                                         LOGGER.info(logString);
                                                                         // Should pop until remove all logs for this isoform
@@ -490,8 +496,14 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         } while(!logPop.startsWith("LISOFORM"));
                                                                     }
                                                                 } else {
-                                                                    logStack.push("VariantAAMatch:false");
-                                                                    String logString = logStack.stream()
+                                                                    logStack.push("VariantAAOriginalMatch:false");
+																	if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
+																		logStack.push("VariantAAVariantMatch:true");
+																	} else {
+																		logStack.push("VariantAAVariantMatch:false");
+																	}
+																	logStack.push("VariantMatch:false");
+																	String logString = logStack.stream()
                                                                             .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                                     LOGGER.info(logString);
                                                                     // Should pop until remove all logs for this isoform
@@ -502,8 +514,9 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                     }while(!logPop.startsWith("LISOFORM"));
                                                                 }
 															} else {
-																logStack.push("VariantNoMatchIsoform:"+key+":"+isoformSpecificity.getFirstPosition()+":"+isoformSpecificity.getLastPosition());
-                                                                String logString = logStack.stream()
+																logStack.push("VariantPositionMatch:false");
+																logStack.push("VariantMatch:false");
+																String logString = logStack.stream()
                                                                         .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                                 LOGGER.info(logString);
                                                                 // Should pop until remove all logs for this isoform
@@ -514,7 +527,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 															}
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
-                                                            logStack.push("isPositionRange:true");
+                                                            logStack.push("missense:false");
+                                                            logStack.push("VariantMatch:false");
                                                             String logString = logStack.stream()
                                                                     .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                             LOGGER.info(logString);
