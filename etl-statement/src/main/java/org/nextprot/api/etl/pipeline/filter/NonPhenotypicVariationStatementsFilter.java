@@ -18,9 +18,9 @@ public class NonPhenotypicVariationStatementsFilter extends BaseFilter {
 	}
 
 	@Override
-	public org.nextprot.pipeline.statement.nxflat.filter.NonPhenotypicVariationStatementsFilter duplicate(int newCapacity) {
+	public NonPhenotypicVariationStatementsFilter duplicate(int newCapacity) {
 
-		return new org.nextprot.pipeline.statement.nxflat.filter.NonPhenotypicVariationStatementsFilter(newCapacity);
+		return new NonPhenotypicVariationStatementsFilter(newCapacity);
 	}
 
 	@Override

@@ -21,9 +21,9 @@ public class NxFlatMappedTableSink extends Sink {
 	}
 
 	@Override
-	public org.nextprot.pipeline.statement.nxflat.sink.NxFlatMappedTableSink duplicate(int newCapacity) {
+	public NxFlatMappedTableSink duplicate(int newCapacity) {
 
-		return new org.nextprot.pipeline.statement.nxflat.sink.NxFlatMappedTableSink();
+		return new NxFlatMappedTableSink();
 	}
 	@Override
 	public boolean handleFlow() throws Exception {

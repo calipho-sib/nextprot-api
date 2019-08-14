@@ -21,9 +21,9 @@ public class NxFlatRawTableFilter extends BaseFilter {
 	}
 
 	@Override
-	public org.nextprot.pipeline.statement.nxflat.filter.NxFlatRawTableFilter duplicate(int newCapacity) {
+	public NxFlatRawTableFilter duplicate(int newCapacity) {
 
-		return new org.nextprot.pipeline.statement.nxflat.filter.NxFlatRawTableFilter(newCapacity);
+		return new NxFlatRawTableFilter(newCapacity);
 	}
 
 	@Override
