@@ -166,6 +166,7 @@ public class PepXServiceImpl implements PepXService {
 			params.put("mode", "IL");
 			params.put("pep", peptides);
 
+			// POST payload same as the query sting for GET
 			StringBuilder postData = new StringBuilder();
 			for (Map.Entry<String,Object> param : params.entrySet()) {
 				if (postData.length() != 0) postData.append('&');
