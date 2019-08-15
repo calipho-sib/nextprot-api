@@ -58,12 +58,12 @@ public class PepXServiceImpl implements PepXService {
 		List<Entry> entries = new ArrayList<>();
 
 		PepXResponse pepXResponse = null;
-		LOGGER.info(method);
+		LOGGER.warn(method);
 		if("GET".equals(method)) {
-			LOGGER.info("Calling GEt");
+			LOGGER.warn("Calling GEt");
 			pepXResponse = getPepXResponse(peptides, modeIsoleucine);
 		} else if("POST".equals(method)){
-			LOGGER.info("Calling post");
+			LOGGER.warn("Calling post");
 			pepXResponse = getPepxResponseByPost(peptides, modeIsoleucine);
 		}
 
