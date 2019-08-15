@@ -539,6 +539,10 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                             } while(!logPop.startsWith("LISOFORM"));
 														}
 													});
+											String logPop = "";
+											do {
+												logPop = logStack.pop();
+											} while(!logPop.startsWith("LGNADVar"));
 										});
 									} else {
 										logStack.push("gnomadvariants:"+0);
