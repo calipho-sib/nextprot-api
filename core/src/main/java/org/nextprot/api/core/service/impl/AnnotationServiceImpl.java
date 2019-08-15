@@ -466,6 +466,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         // Generates the flat log line for this particular case
                                                                         logStack.push("VariantAAOriginalMatch:true");
 																		logStack.push("VariantAAVariantMatch:true");
+																		logStack.push("CrossVariantMatch:false");
 																		logStack.push("VariantMatch:true");
 
 																		String logString = logStack.stream()
@@ -479,11 +480,15 @@ public class AnnotationServiceImpl implements AnnotationService {
 
                                                                     } else {
                                                                         // variant amino acid sequence do not match
-                                                                        // Should log this
-                                                                        // Should we check for other isoforms of the corresponding entry
-
                                                                         logStack.push("VariantAAOriginalMatch:true");
 																		logStack.push("VariantAAVariantMatch:false");
+
+																		// Check for cross AA mathing
+																		// i.e original = variant and vice versa
+																		if(gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
+																			logStack.push("CrossVariantMatch:true");
+																		}
+
 																		logStack.push("VariantMatch:false");
 																		String logString = logStack.stream()
                                                                                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
@@ -502,7 +507,21 @@ public class AnnotationServiceImpl implements AnnotationService {
 																	} else {
 																		logStack.push("VariantAAVariantMatch:false");
 																	}
+
+																	// Check for cross AA mathing
+																	// i.e original = variant and vice versa
+																	if(gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
+																		logStack.push("CrossVariantMatch:true");
+																	}
+
 																	logStack.push("VariantMatch:false");
+
+																	// Check for cross AA mathing
+																	// i.e original = variant and vice versa
+																	if(gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
+
+																	}
+
 																	String logString = logStack.stream()
                                                                             .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                                     LOGGER.info(logString);
@@ -515,6 +534,11 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                 }
 															} else {
 																logStack.push("VariantPositionMatch:false");
+																// Check for cross AA mathing
+																// i.e original = variant and vice versa
+																if(gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
+																	logStack.push("CrossVariantMatch:true");
+																}
 																logStack.push("VariantMatch:false");
 																String logString = logStack.stream()
                                                                         .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
@@ -528,7 +552,10 @@ public class AnnotationServiceImpl implements AnnotationService {
 														} else {
 															LOGGER.info("Annotation variant in a range "+ isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
                                                             logStack.push("missense:false");
-                                                            logStack.push("VariantMatch:false");
+
+															if(gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
+																logStack.push("CrossVariantMatch:true");
+															}
                                                             String logString = logStack.stream()
                                                                     .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
                                                             LOGGER.info(logString);
