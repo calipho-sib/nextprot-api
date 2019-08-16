@@ -185,6 +185,7 @@ public class PepXServiceImpl implements PepXService {
 			pepxConnection.setFixedLengthStreamingMode(postDataBytes.length);
 			pepxConnection.setDoOutput(true);
 			pepxConnection.getOutputStream().write(postDataBytes);
+			LOGGER.info("POST payload " + postDataBytes.toString());
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(pepxConnection.getInputStream(), "UTF-8"));
 			String line;
