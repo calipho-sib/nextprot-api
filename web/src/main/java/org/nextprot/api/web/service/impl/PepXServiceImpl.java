@@ -2,6 +2,7 @@ package org.nextprot.api.web.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpConnection;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -27,11 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Service
@@ -52,12 +53,23 @@ public class PepXServiceImpl implements PepXService {
 	
 	
 	@Override
-	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine) {
+	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine, String method) {
 
 		List<Entry> entries = new ArrayList<>();
 
-		PepXResponse pepXResponse = getPepXResponse(peptides, modeIsoleucine);
-		
+		PepXResponse pepXResponse = null;
+		LOGGER.warn(method);
+		if("GET".equals(method)) {
+			pepXResponse = getPepXResponse(peptides, modeIsoleucine);
+		} else if("POST".equals(method)){
+			pepXResponse = getPepxResponseByPost(peptides, modeIsoleucine);
+		}
+
+		if(pepXResponse == null) {
+			LOGGER.error("No pepx response for peptides: "+ peptides);
+			return null;
+		}
+
 		Set<String> entriesNames = pepXResponse.getEntriesNames();
 		for (String entryName : entriesNames) {
 			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName)
@@ -144,7 +156,48 @@ public class PepXServiceImpl implements PepXService {
 		} catch (IOException e) {
 			throw new NextProtException(e);
 		}
+	}
 
+	private PepXResponse getPepxResponseByPost(String peptides, boolean modeIsoleucine) {
+		try {
+
+			URL pepXUrl = new URL(this.pepXUrl);
+			Map<String,Object> params = new LinkedHashMap<>();
+			params.put("format", "json");
+			params.put("mode", "IL");
+			params.put("pep", peptides);
+
+			// POST payload same as the query sting for GET
+			StringBuilder postData = new StringBuilder();
+			for (Map.Entry<String,Object> param : params.entrySet()) {
+				if (postData.length() != 0) postData.append('&');
+				postData.append(param.getKey());
+				postData.append('=');
+				postData.append(param.getValue());
+			}
+			byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+			HttpURLConnection pepxConnection = (HttpURLConnection) pepXUrl.openConnection();
+			pepxConnection.setRequestMethod("POST");
+			pepxConnection.setRequestProperty("Content-Type", "text/plain");
+			pepxConnection.setFixedLengthStreamingMode(postDataBytes.length);
+			pepxConnection.setDoOutput(true);
+			pepxConnection.getOutputStream().write(postDataBytes);
+			LOGGER.info("POST payload " + postDataBytes.toString());
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(pepxConnection.getInputStream(), "UTF-8"));
+			String line;
+			StringBuilder sb = new StringBuilder();
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+			in.close();
+
+			return PepxUtils.parsePepxResponse(sb.toString());
+
+		} catch (IOException e) {
+			throw new NextProtException(e);
+		}
 	}
 	
 	

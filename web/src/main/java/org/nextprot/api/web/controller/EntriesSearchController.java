@@ -35,7 +35,7 @@ public class EntriesSearchController {
 	public List<Entry> pepx(
 			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "NDVVPTMAQGVLEYK" }) @RequestParam(value = "peptide", required = true) String peptide) {
 		checkPeptideLength(Arrays.stream(peptide.split(",")));
-		return getEntriesWithPeptides(peptide);
+		return getEntriesWithPeptides(peptide, "GET");
 	}
 
 	@ResponseBody
@@ -46,15 +46,15 @@ public class EntriesSearchController {
 		NPreconditions.checkNotNull(peptideList, "The peptide list must be not null");
 		NPreconditions.checkNotEmpty(peptideList, "The peptide list must be not empty");
 		checkPeptideLength(peptideList.stream());
-		return getEntriesWithPeptides(String.join(",", peptideList));
+		return getEntriesWithPeptides(String.join(",", peptideList), "POST");
 	}
 
 	private void checkPeptideLength(Stream<String> peptideList) {
 		NPreconditions.checkTrue(peptideList.allMatch(p -> p.length() >= 6), "The minimum length of all peptides must be 6");
 	}
 
-	private List<Entry> getEntriesWithPeptides(String peptide) {
+	private List<Entry> getEntriesWithPeptides(String peptide, String method) {
 		Boolean modeIL = new Boolean(true);
-		return pepXService.findEntriesWithPeptides(peptide, modeIL);
+		return pepXService.findEntriesWithPeptides(peptide, modeIL, method);
 	}
 }
