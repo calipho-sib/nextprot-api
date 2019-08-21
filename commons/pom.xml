@@ -16,12 +16,15 @@
 	<url>https://api.nextprot.org</url>
 
     <dependencies>
+    
+		<!-- source code is here: https://gitlab.isb-sib.ch/calipho/cali-mz-java.git -->    
         <dependency>
             <groupId>org.expasy.mzjava</groupId>
             <artifactId>mzjava-proteomics</artifactId>
             <version>1.1.2</version>
         </dependency>
 
+		<!-- source code is here: https://gitlab.isb-sib.ch/calipho/cali-mz-java.git -->    
         <dependency>
             <groupId>org.expasy.mzjava</groupId>
             <artifactId>mzjava-core</artifactId>
