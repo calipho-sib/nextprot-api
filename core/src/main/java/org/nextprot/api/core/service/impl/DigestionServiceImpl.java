@@ -10,6 +10,7 @@ import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuil
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.DigestedPeptide;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -46,7 +47,7 @@ class DigestionServiceImpl implements DigestionService {
 	}
 
 	@Override
-	public Set<String> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
+	public Set<DigestedPeptide> digestProteins(String isoformOrEntryAccession, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
 		if (IsoformUtils.isIsoformAccession(isoformOrEntryAccession)) {
 			return digestIsoforms(Collections.singletonList(isoformOrEntryAccession), builder);
@@ -57,7 +58,7 @@ class DigestionServiceImpl implements DigestionService {
 		}
 	}
 
-	private Set<String> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
+	private Set<DigestedPeptide> digestIsoforms(List<String> isoformAccessions, ProteinDigesterBuilder builder) throws ProteinDigestion.MissingIsoformException {
 
 		List<Peptide> peptides = new ArrayList<>();
 
@@ -70,8 +71,9 @@ class DigestionServiceImpl implements DigestionService {
 		}
 
 		return peptides.stream()
-				.map(peptide -> peptide.toSymbolString())
-				.collect(Collectors.toSet());
+			.map(pep -> new DigestedPeptide(pep.toSymbolString(), pep.getProducedWithMisceleavageCount()))
+			.collect(Collectors.toSet());
+		
 	}
 
 	@Cacheable("all-tryptic-digests")

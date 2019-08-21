@@ -19,13 +19,13 @@
         <dependency>
             <groupId>org.expasy.mzjava</groupId>
             <artifactId>mzjava-proteomics</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.expasy.mzjava</groupId>
             <artifactId>mzjava-core</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
         </dependency>
 
     </dependencies>

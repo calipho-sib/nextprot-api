@@ -1,15 +1,19 @@
 package org.nextprot.api.core.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuilder;
-import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
+import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion.MissingIsoformException;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.DigestedPeptide;
 import org.nextprot.api.core.service.DigestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,10 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Set;
 
 // See also sources of mzjava-proteomics are available at https://bitbucket.org/sib-pig/mzjava-proteomics
 @RestController
@@ -45,9 +45,9 @@ public class ProteinDigestionController {
 		return digestionService.digestAllMatureProteinsWithTrypsin();
 	}
 
-	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
+	@RequestMapping(value = "/digestion/{isoformOrEntryAccession}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ApiMethod(path = "/digestion/{isoformOrEntryAccession}", verb = ApiVerb.GET, description = "digest a protein with a specific protease")
-	public String digestProtein(
+	public Set<DigestedPeptide> digestProtein(
 			@ApiPathParam(name = "isoformOrEntryAccession", description = "A neXtProt entry or isoform accession (i.e. NX_P01308 or NX_P01308-1).", allowedvalues = { "NX_P01308" })
 			@PathVariable("isoformOrEntryAccession") String isoformOrEntryAccession,
 			@ApiQueryParam(name = "protease", description = "a protease to digest a protein (trypsin by default)", allowedvalues = { "TRYPSIN" })
@@ -78,25 +78,12 @@ public class ProteinDigestionController {
 		if (digestmaturepartsonly != null) {
 			builder.withMaturePartsOnly(digestmaturepartsonly);
 		}
-
+		
 		try {
-			Set<String> peptides = digestionService.digestProteins(isoformOrEntryAccession, builder);
-
-			if (request.getRequestURI().toLowerCase().endsWith(".json")) {
-				ObjectMapper mapper = new ObjectMapper();
-
-				try {
-					return mapper.writeValueAsString(peptides);
-				} catch (JsonProcessingException e) {
-					throw new NextProtException(e);
-				}
-			}
-			else {
-
-				return String.join(", ", peptides);
-			}
-		} catch (ProteinDigestion.MissingIsoformException e) {
+			return digestionService.digestProteins(isoformOrEntryAccession, builder);
+		} catch (MissingIsoformException e) {
 			throw new NextProtException(e.getMessage());
 		}
+
 	}
 }
