@@ -31,7 +31,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 	
     @Test
     public void shouldFilterOutPeptidesWhichDontBelongToTheEntry() throws Exception {
-		List<Entry> entries = pepXService.findEntriesWithPeptides("TCQAWSSMTPHSHSR,TCQAWS", true);
+    	// Test with GET method
+		List<Entry> entries = pepXService.findEntriesWithPeptides("TCQAWSSMTPHSHSR,TCQAWS", true, "GET");
 		for (Entry entry: entries) {
 			if (entry.getUniqueName().equals("NX_P08519")) {
 				assertTrue(entry.getAnnotations().size()==2);
@@ -45,12 +46,30 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 		}
 
     }
+
+	@Test
+	public void shouldFilterOutPeptidesWhichDontBelongToTheEntryWithPOST() throws Exception {
+		// Test with GET method
+		List<Entry> entries = pepXService.findEntriesWithPeptides("TCQAWSSMTPHSHSR,TCQAWS", true, "POST");
+		for (Entry entry: entries) {
+			if (entry.getUniqueName().equals("NX_P08519")) {
+				assertTrue(entry.getAnnotations().size()==2);
+			} else if (entry.getUniqueName().equals("NX_Q16609")) {
+				assertTrue(entry.getAnnotations().size()==1);
+			} else if (entry.getUniqueName().equals("NX_P48544")) {// Check with Alain that this is correct, apparently in UniProt it says: http://www.uniprot.org/uniprot/P48544#sequences TCQARS instead of TCQAWS
+				assertTrue(entry.getAnnotations().size()==1);
+			} else {
+				assertTrue(false);
+			}
+		}
+
+	}
     
     @Test
     public void testPepXService() throws Exception {
     	List<String> peptides = getPeptides();        	
     	for(String peptide : peptides){
-    		List<Entry> entries = pepXService.findEntriesWithPeptides(peptide, true);
+    		List<Entry> entries = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     		for (Entry entry: entries) {
     			//System.out.println("testing peptide:" + peptide +  " for " + entry.getUniprotName());
     			// we should have at least one annotation for each entry / peptide match (can be a null variant)
@@ -65,7 +84,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	boolean ok = true;
     	try {
 	    	String peptide = "JVPEGPTPDSSEGNJSYJSSJSHJNNJSHJTTSSSF";
-	    	pepXService.findEntriesWithPeptides(peptide, true);
+	    	pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	} catch (Exception e) {
     		ok=false;
     	}
@@ -94,7 +113,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	// NX_PEPT01668698	DJCQAQGVAJQTMK
     	
     	String peptide = "DICQAQGVAIQTMK"; // replaced any J in original with L otherwise pepx don't match the peptide !!!!
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	Assert.assertEquals(1, result.size());
     	List<Annotation> annots = result.get(0).getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION);
     	Assert.assertEquals(1, annots.size());
@@ -114,7 +133,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	
     	String peptide = "AAQEIQEGQR"; // replaced any J in original with L otherwise pepx don't match the peptide !!!!
     	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_P35520-1","NX_P0DN79-1" ));
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() > 1); // multiple entries but they're sharing an isoform having the same sequence
     	assertTrue( result.stream()
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
@@ -133,7 +152,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	// NX_PEPT00000100 AFVHWYVGEGMEEGEFSEAR
     	
     	String peptide = "AFVHWYVGEGMEEGEFSEAR"; 
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() > 1); // multiple entries 
     	assertTrue(result.stream()
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
@@ -154,7 +173,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	// => pepx matches are non unique with variants:  Q13670-1, Q86UW9-1-419, Q86UW9-2-372
     	
     	String peptide = "LSAASGYSDVTDS"; 
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() > 1); // multiple entries 
     	assertTrue(result.stream()
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
@@ -177,7 +196,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	
     	String peptide = "AIPPSQLDSQIDDFTGFSK"; 
     	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_P0DMV1-1", "NX_P0DMV2-1", "NX_Q5DJT8-1" ));
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() > 1); // multiple entries 
     	assertTrue(result.stream()
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
@@ -198,7 +217,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	
     	String peptide = "YPVVKRTEGPAGHSKGELAP"; 
     	Set<String> equivIsoSet = new TreeSet<String>();
-    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true);
+    	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() == 1); // single entry 
     	assertTrue(result.stream()
     		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
