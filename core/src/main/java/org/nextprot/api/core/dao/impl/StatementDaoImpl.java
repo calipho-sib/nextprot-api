@@ -74,7 +74,7 @@ public class StatementDaoImpl implements StatementDao {
 		params.put("accession", nextprotAccession);
 
 		String sql = getSQL("statements-by-entry-accession");
-		
+		System.out.println("FINDNORMALSTATEMERNT" + sql.toString());
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sql, params, new StatementMapper());
 	}
 
