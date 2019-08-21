@@ -134,7 +134,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
 
         AnnotationEvidence evidence = new AnnotationEvidence();
-        LOGGER.info(s.getValue() + " " + s.getEntryAccession() + " " + s.getAnnotationCategory() + " ");
+        LOGGER.info(s.getSubjectStatementIds() + " " + s.getEntryAccession() + " " + s.getAnnotationCategory() + " ");
         if (s.getValue(RESOURCE_TYPE) == null) {
             throw new NextProtException("resource type undefined");
         }
