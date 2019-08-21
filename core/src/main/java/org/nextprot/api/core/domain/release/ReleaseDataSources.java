@@ -19,6 +19,8 @@ public enum ReleaseDataSources {
 	Ensembl("Ensembl", "Ensembl genome", "Ensembl human genome browser", "http://www.ensembl.org/"),
 	ENZYME("ENZYME", "UniProtKB enzyme classification", "Enzyme nomenclature database", "http://www.expasy.org/enzyme/"),
 	GO("GO", "GO", "Gene Ontology", "http://www.geneontology.org/"),
+	GLYCONNECT("GlyConnect", "GlyConnect", "Protein glycosylation platform", "https://glyconnect.expasy.org/"),
+	GNOMAD("gnomAD", "gnomAD", "Genome Aggregation Database", "https://gnomad.broadinstitute.org/"),
 	HPA("HPA", "HPA", "Human Protein Atlas", "https://v%v.proteinatlas.org/"),
 	IntAct("IntAct", "IntAct interactions", "Molecular interaction database", "http://www.ebi.ac.uk/intact/"),
 	InterPro("InterPro", "InterPro", "Integrated resource of protein families, domains and functional sites", "http://www.ebi.ac.uk/interpro/"),
