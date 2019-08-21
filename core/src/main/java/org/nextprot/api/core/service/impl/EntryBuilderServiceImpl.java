@@ -62,13 +62,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setPublications(this.publicationService.findPublicationsByEntryName(entryName));
 			}
 			if(entryConfig.hasXrefs()){
-				// Generates the gnomad xrefs
-				List<Annotation> annotations = annotationService.findAnnotations(entryName);
-				List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
-				List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
-				LOGGER.info("dbxrefs " + dbXrefs.size() + " gnomad xrefs " + gnomAddbXrefs.size());
-				gnomAddbXrefs.addAll(dbXrefs);
-				entry.setXrefs(gnomAddbXrefs);
+				this.setXrefs(entry, entryName);
 			}
 			if(entryConfig.hasIdentifiers()){
 				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
@@ -163,7 +157,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setPublications(this.publicationService.findPublicationsByEntryName(entry.getUniqueName()));
 			}
 			if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
-				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
+				setXrefs(entry, entry.getUniqueName());
 			}
 			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
 				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(entry.getAnnotations());
@@ -175,6 +169,18 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			}
 
 		}
+	}
+
+	private void setXrefs(Entry entry, String entryName) {
+		// Generates the dbxrefs
+		List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+		// Generates the gnomad xrefs
+		List<Annotation> annotations = annotationService.findAnnotations(entryName);
+		List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
+		LOGGER.info("dbxrefs " + dbXrefs.size() + " gnomad xrefs " + gnomAddbXrefs.size());
+		gnomAddbXrefs.addAll(dbXrefs);
+		entry.setXrefs(gnomAddbXrefs);
 	}
 
 	@Override
