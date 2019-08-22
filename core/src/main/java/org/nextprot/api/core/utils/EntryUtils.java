@@ -221,36 +221,5 @@ public class EntryUtils implements Serializable{
 		return np2PE != ProteinExistence.PROTEIN_LEVEL && wouldUpgradeToPE1AccordingToOldRule(e);
 	}
 
-
-	public static List<DbXref> getGnomADXrefs(List<Annotation> annotations, DbXrefService xrefService) {
-		LOGGER.info("Annotations to process " + annotations.size());
-		List<DbXref> gnomADXrefs = new ArrayList<>();
-		annotations.stream()
-				   .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
-				   .forEach(annotation -> {
-				   		// Generates dbxref for all evidence
-					   annotation.getEvidences()
-							   .stream()
-							   .filter(annotationEvidence -> "gnomAD".equals(annotationEvidence.getResourceDb()))
-							   .forEach(annotationEvidence -> {
-							   		DbXref gnomadXref = new DbXref();
-							   		try {
-							   			long xrefId = xrefService.findXrefId("gnomAD", annotationEvidence.getResourceAccession());
-							   			gnomadXref.setDbXrefId(xrefId);
-							   			gnomadXref.setAccession(annotationEvidence.getResourceAccession());
-							   			gnomadXref.setDatabaseCategory("Variant databases");
-							   			gnomadXref.setDatabaseName("gnomAD");
-							   			gnomadXref.setUrl("https://gnomad.broadinstitute.org");
-							   			gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());
-							   			gnomadXref.setProperties(new ArrayList<>());
-							   			gnomADXrefs.add(gnomadXref);
-							   		} catch(Exception e) {
-							   			e.printStackTrace();
-							   		}
-							   });
-				   });
-		LOGGER.info("GNOMAD xrefs generated " + gnomADXrefs.size());
-		return gnomADXrefs;
-	}
 	
 }

@@ -23,10 +23,6 @@ public class StatementMapper implements RowMapper<Statement> {
 		}
 
 		Specifications specifications = builder.build();
-		specifications.getFields().stream()
-				.forEach((field) -> {
-					System.out.println(field);
-				});
 		StatementBuilder sfbuilder = new StatementBuilder()
 				.withSpecifications(specifications);
 

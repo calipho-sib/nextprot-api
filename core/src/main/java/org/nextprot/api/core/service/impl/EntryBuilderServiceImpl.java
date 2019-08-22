@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.DbXref;
@@ -35,6 +36,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private MdataService mdataService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;
+	@Autowired private GnomadXrefService gnomadXrefService;
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 
@@ -176,11 +178,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
 
 		// Generates the gnomad xrefs
-		List<Annotation> annotations = annotationService.findAnnotations(entryName);
-		List<DbXref> gnomAddbXrefs =  EntryUtils.getGnomADXrefs(annotations, xrefService);
-		LOGGER.info("dbxrefs " + dbXrefs.size() + " gnomad xrefs " + gnomAddbXrefs.size());
-		gnomAddbXrefs.addAll(dbXrefs);
-		entry.setXrefs(gnomAddbXrefs);
+		List<DbXref> gnomadXrefs = this.gnomadXrefService.findGnomadDbXrefsByMaster(entryName);
+
+		List<DbXref> allXrefs = new ImmutableList.Builder<DbXref>()
+										.addAll(dbXrefs)
+										.addAll(gnomadXrefs)
+										.build();
+		entry.setXrefs(allXrefs);
 	}
 
 	@Override
