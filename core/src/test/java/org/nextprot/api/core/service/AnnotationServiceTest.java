@@ -50,6 +50,7 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 		assertEquals("Orphanet", evi.getResourceDb());
 	}
 
+	@Ignore
 	@Test
 	public void shouldAddVariantFrequenciesToVariantAnnotations() {
 		List<Annotation> annotations = annotationService.findAnnotationsExcludingBed("NX_P20000");

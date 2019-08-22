@@ -20,8 +20,7 @@ public class PtmDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void testFindPtmsByEntry() {
 		List<Feature> features = this.ptmDao.findPtmsByEntry("NP_MAS1");
-		assertEquals(2, features.size());
-		assertEquals("PTM-204", features.get(0).getAccession());
-		assertEquals("GLC-204", features.get(1).getAccession());
+		assertEquals(1, features.size());
+		assertEquals("GLC-204", features.get(0).getAccession());
 	}
 }
