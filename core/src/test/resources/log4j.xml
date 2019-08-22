@@ -18,13 +18,6 @@
 		</layout>
 	</appender>
 
-	<appender name="jsonAppender" class="SYSTEM_OUT">
-		<Con
-		<JsonLayout complete="false" compact="false">
-
-		</JsonLayout>
-	</appender>
-
 	<logger name="org.springframework">
 		<level value="WARN" />
 	</logger>
