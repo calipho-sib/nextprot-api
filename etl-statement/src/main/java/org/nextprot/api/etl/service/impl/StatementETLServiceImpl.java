@@ -25,6 +25,7 @@ import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -354,11 +355,13 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			String format = "(entry:%s \"%d\"^^xsd:integer)";
 
-			Set<Statement> ptm0528Statements = statements.stream()
-					.filter(statement -> statement.getValue(ANNOT_CV_TERM_ACCESSION).equals("PTM-0528"))
+			Set<String> nGlycoPTMs = new HashSet<>(Arrays.asList("PTM-0528", "PTM-0529", "PTM-0530", "PTM-0531", "PTM-0532"));
+
+			Set<Statement> nGlycoStatements = statements.stream()
+					.filter(statement -> nGlycoPTMs.contains(statement.getValue(ANNOT_CV_TERM_ACCESSION)))
 					.collect(Collectors.toSet());
 
-			String selectedPTM0528EntryPositions = ptm0528Statements.stream()
+			String nGlycoEntryPositions = nGlycoStatements.stream()
 					.map(statement -> String.format(format,
 							statement.getValue(NEXTPROT_ACCESSION),
 							Integer.parseInt(statement.getValue(LOCATION_BEGIN))))
@@ -434,7 +437,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					"cv:DO-00707\n" +
 					"}\n" +
 					"values (?entry ?glypos) {\n" +
-					selectedPTM0528EntryPositions +
+					nGlycoEntryPositions +
 					"}\n" +
 					"?entry :isoform ?iso.\n" +
 					"?iso :swissprotDisplayed true .\n" +
