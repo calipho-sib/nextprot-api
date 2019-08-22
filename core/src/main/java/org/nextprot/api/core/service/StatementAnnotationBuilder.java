@@ -134,7 +134,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
 
         AnnotationEvidence evidence = new AnnotationEvidence();
-        LOGGER.info(s.getSubjectStatementIds() + " " + s.getEntryAccession() + " " + s.getAnnotationCategory() + " ");
         if (s.getValue(RESOURCE_TYPE) == null) {
             throw new NextProtException("resource type undefined");
         }
@@ -244,9 +243,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(ANNOTATION_ID)));
 
         flatStatementsByAnnotationHash.forEach((key, statements) -> {
-            statements.forEach((statement -> {
-                LOGGER.info(statement.toJsonString());
-            }));
             Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
