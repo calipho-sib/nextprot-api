@@ -26,7 +26,6 @@
     </beans>
 
     <beans profile="unit">
-
         <bean id="dataSourceServiceLocator"
               class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
             <property name="dataSource" ref="dataSource"/>
