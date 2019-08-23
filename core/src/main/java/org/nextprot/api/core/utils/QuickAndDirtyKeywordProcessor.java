@@ -1,8 +1,5 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.Isoform;
@@ -10,6 +7,9 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuickAndDirtyKeywordProcessor {
 
@@ -31,6 +31,10 @@ public class QuickAndDirtyKeywordProcessor {
 						
 			if (a.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE) {
 				if ("PTM-0528".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				if ("PTM-0529".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				if ("PTM-0530".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				if ("PTM-0531".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				if ("PTM-0532".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
 				if ("PTM-0551".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
 				if ("PTM-0565".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
 				if ("PTM-0568".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;				

@@ -104,6 +104,10 @@ public class SequenceModification extends SequenceFeatureBase {
             rules = new HashMap<>();
 
             rules.put("PTM-0528", new Rule("PTM-0528", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1 (NX_Q14624.PTM-0528_274)
+            rules.put("PTM-0529", new Rule("PTM-0529", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1
+            rules.put("PTM-0530", new Rule("PTM-0530", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1
+            rules.put("PTM-0531", new Rule("PTM-0531", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1
+            rules.put("PTM-0532", new Rule("PTM-0532", AminoAcidCode.ASPARAGINE, "N[^P][STC]")); // TODO: this rule is not followed by NP1
             rules.put("PTM-0568", new Rule("PTM-0568",AminoAcidCode.THREONINE));
             rules.put("PTM-0250", new Rule("PTM-0250",AminoAcidCode.ARGININE));
             rules.put("PTM-0251", new Rule("PTM-0251",AminoAcidCode.CYSTEINE));
