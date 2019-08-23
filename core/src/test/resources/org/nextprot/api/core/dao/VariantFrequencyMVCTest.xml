@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+    <gnomad_variants chr="1" gnomad_ac="gac-t1" chrpos="150" dbsnp_id="rs001" ori_nuc="A" var_nuc="C" allele_count="1" allele_number="10"
+                     allele_freq="0.1" hom_count="12" var_type="12" gene_name="aga" ensg="ad" enst="afd" ensp="ads" iso_pos="1221" ori_aa="GLY" var_aa="GLU"
+                     uniprot_ac="kjhkj"/>
+    <gnomad_variants chr="1" gnomad_ac="gac2" chrpos="1500" dbsnp_id="rs002" ori_nuc="A" var_nuc="T" allele_count="1" allele_number="10"
+                     allele_freq="0.1" hom_count="12" var_type="12" gene_name="aga" ensg="ad" enst="afd" ensp="ads" iso_pos="1221" ori_aa="GLY" var_aa="GLU"
+                     uniprot_ac="kjhkj"/>
+    <gnomad_variants chr="1" gnomad_ac="gac-g1" chrpos="150" dbsnp_id="rs001" ori_nuc="A" var_nuc="G" allele_count="1" allele_number="10"
+                     allele_freq="0.1" hom_count="12" var_type="12" gene_name="aga" ensg="ad" enst="afd" ensp="ads" iso_pos="1221" ori_aa="GLY" var_aa="GLU"
+                     uniprot_ac="kjhkj"/>
+
+</dataset>

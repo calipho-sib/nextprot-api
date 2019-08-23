@@ -27,5 +27,4 @@ public class StatementController {
 		return statementService.getAnnotations(entryAccession);
 	}
 	
-	
 }

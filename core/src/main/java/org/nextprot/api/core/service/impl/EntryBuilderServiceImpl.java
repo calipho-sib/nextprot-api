@@ -1,5 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
@@ -32,9 +36,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private MdataService mdataService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;
+	@Autowired private GnomadXrefService gnomadXrefService;
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
-		
+
+	private static final Log LOGGER = LogFactory.getLog(EntryBuilderServiceImpl.class);
+
+
 	@Override
 	public Entry build(EntryConfig entryConfig) {
 	
@@ -56,7 +64,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setPublications(this.publicationService.findPublicationsByEntryName(entryName));
 			}
 			if(entryConfig.hasXrefs()){
-				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
+				this.setXrefs(entry, entryName);
 			}
 			if(entryConfig.hasIdentifiers()){
 				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
@@ -151,7 +159,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setPublications(this.publicationService.findPublicationsByEntryName(entry.getUniqueName()));
 			}
 			if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
-				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
+				setXrefs(entry, entry.getUniqueName());
 			}
 			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
 				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(entry.getAnnotations());
@@ -163,6 +171,20 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			}
 
 		}
+	}
+
+	private void setXrefs(Entry entry, String entryName) {
+		// Generates the dbxrefs
+		List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+		// Generates the gnomad xrefs
+		List<DbXref> gnomadXrefs = this.gnomadXrefService.findGnomadDbXrefsByMaster(entryName);
+
+		List<DbXref> allXrefs = new ImmutableList.Builder<DbXref>()
+										.addAll(dbXrefs)
+										.addAll(gnomadXrefs)
+										.build();
+		entry.setXrefs(allXrefs);
 	}
 
 	@Override

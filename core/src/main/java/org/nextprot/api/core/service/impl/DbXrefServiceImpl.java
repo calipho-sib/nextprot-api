@@ -15,12 +15,8 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.AntibodyResourceIdsService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.PeptideNamesService;
-import org.nextprot.api.core.service.StatementService;
+
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
