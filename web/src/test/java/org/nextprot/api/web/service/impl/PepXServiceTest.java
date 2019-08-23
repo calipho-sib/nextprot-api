@@ -27,6 +27,69 @@ public class PepXServiceTest extends WebUnitBaseTest {
 
 	private static final String ISO_ACCESSION = "NX_P01234-1";
 	
+	
+	@Test
+	public void testFilteringOfVariantMatches() throws Exception {
+		
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("org/nextprot/api/pepx/three-matches-pepx-response.json").getFile());
+		Scanner scanner = new Scanner(file, "UTF-8");
+		String content = scanner.useDelimiter("\\A").next();
+		scanner.close();
+		PepXResponse out = PepxUtils.parsePepxResponse(content);
+		
+		// content before filtering
+		assertTrue(out.getParams().get("peplist").equals("MAPGGA,MAPGGP,TGGSTGSS"));
+		assertTrue(out.getParams().get("modeIL").equals(1));
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().size()==3);
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().size()==3);
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().size()==8); 
+		assertTrue(out.getPeptideMatch("TGGSTGSS").getEntryMatches().size()==0);
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+		out = PepxUtils.filterOutVariantMatch(out);
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+		
+		// content after filtering		
+		assertTrue(out.getParams().get("peplist").equals("MAPGGA,MAPGGP,TGGSTGSS"));
+		assertTrue(out.getParams().get("modeIL").equals(1));
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().size()==1);  // instead of 3 before
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().size()==3);
+		assertTrue(out.getPeptideMatch("TGGSTGSS").getEntryMatches().size()==0);
+		
+		// check detailed content
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().get(0).getEntryName().equals("P28799"));
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().get(0).getIsoforms().size()==1);
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().get(0).getIsoforms().get(0).getIsoformAccession().equals("NX_P28799-3"));
+		assertTrue(out.getPeptideMatch("MAPGGA").getEntryMatches().get(0).getIsoforms().get(0).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(0).getEntryName().equals("A0A0J9YX94"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(0).getIsoforms().size()==1);
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(0).getIsoforms().get(0).getIsoformAccession().equals("NX_A0A0J9YX94-1"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(0).getIsoforms().get(0).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(1).getEntryName().equals("Q7L2E3"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(1).getIsoforms().size()==1);
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(1).getIsoforms().get(0).getIsoformAccession().equals("NX_Q7L2E3-2"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(1).getIsoforms().get(0).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getEntryName().equals("Q86UU0"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().size()==4);  // instead of 8 before
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(0).getIsoformAccession().equals("NX_Q86UU0-1"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(0).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(1).getIsoformAccession().equals("NX_Q86UU0-2"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(1).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(2).getIsoformAccession().equals("NX_Q86UU0-3"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(2).getPosition()==null);
+		
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(3).getIsoformAccession().equals("NX_Q86UU0-4"));
+		assertTrue(out.getPeptideMatch("MAPGGP").getEntryMatches().get(2).getIsoforms().get(3).getPosition()==null);
+		
+	}
+	
+	
 	@Test
 	public void shouldParsePep() throws Exception {
 

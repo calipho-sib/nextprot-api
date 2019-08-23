@@ -1,0 +1,116 @@
+{
+"params": {
+"peplist": "MAPGGA,MAPGGP,TGGSTGSS",
+"modeIL": 1
+},
+"peptideMatches": [
+{
+"peptide": "MAPGGA",
+"entryMatches": [
+{
+"entryName": "P28799",
+"isoforms": [
+{
+"isoformName": "P28799-3",
+"position": 0
+}
+]
+},
+{
+"entryName": "P57679",
+"isoforms": [
+{
+"isoformName": "P57679-1",
+"position": 3
+}
+]
+},
+{
+"entryName": "Q5T4S7",
+"isoforms": [
+{
+"isoformName": "Q5T4S7-1",
+"position": 5071
+},
+{
+"isoformName": "Q5T4S7-2",
+"position": 5071
+},
+{
+"isoformName": "Q5T4S7-3",
+"position": 5047
+},
+{
+"isoformName": "Q5T4S7-4",
+"position": 5064
+}
+]
+}
+]
+},
+{
+"peptide": "MAPGGP",
+"entryMatches": [
+{
+"entryName": "A0A0J9YX94",
+"isoforms": [
+{
+"isoformName": "A0A0J9YX94-1",
+"position": 0
+}
+]
+},
+{
+"entryName": "Q7L2E3",
+"isoforms": [
+{
+"isoformName": "Q7L2E3-2",
+"position": 0
+}
+]
+},
+{
+"entryName": "Q86UU0",
+"isoforms": [
+{
+"isoformName": "Q86UU0-1",
+"position": 0
+},
+{
+"isoformName": "Q86UU0-1",
+"position": 1210
+},
+{
+"isoformName": "Q86UU0-2",
+"position": 0
+},
+{
+"isoformName": "Q86UU0-2",
+"position": 1205
+},
+{
+"isoformName": "Q86UU0-3",
+"position": 0
+},
+{
+"isoformName": "Q86UU0-3",
+"position": 1210
+},
+{
+"isoformName": "Q86UU0-4",
+"position": 0
+},
+{
+"isoformName": "Q86UU0-4",
+"position": 1210
+}
+]
+}
+]
+},
+{
+"peptide": "TGGSTGSS",
+"entryMatches": [ ]
+}
+]
+}
