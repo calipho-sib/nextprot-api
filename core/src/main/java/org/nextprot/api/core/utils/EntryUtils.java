@@ -7,11 +7,8 @@ import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 
 public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
-	private static final Log LOGGER = LogFactory.getLog(EntryUtils.class);
 
 
 	public static String getEntryName(String nextprotAccession) {
