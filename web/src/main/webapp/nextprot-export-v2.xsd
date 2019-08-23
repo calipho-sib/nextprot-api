@@ -1435,6 +1435,7 @@
 						<xs:enumeration value="Proteomic databases"/>
 						<xs:enumeration value="Protocols and materials databases"/>
 						<xs:enumeration value="Publication databases"/>
+                        <xs:enumeration value="Variant databases"/>
 						<xs:enumeration value="Sequence databases"/>
 					</xs:restriction>
 				</xs:simpleType>
