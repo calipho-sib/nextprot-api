@@ -1,12 +1,9 @@
 package org.nextprot.api.core.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.ProteinExistence;
-import org.nextprot.api.core.domain.Proteoform;
-import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -28,7 +25,7 @@ import java.util.stream.Collectors;
 public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
 
-	
+
 	public static String getEntryName(String nextprotAccession) {
 		String entryAccession = nextprotAccession;
 		if((nextprotAccession != null) && (nextprotAccession.length() > 0) && (nextprotAccession.contains("-"))){
@@ -219,5 +216,6 @@ public class EntryUtils implements Serializable{
 		ProteinExistence np2PE = e.getOverview().getProteinExistences().getProteinExistence(ProteinExistence.Source.PROTEIN_EXISTENCE_NEXTPROT2);
 		return np2PE != ProteinExistence.PROTEIN_LEVEL && wouldUpgradeToPE1AccordingToOldRule(e);
 	}
+
 	
 }

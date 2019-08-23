@@ -26,13 +26,13 @@
     </beans>
 
     <beans profile="unit">
-
         <bean id="dataSourceServiceLocator"
               class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
             <property name="dataSource" ref="dataSource"/>
             <!-- In unit test we use the same datasource for everything -->
             <property name="userDataSource" ref="dataSource"/>
             <!--  <property name="statementsDataSource" ref="statementsDataSource" /> -->
+            <property name="statementsDataSource" ref="statementsDataSource"/>
         </bean>
 
         <bean id="txManager"
@@ -58,11 +58,28 @@
             <property name="password" value="${db.password}"/>
         </bean>
 
+        <bean id="statementsDataSource"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="${db.statements.driver}"/>
+            <property name="url" value="${db.statements.url}"/>
+            <property name="username" value="${db.statements.username}"/>
+            <property name="password" value="${db.statements.password}"/>
+        </bean>
+
         <beans profile="unit-schema-nextprot">
             <bean id="dbUnitDatabaseConnection"
                   class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
                 <property name="schema" value="nextprot"/>
                 <property name="dataSource" ref="dataSource"/>
+            </bean>
+        </beans>
+
+
+        <beans profile="unit-schema-nxflat">
+            <bean id="dbUnitDatabaseConnection"
+                  class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+                <property name="schema" value="nxflat"/>
+                <property name="dataSource" ref="statementsDataSource"/>
             </bean>
         </beans>
 

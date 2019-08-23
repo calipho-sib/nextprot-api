@@ -25,8 +25,10 @@ import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -278,7 +280,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		private Set<Statement> filterStatements(Collection<Statement> statements) {
 
-			Set<EntryPosition> entryPositionsToFilterOut = fetchEntryPositionsFromSparql(buildSparql(statements));
+			Set<EntryPosition> entryPositionsToFilterOut = fetchEntryPositionsFromSparqlQueries(
+					buildSparqlQueriesToGetNGlycoEntryPositions(statements));
 
 			return statements.stream()
 					.filter(statement -> {
@@ -350,142 +353,159 @@ public class StatementETLServiceImpl implements StatementETLService {
 			return value == null || value.isEmpty();
 		}
 
-		private String buildSparql(Collection<Statement> statements) {
+		private Set<String> buildSparqlQueriesToGetNGlycoEntryPositions(Collection<Statement> statements) {
 
 			String format = "(entry:%s \"%d\"^^xsd:integer)";
 
-			Set<Statement> ptm0528Statements = statements.stream()
-					.filter(statement -> statement.getValue(ANNOT_CV_TERM_ACCESSION).equals("PTM-0528"))
+			Set<String> nGlycoPTMs = new HashSet<>(Arrays.asList("PTM-0528", "PTM-0529", "PTM-0530", "PTM-0531", "PTM-0532"));
+
+			Set<Statement> nGlycoStatements = statements.stream()
+					.filter(statement -> nGlycoPTMs.contains(statement.getValue(ANNOT_CV_TERM_ACCESSION)))
 					.collect(Collectors.toSet());
 
-			String selectedPTM0528EntryPositions = ptm0528Statements.stream()
-					.map(statement -> String.format(format,
-							statement.getValue(NEXTPROT_ACCESSION),
-							Integer.parseInt(statement.getValue(LOCATION_BEGIN))))
-					.collect(Collectors.joining("\n"));
+			List<Set<Statement>> batches = new ArrayList<>();
+			int batchSize = 1000;
 
-			return "select distinct ?entry ?glypos where {\n" +
-					"values ?forbiddom {\n" +
-					"cv:DO-00843\n" +
-					"cv:DO-00082\n" +
-					"cv:DO-00096\n" +
-					"cv:DO-00098\n" +
-					"cv:DO-00099\n" +
-					"cv:DO-00100\n" +
-					"cv:DO-00127\n" +
-					"cv:DO-00135\n" +
-					"cv:DO-00212\n" +
-					"cv:DO-00218\n" +
-					"cv:DO-00224\n" +
-					"cv:DO-00234\n" +
-					"cv:DO-00847\n" +
-					"cv:DO-00280\n" +
-					"cv:DO-00282\n" +
-					"cv:DO-00302\n" +
-					"cv:DO-00310\n" +
-					"cv:DO-00341\n" +
-					"cv:DO-00343\n" +
-					"cv:DO-00349\n" +
-					"cv:DO-00350\n" +
-					"cv:DO-00354\n" +
-					"cv:DO-00376\n" +
-					"cv:DO-00378\n" +
-					"cv:DO-00404\n" +
-					"cv:DO-00416\n" +
-					"cv:DO-00418\n" +
-					"cv:DO-00421\n" +
-					"cv:DO-00415\n" +
-					"cv:DO-00430\n" +
-					"cv:DO-00462\n" +
-					"cv:DO-00466\n" +
-					"cv:DO-00467\n" +
-					"cv:DO-00469\n" +
-					"cv:DO-00477\n" +
-					"cv:DO-00869\n" +
-					"cv:DO-00555\n" +
-					"cv:DO-00592\n" +
-					"cv:DO-00602\n" +
-					"cv:DO-00604\n" +
-					"cv:DO-00779\n" +
-					"cv:DO-00918\n" +
-					"cv:DO-00943\n" +
-					"cv:DO-00632\n" +
-					"cv:DO-00636\n" +
-					"cv:DO-00671\n" +
-					"cv:DO-00691\n" +
-					"cv:DO-00695\n" +
-					"cv:DO-00700\n" +
-					"cv:DO-00832\n" +
-					"cv:DO-00741\n" +
-					"cv:DO-00078\n" +
-					"cv:DO-00057\n" +
-					"cv:DO-00104\n" +
-					"cv:DO-00144\n" +
-					"cv:DO-00244\n" +
-					"cv:DO-00273\n" +
-					"cv:DO-00284\n" +
-					"cv:DO-00387\n" +
-					"cv:DO-00451\n" +
-					"cv:DO-00561\n" +
-					"cv:DO-00650\n" +
-					"cv:DO-00658\n" +
-					"cv:DO-00692\n" +
-					"cv:DO-00697\n" +
-					"cv:DO-00707\n" +
-					"}\n" +
-					"values (?entry ?glypos) {\n" +
-					selectedPTM0528EntryPositions +
-					"}\n" +
-					"?entry :isoform ?iso.\n" +
-					"?iso :swissprotDisplayed true .\n" +
-					"\n" +
-					"{\n" +
-					"values ?forbidtopodom {\n" +
-					"cv:CVTO_0001\n" +
-					"cv:CVTO_0004\n" +
-					"cv:CVTO_0013\n" +
-					"cv:CVTO_0015\n" +
-					"cv:CVTO_0022\n" +
-					"} # topo check\n" +
-					"  ?iso :topology ?topodom .\n" +
-					"  ?topodom :term ?forbidtopodom; :start ?topodomstart; :end ?topodomend .\n" +
-					"  filter((?glypos >= ?topodomstart) && (?glypos <= ?topodomend))\n" +
-					"}\n" +
-					"  union\n" +
-					"{\n" +
-					"\n" +
-					"  ?iso :domain ?dom .\n" +
-					"  ?dom :term ?forbiddom; :start ?domstart; :end ?domend .\n" +
-					"  filter((?glypos >= ?domstart) && (?glypos <= ?domend))\n" +
-					"  }\n" +
-					"  union\n" +
-					" {\n" +
-					"  ?iso :signalPeptide ?sigpep .\n" +
-					"  ?sigpep :start ?sigtart; :end ?sigend .\n" +
-					"  filter((?glypos >= ?sigtart) && (?glypos <= ?sigend))\n" +
-					" }\n" +
-					"  union\n" +
-					" {\n" +
-					"  ?iso :mitochondrialTransitPeptide ?trpep .\n" +
-					"  ?trpep :start ?trtart; :end ?trend .\n" +
-					"  filter((?glypos >= ?trtart) && (?glypos <= ?trend))\n" +
-					" }\n" +
-					"}  order by ?entry ?glypos ";
-		}
-
-		private Set<EntryPosition> fetchEntryPositionsFromSparql(String sparql) {
-
-			HttpSparqlService.SparqlResponse response = httpSparqlService.executeSparqlQuery(sparql);
-
-			List<String> entryList = response.mapResults("entry", HttpSparqlService.SparqlResponse.newRdfEntryConv());
-			List<Integer> glyposList = response.mapResults("glypos", v -> Integer.parseInt(v));
-
-			Set<EntryPosition> entryPositions = new HashSet<>();
-			for (int i=0 ; i<entryList.size() ; i++) {
-
-				entryPositions.add(new EntryPosition(entryList.get(i), glyposList.get(i)));
+			Iterator<Statement> statementIterator = nGlycoStatements.iterator();
+			while (statementIterator.hasNext()) {
+				Set<Statement> statementSubset = new HashSet<>();
+				for (int idx = 0; idx < batchSize && statementIterator.hasNext(); idx++) {
+					Statement statement = statementIterator.next();
+					statementSubset.add(statement);
+				}
+				batches.add(statementSubset);
 			}
 
+			return batches.stream()
+				   .map(batch -> batch.stream()
+									  .map(statement -> String.format(format,
+											  statement.getValue(NEXTPROT_ACCESSION),
+											  Integer.parseInt(statement.getValue(LOCATION_BEGIN))))
+									  .collect(Collectors.joining("\n")))
+				   .map(nGlycoEntryPositions ->
+						   "select distinct ?entry ?glypos where {\n" +
+								   "values ?forbiddom {\n" +
+								   "cv:DO-00843\n" +
+								   "cv:DO-00082\n" +
+								   "cv:DO-00096\n" +
+								   "cv:DO-00098\n" +
+								   "cv:DO-00099\n" +
+								   "cv:DO-00100\n" +
+								   "cv:DO-00127\n" +
+								   "cv:DO-00135\n" +
+								   "cv:DO-00212\n" +
+								   "cv:DO-00218\n" +
+								   "cv:DO-00224\n" +
+								   "cv:DO-00234\n" +
+								   "cv:DO-00847\n" +
+								   "cv:DO-00280\n" +
+								   "cv:DO-00282\n" +
+								   "cv:DO-00302\n" +
+								   "cv:DO-00310\n" +
+								   "cv:DO-00341\n" +
+								   "cv:DO-00343\n" +
+								   "cv:DO-00349\n" +
+								   "cv:DO-00350\n" +
+								   "cv:DO-00354\n" +
+								   "cv:DO-00376\n" +
+								   "cv:DO-00378\n" +
+								   "cv:DO-00404\n" +
+								   "cv:DO-00416\n" +
+								   "cv:DO-00418\n" +
+								   "cv:DO-00421\n" +
+								   "cv:DO-00415\n" +
+								   "cv:DO-00430\n" +
+								   "cv:DO-00462\n" +
+								   "cv:DO-00466\n" +
+								   "cv:DO-00467\n" +
+								   "cv:DO-00469\n" +
+								   "cv:DO-00477\n" +
+								   "cv:DO-00869\n" +
+								   "cv:DO-00555\n" +
+								   "cv:DO-00592\n" +
+								   "cv:DO-00602\n" +
+								   "cv:DO-00604\n" +
+								   "cv:DO-00779\n" +
+								   "cv:DO-00918\n" +
+								   "cv:DO-00943\n" +
+								   "cv:DO-00632\n" +
+								   "cv:DO-00636\n" +
+								   "cv:DO-00671\n" +
+								   "cv:DO-00691\n" +
+								   "cv:DO-00695\n" +
+								   "cv:DO-00700\n" +
+								   "cv:DO-00832\n" +
+								   "cv:DO-00741\n" +
+								   "cv:DO-00078\n" +
+								   "cv:DO-00057\n" +
+								   "cv:DO-00104\n" +
+								   "cv:DO-00144\n" +
+								   "cv:DO-00244\n" +
+								   "cv:DO-00273\n" +
+								   "cv:DO-00284\n" +
+								   "cv:DO-00387\n" +
+								   "cv:DO-00451\n" +
+								   "cv:DO-00561\n" +
+								   "cv:DO-00650\n" +
+								   "cv:DO-00658\n" +
+								   "cv:DO-00692\n" +
+								   "cv:DO-00697\n" +
+								   "cv:DO-00707\n" +
+								   "}\n" +
+								   "values (?entry ?glypos) {\n" +
+								   nGlycoEntryPositions +
+								   "}\n" +
+								   "?entry :isoform ?iso.\n" +
+								   "?iso :swissprotDisplayed true .\n" +
+								   "\n" +
+								   "{\n" +
+								   "values ?forbidtopodom {\n" +
+								   "cv:CVTO_0001\n" +
+								   "cv:CVTO_0004\n" +
+								   "cv:CVTO_0013\n" +
+								   "cv:CVTO_0015\n" +
+								   "cv:CVTO_0022\n" +
+								   "} # topo check\n" +
+								   "  ?iso :topology ?topodom .\n" +
+								   "  ?topodom :term ?forbidtopodom; :start ?topodomstart; :end ?topodomend .\n" +
+								   "  filter((?glypos >= ?topodomstart) && (?glypos <= ?topodomend))\n" +
+								   "}\n" +
+								   "  union\n" +
+								   "{\n" +
+								   "\n" +
+								   "  ?iso :domain ?dom .\n" +
+								   "  ?dom :term ?forbiddom; :start ?domstart; :end ?domend .\n" +
+								   "  filter((?glypos >= ?domstart) && (?glypos <= ?domend))\n" +
+								   "  }\n" +
+								   "  union\n" +
+								   " {\n" +
+								   "  ?iso :signalPeptide ?sigpep .\n" +
+								   "  ?sigpep :start ?sigtart; :end ?sigend .\n" +
+								   "  filter((?glypos >= ?sigtart) && (?glypos <= ?sigend))\n" +
+								   " }\n" +
+								   "  union\n" +
+								   " {\n" +
+								   "  ?iso :mitochondrialTransitPeptide ?trpep .\n" +
+								   "  ?trpep :start ?trtart; :end ?trend .\n" +
+								   "  filter((?glypos >= ?trtart) && (?glypos <= ?trend))\n" +
+								   " }\n" +
+								   "}  order by ?entry ?glypos ")
+			.collect(Collectors.toSet());
+		}
+
+		private Set<EntryPosition> fetchEntryPositionsFromSparqlQueries(Set<String> sparqlQueries) {
+
+			Set<EntryPosition> entryPositions = new HashSet<>();
+			for (String sparqlQuery : sparqlQueries) {
+				HttpSparqlService.SparqlResponse response = httpSparqlService.executeSparqlQuery(sparqlQuery);
+
+				List<String> entryList = response.mapResults("entry", HttpSparqlService.SparqlResponse.newRdfEntryConv());
+				List<Integer> glyposList = response.mapResults("glypos", v -> Integer.parseInt(v));
+
+				for (int i = 0 ; i < entryList.size(); i++) {
+					entryPositions.add(new EntryPosition(entryList.get(i), glyposList.get(i)));
+				}
+			}
 			return entryPositions;
 		}
 
