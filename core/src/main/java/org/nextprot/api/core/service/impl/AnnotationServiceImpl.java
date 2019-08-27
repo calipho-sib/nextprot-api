@@ -570,13 +570,13 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         AnnotationEvidenceProperty countProperty = new AnnotationEvidenceProperty();
                                                                         countProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
                                                                         countProperty.setPropertyName("allele count");
-                                                                        countProperty.setPropertyValue(new Double(variantFrequency.getAlleleCount()).toString());
+                                                                        countProperty.setPropertyValue(new Integer(variantFrequency.getAlleleCount()).toString());
 
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty numberProperty = new AnnotationEvidenceProperty();
                                                                         numberProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
                                                                         numberProperty.setPropertyName("total alleles");
-                                                                        numberProperty.setPropertyValue(new Double(variantFrequency.getAllelNumber()).toString());
+                                                                        numberProperty.setPropertyValue(new Integer(variantFrequency.getAllelNumber()).toString());
 
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty homozegoteNumber = new AnnotationEvidenceProperty();
