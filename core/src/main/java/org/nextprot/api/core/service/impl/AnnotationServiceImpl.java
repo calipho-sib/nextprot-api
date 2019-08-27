@@ -563,25 +563,25 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         // Adds allele frequency property and add it to the evidence
                                                                         AnnotationEvidenceProperty freqProperty = new AnnotationEvidenceProperty();
                                                                         freqProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
-                                                                        freqProperty.setPropertyName("alleleFrequency");
+                                                                        freqProperty.setPropertyName("allele frequency");
                                                                         freqProperty.setPropertyValue(new Double(variantFrequency.getAllelFrequency()).toString());
 
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty countProperty = new AnnotationEvidenceProperty();
                                                                         countProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
-                                                                        countProperty.setPropertyName("alleleCount");
+                                                                        countProperty.setPropertyName("allele count");
                                                                         countProperty.setPropertyValue(new Double(variantFrequency.getAlleleCount()).toString());
 
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty numberProperty = new AnnotationEvidenceProperty();
                                                                         numberProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
-                                                                        numberProperty.setPropertyName("alleleNumber");
+                                                                        numberProperty.setPropertyName("total alleles");
                                                                         numberProperty.setPropertyValue(new Double(variantFrequency.getAllelNumber()).toString());
 
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty homozegoteNumber = new AnnotationEvidenceProperty();
                                                                         homozegoteNumber.setEvidenceId(gnomadEvidence.getEvidenceId());
-                                                                        homozegoteNumber.setPropertyName("homozygoteCount");
+                                                                        homozegoteNumber.setPropertyName("homozygote count");
                                                                         homozegoteNumber.setPropertyValue(new Integer(variantFrequency.getHomozygoteCount()).toString());
 
                                                                         List<AnnotationEvidenceProperty> evidencePropertyList = new ArrayList<>();
