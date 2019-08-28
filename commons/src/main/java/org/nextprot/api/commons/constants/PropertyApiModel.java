@@ -40,6 +40,11 @@ public class PropertyApiModel {
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
 	public static final String NAME_CELL_LINE="CL";
 	public static final String NAME_INTENSITY="intensity";
+	
+	public static final String NAME_ALLELE_COUNT = "allele count";
+	public static final String NAME_TOTAL_ALLELES = "total alleles";
+	public static final String NAME_HOMOZYGOTE_COUNT = "homozygote count";
+	public static final String NAME_ALLELE_FREQUENCY = "allele frequency";
 
 	
 	private enum Parent { EVIDENCE, ANNOTATION }
@@ -48,6 +53,15 @@ public class PropertyApiModel {
 	static {
 		anno2props=new EnumMap<>(AnnotationCategory.class);
 
+		anno2props.put(AnnotationCategory.VARIANT,
+				new HashSet<>(Arrays.asList(
+						new PropertyApiModel(NAME_HOMOZYGOTE_COUNT, "homozygote-count", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_TOTAL_ALLELES, "total-allele", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_COUNT, "allele-count", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_FREQUENCY, "allele-frequency", "double", true, true, Parent.EVIDENCE)
+						))); 
+		
+		
 		anno2props.put(AnnotationCategory.GLYCOSYLATION_SITE,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_CELL_LINE,"cellLine","string", true, true, Parent.EVIDENCE)))); 
