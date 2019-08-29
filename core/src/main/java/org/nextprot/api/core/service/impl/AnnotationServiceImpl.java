@@ -548,6 +548,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         } else {
                                                                             LOGGER.info("XREF could not be generated");
                                                                         }
+                                                                        gnomadEvidence.setEvidenceId(IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_GNOMAD.incrementAndGet());
                                                                         gnomadEvidence.setEvidenceCodeAC("ECO:0000219");
                                                                         gnomadEvidence.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
                                                                         gnomadEvidence.setEvidenceCodeName("nucleotide sequencing assay evidence");
