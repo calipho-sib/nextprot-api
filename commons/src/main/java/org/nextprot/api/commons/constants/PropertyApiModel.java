@@ -42,7 +42,7 @@ public class PropertyApiModel {
 	public static final String NAME_INTENSITY="intensity";
 	
 	public static final String NAME_ALLELE_COUNT = "allele count";
-	public static final String NAME_TOTAL_ALLELES = "total alleles";
+	public static final String NAME_ALLELE_NUMBER = "allele number";
 	public static final String NAME_HOMOZYGOTE_COUNT = "homozygote count";
 	public static final String NAME_ALLELE_FREQUENCY = "allele frequency";
 
@@ -56,7 +56,7 @@ public class PropertyApiModel {
 		anno2props.put(AnnotationCategory.VARIANT,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_HOMOZYGOTE_COUNT, "homozygote-count", "integer", true, true, Parent.EVIDENCE),
-						new PropertyApiModel(NAME_TOTAL_ALLELES, "total-allele", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_NUMBER, "allele-number", "integer", true, true, Parent.EVIDENCE),
 						new PropertyApiModel(NAME_ALLELE_COUNT, "allele-count", "integer", true, true, Parent.EVIDENCE),
 						new PropertyApiModel(NAME_ALLELE_FREQUENCY, "allele-frequency", "double", true, true, Parent.EVIDENCE)
 						))); 
