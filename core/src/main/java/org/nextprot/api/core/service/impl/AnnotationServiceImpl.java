@@ -576,7 +576,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         // Adds allele count property
                                                                         AnnotationEvidenceProperty numberProperty = new AnnotationEvidenceProperty();
                                                                         numberProperty.setEvidenceId(gnomadEvidence.getEvidenceId());
-                                                                        numberProperty.setPropertyName("total alleles");
+                                                                        numberProperty.setPropertyName("allele number");
                                                                         numberProperty.setPropertyValue(new Integer(variantFrequency.getAllelNumber()).toString());
 
                                                                         // Adds allele count property
