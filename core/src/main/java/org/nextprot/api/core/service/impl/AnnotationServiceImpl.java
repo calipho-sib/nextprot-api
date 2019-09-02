@@ -448,6 +448,8 @@ public class AnnotationServiceImpl implements AnnotationService {
         return specs;
     }
 
+    // This method is written to match the gnomad variant data with existing DBSNP
+    // This is a temporary workaround until the gnomad data is properly loaded
     private void addGnomeADVariantFrequencies(String entryName, List<Annotation> annotations) {
         double start = System.currentTimeMillis();
         LOGGER.info("Processing " + entryName + ": " + annotations.size() + " annotations");
@@ -557,7 +559,6 @@ public class AnnotationServiceImpl implements AnnotationService {
                                                                         gnomadEvidence.setAnnotationId(annotation.getAnnotationId());
                                                                         gnomadEvidence.setResourceAccession(variantFrequency.getGnomadAccession());
                                                                         gnomadEvidence.setResourceAssociationType(annotationEvidence.getResourceAssociationType()); // Should this be changed?
-                                                                        LOGGER.info(annotationEvidence.getResourceType());
                                                                         gnomadEvidence.setResourceType("database"); // Should this be changed ?
                                                                         gnomadEvidence.setQualityQualifier("GOLD");
 
@@ -737,8 +738,25 @@ public class AnnotationServiceImpl implements AnnotationService {
 		// Adds properties and evidences
 		newEvidences.keySet().stream()
 				.forEach((annotation -> {
-					annotation.getEvidences().addAll(newEvidences.get(annotation));
+				    // Filters out the duplicated evidences add for multiple isoforms
+                    // Naive duplicate identification
+                    List<AnnotationEvidence> annotationEvidences =new ArrayList<>();
+                    newEvidences.get(annotation)
+                                .forEach(annotationEvidence -> {
+                                    boolean exists = false;
+                                    for(AnnotationEvidence existingEvidence: annotationEvidences) {
+                                        if(existingEvidence.getEvidenceCodeAC().equals(annotationEvidence.getEvidenceCodeAC())) {
+                                            exists = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!exists) {
+                                        annotationEvidences.add(annotationEvidence);
+                                    }
+                                });
+
 					// Sets the quality to GOLD
+                    annotation.getEvidences().addAll(annotationEvidences);
 					annotation.setQualityQualifier("GOLD");
 				}));
 		double time = System.currentTimeMillis() - start;
