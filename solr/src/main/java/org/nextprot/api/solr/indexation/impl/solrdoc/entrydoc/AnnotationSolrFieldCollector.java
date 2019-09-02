@@ -194,18 +194,10 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 									evidxrefaccs += " | ";
 								if (db.equals("Cosmic"))
 									evidxrefaccs += db.toLowerCase() + ":" + ev.getResourceAccession();
-								else if (db.equals("dbSNP"))// Just to allow
-															// comparison with
-															// incoherent
-															// current solr
-															// implementation
+								else if (db.equals("dbSNP") || db.equals("gnomAD"))
 									evidxrefaccs += ev.getResourceAccession();
 								else
-									evidxrefaccs += currannot.getSynonym(); // Uniprot
-																			// FT
-																			// id,
-																			// like
-																			// VAR_056577
+									evidxrefaccs += currannot.getSynonym(); // Uniprot, FT id like VAR_056577
 							}
 						}
 					}
