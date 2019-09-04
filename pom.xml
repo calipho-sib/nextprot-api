@@ -73,7 +73,7 @@
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-commons</artifactId>
-			<version>LATEST</version>
+			<version>RELEASE</version>
 		</dependency>
 
         <dependency>
