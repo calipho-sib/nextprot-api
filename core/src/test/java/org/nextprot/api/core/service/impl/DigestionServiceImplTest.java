@@ -1,6 +1,14 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.collect.Sets;
+import static org.mockito.Matchers.anyString;
+import static org.nextprot.api.core.service.annotation.comp.ByIsoformPositionComparatorTest.mockAnnotation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +19,7 @@ import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigesterBuil
 import org.nextprot.api.commons.bio.variation.prot.digestion.ProteinDigestion;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.DigestedPeptide;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DigestionService;
@@ -21,13 +30,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static org.mockito.Matchers.anyString;
-import static org.nextprot.api.core.service.annotation.comp.ByIsoformPositionComparatorTest.mockAnnotation;
+import com.google.common.collect.Sets;
 
 @ActiveProfiles({ "dev" })
 public class DigestionServiceImplTest extends CoreUnitBaseTest {
@@ -51,6 +54,8 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		digestionService = new DigestionServiceImpl(annotationService, isoformService, masterIdentifierService);
 	}
 
+	
+	
 	@Test(expected = NextProtException.class)
 	public void shouldNotDigestWhenUnknownProtease() throws ProteinDigestion.MissingIsoformException {
 
@@ -62,7 +67,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 
 	    Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
 
-	    Set<String> peptides = digestionService.digestProteins("NX_P01308", new ProteinDigesterBuilder());
+	    Set<DigestedPeptide> peptides = digestionService.digestProteins("NX_P01308", new ProteinDigesterBuilder());
 
 	    Assert.assertTrue(peptides.isEmpty());
     }
@@ -72,7 +77,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 
 		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
 
-		Set<String> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder());
+		Set<DigestedPeptide> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder());
 
 		Assert.assertTrue(peptides.isEmpty());
 	}
@@ -82,7 +87,7 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 
 		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(new ArrayList<>());
 
-		Set<String> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder().withMaturePartsOnly(false));
+		Set<DigestedPeptide> peptides = digestionService.digestProteins("NX_P01308-3", new ProteinDigesterBuilder().withMaturePartsOnly(false));
 
 		Assert.assertTrue(peptides.isEmpty());
 	}
@@ -96,24 +101,27 @@ public class DigestionServiceImplTest extends CoreUnitBaseTest {
 		annotations.add(mockAnnotation(2, AnnotationCategory.MATURATION_PEPTIDE, new ByIsoformPositionComparatorTest.TargetIsoform("NX_P01308-1", 57, 87)));
 		Mockito.when(annotationService.findAnnotations(anyString())).thenReturn(annotations);
 
-		Set<String> peptides = digestionService.digestProteins("NX_P01308",
+		Set<DigestedPeptide> peptides = digestionService.digestProteins("NX_P01308",
 				new ProteinDigesterBuilder().minPepLen(1).maxMissedCleavageCount(0));
 
-		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() > 0 && peptide.length() <= 77));
+		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.getSequence().length() > 0 && peptide.getSequence().length() <= 77));
 		Assert.assertEquals(5, peptides.size());
-		Assert.assertTrue(peptides.containsAll(Arrays.asList("T", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ", "GIVEQCCTSICSLYQLENYCN",
+		Set<String> pepSequences = peptides.stream().map(p -> p.getSequence()).collect(Collectors.toSet());
+		Assert.assertTrue(pepSequences.containsAll(Arrays.asList("T", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQ", "GIVEQCCTSICSLYQLENYCN",
 				"FVNQHLCGSHLVEALYLVCGER", "GFFYTPK")));
 	}
 
 	@Test
 	public void shouldDigestRawProteinSequences() throws ProteinDigestion.MissingIsoformException {
 
-		Set<String> peptides = digestionService.digestProteins("NX_P01308",
+		Set<DigestedPeptide> peptides = digestionService.digestProteins("NX_P01308",
 				new ProteinDigesterBuilder().withMaturePartsOnly(false).minPepLen(1).maxMissedCleavageCount(0));
 
-		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.length() > 0 && peptide.length() <= 77));
+		Assert.assertTrue(peptides.stream().allMatch(peptide -> peptide.getSequence().length() > 0 && peptide.getSequence().length() <= 77));
 		Assert.assertEquals(7, peptides.size());
-		Assert.assertTrue(peptides.containsAll(Arrays.asList("MALWMR", "LLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGER",
+		Set<String> pepSequences = peptides.stream().map(p -> p.getSequence()).collect(Collectors.toSet());
+		
+		Assert.assertTrue(pepSequences.containsAll(Arrays.asList("MALWMR", "LLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGER",
 				"GFFYTPK", "TR", "R", "EAEDLQVGQVELGGGPGAGSLQPLALEGSLQK", "GIVEQCCTSICSLYQLENYCN")));
 	}
 

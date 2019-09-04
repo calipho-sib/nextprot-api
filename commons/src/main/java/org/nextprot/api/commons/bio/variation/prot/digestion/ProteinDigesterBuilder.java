@@ -44,9 +44,6 @@ public class ProteinDigesterBuilder {
 		if (missedCleavageCount < 0) {
 			throw new NextProtException("number of missed cleavages should be positive.");
 		}
-		if (missedCleavageCount > 2) {
-			throw new NextProtException(missedCleavageCount+" missed cleavages is too high: cannot configure digestion with more than 2 missed cleavages.");
-		}
 		this.missedCleavageCount = missedCleavageCount;
 		return this;
 	}

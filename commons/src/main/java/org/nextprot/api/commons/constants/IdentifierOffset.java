@@ -39,5 +39,6 @@ public class IdentifierOffset {
 	public final static AtomicLong NXFLAT_ANNOTATION_ID_COUNTER = new AtomicLong(2_200_000_000_000L);
 	public final static AtomicLong SMI_ANNOTATION_ID_COUNTER = new AtomicLong(2_300_000_000_000L);
 	public final static AtomicLong SMI_EVIDENCE_ID_COUNTER = new AtomicLong(2_400_000_000_000L);
+	public final static AtomicLong EVIDENCE_ID_COUNTER_FOR_GNOMAD = new AtomicLong(2_500_000_000_000L);
 	
 }

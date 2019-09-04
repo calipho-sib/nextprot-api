@@ -7,8 +7,6 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
-import org.nextprot.api.etl.service.impl.SequenceFeatureFactoryServiceMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementTransformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
@@ -62,11 +60,6 @@ public abstract class StatementETLBaseUnitTest {
 		statementETLServiceMocked = new StatementETLServiceImpl();
 		
 		transformerMockedService = new StatementTransformerServiceImpl();
-		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
-		transformerMockedService.setIsoformService(isoformService);
-		transformerMockedService.setSequenceFeatureFactoryService(new SequenceFeatureFactoryServiceMockImpl("NX_Q15858-3"));
-		
-		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
 	}
 
 	private void mockIsoMapperService() {

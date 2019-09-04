@@ -63,131 +63,128 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nextprot-header">
-                    <span class="sr-only">Toggle navigation</span>
-<!--
-                    <span class="fa-bar"></span>
-                    <span class="fa-bar"></span>
-                    <span class="fa-bar"></span>
--->
-                    <span class="fa fa-bars"></span>
-                </button>
+<!--                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nextprot-header">-->
+<!--                    <span class="sr-only">Toggle navigation</span>-->
+
+<!--                    <span class="fa-bar"></span>-->
+<!--                    <span class="fa-bar"></span>-->
+<!--                    <span class="fa-bar"></span>-->
+
+<!--                    <span class="fa fa-bars"></span>-->
+<!--                </button>-->
                 <a class="navbar-brand navbar-logo" href="/"><img id="np-logo" src="/img/np.png" /></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse ng-scope" id="nextprot-header" ng-controller="HelpCtrl">
-                <ul class="nav navbar-nav">
+<!--                <ul class="nav navbar-nav">-->
 
-                    <!-- Services dropdown -->
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <!-- Learn -->
-                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
-                            <li ng-class=""><a href="/proteins/search">Simple search</a></li>
-                            <li ng-class=""><a href="/proteins/search?mode=advanced">Advanced search</a></li>
-                            <li class="divider"></li>
-                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('lists')">My Lists</a></li>
-                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('queries')">My Queries</a></li>
-                            <li class="divider"></li>
-<!--                            <li ng-class=""><a href="#" ng-click="routingOutside('snorql')" style="cursor:not-allowed">BLAST</a></li>-->
-                            <li ng-class=""><a href="/tools/unicity-checker" ng-click="routingOutside('snorql')">Peptide unicity checker</a></li>
-                            <li class="divider"></li>
-                            <li class="disabled" style="font-size:12px; margin-left: 10px"><i>Programmatic access</i></li>
-                            <li ng-class=""><a ng-href="https://api.nextprot.org" href="https://api.nextprot.org">API</a></li>
-                            <li ng-class=""><a ng-href="https://sparql.nextprot.org" href="https://sparql.nextprot.org">SPARQL</a></li>
-                            <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>
-                        </ul>
-                    </li>
+<!--                    &lt;!&ndash; Services dropdown &ndash;&gt;-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>-->
+<!--                        <ul class="dropdown-menu" role="menu">-->
+<!--                            &lt;!&ndash; Learn &ndash;&gt;-->
+<!--                            &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;  CHANGE ngclick !!!! &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+<!--                            <li ng-class=""><a href="/proteins/search">Simple search</a></li>-->
+<!--                            <li ng-class=""><a href="/proteins/search?mode=advanced">Advanced search</a></li>-->
+<!--                            <li class="divider"></li>-->
+<!--                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('lists')">My Lists</a></li>-->
+<!--                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('queries')">My Queries</a></li>-->
+<!--                            <li class="divider"></li>-->
+<!--&lt;!&ndash;                            <li ng-class=""><a href="#" ng-click="routingOutside('snorql')" style="cursor:not-allowed">BLAST</a></li>&ndash;&gt;-->
+<!--                            <li ng-class=""><a href="/tools/unicity-checker" ng-click="routingOutside('snorql')">Peptide unicity checker</a></li>-->
+<!--                            <li class="divider"></li>-->
+<!--                            <li class="disabled" style="font-size:12px; margin-left: 10px"><i>Programmatic access</i></li>-->
+<!--                            <li ng-class=""><a ng-href="https://api.nextprot.org" href="https://api.nextprot.org">API</a></li>-->
+<!--                            <li ng-class=""><a ng-href="https://sparql.nextprot.org" href="https://sparql.nextprot.org">SPARQL</a></li>-->
+<!--                            <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
 
-                    <!-- Portals dropdown -->
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Portals <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <!-- Learn -->
-                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
-                            <li ng-class=""><a href="./portals/breast-cancer">Cancer variants portal</a></li>
-                            <li ng-class=""><a href="./portals/navmut">Ion channels variants portal</a></li>
-                        </ul>
-                    </li>
+<!--                    &lt;!&ndash; Portals dropdown &ndash;&gt;-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Portals <span class="caret"></span></a>-->
+<!--                        <ul class="dropdown-menu" role="menu">-->
+<!--                            &lt;!&ndash; Learn &ndash;&gt;-->
+<!--                            &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;  CHANGE ngclick !!!! &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+<!--                            <li ng-class=""><a href="./portals/breast-cancer">Cancer variants portal</a></li>-->
+<!--                            <li ng-class=""><a href="./portals/navmut">Ion channels variants portal</a></li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
 
-                    <!-- Tools (for instance, blast) -->
-                    <!--<li ng-class=""><a href="/tools">Tools</a></li>-->
+<!--                    &lt;!&ndash; Tools (for instance, blast) &ndash;&gt;-->
+<!--                    &lt;!&ndash;<li ng-class=""><a href="/tools">Tools</a></li>&ndash;&gt;-->
 
-                    <!-- Download -->
-                    <li ng-class=""><a href="ftp://ftp.nextprot.org/pub/current_release/" ng-click="routingOutside('ftp')">Download</a></li>
+<!--                    &lt;!&ndash; Download &ndash;&gt;-->
+<!--                    <li ng-class=""><a href="ftp://ftp.nextprot.org/pub/current_release/" ng-click="routingOutside('ftp')">Download</a></li>-->
 
-                    <!-- Help dropdown -->
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li class="divider"></li>
+<!--                    &lt;!&ndash; Help dropdown &ndash;&gt;-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help <span class="caret"></span></a>-->
+<!--                        <ul class="dropdown-menu" role="menu">-->
+<!--                            <li class="divider"></li>-->
 
-                            <li ng-class="{'active':isActiveDoc('/help/technical-corner')}">
-                                <a href="/help/technical-corner">Technical corner</a>
-                            </li>
+<!--                            <li ng-class="{'active':isActiveDoc('/help/technical-corner')}">-->
+<!--                                <a href="/help/technical-corner">Technical corner</a>-->
+<!--                            </li>-->
 
-                        </ul>
-                    </li>
+<!--                        </ul>-->
+<!--                    </li>-->
 
-                    <!-- About dropdown -->
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">About <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <!-- Learn -->
-                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
-                            <li ng-class="{'active':isActiveDoc('/about/nextprot')}">
-                                <a href="about/nextprot">
-                                    <span class="text">neXtProt concept</span>
-                                </a>
-                            </li>
-<!--                            <li ng-class=""><a href="release/contents">Current release</a></li>-->
-                            <li ng-class="{'active':isActiveDoc('/about/contents')}">
-                                <a href="about/contents">
-                                    <span class="text">Release contents</span>
-                                </a>
-                            </li>
-                            <li ng-class="{'active':isActiveDoc('/about/statistics')}">
-                                <a href="about/statistics">
-                                    <span class="text">Release statistics</span>
-                                </a>
-                            </li>
-                            <li ng-class="{'active':isActiveDoc('/about/protein-existence')}">
-                                <a href="about/protein-existence">
-                                    <span class="text">Protein existence</span>
-                                </a>
-                            </li>
-                            <li ng-class="{'active':isActiveDoc('/about/human-proteome')}">
-                                <a href="about/human-proteome">
-                                    <span class="text">The human proteome</span>
-                                </a>
-                            </li>
-                            <li ng-class="{'active':isActiveDoc('/about/news/*')}">
-                                <a href="news/">
-                                    <span class="text">News</span>
-                                </a>
-                            </li>
-                            <li ng-class="{'active':isActiveDoc('/about/citing-nextprot')}">
-                                <a href="about/citing-nextprot">
-                                    <span class="text">Citing neXtProt</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+<!--                    &lt;!&ndash; About dropdown &ndash;&gt;-->
+<!--                    <li class="dropdown">-->
+<!--                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">About <span class="caret"></span></a>-->
+<!--                        <ul class="dropdown-menu" role="menu">-->
+<!--                            &lt;!&ndash; Learn &ndash;&gt;-->
+<!--                            &lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;  CHANGE ngclick !!!! &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/nextprot')}">-->
+<!--                                <a href="about/nextprot">-->
+<!--                                    <span class="text">neXtProt concept</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--&lt;!&ndash;                            <li ng-class=""><a href="release/contents">Current release</a></li>&ndash;&gt;-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/contents')}">-->
+<!--                                <a href="about/contents">-->
+<!--                                    <span class="text">Release contents</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/statistics')}">-->
+<!--                                <a href="about/statistics">-->
+<!--                                    <span class="text">Release statistics</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/protein-existence')}">-->
+<!--                                <a href="about/protein-existence">-->
+<!--                                    <span class="text">Protein existence</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/human-proteome')}">-->
+<!--                                <a href="about/human-proteome">-->
+<!--                                    <span class="text">The human proteome</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/news/*')}">-->
+<!--                                <a href="news/">-->
+<!--                                    <span class="text">News</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li ng-class="{'active':isActiveDoc('/about/citing-nextprot')}">-->
+<!--                                <a href="about/citing-nextprot">-->
+<!--                                    <span class="text">Citing neXtProt</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </li>-->
 
-                    <li ng-class="">
-                        <a href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact</a>
-                    </li>
+<!--                    <li ng-class="">-->
+<!--                        <a href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact</a>-->
+<!--                    </li>-->
 
-                </ul>
+<!--                </ul>-->
                 <ul class="nav navbar-nav navbar-right" style="margin-right:0px;">
-
-
                     <li>
                         <a id="sib-link" href="http://www.sib.swiss"><img id="sib-logo" src="/img/sib.png" /></a>
                     </li>
-
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

@@ -1,32 +1,37 @@
 package org.nextprot.api.etl.service.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.NextProtSource;
+import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.springframework.stereotype.Service;
 import sun.net.www.protocol.http.HttpURLConnection;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
-public class StatementRemoteServiceImpl extends StatementExtractorBase {
+public class StatementRemoteServiceImpl implements StatementExtractorService {
 
 	private static final Log LOGGER = LogFactory.getLog(StatementRemoteServiceImpl.class);
 
 	// BioEditor Raw Statement service for a Gene. Example for msh2:
 	// http://kant.isb-sib.ch:9000/bioeditor/gene/msh2/statements
-	public Set<Statement> getStatementsFromJsonFile(NextProtSource source, String release, String jsonFileName) throws IOException {
+	public Collection<Statement> getStatementsFromJsonFile(StatementSource source, String release, String jsonFileName) throws IOException {
 
 		String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 		if (!jsonFileName.endsWith(".json")) {
@@ -34,7 +39,8 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 		}
 
 		if (isServiceUp(urlString)) {
-			return deserialize(getInputStreamFromUrl(urlString));
+
+			return new JsonStatementReader(readUrlContent(urlString), source.getSpecifications()).readStatements();
 		}
 
 		return new HashSet<>();
@@ -42,57 +48,49 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for all data (CAREFUL WITH THIS ONE)
 	// http://kant.isb-sib.ch:9000/bioeditor/statements
-	public Set<Statement> getStatementsForSource(NextProtSource source, String release) throws IOException {
+	public Collection<Statement> getStatementsForSource(StatementSource source, String release) throws IOException {
 
 		Set<Statement> statements = new LinkedHashSet<>();
-        getJsonFilenamesForRelease(source, release)
-                .forEach(jsonFilename -> {
-	                try {
-		                statements.addAll(getStatementsFromJsonFile(source, release, jsonFilename));
-	                } catch (IOException e) {
-		                throw new NextProtException(e.getMessage());
-	                }
-                });
+		getJsonFilenamesForRelease(source, release)
+				.forEach(jsonFilename -> {
+					try {
+						statements.addAll(getStatementsFromJsonFile(source, release, jsonFilename));
+					} catch (IOException e) {
+						throw new NextProtException(e.getMessage());
+					}
+				});
 		return statements;
 	}
 
-	Set<String> getJsonFilenamesForRelease(NextProtSource source, String release) throws IOException {
+	Set<String> getJsonFilenamesForRelease(StatementSource source, String release) throws IOException {
 		Set<String> genes = new TreeSet<>();
 		String urlString = source.getStatementsUrl() + "/" + release;
-		LOGGER.info("Requesting " +  urlString );
+		LOGGER.info("Requesting " + urlString);
 
 		if (isServiceUp(urlString)) {
-			try (InputStream is = getInputStreamFromUrl(urlString)) {
+			String content = readUrlContent(urlString);
 
-				if (is != null) {
+			if (content != null) {
 
-					String content = IOUtils.toString(is, "UTF8");
-					Pattern pattern = Pattern.compile("href\\=\\\"(.*.json)\\\"", Pattern.MULTILINE);
-					Matcher matcher = pattern.matcher(content);
-					while (matcher.find()) {
-						genes.add(matcher.group(1));
-					}
+				Pattern pattern = Pattern.compile("href\\=\\\"(.*.json)\\\"", Pattern.MULTILINE);
+				Matcher matcher = pattern.matcher(content);
+				while (matcher.find()) {
+					genes.add(matcher.group(1));
 				}
-			}
-			catch (IOException e) {
-				throw new NextProtException("Cannot find json filenames for source "+ source.getSourceName() + ":" + e.getLocalizedMessage());
 			}
 		}
 
 		return genes;
 	}
 
-	private InputStream getInputStreamFromUrl(String urlString) {
+	private String readUrlContent(String urlString) throws IOException {
 
-			URL url;
-			try {
-				url = new URL(urlString);
-				return url.openStream();
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage());
-			} 
-			return null;
-			
+		URL url = new URL(urlString);
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8.name()))) {
+
+			return br.lines().collect(Collectors.joining(System.lineSeparator()));
+		}
 	}
 
 	private boolean isServiceUp(String url) throws IOException {

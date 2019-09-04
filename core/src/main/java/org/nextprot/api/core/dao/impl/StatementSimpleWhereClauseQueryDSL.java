@@ -1,6 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
-import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.specs.StatementField;
 
 public class StatementSimpleWhereClauseQueryDSL {
 

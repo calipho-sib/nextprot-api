@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.service;
+package org.nextprot.api.rdf.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;

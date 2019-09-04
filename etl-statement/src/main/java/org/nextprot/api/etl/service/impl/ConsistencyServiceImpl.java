@@ -8,13 +8,14 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.etl.service.ConsistencyService;
-import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class ConsistencyServiceImpl implements ConsistencyService{
@@ -31,8 +32,8 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 		Arrays.asList(XrefDatabase.PUB_MED, XrefDatabase.DOI).forEach(referenceDB -> {
 		
 			List<String> ids = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
-					StatementField.REFERENCE_ACCESSION, 
-					new StatementSimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB.getName()));
+					REFERENCE_ACCESSION,
+					new StatementSimpleWhereClauseQueryDSL(REFERENCE_DATABASE, referenceDB.getName()));
 			
 			for(String id : ids) {
 				if(id != null){ 
@@ -54,7 +55,7 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 
 		List<String> missingCvTerms = new ArrayList<>();
 		
-		List<String> terms = statementDao.findAllDistinctValuesforField(StatementField.ANNOT_CV_TERM_ACCESSION);
+		List<String> terms = statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION);
 		for(String t : terms) {
 			if(t != null){
 				CvTerm term = terminologyService.findCvTermByAccession(t);

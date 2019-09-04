@@ -195,6 +195,12 @@
 		statistics="true">
 	</cache>
 
+	<cache name="gnomadxrefs" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
 	<cache name="entry-properties" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"

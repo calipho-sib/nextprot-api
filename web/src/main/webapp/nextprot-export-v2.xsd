@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:        2019/09/02
+    New database category added: Variant database (for gnomAD variant cross-references) 
+
     Date:        2019/02/01
     Modified annotation category: activity-regulation (replaces enzyme-regulation)
 
@@ -28,6 +31,7 @@
 	Distributed under the Creative Commons Attribution 4.0 International Public License (CC BY 4.0)
 *******************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.1">
+
 
 	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
@@ -1435,6 +1439,7 @@
 						<xs:enumeration value="Proteomic databases"/>
 						<xs:enumeration value="Protocols and materials databases"/>
 						<xs:enumeration value="Publication databases"/>
+                        <xs:enumeration value="Variant databases"/>
 						<xs:enumeration value="Sequence databases"/>
 					</xs:restriction>
 				</xs:simpleType>

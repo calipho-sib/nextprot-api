@@ -2,6 +2,7 @@ package org.nextprot.api.web.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpConnection;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -27,12 +28,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PepXServiceImpl implements PepXService {
@@ -49,25 +51,52 @@ public class PepXServiceImpl implements PepXService {
 		this.pepXUrl = pepXUrl;
 	}
 
+	@Override
+	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine, String method) {
+		return findEntriesWithPeptides(peptides,  modeIsoleucine,  method, false);
+	}
 	
 	
 	@Override
-	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine) {
+	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine, String method, boolean ignoreVariantMatches) {
 
 		List<Entry> entries = new ArrayList<>();
 
-		PepXResponse pepXResponse = getPepXResponse(peptides, modeIsoleucine);
+		PepXResponse pepXResponse = null;
+		LOGGER.warn(method);
+		if("GET".equals(method)) {
+			pepXResponse = getPepXResponse(peptides, modeIsoleucine);
+		} else if("POST".equals(method)){
+			pepXResponse = getPepxResponseByPost(peptides, modeIsoleucine);
+		}
+		
+		if(pepXResponse == null) {
+			LOGGER.error("No pepx response for peptides: "+ peptides);
+			return null;
+		}
+		
+		if (ignoreVariantMatches) {
+			pepXResponse = PepxUtils.filterOutVariantMatch(pepXResponse);
+		}
 		
 		Set<String> entriesNames = pepXResponse.getEntriesNames();
 		for (String entryName : entriesNames) {
 			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName)
                     .withTargetIsoforms()
-                    .with("variant")
                     .withOverview()
                     .withoutAdditionalReferences()
-                    .withoutProperties(); // .with("variant")
+                    .withoutProperties(); 
+			
+			if (! ignoreVariantMatches) {
+				targetIsoconf.with("variant");
+			}
+			
 			Entry entry = entryBuilderService.build(targetIsoconf);
 
+			if (ignoreVariantMatches) {
+				entry.setAnnotations(new ArrayList<>());
+			}
+			
 			List<Annotation> virtualAnnotations = new ArrayList<>();
 			Set<String> peptidesForEntry = pepXResponse.getPeptidesForEntry(entryName);
 			for(String peptide : peptidesForEntry){
@@ -95,6 +124,7 @@ public class PepXServiceImpl implements PepXService {
 
 	}
 
+	
 	private void updateAnnotationsWithPeptideProperties(List<Entry> entries) {
 
 		Map<String, SequenceUnicity> puMap = computePeptideUnicityStatus(entries, false);    // peptide unicity over wildtype isoforms
@@ -122,6 +152,17 @@ public class PepXServiceImpl implements PepXService {
 		});
 	}
 
+	
+	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
+		return PepxUtils.getPepXResponse(this.pepXUrl, peptides, modeIsoleucine);
+	}
+	
+	private PepXResponse getPepxResponseByPost(String peptides, boolean modeIsoleucine) {
+		return PepxUtils.getPepxResponseByPost(this.pepXUrl, peptides, modeIsoleucine);
+	}
+	
+	
+	/*
 	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
 		
 		String httpRequest = pepXUrl + "?format=json" + (modeIsoleucine ? ("&mode=IL&pep=" + peptides) : ("&pep=" + peptides));
@@ -144,9 +185,50 @@ public class PepXServiceImpl implements PepXService {
 		} catch (IOException e) {
 			throw new NextProtException(e);
 		}
-
 	}
-	
+
+	private PepXResponse getPepxResponseByPost(String peptides, boolean modeIsoleucine) {
+		try {
+
+			URL pepXUrl = new URL(this.pepXUrl);
+			Map<String,Object> params = new LinkedHashMap<>();
+			params.put("format", "json");
+			params.put("mode", "IL");
+			params.put("pep", peptides);
+
+			// POST payload same as the query sting for GET
+			StringBuilder postData = new StringBuilder();
+			for (Map.Entry<String,Object> param : params.entrySet()) {
+				if (postData.length() != 0) postData.append('&');
+				postData.append(param.getKey());
+				postData.append('=');
+				postData.append(param.getValue());
+			}
+			byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+			HttpURLConnection pepxConnection = (HttpURLConnection) pepXUrl.openConnection();
+			pepxConnection.setRequestMethod("POST");
+			pepxConnection.setRequestProperty("Content-Type", "text/plain");
+			pepxConnection.setFixedLengthStreamingMode(postDataBytes.length);
+			pepxConnection.setDoOutput(true);
+			pepxConnection.getOutputStream().write(postDataBytes);
+			LOGGER.info("POST payload " + postDataBytes.toString());
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(pepxConnection.getInputStream(), "UTF-8"));
+			String line;
+			StringBuilder sb = new StringBuilder();
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+			in.close();
+
+			return PepxUtils.parsePepxResponse(sb.toString());
+
+		} catch (IOException e) {
+			throw new NextProtException(e);
+		}
+	}
+*/	
 	
 	private static AnnotationProperty buildAnnotationProperty(String name, String value) {
 		AnnotationProperty result = new AnnotationProperty();

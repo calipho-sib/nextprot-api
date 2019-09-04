@@ -35,7 +35,7 @@
   "EVIDENCE_NOTE" : "Additional experimental evidence:over expression analysis, current clamp voltage recording protocol evidence, natural variation mutant evidence used in manual assertion\n",
   "EVIDENCE_QUALITY" : "GOLD",
   "GENE_NAME" : "SCN9A",
-  "OBJECT_STATEMENT_IDS" : "6c8e563c1dd2339b4d164d8cbb24fcf6",
+  "OBJECT_STATEMENT_IDS" : "6758c90cd817f38816e98c3956f31887",
   "REFERENCE_ACCESSION" : "15958509",
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
@@ -60,6 +60,6 @@
   "REFERENCE_DATABASE" : "PubMed",
   "RESOURCE_TYPE" : "publication",
   "SOURCE" : "BioEditor",
-  "STATEMENT_ID" : "6c8e563c1dd2339b4d164d8cbb24fcf6"
+  "STATEMENT_ID" : "6758c90cd817f38816e98c3956f31887"
 }
 ]
