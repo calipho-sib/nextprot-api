@@ -745,7 +745,7 @@ public class AnnotationServiceImpl implements AnnotationService {
                                 .forEach(annotationEvidence -> {
                                     boolean exists = false;
                                     for(AnnotationEvidence existingEvidence: annotationEvidences) {
-                                        if(existingEvidence.getEvidenceCodeAC().equals(annotationEvidence.getEvidenceCodeAC())) {
+                                        if(existingEvidence.getResourceAccession().equals(annotationEvidence.getResourceAccession())) {
                                             exists = true;
                                             break;
                                         }
