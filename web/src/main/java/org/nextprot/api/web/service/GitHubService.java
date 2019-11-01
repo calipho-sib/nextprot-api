@@ -13,4 +13,5 @@ public interface GitHubService {
 
 	List<NextProtNews> getNews();
 
+	List<String> getReleaseStatList();
 }
