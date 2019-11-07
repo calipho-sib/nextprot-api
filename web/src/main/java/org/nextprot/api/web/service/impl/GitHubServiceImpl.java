@@ -8,6 +8,7 @@ import org.kohsuke.github.GHTree.GHTreeEntry;
 import org.kohsuke.github.GitHub;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.service.GitHubService;
@@ -24,12 +25,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -52,6 +55,8 @@ public class GitHubServiceImpl implements GitHubService {
 	
 	@Autowired
 	StatisticsService statisticsService;
+	@Autowired
+	private ReleaseInfoDao releaseInfoDao;
 
 	// will refresh every minute, because anonymous calls are limited to 60
 	// calls per hour
@@ -155,6 +160,9 @@ public class GitHubServiceImpl implements GitHubService {
 						String databaseRelease = te.getPath().replaceAll("release-stats/", "")
 												   .replaceAll("\\.json", "")
 												   .trim();
+						if (databaseRelease.equals(releaseInfoDao.findDatabaseRelease())) {
+							databaseRelease += " (current)";
+						}
 						releaseStatList.add(databaseRelease);
 					}
 				}
@@ -164,7 +172,9 @@ public class GitHubServiceImpl implements GitHubService {
 		}
 
 		Collections.sort(releaseStatList);
-		return releaseStatList;
+		return releaseStatList.stream()
+							  .sorted(Comparator.reverseOrder())
+							  .collect(Collectors.toList());
 	}
 
 	@Override
