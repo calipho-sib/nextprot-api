@@ -160,8 +160,7 @@ public class GitHubServiceImpl implements GitHubService {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new NextProtException("Release statistics not available, sorry for the inconvenience");
+			throw new NextProtException("Release statistics list not available, sorry for the inconvenience", e);
 		}
 
 		Collections.sort(releaseStatList);

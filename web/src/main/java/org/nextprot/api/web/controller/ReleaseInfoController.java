@@ -1,11 +1,11 @@
 package org.nextprot.api.web.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.release.ReleaseInfoStats;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
@@ -57,16 +57,20 @@ public class ReleaseInfoController {
             @ApiPathParam(name = "databaseRelease", description = "The database release of the neXtProt release. For example, '2018-01-17'",  allowedvalues = { "2018-01-17"})
             @PathVariable("databaseRelease") String databaseRelease,
             Model model) {
-        //FIXME manage unknown databaseRelease
-        String page = githubService.getPage("release-stats", databaseRelease);
+
+        String page;
+        try {
+            page = githubService.getPage("release-stats", databaseRelease);
+        } catch (NextProtException e) {
+            throw new NextProtException(databaseRelease+": invalid database release");
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        ReleaseInfoStats ris = new ReleaseInfoStats();
+        ReleaseInfoStats ris;
         try {
-            JsonNode actualObj = objectMapper.readTree(page);
-            ris = objectMapper.readValue(actualObj.get("releaseStats").toString(), ReleaseInfoStats.class);
+            ris = objectMapper.readValue(objectMapper.readTree(page).get("releaseStats").toString(), ReleaseInfoStats.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new NextProtException("Cannot read json file for database release " + databaseRelease + ":" + e.getLocalizedMessage());
         }
         ris.setDatabaseReleaseList(githubService.getReleaseStatList());
         model.addAttribute(NXVelocityContext.RELEASE_STATS, ris);
