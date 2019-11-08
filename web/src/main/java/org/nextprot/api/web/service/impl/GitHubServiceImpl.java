@@ -160,9 +160,6 @@ public class GitHubServiceImpl implements GitHubService {
 						String databaseRelease = te.getPath().replaceAll("release-stats/", "")
 												   .replaceAll("\\.json", "")
 												   .trim();
-						if (databaseRelease.equals(releaseInfoDao.findDatabaseRelease())) {
-							databaseRelease += " (current)";
-						}
 						releaseStatList.add(databaseRelease);
 					}
 				}
@@ -171,7 +168,6 @@ public class GitHubServiceImpl implements GitHubService {
 			throw new NextProtException("Release statistics list not available, sorry for the inconvenience", e);
 		}
 
-		Collections.sort(releaseStatList);
 		return releaseStatList.stream()
 							  .sorted(Comparator.reverseOrder())
 							  .collect(Collectors.toList());
