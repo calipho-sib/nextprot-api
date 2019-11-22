@@ -7,9 +7,11 @@ import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
+import org.nextprot.api.core.domain.release.ReleaseContentsStatQueries;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
 import org.nextprot.api.core.domain.release.ReleaseInfoStats;
 import org.nextprot.api.core.domain.release.ReleaseInfoVersions;
+import org.nextprot.api.core.domain.release.ReleaseStatQueries;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
@@ -27,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -83,6 +86,8 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		ReleaseInfoStats rs = new ReleaseInfoStats();
 
 		rs.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
+
+		rs.setTagQueries(this.getPublicQueryIdsByReleaseTag());
 
 		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
 
@@ -166,6 +171,14 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		releaseStatsTag.setSortOrder(225);
 		releaseStatsTag.setCategroy("Annotations");
 		return releaseStatsTag;
+	}
+
+	@Override
+	public List<ReleaseContentsStatQueries> getPublicQueryIdsByReleaseTag() {
+		return EnumSet.allOf(ReleaseStatQueries.class)
+					  .stream()
+					  .map(r -> new ReleaseContentsStatQueries(r.getTag(), r.getQueryId()))
+					  .collect(Collectors.toList());
 	}
 
 	@Override

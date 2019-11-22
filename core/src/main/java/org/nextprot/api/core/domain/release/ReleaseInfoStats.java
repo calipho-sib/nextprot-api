@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain.release;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReleaseInfoStats implements Serializable{
@@ -12,9 +11,11 @@ public class ReleaseInfoStats implements Serializable{
 
     private List<String> databaseReleaseList;
 
+    private List<ReleaseContentsStatQueries> tagQueries;
+
     private List<ReleaseStatsTag> tagStatistics;
-	
-	public List<ReleaseStatsTag> getTagStatistics() {
+
+    public List<ReleaseStatsTag> getTagStatistics() {
 		return tagStatistics;
 	}
 
@@ -38,10 +39,11 @@ public class ReleaseInfoStats implements Serializable{
         this.databaseReleaseList = databaseReleaseList;
     }
 
-    public void addDatabaseReleaseToList(String databaseRelease) {
-	    if (this.databaseReleaseList == null || this.databaseReleaseList.isEmpty()) {
-            this.databaseReleaseList = new ArrayList<>();
-        }
-        this.databaseReleaseList.add(databaseRelease);
+    public List<ReleaseContentsStatQueries> getTagQueries() {
+        return tagQueries;
+    }
+
+    public void setTagQueries(List<ReleaseContentsStatQueries> tagQueries) {
+        this.tagQueries = tagQueries;
     }
 }
