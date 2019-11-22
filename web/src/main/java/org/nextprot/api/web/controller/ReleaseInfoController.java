@@ -51,7 +51,7 @@ public class ReleaseInfoController {
 		return "release-stats";
 	}
 
-    @ApiMethod(path = "/release-stats/{databaseRelease}", verb = ApiVerb.GET, description = "Gets data statistics about the current neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/release-stats/{databaseRelease}", verb = ApiVerb.GET, description = "Gets data statistics about the provided neXtProt release", produces = {MediaType.APPLICATION_JSON_VALUE})
     @RequestMapping(value = "/release-stats/{databaseRelease}", method = { RequestMethod.GET })
     public String releaseStatsByDbRelease(
             @ApiPathParam(name = "databaseRelease", description = "The database release of the neXtProt release. For example, '2018-01-17'",  allowedvalues = { "2018-01-17"})
