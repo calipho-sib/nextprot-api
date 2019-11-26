@@ -124,6 +124,7 @@ public class BlastPRunnerTest {
         new BlastPRunner(config);
     }
 
+    @Ignore
     @Test(expected = ExceptionWithReason.class)
     public void blastpShouldThrowExceptionWithReason() throws Exception {
 
