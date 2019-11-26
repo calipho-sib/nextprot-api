@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.service;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.blast.domain.BlastSearchParams;
@@ -33,6 +34,7 @@ public class BlastPRunnerTest {
     @Autowired
     private BlastResultUpdaterService updater;
 
+    @Ignore
     @Test
     public void blastpShouldFindResult() throws Exception {
 
@@ -48,6 +50,7 @@ public class BlastPRunnerTest {
         Assert.assertEquals(4, blastReport.getResults().getSearch().getHits().size());
     }
 
+    @Ignore
     @Test(expected = NextProtException.class)
     public void blastpShouldThrowNPException() throws Exception {
 
