@@ -64,9 +64,39 @@ public class SparqlQueryRunnerController {
     	runSparqlQueries(response, request, tags, AccessMode.DIRECT);
     }
 
+    @RequestMapping("/run/query/direct/id/{id}")
+    public void runSparqlQueryWithDirectAccessToEndPoint(HttpServletResponse response, HttpServletRequest request, @PathVariable("id") String id) {
+    	runSparqlQuery(response, request, id, AccessMode.DIRECT);
+    }
+
     @RequestMapping("/run/query/proxy/tags/{tags}")
     public void runSparqlQueriesViaAPIProxy(HttpServletResponse response, HttpServletRequest request, @PathVariable("tags") String tags) {
     	runSparqlQueries(response, request, tags, AccessMode.PROXY);
+    }
+
+    private void runSparqlQuery(HttpServletResponse response, HttpServletRequest request, String id, AccessMode accessMode) {
+    	String fileName = "run-sparql-query.txt";
+        response.setContentType("text/ascii");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\""); 	
+		UserQuery q = userQueryService.getUserQueryByPublicId(id);		
+        try {
+        	PrintWriter w = response.getWriter();
+        	w.write("SPARQL endpoint : " + sparqlEndpoint.getUrl() + CRLF);
+        	w.write("Access mode     : " + accessMode.toString()  + CRLF);
+        	w.write("Starting at     : "  + new Date() + CRLF);
+        	w.flush();
+        	Map<String,String> result = getQueryResult(q,accessMode); 
+        	for (String col: COLUMNS) {
+        		StringBuffer colsb = new StringBuffer(col);
+        		while (colsb.length()<16) colsb.append(" ");
+        		colsb.append(": ");
+        		w.write(colsb.toString() + result.get(col) + CRLF); 
+        	}
+        	w.write(CRLF);        	
+        	w.flush();
+        } catch (Exception e) {
+            throw new NextProtException(e.getMessage(), e);
+        }
     }
 
     

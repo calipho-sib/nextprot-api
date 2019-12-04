@@ -8,6 +8,7 @@ import org.kohsuke.github.GHTree.GHTreeEntry;
 import org.kohsuke.github.GitHub;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.service.StatisticsService;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.service.GitHubService;
@@ -22,11 +23,16 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -40,7 +46,8 @@ public class GitHubServiceImpl implements GitHubService {
 	
 	private static final Log LOGGER = LogFactory.getLog(GitHubServiceImpl.class);
 
-	
+	private final static Set<String> JSON_FOLDERS = new HashSet<>(Arrays.asList("json-config", "release-stats"));
+
 	private String githubToken = null;
 	private String githubDocBranch = null;
 	
@@ -48,6 +55,8 @@ public class GitHubServiceImpl implements GitHubService {
 	
 	@Autowired
 	StatisticsService statisticsService;
+	@Autowired
+	private ReleaseInfoDao releaseInfoDao;
 
 	// will refresh every minute, because anonymous calls are limited to 60
 	// calls per hour
@@ -76,7 +85,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GHRepository repo = getGitHubConnection().getRepository("calipho-sib/nextprot-docs");
 
-			String filename = folder + "/" + finalPage + (("json-config".equals(folder)) ? ".json" : ".md");
+			String filename = folder + "/" + finalPage + ((JSON_FOLDERS.contains(folder)) ? ".json" : ".md");
 
 			String gitHubFileContent = repo.getFileContent(filename, githubDocBranch).getContent();
 
@@ -135,6 +144,34 @@ public class GitHubServiceImpl implements GitHubService {
 
 	}
 
+	@Override
+	@Cacheable(value = "github-stat-list", sync = true)
+	public List<String> getReleaseStatList() {
+
+		List<String> releaseStatList = new ArrayList<>();
+
+		try {
+			GitHub github =  getGitHubConnection();
+			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
+			GHTree tree = repo.getTreeRecursive(githubDocBranch, 1);
+			for(GHTreeEntry te : tree.getTree()){
+				if(te.getPath().startsWith("release-stats")){ //Add only file on stats
+					if(te.getType().equalsIgnoreCase("blob")){ // file
+						String databaseRelease = te.getPath().replaceAll("release-stats/", "")
+												   .replaceAll("\\.json", "")
+												   .trim();
+						releaseStatList.add(databaseRelease);
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw new NextProtException("Release statistics list not available, sorry for the inconvenience", e);
+		}
+
+		return releaseStatList.stream()
+							  .sorted(Comparator.reverseOrder())
+							  .collect(Collectors.toList());
+	}
 
 	@Override
 	@Cacheable(value = "github-news", sync = true)

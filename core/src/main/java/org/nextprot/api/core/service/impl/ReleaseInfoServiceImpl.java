@@ -82,6 +82,8 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 		ReleaseInfoStats rs = new ReleaseInfoStats();
 
+		rs.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
+
 		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
 
 		updatePECountAndPubliCountTags(stats);
