@@ -32,7 +32,7 @@ public enum DbXrefURLResolverSupplier {
     GERMONLINE(XrefDatabase.GERM_ONLINE,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
     GLY_CONNECT(XrefDatabase.GLY_CONNECT,           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GLY_CONNECT)),
     HAMAP_RULE(XrefDatabase.HAMAP_RULE,             new ConstantXrefDatabasebURLResolver("http://hamap.expasy.org/")),
-    HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver(18)), // change the version number here if another version has to be used
+    HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver(19)), // change the version number here if another version has to be used
     HSSP(XrefDatabase.HSSP,                         new HsspXrefURLResolver()),
     IFO(XrefDatabase.IFO,                           new JcrbXrefURLResolver()),
     INTACT(XrefDatabase.INT_ACT,                    new IntactXrefURLResolver()),
