@@ -29,7 +29,7 @@ public class IdentifiersPageView extends PageViewBase {
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 		return Arrays.asList(
 				CCDS, GENE_CARDS, GENE_ID, HGNC, H_INV_DB, HPA, HPRD, KEGG, LOC,
-				MIM,  NEXT_BIO, PDB, PHARM_GKB, PIR, REF_SEQ, UCSC, UNI_GENE,
+				MIM,  NEXT_BIO, PDB, PHARM_GKB, PIR, REF_SEQ, UCSC,
 				CH_EMBL);
 	}
 
