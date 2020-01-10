@@ -28,7 +28,7 @@ public class GeneIdentifiersPageView extends PageViewBase {
 	@Override
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 
-		return Arrays.asList(CCDS, GENE_CARDS, GENE_ID, HGNC, H_INV_DB, KEGG, LOC, MIM, REF_SEQ, UCSC);
+		return Arrays.asList(CCDS, GENE_CARDS, GENE_ID, HGNC, KEGG, LOC, MIM, REF_SEQ, UCSC);
 	}
 
 	@Override
