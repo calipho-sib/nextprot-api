@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,30 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	@Autowired
 	private AnnotationService annotationService;
 
+	
+	
+	@Test
+    public void shouldPam()  {
+		List<PeptideSet> list = new ArrayList<>();
+		PeptideSet p1 = new PeptideSet("psa");
+		for (int i=0;i<5;i++) p1.addAnnotation(new Annotation());
+		list.add(p1);
+		PeptideSet p2 = new PeptideSet("psb");
+		for (int i=0;i<10;i++) p2.addAnnotation(new Annotation());
+		list.add(p2);
+		PeptideSet p3 = new PeptideSet("psc");
+		for (int i=0;i<6;i++) p3.addAnnotation(new Annotation());
+		list.add(p3);
+		list.sort(new Comparator<PeptideSet>() {
+		    public int compare(PeptideSet p1, PeptideSet p2) {
+		        return p2.getAnnotations().size()-p1.getAnnotations().size();
+		    }
+		});
+		for (PeptideSet p: list) {
+			System.out.println(p.getName() + " - annot count: " + p.getAnnotations().size());
+		}
+	}
+	
 	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				
