@@ -168,6 +168,7 @@ public class PropertyApiModel {
 				case "not detected" : return "Negative";
 				case "positive" : return "Positive";
 				case "negative" : return "Negative";
+				case "detected" : return "Positive";
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_EXPRESSION_LEVEL );
 			}
 		}
