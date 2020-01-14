@@ -46,15 +46,6 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	private AnnotationService annotationService;
 
 	
-	
-	@Test
-    public void shouldPam()  {
-		
-		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P52701").with("peptide-mapping")).getAnnotations();
-		List<PeptideSet> list = AnnotationUtils.buildPeptideSets(annotations);
-		for (PeptideSet ps: list) System.out.println(ps.getName() + " - annot count:" + ps.getAnnotations().size());
-	}
-	
 	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				

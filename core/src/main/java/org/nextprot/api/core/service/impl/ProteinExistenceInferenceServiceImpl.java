@@ -12,6 +12,7 @@ import org.nextprot.api.core.service.CvTermGraphService;
 import org.nextprot.api.core.service.ProteinExistenceInferenceService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.annotation.PeptideSet;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,7 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 
 	// Spec: Entry must have at least 2 proteotypic peptides of quality GOLD, 9 or more amino acids in length,
     // which must differ by at least 1 amino acid and not overlap (i.e. one of the peptides must not be included in the other)
+	// and since 2020 the 2 peptides should belong to the same peptide set
 	@Override
 	public boolean promotedAccordingToRule2(String entryAccession) {
 
@@ -104,7 +106,17 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.filter(AnnotationUtils::isProteotypicPeptideMapping)
 	            .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
 	            .collect(Collectors.toList());
-        return AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(filteredPeptideMappingList);
+        
+        List<PeptideSet> list = AnnotationUtils.buildPeptideSets(filteredPeptideMappingList);
+        
+        for (PeptideSet ps: list) {
+        	StringBuilder pairFound = new StringBuilder();
+        	if (AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(ps.getAnnotations(), pairFound)) {
+        		LOGGER.info("ProteinExistence: promotion using peptideSet: " + ps.getName() + " : " + pairFound.toString());
+        		return true;
+        	}
+        }
+        return false;
         
 	}
 

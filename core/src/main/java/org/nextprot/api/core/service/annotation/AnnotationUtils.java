@@ -563,18 +563,13 @@ public class AnnotationUtils {
     	return props.iterator().next().getValue();
 	}
 
-	// related to  rule to PE1 upgrade (for prod)
-	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list) {
-		return containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list,false);
-	}
-
-	// related to  rule to PE1 upgrade (for tests)
-	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list, boolean debug) {
-		return containsAtLeast2NonInclusivePeptides(list,9,18,debug);
+	// related to  rule to PE1 upgrade (for prod & tests)
+	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list, StringBuilder pairFound) {
+		return containsAtLeast2NonInclusivePeptides(list,9,18,pairFound);
 	}
 
 	// related to  rule to PE1 upgrade 
-	private static boolean containsAtLeast2NonInclusivePeptides(List<Annotation> list, int peptideMinSize, int minCoverage, boolean debug) {
+	private static boolean containsAtLeast2NonInclusivePeptides(List<Annotation> list, int peptideMinSize, int minCoverage, StringBuilder pairFound) {
 		
 		if (list==null) return false;
 		
@@ -605,14 +600,10 @@ public class AnnotationUtils {
 							int overlap = bP2 - aP1 + 1;
 							if (overlap<0) overlap=0;
 							if (aPepSize + bPepSize - overlap >= minCoverage) {
-								if (debug==true) {
-									System.out.println(
-										"Found 2 non inclusive peptides on " + aIsoAC + ":" 
-										+ aName + " at " + aP1 + "-" +aP2 + " and "
-										+ bName + " at " + bP1 + "-" +bP2 
-										+ " with overlap " + overlap + " and coverage " + (aPepSize + bPepSize - overlap)
-									);
-								}
+								pairFound.append("Found 2 non inclusive peptides on " + aIsoAC + ":" );
+								pairFound.append(aName + " at " + aP1 + "-" + aP2 + " and ");
+								pairFound.append(bName + " at " + bP1 + "-" + bP2 );
+								pairFound.append(" with overlap " + overlap + " and coverage " + (aPepSize + bPepSize - overlap));
 								return true; 
 							}
 						} 
