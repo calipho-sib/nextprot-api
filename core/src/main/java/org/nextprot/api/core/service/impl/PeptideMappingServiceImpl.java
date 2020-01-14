@@ -92,6 +92,13 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		}
 	}
 	
+	/*
+	 * Returns a string identifying a peptide set.
+	 * The peptide set is important because it is involved in rules promoting PE.
+	 * We return 1 peptide set for any massive evidence, peptide atlas evidences 
+	 * are divided into 2 peptide sets: phosphoproteome and others. Finally any 
+	 * nextprot submission of pubmed paper is considered as a separate peptide set.
+	 */
 	static String computePeptideSet(String db, String src) {
 		String result = null;
 		if (XrefDatabase.PEPTIDE_ATLAS.getName().equals(db)) {
