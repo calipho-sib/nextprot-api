@@ -525,6 +525,31 @@ public class AnnotationUtils {
 	}
 	
 	// related to  rule to PE1 upgrade 
+	public static List<PeptideSet> buildPeptideSets(List<Annotation> annotations) {
+		
+		// create a list (map for concenience) of peptide sets and attach to each 
+		// peptide set its peptide mapping annotations
+		Map<String, PeptideSet> map = new HashMap<>();
+		for (Annotation a: annotations) {
+			for (AnnotationProperty p: a.getPropertiesByKey("peptideSet")) {
+				String name = p.getValue();
+				if (map.get(name)==null) map.put(name, new PeptideSet(name));
+				map.get(name).addAnnotation(a);
+			}
+		}
+		// now sort the list of peptide sets: the ones with more peptidemapping annotations first
+		// will increase performance (peptide atlas, then massive, then, phosphoproteome, then small sets
+		// the probability to find a pair of proteotypic non overlapping > 9aa peptides is higher in first sets
+		List<PeptideSet> result = new ArrayList<>(map.values());
+		result.sort(new Comparator<PeptideSet>() {
+		    public int compare(PeptideSet p1, PeptideSet p2) {
+		        return p2.getAnnotations().size()-p1.getAnnotations().size();
+		    }
+		});
+		return result;
+	}
+	
+	// related to  rule to PE1 upgrade 
 	public static boolean isProteotypicPeptideMapping(Annotation a) {
     	Collection<AnnotationProperty> props = a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY);
     	if (props==null || props.size()==0) return false; // we don't know if proteotypic or not => NO !
