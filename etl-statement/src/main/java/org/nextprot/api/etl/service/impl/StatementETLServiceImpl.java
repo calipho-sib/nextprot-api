@@ -144,8 +144,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public Collection<Statement> transformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
+		report.addInfoWithElapsedTime("Starting transformStatements(), raw statements count:" + rawStatements.size());
 		rawStatements = preTransformStatements(source, rawStatements, report);
-		report.addInfoWithElapsedTime("Finished pre transformation treatments");
+		report.addInfoWithElapsedTime("Finished pre transformation treatments, raw statements count:" + rawStatements.size());
 
 		Collection<Statement> statements = statementTransformerService.transformStatements(rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
