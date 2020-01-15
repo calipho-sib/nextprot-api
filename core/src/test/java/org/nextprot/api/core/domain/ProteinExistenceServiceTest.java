@@ -74,8 +74,12 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldNotMatchRule4BecauseNotDetected() {
-
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q9HB31"));
+		// cases since release 2020_02
+		// with N "not detected" and 0 "detected" in RNA-seq evidences of expression profile annotations
+		// NX_Q5VXH4	0	65
+		// NX_Q96LA9	0	65
+		// NX_P0C7T3	0	56
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q5VXH4"));
 	}
 
 	@Test

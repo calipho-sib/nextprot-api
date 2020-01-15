@@ -144,8 +144,8 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                     .filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
                     .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
                     .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
-                    .anyMatch(evidence -> evidence.isExpressionLevelDetected(Arrays.asList("high", "medium")));
-        }
+                    .anyMatch(evidence -> evidence.isExpressionLevelEqualTo("detected"));
+        }             
 
 		return false;
 	}
