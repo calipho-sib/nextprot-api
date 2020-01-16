@@ -1,5 +1,9 @@
 package org.nextprot.api.core.domain;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -61,9 +65,26 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
+	public void shouldBeOK() {
+		assertTrue(   todayIsAfter("22 Feb 1999"));
+		assertTrue( ! todayIsAfter("18 Jul 2028"));
+	}
+	
+	private boolean todayIsAfter(String date) {
+		Date somedate = new Date(date);
+		Date now = new Date();
+		return now.after(somedate);
+		
+	}
+	
+	@Test
 	public void shouldMatchRule4() {
-
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
+		
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2019")) { 
+			Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
+		}
 	}
 
 	@Test
@@ -150,10 +171,14 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldInferFromRule4() {
 
-		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2019")) { 
 
-		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+			Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
+			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
+		}
 	}
 
 	@Test
