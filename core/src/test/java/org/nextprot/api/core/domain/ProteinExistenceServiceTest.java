@@ -189,6 +189,8 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 	}
 
+	
+	
 	// Could not find an entry that match this rule:
 	// the following query was returning NX_Q9ULZ1 but infortunately SP_PER_05 inferred the promotion
 	//SELECT  * WHERE {
@@ -198,7 +200,10 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	//  ?a :evidence ?e.
 	//  ?e :assignedBy source:NextProt
 	//}
-	@Ignore
+	
+	// TODO: modify to use only rule6, if no example found then Ignore it
+	
+	//@Ignore
 	@Test
 	public void shouldInferFromRule6() {
 

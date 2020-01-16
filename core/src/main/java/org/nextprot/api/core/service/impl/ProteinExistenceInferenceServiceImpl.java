@@ -159,18 +159,19 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS));
 	}
 
-	// Spec: Entry must have a binary interaction annotation with evidence assigned by neXtProt of quality GOLD
+	// Spec: Entry must have a binary interaction annotation with evidence of quality GOLD
 	// AND ECO experimental evidence (or child thereof)
 	@Override
 	public boolean promotedAccordingToRule6(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.BINARY_INTERACTION));
 	}
 
-    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and ECO experimental evidence (or child thereof)
-    // other than mass spectrometry evidence (ECO:0001096)
-    // Note: Term "experimental evidence": ECO:0000006 (ID=84877), Term "mass spectrometry evidence": ECO:0001096 (ID=154119)
+    // Spec: Entry must have a modified residue annotation with evidence of quality GOLD and ECO experimental 
+	// evidence (or child thereof) other than mass spectrometry evidence (ECO:0001096)
+    // Note: Term "experimental evidence"      : ECO:0000006 (ID=84877)
+	// Note: Term "mass spectrometry evidence" : ECO:0001096 (ID=154119)
     @Override
     public boolean promotedAccordingToRule7(String entryAccession) {
 
@@ -183,7 +184,14 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
                 .anyMatch(evidence -> !isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 154119));
     }
 
-	// Note: Term "experimental evidence": ECO:0000006 (ID=84877)
+    private boolean hasExperimentalEvidenceOfQualityGOLD(Supplier<Stream<Annotation>> streamSupplier) {
+
+		return streamSupplier.get().flatMap(annot -> annot.getEvidences().stream())
+				.filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+				.anyMatch(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 84877));
+	}
+
+    // Note: Term "experimental evidence": ECO:0000006 (ID=84877)
     private boolean hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(Supplier<Stream<Annotation>> streamSupplier) {
 
 		return streamSupplier.get().flatMap(annot -> annot.getEvidences().stream())

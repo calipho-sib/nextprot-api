@@ -1,5 +1,8 @@
 package org.nextprot.api.core.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -7,27 +10,10 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@ActiveProfiles({ "dev","cache" })
 public class AnnotationUtilsUnconfirmedPE1Test extends CoreUnitBaseTest {
-        
-    @Autowired private EntryBuilderService entryBuilderService;
-    @Autowired private ProteinExistenceInferenceService peService;
-    
-    @Test
-	public void test2020() {
-    	//List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P52701").with("peptide-mapping")).getAnnotations();    	
-    	Assert.assertEquals(true, peService.promotedAccordingToRule2("NX_P52701"));
-    }
-
-	
+        	
     @Test
 	public void test11() {
 
