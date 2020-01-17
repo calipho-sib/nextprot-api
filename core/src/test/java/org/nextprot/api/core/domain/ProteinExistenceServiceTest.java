@@ -82,7 +82,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		
 		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
 		
-		if (todayIsAfter("10 Mar 2019")) { 
+		if (todayIsAfter("10 Mar 2020")) { 
 			Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
 		}
 	}
@@ -173,7 +173,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
 		
-		if (todayIsAfter("10 Mar 2019")) { 
+		if (todayIsAfter("10 Mar 2020")) { 
 
 			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
 			Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
@@ -191,26 +191,27 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 	
 	
-	// Could not find an entry that match this rule:
-	// the following query was returning NX_Q9ULZ1 but infortunately SP_PER_05 inferred the promotion
-	//SELECT  * WHERE {
-	//  ?entry :existence /:level 2 .
-	//  ?entry :isoform ?iso .
-	//  ?iso :binaryInteraction ?a .
-	//  ?a :evidence ?e.
-	//  ?e :assignedBy source:NextProt
-	//}
 	
-	// TODO: modify to use only rule6, if no example found then Ignore it
-	
-	//@Ignore
 	@Test
 	public void shouldInferFromRule6() {
 
-		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q9ULZ1");
-
-		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
+//		Example in data release 2020_02		
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_A6NEM1 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CL80 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CL81 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CV98 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q07627 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q6S545 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q6UXS9 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q9BXU9 to PE1
+		
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2020")) { 
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A6NEM1");
+			Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
+		}
 	}
 
 	@Ignore
