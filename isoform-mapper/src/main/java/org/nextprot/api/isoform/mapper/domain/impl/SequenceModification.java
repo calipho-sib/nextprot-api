@@ -117,7 +117,9 @@ public class SequenceModification extends SequenceFeatureBase {
             rules.put("PTM-0255", new Rule("PTM-0255",AminoAcidCode.TYROSINE));
             rules.put("PTM-0237", new Rule("PTM-0237",AminoAcidCode.ARGININE));
             rules.put("PTM-0565", new Rule("PTM-0565",AminoAcidCode.SERINE));
+            rules.put("PTM-0550", new Rule("PTM-0550",AminoAcidCode.SERINE));
             rules.put("PTM-0551", new Rule("PTM-0551",AminoAcidCode.SERINE));
+            rules.put("PTM-0552", new Rule("PTM-0552",AminoAcidCode.THREONINE));
             rules.put("PTM-0553", new Rule("PTM-0553",AminoAcidCode.THREONINE));
             rules.put("PTM-0574", new Rule("PTM-0574",AminoAcidCode.SERINE));
             //TODO: we could add all other PTM-ids given the target supplied by ProteinModificationService
