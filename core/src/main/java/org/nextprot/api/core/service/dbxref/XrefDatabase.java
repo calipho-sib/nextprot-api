@@ -17,7 +17,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     CARBONYL_DB("CarbonylDB"), CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"), COMPLEX_PORTAL("ComplexPortal"),
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CPTAC, CTD,
     DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"), DRUG_CENTRAL("DrugCentral"),
-    ECO, EGG_NOG("eggNOG"), ELM, EMBL, ENSEMBL("Ensembl"), ENSG, EPD, ESTHER, EU_PATH_DB("EuPathDB"),
+    ECO, EGG_NOG("eggNOG"), ELM, EMBL, EMBL_CDS("EMBL-CDS"), ENSEMBL("Ensembl"), ENSG, EPD, ESTHER, EU_PATH_DB("EuPathDB"),
     EVOLUTIONARY_TRACE("EvolutionaryTrace"), EXPRESSION_ATLAS("ExpressionAtlas"), EVOC("eVOC"),
     GENE_3D("Gene3D"), GENE_CARDS("GeneCards"), GENE_ID("GeneID"), GENE_REVIEWS("GeneReviews"), GENE_TREE("GeneTree"),
     GENEVESTIGATOR("Genevestigator"), GENEVISIBLE("Genevisible"), GENE_WIKI("GeneWiki"), GENOME_RNA_I("GenomeRNAi"),

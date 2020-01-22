@@ -24,6 +24,7 @@ public enum DbXrefURLResolverSupplier {
     COSMIC(XrefDatabase.COSMIC,                     new CosmicXrefURLResolver()),
     ECO(XrefDatabase.ECO,                         	new EcoXrefURLResolver()),
     EMBL(XrefDatabase.EMBL,                         new EmblXrefURLResolver()),
+    EMBL_CDS(XrefDatabase.EMBL_CDS,                 new EmblCdsXrefURLResolver()),
     ENSEMBL(XrefDatabase.ENSEMBL,                   new EnsemblXrefURLResolver()),
     EVOC(XrefDatabase.EVOC,				 			new UnresolvedXrefURLResolver()),
     EXPRESSION_ATLAS(XrefDatabase.EXPRESSION_ATLAS, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.EXPRESSION_ATLAS)),
