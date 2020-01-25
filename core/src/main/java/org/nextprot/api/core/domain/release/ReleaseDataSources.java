@@ -25,6 +25,7 @@ public enum ReleaseDataSources {
 	IntAct("IntAct", "IntAct interactions", "Molecular interaction database", "http://www.ebi.ac.uk/intact/"),
 	InterPro("InterPro", "InterPro", "Integrated resource of protein families, domains and functional sites", "http://www.ebi.ac.uk/interpro/"),
 	MeSH("MeSH", "MeSH", "Medical Subject Headings", "http://www.nlm.nih.gov/mesh/MBrowser.html"),
+	MassIVE("MassIVE", "Human MassIVE",  "Peptides identified by mass spectrometry", "https://massive.ucsd.edu"),
 	PeptideAtlas("PeptideAtlas", "Human PeptideAtlas", "Peptides identified by mass spectrometry", "http://www.peptideatlas.org/"),
 	PROSITE("PROSITE", "PROSITEDOC", "Protein domain and family database", "http://www.expasy.org/prosite/"),
 	PubMed("PubMed", "PubMed publications", "Citations for biomedical literature from MEDLINE, life science journals, and online books.", "http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed"),
