@@ -69,6 +69,18 @@ public class CvTermGraphCircularReferenceTest extends CoreUnitBaseTest {
         	
     }
 
+
+//    @Test
+//    public void shouldPam() throws Exception {
+//
+//        CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoBiologicalProcessCv);
+//        Stack<Integer> stack = new Stack<>();
+//        int node = 20191; //  'GO:0043491' 
+//        getAncestors(node , stack, graph, true);
+//        
+//    }
+
+    
     
     private void getAncestors(int node, Stack<Integer> stack, CvTermGraph graph, boolean printPaths) {
     	
