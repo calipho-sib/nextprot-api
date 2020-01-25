@@ -193,6 +193,11 @@ public class CvTermGraph implements Serializable {
 
         return new CvTermGraph(terminologyCv, sg);
     }
+    
+    public String getEdgeLabel(int tailNode, int headNode) {
+    	int edge = graph.getEdge(tailNode, headNode);
+    	return graph.getEdgeLabel(edge);
+    }
 
     public int[] getParents(int cvTermId) {
 
