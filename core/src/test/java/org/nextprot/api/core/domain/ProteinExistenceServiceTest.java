@@ -2,8 +2,6 @@ package org.nextprot.api.core.domain;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,12 +68,6 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		assertTrue( ! todayIsAfter("18 Jul 2028"));
 	}
 	
-	private boolean todayIsAfter(String date) {
-		Date somedate = new Date(date);
-		Date now = new Date();
-		return now.after(somedate);
-		
-	}
 	
 	@Test
 	public void shouldMatchRule4() {

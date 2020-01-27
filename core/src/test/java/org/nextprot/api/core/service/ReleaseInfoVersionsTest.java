@@ -15,11 +15,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author pmichel
- * These tests require computation on the full set of entries  
- * => 4 hours at least with cache
- * => untractable without cache
- * And these tests don't test anything relevant
- * => ignored
  */
 
 @ActiveProfiles({ "dev" })
@@ -43,8 +38,13 @@ public class ReleaseInfoVersionsTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldFindDataSources() {
-		int datasourcesSize = releaseInfoService.findReleaseDatasources().getDatasources().size();
-		assertEquals(ReleaseDataSources.values().length,  datasourcesSize);
+		
+		if (todayIsAfter("10 Mar 2020")) { 
+			// we assume that at this date the db declared in application-dev.properties
+			// will contain the MassIVe datasource
+			int datasourcesSize = releaseInfoService.findReleaseDatasources().getDatasources().size();
+			assertEquals( ReleaseDataSources.values().length,  datasourcesSize);
+		}
 	}
 
 }
