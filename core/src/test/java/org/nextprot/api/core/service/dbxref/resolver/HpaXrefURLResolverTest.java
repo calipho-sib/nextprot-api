@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.release.ReleaseDataSources;
 
 public class HpaXrefURLResolverTest {
 
@@ -12,7 +13,7 @@ public class HpaXrefURLResolverTest {
     @Before
     public void setup() {
 
-        resolver = new HpaXrefURLResolver(18);
+        resolver = new HpaXrefURLResolver();
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -20,8 +21,8 @@ public class HpaXrefURLResolverTest {
     public void testResolveHPAGene() throws Exception {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
-
-        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+        System.out.println("HPA datasource base url:"+ReleaseDataSources.HPA.getUrl());
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -29,8 +30,7 @@ public class HpaXrefURLResolverTest {
     public void testResolveHPASubcellular() throws Exception {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
-
-        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/subcellular", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -38,7 +38,6 @@ public class HpaXrefURLResolverTest {
     public void testResolveHPAAntibody() throws Exception {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("HPA018312", "HPA", "whatever");
-
-        Assert.assertEquals("https://v18.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/search/HPA018312", resolver.resolve(xref));
     }
 }
