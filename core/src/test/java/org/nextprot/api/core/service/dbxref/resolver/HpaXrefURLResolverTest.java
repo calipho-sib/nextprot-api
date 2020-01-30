@@ -22,7 +22,6 @@ public class HpaXrefURLResolverTest {
     	// page summary:
     	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
-        System.out.println("HPA datasource base url:"+ReleaseDataSources.HPA.getUrl());
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647", resolver.resolve(xref));
     }
 
@@ -32,7 +31,33 @@ public class HpaXrefURLResolverTest {
     	// TODO use .../cell
     	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS/cell 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
-        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/subcellular", resolver.resolve(xref));
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/cell", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveHPACell() throws Exception {
+    	// TODO use .../cell
+    	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS/cell 
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/cell", "HPA", "whatever");
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/cell", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveHPAExpr() throws Exception {
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/tissue/lung", "HPA", "whatever");
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/tissue/lung", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveHPABloodRnaSeq() throws Exception {
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/blood/t-cells#hpa_memory_cd4_t-cell", "HPA", "whatever");
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/blood/t-cells#hpa_memory_cd4_t-cell", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveHPATissueExprInfo() throws Exception {
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/tissue", "HPA", "whatever");
+        Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/tissue", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
