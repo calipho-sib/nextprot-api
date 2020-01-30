@@ -328,7 +328,7 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
-        Assert.assertEquals("https://v19.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
+        Assert.assertEquals("https://v19.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
         Assert.assertEquals("https://v19.proteinatlas.org/%s", xref.getLinkUrl());
     }
 

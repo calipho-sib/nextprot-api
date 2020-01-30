@@ -19,7 +19,7 @@ public class HpaXrefURLResolverTest {
     // entry/NX_Q9BXA6/xref.json
     @Test
     public void testResolveHPAGene() throws Exception {
-    	// page summary:
+    	// towards page summary
     	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647", resolver.resolve(xref));
@@ -28,16 +28,12 @@ public class HpaXrefURLResolverTest {
     // entry/NX_P51610/xref.json
     @Test
     public void testResolveHPASubcellular() throws Exception {
-    	// TODO use .../cell
-    	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS/cell 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/cell", resolver.resolve(xref));
     }
 
     @Test
     public void testResolveHPACell() throws Exception {
-    	// TODO use .../cell
-    	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS/cell 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/cell", "HPA", "whatever");
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647/cell", resolver.resolve(xref));
     }
@@ -72,6 +68,7 @@ public class HpaXrefURLResolverTest {
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("HPA018312", "HPA", "whatever");
         // unexpected value is a broken URL, actual value is VALID URL ???
         // actual value: https://www.proteinatlas.org/search/HPA018312
+        // used in antibody mapping evidences
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "search/HPA018312", resolver.resolve(xref)); 
     }
 }
