@@ -35,7 +35,7 @@ public class EntriesSearchController {
 	public List<Entry> pepx(
 			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "NDVVPTMAQGVLEYK" }) 
 			@RequestParam(value = "peptide", required = true) String peptide,
-			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "true","false" })
+			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "true" })
 			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch) {
 		checkPeptideLength(Arrays.stream(peptide.split(",")));
 		return getEntriesWithPeptides(peptide, "GET", noVariantMatch);
@@ -46,7 +46,7 @@ public class EntriesSearchController {
 	@ApiMethod(path = "peptide-post", verb = ApiVerb.POST, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptides, taking into account variants. Leucine and isoleucine are considered to be equivalent.")
 	// TODO: add description of body
 	public List<Entry> pepx(@ApiBodyObject @RequestBody List<String> peptideList,
-			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "true","false" })
+			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "true" })
 			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch) {
 		NPreconditions.checkNotNull(peptideList, "The peptide list must be not null");
 		NPreconditions.checkNotEmpty(peptideList, "The peptide list must be not empty");

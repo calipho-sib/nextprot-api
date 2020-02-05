@@ -241,15 +241,16 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         CvTermGraph descendantSubgraph = graph.calcDescendantSubgraph(graph.getCvTermIdByAccession("GO:0043491"));
 
         CvTermGraph.View view = descendantSubgraph.toView();
-
+        
         Assert.assertEquals("GO:0043491 descendant graph", view.getLabel());
-        Assert.assertEquals(4, view.getNodes().size());
-        Assert.assertEquals(5, view.getEdges().size());
+        Assert.assertEquals(1, view.getNodes().size()); // was 4 before we exclude non subsuming relationships
+        Assert.assertEquals(0, view.getEdges().size()); // was 5 before we exclude non subsuming relationships
 
+        // we don't have edged in this example any more cos we now filter out non subsuming relationships
         for (CvTermGraph.View.Edge edge : view.getEdges()) {
-
             int tail = edge.getTail();
             int head = edge.getHead();
+        	System.out.println("was in edge with tail " + tail + " and head " + head);
 
             if (tail == 26584) {
                 Assert.assertTrue(head == 26586 || head == 26585);

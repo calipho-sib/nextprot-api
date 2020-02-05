@@ -24,6 +24,7 @@ public class PropertyApiModel {
 	public static final String NAME_SELF_INTERACTION="selfInteraction";
 	public static final String NAME_ANTIBODY_UNICITY="antibody unicity";
 	public static final String NAME_PEPTIDE_UNICITY="peptide unicity";
+	public static final String NAME_PEPTIDE_SET="peptideSet";
 	public static final String NAME_PEPTIDE_UNICITY_WITH_VARIANTS="peptide unicity with variants";
 	
 
@@ -87,6 +88,7 @@ public class PropertyApiModel {
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUnicity","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_SET,"peptideSet","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.SRM_PEPTIDE_MAPPING,
@@ -166,6 +168,7 @@ public class PropertyApiModel {
 				case "not detected" : return "Negative";
 				case "positive" : return "Positive";
 				case "negative" : return "Negative";
+				case "detected" : return "Positive";
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_EXPRESSION_LEVEL );
 			}
 		}

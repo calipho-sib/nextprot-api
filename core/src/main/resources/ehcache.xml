@@ -79,6 +79,12 @@
 		   statistics="true">
 	</cache>
 	
+	<cache name="entry-gene-names-and-alt-names" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
 	<cache name="term-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="200" eternal="true" memoryStoreEvictionPolicy="LRU"

@@ -525,6 +525,31 @@ public class AnnotationUtils {
 	}
 	
 	// related to  rule to PE1 upgrade 
+	public static List<PeptideSet> buildPeptideSets(List<Annotation> annotations) {
+		
+		// create a list (map for concenience) of peptide sets and attach to each 
+		// peptide set its peptide mapping annotations
+		Map<String, PeptideSet> map = new HashMap<>();
+		for (Annotation a: annotations) {
+			for (AnnotationProperty p: a.getPropertiesByKey("peptideSet")) {
+				String name = p.getValue();
+				if (map.get(name)==null) map.put(name, new PeptideSet(name));
+				map.get(name).addAnnotation(a);
+			}
+		}
+		// now sort the list of peptide sets: the ones with more peptidemapping annotations first
+		// will increase performance (peptide atlas, then massive, then, phosphoproteome, then small sets
+		// the probability to find a pair of proteotypic non overlapping > 9aa peptides is higher in first sets
+		List<PeptideSet> result = new ArrayList<>(map.values());
+		result.sort(new Comparator<PeptideSet>() {
+		    public int compare(PeptideSet p1, PeptideSet p2) {
+		        return p2.getAnnotations().size()-p1.getAnnotations().size();
+		    }
+		});
+		return result;
+	}
+	
+	// related to  rule to PE1 upgrade 
 	public static boolean isProteotypicPeptideMapping(Annotation a) {
     	Collection<AnnotationProperty> props = a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY);
     	if (props==null || props.size()==0) return false; // we don't know if proteotypic or not => NO !
@@ -538,18 +563,13 @@ public class AnnotationUtils {
     	return props.iterator().next().getValue();
 	}
 
-	// related to  rule to PE1 upgrade (for prod)
-	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list) {
-		return containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list,false);
-	}
-
-	// related to  rule to PE1 upgrade (for tests)
-	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list, boolean debug) {
-		return containsAtLeast2NonInclusivePeptides(list,9,18,debug);
+	// related to  rule to PE1 upgrade (for prod & tests)
+	public static boolean containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(List<Annotation> list, StringBuilder pairFound) {
+		return containsAtLeast2NonInclusivePeptides(list,9,18,pairFound);
 	}
 
 	// related to  rule to PE1 upgrade 
-	private static boolean containsAtLeast2NonInclusivePeptides(List<Annotation> list, int peptideMinSize, int minCoverage, boolean debug) {
+	private static boolean containsAtLeast2NonInclusivePeptides(List<Annotation> list, int peptideMinSize, int minCoverage, StringBuilder pairFound) {
 		
 		if (list==null) return false;
 		
@@ -580,14 +600,10 @@ public class AnnotationUtils {
 							int overlap = bP2 - aP1 + 1;
 							if (overlap<0) overlap=0;
 							if (aPepSize + bPepSize - overlap >= minCoverage) {
-								if (debug==true) {
-									System.out.println(
-										"Found 2 non inclusive peptides on " + aIsoAC + ":" 
-										+ aName + " at " + aP1 + "-" +aP2 + " and "
-										+ bName + " at " + bP1 + "-" +bP2 
-										+ " with overlap " + overlap + " and coverage " + (aPepSize + bPepSize - overlap)
-									);
-								}
+								pairFound.append("Found 2 non inclusive peptides on " + aIsoAC + ":" );
+								pairFound.append(aName + " at " + aP1 + "-" + aP2 + " and ");
+								pairFound.append(bName + " at " + bP1 + "-" + bP2 );
+								pairFound.append(" with overlap " + overlap + " and coverage " + (aPepSize + bPepSize - overlap));
 								return true; 
 							}
 						} 

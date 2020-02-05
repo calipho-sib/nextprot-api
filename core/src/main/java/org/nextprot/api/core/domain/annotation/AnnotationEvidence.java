@@ -456,8 +456,8 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	/**
-	 * Return true if evidence shows any kind of detection (low, medium, high or positive) else false
-	 *
+	 * Return true if evidence shows any kind of detection (low, medium, high, positive or detected) else false
+	 * Used in velocity template for ttl
 	 * @return an optional boolean or absent if no expression info
 	 */
 	public Optional<Boolean> isExpressionLevelDetected() {
@@ -466,18 +466,18 @@ public class AnnotationEvidence implements Serializable {
 
 			String level = extractProperty("expressionLevel");
 
-			return Optional.of("low".equals(level) || "medium".equals(level) || "high".equals(level) || "positive".equals(level));
+			return Optional.of("low".equals(level) || "medium".equals(level) || "high".equals(level) || "positive".equals(level) || "detected".equals(level));
 		}
 
 		return Optional.empty();
 	}
 
-	public boolean isExpressionLevelDetected(String level) {
+	public boolean isExpressionLevelEqualTo(String level) {
 
-		return isExpressionLevelDetected(Collections.singletonList(level));
+		return isExpressionLevelAmong(Collections.singletonList(level));
 	}
 
-	public boolean isExpressionLevelDetected(List<String> possibleLevels) {
+	public boolean isExpressionLevelAmong(List<String> possibleLevels) {
 
 		if (propertiesMap.containsKey("expressionLevel")) {
 

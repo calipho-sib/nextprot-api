@@ -142,18 +142,26 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 	@Override
 	public List<AnnotationIsoformSpecificity> findAnnotationIsoformsByAnnotationIds(List<Long> annotationIds) {
-
-		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-isoforms-by-annotation-ids"), namedParameters, new AnnotationIsoformRowMapper());
-
+		
+		//System.out.println("??? findAnnotationIsoformsByAnnotationIds(), annotationsIds: " + annotationIds.size());
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+				sqlDictionary.getSQLQuery("annotation-isoforms-by-annotation-ids"), 
+				"ids",
+				annotationIds, 
+				new AnnotationIsoformRowMapper());
 	}
 
 	// Annotation Evidences /////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public List<AnnotationEvidence> findAnnotationEvidencesByAnnotationIds(List<Long> annotationIds) {
-
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, (resultSet, row) -> {
+		
+		//System.out.println("findAnnotationEvidencesByAnnotationIds(), annotationsIds: " + annotationIds.size());
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+				sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), 
+				"ids", 
+				annotationIds, 
+				(resultSet, row) -> {
 
             AnnotationEvidence evidence = new AnnotationEvidence();
             evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
@@ -188,6 +196,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds) {
 		
+		//System.out.println("findAnnotationEvidencePropertiesByEvidenceIds(), evidenceIds: " + evidenceIds.size());
 		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, (resultSet, row) -> {
 
             AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
@@ -204,9 +213,14 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationProperty> findAnnotationPropertiesByAnnotationIds(List<Long> annotationIds) {
 
+		//System.out.println("findAnnotationPropertiesByAnnotationIds(), annotationIds: " + annotationIds.size());
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, (resultSet, row) -> {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(
+				sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), 
+				"ids", 
+				annotationIds,
+				(resultSet, row) -> {
 
             AnnotationProperty property = new AnnotationProperty();
 

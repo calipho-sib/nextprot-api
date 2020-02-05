@@ -50,7 +50,7 @@ public class InteractionsPageView extends PageViewBase {
 	@Override
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 
-		return Arrays.asList(BINDING_DB, DIP, INT_ACT, MINT, STRING, SIGNA_LINK, BIO_GRID, SIGNOR, CORUM, COMPLEX_PORTAL, RHEA);
+		return Arrays.asList(BINDING_DB, DIP, DRUG_CENTRAL, INT_ACT, MINT, STRING, SIGNA_LINK, BIO_GRID, SIGNOR, CORUM, COMPLEX_PORTAL, RHEA);
 	}
 
 	@Override

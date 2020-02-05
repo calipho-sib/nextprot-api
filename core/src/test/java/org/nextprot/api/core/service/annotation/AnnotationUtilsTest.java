@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	@Autowired
 	private AnnotationService annotationService;
 
+	
 	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				
