@@ -6,6 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistence;
+import org.nextprot.api.core.domain.ProteinExistenceInferred;
+import org.nextprot.api.core.domain.ProteinExistences;
+import org.nextprot.api.core.domain.ProteinExistenceInferred.ProteinExistenceRule;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.MasterIdentifierService;
@@ -31,6 +36,9 @@ public class ReleaseInfoServiceTest {
     @Mock
     private AnnotationServiceImpl annotationService;
 
+    @Mock
+    private OverviewServiceImpl overviewService;
+
     @InjectMocks
     private ReleaseInfoServiceImpl releaseInfoService = new ReleaseInfoServiceImpl();
 
@@ -38,10 +46,23 @@ public class ReleaseInfoServiceTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
+        
         when(masterIdentifierService.findUniqueNames()).thenReturn(new HashSet<>(Arrays.asList(
                 "WO_ANNOT", "W_NOT_FUNCTIONAL_MF", "W_NOT_FUNCTIONAL_GO_BP",
                 "W_FUNCTION_INFO", "W_FUNCTIONAL_GO_MF", "W_FUNCTIONAL_GO_BP")));
 
+        Overview o = new Overview();
+        ProteinExistences pes = new ProteinExistences();
+        ProteinExistenceInferred pe = new ProteinExistenceInferred(ProteinExistence.PROTEIN_LEVEL, ProteinExistenceRule.SP_PER_03);
+        pes.setProteinExistenceInferred(pe);
+        o.setProteinExistences(pes);
+        when(overviewService.findOverviewByEntry("WO_ANNOT")).thenReturn(o);
+        when(overviewService.findOverviewByEntry("W_NOT_FUNCTIONAL_MF")).thenReturn(o);
+        when(overviewService.findOverviewByEntry("W_NOT_FUNCTIONAL_GO_BP")).thenReturn(o);
+        when(overviewService.findOverviewByEntry("W_FUNCTION_INFO")).thenReturn(o);
+        when(overviewService.findOverviewByEntry("W_FUNCTIONAL_GO_MF")).thenReturn(o);
+        when(overviewService.findOverviewByEntry("W_FUNCTIONAL_GO_BP")).thenReturn(o);
+        
         when(annotationService.findAnnotations("WO_ANNOT")).thenReturn(new ArrayList<>());
 
         Annotation a1 = new Annotation();

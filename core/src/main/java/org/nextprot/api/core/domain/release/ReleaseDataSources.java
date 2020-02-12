@@ -21,10 +21,11 @@ public enum ReleaseDataSources {
 	GO("GO", "GO", "Gene Ontology", "http://www.geneontology.org/"),
 	GLYCONNECT("GlyConnect", "GlyConnect", "Protein glycosylation platform", "https://glyconnect.expasy.org/"),
 	GNOMAD("gnomAD", "gnomAD", "Genome Aggregation Database", "https://gnomad.broadinstitute.org/"),
-	HPA("HPA", "HPA", "Human Protein Atlas", "https://v%v.proteinatlas.org/"),
+	HPA("HPA", "HPA", "Human Protein Atlas", "https://v19.proteinatlas.org/"),  // change v19 to something else when required by new data release
 	IntAct("IntAct", "IntAct interactions", "Molecular interaction database", "http://www.ebi.ac.uk/intact/"),
 	InterPro("InterPro", "InterPro", "Integrated resource of protein families, domains and functional sites", "http://www.ebi.ac.uk/interpro/"),
 	MeSH("MeSH", "MeSH", "Medical Subject Headings", "http://www.nlm.nih.gov/mesh/MBrowser.html"),
+	MassIVE("MassIVE", "Human MassIVE",  "Peptides identified by mass spectrometry", "https://massive.ucsd.edu"),
 	PeptideAtlas("PeptideAtlas", "Human PeptideAtlas", "Peptides identified by mass spectrometry", "http://www.peptideatlas.org/"),
 	PROSITE("PROSITE", "PROSITEDOC", "Protein domain and family database", "http://www.expasy.org/prosite/"),
 	PubMed("PubMed", "PubMed publications", "Citations for biomedical literature from MEDLINE, life science journals, and online books.", "http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed"),

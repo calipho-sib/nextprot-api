@@ -5,6 +5,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,20 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertEquals(properties.get(3).gettermId(), (long)99999);
 	}
 
+	
+	@Test
+	public void shouldReturnTheRightXrefs() {
+		CvTerm term = this.terminologyService.findCvTermByAccession("PP:0001");
+		assertEquals("NextprotProteinPropertyCv", term.getOntology());
+		boolean ok = false;
+		for (DbXref x : term.getXrefs()) {
+			System.out.println(x.getResolvedUrl());
+			if ("http://purl.obolibrary.org/obo/VariO_0052".equals(x.getResolvedUrl())) ok = true;
+		}
+		Assert.assertEquals(true, ok);
+	}
+
+	
 	@Test
 	public void shouldReturnAUniprotKeywordId() {
 		CvTerm term = this.terminologyService.findCvTermByAccession("KW-0732");

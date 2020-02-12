@@ -71,7 +71,7 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                         logStack.push("LANNOT:" + annotation.getAnnotationId());
                         annotationEvidences.stream()
                                 .filter((annotationEvidence -> "dbSNP".equals(annotationEvidence.getResourceDb())))
-                                .forEach(annotationEvidence -> {
+                                .forEach(annotationEvidence -> { // Match the annotations evidence with the gnomad frequencies
                                     String dbSNPId = annotationEvidence.getResourceAccession();
                                     logStack.push("LANNOTEV:" + dbSNPId);
 
@@ -120,34 +120,14 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                                                                     if (gnomeadVariantAA1Letter.equals(annotationVariantVariant)) {
                                                                         //LOGGER.info("GNOMAD variant matches with annotation variant for " + variantFrequency.getGnomadAccession() + " " + annotation.getAnnotationId());
                                                                         // Adds evidence
-                                                                        createAnnotationEvidence(annotation, variantFrequency);
+                                                                        AnnotationEvidence newAnnotationEvidence = createAnnotationEvidence(annotation, variantFrequency);
 
-                                                                        // Adds allele frequency property and add it to the evidence
-                                                                        Double alleleFrequency = new Double(variantFrequency.getAllelFrequency());
-                                                                        AnnotationEvidenceProperty freqProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele frequency", alleleFrequency.toString());
-
-                                                                        // Adds allele count property
-                                                                        Integer alleleCount = new Integer(variantFrequency.getAlleleCount());
-                                                                        AnnotationEvidenceProperty countProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele count", alleleCount.toString());
-
-                                                                        // Adds allele number property
-                                                                        Integer alleleNumber = new Integer(variantFrequency.getAllelNumber());
-                                                                        AnnotationEvidenceProperty numberProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele number", alleleNumber.toString());
-
-                                                                        // Adds homozygote number property
-                                                                        Integer homozygoteNumber = new Integer(variantFrequency.getHomozygoteCount());
-                                                                        AnnotationEvidenceProperty homozegoteProperty = createAnnotationEvidenceProperty(annotationEvidence, "homozygote count", homozygoteNumber.toString());
-
-                                                                        List<AnnotationEvidenceProperty> evidencePropertyList = new ArrayList<>();
-                                                                        evidencePropertyList.add(freqProperty);
-                                                                        evidencePropertyList.add(countProperty);
-                                                                        evidencePropertyList.add(numberProperty);
-                                                                        evidencePropertyList.add(homozegoteProperty);
-                                                                        annotationEvidence.setProperties(evidencePropertyList);
+                                                                        // Adds the frequencies as a new evidence
+                                                                        addFrequencyDetailsToEvidence(newAnnotationEvidence, variantFrequency);
 
                                                                         if (newEvidences.get(annotation) == null) {
                                                                             Set<AnnotationEvidence> evidenceList = new HashSet<>();
-                                                                            evidenceList.add(annotationEvidence);
+                                                                            evidenceList.add(newAnnotationEvidence);
                                                                             newEvidences.put(annotation, evidenceList);
                                                                         } else {
                                                                             newEvidences.get(annotation).add(annotationEvidence);
@@ -158,15 +138,8 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                                                                         logStack.push("VariantAAVariantMatch:true");
                                                                         logStack.push("CrossVariantMatch:false");
                                                                         logStack.push("VariantMatch:true");
-
-                                                                        String logString = logStack.stream()
-                                                                                .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                        LOGGER.info(logString);
-                                                                        // Should pop until remove all logs for this isoform
-                                                                        String logPop = "";
-                                                                        do {
-                                                                            logPop = logStack.pop();
-                                                                        } while (!logPop.startsWith("LISOFORM"));
+                                                                        writeLog(logStack);
+                                                                        popLogStack(logStack, "LISOFORM");
 
                                                                     } else {
                                                                         // variant amino acid sequence do not match
@@ -178,17 +151,6 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                                                                         if (gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
                                                                             logStack.push("CrossVariantMatch:true");
                                                                         }
-
-                                                                        logStack.push("VariantMatch:false");
-                                                                        String logString = logStack.stream()
-                                                                                .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                        LOGGER.info(logString);
-                                                                        // Should pop until remove all logs for this isoform
-                                                                        String logPop = "";
-                                                                        do {
-                                                                            logPop = logStack.pop();
-
-                                                                        } while (!logPop.startsWith("LISOFORM"));
                                                                     }
                                                                 } else {
                                                                     logStack.push("VariantAAOriginalMatch:false");
@@ -206,21 +168,13 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
 
                                                                     logStack.push("VariantMatch:false");
 
-                                                                    // Check for cross AA mathing
+                                                                    // Check for cross AA matching
                                                                     // i.e original = variant and vice versa
                                                                     if (gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
 
                                                                     }
-
-                                                                    String logString = logStack.stream()
-                                                                            .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                    LOGGER.info(logString);
-                                                                    // Should pop until remove all logs for this isoform
-                                                                    String logPop = "";
-                                                                    do {
-                                                                        logPop = logStack.pop();
-
-                                                                    } while (!logPop.startsWith("LISOFORM"));
+                                                                    writeLog(logStack);
+                                                                    popLogStack(logStack, "LISOFORM");
                                                                 }
                                                             } else {
                                                                 logStack.push("VariantPositionMatch:false");
@@ -230,14 +184,8 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                                                                     logStack.push("CrossVariantMatch:true");
                                                                 }
                                                                 logStack.push("VariantMatch:false");
-                                                                String logString = logStack.stream()
-                                                                        .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                                LOGGER.info(logString);
-                                                                // Should pop until remove all logs for this isoform
-                                                                String logPop = "";
-                                                                do {
-                                                                    logPop = logStack.pop();
-                                                                } while (!logPop.startsWith("LISOFORM"));
+                                                                writeLog(logStack);
+                                                                popLogStack(logStack, "LISOFORM");
                                                             }
                                                         } else {
                                                             LOGGER.info("Annotation variant in a range " + isoformSpecificity.getFirstPosition() + " -> " + isoformSpecificity.getLastPosition());
@@ -246,44 +194,25 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
                                                             if (gnomeadOriginalAA.equals(annotationVariantVariant) && gnomeadVariantAA.equals(annotationVariantOriginal)) {
                                                                 logStack.push("CrossVariantMatch:true");
                                                             }
-                                                            String logString = logStack.stream()
-                                                                    .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                                            LOGGER.info(logString);
-                                                            // Should pop until remove all logs for this isoform
-                                                            String logPop = "";
-                                                            do {
-                                                                logPop = logStack.pop();
-                                                            } while (!logPop.startsWith("LISOFORM"));
+                                                            writeLog(logStack);
+                                                            popLogStack(logStack, "LISOFORM");
                                                         }
                                                     });
-                                            String logPop = "";
-                                            do {
-                                                logPop = logStack.pop();
-                                            } while (!logPop.startsWith("LGNADVar"));
+                                            popLogStack(logStack, "LGNADVar");
                                         });
                                     } else {
                                         logStack.push("gnomadvariants:" + 0);
-                                        String logString = logStack.stream()
-                                                .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
-                                        LOGGER.info(logString);
+                                        writeLog(logStack);
                                     }
-                                    String logPop = "";
-                                    do {
-                                        logPop = logStack.pop();
-                                    } while (!logPop.startsWith("LANNOTEV"));
+                                    popLogStack(logStack,"LANNOTEV");
+
                                 });
-                        String logPop = "";
-                        do {
-                            logPop = logStack.pop();
-                        } while (!logPop.startsWith("LANNOT"));
+                        popLogStack(logStack,"LANNOT");
                     });
         } else {
             logStack.push("DBSNPEvidence:0");
-            String logPop = "";
-            do {
-                logPop = logStack.pop();
-                LOGGER.info(logPop);
-            } while (!logPop.startsWith("LENTRY"));
+            writeLog(logStack);
+            popLogStack(logStack,"LENTRY");
             LOGGER.info("No DBSNP ids for given annotations");
         }
 
@@ -317,11 +246,13 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
         LOGGER.info("ElapsedTime:" + time);
     }
 
-    private VariantMatch matchVariantAnnotationWithGnomadVariant(Annotation annotation, VariantFrequency variantFrequency ) {
-        return null;
-    }
 
-
+    /**
+     * Create annotation evidence given the variant frequency
+     * @param annotation
+     * @param variantFrequency
+     * @return AnnotationEvidence
+     */
     private AnnotationEvidence createAnnotationEvidence(Annotation annotation, VariantFrequency variantFrequency) {
         AnnotationEvidence annotationEvidence = new AnnotationEvidence();
         long xrefId = -1;
@@ -358,15 +289,43 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
         return annotationProperty;
     }
 
-    private void writeLog(String log, String parentLevel) {
+    private void addFrequencyDetailsToEvidence(AnnotationEvidence annotationEvidence, VariantFrequency variantFrequency) {
+        // Adds allele frequency property and add it to the evidence
+        Double alleleFrequency = new Double(variantFrequency.getAllelFrequency());
+        AnnotationEvidenceProperty freqProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele frequency", alleleFrequency.toString());
+
+        // Adds allele count property
+        Integer alleleCount = new Integer(variantFrequency.getAlleleCount());
+        AnnotationEvidenceProperty countProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele count", alleleCount.toString());
+
+        // Adds allele number property
+        Integer alleleNumber = new Integer(variantFrequency.getAllelNumber());
+        AnnotationEvidenceProperty numberProperty = createAnnotationEvidenceProperty(annotationEvidence, "allele number", alleleNumber.toString());
+
+        // Adds homozygote number property
+        Integer homozygoteNumber = new Integer(variantFrequency.getHomozygoteCount());
+        AnnotationEvidenceProperty homozegoteProperty = createAnnotationEvidenceProperty(annotationEvidence, "homozygote count", homozygoteNumber.toString());
+
+        List<AnnotationEvidenceProperty> evidencePropertyList = new ArrayList<>();
+        evidencePropertyList.add(freqProperty);
+        evidencePropertyList.add(countProperty);
+        evidencePropertyList.add(numberProperty);
+        evidencePropertyList.add(homozegoteProperty);
+        annotationEvidence.setProperties(evidencePropertyList);
+    }
+
+    private void writeLog(Stack<String> logStack) {
         String logString = logStack.stream()
                 .collect(Collectors.joining(", ", "MATCHSTART ", " MATCHEND"));
         LOGGER.info(logString);
+    }
+
+    private void popLogStack(Stack<String> logStack, String parentLevel) {
         // Should pop until remove all logs for this isoform
         String logPop = "";
         do {
             logPop = logStack.pop();
-        } while (!logPop.startsWith("LISOFORM"));
+        } while (!logPop.startsWith(parentLevel));
     }
 }
 

@@ -72,8 +72,10 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			Set<Statement> mappedStatements = new HashSet<>();
 			trackedRawStatementIds.clear();
 
+			int cpt = 0;
 			for (Statement rawStatement : rawStatements) {
-
+				cpt++;
+				System.out.println("Handling rawStatement " + cpt + " / " + this.rawStatements.size());
 				if (isPhenotypicVariation(rawStatement)) {
 
 					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));

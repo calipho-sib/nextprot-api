@@ -79,6 +79,12 @@
 		   statistics="true">
 	</cache>
 	
+	<cache name="entry-gene-names-and-alt-names" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
 	<cache name="term-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="200" eternal="true" memoryStoreEvictionPolicy="LRU"
@@ -263,6 +269,7 @@
 	<cache name="github-pages" maxEntriesLocalHeap="1000" eternal="true" statistics="true" />
 	<cache name="github-tree" maxEntriesLocalHeap="10" eternal="true" statistics="true" />
 	<cache name="github-news" maxEntriesLocalHeap="1" eternal="true" statistics="true" />
+	<cache name="github-stat-list" maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 
 
 	<!-- Publications for in memory processing during ETL -->

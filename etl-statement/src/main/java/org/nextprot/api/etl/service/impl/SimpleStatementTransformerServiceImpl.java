@@ -70,8 +70,13 @@ public class SimpleStatementTransformerServiceImpl implements SimpleStatementTra
 
 		List<Statement> result = new ArrayList<>();
 
+		System.out.println("subjects:" + subjects.size());
+		
 		for (Statement subject : subjects) {
-
+			
+			System.out.println("subject " + subject.getEntryAccession() + " - " + subject.getAnnotationCategory()+ " - " + 
+											subject.getAnnotationId() + " - " + subject.getStatementId());
+			
 			Statement transformedStatement = transformSubject(subject);
 
 			if (transformedStatement != null) {

@@ -49,6 +49,7 @@ public enum CvDatabasePreferredLink {
 	UNIPROT_DOMAIN("https://www.uniprot.org/uniprot/?query=annotation%3A%28type%3Apositional+%s%29"),
 	UNIPROT_KEYWORDS("http://www.uniprot.org/keywords/%s"),
 	UNIPROT_LOCATIONS("http://www.uniprot.org/locations/%s"),
+	VARIO("http://purl.obolibrary.org/obo/%s"),
 	;
 
 	private final String link;

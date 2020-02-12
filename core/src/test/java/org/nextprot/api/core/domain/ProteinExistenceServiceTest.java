@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -61,9 +63,20 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
+	public void shouldBeOK() {
+		assertTrue(   todayIsAfter("22 Feb 1999"));
+		assertTrue( ! todayIsAfter("18 Jul 2028"));
+	}
+	
+	
+	@Test
 	public void shouldMatchRule4() {
-
-		Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
+		
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2020")) { 
+			Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
+		}
 	}
 
 	@Test
@@ -74,8 +87,12 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldNotMatchRule4BecauseNotDetected() {
-
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q9HB31"));
+		// cases since release 2020_02
+		// with N "not detected" and 0 "detected" in RNA-seq evidences of expression profile annotations
+		// NX_Q5VXH4	0	65
+		// NX_Q96LA9	0	65
+		// NX_P0C7T3	0	56
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule4("NX_Q5VXH4"));
 	}
 
 	@Test
@@ -146,10 +163,14 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldInferFromRule4() {
 
-		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2020")) { 
 
-		Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+			Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
+			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
+		}
 	}
 
 	@Test
@@ -160,23 +181,29 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 	}
 
-	// Could not find an entry that match this rule:
-	// the following query was returning NX_Q9ULZ1 but infortunately SP_PER_05 inferred the promotion
-	//SELECT  * WHERE {
-	//  ?entry :existence /:level 2 .
-	//  ?entry :isoform ?iso .
-	//  ?iso :binaryInteraction ?a .
-	//  ?a :evidence ?e.
-	//  ?e :assignedBy source:NextProt
-	//}
-	@Ignore
+	
+	
+	
 	@Test
 	public void shouldInferFromRule6() {
 
-		ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_Q9ULZ1");
-
-		Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
-		Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
+//		Example in data release 2020_02		
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_A6NEM1 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CL80 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CL81 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_P0CV98 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q07627 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q6S545 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q6UXS9 to PE1
+//		INFO: ProteinExistence: promotedAccordingToRule6: NX_Q9BXU9 to PE1
+		
+		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
+		
+		if (todayIsAfter("10 Mar 2020")) { 
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A6NEM1");
+			Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
+			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
+		}
 	}
 
 	@Ignore

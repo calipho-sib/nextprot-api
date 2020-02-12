@@ -66,10 +66,19 @@
 				<cv-term accession="$evidence.getEvidenceCodeAC()" terminology="$StringUtils.camelToKebabCase($evidence.getEvidenceCodeOntology())">$evidence.getEvidenceCodeName()</cv-term>
 				#if(!$evidence.getPropertiesNames().isEmpty())
                     <property-list>
-						#foreach($pk in $evidence.getPropertiesNames())
-							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
+					#foreach($pname in $evidence.getPropertiesNames())
+						#set($epw=false)
+						#set($epw=$NXUtils.getXMLPropertyWriter($annotation.getAPICategory(), $pname))
+						#if($epw)
+							#set($UNESCAPED_CDATA = $epw.formatValue($evidence.getPropertyRawValue($pname)))
+							<property name="$pname" value="$UNESCAPED_CDATA" />
+						#else
+							<property name="$pname" value="$evidence.getPropertyValue($pname)" />
 						#end
-					</property-list>
+					#end
+                    </property-list>
+					
+					
 				#end
 				#if($evidence.getNote())
 					#set($UNESCAPED_CDATA = $evidence.getNote())

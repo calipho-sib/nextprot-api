@@ -15,6 +15,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.nextprot.api.core.service.SequenceUnicityService;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
@@ -62,7 +65,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		
 		List<String> pepNames = this.peptideNamesService.findAllPeptideNamesByMasterId(uniqueName);
 		Map<String,List<AnnotationEvidence>> evidences = this.peptideMappingDao.findPeptideAnnotationEvidencesMap(pepNames, withNatural); // nat=true,synth=false
-		attachPeptideEvidencesToAnnotations(annotations, evidences);	
+		attachPeptideEvidencesToAnnotations(annotations, evidences);
+		if (withNatural) attachPeptideSetsToAnnotations(annotations);
 		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, 
 		//since the cache returns a reference) copy on read and copy on write is too much time consuming
@@ -70,6 +74,42 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		
 	}
 
+	static void attachPeptideSetsToAnnotations(List<Annotation> annotations) {
+		for (Annotation annot: annotations) attachPeptideSets(annot);
+	}
+	
+	static void attachPeptideSets(Annotation annot) {
+		Set<String> peptideSets = new HashSet<>();
+		for (AnnotationEvidence evi: annot.getEvidences()) {
+			peptideSets.add(computePeptideSet(evi.getResourceDb(), evi.getAssignedBy()));
+		}
+		for (String ps: peptideSets) {
+			AnnotationProperty prop = new AnnotationProperty();
+			prop.setAnnotationId(annot.getAnnotationId());
+			prop.setName("peptideSet");
+			prop.setValue(ps);
+			annot.addProperty(prop);
+		}
+	}
+	
+	/*
+	 * Returns a string identifying a peptide set.
+	 * The peptide set is important because it is involved in rules promoting PE.
+	 * We return 1 peptide set for any massive evidence, peptide atlas evidences 
+	 * are divided into 2 peptide sets: phosphoproteome and others. Finally any 
+	 * nextprot submission of pubmed paper is considered as a separate peptide set.
+	 */
+	static String computePeptideSet(String db, String src) {
+		String result = null;
+		if (XrefDatabase.PEPTIDE_ATLAS.getName().equals(db)) {
+			return "PeptideAtlas human phosphoproteome".equals(src) ? src : db ;
+		}
+		if (XrefDatabase.MASSIVE.getName().equals(db)) return db;
+		if (XrefDatabase.PUB_MED.getName().equals(db)) return src;
+		if (XrefDatabase.NEXTPROT_SUBMISSION.getName().equals(db)) return src;
+		return result;
+	}
+	
 	
 	static String getMappingAnnotationPeptideName(Annotation annot) {
 		// retrieve pep name from annotation properties
