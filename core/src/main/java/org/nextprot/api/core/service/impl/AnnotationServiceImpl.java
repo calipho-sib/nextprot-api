@@ -10,7 +10,6 @@ import com.google.common.collect.Multimaps;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.TerminologyCv;
@@ -37,7 +36,6 @@ import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static org.nextprot.api.core.domain.Overview.EntityNameClass.GENE_NAMES;
 
@@ -262,7 +260,8 @@ public class AnnotationServiceImpl implements AnnotationService {
         annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
         // Adds the variant frequencies to variant annotations
-        addGnomeADVariantFrequencies(entryName, annotations);
+        variantFrequencyService.addFrequencyEvidences(entryName, annotations);
+
         if (!ignoreStatements) {
 
             String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()

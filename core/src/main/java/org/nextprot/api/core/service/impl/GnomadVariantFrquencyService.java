@@ -10,10 +10,12 @@ import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.VariantFrequencyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class GnomadVariantFrquencyService implements VariantFrequencyService {
 
     @Autowired
@@ -81,7 +83,6 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
 
                                     logStack.push("annotationvariantoriginalAA:" + annotation.getVariant().getOriginal());
                                     logStack.push("annotationvariantvariantAA:" + annotation.getVariant().getVariant());
-                                    Map<String, AnnotationIsoformSpecificity> isoformMap = annotation.getTargetingIsoformsMap();
 
                                     // Get variant frequency for this annotation
                                     List<VariantFrequency> variantFrequencyList = variantFrequencies.get(dbSNPId);
@@ -327,8 +328,4 @@ public class GnomadVariantFrquencyService implements VariantFrequencyService {
             logPop = logStack.pop();
         } while (!logPop.startsWith(parentLevel));
     }
-}
-
-class VariantMatch {
-
 }
