@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.nextprot</groupId>
+    <artifactId>nextprot-api-master</artifactId>
+    <version>2.25.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <description>An API to access and search for nextprot data</description>
+    <url>https://api.nextprot.org</url>
+
+    <developers>
+        <developer>
+            <name>NextProt Team</name>
+            <email>ndu@sib.swiss</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <spring.version>4.3.21.RELEASE</spring.version>
+        <project.version>${project.version}</project.version>
+        <spring-security.version>4.2.10.RELEASE</spring-security.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nextprot-snapshot-repo</id>
+            <url>http://miniwatt:8800/nexus/content/repositories/nextprot-snapshot-repo</url>
+        </snapshotRepository>
+        <repository>
+            <id>nextprot-repo</id>
+            <url>http://miniwatt:8800/nexus/content/repositories/nextprot-repo</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+
+        <!-- dependency plugin -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.nextprot</groupId>
+                                    <artifactId>nextprot-api-master</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <destFileName>nextprot-api-master-${project.version}.war</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${webapps.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
