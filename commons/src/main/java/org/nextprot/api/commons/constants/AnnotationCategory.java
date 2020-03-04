@@ -69,7 +69,9 @@ public enum AnnotationCategory implements Serializable {
 	PDB_MAPPING(116892, "3D structure", "pdbMapping", "PDB mapping", MAPPING),
 	PEPTIDE_MAPPING(-116892, "peptide mapping", "peptideMapping", "Peptide mapping", MAPPING),
 	SRM_PEPTIDE_MAPPING(-116893, "SRM peptide mapping", "srmPeptideMapping", "SRM Peptide mapping", MAPPING),
-	ANTIBODY_MAPPING(-116894, "antibody mapping", "antibodyMapping", "Antibody mapping", MAPPING),
+	ANTIBODY_MAPPING(-116894, "antibody mapping", "antibodyMapping", "Antibody mapping", MAPPING),	
+	// for ENYO data, similar to interacting region BUT not necessarily the minuimal region (may be larger than functional region)
+	INTERACTION_MAPPING(-116895, "interaction mapping", "interactionMapping", "Interaction mapping", MAPPING),
 
 	NON_CONSECUTIVE_RESIDUE(1031, "non-consecutive residues", "nonConsecutiveResidue", "Non-consecutive residue", POSITIONAL_ANNOTATION),
 	NON_TERMINAL_RESIDUE(1032, "non-terminal residue", "nonTerminalResidue", "Non-terminal residue", POSITIONAL_ANNOTATION),
