@@ -23,6 +23,10 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 			"http://kant.sib.swiss:9001/glyconnect",
 			new Specifications.Builder().build()),
 
+	ENYO("ENYO",
+			"http://kant.sib.swiss:9001/enyo",
+			new Specifications.Builder().build()),
+
 	GnomAD("gnomAD",
 			"http://kant.sib.swiss:9001/gnomad",
 			new Specifications.Builder()
