@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.StatementTableNames;
@@ -62,12 +62,12 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 			String columnNames = StringUtils.mkString(coreFields, "", ",", "");
 			if (customFields.size()>0) columnNames += ",EXTRA_FIELDS";
-			System.out.println("columnsNames: "+columnNames);
+			System.out.println("JDBCStatementLoaderServiceImpl columnsNames: "+columnNames);
 			List<String> bindVariablesList = new ArrayList<>();
 			for (int i=0 ; i<coreFields.size(); i++) bindVariablesList.add("?");
 			if (customFields.size()>0) bindVariablesList.add("?");
 			String bindVariables = StringUtils.mkString(bindVariablesList, "",",", "");
-			System.out.println("bindVariables: "+bindVariables);
+			System.out.println("JDBCStatementLoaderServiceImpl bindVariables: "+bindVariables);
 
 			pstmt = conn.prepareStatement(
 					"INSERT INTO nxflat." + tableName + " (" + columnNames + ") VALUES ( " + bindVariables + ")"
@@ -83,7 +83,7 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 				Map<String,String> extraMap = new HashMap<>();
 				for (StatementField sf : customFields) extraMap.put(sf.getName(), s.getValue(sf));
 				String extraValue = StringUtils.serializeAsJsonStringOrNull(extraMap);
-				System.out.println("extraValue:" + extraValue);
+				System.out.println("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
 				pstmt.setString(i, extraValue==null ? null : extraValue.replace("'", "''"));
 				pstmt.addBatch();
 			}

@@ -1,9 +1,9 @@
 package org.nextprot.api.etl.service;
 
 
-import org.nextprot.api.etl.StatementSource;
-
 import java.io.IOException;
+
+import org.nextprot.api.core.app.StatementSource;
 
 /**
  * Extract, transform, load Statements from Json data source to nxflat database
