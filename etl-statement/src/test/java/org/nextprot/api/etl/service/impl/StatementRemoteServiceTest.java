@@ -2,7 +2,7 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.commons.statements.Statement;
 import org.springframework.util.Assert;
 

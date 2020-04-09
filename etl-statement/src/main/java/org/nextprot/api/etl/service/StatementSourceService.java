@@ -1,9 +1,9 @@
 package org.nextprot.api.etl.service;
 
-import org.nextprot.api.etl.StatementSource;
-
 import java.io.IOException;
 import java.util.Set;
+
+import org.nextprot.api.core.app.StatementSource;
 
 /**
  * Provide statements from Json files for a specific source and release

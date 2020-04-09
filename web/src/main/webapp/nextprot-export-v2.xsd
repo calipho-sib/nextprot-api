@@ -956,6 +956,7 @@
 						<xs:enumeration value="initiator-methionine"/>
 						<xs:enumeration value="interacting-region"/>
 						<xs:enumeration value="interaction-info"/>
+						<xs:enumeration value="interaction-mapping"/>
 						<xs:enumeration value="intramembrane-region"/>
 						<xs:enumeration value="kinetic-km"/>
 						<xs:enumeration value="kinetic-note"/>

@@ -70,11 +70,11 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	
 	
 	@Test
-	public void shouldMatchRule4() {
+	public void shouldMatchRule4_After_April_10() {
 		
 		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
 		
-		if (todayIsAfter("10 Mar 2020")) { 
+		if (todayIsAfter("10 Apr 2020")) { 
 			Assert.assertTrue(proteinExistenceInferenceService.promotedAccordingToRule4("NX_P59646"));
 		}
 	}
@@ -161,11 +161,11 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
-	public void shouldInferFromRule4() {
+	public void shouldInferFromRule4_After_April_10() {
 
 		// if this fails after 10 March, then install nextprot and nxflat db of release 2020_02 to DEV pleatform (crick)
 		
-		if (todayIsAfter("10 Mar 2020")) { 
+		if (todayIsAfter("10 Apr 2020")) { 
 
 			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
 			Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());

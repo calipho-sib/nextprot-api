@@ -1,7 +1,5 @@
-package org.nextprot.api.etl;
+package org.nextprot.api.core.app;
 
-
-import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.Specifications;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.statements.specs.StatementSpecifications;
@@ -23,6 +21,13 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 			"http://kant.sib.swiss:9001/glyconnect",
 			new Specifications.Builder().build()),
 
+	ENYO("ENYO",
+			"http://kant.sib.swiss:9001/enyo",
+			new Specifications.Builder()
+					.withExtraFields(Arrays.asList("PSIMI_ID"))
+					.build()),
+
+	// unused code afaik (Kasun and Pam)
 	GnomAD("gnomAD",
 			"http://kant.sib.swiss:9001/gnomad",
 			new Specifications.Builder()
@@ -37,6 +42,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 				protected void updateDictionaryOfConstants(Map<String, StatementSource> dictionary) {
 
 					for (StatementSource source : values()) {
+						dictionary.put(source.getSourceName(), source);
 						dictionary.put(source.toString().toLowerCase(), source);
 						dictionary.put(source.toString().toUpperCase(), source);
 					}
@@ -67,42 +73,47 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 
 	@Override
 	public StatementField getField(String fieldName) {
-
 		return specifications.getField(fieldName);
 	}
 
 	@Override
 	public boolean hasField(String fieldName) {
-
 		return specifications.hasField(fieldName);
 	}
 
 	@Override
 	public Collection<StatementField> getFields() {
-
 		return specifications.getFields();
 	}
 
 	@Override
-	public int size() {
+	public Collection<StatementField> getCoreFields() {
+		return specifications.getCoreFields();
+	}
 
+	@Override
+	public Collection<StatementField> getCustomFields() {
+		return specifications.getCustomFields();
+
+	}
+
+	@Override
+	public int size() {
 		return specifications.size();
 	}
 
 	@Override
-	public CompositeField searchCompositeFieldOrNull(StatementField field) {
-
-		return specifications.searchCompositeFieldOrNull(field);
-	}
-
-	@Override
 	public EnumConstantDictionary<StatementSource> getEnumConstantDictionary() {
-
 		return dictionaryOfConstants;
 	}
 
+	
 	public static StatementSource valueOfKey(String value) {
-
 		return dictionaryOfConstants.valueOfKey(value);
 	}
+
+	public static boolean hasKey(String value) {
+		return dictionaryOfConstants.haskey(value);
+	}
+	
 }

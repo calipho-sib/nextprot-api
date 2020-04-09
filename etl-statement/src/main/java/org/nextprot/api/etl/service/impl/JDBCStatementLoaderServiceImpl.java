@@ -1,12 +1,12 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.StatementTableNames;
-import org.nextprot.commons.statements.specs.CompositeField;
 import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.nextprot.commons.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -42,8 +44,12 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	
 	private void load(Collection<Statement> statements, String tableName, StatementSource source) throws SQLException {
 
-		List<StatementField> fields = source.getFields().stream()
-				.filter(field -> field instanceof CoreStatementField || field instanceof CompositeField)
+		List<StatementField> customFields = source.getFields().stream()
+				.filter(field -> field instanceof CustomStatementField)
+				.collect(Collectors.toList());
+		
+		List<StatementField> coreFields = source.getFields().stream()
+				.filter(field -> field instanceof CoreStatementField)
 				.collect(Collectors.toList());
 
 		java.sql.Statement deleteStatement = null;
@@ -54,34 +60,31 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 			deleteStatement = conn.createStatement();
 			deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
 
-			String columnNames = StringUtils.mkString(fields, "", ",", "");
+			String columnNames = StringUtils.mkString(coreFields, "", ",", "");
+			if (customFields.size()>0) columnNames += ",EXTRA_FIELDS";
+			System.out.println("JDBCStatementLoaderServiceImpl columnsNames: "+columnNames);
 			List<String> bindVariablesList = new ArrayList<>();
-			for (int i=0 ; i<fields.size(); i++) {
-				bindVariablesList.add("?");
-			}
+			for (int i=0 ; i<coreFields.size(); i++) bindVariablesList.add("?");
+			if (customFields.size()>0) bindVariablesList.add("?");
 			String bindVariables = StringUtils.mkString(bindVariablesList, "",",", "");
+			System.out.println("JDBCStatementLoaderServiceImpl bindVariables: "+bindVariables);
 
 			pstmt = conn.prepareStatement(
 					"INSERT INTO nxflat." + tableName + " (" + columnNames + ") VALUES ( " + bindVariables + ")"
 			);
 
 			for (Statement s : statements) {
-				int i=0;
-				for (StatementField sf : fields) {
-					String value;
-					if (CoreStatementField.SOURCE.equals(sf)){
-						value = source.getSourceName();
-					}
-					else {
-						value = s.getValue(sf);
-					}
-					if (value != null) {
-						pstmt.setString(i + 1, value.replace("'", "''"));
-					} else {
-						pstmt.setNull(i + 1, java.sql.Types.VARCHAR);
-					}
+				int i=1;
+				for (StatementField sf : coreFields) {
+					String value = CoreStatementField.SOURCE.equals(sf) ? source.getSourceName() : s.getValue(sf);
+					pstmt.setString(i, value==null ? null :  value.replace("'", "''"));
 					i++;
 				}
+				Map<String,String> extraMap = new HashMap<>();
+				for (StatementField sf : customFields) extraMap.put(sf.getName(), s.getValue(sf));
+				String extraValue = StringUtils.serializeAsJsonStringOrNull(extraMap);
+				System.out.println("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
+				pstmt.setString(i, extraValue==null ? null : extraValue.replace("'", "''"));
 				pstmt.addBatch();
 			}
 
