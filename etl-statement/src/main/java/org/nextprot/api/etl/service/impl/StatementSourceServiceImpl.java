@@ -4,7 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementSourceService;
 import org.springframework.stereotype.Service;
 import sun.net.www.protocol.http.HttpURLConnection;

@@ -5,7 +5,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -21,6 +21,14 @@ public class StringUtils {
 		throw new AssertionError("should not be instanciable");
 	}
 
+	public static boolean isEnsgAccession(String accession) {
+		return accession !=null && accession.startsWith("ENSG");
+	}
+	
+	public static boolean isVirtualGeneAccession(String accession) {
+		return accession !=null && accession.startsWith("VG_");
+	}
+	
 	public static StringFormatter createXCaseBuilder(String string) {
 
 		return new StringFormatter(string);

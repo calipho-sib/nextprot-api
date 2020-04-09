@@ -2,7 +2,7 @@ package org.nextprot.api.etl.service.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
