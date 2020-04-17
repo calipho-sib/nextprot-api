@@ -18,6 +18,7 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,13 +123,20 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     private String buildAnnotationEvidenceKey(AnnotationEvidence evidence) {
 
-        return new StringBuilder()
-                .append(String.valueOf(evidence.getResourceId())).append(".")
-                .append(String.valueOf(evidence.getExperimentalContextId())).append(".")
-                .append(String.valueOf(evidence.isNegativeEvidence())).append(".")
+        StringBuilder keyBuilder = new StringBuilder();
+        keyBuilder.append(evidence.getResourceId()).append(".")
+                .append(evidence.getExperimentalContextId()).append(".")
+                .append(evidence.isNegativeEvidence()).append(".")
                 .append(evidence.getAssignedBy()).append(".")
                 .append(evidence.getEvidenceCodeAC())
                 .toString();
+
+        String psimiId = evidence.getProperties().get("psimiId");
+        if(psimiId != null) {
+            keyBuilder.append(psimiId);
+        }
+
+        return keyBuilder.toString();
     }
 
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
@@ -146,9 +154,11 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(EVIDENCE_INTENSITY), "intensity");
         AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
         AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+        // PSIMI ID property
+        AnnotationEvidenceProperty psimiProperty = addPropertyIfPresent(s.getValue(new CustomStatementField("PSIMI_ID")), "psimiId");
 
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
