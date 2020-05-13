@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
@@ -13,8 +14,10 @@ import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
@@ -297,9 +300,33 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 3);
-		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get("psimiId"), "MI:0003");
+
+		LinkedList<AnnotationEvidence> enyoAnnoataionEvidences = annotation.getEvidences()
+				.stream()
+				.filter(evidence -> "ENYO".equals(evidence.getAssignedBy()))
+				.collect(Collectors.toCollection(LinkedList::new));
+
+		// There must be two enyo annotation evidences
+		Assert.assertTrue(enyoAnnoataionEvidences.size() == 2);
+
+		// Enyo annotation evidence must have psimiID property
+		AnnotationEvidence enyo1 = enyoAnnoataionEvidences.get(0);
+		AnnotationEvidence enyo2 = enyoAnnoataionEvidences.get(1);
+		String enyo1psimiId = enyo1.getProperties().get("psimiId");
+		String enyo2psimiId = enyo2.getProperties().get("psimiId");
+		Assert.assertNotNull(enyo1psimiId);
+		Assert.assertNotNull(enyo2psimiId);
 		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), "MI:0008");
-		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get("psimiId"), null);
+		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get("psimiId"), "MI:0003");
+
+		// There must be a nextprot evidence
+		LinkedList<AnnotationEvidence> nexprotAnnoataionEvidences = annotation.getEvidences()
+				.stream()
+				.filter(evidence -> "Nextprot".equals(evidence.getAssignedBy()))
+				.collect(Collectors.toCollection(LinkedList::new));
+		Assert.assertEquals(nexprotAnnoataionEvidences.size(),1);
+		Assert.assertNull(nexprotAnnoataionEvidences.get(0).getProperties().get("psimiId"));
+
 	}
 
 }
