@@ -56,14 +56,14 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
     private boolean validate(RegionalFeatureQuery query, Isoform isoform) {
         int regionStart = query.getRegionStart();
         int regionEnd = query.getRegionEnd();
-        String region = isoform.getSequence().substring(regionStart - 1, regionEnd);
+        String regionFromQuery = query.getRegionSequence();
+        String regionFromIsoform = isoform.getSequence().substring(regionStart - 1, regionEnd);
 
-        if(region != null) {
-            return isoform.getSequence().contains(region);
+        if(regionFromQuery != null && regionFromIsoform != null) {
+            return regionFromQuery.equals(regionFromIsoform);
         } else {
             return false;
         }
-
     }
 
     /**

@@ -200,6 +200,8 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 			// Have to parse and build an isoform
 			Optional<String> isoSpecificAccession = statement.getOptionalIsoformAccession();
 			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession.toString(), featureType, regionStart,regionEnd);
+
+			// Should set the sequence read from the statement
 			result = regionIsoformMappingService.propagateFeature(query);
 
 		} else {

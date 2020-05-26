@@ -23,6 +23,11 @@ public class RegionalFeatureQuery extends BaseFeatureQuery {
      */
     private int regionEnd;
 
+    /**
+     * Sequence of the region query
+     */
+    private String regionSequence;
+
 
     public RegionalFeatureQuery(String accession, String featureType, int regionStart, int regionEnd) {
         this.accession = accession;
@@ -52,5 +57,13 @@ public class RegionalFeatureQuery extends BaseFeatureQuery {
 
     public int getRegionEnd() {
         return regionEnd;
+    }
+
+    public void setRegionSequence(String sequence) {
+        regionSequence = sequence;
+    }
+
+    public String getRegionSequence() {
+        return regionSequence;
     }
 }
