@@ -4,11 +4,11 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.OutOfBoundSequencePositionException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnexpectedFeatureQueryAminoAcidException;
 

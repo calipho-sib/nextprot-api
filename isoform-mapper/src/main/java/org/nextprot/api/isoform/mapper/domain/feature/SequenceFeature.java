@@ -1,8 +1,9 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.feature;
 
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 
 /**

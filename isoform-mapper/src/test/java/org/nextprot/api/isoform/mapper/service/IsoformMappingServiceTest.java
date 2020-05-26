@@ -16,13 +16,16 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceModification;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceModification;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -46,6 +50,9 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
     private IsoformMappingService service;
+
+    @Autowired
+    private RegionIsoformMappingService regionIsoformService;
 
     @Test
     public void shouldValidateVariantOnCanonicalIsoform() throws Exception {
@@ -491,6 +498,29 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQueryResult result = service.validateFeature(query);
 
         assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryException(query, new SequenceVariationBuildException(new VariationOutOfSequenceBoundException(408, 365))));
+    }
+
+    @Test
+    public void shouldGenerateResultsforRegionQuery() {
+        RegionalFeatureQuery query = new RegionalFeatureQuery("NX_P09455-1", "INTERACTION_MAPPING", 2, 84);
+        FeatureQueryResult result = regionIsoformService.propagateFeature(query);
+
+        Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> targetIsoforms = ((FeatureQuerySuccess)result).getData();
+        int targetIsoformCount = targetIsoforms.keySet().size();
+        // Must be two other isoforms
+        Assert.assertEquals(targetIsoformCount, 2);
+
+        // Isoform-2 NX_P09455-2
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso2 = targetIsoforms.get("NX_P09455-2");
+        Assert.assertEquals(iso2.getIsoformAccession(),"NX_P09455-2");
+        Assert.assertEquals(iso2.getBeginIsoformPosition().intValue(), 64);
+        Assert.assertEquals(iso2.getEndIsoformPosition().intValue(), 146);
+
+        // Isoform-3 NX_P09455-3
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso3 = targetIsoforms.get("NX_P09455-3");
+        Assert.assertEquals(iso3.getIsoformAccession(),"NX_P09455-3");
+        Assert.assertEquals(iso3.getBeginIsoformPosition().intValue(), 64);
+        Assert.assertEquals(iso3.getEndIsoformPosition().intValue(), 146);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

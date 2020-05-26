@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.feature.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +11,8 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
+import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceModification;
+import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceVariant;
 
 import java.text.ParseException;
 import java.util.Arrays;

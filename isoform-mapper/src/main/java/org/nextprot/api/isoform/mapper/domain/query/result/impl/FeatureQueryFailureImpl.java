@@ -1,8 +1,9 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.query.result.impl;
 
 import org.nextprot.api.commons.utils.ExceptionWithReason;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.BaseFeatureQueryResult;
 
 /**
  * Feature query failure class contain reason of the error

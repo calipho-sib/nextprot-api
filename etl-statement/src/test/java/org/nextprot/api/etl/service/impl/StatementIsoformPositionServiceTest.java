@@ -12,8 +12,8 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.domain.IsoformPositions;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.when;
 import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Met932LeuStatement;
 import static org.nextprot.api.etl.service.impl.SimpleStatementTransformerServiceTest.expectedSCN9Aiso3Val991LeuStatement;
-import static org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
+import static org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 public class StatementIsoformPositionServiceTest {

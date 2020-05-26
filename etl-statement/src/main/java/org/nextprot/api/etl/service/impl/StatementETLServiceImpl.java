@@ -131,14 +131,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private PreTransformProcessor preProcess(StatementSource source, ReportBuilder report) {
 
 		if (source == StatementSource.GlyConnect) {
-			return new GlyConnectPreProcessor(report);
-		}
-		else if (source == StatementSource.BioEditor) {
-			return new BioEditorPreProcessor();
-		}
-		else if (source == StatementSource.GnomAD) {
-			return new GnomADPreProcessor();
-		}
+            return new GlyConnectPreProcessor(report);
+        }
+        else if (source == StatementSource.BioEditor) {
+            return new BioEditorPreProcessor();
+        }
+        else if (source == StatementSource.GnomAD) {
+            return new GnomADPreProcessor();
+        }
 		return new StatementIdBuilder();
 	}
 
@@ -242,6 +242,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.collect(Collectors.toSet());
 		}
 	}
+
 	private class GnomADPreProcessor implements PreTransformProcessor {
 
 		@Override
@@ -255,6 +256,25 @@ public class StatementETLServiceImpl implements StatementETLService {
 								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
 								.addField(RESOURCE_TYPE, "database")
 								.addField(REFERENCE_DATABASE, StatementSource.GnomAD.getSourceName())
+								.build();
+					})
+					.collect(Collectors.toSet());
+		}
+	}
+
+	private class ENYOPreProcessor implements PreTransformProcessor {
+
+		@Override
+		public Set<Statement> process(Collection<Statement> statements) {
+
+			return statements.stream()
+					.filter(rs -> rs.hasField(NEXTPROT_ACCESSION.getName()))
+					.map(rs -> {
+						String nextprotAccession = rs.getValue(NEXTPROT_ACCESSION);
+						return new StatementBuilder(rs)
+								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
+								.addField(RESOURCE_TYPE, "database")
+								.addField(REFERENCE_DATABASE, StatementSource.ENYO.getSourceName())
 								.build();
 					})
 					.collect(Collectors.toSet());

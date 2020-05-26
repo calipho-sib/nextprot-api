@@ -1,7 +1,9 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.isoform.mapper.domain.query.BaseFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
 
 import java.util.ArrayList;
 import java.util.List;

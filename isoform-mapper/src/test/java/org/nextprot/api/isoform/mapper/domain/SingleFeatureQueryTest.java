@@ -3,6 +3,8 @@ package org.nextprot.api.isoform.mapper.domain;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 
 public class SingleFeatureQueryTest {
 

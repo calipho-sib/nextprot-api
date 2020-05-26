@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariantTest;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceVariantTest;
 
 import java.text.ParseException;
 import java.util.Arrays;

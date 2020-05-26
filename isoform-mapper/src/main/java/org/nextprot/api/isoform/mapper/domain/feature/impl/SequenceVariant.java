@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.feature.impl;
 
 import org.nextprot.api.commons.app.ApplicationContextProvider;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationBuildException;
@@ -15,8 +15,8 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParseException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownGeneNameException;
