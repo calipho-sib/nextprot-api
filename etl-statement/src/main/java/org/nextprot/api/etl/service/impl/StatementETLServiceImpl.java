@@ -261,26 +261,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.collect(Collectors.toSet());
 		}
 	}
-
-	private class ENYOPreProcessor implements PreTransformProcessor {
-
-		@Override
-		public Set<Statement> process(Collection<Statement> statements) {
-
-			return statements.stream()
-					.filter(rs -> rs.hasField(NEXTPROT_ACCESSION.getName()))
-					.map(rs -> {
-						String nextprotAccession = rs.getValue(NEXTPROT_ACCESSION);
-						return new StatementBuilder(rs)
-								.addField(ENTRY_ACCESSION, IsoformUtils.findEntryAccessionFromEntryOrIsoformAccession(nextprotAccession))
-								.addField(RESOURCE_TYPE, "database")
-								.addField(REFERENCE_DATABASE, StatementSource.ENYO.getSourceName())
-								.build();
-					})
-					.collect(Collectors.toSet());
-		}
-	}
-
 	private class GlyConnectPreProcessor implements PreTransformProcessor {
 
 		private final ReportBuilder report;
