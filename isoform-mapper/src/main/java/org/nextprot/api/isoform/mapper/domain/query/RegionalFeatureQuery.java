@@ -1,7 +1,5 @@
 package org.nextprot.api.isoform.mapper.domain.query;
 
-import org.nextprot.api.isoform.mapper.domain.query.BaseFeatureQuery;
-
 import java.util.List;
 
 /**

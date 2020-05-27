@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.domain.IsoformPositions;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.RegionFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
@@ -21,10 +22,13 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -191,19 +195,28 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 			int regionStart = Integer.parseInt(statement.getValue(LOCATION_BEGIN));
 			int regionEnd = Integer.parseInt(statement.getValue(LOCATION_END));
 
-
-			// For interactoin mapping all statements are isoform specific
+			// For interaction mapping all statements are isoform specific
 			// i.e we have to do;
 			// validate if the interacting region exists
 			// propagate it to other isoforms
 
 			// Have to parse and build an isoform
-			Optional<String> isoSpecificAccession = statement.getOptionalIsoformAccession();
-			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession.toString(), featureType, regionStart,regionEnd);
+			String isoSpecificAccession = statement.getEntryAccession();
+			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession, featureType, regionStart,regionEnd);
 
-			// Should set the sequence read from the statement
-			result = regionIsoformMappingService.propagateFeature(query);
-
+			//TODO: Is there a better way to handle extra fields for transformation??
+			Optional<StatementField> mappingSequenceField = statement.keySet()
+					.stream()
+					.filter(statementField -> statementField instanceof CustomStatementField && statementField.getName() == "MAPPING_SEQUENCE")
+					.findFirst();
+			if(mappingSequenceField.isPresent()) {
+				query.setRegionSequence(statement.getValue(mappingSequenceField.get()));
+				// Should set the sequence read from the statement
+				result = regionIsoformMappingService.propagateFeature(query);
+			} else {
+				result = new RegionFeatureQuerySuccessImpl(query);
+				LOGGER.error("Error in source statement; missing mapping sequence");
+			}
 		} else {
 			SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());
 			if (!isoSpecific) {

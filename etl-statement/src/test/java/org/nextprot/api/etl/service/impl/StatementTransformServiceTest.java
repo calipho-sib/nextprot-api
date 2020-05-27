@@ -134,6 +134,45 @@ public class StatementTransformServiceTest {
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
 	}
 
+	@Test
+	public void shouldPropagatePropagableRegionToOtherIsoform() throws IOException{
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");
+
+		//Interaction mapping
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
+		Statement regionalMappedStatement = mappedStatements.stream()
+				.filter(new AnnotationCategoryPredicate(AnnotationCategory.INTERACTION_MAPPING))
+				.findFirst()
+				.orElseThrow(RuntimeException::new);
+		String regionalMappedStatementIsoformJson = regionalMappedStatement.getValue(TARGET_ISOFORMS);
+
+		Assert.assertEquals(3, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson).size());
+		Assert.assertEquals("[{\"ASSIGNED_BY\": \"ENYO\",\n" +
+				"    \"ASSIGMENT_METHOD\": \"curated\",\n" +
+				"    \"PSIMI_ID\": \"MI:0096\",\n" +
+				"    \"NEXTPROT_ACCESSION\": \"NX_Q9Y6Q6\",\n" +
+				"    \"NEXTPROT_ISOFORM_ACCESSION\": \"NX_Q9Y6Q6-1\",\n" +
+				"    \"ENTRY_ACCESSION\": \"NX_Q9Y6Q6\",\n" +
+				"    \"LOCATION_END\": \"616\",\n" +
+				"    \"ANNOTATION_CATEGORY\": \"interaction-mapping\",\n" +
+				"    \"NEXTPROT_OCCURRENCE_IDENTITY\": \"100\",\n" +
+				"    \"BIOLOGICAL_OBJECT_TYPE\": \"PROTEIN\",\n" +
+				"    \"REFERENCE_ACCESSION\": \"9852070\",\n" +
+				"    \"BIOLOGICAL_OBJECT_NAME\": \"TRAF6\",\n" +
+				"    \"MAPPING_SEQUENCE\": \"GDIIVVYVSQTSQEGAAAAAEPMGRPVQEETLARRDSFAGNGPRFPDPCGGPEGLREPEKASRPVQEQGGAKA\",\n" +
+				"    \"SOURCE\": \"ENYO\",\n" +
+				"    \"EVIDENCE_CODE\": \"ECO:0000353\",\n" +
+				"    \"BIOLOGICAL_OBJECT_ACCESSION\": \"NX_Q9Y4K3\",\n" +
+				"    \"ANNOT_SOURCE_ACCESSION\": \"7924\",\n" +
+				"    \"LOCATION_BEGIN\": \"544\",\n" +
+				"    \"GENE_NAME\": \"TNFRSF11A\",\n" +
+				"    \"EVIDENCE_QUALITY\": \"GOLD\",\n" +
+				"    \"REFERENCE_DATABASE\": \"PubMed\",\n" +
+				"    \"RESOURCE_TYPE\": \"publication\"}]", regionalMappedStatementIsoformJson);
+
+	}
+
 	static class AnnotationCategoryPredicate implements Predicate<Statement>{
 
 		private AnnotationCategory category = null;
