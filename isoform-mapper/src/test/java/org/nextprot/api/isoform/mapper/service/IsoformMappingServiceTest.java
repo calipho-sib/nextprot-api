@@ -503,8 +503,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldGenerateResultsforRegionQuery() {
         RegionalFeatureQuery query = new RegionalFeatureQuery("NX_P09455-1", "INTERACTION_MAPPING", 2, 84);
+        query.setRegionSequence("PVDFTGYWKMLVNENFEEYLRALDVNVALRKIANLLKPDKEIVQDGDHMIIRTLSTFRNYIMDFQVGKEFEEDLTGIDDRKCM");
         FeatureQueryResult result = regionIsoformService.propagateFeature(query);
 
+
+        Assert.assertTrue(result.isSuccess());
         Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> targetIsoforms = ((FeatureQuerySuccess)result).getData();
         int targetIsoformCount = targetIsoforms.keySet().size();
         // Must be two other isoforms

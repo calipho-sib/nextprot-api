@@ -18,7 +18,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.fail;
 import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
@@ -141,36 +144,19 @@ public class StatementTransformServiceTest {
 
 		//Interaction mapping
 		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
-		Statement regionalMappedStatement = mappedStatements.stream()
+		List<Statement> regionalMappedStatements = mappedStatements.stream()
 				.filter(new AnnotationCategoryPredicate(AnnotationCategory.INTERACTION_MAPPING))
-				.findFirst()
-				.orElseThrow(RuntimeException::new);
-		String regionalMappedStatementIsoformJson = regionalMappedStatement.getValue(TARGET_ISOFORMS);
+				.collect(Collectors.toList());
 
-		Assert.assertEquals(3, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson).size());
-		Assert.assertEquals("[{\"ASSIGNED_BY\": \"ENYO\",\n" +
-				"    \"ASSIGMENT_METHOD\": \"curated\",\n" +
-				"    \"PSIMI_ID\": \"MI:0096\",\n" +
-				"    \"NEXTPROT_ACCESSION\": \"NX_Q9Y6Q6\",\n" +
-				"    \"NEXTPROT_ISOFORM_ACCESSION\": \"NX_Q9Y6Q6-1\",\n" +
-				"    \"ENTRY_ACCESSION\": \"NX_Q9Y6Q6\",\n" +
-				"    \"LOCATION_END\": \"616\",\n" +
-				"    \"ANNOTATION_CATEGORY\": \"interaction-mapping\",\n" +
-				"    \"NEXTPROT_OCCURRENCE_IDENTITY\": \"100\",\n" +
-				"    \"BIOLOGICAL_OBJECT_TYPE\": \"PROTEIN\",\n" +
-				"    \"REFERENCE_ACCESSION\": \"9852070\",\n" +
-				"    \"BIOLOGICAL_OBJECT_NAME\": \"TRAF6\",\n" +
-				"    \"MAPPING_SEQUENCE\": \"GDIIVVYVSQTSQEGAAAAAEPMGRPVQEETLARRDSFAGNGPRFPDPCGGPEGLREPEKASRPVQEQGGAKA\",\n" +
-				"    \"SOURCE\": \"ENYO\",\n" +
-				"    \"EVIDENCE_CODE\": \"ECO:0000353\",\n" +
-				"    \"BIOLOGICAL_OBJECT_ACCESSION\": \"NX_Q9Y4K3\",\n" +
-				"    \"ANNOT_SOURCE_ACCESSION\": \"7924\",\n" +
-				"    \"LOCATION_BEGIN\": \"544\",\n" +
-				"    \"GENE_NAME\": \"TNFRSF11A\",\n" +
-				"    \"EVIDENCE_QUALITY\": \"GOLD\",\n" +
-				"    \"REFERENCE_DATABASE\": \"PubMed\",\n" +
-				"    \"RESOURCE_TYPE\": \"publication\"}]", regionalMappedStatementIsoformJson);
+		Statement mappedStatement1 = regionalMappedStatements.get(0);
+		String regionalMappedStatementIsoformJson1 = mappedStatement1.getValue(TARGET_ISOFORMS);
+		Assert.assertEquals(2, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson1).size());
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q9Y6Q6-5\",\"specificity\":\"UNKNOWN\",\"begin\":340,\"end\":421},{\"isoformAccession\":\"NX_Q9Y6Q6-6\",\"specificity\":\"UNKNOWN\",\"begin\":326,\"end\":407}]", regionalMappedStatementIsoformJson1);
 
+		Statement mappedStatement2 = regionalMappedStatements.get(1);
+		String regionalMappedStatementIsoformJson2 = mappedStatement2.getValue(TARGET_ISOFORMS);
+		Assert.assertEquals(3, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson2).size());
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q9Y6Q6-2\",\"specificity\":\"UNKNOWN\",\"begin\":227,\"end\":299},{\"isoformAccession\":\"NX_Q9Y6Q6-3\",\"specificity\":\"UNKNOWN\",\"begin\":265,\"end\":337},{\"isoformAccession\":\"NX_Q9Y6Q6-6\",\"specificity\":\"UNKNOWN\",\"begin\":530,\"end\":602}]", regionalMappedStatementIsoformJson2);
 	}
 
 	static class AnnotationCategoryPredicate implements Predicate<Statement>{

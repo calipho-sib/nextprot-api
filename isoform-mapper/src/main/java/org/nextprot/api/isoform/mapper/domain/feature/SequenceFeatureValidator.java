@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.service;
+package org.nextprot.api.isoform.mapper.domain.feature;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;

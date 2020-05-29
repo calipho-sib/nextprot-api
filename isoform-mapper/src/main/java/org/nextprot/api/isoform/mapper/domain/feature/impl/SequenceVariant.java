@@ -20,7 +20,7 @@ import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParseException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownGeneNameException;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.List;

@@ -60,6 +60,7 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
         String regionFromIsoform = isoform.getSequence().substring(regionStart - 1, regionEnd);
 
         if(regionFromQuery != null && regionFromIsoform != null) {
+            // Alow tolerance
             return regionFromQuery.equals(regionFromIsoform);
         } else {
             return false;

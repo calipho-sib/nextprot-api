@@ -17,7 +17,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.HashMap;
