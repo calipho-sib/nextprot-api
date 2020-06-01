@@ -37,9 +37,9 @@ public class ReleaseInfoVersionsTest extends CoreUnitBaseTest {
 	
 	
 	@Test
-	public void shouldFindDataSources_After_April_10() {
+	public void shouldFindDataSources_After_Jun_15() {
 		
-		if (todayIsAfter("10 Apr 2020")) { 
+		if (todayIsAfter("15 Jun 2020")) { 
 			// we assume that at this date the db declared in application-dev.properties
 			// will contain the MassIVe datasource
 			int datasourcesSize = releaseInfoService.findReleaseDatasources().getDatasources().size();
