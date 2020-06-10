@@ -60,8 +60,8 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
         String regionFromIsoform = isoform.getSequence().substring(regionStart - 1, regionEnd);
 
         if(regionFromQuery != null && regionFromIsoform != null) {
-            // Alow tolerance
-            return regionFromQuery.equals(regionFromIsoform);
+            // Allow tolerance
+            return matchWithTolerance(regionFromQuery,regionFromIsoform, 0.05);
         } else {
             return false;
         }
@@ -80,7 +80,7 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
         int regionLength = regionEnd - regionStart + 1;
         String region = isoform.getSequence().substring(regionStart - 1, regionEnd);
 
-        RegionFeatureQuerySuccessImpl result = new RegionFeatureQuerySuccessImpl(query);
+        RegionFeatureQuerySuccessImpl result = new RegionFeatureQuerySuccessImpl(query, isoform);
 
         for (Isoform targetIsoform : isoformService.getOtherIsoforms(isoform.getIsoformAccession())) {
 
@@ -106,20 +106,10 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
                         }
                     } else {
                         // For sub sequences longer than 30 a mismatches are tolerated up to a level
-                        int unmatchCount = region.length();
-                        boolean matched = true;
-                        for(int i = 0; i < region.length(); i++) {
-                            if(region.charAt(i) != targetIsoformRegion.charAt(i)) {
-                                unmatchCount--;
-                                if((float)(unmatchCount/region.length()) > 0.05 ) {
-                                    matched = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if(matched) {
+
+                        if(matchWithTolerance(region, targetIsoformRegion, 0.05)) {
                             // Matching regions
-                            LOGGER.info("Matched isform regions with score " + ((regionLength - unmatchCount)/regionLength));
+                            LOGGER.info("Matched isform regions");
                             result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
                             continue;
@@ -136,5 +126,21 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
         return result;
     }
 
+
+    private boolean matchWithTolerance(String s, String r, double tolerance) {
+        int unmatchCount = s.length();
+        boolean matched = true;
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) != r.charAt(i)) {
+                unmatchCount--;
+                if((float)(unmatchCount/s.length()) > tolerance ) {
+                    matched = false;
+                    break;
+                }
+            }
+        }
+
+        return matched;
+    }
 }
 

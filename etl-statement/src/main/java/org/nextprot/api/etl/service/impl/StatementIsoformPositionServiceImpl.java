@@ -201,7 +201,13 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 			// propagate it to other isoforms
 
 			// Have to parse and build an isoform
-			String isoSpecificAccession = statement.getEntryAccession();
+			Optional<String> isoformSpecificOptional =  statement.getOptionalIsoformAccession();
+			String isoSpecificAccession;
+			if(isoformSpecificOptional.isPresent()) {
+				isoSpecificAccession = isoformSpecificOptional.get();
+			} else {
+				throw new NextProtException("Isoform specific accession is required in the statement");
+			}
 			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession, featureType, regionStart,regionEnd);
 
 			//TODO: Is there a better way to handle extra fields for transformation??
@@ -214,8 +220,8 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 				// Should set the sequence read from the statement
 				result = regionIsoformMappingService.propagateFeature(query);
 			} else {
-				result = new RegionFeatureQuerySuccessImpl(query);
 				LOGGER.error("Error in source statement; missing mapping sequence");
+				return null;
 			}
 		} else {
 			SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());

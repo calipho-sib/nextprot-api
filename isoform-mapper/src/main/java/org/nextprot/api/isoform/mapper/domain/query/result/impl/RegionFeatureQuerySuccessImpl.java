@@ -14,9 +14,10 @@ public class RegionFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Region
     private static final long serialVersionUID = 20180815L;
     private final Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> data;
 
-    public RegionFeatureQuerySuccessImpl(RegionalFeatureQuery query) {
+    public RegionFeatureQuerySuccessImpl(RegionalFeatureQuery query, Isoform isoform) {
         super(query);
         data = new TreeMap<>();
+        addMappedFeature(isoform, query.getRegionStart(), query.getRegionEnd());
     }
 
     public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {
