@@ -100,7 +100,7 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
                     // If the sub sequence is shorter or equal to 30, an exact match is required
                     if(projectedSequenceLegth <= 30) {
                         if(region.equals(targetIsoformRegion)) {
-                            result.addMappedFeature(isoform, targetIsoformRegionStart, targetIsoformRegionEnd);
+                            result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
                             continue;
                         }
