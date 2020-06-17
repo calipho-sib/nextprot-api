@@ -352,7 +352,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         BioObject bioObject;
 
-        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory)) {
+        // Both binary interaction and interaction mapping annotations are handled in the same way
+        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
 
             if (!bioObjectAccession.startsWith("NX_")) {
 
@@ -386,6 +387,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);
+
         } else {
             throw new NextProtException("Category not expected for bioobject " + annotationCategory);
         }
