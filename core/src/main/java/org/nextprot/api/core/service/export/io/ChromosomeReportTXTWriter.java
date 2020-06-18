@@ -16,6 +16,7 @@ import java.util.Arrays;
  */
 public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
+    private static final String ASSEMBLY = "GRCh38";
     private final PrintWriter writer;
 
     public ChromosomeReportTXTWriter(OutputStream os) {
@@ -35,6 +36,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
         writer.write("Description: Chromosome " + report.getSummary().getChromosome() + " report\n");
         writer.write("Name:        nextprot_chromosome_" + report.getSummary().getChromosome() + "\n");
         writer.write("Release:     "+ report.getDataRelease() + "\n");
+        writer.write("Assembly:    "+ ASSEMBLY + "\n");
         writer.write("\n----------------------------------------------------------------------------\n\n");
 
         writer.write("This file lists all neXtProt entries on chromosome "+report.getSummary().getChromosome()+"\n");
