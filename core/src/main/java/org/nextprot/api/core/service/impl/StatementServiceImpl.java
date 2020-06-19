@@ -1,7 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.StatementDao;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -74,7 +76,9 @@ public class StatementServiceImpl implements StatementService {
     public List<Annotation> getAnnotations(String entryAccession) {
 
         List<Annotation> list = getProteoformEntryAnnotations(entryAccession);
-        list.addAll(getNormalEntryAnnotations(entryAccession));
+        List<Annotation> normalEntryAnnotations = getNormalEntryAnnotations(entryAccession);
+        matchRelatedAnnotations(normalEntryAnnotations);
+        list.addAll(normalEntryAnnotations);
 
         return list;
     }
@@ -119,6 +123,31 @@ public class StatementServiceImpl implements StatementService {
         } catch (DbXrefServiceImpl.MissingCvDatabaseException e) {
 
             throw new NextProtException("Cannot create dbxref for GlyConnect statement " + statement.getStatementId() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Matches the interaction mapping and binary interaction annotations
+     * @param annotations
+     */
+    private void matchRelatedAnnotations(List<Annotation> annotations) {
+        List<Annotation> binaryInteractions = annotations.stream()
+                .filter(annotation -> AnnotationCategory.BINARY_INTERACTION.equals(annotation.getCategory()))
+                .collect(Collectors.toList());
+
+        List<Annotation> interactionMappings = annotations.stream()
+                .filter(annotation -> AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getCategory()))
+                .collect(Collectors.toList());
+
+        for(Annotation interactionMapping: interactionMappings) {
+            for(Annotation binaryInteraction: binaryInteractions) {
+                BioObject interactantFromBinaryInteraction = binaryInteraction.getBioObject();
+                BioObject interactantFromInteractionMapping = interactionMapping.getBioObject();
+                if(interactantFromBinaryInteraction.getAccession().equals(interactantFromInteractionMapping.getAccession())) {
+                    binaryInteraction.addRelatedAnnotationName(interactionMapping.getUniqueName());
+                    interactionMapping.addRelatedAnnotationName(binaryInteraction.getUniqueName());
+                }
+            }
         }
     }
 }

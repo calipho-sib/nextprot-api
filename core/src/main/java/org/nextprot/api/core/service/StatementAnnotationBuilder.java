@@ -10,10 +10,7 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -335,6 +332,14 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                     (bioObjectAccession != null && !bioObjectAccession.isEmpty())) {
 
                 annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
+            }
+
+            // For interaction mappings, add the interacting region from statment as a property
+            if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setName("interacting-region");
+                annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
+                annotation.addProperty(annotationProperty);
             }
 
             annotations.add(annotation);

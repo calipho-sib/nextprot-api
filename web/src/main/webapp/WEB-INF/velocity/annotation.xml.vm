@@ -47,6 +47,14 @@
 		#end
 	#end
 
+	#if($annotation.getRelatedAnnotationNames())
+		<related-annotations>
+			#foreach($annotationName in $annotation.getRelatedAnnotationNames())
+				<related-to unique-name="$annotationName"/>
+			#end
+		</related-annotations>
+	#end
+
 	## might have no properties so need to check
 	#set($annotationProperties = $annotation.getPropertiesExceptName("rank"))
 	#if(!$annotationProperties.isEmpty())
@@ -89,5 +97,5 @@
     </evidence-list>
 	#end
 	#set($target-isoform-list = $annotation.getTargetingIsoformsMap())
-	#parse('target-isoform-list-annotation.xml.vm')	
+	#parse('target-isoform-list-annotation.xml.vm')
 </annotation>
