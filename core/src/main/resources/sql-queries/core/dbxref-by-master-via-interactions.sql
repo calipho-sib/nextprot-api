@@ -8,5 +8,6 @@ inner join nextprot.partnership_resource_assoc evi on (p.partnership_id=evi.part
 inner join nextprot.db_xrefs px on (evi.resource_id=px.resource_id)
 inner join nextprot.cv_databases db on (px.cv_database_id=db.cv_id)
 inner join nextprot.cv_database_categories dbc on (dbc.cv_id=db.cv_category_id) 
-where si.unique_name like :uniqueName || '%'
+where si.cv_type_id in (1,2) -- makes it faster !
+and si.unique_name like :uniqueName || '%'
 
