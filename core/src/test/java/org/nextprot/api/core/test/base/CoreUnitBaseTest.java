@@ -28,7 +28,7 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 @ContextConfiguration("classpath:spring/core-context.xml")
 public abstract class CoreUnitBaseTest extends AbstractUnitBaseTest{
 
-	public boolean todayIsAfter(String date) {
+	public static boolean todayIsAfter(String date) {
 		Date somedate = new Date(date);
 		Date now = new Date();
 		return now.after(somedate);
