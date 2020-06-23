@@ -132,11 +132,11 @@ public class StatementServiceImpl implements StatementService {
      */
     private void matchRelatedAnnotations(List<Annotation> annotations) {
         List<Annotation> binaryInteractions = annotations.stream()
-                .filter(annotation -> AnnotationCategory.BINARY_INTERACTION.equals(annotation.getCategory()))
+                .filter(annotation -> AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory()))
                 .collect(Collectors.toList());
 
         List<Annotation> interactionMappings = annotations.stream()
-                .filter(annotation -> AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getCategory()))
+                .filter(annotation -> AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory()))
                 .collect(Collectors.toList());
 
         for(Annotation interactionMapping: interactionMappings) {
