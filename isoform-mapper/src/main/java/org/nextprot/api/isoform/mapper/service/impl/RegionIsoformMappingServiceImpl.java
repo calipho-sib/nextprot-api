@@ -43,7 +43,8 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
             // Propagate
             return propagate(query, isoform);
         } else {
-            return null;
+            RegionFeatureQuerySuccessImpl result = new RegionFeatureQuerySuccessImpl(query, isoform);
+            return result;
         }
     }
 
@@ -128,6 +129,10 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
 
 
     private boolean matchWithTolerance(String s, String r, double tolerance) {
+        if(s.length() != r.length()) {
+            LOGGER.warn("Sequences are not in the same length: " + s + " " + r);
+            return false;
+        }
         int unmatchCount = s.length();
         boolean matched = true;
         for(int i = 0; i < s.length(); i++) {
