@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
 @Api(name = "Admin tasks", description = "Admin operations", group="Admin")
-@ApiAuthBasic(roles={"ROLE_ADMIN"})
+//@ApiAuthBasic(roles={"ROLE_ADMIN"})
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);
