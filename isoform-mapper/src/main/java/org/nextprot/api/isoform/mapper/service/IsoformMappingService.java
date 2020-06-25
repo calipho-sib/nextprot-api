@@ -1,8 +1,10 @@
 package org.nextprot.api.isoform.mapper.service;
 
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.MultipleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.feature.FeaturePropagator;
+import org.nextprot.api.isoform.mapper.domain.feature.FeatureValidator;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.MultipleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 
 import java.util.HashMap;
 import java.util.Map;

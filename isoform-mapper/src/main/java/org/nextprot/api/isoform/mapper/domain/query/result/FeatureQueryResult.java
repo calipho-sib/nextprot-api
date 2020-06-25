@@ -1,4 +1,6 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query.result;
+
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
 
 import java.io.Serializable;
 

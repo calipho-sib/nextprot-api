@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query;
 
 import java.io.Serializable;
 import java.util.List;

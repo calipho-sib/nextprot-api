@@ -8,20 +8,27 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.domain.IsoformPositions;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.RegionFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQuerySuccess;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.service.RegionIsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
+import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +48,10 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 
 	@Autowired
 	private IsoformMappingService isoformMappingService;
+
+	@Autowired
+	private RegionIsoformMappingService regionIsoformMappingService;
+
 
 	@Override
 	public IsoformPositions computeIsoformPositionsForNormalAnnotation(Statement statement) {
@@ -63,7 +74,7 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 				isoformPositions = buildTargetIsoformStatementPositions(category, statement, isoSpecificAccession.isPresent());
 			}
 
-			// NON-POSITIONAL ANNOTATIONS: yes indeed, it is weird :(
+			// NON-POSITIONAL ANNOTATIONS: yes indeed,
 			else {
 
 				Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
@@ -176,21 +187,52 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 		}
 
 		IsoformPositions isoformPositions = new IsoformPositions();
-
 		String featureName = statement.getValue(ANNOTATION_NAME);
-		SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());
+		IsoTargetSpecificity isoTargetSpecificity = isoSpecific ? IsoTargetSpecificity.SPECIFIC : IsoTargetSpecificity.UNKNOWN;
 		FeatureQueryResult result;
-		IsoTargetSpecificity isoTargetSpecificity;
 
-		if (!isoSpecific) {
-			result = isoformMappingService.propagateFeature(query);
-			isoTargetSpecificity = IsoTargetSpecificity.UNKNOWN;
-		}
-		else {
-			result = isoformMappingService.validateFeature(query);
-			isoTargetSpecificity = IsoTargetSpecificity.SPECIFIC;
+		if("regional".equals(featureType)) {
+			int regionStart = Integer.parseInt(statement.getValue(LOCATION_BEGIN));
+			int regionEnd = Integer.parseInt(statement.getValue(LOCATION_END));
+
+			// For interaction mapping all statements are isoform specific
+			// i.e we have to do;
+			// validate if the interacting region exists
+			// propagate it to other isoforms
+
+			// Have to parse and build an isoform
+			Optional<String> isoformSpecificOptional =  statement.getOptionalIsoformAccession();
+			String isoSpecificAccession;
+			if(isoformSpecificOptional.isPresent()) {
+				isoSpecificAccession = isoformSpecificOptional.get();
+			} else {
+				throw new NextProtException("Isoform specific accession is required in the statement");
+			}
+			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession, featureType, regionStart,regionEnd);
+
+			//TODO: Is there a better way to handle extra fields for transformation??
+			Optional<StatementField> mappingSequenceField = statement.keySet()
+					.stream()
+					.filter(statementField -> statementField instanceof CustomStatementField && statementField.getName() == "MAPPING_SEQUENCE")
+					.findFirst();
+			if(mappingSequenceField.isPresent()) {
+				query.setRegionSequence(statement.getValue(mappingSequenceField.get()));
+				// Should set the sequence read from the statement
+				result = regionIsoformMappingService.propagateFeature(query);
+			} else {
+				LOGGER.error("Error in source statement; missing mapping sequence");
+				return null;
+			}
+		} else {
+			SingleFeatureQuery query = new SingleFeatureQuery(featureName, featureType, statement.getEntryAccession());
+			if (!isoSpecific) {
+				result = isoformMappingService.propagateFeature(query);
+			} else {
+				result = isoformMappingService.validateFeature(query);
+			}
 		}
 
+		// Target isoform building
 		if (result.isSuccess()) {
 
 			isoformPositions = calcIsoformPositions(statement, (FeatureQuerySuccess) result, isoTargetSpecificity);
@@ -212,6 +254,15 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 	private IsoformPositions calcIsoformPositions(Statement variationStatement, FeatureQuerySuccess result) {
 
 		return calcIsoformPositions(variationStatement, result, IsoTargetSpecificity.UNKNOWN);
+	}
+
+	/**
+	 * Computes isoform list
+	 * @param mappingStatement
+	 * @return
+	 */
+	private IsoformPositions calcIsoformPositions(Statement mappingStatement) {
+		return null;
 	}
 
 	/**
@@ -284,9 +335,10 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 
 		if (category == AnnotationCategory.VARIANT || category  == AnnotationCategory.MUTAGENESIS) {
 			return "variant";
-		}
-		else if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
+		} else if (category == AnnotationCategory.MODIFIED_RESIDUE || category == AnnotationCategory.GLYCOSYLATION_SITE) {
 			return "ptm";
+		} else if (category == AnnotationCategory.INTERACTION_MAPPING) {
+			return "regional";
 		}
 		return null;
 	}

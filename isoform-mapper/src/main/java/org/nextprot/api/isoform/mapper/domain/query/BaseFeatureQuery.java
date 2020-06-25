@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query;
 
 
 import org.nextprot.api.commons.constants.AnnotationCategory;

@@ -1,7 +1,7 @@
-package org.nextprot.api.isoform.mapper.service;
+package org.nextprot.api.isoform.mapper.domain.feature;
 
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 
 @FunctionalInterface
 public interface FeaturePropagator {
