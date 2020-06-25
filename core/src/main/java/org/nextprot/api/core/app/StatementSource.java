@@ -24,7 +24,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	ENYO("ENYO",
 			"http://kant.sib.swiss:9001/enyo",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("PSIMI_ID"))
+					.withExtraFields(Arrays.asList("PSIMI_ID", "MAPPING_SEQUENCE"))
 					.build()),
 
 	// unused code afaik (Kasun and Pam)

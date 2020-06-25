@@ -1,8 +1,8 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.query.result.impl;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
 
 /**
  * Data transfer object that store mapping features results on isoforms

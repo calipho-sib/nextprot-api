@@ -83,6 +83,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
+	private List<String> relatedTo;
+
 	public String toString() {
 		return uniqueName + ": "  + 
 				"cvTermAccessionCode:" + cvTermAccessionCode +
@@ -456,6 +458,17 @@ public class Annotation implements Serializable, IsoformSpecific {
 			indirectEvidenceRefList = new HashSet<String>();
 		}
 		this.indirectEvidenceRefList.add(indirectEvidenceId);
+	}
+
+	public void addRelatedAnnotationName(String annotationUniqueName) {
+		if(relatedTo == null) {
+			relatedTo = new ArrayList<>();
+		}
+		relatedTo.add(annotationUniqueName);
+	}
+
+	public List<String> getRelatedAnnotationNames() {
+		return relatedTo;
 	}
 
 }

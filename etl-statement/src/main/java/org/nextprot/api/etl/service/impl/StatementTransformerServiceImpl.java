@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.commons.constants.AnnotationCategory.INTERACTION_MAPPING;
 import static org.nextprot.api.commons.constants.AnnotationCategory.PHENOTYPIC_VARIATION;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
@@ -79,10 +80,14 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				if (isPhenotypicVariation(rawStatement)) {
 
 					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
-				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) {
+				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) { // single
 
-					simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
-					trackedRawStatementIds.add(rawStatement.getStatementId());
+					if (isInteractionMapping(rawStatement)) {
+
+					} else {
+						simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
+						trackedRawStatementIds.add(rawStatement.getStatementId());
+					}
 				}
 			}
 
@@ -173,6 +178,10 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 			return statement.getValue(ANNOTATION_CATEGORY).equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName());
 		}
+
+		private boolean isInteractionMapping(Statement statement) {
+		    return statement.getValue(ANNOTATION_CATEGORY).equals(INTERACTION_MAPPING.getDbAnnotationTypeName());
+        }
 
 		private String getIsoAccession(Statement statement) {
 

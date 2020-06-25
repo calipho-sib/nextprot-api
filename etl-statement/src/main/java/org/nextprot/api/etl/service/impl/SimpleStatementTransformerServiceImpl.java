@@ -38,7 +38,7 @@ public class SimpleStatementTransformerServiceImpl implements SimpleStatementTra
 		IsoformPositions isoformPositions =
 				statementIsoformPositionService.computeIsoformPositionsForNormalAnnotation(simpleStatement);
 
-		if (!isoformPositions.hasTargetIsoforms()) {
+		if (isoformPositions == null | !isoformPositions.hasTargetIsoforms()) {
 
 			LOGGER.warn("Skipping statement " + simpleStatement.getValue(ANNOTATION_NAME) + " (source=" + simpleStatement.getValue(ASSIGNED_BY) + ")");
 			return Optional.empty();

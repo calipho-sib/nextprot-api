@@ -10,10 +10,7 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -337,6 +334,14 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
             }
 
+            // For interaction mappings, add the interacting region from statment as a property
+            if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setName("interacting-region");
+                annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
+                annotation.addProperty(annotationProperty);
+            }
+
             annotations.add(annotation);
         });
 
@@ -352,7 +357,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         BioObject bioObject;
 
-        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory)) {
+        // Both binary interaction and interaction mapping annotations are handled in the same way
+        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
 
             if (!bioObjectAccession.startsWith("NX_")) {
 
@@ -386,6 +392,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);
+
         } else {
             throw new NextProtException("Category not expected for bioobject " + annotationCategory);
         }

@@ -119,8 +119,8 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 			List<CvTerm> terms = new ArrayList<>();
 			//Check cv terms used in experimental context
 			terms.addAll(extractCvTermsFromExperimentalContext(annot, expCtxtCvTermMap));
+			terms.addAll(extractCvTermsFromEvidenceCodes(annot));
 			terms.addAll(extractCvTermsFromProperties(annot));
-
 
 			for (CvTerm t : terms) {
 				//Only add accessions in here. The use case is related to the page /term/TERM-NAME and see entries related to the term.
@@ -207,8 +207,8 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 	// PRIVATE METHODS
 	private Map<Long, List<CvTerm>> extractCvTermsFromExperimentalContext(List<Annotation> annots) {
 		Map<Long, List<CvTerm>> expCtxtCvTermMap = new HashMap<>();
-
-		for (ExperimentalContext expCtxt : experimentalContextService.findExperimentalContextsByIds(EntryUtils.getExperimentalContextIds(annots))) {
+		List<ExperimentalContext> experimentalContexts = experimentalContextService.findExperimentalContextsByIds(EntryUtils.getExperimentalContextIds(annots));
+		for (ExperimentalContext expCtxt : experimentalContexts) {
 
 			List<CvTerm> contextTerms = new ArrayList();
 			if(expCtxt.getDisease() != null) contextTerms.add(expCtxt.getDisease());
@@ -216,7 +216,8 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 			if(expCtxt.getDevelopmentalStage() != null) contextTerms.add(expCtxt.getDevelopmentalStage());
 			if(expCtxt.getCellLine() != null) contextTerms.add(expCtxt.getCellLine());
 			if(expCtxt.getOrganelle() != null) contextTerms.add(expCtxt.getOrganelle());
-			if(expCtxt.getDetectionMethod() != null) contextTerms.add(expCtxt.getDetectionMethod());
+			// We don't index DetectionMethod because we index evidenceCode of the evidence
+//			if(expCtxt.getDetectionMethod() != null) contextTerms.add(expCtxt.getDetectionMethod());
 			if(!contextTerms.isEmpty()){
 				expCtxtCvTermMap.put(expCtxt.getContextId(), contextTerms);
 			}
@@ -252,12 +253,21 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		for (Long ctxtId : ctxtIds) {
 			List<CvTerm> ts = expCtxtCvTermMap.get(ctxtId);
 			if(ts != null){
-				for (CvTerm t : ts) {
-					terms.add(t);
-				}
+				terms.addAll(ts);
 			}
 		}
 		return terms;
+	}
+
+	static private List<CvTerm> extractCvTermsFromEvidenceCodes(Annotation annot) {
+		return annot.getEvidences().stream()
+					.map(ev -> {
+						CvTerm cv = new CvTerm();
+						cv.setAccession(ev.getEvidenceCodeAC());
+						cv.setName(ev.getEvidenceCodeName());
+						return cv;
+					})
+					.collect(Collectors.toList());
 	}
 
 	static private List<CvTerm> extractCvTermsFromProperties(Annotation annot) {
