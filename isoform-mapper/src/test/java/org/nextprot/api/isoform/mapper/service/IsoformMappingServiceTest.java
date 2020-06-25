@@ -511,7 +511,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> targetIsoforms = ((FeatureQuerySuccess)result).getData();
         int targetIsoformCount = targetIsoforms.keySet().size();
         // Must be two other isoforms
-        Assert.assertEquals(targetIsoformCount, 2);
+        Assert.assertEquals(targetIsoformCount, 3);
 
         // Isoform-2 NX_P09455-2
         SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso2 = targetIsoforms.get("NX_P09455-2");
