@@ -23,12 +23,23 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	public void shouldContainCvTermsFromExperimentalContext() {
 
 		Map<EntrySolrField, Object> collector = new HashMap<>();
-		cvSolrFieldCollector.collect(collector, "NX_Q9H207", true);
+		cvSolrFieldCollector.collect(collector, "NX_P27658", true);
 
 		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
 		//noinspection unchecked
 		List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+		// evidence - evidenceCodeAC
 		Assert.assertTrue(cvAcs.contains("ECO:0000219"));
+		// evidence - experimentalContext - detectionMethod
+		Assert.assertFalse(cvAcs.contains("ECO:0000006"));
+		// evidence - experimentalContext - Disease
+		Assert.assertTrue(cvAcs.contains("C3749"));
+		// evidence - experimentalContext - Tissue
+		Assert.assertTrue(cvAcs.contains("TS-0558"));
+
+		// evidence - experimentalContext - DevelopmentalStage : see shouldContainCvTermsFromExperimentalContext_devStage
+		// evidence - experimentalContext - CellLine: no example found
+		// evidence - experimentalContext - Organelle: no example found
 
 		// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
 		Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
@@ -36,6 +47,25 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
 		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
     }
+	@Test
+	public void shouldContainCvTermsFromExperimentalContext_devStage() {
+
+		Map<EntrySolrField, Object> collector = new HashMap<>();
+		cvSolrFieldCollector.collect(collector, "NX_Q6NUJ2", true);
+
+		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
+		//noinspection unchecked
+		List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+		// evidence - experimentalContext - DevelopmentalStage
+		Assert.assertTrue(cvAcs.contains("HsapDO:0000030"));
+		Assert.assertFalse(cvAcs.contains("HsapDO:0000005")); // negative evidence
+
+		// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
+		Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
+		//noinspection unchecked
+		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
+		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
+	}
 
 	@Test
 	public void shouldContainCvTermsFromPropertyNamesSuchAsTopologyAndOrientation() {
