@@ -340,6 +340,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotationProperty.setName("interacting-region");
                 annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
                 annotation.addProperty(annotationProperty);
+
+                // Adds the description
+                annotation.setDescription("Interaction with " + annotation.getBioObject().getPropertyValue("geneName"));
             }
 
             annotations.add(annotation);
