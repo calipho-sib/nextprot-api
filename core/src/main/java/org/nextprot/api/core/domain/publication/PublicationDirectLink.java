@@ -196,9 +196,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		xref.setAccession(accession);
 		xref.setDatabaseName(dbName);
 		xref.setLinkUrl(db2link.get(dbName));
-		System.out.println(xref.getDatabaseName() + " : " + xref.getAccession());
 		String result = resolver.resolve(xref);
-		System.out.println("resolved");
 		return result;
 	}
 }
