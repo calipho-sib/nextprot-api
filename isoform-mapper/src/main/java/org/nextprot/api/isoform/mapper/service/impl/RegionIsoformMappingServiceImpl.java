@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingService {
 
-    private static final Log LOGGER = LogFactory.getLog(AnnotationServiceImpl.class);
+    private static final Log LOGGER = LogFactory.getLog(RegionIsoformMappingServiceImpl.class);
 
     @Autowired
     private IsoformService isoformService;
@@ -62,7 +62,19 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
 
         if(regionFromQuery != null && regionFromIsoform != null) {
             // Allow tolerance
-            return matchWithTolerance(regionFromQuery,regionFromIsoform, 0.05);
+            float matchingScore = getMismatchCount(regionFromQuery,regionFromIsoform);
+            if(matchingScore == -1) {
+                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:rejected_sequence_length_notequal");
+                return false;
+            }
+
+            if(matchingScore >= 0.96) {
+                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:matched_with_score_"+matchingScore);
+                return true;
+            } else {
+                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:rejected_with_score_"+matchingScore);
+                return false;
+            }
         } else {
             return false;
         }
@@ -90,35 +102,37 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
             Integer targetIsoformRegionEnd = IsoformSequencePositionMapper.getProjectedPosition(isoform, regionEnd, targetIsoform);
 
             if(targetIsoformRegionStart == null || targetIsoformRegionEnd == null) {
-                LOGGER.info("Project start/end position does not exist");
+                LOGGER.warn("Project start/end position does not exist");
                 continue;
             } else {
                 int projectedSequenceLegth = targetIsoformRegionEnd - targetIsoformRegionStart + 1;
                 // Check if the sub sequence exists consecutively on the other isoform
+                String targetIsoformRegion = targetIsoform.getSequence().substring(targetIsoformRegionStart - 1, targetIsoformRegionEnd);
                 if(regionLength == projectedSequenceLegth) {
-                    String targetIsoformRegion = targetIsoform.getSequence().substring(targetIsoformRegionStart - 1, targetIsoformRegionEnd);
-
                     // If the sub sequence is shorter or equal to 30, an exact match is required
                     if(projectedSequenceLegth <= 30) {
-                        if(region.equals(targetIsoformRegion)) {
+                        boolean matched = region.equals(targetIsoformRegion);
+                        LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:matched_"+matched);
+                        if(matched) {
                             result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
                             continue;
                         }
                     } else {
                         // For sub sequences longer than 30 a mismatches are tolerated up to a level
-
-                        if(matchWithTolerance(region, targetIsoformRegion, 0.05)) {
+                        float matchingScore = getMismatchCount(region,targetIsoformRegion);
+                        if(matchingScore > 0.96) {
                             // Matching regions
-                            LOGGER.info("Matched isform regions");
+                            LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:matched_with_score_"+matchingScore);
                             result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
+                            LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:rejected_with_score_"+matchingScore);
                             continue;
                         }
                     }
 
                 } else {
-                    LOGGER.info("Subsequence does not align with projected indices");
+                    LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:rejected_sequence_length_notequal");
                     continue;
                 }
             }
@@ -128,24 +142,19 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
     }
 
 
-    private boolean matchWithTolerance(String s, String r, double tolerance) {
+    private float getMismatchCount(String s, String r) {
         if(s.length() != r.length()) {
-            LOGGER.warn("Sequences are not in the same length: " + s + " " + r);
-            return false;
+            return -1;
         }
-        int unmatchCount = s.length();
-        boolean matched = true;
+
+        int misMatchCount = s.length();
         for(int i = 0; i < s.length(); i++) {
             if(s.charAt(i) != r.charAt(i)) {
-                unmatchCount--;
-                if((float)(unmatchCount/s.length()) > tolerance ) {
-                    matched = false;
-                    break;
-                }
+                misMatchCount--;
             }
         }
 
-        return matched;
+        return (float)(s.length() - misMatchCount)/s.length();
     }
 }
 
