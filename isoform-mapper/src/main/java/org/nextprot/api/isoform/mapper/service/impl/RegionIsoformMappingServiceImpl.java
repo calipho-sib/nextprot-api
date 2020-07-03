@@ -64,15 +64,15 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
             // Allow tolerance
             float matchingScore = getMismatchCount(regionFromQuery,regionFromIsoform);
             if(matchingScore == -1) {
-                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:rejected_sequence_length_notequal");
+                LOGGER.info("validating:"+isoform.getIsoformAccession()+",region:"+regionFromQuery+",start:"+regionStart+",end:"+regionEnd+"accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ ",step1:rejected_sequence_length_notequal");
                 return false;
             }
 
             if(matchingScore >= 0.96) {
-                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:matched_with_score_"+matchingScore);
+                LOGGER.info("validating:"+isoform.getIsoformAccession()+",region:"+regionFromQuery+",start:"+regionStart+",end:"+regionEnd+"accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ ",step1:matched_with_score_"+matchingScore);
                 return true;
             } else {
-                LOGGER.info("accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ "step1:rejected_with_score_"+matchingScore);
+                LOGGER.info("validating:"+isoform.getIsoformAccession()+",region:"+regionFromQuery+",start:"+regionStart+",end:"+regionEnd+"accession:"+ query.getAccession()+",region:"+ regionFromQuery+",region_np:"+regionFromIsoform+ ",step1:rejected_with_score_"+matchingScore);
                 return false;
             }
         } else {
@@ -102,7 +102,7 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
             Integer targetIsoformRegionEnd = IsoformSequencePositionMapper.getProjectedPosition(isoform, regionEnd, targetIsoform);
 
             if(targetIsoformRegionStart == null || targetIsoformRegionEnd == null) {
-                LOGGER.warn("Project start/end position does not exist");
+                LOGGER.info("propagating:"+isoform.getIsoformAccession()+",region:"+ region+",start:"+regionStart+",end:"+regionEnd+",region_length:"+region.length()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_start:"+targetIsoformRegionStart+",target_isoform_end:"+targetIsoformRegionEnd+",step2:rejected_no_projected_isoform_position");
                 continue;
             } else {
                 int projectedSequenceLegth = targetIsoformRegionEnd - targetIsoformRegionStart + 1;
@@ -112,7 +112,7 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
                     // If the sub sequence is shorter or equal to 30, an exact match is required
                     if(projectedSequenceLegth <= 30) {
                         boolean matched = region.equals(targetIsoformRegion);
-                        LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:matched_"+matched);
+                        LOGGER.info("propagating:"+isoform.getIsoformAccession()+",region:"+ region+",start:"+regionStart+",end:"+regionEnd+",region_length:"+region.length()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_region:"+targetIsoformRegion+",target_isoform_start:"+targetIsoformRegionStart+",target_isoform_end:"+targetIsoformRegionEnd+",target_isoform_region_length:"+targetIsoformRegion.length()+ ",step2:matched_"+matched);
                         if(matched) {
                             result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
@@ -123,16 +123,16 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
                         float matchingScore = getMismatchCount(region,targetIsoformRegion);
                         if(matchingScore > 0.96) {
                             // Matching regions
-                            LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:matched_with_score_"+matchingScore);
+                            LOGGER.info("propagating:"+isoform.getIsoformAccession()+",region:"+ region+",start:"+regionStart+",end:"+regionEnd+"region_length:"+region.length()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_region:"+targetIsoformRegion+",target_isoform_start:"+targetIsoformRegionStart+",target_isoform_end:"+targetIsoformRegionEnd+",target_isoform_region_length:"+targetIsoformRegion.length()+ ",step2:matched_with_score_"+matchingScore);
                             result.addMappedFeature(targetIsoform, targetIsoformRegionStart, targetIsoformRegionEnd);
                         } else {
-                            LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:rejected_with_score_"+matchingScore);
+                            LOGGER.info("propagating:"+isoform.getIsoformAccession()+",region:"+ region+",start:"+regionStart+",end:"+regionEnd+",region_length:"+region.length()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_region:"+targetIsoformRegion+",target_isoform_start:"+targetIsoformRegionStart+",target_isoform_end:"+targetIsoformRegionEnd+",target_isoform_region_length:"+targetIsoformRegion.length()+ ",step2:rejected_with_score_"+matchingScore);
                             continue;
                         }
                     }
 
                 } else {
-                    LOGGER.info("accession:"+ targetIsoform.getIsoformAccession()+",region:"+ region+",region_length:"+region.length()+",region_np_isoform:"+targetIsoformRegion+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:rejected_sequence_length_notequal");
+                    LOGGER.info("propagating:"+isoform.getIsoformAccession()+",region:"+ region+",start:"+regionStart+",end:"+regionEnd+",region_length:"+region.length()+",target_isoform_accession:"+ targetIsoform.getIsoformAccession()+",target_isoform_region:"+targetIsoformRegion+",target_isoform_start:"+targetIsoformRegionStart+",target_isoform_end:"+targetIsoformRegionEnd+",target_isoform_region_length:"+targetIsoformRegion.length()+ "step2:rejected_sequence_length_notequal");
                     continue;
                 }
             }
@@ -147,10 +147,10 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
             return -1;
         }
 
-        int misMatchCount = s.length();
+        int misMatchCount = 0;
         for(int i = 0; i < s.length(); i++) {
             if(s.charAt(i) != r.charAt(i)) {
-                misMatchCount--;
+                misMatchCount++;
             }
         }
 
