@@ -20,6 +20,8 @@ public class PropertyTtlWriter extends PropertyApiModel implements PropertyWrite
 		// the values of these are URIs
 		if (dbName.equals(NAME_INTEGRATION_LEVEL) || dbName.equals(NAME_EXPRESSION_LEVEL)) {
 			return ":" + super.formatValue(value);
+		} else if (dbName.equals(NAME_PSIMI_AC)) {
+			return "cv:" + super.formatValue(value);
 		}
 		// by default values are literal with a known data type
 		return "\"" + super.formatValue(value) + "\"^^xsd:" + datatype; 

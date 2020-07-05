@@ -39,6 +39,8 @@ public class PropertyApiModel {
 	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
+	public static final String NAME_PSIMI_AC="psimiId";
+	
 	public static final String NAME_CELL_LINE="CL";
 	public static final String NAME_INTENSITY="intensity";
 	
@@ -106,8 +108,13 @@ public class PropertyApiModel {
 		anno2props.put(AnnotationCategory.BINARY_INTERACTION,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_SELF_INTERACTION,"selfInteraction","boolean", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PSIMI_AC, "interactionDetectionMethod","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_NUMBER_EXPERIMENTS,"numberOfExperiments","integer", true, true, Parent.EVIDENCE))));
 		
+		anno2props.put(AnnotationCategory.INTERACTION_MAPPING,
+				new HashSet<>(Arrays.asList(
+						new PropertyApiModel(NAME_PSIMI_AC, "interactionDetectionMethod","string", true, true, Parent.EVIDENCE))));
+
 		anno2props.put(AnnotationCategory.PHENOTYPIC_VARIATION,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_INTENSITY,"intensity","string", false, true, Parent.EVIDENCE)))); 
@@ -180,6 +187,10 @@ public class PropertyApiModel {
 				case "single" : return "Single";
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_INTEGRATION_LEVEL );
 			}
+		}
+		
+		if (dbName.equals(PropertyApiModel.NAME_PSIMI_AC)) {
+			return value.replace(":", "_");
 		}
 		
 		// default
