@@ -3,6 +3,7 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -136,7 +137,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 1);
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), "MI:0943");
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0943");
 	}
 
 	@Test
@@ -165,8 +166,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 2);
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), "MI:0943");
-		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get("psimiId"), "MI:0003");
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0943");
+		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0003");
 	}
 
 	@Test
@@ -195,8 +196,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 2);
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), null);
-		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get("psimiId"), "MI:0003");
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), null);
+		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0003");
 	}
 
 	@Test
@@ -232,9 +233,9 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 3);
-		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get("psimiId"), "MI:0003");
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), "MI:0008");
-		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get("psimiId"), null);
+		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0003");
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0008");
+		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), null);
 	}
 
 	@Test
@@ -263,8 +264,8 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
 		Assert.assertEquals(annotation.getEvidences().size(), 2);
-		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get("psimiId"), "MI:0003");
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), null);
+		Assert.assertEquals(annotation.getEvidences().get(1).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0003");
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), null);
 	}
 
 	@Test
@@ -309,15 +310,15 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 		// There must be two enyo annotation evidences
 		Assert.assertTrue(enyoAnnoataionEvidences.size() == 2);
 
-		// Enyo annotation evidence must have psimiID property
+		// Enyo annotation evidence must have psimi property
 		AnnotationEvidence enyo1 = enyoAnnoataionEvidences.get(0);
 		AnnotationEvidence enyo2 = enyoAnnoataionEvidences.get(1);
-		String enyo1psimiId = enyo1.getProperties().get("psimiId");
-		String enyo2psimiId = enyo2.getProperties().get("psimiId");
-		Assert.assertNotNull(enyo1psimiId);
-		Assert.assertNotNull(enyo2psimiId);
-		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get("psimiId"), "MI:0008");
-		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get("psimiId"), "MI:0003");
+		String enyo1psimiAc = enyo1.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
+		String enyo2psimiAc = enyo2.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
+		Assert.assertNotNull(enyo1psimiAc);
+		Assert.assertNotNull(enyo2psimiAc);
+		Assert.assertEquals(annotation.getEvidences().get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0008");
+		Assert.assertEquals(annotation.getEvidences().get(2).getProperties().get(PropertyApiModel.NAME_PSIMI_AC), "MI:0003");
 
 		// There must be a nextprot evidence
 		LinkedList<AnnotationEvidence> nexprotAnnoataionEvidences = annotation.getEvidences()
@@ -325,7 +326,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.filter(evidence -> "Nextprot".equals(evidence.getAssignedBy()))
 				.collect(Collectors.toCollection(LinkedList::new));
 		Assert.assertEquals(nexprotAnnoataionEvidences.size(),1);
-		Assert.assertNull(nexprotAnnoataionEvidences.get(0).getProperties().get("psimiId"));
+		Assert.assertNull(nexprotAnnoataionEvidences.get(0).getProperties().get(PropertyApiModel.NAME_PSIMI_AC));
 
 	}
 

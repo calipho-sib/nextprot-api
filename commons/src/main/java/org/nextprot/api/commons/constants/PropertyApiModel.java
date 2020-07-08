@@ -39,7 +39,7 @@ public class PropertyApiModel {
 	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
-	public static final String NAME_PSIMI_AC="psimiId";
+	public static final String NAME_PSIMI_AC="psimiAC";
 	
 	public static final String NAME_CELL_LINE="CL";
 	public static final String NAME_INTENSITY="intensity";
