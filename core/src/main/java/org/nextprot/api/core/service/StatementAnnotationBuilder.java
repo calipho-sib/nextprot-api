@@ -151,11 +151,16 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(EVIDENCE_INTENSITY), "intensity");
         AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
         AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+
         // PSIMI ID property
-        AnnotationEvidenceProperty psimiProperty = addPropertyIfPresent(s.getValue(new CustomStatementField("PSIMI_ID")), "psimiId");
+        String psimiId = s.getValue(new CustomStatementField("PSIMI_ID"));
+        CvTerm psimiIdTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(psimiId);
+        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiId, "psimiId");
+        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiIdTerm.getName(), "psimiCvName");
+
 
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiProperty)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
@@ -337,7 +342,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             // For interaction mappings, add the interacting region from statment as a property
             if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
                 AnnotationProperty annotationProperty = new AnnotationProperty();
-                annotationProperty.setName("interacting-region");
+                annotationProperty.setName("mapping-sequence");
                 annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
                 annotation.addProperty(annotationProperty);
 
