@@ -80,11 +80,13 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 					pstmt.setString(i, value==null ? null :  value.replace("'", "''"));
 					i++;
 				}
-				Map<String,String> extraMap = new HashMap<>();
-				for (StatementField sf : customFields) extraMap.put(sf.getName(), s.getValue(sf));
-				String extraValue = StringUtils.serializeAsJsonStringOrNull(extraMap);
-				System.out.println("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
-				pstmt.setString(i, extraValue==null ? null : extraValue.replace("'", "''"));
+				if (!customFields.isEmpty()) {
+					Map<String,String> extraMap = new HashMap<>();
+					for (StatementField sf : customFields) extraMap.put(sf.getName(), s.getValue(sf));
+					String extraValue = StringUtils.serializeAsJsonStringOrNull(extraMap);
+					System.out.println("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
+					pstmt.setString(i, extraValue==null ? null : extraValue.replace("'", "''"));
+				}
 				pstmt.addBatch();
 			}
 
