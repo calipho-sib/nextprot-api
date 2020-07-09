@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.statement.service;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.commons.statements.StatementBuilder;
@@ -23,11 +24,11 @@ public class StatementAnnotationBuilderTest {
 
 		AnnotationEvidenceProperty property = new AnnotationEvidenceProperty();
 		property.setEvidenceId(1);
-		property.setPropertyName("psimiId");
+		property.setPropertyName(PropertyApiModel.NAME_PSIMI_AC);
 		property.setPropertyValue("MI:0943");
 
 		evidence.setProperties(Arrays.asList(new AnnotationEvidenceProperty[] { property }));
-		Assert.assertEquals("MI:0943", evidence.getPropertyValue("psimiId"));
+		Assert.assertEquals("MI:0943", evidence.getPropertyValue(PropertyApiModel.NAME_PSIMI_AC));
 
 		StatementBuilder statement = new StatementBuilder();
 

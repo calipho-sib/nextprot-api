@@ -4,6 +4,7 @@ import com.google.common.base.Supplier;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
@@ -128,9 +129,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 .append(evidence.getEvidenceCodeAC())
                 .toString();
 
-        String psimiId = evidence.getProperties().get("psimiId");
-        if(psimiId != null) {
-            keyBuilder.append(psimiId);
+        String psimiAC = evidence.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
+        if(psimiAC != null) {
+            keyBuilder.append(psimiAC);
         }
 
         return keyBuilder.toString();
@@ -155,9 +156,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // PSIMI ID property
         String psimiId = s.getValue(new CustomStatementField("PSIMI_ID"));
         CvTerm psimiIdTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(psimiId);
-        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiId, "psimiId");
-        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiIdTerm.getName(), "psimiCvName");
 
+        // PSIMI_ID custom statement field becomes a property with name = PropertyApiModel.NAME_PSIMI_AC
+        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(s.getValue(new CustomStatementField("PSIMI_ID")), PropertyApiModel.NAME_PSIMI_AC);
+        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiIdTerm.getName(), "psimiCvName");
 
         //Set properties which are not null
         evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
