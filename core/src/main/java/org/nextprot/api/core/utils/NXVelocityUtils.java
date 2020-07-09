@@ -14,8 +14,11 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class NXVelocityUtils {
 	
@@ -109,4 +112,11 @@ public class NXVelocityUtils {
 
 		return hierarchy;
 	}
+
+	public static Set<String> clonedSetWithoutElement(Set<String> originalSet, String el) {
+    	Set<String> result = new HashSet<>(originalSet);	
+		result.remove(el);
+    	return result;	
+	}
+	
 }

@@ -2,6 +2,8 @@ package org.nextprot.api.core.domain.annotation;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -209,7 +211,7 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	public Map<String,String> getProperties() {return this.propertiesMap;}
-	
+
 	/**
 	 * Determines if an evidence has to be taken into account for xml / ttl, ...
 	 * exports. We should only export, publish evidences meeting the following
