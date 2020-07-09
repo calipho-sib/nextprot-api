@@ -13,7 +13,7 @@ import java.util.Map;
 public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
 	ABCD, ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
-    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_MUTA("BioMuta"), BRENDA,
+    BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGrid"), BIO_GRID_ORCS("BioGRID-ORCS"), BIO_MUTA("BioMuta"), BRENDA,
     CARBONYL_DB("CarbonylDB"), CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"), COMPLEX_PORTAL("ComplexPortal"),
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CPTAC, CTD,
     DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"), DRUG_CENTRAL("DrugCentral"),
@@ -23,18 +23,18 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     GENEVESTIGATOR("Genevestigator"), GENEVISIBLE("Genevisible"), GENE_WIKI("GeneWiki"), GENOME_RNA_I("GenomeRNAi"),
     GERM_ONLINE("GermOnline"), GLY_CONNECT("GlyConnect"), GUIDETO_PHARMOCOLOGY("GuidetoPHARMACOLOGY"),
     HAMAP, HAMAP_RULE("HAMAP-Rule"), HGNC, H_INV_DB("H-InvDB"), HOGENOM, HOVERGEN, HPA, HPRD, HSSP,
-    IFO, IMGT_GENE_DB("IMGT_GENE-DB"), IN_PARANOID("InParanoid"), INT_ACT("IntAct"), INTER_PRO("InterPro"), I_PTM_NET("iPTMnet"),
+    IDEAL, IFO, IMGT_GENE_DB("IMGT_GENE-DB"), IN_PARANOID("InParanoid"), INT_ACT("IntAct"), INTER_PRO("InterPro"), I_PTM_NET("iPTMnet"),
     JCRB, JPOST("jPOST"),
     KEGG, KO,
     LOC,
-    MALA_CARDS("MalaCards"), MASSIVE("MassIVE"), MAX_QB("MaxQB"), MESH("MeSH"), MEROPS, MGI, MIM, MINT, MOON_DB("MoonDB"), MOON_PROT("MoonProt"),
+    MALA_CARDS("MalaCards"), MASSIVE("MassIVE"), MAX_QB("MaxQB"), MESH("MeSH"), MEROPS, METOSITE("MetOSite"), MGI, MIM, MINT, MOON_DB("MoonDB"), MOON_PROT("MoonProt"),
     NEXT_BIO("NextBio"), NEXTPROT_SUBMISSION("neXtProtSubmission"),NIAGADS, NIH_ARP("NIH-ARP"),
     OBO, OGP, OMA, OPEN_TARGETS("OpenTargets"), ORPHANET("Orphanet"), ORTHO_DB("OrthoDB"),
     PANTHER, PAX_DB("PaxDb"), PDB, PDB_SUM("PDBsum"), PEPTIDE_ATLAS("PeptideAtlas"), PEROXIBASE("PeroxiBase"),
     PFAM("Pfam"), PHARM_GKB("PharmGKB"), PHOSPHO_SITE_PLUS("PhosphoSitePlus"), PHYLOM_DB("PhylomeDB"), PIR, PIRNR,
     PIRSF, PIRSR, PMAP_CUT_DB("PMAP-CutDB"), PHAROS("Pharos"), PRIDE, PRINTS, PRO, PRO_DOM("ProDom"), PROSITE, PROSITE_PRORULE("PROSITE-ProRule"),
     PROTEIN_MODEL_PORTAL("ProteinModelPortal"), PROTEOMES("Proteomes"), PROTEOMICS_DB("ProteomicsDB"), PROTEOPEDIA, PUB_MED("PubMed"),
-    REBASE, REF_SEQ("RefSeq"), REPRODUCTION_2DPAGE("REPRODUCTION-2DPAGE"), RHEA("Rhea"), RULEBASE("RuleBase"),
+    REBASE, REF_SEQ("RefSeq"), REPRODUCTION_2DPAGE("REPRODUCTION-2DPAGE"), RHEA("Rhea"), RNACT("RNAct"), RULEBASE("RuleBase"),
     SABIO_RK("SABIO-RK"), SFLD, SIGNA_LINK("SignaLink"), SIGNOR, SMART, SMR, SRM_ATLAS("SRMAtlas"), STRING,
     SUPFAM, SWISS_2DPAGE("SWISS-2DPAGE"), SWISS_LIPIDS("SwissLipids"), SWISS_PALM("SwissPalm"),
     TIGRFAMS("TIGRFAMs"), TKG, TOP_DOWN_PROTEOMICS("TopDownProteomics"), TREE_FAM("TreeFam"),
@@ -42,7 +42,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     UNIPROT("UniProt"), UNIPROT_CONTROL_VOC("UniProt control vocabulary"), UNIPROT_DOMAIN("UniProt domain"),
     VARIO("VariO"),
     PSIMOD("PSI-MOD"),
-    WEBINFO
+    WEBINFO,
     ;
 
     private static EnumConstantDictionary<XrefDatabase> dictionaryOfConstants =
