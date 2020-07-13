@@ -63,7 +63,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		setAncestorsAndSynonyms(fields, entryAccession, cvTermsSetForAncestors);
 
 		//Add more cv term accession
-		setExperimentalContextAndPropertiesCvAccessionOnly(fields, annots);
+		setExperimentalContextAndPropertiesCvAccessionOnly(fields, annots, buildingSilverIndex);
 
 		//Add enzyme names to EC_NAMES
 		setEnzymeNames(fields, entryAccession);
@@ -109,19 +109,18 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		return cv_acs;
 	}
 
-	private void setExperimentalContextAndPropertiesCvAccessionOnly(Map<EntrySolrField, Object> fields, List<Annotation> annots){
+	private void setExperimentalContextAndPropertiesCvAccessionOnly(Map<EntrySolrField, Object> fields, List<Annotation> annots, boolean buildingSilverIndex) {
 
 		Map<Long, List<CvTerm>> expCtxtCvTermMap = extractCvTermsFromExperimentalContext(annots);
 		//We have added in CV_ACS the accessions related to experimental context and properties
 		for (Annotation annot : annots) {
-
-			//Check cv terms used in experimental context
 			List<CvTerm> terms = new ArrayList<>();
-			//Check cv terms used in experimental context
-			terms.addAll(extractCvTermsFromExperimentalContext(annot, expCtxtCvTermMap));
-			terms.addAll(extractCvTermsFromEvidenceCodes(annot));
-			terms.addAll(extractCvTermsFromProperties(annot));
-
+			if(buildingSilverIndex || annot.getQualityQualifier().equals("GOLD")) {
+				//Check cv terms used in experimental context
+				terms.addAll(extractCvTermsFromExperimentalContext(annot, expCtxtCvTermMap));
+				terms.addAll(extractCvTermsFromEvidenceCodes(annot));
+				terms.addAll(extractCvTermsFromProperties(annot));
+			}
 			for (CvTerm t : terms) {
 				//Only add accessions in here. The use case is related to the page /term/TERM-NAME and see entries related to the term.
 				//No need to index term name in here
