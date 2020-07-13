@@ -45,6 +45,18 @@ public class DbXrefURLResolverDelegateTest {
     }
     
     @Test
+    public void testResolveRNAct() throws Exception {
+
+        DbXref xref = createDbXref("Q8TCH9", "RNAct", "http://www.youpie.uk/whatever");
+
+        Assert.assertEquals("https://rnact.crg.eu/protein?query=Q8TCH9", resolver.resolve(xref));
+        Assert.assertEquals("https://rnact.crg.eu/protein?query=%s", xref.getLinkUrl());
+    }
+    
+    
+    
+    
+    @Test
     public void testResolveExpressionAtlas() throws Exception {
 
         DbXref xref = createDbXref("AF009225", "ExpressionAtlas", "http://www.ebi.ac.uk/whatever");

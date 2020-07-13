@@ -42,6 +42,7 @@ public enum CvDatabasePreferredLink {
 	PROTEOPEDIA("http://www.proteopedia.org/wiki/index.php/%s"),
 	PSIMOD("https://www.ebi.ac.uk/ols/ontologies/mod/terms?iri=http://purl.obolibrary.org/obo/MOD_%s"),
 	REFSEQ_NUCLEOTIDE("http://www.ncbi.nlm.nih.gov/nuccore/%s"),
+	RNACT("https://rnact.crg.eu/protein?query=%s"),
 	RULEBASE("http://www.uniprot.org/unirule/%s"),
 	SIGNOR("http://signor.uniroma2.it/relation_result.php?id=%u&organism=human"),
 	UCSC("https://genome.ucsc.edu/cgi-bin/hgLinkIn?resource=uniprot&id=%u"),
