@@ -1013,6 +1013,27 @@
     </xs:element>	
     <!-- Annotation category definition ends -->
 
+    <xs:element name="related-annotation">
+        <xs:annotation>
+            <xs:documentation>Describes a list of related annotation.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="annotation-internal-ref" type="xs:string" use="required"/>
+		</xs:complexType>
+    </xs:element>	
+
+    <xs:element name="related-annotation-list">
+        <xs:annotation>
+            <xs:documentation>Describes a list of related annotations.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+            <xs:sequence>
+                <xs:element ref="related-annotation" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>               
+		</xs:complexType>
+    </xs:element>	
+
+
 	<!-- Annotation element definition begins -->
     <xs:element name="annotation">
         <xs:annotation>
@@ -1024,6 +1045,7 @@
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
                 <xs:element ref="biological-object" minOccurs="0"/>
+                <xs:element ref="related-annotation-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="variant" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element ref="evidence-list" minOccurs="0" maxOccurs="1"/>
@@ -1174,7 +1196,8 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="cv-term" minOccurs="0"/>
+            <!-- 2 terms are allowed one for ECO, one for PSI-MI -->
+                <xs:element ref="cv-term" minOccurs="0" maxOccurs="2"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element name="evidence-note" type="xs:string" minOccurs="0"/>
 			</xs:sequence>

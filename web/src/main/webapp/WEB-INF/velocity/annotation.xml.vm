@@ -47,12 +47,13 @@
 		#end
 	#end
 
+## pam: to be discussed with Kasun
 	#if($annotation.getRelatedAnnotationNames())
-		<related-annotations>
+		<related-annotation-list>
 			#foreach($annotationName in $annotation.getRelatedAnnotationNames())
-				<related-to unique-name="$annotationName"/>
+				<related-annotation annotation-internal-ref="$annotationName"/>
 			#end
-		</related-annotations>
+		</related-annotation-list>
 	#end
 
 	## might have no properties so need to check
