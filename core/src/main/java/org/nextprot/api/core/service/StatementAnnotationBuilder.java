@@ -16,6 +16,7 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
@@ -153,13 +154,12 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
         AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 
-        // PSIMI ID property
-        String psimiId = s.getValue(new CustomStatementField("PSIMI_ID"));
-        CvTerm psimiIdTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(psimiId);
-
         // PSIMI_ID custom statement field becomes a property with name = PropertyApiModel.NAME_PSIMI_AC
-        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(s.getValue(new CustomStatementField("PSIMI_ID")), PropertyApiModel.NAME_PSIMI_AC);
-        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiIdTerm.getName(), "psimiCvName");
+        String psimiAC = s.getValue(new CustomStatementField("PSIMI_ID"));
+        CvTerm t = terminologyService.findCvTermByAccession(psimiAC);
+        String psimiCvName = t==null ? null : t.getName();
+        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiAC, PropertyApiModel.NAME_PSIMI_AC);
+        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiCvName, PropertyApiModel.NAME_PSIMI_CV_NAME);
 
         //Set properties which are not null
         evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
