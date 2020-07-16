@@ -260,7 +260,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
-
+            
             annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
             annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
@@ -341,15 +341,24 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
             }
 
-            // For interaction mappings, add the interacting region from statment as a property
+            // For interaction mappings, add the interacting region from statement as a property
             if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
                 AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setAnnotationId(annotation.getAnnotationId());
                 annotationProperty.setName("mapping-sequence");
                 annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
                 annotation.addProperty(annotationProperty);
-
                 // Adds the description
                 annotation.setDescription("Interaction with " + annotation.getBioObject().getPropertyValue("geneName"));
+                
+            } else if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
+            	String p1 = firstStatement.getEntryAccession();
+            	String p2 = annotation.getBioObject().getAccession();
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setAnnotationId(annotation.getAnnotationId());
+                annotationProperty.setName("selfInteraction");
+                annotationProperty.setValue(String.valueOf(p1.equals(p2)));
+                annotation.addProperty(annotationProperty);            		
             }
 
             annotations.add(annotation);
