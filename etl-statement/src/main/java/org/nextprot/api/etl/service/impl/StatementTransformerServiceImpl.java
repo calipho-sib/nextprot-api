@@ -78,16 +78,10 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 				cpt++;
 				System.out.println("Handling rawStatement " + cpt + " / " + this.rawStatements.size());
 				if (isPhenotypicVariation(rawStatement)) {
-
 					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
 				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) { // single
-
-					if (isInteractionMapping(rawStatement)) {
-
-					} else {
-						simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
-						trackedRawStatementIds.add(rawStatement.getStatementId());
-					}
+					simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
+					trackedRawStatementIds.add(rawStatement.getStatementId());
 				}
 			}
 

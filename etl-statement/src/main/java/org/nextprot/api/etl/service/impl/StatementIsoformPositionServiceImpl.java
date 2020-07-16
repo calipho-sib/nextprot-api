@@ -1,6 +1,8 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
@@ -25,10 +27,8 @@ import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -198,7 +198,7 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 			// For interaction mapping all statements are isoform specific
 			// i.e we have to do;
 			// validate if the interacting region exists
-			// propagate it to other isoforms
+			// extract the given isoforms in the statement and validate them also
 
 			// Have to parse and build an isoform
 			Optional<String> isoformSpecificOptional =  statement.getOptionalIsoformAccession();
@@ -209,14 +209,14 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 				throw new NextProtException("Isoform specific accession is required in the statement");
 			}
 			RegionalFeatureQuery query = new RegionalFeatureQuery(isoSpecificAccession, featureType, regionStart,regionEnd);
+			String mappingSequence = statement.getValue(new CustomStatementField("MAPPING_SEQUENCE"));
+			if(mappingSequence != null) {
+				query.setRegionSequence(mappingSequence);
 
-			//TODO: Is there a better way to handle extra fields for transformation??
-			Optional<StatementField> mappingSequenceField = statement.keySet()
-					.stream()
-					.filter(statementField -> statementField instanceof CustomStatementField && statementField.getName() == "MAPPING_SEQUENCE")
-					.findFirst();
-			if(mappingSequenceField.isPresent()) {
-				query.setRegionSequence(statement.getValue(mappingSequenceField.get()));
+				// Target isoform
+				JSONArray targetIsoformObject = new JSONArray(statement.getValue(new CustomStatementField("TARGET_ISOFORM")));
+				query.setTargetIsoformRegions(targetIsoformObject);
+
 				// Should set the sequence read from the statement
 				result = regionIsoformMappingService.propagateFeature(query);
 			} else {
@@ -310,6 +310,9 @@ public class StatementIsoformPositionServiceImpl implements StatementIsoformPosi
 					isoformPositions.setMasterEndPosition(isoformFeatureResult.getEndMasterPosition());
 				}
 
+				if(result instanceof RegionFeatureQuerySuccessImpl) {
+					continue;
+				}
 				if (isoformPositions.getMasterBeginPosition() != null) {
 					if (!isoformPositions.getMasterBeginPosition().equals(isoformFeatureResult.getBeginMasterPosition())) {
 						throw new NextProtException("Begin master position " + isoformPositions.getMasterBeginPosition()

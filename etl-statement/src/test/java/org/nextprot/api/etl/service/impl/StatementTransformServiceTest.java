@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
 import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOTATION_CATEGORY;
@@ -138,28 +139,21 @@ public class StatementTransformServiceTest {
 	}
 
 	@Test
-	public void shouldPropagatePropagableRegionToOtherIsoform() throws IOException{
+	public void shouldTransformIntMapStatmentWithMultipleTargetIsoforms() throws IOException{
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");
 
 		//Interaction mapping
 		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
-		List<Statement> regionalMappedStatements = mappedStatements.stream()
+		Optional<Statement> regionalMappedStatement = mappedStatements.stream()
 				.filter(new AnnotationCategoryPredicate(AnnotationCategory.INTERACTION_MAPPING))
-				.filter(statement ->  "NX_Q9Y6Q6".equals(statement.getEntryAccession()))
-				.collect(Collectors.toList());
+				.filter(statement ->  "NX_Q9NR46".equals(statement.getEntryAccession()))
+				.findFirst();
 
-		Assert.assertTrue(!regionalMappedStatements.isEmpty());
-		for(Statement regionalMappedStatement : regionalMappedStatements) {
-			String regionalMappedStatementIsoformJson = regionalMappedStatement.getValue(TARGET_ISOFORMS);
-			if("NX_Q9Y6Q6-5".equals(regionalMappedStatement.getOptionalIsoformAccession().toString())) {
-				Assert.assertEquals(2, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson).size());
-				Assert.assertEquals("[{\"isoformAccession\":\"NX_Q9Y6Q6-5\",\"specificity\":\"UNKNOWN\",\"begin\":340,\"end\":421},{\"isoformAccession\":\"NX_Q9Y6Q6-6\",\"specificity\":\"UNKNOWN\",\"begin\":326,\"end\":407}]", regionalMappedStatementIsoformJson);
-			} else if("NX_Q9Y6Q6-2".equals(regionalMappedStatement.getOptionalIsoformAccession().toString())) {
-				Assert.assertEquals(3, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson).size());
-				Assert.assertEquals("[{\"isoformAccession\":\"NX_Q9Y6Q6-2\",\"specificity\":\"UNKNOWN\",\"begin\":227,\"end\":299},{\"isoformAccession\":\"NX_Q9Y6Q6-3\",\"specificity\":\"UNKNOWN\",\"begin\":265,\"end\":337},{\"isoformAccession\":\"NX_Q9Y6Q6-6\",\"specificity\":\"UNKNOWN\",\"begin\":530,\"end\":602}]", regionalMappedStatementIsoformJson);
-			}
-		}
+		Assert.assertTrue(regionalMappedStatement.isPresent());
+		String regionalMappedStatementIsoformJson = regionalMappedStatement.get().getValue(TARGET_ISOFORMS);
+		assertEquals(regionalMappedStatementIsoformJson, "[{\"isoformAccession\":\"NX_Q9NR46-1\",\"specificity\":\"SPECIFIC\",\"begin\":153,\"end\":395},{\"isoformAccession\":\"NX_Q9NR46-2\",\"specificity\":\"SPECIFIC\",\"begin\":153,\"end\":404}]");
+
 	}
 
 	@Test
@@ -170,13 +164,13 @@ public class StatementTransformServiceTest {
 		//Interaction mapping
 		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
 		Optional<Statement> mappedStatementWithOneIsoform = mappedStatements.stream()
-				.filter(statement ->  "NX_P05412".equals(statement.getEntryAccession()))
+				.filter(statement ->  "NX_Q02779".equals(statement.getEntryAccession()))
 				.findFirst();
 
 		if(mappedStatementWithOneIsoform.isPresent()) {
 			String regionalMappedStatementIsoformJson1 = mappedStatementWithOneIsoform.get().getValue(TARGET_ISOFORMS);
 			Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson1).size());
-			Assert.assertEquals("[{\"isoformAccession\":\"NX_P05412-1\",\"specificity\":\"SPECIFIC\",\"begin\":1,\"end\":89}]", regionalMappedStatementIsoformJson1);
+			Assert.assertEquals("[{\"isoformAccession\":\"NX_Q02779-1\",\"specificity\":\"SPECIFIC\",\"begin\":854,\"end\":954}]", regionalMappedStatementIsoformJson1);
 		}
 	}
 

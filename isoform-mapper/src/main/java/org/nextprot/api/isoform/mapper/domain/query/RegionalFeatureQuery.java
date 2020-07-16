@@ -1,5 +1,9 @@
 package org.nextprot.api.isoform.mapper.domain.query;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +31,15 @@ public class RegionalFeatureQuery extends BaseFeatureQuery {
     private String regionSequence;
 
 
+    private List<TargetIsoformRegion> targetIsoformRegions;
+
+
     public RegionalFeatureQuery(String accession, String featureType, int regionStart, int regionEnd) {
         this.accession = accession;
         this.featureType = featureType;
         this.regionStart = regionStart;
         this.regionEnd = regionEnd;
+        this.targetIsoformRegions = new ArrayList<>();
     }
 
     @Override
@@ -57,11 +65,62 @@ public class RegionalFeatureQuery extends BaseFeatureQuery {
         return regionEnd;
     }
 
+    public List<TargetIsoformRegion> getTargetIsoformRegions() { return targetIsoformRegions; }
+
+    public void setTargetIsoformRegions(JSONArray targetIsoformRegionsJSON) {
+        targetIsoformRegionsJSON.forEach(tir -> {
+            JSONObject targetIsoformRegionJSON = (JSONObject)tir;
+            int begin = Integer.parseInt(targetIsoformRegionJSON.get("begin").toString());
+            int end = Integer.parseInt(targetIsoformRegionJSON.get("end").toString());
+            String isoformAccession = targetIsoformRegionJSON.get("isoformAccession").toString();
+
+            TargetIsoformRegion targetIsoformRegion = new TargetIsoformRegion();
+            targetIsoformRegion.setIsoformAccession(isoformAccession);
+            targetIsoformRegion.setRegionBegin(begin);
+            targetIsoformRegion.setRegionEnd(end);
+            targetIsoformRegions.add(targetIsoformRegion);
+        });
+    }
+
     public void setRegionSequence(String sequence) {
         regionSequence = sequence;
     }
 
     public String getRegionSequence() {
         return regionSequence;
+    }
+
+
+    public static class TargetIsoformRegion {
+
+        private String isoformAccession;
+
+        private int regionBegin;
+
+        private int regionEnd;
+
+        public void setIsoformAccession(String isoformAccession) {
+            this.isoformAccession = isoformAccession;
+        }
+
+        public void setRegionBegin(int regionBegin) {
+            this.regionBegin = regionBegin;
+        }
+
+        public void setRegionEnd(int regionEnd) {
+            this.regionEnd = regionEnd;
+        }
+
+        public String getIsoformAccession() {
+            return isoformAccession;
+        }
+
+        public int getRegionBegin() {
+            return regionBegin;
+        }
+
+        public int getRegionEnd() {
+            return regionEnd;
+        }
     }
 }
