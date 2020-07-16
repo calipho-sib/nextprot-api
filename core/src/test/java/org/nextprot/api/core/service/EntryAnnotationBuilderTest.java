@@ -129,7 +129,11 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0943").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb1);
 
@@ -151,6 +155,9 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0943").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
 				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
 
 		Statement sb_psimi2 = new StatementBuilder()
@@ -158,6 +165,9 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0003").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
 				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb_psimi1, sb_psimi2);
@@ -180,14 +190,20 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(ASSIGNED_BY, "IntAct").addTargetIsoformsField(new TargetIsoformSet())
-				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication").withAnnotationHash()
-				.build();
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0003").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
 				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb_intact, sb_enyo);
@@ -210,22 +226,33 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(ASSIGNED_BY, "IntAct").addTargetIsoformsField(new TargetIsoformSet())
-				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication").withAnnotationHash()
-				.build();
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo_psimi1 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0003").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo_psimi2 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0008").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.addField(RESOURCE_TYPE, "publication")
+				.withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb_enyo_psimi1, sb_enyo_psimi2, sb_intact);
 
@@ -248,15 +275,22 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(ASSIGNED_BY, "Nextprot").addTargetIsoformsField(new TargetIsoformSet())
-				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication").withAnnotationHash()
-				.build();
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0003").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb_enyo, sb_nextprot);
 
@@ -278,22 +312,33 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(ASSIGNED_BY, "Nextprot").addTargetIsoformsField(new TargetIsoformSet())
-				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication").withAnnotationHash()
-				.build();
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo_psimi1 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0003").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		Statement sb_enyo_psimi2 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
 				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
 				.addField(new CustomStatementField("PSIMI_ID"), "MI:0008").addField(ASSIGNED_BY, "ENYO")
 				.addTargetIsoformsField(new TargetIsoformSet()).addField(REFERENCE_ACCESSION, "123")
-				.addField(RESOURCE_TYPE, "publication").withAnnotationHash().build();
+				.addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "NX_P38398")
+				.addField(BIOLOGICAL_OBJECT_NAME, "BRCA1")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.withAnnotationHash().build();
 
 		List<Statement> statements = Arrays.asList(sb_enyo_psimi1, sb_enyo_psimi2, sb_nextprot);
 

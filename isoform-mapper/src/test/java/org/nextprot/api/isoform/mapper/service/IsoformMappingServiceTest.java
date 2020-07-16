@@ -501,6 +501,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
+    @Ignore
     public void shouldPropagateToMultipleIsoforms1() {
         RegionalFeatureQuery query = new RegionalFeatureQuery("NX_P09455-1", "INTERACTION_MAPPING", 2, 84);
         query.setRegionSequence("PVDFTGYWKMLVNENFEEYLRALDVNVALRKIANLLKPDKEIVQDGDHMIIRTLSTFRNYIMDFQVGKEFEEDLTGIDDRKCM");
@@ -527,6 +528,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
+    @Ignore
     public void shouldPropagateToMultipleIsoforms2() {
         RegionalFeatureQuery query = new RegionalFeatureQuery("NX_O14490-1", "INTERACTION_MAPPING", 539, 552);
         query.setRegionSequence("KKTPPPVPPRTTTK");

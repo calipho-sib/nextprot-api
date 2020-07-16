@@ -5,8 +5,16 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
+import sun.applet.Main;
+
+import javax.swing.text.html.Option;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public abstract class AnnotationBuilderBastUnitTest {
 
@@ -37,9 +45,12 @@ public abstract class AnnotationBuilderBastUnitTest {
 
 		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "000")).thenReturn(null);
 		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "123")).thenReturn(pub);
-		
-		//unused in tests yet
-		Mockito.when(mainNamesService.findIsoformOrEntryMainName()).thenReturn(null);
+
+		MainNames mainName = new MainNames();
+		mainName.setAccession("NX_P38398");
+		mainName.setName("BRCA1");
+		Optional<MainNames> entry = Optional.of(mainName);
+		Mockito.when(mainNamesService.findIsoformOrEntryMainName("NX_P38398")).thenReturn(entry);
 
 	}
 	
