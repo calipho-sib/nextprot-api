@@ -68,6 +68,20 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	}
 
 	@Test
+	public void shouldContainCvTermsFromPsimiEvidenceProperties() {
+
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cvSolrFieldCollector.collect(fields, "NX_P08048", false);
+		List<String> cvAvs = getFieldValue(fields, EntrySolrField.CV_ACS, List.class);
+		List<String> cvNames = getFieldValue(fields, EntrySolrField.CV_NAMES, List.class);
+
+		assertTrue(cvAvs.contains("MI:0728"));
+		//The text should not be indexed
+		assertFalse(cvNames.contains("gal4 vp16 complementation"));
+	}
+	
+	
+	@Test
 	public void shouldContainCvTermsFromPropertyNamesSuchAsTopologyAndOrientation() {
 
 		Map<EntrySolrField, Object> fields = new HashMap<>();
