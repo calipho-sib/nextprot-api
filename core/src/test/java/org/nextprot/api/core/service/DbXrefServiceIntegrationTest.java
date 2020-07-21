@@ -120,10 +120,16 @@ having sum(a.cnt)=1
 	@Test
 	public void shouldReturn_1_DrugBankXrefAsAnnotation() {
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_Q9Y2D1");
-		assertTrue(annotations.size() == 1);
-		Annotation annot = annotations.get(0);
+		assertTrue(annotations.size() > 0);
+		
+		int idx = -1;
+		for (Annotation a : annotations) {
+			idx++;
+			if (a.getAPICategory()== AnnotationCategory.SMALL_MOLECULE_INTERACTION) break;
+		}
+		
+		Annotation annot = annotations.get(idx);
 		assertTrue(annot.getCategory().equals(AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
-		assertTrue(annot.getAPICategory()== AnnotationCategory.SMALL_MOLECULE_INTERACTION);
 		assertTrue(annot.getQualityQualifier().equals("SILVER"));
 		assertEquals(null,annot.getDescription());
 		BioObject bo = annot.getBioObject();
@@ -218,9 +224,8 @@ having sum(a.cnt)=1
 
 			if (xref.getDbXrefId() == 964246) {
 
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u&OrganismID=%d", xref.getLinkUrl());
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1&UniProtAcc=Q9BXA6", xref.getResolvedUrl());
-
+				Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u&OrganismID=%d", xref.getLinkUrl());
+				Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1&UniProtAcc=Q9BXA6", xref.getResolvedUrl());
                 break;
 			}
 		}

@@ -51,7 +51,7 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
 
         assertExonStructures(iml, "NX_Q12805-3", "NX_ENSG00000115380", "NX_ENST00000355426",
                 "1700-1780,5873-5921,6089-6126,6130-6475,42406-42528,46275-46394,47398-47517,49075-49194,53017-53140,53225-53420,56906-57064",
-                "353-429,1201-1241,1693-1780,5873-5921,6089-6126,6130-6475,42406-42528,46275-46394,47398-47517,49075-49194,53017-53140,53225-53420,56906-57280");
+                "358-429,1201-1241,1693-1780,5873-5921,6089-6126,6130-6475,42406-42528,46275-46394,47398-47517,49075-49194,53017-53140,53225-53420,56906-58173");
     }
 
     @Test
@@ -74,10 +74,10 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         Assert.assertEquals("Iso 2", gml.get(0).getIsoformGeneMappings().get(1).getIsoformMainName());
         Assert.assertEquals("SILVER", gml.get(0).getIsoformGeneMappings().get(1).getQuality());
         Assert.assertEquals(13, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().size());
-        Assert.assertEquals(7034, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getFirstPositionOnGene());
+        Assert.assertEquals(7030, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getFirstPositionOnGene());
         Assert.assertEquals(7175, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(0).getLastPositionOnGene());
         Assert.assertEquals(45835, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getFirstPositionOnGene());
-        Assert.assertEquals(46525, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getLastPositionOnGene());
+        Assert.assertEquals(51047, gml.get(0).getIsoformGeneMappings().get(1).getTranscriptGeneMappings().get(0).getExons().get(12).getLastPositionOnGene());
     }
 
     @Test
@@ -138,13 +138,13 @@ public class GenomicMappingServiceImplTest extends CoreUnitBaseTest {
         Assert.assertEquals(7, exonsForIso3.size());
         Assert.assertEquals(6, exonsForIso4.size());
 
-        Assert.assertEquals(486, exonsForIso1.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(443, exonsForIso1.get(0).getGeneRegion().getLength());
         Assert.assertEquals(773, exonsForIso1.get(1).getGeneRegion().getLength());
-        Assert.assertEquals(798, exonsForIso1.get(5).getGeneRegion().getLength());
+        Assert.assertEquals(799, exonsForIso1.get(5).getGeneRegion().getLength());
 
-        Assert.assertEquals(486, exonsForIso3.get(0).getGeneRegion().getLength());
+        Assert.assertEquals(443, exonsForIso3.get(0).getGeneRegion().getLength());
         Assert.assertEquals(773, exonsForIso3.get(1).getGeneRegion().getLength());
-        Assert.assertEquals(798, exonsForIso3.get(6).getGeneRegion().getLength());
+        Assert.assertEquals(799, exonsForIso3.get(6).getGeneRegion().getLength());
 
         Assert.assertEquals(442, exonsForIso4.get(0).getGeneRegion().getLength());
         Assert.assertEquals(770, exonsForIso4.get(1).getGeneRegion().getLength());

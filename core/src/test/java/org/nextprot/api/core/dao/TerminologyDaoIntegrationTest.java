@@ -63,7 +63,7 @@ public class TerminologyDaoIntegrationTest extends CoreUnitBaseTest {
 		for (DbXref x : t.getXrefs()) {
 			// this one is an external xref (no corresponding term loaded in db)
 			if (x.getAccession().equals("614224")) {
-				assertEquals("http://www.omim.org/entry/614224", x.getResolvedUrl());
+				assertEquals("https://www.omim.org/entry/614224", x.getResolvedUrl());
 			}
 			// this one is a related term  (there is actually 1 term corresponding to the AC loaded in db)
 			if (x.getAccession().equals("D011666")) {

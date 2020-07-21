@@ -33,7 +33,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldNotMatchRule1BecausePE2() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_P0CK97"));
+		Assert.assertFalse(proteinExistenceInferenceService.cannotBePromotedAccordingToRule1("NX_Q86Y30"));
 	}
 
 	// TODO: see with pam
@@ -110,7 +110,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldNotMatchRule6Because() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule6("NX_Q9Y6N5"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule6("NX_A2RU30"));
 	}
 
     @Test
@@ -200,7 +200,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		// if this fails after July 06, then install nextprot and nxflat db of release 2020_09 to DEV pleatform (crick)
 
 		if (todayIsAfter("06 Jul 2020")) {
-			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A6NEM1");
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A2RRL7");
 			Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
 		}
