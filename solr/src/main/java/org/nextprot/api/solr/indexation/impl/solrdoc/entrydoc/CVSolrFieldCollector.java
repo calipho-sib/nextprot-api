@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.ExperimentalContextService;
@@ -15,6 +16,7 @@ import org.nextprot.api.core.utils.EntryUtils;
 import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +122,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 				terms.addAll(extractCvTermsFromExperimentalContext(annot, expCtxtCvTermMap));
 				terms.addAll(extractCvTermsFromEvidenceCodes(annot));
 				terms.addAll(extractCvTermsFromProperties(annot));
+				terms.addAll(extractCvTermsFromEvidenceProperties(annot));
 			}
 			for (CvTerm t : terms) {
 				//Only add accessions in here. The use case is related to the page /term/TERM-NAME and see entries related to the term.
@@ -209,7 +212,7 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 		List<ExperimentalContext> experimentalContexts = experimentalContextService.findExperimentalContextsByIds(EntryUtils.getExperimentalContextIds(annots));
 		for (ExperimentalContext expCtxt : experimentalContexts) {
 
-			List<CvTerm> contextTerms = new ArrayList();
+			List<CvTerm> contextTerms = new ArrayList<>();
 			if(expCtxt.getDisease() != null) contextTerms.add(expCtxt.getDisease());
 			if(expCtxt.getTissue() != null) contextTerms.add(expCtxt.getTissue());
 			if(expCtxt.getDevelopmentalStage() != null) contextTerms.add(expCtxt.getDevelopmentalStage());
@@ -267,6 +270,22 @@ public class CVSolrFieldCollector extends EntrySolrFieldCollector {
 						return cv;
 					})
 					.collect(Collectors.toList());
+	}
+
+	static private List<CvTerm> extractCvTermsFromEvidenceProperties(Annotation annot) {
+		List<CvTerm> result = new ArrayList<>();
+		for (AnnotationEvidence ev: annot.getEvidences()) {
+			if (ev.isNegativeEvidence()) continue;
+			String ac = ev.getPropertyValue(PropertyApiModel.NAME_PSIMI_AC);
+			String name = ev.getPropertyValue(PropertyApiModel.NAME_PSIMI_CV_NAME);
+			if (ac!=null) {
+				CvTerm term = new CvTerm();
+				term.setAccession(ac);
+				term.setName(name==null ? "" : name);
+				result.add(term);				
+			}
+		}
+		return result;
 	}
 
 	static private List<CvTerm> extractCvTermsFromProperties(Annotation annot) {
