@@ -587,8 +587,8 @@ public class DbXrefURLResolverDelegateTest {
     public void testResolveWithDefaultResolverBrenda() throws Exception {
 
         DbXref xref = createDbXrefWithEntry("NX_Q8NBS9", "2.7.11.21", "BRENDA", CvDatabasePreferredLink.BRENDA.getLink());
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref));
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
+        Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref));
+        Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
     }
 
     @Test
