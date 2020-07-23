@@ -95,6 +95,7 @@
 	    <xs:complexType>
 			<xs:sequence>
 				<xs:element ref="database-release" minOccurs="1" maxOccurs="1"/> 	
+                <xs:element ref="genome-assembly" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="api-release"  minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -102,6 +103,7 @@
 	<!-- neXtProt definition ends -->	
 
 	<xs:element name="database-release" type="xs:date"/>	
+    <xs:element name="genome-assembly" type="xs:normalizedString"/>
 	<xs:element name="api-release" type="xs:normalizedString"/>
 	
     <!-- Data source list element definition begins -->

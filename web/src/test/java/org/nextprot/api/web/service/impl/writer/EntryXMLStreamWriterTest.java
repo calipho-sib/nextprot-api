@@ -96,6 +96,7 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "        <release>\n" +
                 "            <nextprot>\n" +
                 "                <database-release>$release.databaseRelease</database-release>\n" +
+                "                <genome-assembly>GRCh38</genome-assembly>\n" +
                 "                <api-release>$release.apiRelease</api-release>\n" +
                 "            </nextprot>\n" +
                 "            <data-source-list/>\n" +
