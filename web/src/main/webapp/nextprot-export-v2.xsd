@@ -2,22 +2,27 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+
+    Date:        2020/07/01
+    1) New annotation category added: interaction-mapping
+    2) New related-annotation-list and related-annotation elements added to link annotations
+
     Date:        2019/09/02
     New database category added: Variant database (for gnomAD variant cross-references) 
 
     Date:        2019/02/01
     Modified annotation category: activity-regulation (replaces enzyme-regulation)
 
-    Date:		2018/03/27
+    Date:	2018/03/27
     2 parameters of <exon> are now optional: parameters 'accession' and 'database' of exon tag are optional
 
-    Date:		2017/04/24
+    Date:	2017/04/24
     New annotation category added: electrophysiological-parameter
 
-    Date:		2017/04/18
+    Date:	2017/04/18
     New annotation category added: cofactor-info
 
-    Date:		2017/02/21
+    Date:	2017/02/21
     New annotation category added: transport-activity
 
 	Date:		2016/08/30
