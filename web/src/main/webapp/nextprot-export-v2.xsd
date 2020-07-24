@@ -6,6 +6,7 @@
     Date:        2020/07/01
     1) New annotation category added: interaction-mapping
     2) New related-annotation-list and related-annotation elements added to link annotations
+    3) New element genome-assembly in nextprot header
 
     Date:        2019/09/02
     New database category added: Variant database (for gnomAD variant cross-references) 
