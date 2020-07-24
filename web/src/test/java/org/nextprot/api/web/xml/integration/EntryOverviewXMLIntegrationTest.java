@@ -39,9 +39,11 @@ public class EntryOverviewXMLIntegrationTest extends WebIntegrationBaseTest {
   @Test
   public void shouldContainOverviewWithRegionsAndAlternativeNames() throws Exception {
 
-	  //Tests issue CALIPHOMISC-322 https://issues.isb-sib.ch/browse/CALIPHOMISC-322
-	  // old one: ResultActions actions = this.mockMvc.perform(get("/entry/NX_O60513/overview.xml"));
-	  ResultActions actions = this.mockMvc.perform(get("/entry/NX_Q08426/overview.xml"));
+	  // Tests issue CALIPHOMISC-322 https://issues.isb-sib.ch/browse/CALIPHOMISC-322
+	  // old one which used to have such regions but do not any more
+	  // ResultActions actions = this.mockMvc.perform(get("/entry/NX_O60513/overview.xml"));
+	  // new one:
+	  ResultActions actions = this.mockMvc.perform(get("/entry/NX_O95954/overview.xml"));
 	  actions.andExpect(xpath("entry/overview/protein-name-list/region-list/region/alternative-name-list/alternative-name/region-name").exists());
   }
 }
