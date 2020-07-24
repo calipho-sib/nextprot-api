@@ -1,6 +1,7 @@
 <release>
       <nextprot>
           <database-release>$versions.databaseRelease</database-release>
+          <genome-assembly>GRCh38</genome-assembly>
           <api-release>$versions.apiRelease</api-release>
       </nextprot>
 </release>
