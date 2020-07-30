@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.feature.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -8,7 +8,9 @@ import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormatter;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariationParser;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceVariationMutable;
+import org.nextprot.api.isoform.mapper.domain.feature.VaryingSequenceMutable;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.PreIsoformParseException;
 
 import java.text.ParseException;

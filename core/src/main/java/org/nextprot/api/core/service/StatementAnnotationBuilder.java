@@ -4,20 +4,20 @@ import com.google.common.base.Supplier;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.specs.CoreStatementField;
+import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,13 +122,20 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     private String buildAnnotationEvidenceKey(AnnotationEvidence evidence) {
 
-        return new StringBuilder()
-                .append(String.valueOf(evidence.getResourceId())).append(".")
-                .append(String.valueOf(evidence.getExperimentalContextId())).append(".")
-                .append(String.valueOf(evidence.isNegativeEvidence())).append(".")
+        StringBuilder keyBuilder = new StringBuilder();
+        keyBuilder.append(evidence.getResourceId()).append(".")
+                .append(evidence.getExperimentalContextId()).append(".")
+                .append(evidence.isNegativeEvidence()).append(".")
                 .append(evidence.getAssignedBy()).append(".")
                 .append(evidence.getEvidenceCodeAC())
                 .toString();
+
+        String psimiAC = evidence.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
+        if(psimiAC != null) {
+            keyBuilder.append(psimiAC);
+        }
+
+        return keyBuilder.toString();
     }
 
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
@@ -147,8 +154,15 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
         AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 
+        // PSIMI_ID custom statement field becomes a property with name = PropertyApiModel.NAME_PSIMI_AC
+        String psimiAC = s.getValue(new CustomStatementField("PSIMI_ID"));
+        CvTerm t = terminologyService.findCvTermByAccession(psimiAC);
+        String psimiCvName = t==null ? null : t.getName();
+        AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiAC, PropertyApiModel.NAME_PSIMI_AC);
+        AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiCvName, PropertyApiModel.NAME_PSIMI_CV_NAME);
+
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
@@ -246,7 +260,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
-
+            
             annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
             annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
@@ -327,6 +341,26 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotation.setBioObject(newBioObject(firstStatement, annotation.getAPICategory()));
             }
 
+            // For interaction mappings, add the interacting region from statement as a property
+            if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setAnnotationId(annotation.getAnnotationId());
+                annotationProperty.setName("mapping-sequence");
+                annotationProperty.setValue(firstStatement.getValue(new CustomStatementField("MAPPING_SEQUENCE")));
+                annotation.addProperty(annotationProperty);
+                // Adds the description
+                annotation.setDescription("Interaction with " + annotation.getBioObject().getPropertyValue("geneName"));
+                
+            } else if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
+            	String p1 = firstStatement.getEntryAccession();
+            	String p2 = annotation.getBioObject().getAccession();
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setAnnotationId(annotation.getAnnotationId());
+                annotationProperty.setName("selfInteraction");
+                annotationProperty.setValue(String.valueOf(p1.equals(p2)));
+                annotation.addProperty(annotationProperty);            		
+            }
+
             annotations.add(annotation);
         });
 
@@ -342,7 +376,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         BioObject bioObject;
 
-        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory)) {
+        // Both binary interaction and interaction mapping annotations are handled in the same way
+        if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
 
             if (!bioObjectAccession.startsWith("NX_")) {
 
@@ -376,6 +411,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);
+
         } else {
             throw new NextProtException("Category not expected for bioobject " + annotationCategory);
         }

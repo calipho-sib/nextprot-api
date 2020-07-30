@@ -209,7 +209,7 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	public Map<String,String> getProperties() {return this.propertiesMap;}
-	
+
 	/**
 	 * Determines if an evidence has to be taken into account for xml / ttl, ...
 	 * exports. We should only export, publish evidences meeting the following

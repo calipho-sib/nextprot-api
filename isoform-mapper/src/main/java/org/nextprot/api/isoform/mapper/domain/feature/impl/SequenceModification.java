@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.feature.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.app.ApplicationContextProvider;
@@ -14,10 +14,10 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeatureValidator;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -122,6 +122,9 @@ public class SequenceModification extends SequenceFeatureBase {
             rules.put("PTM-0552", new Rule("PTM-0552",AminoAcidCode.THREONINE));
             rules.put("PTM-0553", new Rule("PTM-0553",AminoAcidCode.THREONINE));
             rules.put("PTM-0574", new Rule("PTM-0574",AminoAcidCode.SERINE));
+            rules.put("PTM-0580", new Rule("PTM-0580",AminoAcidCode.SERINE));
+            rules.put("PTM-0582", new Rule("PTM-0582", AminoAcidCode.THREONINE));
+            
             //TODO: we could add all other PTM-ids given the target supplied by ProteinModificationService
         }
 

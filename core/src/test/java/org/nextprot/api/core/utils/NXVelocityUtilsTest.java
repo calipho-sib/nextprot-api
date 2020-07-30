@@ -1,6 +1,8 @@
 package org.nextprot.api.core.utils;
 
 import org.junit.Test;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
+import org.apache.poi.util.SystemOutLogger;
 import org.junit.Assert;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
@@ -8,10 +10,28 @@ import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class NXVelocityUtilsTest extends CoreUnitBaseTest {
 
+	
+    @Test
+    public void test1() {
+    	Map<String,String> m = new HashMap<>();
+    	m.put("a", "a value");
+    	m.put("b", "b value");
+    	m.put("c", "c value");
+    	Set<String> s = new HashSet<>(m.keySet());
+    	s.remove("b");
+    	m.keySet().stream().forEach(k -> System.out.println(k + "=" + m.get(k)));
+    }
+	
     @Test
     public void test_expected_property_behavior_for_uri_property() {
     	

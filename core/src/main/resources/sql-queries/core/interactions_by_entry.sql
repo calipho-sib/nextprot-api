@@ -100,6 +100,7 @@ interactant_protname
 	left outer join nextprot.sequence_identifiers psi on (psi.db_xref_id=pxr.resource_id)
 	where si.cv_status_id = 1 
 	and si.cv_type_id in (1,2) 
+	and inter.cv_status_id=1
 	and inter.cv_quality_qualifier_id in (50,10) 
 	and not (inter.is_xeno=false and psi.identifier_id is null and pxr.accession is not null)  -- removes interactions with partner which are human trEMBL proteins 
 	) a

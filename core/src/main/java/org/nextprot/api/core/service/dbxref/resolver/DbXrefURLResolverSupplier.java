@@ -51,6 +51,7 @@ public enum DbXrefURLResolverSupplier {
     PROTEOPEDIA(XrefDatabase.PROTEOPEDIA,           new DefaultDbXrefURLResolver()),
     PSIMOD(XrefDatabase.PSIMOD, 					new PsiModXrefURLResolver()),
     REF_SEQ(XrefDatabase.REF_SEQ,                   new DefaultDbXrefURLResolver()),
+    RNACT(XrefDatabase.RNACT,                     	new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.RNACT)),
     RULEBASE(XrefDatabase.RULEBASE,                 new RuleBaseXrefURLResolver()),
     SIGNOR(XrefDatabase.SIGNOR,                     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.SIGNOR)),
     SMR(XrefDatabase.SMR,                           new SmrXrefURLResolver()),

@@ -131,14 +131,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private PreTransformProcessor preProcess(StatementSource source, ReportBuilder report) {
 
 		if (source == StatementSource.GlyConnect) {
-			return new GlyConnectPreProcessor(report);
-		}
-		else if (source == StatementSource.BioEditor) {
-			return new BioEditorPreProcessor();
-		}
-		else if (source == StatementSource.GnomAD) {
-			return new GnomADPreProcessor();
-		}
+            return new GlyConnectPreProcessor(report);
+        }
+        else if (source == StatementSource.BioEditor) {
+            return new BioEditorPreProcessor();
+        }
+        else if (source == StatementSource.GnomAD) {
+            return new GnomADPreProcessor();
+        }
 		return new StatementIdBuilder();
 	}
 
@@ -242,6 +242,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.collect(Collectors.toSet());
 		}
 	}
+
 	private class GnomADPreProcessor implements PreTransformProcessor {
 
 		@Override
@@ -260,7 +261,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 					.collect(Collectors.toSet());
 		}
 	}
-
 	private class GlyConnectPreProcessor implements PreTransformProcessor {
 
 		private final ReportBuilder report;

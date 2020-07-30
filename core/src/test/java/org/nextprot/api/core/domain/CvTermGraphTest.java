@@ -52,7 +52,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertTrue(Arrays.stream(graph.getChildren(cvId)).boxed()
                 .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0030246"));
         Assert.assertTrue(Arrays.stream(graph.getChildren(cvId)).boxed()
-                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0001871"));
+                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0019808"));
     }
 
     @Test
@@ -78,21 +78,24 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void geneOntologyShouldContainOneRoot() throws Exception {
+    public void geneOntologyMayContainMoreTanOneRoot() throws Exception {
 
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int[] roots = graph.getSources();
-        Assert.assertEquals(1, roots.length);
+          
+        // pam 20.07.2020
+        // we normally expect 1 root, but here we have a node beeing a child of 
+        // a biological process (another go terminology) so it appears as a root
+        // it doesn't seem to disturb any functionality
+        Assert.assertEquals(2, roots.length);
 
         List<String> accessions = new ArrayList<>();
-        for (int i=0 ; i<roots.length ; i++) {
+        for (int i=0 ; i<roots.length ; i++) accessions.add(graph.getCvTermAccessionById(roots[i]));
 
-            accessions.add(graph.getCvTermAccessionById(roots[i]));
-        }
-
-        Assert.assertEquals(1, accessions.size());
-        Assert.assertEquals("GO:0003674", accessions.get(0));
+        Assert.assertTrue(accessions.contains("GO:0003674")); // Molecular function (the real root)
+        Assert.assertTrue(accessions.contains("GO:0140312")); // Cargo adaptor activity (the fake root)
+        
     }
 
     @Test

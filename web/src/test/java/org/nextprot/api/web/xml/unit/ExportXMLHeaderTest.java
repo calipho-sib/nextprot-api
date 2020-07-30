@@ -52,6 +52,8 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='database-release']");
         assertEquals("database-test-version", dbReleaseNodes.item(0).getTextContent());
+        NodeList genomeAssemblyNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='genome-assembly']");
+        assertEquals("GRCh38", genomeAssemblyNodes.item(0).getTextContent());
         NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='api-release']");
         assertEquals("api-test-version", apiReleaseNodes.item(0).getTextContent());
         NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='number-of-entries']");

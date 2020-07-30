@@ -1,6 +1,7 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query;
 
 import org.nextprot.api.commons.utils.ExceptionWithReason;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
 
 public abstract class FeatureQueryException extends ExceptionWithReason {
 

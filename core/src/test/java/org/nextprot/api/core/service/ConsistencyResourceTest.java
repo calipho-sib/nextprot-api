@@ -8,6 +8,7 @@ import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -24,8 +25,14 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Autowired private MainNamesService mainNamesService;		
 	
 	@Test
-	public void shouldFindAllPublications() {
-		
+	public void shouldFindAllPublications_After_Jul_06() {
+
+		// We assume that at this date the nextprot db declared in application-dev.properties
+		// will contain the all publications declared in nxflat db
+		if (!CoreUnitBaseTest.todayIsAfter("06 Jul 2020")) {
+			return;
+		}
+
 		List<String> missingPublications = new ArrayList<>();
 
 		List<String> pubmeds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(

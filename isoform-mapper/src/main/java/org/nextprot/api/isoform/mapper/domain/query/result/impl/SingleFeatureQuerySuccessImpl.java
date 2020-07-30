@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain.impl;
+package org.nextprot.api.isoform.mapper.domain.query.result.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
@@ -6,9 +6,11 @@ import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceVariationMutable;
+import org.nextprot.api.isoform.mapper.domain.feature.VaryingSequenceMutable;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.feature.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

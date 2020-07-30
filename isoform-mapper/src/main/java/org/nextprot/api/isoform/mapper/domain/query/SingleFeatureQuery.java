@@ -1,4 +1,4 @@
-package org.nextprot.api.isoform.mapper.domain;
+package org.nextprot.api.isoform.mapper.domain.query;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.EqualsBuilder;

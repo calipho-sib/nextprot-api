@@ -21,7 +21,6 @@ import java.util.*;
 @Component
 public class VariantFrequencyDaoImpl implements VariantFrequencyDao {
 
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private SQLDictionary sqlDictionary;

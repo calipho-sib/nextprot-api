@@ -1,6 +1,8 @@
 package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class ExperimentalContext implements Serializable{
 
@@ -88,9 +90,12 @@ public class ExperimentalContext implements Serializable{
 		this.organelle = organelle;
 	}
 
+    @JsonIgnore
 	public CvTerm getDetectionMethod() {
 		return detectionMethod;
 	}
+    
+    @JsonIgnore
 	public String getDetectionMethodAC() {
 		return (detectionMethod != null) ? detectionMethod.getAccession() : null;
 	}

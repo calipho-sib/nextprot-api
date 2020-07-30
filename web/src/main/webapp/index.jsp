@@ -180,6 +180,7 @@
 						<a id="copyright" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; (year YYYY set by javascript onReady() function) SIB Swiss Institute of Bioinformatics</a>
 						<a id="legal-disclaimer" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
 						<span id="data-release" class="ft-item"></span>
+						<a class="ft-item" href="https://creativecommons.org/licenses/by/4.0/" target="_blank">Data CC BY 4.0</a>
 						<span id="app-release" class="ft-item"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
 							<span class="fa fa-github" aria-hidden="true"></span> For developers

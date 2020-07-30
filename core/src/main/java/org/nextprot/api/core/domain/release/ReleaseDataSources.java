@@ -18,6 +18,7 @@ public enum ReleaseDataSources {
 	COSMIC("COSMIC", "Cosmic", "Catalogue of somatic mutations in cancer", "http://www.sanger.ac.uk/genetics/CGP/cosmic/"),
 	Ensembl("Ensembl", "Ensembl genome", "Ensembl human genome browser", "http://www.ensembl.org/"),
 	ENZYME("ENZYME", "UniProtKB enzyme classification", "Enzyme nomenclature database", "http://www.expasy.org/enzyme/"),
+	ENYO("Enyo Pharma SA", "ENYO", "Manually curated protein-protein interaction data", "http://www.enyopharma.com/technology/interactome-datasets/"),
 	GO("GO", "GO", "Gene Ontology", "http://www.geneontology.org/"),
 	GLYCONNECT("GlyConnect", "GlyConnect", "Protein glycosylation platform", "https://glyconnect.expasy.org/"),
 	GNOMAD("gnomAD", "gnomAD", "Genome Aggregation Database", "https://gnomad.broadinstitute.org/"),

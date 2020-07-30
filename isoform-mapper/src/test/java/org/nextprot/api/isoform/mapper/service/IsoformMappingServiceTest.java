@@ -16,13 +16,16 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceModification;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceModification;
+import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,6 +36,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -46,6 +50,9 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
     private IsoformMappingService service;
+
+    @Autowired
+    private RegionIsoformMappingService regionIsoformService;
 
     @Test
     public void shouldValidateVariantOnCanonicalIsoform() throws Exception {
@@ -491,6 +498,72 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQueryResult result = service.validateFeature(query);
 
         assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryException(query, new SequenceVariationBuildException(new VariationOutOfSequenceBoundException(408, 365))));
+    }
+
+    @Test
+    @Ignore
+    public void shouldPropagateToMultipleIsoforms1() {
+        RegionalFeatureQuery query = new RegionalFeatureQuery("NX_P09455-1", "INTERACTION_MAPPING", 2, 84);
+        query.setRegionSequence("PVDFTGYWKMLVNENFEEYLRALDVNVALRKIANLLKPDKEIVQDGDHMIIRTLSTFRNYIMDFQVGKEFEEDLTGIDDRKCM");
+        FeatureQueryResult result = regionIsoformService.propagateFeature(query);
+
+
+        Assert.assertTrue(result.isSuccess());
+        Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> targetIsoforms = ((FeatureQuerySuccess)result).getData();
+        int targetIsoformCount = targetIsoforms.keySet().size();
+        // Must be two other isoforms
+        Assert.assertEquals(targetIsoformCount, 3);
+
+        // Isoform-2 NX_P09455-2
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso2 = targetIsoforms.get("NX_P09455-2");
+        Assert.assertEquals(iso2.getIsoformAccession(),"NX_P09455-2");
+        Assert.assertEquals(iso2.getBeginIsoformPosition().intValue(), 64);
+        Assert.assertEquals(iso2.getEndIsoformPosition().intValue(), 146);
+
+        // Isoform-3 NX_P09455-3
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso3 = targetIsoforms.get("NX_P09455-3");
+        Assert.assertEquals(iso3.getIsoformAccession(),"NX_P09455-3");
+        Assert.assertEquals(iso3.getBeginIsoformPosition().intValue(), 64);
+        Assert.assertEquals(iso3.getEndIsoformPosition().intValue(), 146);
+    }
+
+    @Test
+    @Ignore
+    public void shouldPropagateToMultipleIsoforms2() {
+        RegionalFeatureQuery query = new RegionalFeatureQuery("NX_O14490-1", "INTERACTION_MAPPING", 539, 552);
+        query.setRegionSequence("KKTPPPVPPRTTTK");
+        FeatureQueryResult result = regionIsoformService.propagateFeature(query);
+
+
+        Assert.assertTrue(result.isSuccess());
+        Map<String, SingleFeatureQuerySuccessImpl.IsoformFeatureResult> targetIsoforms = ((FeatureQuerySuccess)result).getData();
+        int targetIsoformCount = targetIsoforms.keySet().size();
+        // Must be two other isoforms
+        Assert.assertEquals(targetIsoformCount, 6);
+
+        // Isoform-2 NX_P09455-2
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso2 = targetIsoforms.get("NX_O14490-2");
+        Assert.assertEquals(iso2.getIsoformAccession(),"NX_O14490-2");
+        Assert.assertEquals(iso2.getBeginIsoformPosition().intValue(), 237);
+        Assert.assertEquals(iso2.getEndIsoformPosition().intValue(), 250);
+
+        // Isoform-3 NX_P09455-3
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso3 = targetIsoforms.get("NX_O14490-3");
+        Assert.assertEquals(iso3.getIsoformAccession(),"NX_O14490-3");
+        Assert.assertEquals(iso3.getBeginIsoformPosition().intValue(), 237);
+        Assert.assertEquals(iso3.getEndIsoformPosition().intValue(), 250);
+
+        // Isoform-4 NX_P09455-4
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso4 = targetIsoforms.get("NX_O14490-4");
+        Assert.assertEquals(iso4.getIsoformAccession(),"NX_O14490-4");
+        Assert.assertEquals(iso4.getBeginIsoformPosition().intValue(), 245);
+        Assert.assertEquals(iso4.getEndIsoformPosition().intValue(), 258);
+
+        // Isoform-5 NX_P09455-5
+        SingleFeatureQuerySuccessImpl.IsoformFeatureResult iso6 = targetIsoforms.get("NX_O14490-6");
+        Assert.assertEquals(iso6.getIsoformAccession(),"NX_O14490-6");
+        Assert.assertEquals(iso6.getBeginIsoformPosition().intValue(), 247);
+        Assert.assertEquals(iso6.getEndIsoformPosition().intValue(), 260);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

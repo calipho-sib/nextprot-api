@@ -2,22 +2,28 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+
+    Date:        2020/07/01
+    1) New annotation category added: interaction-mapping
+    2) New related-annotation-list and related-annotation elements added to link annotations
+    3) New element genome-assembly in nextprot header
+
     Date:        2019/09/02
     New database category added: Variant database (for gnomAD variant cross-references) 
 
     Date:        2019/02/01
     Modified annotation category: activity-regulation (replaces enzyme-regulation)
 
-    Date:		2018/03/27
+    Date:	2018/03/27
     2 parameters of <exon> are now optional: parameters 'accession' and 'database' of exon tag are optional
 
-    Date:		2017/04/24
+    Date:	2017/04/24
     New annotation category added: electrophysiological-parameter
 
-    Date:		2017/04/18
+    Date:	2017/04/18
     New annotation category added: cofactor-info
 
-    Date:		2017/02/21
+    Date:	2017/02/21
     New annotation category added: transport-activity
 
 	Date:		2016/08/30
@@ -90,6 +96,7 @@
 	    <xs:complexType>
 			<xs:sequence>
 				<xs:element ref="database-release" minOccurs="1" maxOccurs="1"/> 	
+                <xs:element ref="genome-assembly" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="api-release"  minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -97,6 +104,7 @@
 	<!-- neXtProt definition ends -->	
 
 	<xs:element name="database-release" type="xs:date"/>	
+    <xs:element name="genome-assembly" type="xs:normalizedString"/>
 	<xs:element name="api-release" type="xs:normalizedString"/>
 	
     <!-- Data source list element definition begins -->
@@ -1013,6 +1021,27 @@
     </xs:element>	
     <!-- Annotation category definition ends -->
 
+    <xs:element name="related-annotation">
+        <xs:annotation>
+            <xs:documentation>Describes a list of related annotation.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="annotation-internal-ref" type="xs:string" use="required"/>
+		</xs:complexType>
+    </xs:element>	
+
+    <xs:element name="related-annotation-list">
+        <xs:annotation>
+            <xs:documentation>Describes a list of related annotations.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+            <xs:sequence>
+                <xs:element ref="related-annotation" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>               
+		</xs:complexType>
+    </xs:element>	
+
+
 	<!-- Annotation element definition begins -->
     <xs:element name="annotation">
         <xs:annotation>
@@ -1024,6 +1053,7 @@
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
                 <xs:element ref="biological-object" minOccurs="0"/>
+                <xs:element ref="related-annotation-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="variant" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element ref="evidence-list" minOccurs="0" maxOccurs="1"/>
@@ -1174,7 +1204,8 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="cv-term" minOccurs="0"/>
+            <!-- 2 terms are allowed one for ECO, one for PSI-MI -->
+                <xs:element ref="cv-term" minOccurs="0" maxOccurs="2"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element name="evidence-note" type="xs:string" minOccurs="0"/>
 			</xs:sequence>
