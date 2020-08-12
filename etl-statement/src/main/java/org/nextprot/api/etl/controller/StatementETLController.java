@@ -47,4 +47,25 @@ public class StatementETLController {
 			throw new NextProtException(e.getMessage());
 		}
 	}
+
+	@ApiMethod(path = "/etl-streaming/{source}/{release}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl-streaming/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseBody
+	public String loadStatementsStreaming(
+			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
+			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-10-04" }) @PathVariable("release") String release,
+			HttpServletRequest request) {
+
+		boolean load = true;
+
+		if ("true".equalsIgnoreCase(request.getParameter("skipLoad"))){
+			load = false;
+		}
+
+		try {
+			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load);
+		} catch (IOException e) {
+			throw new NextProtException(e.getMessage());
+		}
+	}
 }
