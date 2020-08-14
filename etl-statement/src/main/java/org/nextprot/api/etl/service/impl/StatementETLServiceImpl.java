@@ -88,6 +88,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	@Override
 	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load) throws IOException {
+		ReportBuilder report = new ReportBuilder();
 
 		// Reads the source in a streaming fashion and process transform statement by statement
 		for( String jsonFileName : statementSourceService.getJsonFilenamesForRelease(source, release)) {
@@ -98,11 +99,24 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
-				System.out.println("Current read " + currentStatements.size());
-				//TODO: Process statements
+				report.addInfoWithElapsedTime("Read " + currentStatements.size() + " statements");
+				Set<Statement> rawStatements = new HashSet<>(currentStatements);
+				if(!currentStatements.isEmpty()) {
+					// transform the batch of statements
+					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
+					report.addInfoWithElapsedTime("Transformed " + mappedStatements.size() + " statements");
+
+					if(!mappedStatements.isEmpty()) {
+						loadStatements(source, rawStatements, mappedStatements, load, report);
+						report.addInfoWithElapsedTime("Load " + mappedStatements + " mapped statements");
+					}
+				}
 			}
+
+			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName);
 		}
 
+		report.addInfoWithElapsedTime("Finish ETL");
 		return null;
 	}
 
