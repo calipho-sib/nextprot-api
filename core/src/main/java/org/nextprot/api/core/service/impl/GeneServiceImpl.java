@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 class GeneServiceImpl implements GeneService {
@@ -31,4 +32,10 @@ class GeneServiceImpl implements GeneService {
 
         return geneIdentifierService.findGeneNamesByEntryAccession(accession).contains(geneName);
     }
+
+	@Override
+	@Cacheable(value = "entry-ensg-map", sync = true)
+	public Map<String, List<String>> getEntryENSGMap() {
+		return geneDAO.getEntryENSGMap();
+	}
 }

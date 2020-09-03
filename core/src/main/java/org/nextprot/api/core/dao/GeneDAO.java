@@ -24,4 +24,6 @@ public interface GeneDAO {
 	List<SimpleExon> findExonsPartiallyAlignedToTranscriptOfGene(String isoName, String transcriptName, String geneName);
 
 	Map<String, List<IsoformGeneMapping>> getIsoformMappingsByIsoformName(Collection<String> isoformNames);
+	
+	Map<String, List<String>> getEntryENSGMap();
 }
