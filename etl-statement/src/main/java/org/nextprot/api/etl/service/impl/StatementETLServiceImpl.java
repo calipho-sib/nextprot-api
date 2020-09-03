@@ -16,11 +16,14 @@ import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
+import org.nextprot.commons.statements.reader.BufferedJsonStatementReader;
 import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -82,6 +85,40 @@ public class StatementETLServiceImpl implements StatementETLService {
 
         return report.toString();
     }
+
+	@Override
+	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load) throws IOException {
+		ReportBuilder report = new ReportBuilder();
+
+		// Reads the source in a streaming fashion and process transform statement by statement
+		for( String jsonFileName : statementSourceService.getJsonFilenamesForRelease(source, release)) {
+
+			String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
+			URL  fileURL = new URL(urlString);
+			BufferedJsonStatementReader bufferedJsonStatementReader = new BufferedJsonStatementReader(new InputStreamReader(fileURL.openStream()));
+
+			while(bufferedJsonStatementReader.hasStatement()) {
+				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
+				report.addInfoWithElapsedTime("Read " + currentStatements.size() + " statements");
+				Set<Statement> rawStatements = new HashSet<>(currentStatements);
+				if(!currentStatements.isEmpty()) {
+					// transform the batch of statements
+					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
+					report.addInfoWithElapsedTime("Transformed " + mappedStatements.size() + " statements");
+
+					if(!mappedStatements.isEmpty()) {
+						loadStatements(source, rawStatements, mappedStatements, load, report);
+						report.addInfoWithElapsedTime("Load " + mappedStatements + " mapped statements");
+					}
+				}
+			}
+
+			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName);
+		}
+
+		report.addInfoWithElapsedTime("Finish ETL");
+		return null;
+	}
 
     public Set<Statement> extractStatements(StatementSource source, String release, ReportBuilder report) throws IOException {
 
