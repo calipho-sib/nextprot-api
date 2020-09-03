@@ -6,5 +6,6 @@ inner join nextprot.sequence_identifiers master on (master.identifier_id = mappi
 inner join nextprot.db_xrefs xrefs on (gene.db_xref_id = xrefs.resource_id)   
 inner join nextprot.cv_databases dbs on (xrefs.cv_database_id = dbs.cv_id)   
 where mapping_types.cv_name = 'MASTER_SEQUENCE_GENE'  
+and gene.cv_status_id=1 and master.cv_status_id=1
 and master.unique_name = :unique_name
 and dbs.cv_name = 'Ensembl' -- all dbs.cv_name in (HGNC, Ensembl, neXtProt)
