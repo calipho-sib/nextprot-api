@@ -54,9 +54,8 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 		java.sql.Statement deleteStatement = null;
 		PreparedStatement pstmt = null;
-		
-		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection()) {
 
+		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection())  {
 			deleteStatement = conn.createStatement();
 			deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
 

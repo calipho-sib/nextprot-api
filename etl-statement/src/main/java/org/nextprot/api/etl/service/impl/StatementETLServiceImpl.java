@@ -65,7 +65,7 @@ public class StatementETLServiceImpl implements StatementETLService {
     public String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
-
+		float startETL = System.currentTimeMillis();
         Set<Statement> rawStatements = extractStatements(source, release, report);
         report.addInfoWithElapsedTime("Finished extraction");
 
@@ -81,7 +81,8 @@ public class StatementETLServiceImpl implements StatementETLService {
         report.addInfoWithElapsedTime("Finished transformation");
 
         loadStatements(source, rawStatements, mappedStatements, load, report);
-        report.addInfoWithElapsedTime("Finished load");
+        float etlProcessingTime = System.currentTimeMillis() - startETL;
+        report.addInfoWithElapsedTime("Finished load in " + etlProcessingTime + " ms");
 
         return report.toString();
     }
@@ -91,8 +92,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 		ReportBuilder report = new ReportBuilder();
 
 		// Reads the source in a streaming fashion and process transform statement by statement
+		float startETL = System.currentTimeMillis();
 		for( String jsonFileName : statementSourceService.getJsonFilenamesForRelease(source, release)) {
-
+			System.out.println("Processing source file " + jsonFileName);
+			float start = System.currentTimeMillis();
 			String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 			URL  fileURL = new URL(urlString);
 			BufferedJsonStatementReader bufferedJsonStatementReader = new BufferedJsonStatementReader(new InputStreamReader(fileURL.openStream()));
@@ -108,16 +111,19 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 					if(!mappedStatements.isEmpty()) {
 						loadStatements(source, rawStatements, mappedStatements, load, report);
-						report.addInfoWithElapsedTime("Load " + mappedStatements + " mapped statements");
+						report.addInfoWithElapsedTime("Load " + mappedStatements.size() + " mapped statements");
 					}
 				}
 			}
 
-			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName);
+			float processingTime = System.currentTimeMillis() - start;
+			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName + " in " + processingTime + " ms");
+
 		}
 
-		report.addInfoWithElapsedTime("Finish ETL");
-		return null;
+		float etlProcessingTime = System.currentTimeMillis() - startETL;
+		report.addInfoWithElapsedTime("Finished ETL in " + etlProcessingTime + " ms");
+		return report.toString();
 	}
 
     public Set<Statement> extractStatements(StatementSource source, String release, ReportBuilder report) throws IOException {
