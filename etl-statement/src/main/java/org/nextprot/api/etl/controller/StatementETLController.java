@@ -41,8 +41,11 @@ public class StatementETLController {
 			load = false;
 		}
 
+		// Erases the existing data for the given source
+		boolean erase = true;
+
 		try {
-			return statementETLService.extractTransformLoadStatements(StatementSource.valueOfKey(source), release, load);
+			return statementETLService.extractTransformLoadStatements(StatementSource.valueOfKey(source), release, load, erase);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}
@@ -62,8 +65,10 @@ public class StatementETLController {
 			load = false;
 		}
 
+		boolean erase = false;
+
 		try {
-			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load);
+			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}

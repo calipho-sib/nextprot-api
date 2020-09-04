@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface StatementLoaderService {
 
-	void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException;
-	void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source)  throws SQLException;
+	void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source, boolean erase) throws SQLException;
+	void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source, boolean erase)  throws SQLException;
 	
 }
