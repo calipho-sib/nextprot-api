@@ -2,18 +2,26 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.Lists;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.impl.MasterIdentifierServiceImpl.MapStatus;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev","cache" })
 public class GeneServiceImplTest extends CoreUnitBaseTest {
 
     @Autowired
@@ -21,6 +29,11 @@ public class GeneServiceImplTest extends CoreUnitBaseTest {
 
     @Autowired
     private GeneIdentifierService geneIdentifierService;
+    
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+    
+    
 
     @Test
     public void findGeneNames() {
@@ -56,6 +69,30 @@ public class GeneServiceImplTest extends CoreUnitBaseTest {
 
     	// we should encounter some multi-entry gene
     	Assert.assertTrue(map.get("ENSG00000225830").size() > 1);
+    	
+    }
+    
+    
+    @Ignore
+    @Test
+    public void classifyGeneMapping() throws Exception {
+    	String filename = "/Users/pmichel/tmp/bgee/ensg.list";
+    	String file_out = "/Users/pmichel/tmp/bgee/ensg.out";
+    	BufferedReader reader = new BufferedReader(new FileReader(filename));
+    	BufferedWriter writer = new BufferedWriter(new FileWriter(file_out));
+	    String ensg = null;
+        int line = 0;
+        while ((ensg = reader.readLine()) != null) {
+            line++;
+            if (line > 1000) System.out.println("Processing line " + line);
+            MapStatus s = masterIdentifierService.getMapStatusForENSG(ensg);
+            String result = ensg + "\t" + s.getStatus() + "\t" + s.getEntries().stream().collect(Collectors.joining(",")) + "\n";
+            writer.write(result);
+        }
+        System.out.println("Processing line " + line);
+        System.out.println("end");        
+        reader.close();
+        writer.close();
     	
     }
     
