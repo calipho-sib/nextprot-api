@@ -61,8 +61,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private HttpSparqlService httpSparqlService;
 
+	protected static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
+
 	@Override
-    public String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException {
+    public String extractTransformLoadStatements(StatementSource source, String release, boolean load, boolean erase) throws IOException {
 
         ReportBuilder report = new ReportBuilder();
 		float startETL = System.currentTimeMillis();
@@ -80,7 +82,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	    Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
         report.addInfoWithElapsedTime("Finished transformation");
 
-        loadStatements(source, rawStatements, mappedStatements, load, report);
+        loadStatements(source, rawStatements, mappedStatements, load, report, erase);
         float etlProcessingTime = System.currentTimeMillis() - startETL;
         report.addInfoWithElapsedTime("Finished load in " + etlProcessingTime + " ms");
 
@@ -88,13 +90,13 @@ public class StatementETLServiceImpl implements StatementETLService {
     }
 
 	@Override
-	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load) throws IOException {
+	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException {
 		ReportBuilder report = new ReportBuilder();
 
 		// Reads the source in a streaming fashion and process transform statement by statement
 		float startETL = System.currentTimeMillis();
 		for( String jsonFileName : statementSourceService.getJsonFilenamesForRelease(source, release)) {
-			System.out.println("Processing source file " + jsonFileName);
+			LOGGER.info("Processing source file " + jsonFileName);
 			float start = System.currentTimeMillis();
 			String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 			URL  fileURL = new URL(urlString);
@@ -106,23 +108,30 @@ public class StatementETLServiceImpl implements StatementETLService {
 				Set<Statement> rawStatements = new HashSet<>(currentStatements);
 				if(!currentStatements.isEmpty()) {
 					// transform the batch of statements
+					float transformStart = System.currentTimeMillis();
 					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 					report.addInfoWithElapsedTime("Transformed " + mappedStatements.size() + " statements");
+					float transformTime = System.currentTimeMillis() - transformStart;
+					LOGGER.info("Transformed " + mappedStatements.size() + " in " + transformTime + " ms");
 
 					if(!mappedStatements.isEmpty()) {
-						loadStatements(source, rawStatements, mappedStatements, load, report);
+						float loadStart = System.currentTimeMillis();
+						loadStatements(source, rawStatements, mappedStatements, load, report, erase);
 						report.addInfoWithElapsedTime("Load " + mappedStatements.size() + " mapped statements");
+						float loadTime = System.currentTimeMillis() - loadStart;
+						LOGGER.info("Loaded " + mappedStatements.size() + " in " + loadTime + " ms");
 					}
 				}
 			}
 
 			float processingTime = System.currentTimeMillis() - start;
 			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName + " in " + processingTime + " ms");
-
+			LOGGER.info("Finished ETL for source file " + jsonFileName + " in " + processingTime + " ms");
 		}
 
 		float etlProcessingTime = System.currentTimeMillis() - startETL;
 		report.addInfoWithElapsedTime("Finished ETL in " + etlProcessingTime + " ms");
+		LOGGER.info("Finished ETL in " + etlProcessingTime + " ms");
 		return report.toString();
 	}
 
@@ -197,18 +206,18 @@ public class StatementETLServiceImpl implements StatementETLService {
         return statements;
     }
 
-	public void loadStatements(StatementSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report) {
+	public void loadStatements(StatementSource source, Collection<Statement> rawStatements, Collection<Statement> mappedStatements, boolean load, ReportBuilder report, boolean erase) {
 
         try {
             if (load) {
                 report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
                 long start = System.currentTimeMillis();
-                statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
+                statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source, erase);
                 report.addInfo("Finish load raw statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 
                 report.addInfo("Loading entry statements: " + mappedStatements.size());
                 start = System.currentTimeMillis();
-                statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source);
+                statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source, erase);
                 report.addInfo("Finish load mapped statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 
             } else {

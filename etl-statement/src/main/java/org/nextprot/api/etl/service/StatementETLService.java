@@ -19,7 +19,7 @@ public interface StatementETLService {
 		 * @return the log message
 		 * @throws IOException
 		 */
-	String extractTransformLoadStatements(StatementSource source, String release, boolean load) throws IOException;
+	String extractTransformLoadStatements(StatementSource source, String release, boolean load, boolean erase) throws IOException;
 
 	/**
 	 * Extract/Transform/Load statements provided by a source
@@ -29,5 +29,5 @@ public interface StatementETLService {
 	 * @return the log message
 	 * @throws IOException
 	 */
-	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load) throws IOException;
+	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException;
 }

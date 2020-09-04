@@ -1,5 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
+	protected static final Logger LOGGER = Logger.getLogger(JDBCStatementLoaderServiceImpl.class);
+
 	@Autowired private DataSourceServiceLocator dataSourceServiceLocator = null;
 	
 	private String entryTable =  StatementTableNames.ENTRY_TABLE;
@@ -33,16 +36,16 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	
 
 	@Override
-	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
-		load(statements, rawTable, source);
+	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source, boolean erase) throws SQLException {
+		load(statements, rawTable, source, erase);
 	}
 
 	@Override
-	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
-		load(statements, entryTable, source);
+	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source, boolean erase) throws SQLException {
+		load(statements, entryTable, source, erase);
 	}
 	
-	private void load(Collection<Statement> statements, String tableName, StatementSource source) throws SQLException {
+	private void load(Collection<Statement> statements, String tableName, StatementSource source, boolean erase) throws SQLException {
 
 		List<StatementField> customFields = source.getFields().stream()
 				.filter(field -> field instanceof CustomStatementField)
@@ -56,17 +59,19 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 		PreparedStatement pstmt = null;
 
 		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection())  {
-			deleteStatement = conn.createStatement();
-			deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
+			if(erase) {
+				deleteStatement = conn.createStatement();
+				deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
+			}
 
 			String columnNames = StringUtils.mkString(coreFields, "", ",", "");
 			if (customFields.size()>0) columnNames += ",EXTRA_FIELDS";
-			System.out.println("JDBCStatementLoaderServiceImpl columnsNames: "+columnNames);
+			LOGGER.debug("JDBCStatementLoaderServiceImpl columnsNames: "+columnNames);
 			List<String> bindVariablesList = new ArrayList<>();
 			for (int i=0 ; i<coreFields.size(); i++) bindVariablesList.add("?");
 			if (customFields.size()>0) bindVariablesList.add("?");
 			String bindVariables = StringUtils.mkString(bindVariablesList, "",",", "");
-			System.out.println("JDBCStatementLoaderServiceImpl bindVariables: "+bindVariables);
+			LOGGER.debug("JDBCStatementLoaderServiceImpl bindVariables: "+bindVariables);
 
 			pstmt = conn.prepareStatement(
 					"INSERT INTO nxflat." + tableName + " (" + columnNames + ") VALUES ( " + bindVariables + ")"
@@ -83,13 +88,15 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 					Map<String,String> extraMap = new HashMap<>();
 					for (StatementField sf : customFields) extraMap.put(sf.getName(), s.getValue(sf));
 					String extraValue = StringUtils.serializeAsJsonStringOrNull(extraMap);
-					System.out.println("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
+					LOGGER.debug("JDBCStatementLoaderServiceImplextraValue:" + extraValue);
 					pstmt.setString(i, extraValue==null ? null : extraValue.replace("'", "''"));
 				}
 				pstmt.addBatch();
 			}
 
-			deleteStatement.executeBatch();
+			if(deleteStatement != null ) {
+				deleteStatement.executeBatch();
+			}
 			pstmt.executeBatch();
 
 		} finally {
