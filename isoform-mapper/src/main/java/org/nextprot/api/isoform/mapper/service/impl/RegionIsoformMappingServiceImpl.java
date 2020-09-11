@@ -66,8 +66,16 @@ public class RegionIsoformMappingServiceImpl implements RegionIsoformMappingServ
         int regionStart = query.getRegionStart();
         int regionEnd = query.getRegionEnd();
         String regionFromQuery = query.getRegionSequence();
-        String regionFromIsoform = isoform.getSequence().substring(regionStart - 1, regionEnd);
 
+        String isoformSequence = isoform.getSequence();
+        int regionStartIndex = regionStart - 1;
+        String regionFromIsoform = null;
+        if(!(regionStartIndex >= 0 && regionStartIndex < isoformSequence.length() && (regionEnd >= 0 && regionEnd < isoformSequence.length()))) {
+            LOGGER.debug("Region start and end indices are out of bound");
+            return false;
+        }
+
+        regionFromIsoform = isoformSequence.substring(regionStartIndex, regionEnd);
         if(regionFromQuery != null && regionFromIsoform != null) {
             float matchingScore = getMatchingScore(regionFromQuery,regionFromIsoform);
             if(matchingScore >= 0.96) {

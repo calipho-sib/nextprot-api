@@ -37,16 +37,4 @@ public class StatementSourceTest {
 	
 		Assert.assertTrue(src.getField("PSIMI_ID").getName().equals("PSIMI_ID"));
 	}
-
-	@Test
-	public void shouldFindValueOfLowerCaseKey() {
-
-		Assert.assertEquals(StatementSource.GnomAD, StatementSource.valueOfKey("gnomad"));
-	}
-
-	@Test
-	public void shouldFindValueOfUpperCaseKey() {
-
-		Assert.assertEquals(StatementSource.GnomAD, StatementSource.valueOfKey("GNOMAD"));
-	}
 }
