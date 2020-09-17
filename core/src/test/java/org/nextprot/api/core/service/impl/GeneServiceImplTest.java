@@ -77,19 +77,25 @@ public class GeneServiceImplTest extends CoreUnitBaseTest {
     @Test
     public void classifyGeneMapping() throws Exception {
     	String filename = "/Users/pmichel/tmp/bgee/ensg.list";
-    	String file_out = "/Users/pmichel/tmp/bgee/ensg.out";
+    	String file_out = "/Users/pmichel/tmp/bgee/ensg.out";   	
+    	// fake call to load cache
+    	long t0 = System.currentTimeMillis();
+    	masterIdentifierService.getMapStatusForENSG("Schtroumpf");
+    	System.out.println("Took " + (System.currentTimeMillis()-t0) + " ms to load cache") ;    	
     	BufferedReader reader = new BufferedReader(new FileReader(filename));
     	BufferedWriter writer = new BufferedWriter(new FileWriter(file_out));
 	    String ensg = null;
         int line = 0;
+        t0 = System.currentTimeMillis();
         while ((ensg = reader.readLine()) != null) {
             line++;
-            if (line > 1000) System.out.println("Processing line " + line);
+            if (line % 10000 == 0) System.out.println("Processing line " + line);
             MapStatus s = masterIdentifierService.getMapStatusForENSG(ensg);
             String result = ensg + "\t" + s.getStatus() + "\t" + s.getEntries().stream().collect(Collectors.joining(",")) + "\n";
             writer.write(result);
         }
         System.out.println("Processing line " + line);
+        System.out.println("Took " + (System.currentTimeMillis()-t0) + " ms.") ;
         System.out.println("end");        
         reader.close();
         writer.close();
