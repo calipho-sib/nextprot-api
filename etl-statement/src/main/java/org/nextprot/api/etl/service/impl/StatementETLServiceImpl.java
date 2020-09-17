@@ -14,6 +14,7 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.reader.BufferedJsonStatementReader;
 import org.nextprot.commons.statements.reader.JsonStatementReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -50,6 +51,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private StatementPreProcessServiceImpl statementPreProcessService;
 
+	@Value("${etl.streaming.batchSize}")
+	private int batchSize;
 
 	protected static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
 
@@ -79,6 +82,7 @@ public class StatementETLServiceImpl implements StatementETLService {
         return report.toString();
     }
 
+
 	@Override
 	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException {
 		ReportBuilder report = new ReportBuilder();
@@ -90,7 +94,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 			long start = System.currentTimeMillis();
 			String urlString = source.getStatementsUrl() + "/" + release + "/" + jsonFileName;
 			URL  fileURL = new URL(urlString);
-			BufferedJsonStatementReader bufferedJsonStatementReader = new BufferedJsonStatementReader(new InputStreamReader(fileURL.openStream()), 1000);
+			BufferedJsonStatementReader bufferedJsonStatementReader = new BufferedJsonStatementReader(new InputStreamReader(fileURL.openStream()), this.batchSize);
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
