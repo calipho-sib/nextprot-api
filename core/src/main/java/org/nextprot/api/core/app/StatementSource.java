@@ -27,14 +27,10 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 					.withExtraFields(Arrays.asList("PSIMI_ID", "MAPPING_SEQUENCE", "TARGET_ISOFORM"))
 					.build()),
 
-	// unused code afaik (Kasun and Pam)
-	GnomAD("gnomAD",
-			"http://kant.sib.swiss:9001/gnomad",
+	Bgee("Bgee", "http://kant.sib.swiss:9001/bgee",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
-					.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
-					.build())
-	;
+					.withExtraFields(Arrays.asList("ENSEMBL_ID"))
+					.build());
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
 			new EnumConstantDictionary<StatementSource>(StatementSource.class, values()) {
