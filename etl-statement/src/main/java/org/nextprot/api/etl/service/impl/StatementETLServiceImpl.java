@@ -98,31 +98,30 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
-				report.addInfoWithElapsedTime("Read " + currentStatements.size() + " statements");
+				report.addInfoWithElapsedTime(" { 'step': extract, 'statements': " + currentStatements.size() + ", 'time':  -");
 				Set<Statement> rawStatements = new HashSet<>(currentStatements);
 				if(!currentStatements.isEmpty()) {
 					// transform the batch of statements
 					long transformStart = System.currentTimeMillis();
 					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
-					report.addInfoWithElapsedTime("Transformed " + mappedStatements.size() + " statements");
 					long transformTime = (System.currentTimeMillis() - transformStart) / 1000;
-					report.addInfoWithElapsedTime("Transformed " + mappedStatements.size() + " statements" + " in "+ transformTime +"ms");
+					report.addInfoWithElapsedTime("{ 'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
 					if(!mappedStatements.isEmpty()) {
 						long loadStart = System.currentTimeMillis();
 						loadStatements(source, rawStatements, mappedStatements, load, report, erase);
 						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-						report.addInfoWithElapsedTime("Load " + mappedStatements.size() + " mapped statements in " + loadTime + " ms");
+						report.addInfoWithElapsedTime("{ 'step' : load , statements: " + mappedStatements.size() + ", time: " + loadTime);
 					}
 				}
 			}
 
 			long processingTime = (System.currentTimeMillis() - start) / 1000;
-			report.addInfoWithElapsedTime("Finished ETL for file " + jsonFileName + " in " + processingTime + " ms");
+			report.addInfoWithElapsedTime("{ 'File' : " + jsonFileName + " , 'time' : " + processingTime);
 			//LOGGER.info("Finished ETL for source file " + jsonFileName + " in " + processingTime + " ms");
 		}
 
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
-		report.addInfoWithElapsedTime("Finished ETL in " + etlProcessingTime + " ms");
+		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime);
 		//LOGGER.info("Finished ETL in " + etlProcessingTime + " ms");
 		return report.toString();
 	}
