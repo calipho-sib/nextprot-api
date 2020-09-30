@@ -405,6 +405,7 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                             return statement;
                         }
                     })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
             return preProcessedStatements;
         }

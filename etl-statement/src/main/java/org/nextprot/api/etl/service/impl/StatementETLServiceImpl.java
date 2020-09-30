@@ -73,6 +73,10 @@ public class StatementETLServiceImpl implements StatementETLService {
         }
 
 	    Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
+        if(mappedStatements == null) {
+        	LOGGER.debug("Empyt mapped statements");
+        	return report.toString();
+		}
         report.addInfoWithElapsedTime("Finished transformation");
 
         loadStatements(source, rawStatements, mappedStatements, load, report, erase);
@@ -174,8 +178,13 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		report.addInfoWithElapsedTime("Starting transformStatements(), raw statements count:" + rawStatements.size());
 		rawStatements = preTransformStatements(source, rawStatements);
-		report.addInfoWithElapsedTime("Finished pre transformation treatments, raw statements count:" + rawStatements.size());
+		if(rawStatements.isEmpty()) {
+			LOGGER.debug("Raw statements are empty");
+			report.addInfoWithElapsedTime("Pre-transformation returned empty");
+			return null;
+		}
 
+		report.addInfoWithElapsedTime("Finished pre transformation treatments, raw statements count:" + rawStatements.size());
 		Collection<Statement> statements = statementTransformerService.transformStatements(rawStatements, report);
         report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
