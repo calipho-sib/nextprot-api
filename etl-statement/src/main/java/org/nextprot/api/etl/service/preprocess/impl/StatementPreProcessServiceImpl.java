@@ -34,15 +34,20 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
     @Autowired
     HttpSparqlService httpSparqlService;
 
+    @Autowired
+    MasterIdentifierService masterIdentifierService;
+
     @Override
     public Set<Statement> process(StatementSource source, Collection<Statement> statements) {
         if (source == StatementSource.GlyConnect) {
             StatementETLServiceImpl.ReportBuilder report = new StatementETLServiceImpl.ReportBuilder();
             return new GlyConnectPreProcessor(report)
                     .process(statements);
-        }
-        else if (source == StatementSource.BioEditor) {
+        } else if (source == StatementSource.BioEditor) {
             return new BioEditorPreProcessor()
+                    .process(statements);
+        } else if (source == StatementSource.Bgee) {
+            return new BgeePreProcessor()
                     .process(statements);
         }
         return new StatementIdBuilder()
@@ -379,9 +384,6 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
     }
 
     private class BgeePreProcessor implements StatementETLServiceImpl.PreTransformProcessor {
-
-        @Autowired
-        MasterIdentifierService masterIdentifierService;
 
         @Override
         public Set<Statement> process(Collection<Statement> statements) {

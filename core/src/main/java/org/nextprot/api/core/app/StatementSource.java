@@ -29,7 +29,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 
 	Bgee("Bgee", "http://kant.sib.swiss:9001/bgee",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("ENSEMBL_ID"))
+					.withExtraFields(Arrays.asList("ENSEMBL_ID", "STAGE_ID", "EXPRESSION_LEVEL"))
 					.build());
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
