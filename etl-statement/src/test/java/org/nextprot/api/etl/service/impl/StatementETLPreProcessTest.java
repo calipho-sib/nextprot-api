@@ -1,5 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.core.app.StatementSource;
@@ -12,6 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles({"dev", "build"})
@@ -24,7 +27,20 @@ public class StatementETLPreProcessTest {
     @Test
     public void shouldPreprocessBgeeRawStatementAndAddEntryAccession() throws Exception{
         StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
-        Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");
-        statementPreProcessService.process(StatementSource.valueOfKey("Bgee"), rawStatements);
+        Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "bgee-statements");
+        Set<Statement> preprocessedStatements = statementPreProcessService.process(StatementSource.valueOfKey("Bgee"), rawStatements);
+        Assert.assertEquals(preprocessedStatements.size(),2);
+
+        for (Statement preprocessedStatement : preprocessedStatements) {
+            Optional<String> geneName = preprocessedStatement.getOptionalValue("ENSEMBL_ID");
+            Assert.assertEquals(geneName.isPresent(), true);
+
+            String entryName = geneName.get();
+            if(geneName.equals("ENSG00000100031")) {
+                Assert.assertEquals(entryName, "NX_P19440");
+            } else if(geneName.equals("ENSG00000000003")) {
+                Assert.assertEquals(entryName, "NX_O43657");
+            }
+        }
     }
 }
