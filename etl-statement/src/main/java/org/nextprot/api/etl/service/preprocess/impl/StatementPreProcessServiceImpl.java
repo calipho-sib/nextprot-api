@@ -7,6 +7,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
+import org.nextprot.api.core.service.impl.MasterIdentifierServiceImpl;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.preprocess.StatementPreProcessService;
@@ -391,7 +392,9 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
             Set<Statement> preProcessedStatements = statements.stream()
                     .map((statement) -> {
                         String ensemblID = statement.getValue(new CustomStatementField("ENSEMBL_ID"));
-                        Set<String> entries = masterIdentifierService.findEntryAccessionByGeneName(ensemblID, true);
+                        MasterIdentifierServiceImpl.MapStatus geneMapStatus = masterIdentifierService.getMapStatusForENSG(ensemblID);
+                        LOGGER.debug("Gene to entry map status " + geneMapStatus.getStatus());
+                        List<String> entries = geneMapStatus.getEntries();
                         if(entries.isEmpty()) {
                             LOGGER.debug("No entry found for ensembl ID " + ensemblID + " ignoring the statement");
                             return null;
@@ -399,7 +402,7 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                             LOGGER.debug("Multiple entries found for ensembl ID " + ensemblID + " ignoring the statement");
                             return null;
                         } else {
-                            String entryAccession = entries.stream().findFirst().toString();
+                            String entryAccession = entries.get(0).toString();
                             LOGGER.debug("Unique entry found for ensembl ID " + ensemblID + " entry " + entryAccession);
                             statement.put(ENTRY_ACCESSION, entryAccession);
                             return statement;
