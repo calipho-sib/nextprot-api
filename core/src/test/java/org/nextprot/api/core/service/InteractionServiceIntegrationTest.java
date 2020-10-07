@@ -90,6 +90,11 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 	 * 
 	 * see query above to find other examples if necessary in future releases
 	 * 
+	 * 
+	 * Pam 07/10/2020:
+	 * We are now using NP2 pipeline to get IntAct (and other) binary interactions.
+	 * This test should work again once we have the nxflat db filled with IntAct data
+	 * 
 	 */
 	@Test
 	public void shouldDealWithAnyInteractionSpecialInteraction() {

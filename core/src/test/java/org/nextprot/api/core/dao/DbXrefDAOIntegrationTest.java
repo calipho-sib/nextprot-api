@@ -43,6 +43,11 @@ limit 100
 
  */
 	
+	/*
+	 * Pam: 07.10.2020
+	 * This test and related DAO method are absolete after we retrieve all interactions from NP2 pipeline
+	 */
+	@Ignore
 	@Test
 	public void shouldReturn_2_XenoInteractantXrefs() {
 

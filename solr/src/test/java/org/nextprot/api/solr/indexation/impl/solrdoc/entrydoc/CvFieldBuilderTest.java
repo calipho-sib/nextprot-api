@@ -49,6 +49,12 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
 		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
     }
+	
+	/*
+	 * Pam 07/10/2020:
+	 * We are now using NP2 pipeline to get Bgee expression profile annotations.
+	 * This test should work again once we have the nxflat db filled with Bgee data
+	 */
 	@Test
 	public void shouldContainCvTermsFromExperimentalContext_devStage() {
 
