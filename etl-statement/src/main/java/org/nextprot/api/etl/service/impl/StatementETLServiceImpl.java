@@ -110,7 +110,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 					long transformTime = (System.currentTimeMillis() - transformStart) / 1000;
 					if(mappedStatements == null) {
-						report.addInfoWithElapsedTime("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
+						report.addInfoWithElapsedTime("'step' : transform, statements: 0, time:" + transformTime);
 						continue;
 					}
 					report.addInfoWithElapsedTime("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
@@ -118,7 +118,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						long loadStart = System.currentTimeMillis();
 						loadStatements(source, rawStatements, mappedStatements, load, report, erase);
 						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-						report.addInfoWithElapsedTime("'step' : load , statements: " + mappedStatements.size() + ", time: " + loadTime);
+						report.addInfoWithElapsedTime("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + rawStatements.size() + ", time: " + loadTime);
 					}
 				}
 			}
@@ -179,16 +179,16 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public Collection<Statement> transformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		report.addInfoWithElapsedTime("Starting transformStatements(), raw statements count:" + rawStatements.size());
-		rawStatements = preTransformStatements(source, rawStatements);
-		if(rawStatements.isEmpty()) {
+		Set<Statement> preTransformStatements = preTransformStatements(source, rawStatements);
+		if(preTransformStatements.isEmpty()) {
 			LOGGER.debug("Raw statements are empty");
 			report.addInfoWithElapsedTime("Pre-transformation returned empty");
 			return null;
 		}
 
-		report.addInfoWithElapsedTime("Finished pre transformation treatments, raw statements count:" + rawStatements.size());
-		Collection<Statement> statements = statementTransformerService.transformStatements(rawStatements, report);
-        report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
+		report.addInfoWithElapsedTime("Finished pre transformation, raw statements count:" + preTransformStatements.size());
+		Collection<Statement> statements = statementTransformerService.transformStatements(preTransformStatements, report);
+        report.addInfo("Transformed " + preTransformStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
         return statements;
     }
