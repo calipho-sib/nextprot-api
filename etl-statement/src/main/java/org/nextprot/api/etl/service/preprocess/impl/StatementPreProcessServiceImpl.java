@@ -393,17 +393,20 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                     .map((statement) -> {
                         String ensemblID = statement.getValue(new CustomStatementField("ENSEMBL_ID"));
                         MasterIdentifierServiceImpl.MapStatus geneMapStatus = masterIdentifierService.getMapStatusForENSG(ensemblID);
-                        LOGGER.debug("Gene to entry map status " + geneMapStatus.getStatus());
+                        LOGGER.info("Gene to entry map status " + geneMapStatus.getStatus());
                         List<String> entries = geneMapStatus.getEntries();
-                        if(entries.isEmpty()) {
-                            LOGGER.debug("No entry found for ensembl ID " + ensemblID + " ignoring the statement");
+                        if(geneMapStatus.getStatus().equals(MasterIdentifierServiceImpl.MapStatus.Status.MAPS_NO_ENTRY)) {
+                            LOGGER.info("No entry found for ensembl ID " + ensemblID + " ignoring the statement");
                             return null;
-                        } else if(entries.size() > 1) {
-                            LOGGER.debug("Multiple entries found for ensembl ID " + ensemblID + " ignoring the statement");
+                        } else if(geneMapStatus.getStatus().equals(MasterIdentifierServiceImpl.MapStatus.Status.MAPS_MULTIPLE_ENTRIES)) {
+                            LOGGER.info("Multiple entries found for ensembl ID " + ensemblID + " ignoring the statement");
+                            return null;
+                        } else if(geneMapStatus.getStatus().equals(MasterIdentifierServiceImpl.MapStatus.Status.MAPS_MULTIGENE_ENTRY)) {
+                            LOGGER.info("Multigene entry "+ entries.get(0).toString() +" found for ensembl ID " + ensemblID + " ignoring the statement");
                             return null;
                         } else {
                             String entryAccession = entries.get(0).toString();
-                            LOGGER.debug("Unique entry found for ensembl ID " + ensemblID + " entry " + entryAccession);
+                            LOGGER.info("Unique entry found for ensembl ID " + ensemblID + " entry " + entryAccession);
                             statement.put(ENTRY_ACCESSION, entryAccession);
                             return statement;
                         }

@@ -34,5 +34,41 @@
     "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
     "IS_NEGATIVE": "false",
     "REFERENCE_ACCESSION": "ENSG00000100031"
+  },
+  {
+    "ANNOT_CV_TERM_ACCESSION": "TS-0711",
+    "GENE_NAME": "RGPD5",
+    "EVIDENCE_CODE": "ECO:0000104",
+    "SOURCE": "Bgee",
+    "STAGE_NAME": "human adult stage (human)",
+    "ANNOT_CV_TERM_NAME": "Oocyte",
+    "EXPRESSION_LEVEL": "negative",
+    "RESOURCE_TYPE": "xref",
+    "ASSIGNED_BY": "Bgee",
+    "ASSIGMENT_METHOD": "CURATED",
+    "ENSEMBL_ID": "ENSG00000015568",
+    "ANNOTATION_CATEGORY": "expression-profile",
+    "STAGE_ID": "HsapDv:0000087",
+    "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
+    "IS_NEGATIVE": "true",
+    "REFERENCE_ACCESSION": "ENSG00000015568"
+  },
+  {
+    "ANNOT_CV_TERM_ACCESSION": "TS-0549",
+    "GENE_NAME": "NME1-NME2",
+    "EVIDENCE_CODE": "ECO:0000295",
+    "SOURCE": "Bgee",
+    "STAGE_NAME": "human middle aged stage (human)",
+    "ANNOT_CV_TERM_NAME": "Leukocyte",
+    "EXPRESSION_LEVEL": "positive",
+    "RESOURCE_TYPE": "xref",
+    "ASSIGNED_BY": "Bgee",
+    "ASSIGMENT_METHOD": "CURATED",
+    "ENSEMBL_ID": "ENSG00000011052",
+    "ANNOTATION_CATEGORY": "expression-profile",
+    "STAGE_ID": "HsapDv:0000092",
+    "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
+    "IS_NEGATIVE": "false",
+    "REFERENCE_ACCESSION": "ENSG00000011052"
   }
 ]

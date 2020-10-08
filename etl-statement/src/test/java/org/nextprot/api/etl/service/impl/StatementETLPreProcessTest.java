@@ -29,16 +29,14 @@ public class StatementETLPreProcessTest {
         StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
         Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "bgee-statements");
         Set<Statement> preprocessedStatements = statementPreProcessService.process(StatementSource.valueOfKey("Bgee"), rawStatements);
-        Assert.assertEquals(preprocessedStatements.size(),2);
+        Assert.assertEquals(preprocessedStatements.size(),1);
 
         for (Statement preprocessedStatement : preprocessedStatements) {
             Optional<String> geneName = preprocessedStatement.getOptionalValue("ENSEMBL_ID");
             Assert.assertEquals(geneName.isPresent(), true);
 
             String entryName = geneName.get();
-            if(geneName.equals("ENSG00000100031")) {
-                Assert.assertEquals(entryName, "NX_P19440");
-            } else if(geneName.equals("ENSG00000000003")) {
+            if(geneName.equals("ENSG00000000003")) {
                 Assert.assertEquals(entryName, "NX_O43657");
             }
         }
