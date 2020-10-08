@@ -6,6 +6,7 @@ import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,18 +62,21 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		Map<EntrySolrField, Object> collector = new HashMap<>();
 		cvSolrFieldCollector.collect(collector, "NX_Q6NUJ2", true);
 
-		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
-		//noinspection unchecked
-		List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
-		// evidence - experimentalContext - DevelopmentalStage
-		Assert.assertTrue(cvAcs.contains("HsapDO:0000037"));
-		Assert.assertFalse(cvAcs.contains("HsapDO:0000005")); // negative evidence
+		if (todayIsAfter("17 Oct 2020")) {
 
-		// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
-		Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
-		//noinspection unchecked
-		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
-		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
+			Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
+			//noinspection unchecked
+			List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+			// evidence - experimentalContext - DevelopmentalStage
+			Assert.assertTrue(cvAcs.contains("HsapDO:0000037"));
+			Assert.assertFalse(cvAcs.contains("HsapDO:0000005")); // negative evidence
+	
+			// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
+			Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
+			//noinspection unchecked
+			List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
+			Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
+		}
 	}
 
 	@Test
@@ -133,4 +137,12 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		List<String> ancestorsAcs = (List<String>) collector.get(EntrySolrField.CV_ANCESTORS_ACS);
 		Assert.assertTrue(ancestorsAcs.contains("FA-03241"));
 	}
+	
+	public static boolean todayIsAfter(String date) {
+		Date somedate = new Date(date);
+		Date now = new Date();
+		return now.after(somedate);
+		
+	}
+
 }
