@@ -70,5 +70,41 @@
     "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
     "IS_NEGATIVE": "false",
     "REFERENCE_ACCESSION": "ENSG00000011052"
+  },
+  {
+    "ANNOT_CV_TERM_ACCESSION": "TS-2687",
+    "GENE_NAME": "RTEL1-TNFRSF6B",
+    "EVIDENCE_CODE": "ECO:0000295",
+    "SOURCE": "Bgee",
+    "STAGE_NAME": "human middle aged stage (human)",
+    "ANNOT_CV_TERM_NAME": "Esophagogastric junction muscularis propria",
+    "EXPRESSION_LEVEL": "positive",
+    "RESOURCE_TYPE": "xref",
+    "ASSIGNED_BY": "Bgee",
+    "ASSIGMENT_METHOD": "CURATED",
+    "ENSEMBL_ID": "ENSG00000026036",
+    "ANNOTATION_CATEGORY": "expression-profile",
+    "STAGE_ID": "HsapDv:0000092",
+    "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
+    "IS_NEGATIVE": "false",
+    "REFERENCE_ACCESSION": "ENSG00000026036"
+  },
+  {
+    "ANNOT_CV_TERM_ACCESSION": "TS-2687",
+    "GENE_NAME": "RTEL1-TNFRSF6B",
+    "EVIDENCE_CODE": "ECO:0000295",
+    "SOURCE": "Bgee",
+    "STAGE_NAME": "65-79 year-old human stage (human)",
+    "ANNOT_CV_TERM_NAME": "Esophagogastric junction muscularis propria",
+    "EXPRESSION_LEVEL": "positive",
+    "RESOURCE_TYPE": "xref",
+    "ASSIGNED_BY": "Bgee",
+    "ASSIGMENT_METHOD": "CURATED",
+    "ENSEMBL_ID": "ENSG00000026036",
+    "ANNOTATION_CATEGORY": "expression-profile",
+    "STAGE_ID": "HsapDv:0000094",
+    "ANNOT_CV_TERM_TERMINOLOGY": "NextProt tissues",
+    "IS_NEGATIVE": "false",
+    "REFERENCE_ACCESSION": "ENSG00000026036"
   }
 ]

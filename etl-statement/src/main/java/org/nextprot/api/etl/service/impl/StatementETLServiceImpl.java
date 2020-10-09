@@ -102,8 +102,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
-				report.addInfoWithElapsedTime("step: extract, statements: " + currentStatements.size() + ", time:  -");
+				report.addInfoWithElapsedTime("step: extract, read_statements: " + currentStatements.size() + ", time:  -");
 				Set<Statement> rawStatements = new HashSet<>(currentStatements);
+				report.addInfoWithElapsedTime("step: extract, raw_statements: " + rawStatements.size() + ", time:  -");
 				if(!currentStatements.isEmpty()) {
 					// transform the batch of statements
 					long transformStart = System.currentTimeMillis();
@@ -111,14 +112,19 @@ public class StatementETLServiceImpl implements StatementETLService {
 					long transformTime = (System.currentTimeMillis() - transformStart) / 1000;
 					if(mappedStatements == null) {
 						report.addInfoWithElapsedTime("'step' : transform, statements: 0, time:" + transformTime);
+						// Still need to store the raw statements
+						long loadStart = System.currentTimeMillis();
+						loadStatements(source, currentStatements, null, load, report, erase);
+						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
+						report.addInfoWithElapsedTime("'step' : load , mappedStatements: rowStatements: " + currentStatements.size() + ", time: " + loadTime);
 						continue;
 					}
 					report.addInfoWithElapsedTime("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
 					if(!mappedStatements.isEmpty()) {
 						long loadStart = System.currentTimeMillis();
-						loadStatements(source, rawStatements, mappedStatements, load, report, erase);
+						loadStatements(source, currentStatements, mappedStatements, load, report, erase);
 						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-						report.addInfoWithElapsedTime("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + rawStatements.size() + ", time: " + loadTime);
+						report.addInfoWithElapsedTime("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + currentStatements.size() + ", time: " + loadTime);
 					}
 				}
 			}
@@ -179,7 +185,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public Collection<Statement> transformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
 		report.addInfoWithElapsedTime("Starting transformStatements(), raw statements count:" + rawStatements.size());
-		Set<Statement> preTransformStatements = preTransformStatements(source, rawStatements);
+		Collection<Statement> preTransformStatements = preTransformStatements(source, rawStatements);
 		if(preTransformStatements.isEmpty()) {
 			LOGGER.debug("Raw statements are empty");
 			report.addInfoWithElapsedTime("Pre-transformation returned empty");
@@ -197,16 +203,19 @@ public class StatementETLServiceImpl implements StatementETLService {
 
         try {
             if (load) {
-                report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
-                long start = System.currentTimeMillis();
-                statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source, erase);
-                report.addInfo("Finish load raw statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+            	if(rawStatements != null && rawStatements.size() > 0) {
+					report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
+					long start = System.currentTimeMillis();
+					statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source, erase);
+					report.addInfo("Finish load raw statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+				}
 
-                report.addInfo("Loading entry statements: " + mappedStatements.size());
-                start = System.currentTimeMillis();
-                statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source, erase);
-                report.addInfo("Finish load mapped statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
-
+				if(mappedStatements != null && mappedStatements.size() > 0) {
+					report.addInfo("Loading entry statements: " + mappedStatements.size());
+					long start = System.currentTimeMillis();
+					statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, source, erase);
+					report.addInfo("Finish load mapped statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+				}
             } else {
                 report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source " + source);
             }
@@ -268,7 +277,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public interface PreTransformProcessor {
 
-		Set<Statement> process(Collection<Statement> statements);
+		Collection<Statement> process(Collection<Statement> statements);
 	}
 
 
