@@ -36,6 +36,7 @@ public class PropertyApiModel {
 	// annotation evidence properties
 	public static final String NAME_GO_QUALIFIER = "go_qualifier";
 	public static final String NAME_EXPRESSION_LEVEL="expressionLevel";
+	public static final String NAME_EXPRESSION_SCORE="expressionScore";
 	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
