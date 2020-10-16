@@ -131,7 +131,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 .toString();
 
         String psimiAC = evidence.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
-        if(psimiAC != null) {
+        if (psimiAC != null) {
             keyBuilder.append(psimiAC);
         }
 
@@ -157,12 +157,20 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // PSIMI_ID custom statement field becomes a property with name = PropertyApiModel.NAME_PSIMI_AC
         String psimiAC = s.getValue(new CustomStatementField("PSIMI_ID"));
         CvTerm t = terminologyService.findCvTermByAccession(psimiAC);
-        String psimiCvName = t==null ? null : t.getName();
+        String psimiCvName = t == null ? null : t.getName();
         AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiAC, PropertyApiModel.NAME_PSIMI_AC);
         AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiCvName, PropertyApiModel.NAME_PSIMI_CV_NAME);
 
+        // Bgee statement custom fields, EXPRESSION_LEVEL, SCORE, STAGE_ID, STAGE_NAME
+        String expressionLevel = s.getValue(new CustomStatementField("EXPRESSION_LEVEL"));
+        String expressionScore = s.getValue(new CustomStatementField("SCORE"));
+        String stageId = s.getValue(new CustomStatementField("STAGE_ID"));
+        String stageName = s.getValue(new CustomStatementField("STAGE_NAME"));
+        AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
+        AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
+
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty, expressionLevelProperty, expressionScoreProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
@@ -260,7 +268,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
-            
+
             annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
             annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
@@ -342,7 +350,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             }
 
             // For interaction mappings, add the interacting region from statement as a property
-            if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
+            if (AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
                 AnnotationProperty annotationProperty = new AnnotationProperty();
                 annotationProperty.setAnnotationId(annotation.getAnnotationId());
                 annotationProperty.setName("mapping-sequence");
@@ -350,15 +358,15 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotation.addProperty(annotationProperty);
                 // Adds the description
                 annotation.setDescription("Interaction with " + annotation.getBioObject().getPropertyValue("geneName"));
-                
+
             } else if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
-            	String p1 = firstStatement.getEntryAccession();
-            	String p2 = annotation.getBioObject().getAccession();
+                String p1 = firstStatement.getEntryAccession();
+                String p2 = annotation.getBioObject().getAccession();
                 AnnotationProperty annotationProperty = new AnnotationProperty();
                 annotationProperty.setAnnotationId(annotation.getAnnotationId());
                 annotationProperty.setName("selfInteraction");
                 annotationProperty.setValue(String.valueOf(p1.equals(p2)));
-                annotation.addProperty(annotationProperty);            		
+                annotation.addProperty(annotationProperty);
             }
 
             annotations.add(annotation);
