@@ -8,7 +8,6 @@ import org.nextprot.commons.utils.EnumDictionarySupplier;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 public enum StatementSource implements StatementSpecifications, EnumDictionarySupplier<StatementSource> {
@@ -30,6 +29,11 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	Bgee("Bgee", "http://kant.sib.swiss:9001/bgee",
 			new Specifications.Builder()
 					.withExtraFields(Arrays.asList("ENSEMBL_ID", "STAGE_ID", "STAGE_NAME", "EXPRESSION_LEVEL", "SCORE"))
+					.build()),
+
+	IntAct("IntAct", "http://kant.sib.swiss:9001/intact",
+			new Specifications.Builder()
+					.withExtraFields(Arrays.asList("PSIMI_ID", "XENO"))
 					.build());
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
