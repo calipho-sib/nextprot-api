@@ -43,7 +43,12 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		return dictionary;
 	}
 
-	
+	@Override
+	@Cacheable(value = "experimental-context-dictionary-by-properties", sync = true)
+	public ExperimentalContext getExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId) {
+		return null;
+	}
+
 
 	private void updateTerminologies(List<ExperimentalContext> ecs) {
 

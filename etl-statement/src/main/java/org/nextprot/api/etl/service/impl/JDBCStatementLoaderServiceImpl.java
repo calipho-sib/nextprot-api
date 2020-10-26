@@ -99,6 +99,8 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 			}
 			pstmt.executeBatch();
 
+		} catch(Exception e) {
+			e.printStackTrace();
 		} finally {
 
 			if(deleteStatement != null){
