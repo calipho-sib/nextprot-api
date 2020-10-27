@@ -141,9 +141,11 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
             return annotationService.findAnnotations(entryAccession).stream()
 					.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.EXPRESSION_PROFILE)
                     .flatMap(annot -> annot.getEvidences().stream())
-                    .filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
+                     // we also have Bgee RNA-seq data since Oct 2020 and we currently only have Bgee and HPA as expression data sources
+                     // which makes criterion at next line obsolete 
+                     //.filter(evidence -> "Human protein atlas".equals(evidence.getAssignedBy()))
                     .filter(evidence -> evidence.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-                    .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))
+                    .filter(evidence -> isChildOfEvidenceTerm(evidence.getEvidenceCodeAC(), 85109))  // child of or equals to ECO:0000295 - RNA-seq evidence 
                     .anyMatch(evidence -> evidence.isExpressionLevelEqualTo("detected"));
         }             
 
