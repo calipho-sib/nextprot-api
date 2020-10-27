@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- 
+
+	excerpt doc from http://www.ehcache.org/ehcache.xml
+
+    maxEntriesLocalHeap:
+    Sets the maximum number of objects that will be created in memory.  0 = no limit.
+    overflowToOffHeap:
+    (boolean) This feature is available only in enterprise versions of Ehcache.
+    When set to true, enables the cache to utilize off-heap memory	
+    eternal:
+    Sets whether elements are eternal. If eternal,  timeouts are ignored and the
+    element is never expired.
+    memoryStoreEvictionPolicy:
+    Policy would be enforced upon reaching the maxEntriesLocalHeap limit. Default
+    policy is Least Recently Used (specified as LRU). Other policies available -
+    First In First Out (specified as FIFO) and Less Frequently Used
+    (specified as LFU)
+    
+ -->
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
@@ -393,4 +412,14 @@
     <cache name="all-tryptic-digests" overflowToOffHeap="false"
            overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1">
     </cache>
+
+<!--  
+	maxEntriesLocalHeap="4" 
+	mostly used on building experimental context dictionary for bgee (psimi, stages, eco, tissues = 4 ontologies) 
+-->
+
+    <cache name="term-map-by-ontology" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="4" >
+    </cache>
+
 </ehcache>
