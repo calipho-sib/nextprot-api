@@ -7,5 +7,5 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 public interface ExperimentalContextDictionaryService {
 
 	Map<Long,ExperimentalContext> getAllExperimentalContexts();
-	ExperimentalContext getExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId);
+	Map<String,ExperimentalContext> getExperimentalContextByProperties();
 }

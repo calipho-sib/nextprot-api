@@ -10,6 +10,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
@@ -41,6 +42,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     protected PublicationService publicationService;
     protected MainNamesService mainNamesService;
     protected DbXrefService dbXrefService;
+    protected ExperimentalContextService experimentalContextService;
 
     private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 
@@ -164,7 +166,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // Bgee statement custom fields, EXPRESSION_LEVEL, SCORE, STAGE_ID, STAGE_NAME
         String expressionLevel = s.getValue(new CustomStatementField("EXPRESSION_LEVEL"));
         String expressionScore = s.getValue(new CustomStatementField("SCORE"));
-        String stageId = s.getValue(new CustomStatementField("STAGE_ID"));
         String stageName = s.getValue(new CustomStatementField("STAGE_NAME"));
         AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
         AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
@@ -187,7 +188,14 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(IS_NEGATIVE)));
         evidence.setNote(s.getValue(EVIDENCE_NOTE));
 
-        //TODO create experimental contexts!
+        //Set experimental context ID
+        // Note that this currently concerns for bgee statements
+        // All the other annotations with inherent experimental contexts are inherited from NP1 data model itself
+        if("Bgee".equals(s.getValue(SOURCE))) {
+            ExperimentalContext experimentalContext = experimentalContextService.findExperimentalContextByProperties(s.getValue(ANNOT_CV_TERM_ACCESSION), stageName, s.getValue(EVIDENCE_CODE));
+            long expContextId = experimentalContext.getContextId();
+            evidence.setExperimentalContextId(expContextId);
+        }
 
         return evidence;
     }

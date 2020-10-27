@@ -11,5 +11,5 @@ public interface ExperimentalContextService {
 	List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds);
 
 	// This is only applies for the cases where there is a unique triple of (tissue_id, developmental_stage_id, detection_method_id)
-	ExperimentalContext findExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId);
+	ExperimentalContext findExperimentalContextByProperties(String tissueId, String developmentalStageId, String detectionMethodId);
 }

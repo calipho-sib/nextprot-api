@@ -11,7 +11,6 @@ public interface ExperimentalContextDao {
 
 	List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids);
 	List<ExperimentalContext> findAllExperimentalContexts();
-	ExperimentalContext findExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId);
 
 	// Loads a set of experimental context statements and returns the corresponding SQL Statement
 	String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContexts, boolean erase) throws SQLException;

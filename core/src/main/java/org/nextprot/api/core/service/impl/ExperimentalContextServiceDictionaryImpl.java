@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -45,8 +46,13 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 
 	@Override
 	@Cacheable(value = "experimental-context-dictionary-by-properties", sync = true)
-	public ExperimentalContext getExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId) {
-		return null;
+	public Map<String, ExperimentalContext> getExperimentalContextByProperties() {
+		List<ExperimentalContext> experimentalContexts = ecDao.findAllExperimentalContexts();
+		Map<String, ExperimentalContext> experimentalContextByPropertyMap = new HashMap<>();
+		for( ExperimentalContext experimentalContext : experimentalContexts) {
+			experimentalContextByPropertyMap.put(ExperimentalContextUtil.computeMd5ForBgee(experimentalContext.getTissueAC(), experimentalContext.getDevelopmentalStageAC(), experimentalContext.getDetectionMethodAC()), experimentalContext);
+		}
+		return experimentalContextByPropertyMap;
 	}
 
 

@@ -10,6 +10,8 @@ import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,6 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
 	@Autowired
 	private ExperimentalContextDictionaryService ecDico;
-
-	@Autowired
-	private ExperimentalContextDao ecDao;
-	
 	
 	@Override
 	public List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds) {
@@ -35,14 +33,13 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 
 	@Override
 	public List<ExperimentalContext> findAllExperimentalContexts() {
-		
 		return new ArrayList<ExperimentalContext>(ecDico.getAllExperimentalContexts().values());
 	}
 
 	@Override
-	public ExperimentalContext findExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId) {
-
-		return null;
+	public ExperimentalContext findExperimentalContextByProperties(String tissueAC, String developmentalStageAC, String detectionMethodAC) {
+		String key = ExperimentalContextUtil.computeMd5ForBgee(tissueAC, developmentalStageAC, detectionMethodAC);
+		return ecDico.getExperimentalContextByProperties().get(key);
 	}
 
 }

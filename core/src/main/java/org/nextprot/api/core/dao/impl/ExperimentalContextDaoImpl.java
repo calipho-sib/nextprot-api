@@ -48,11 +48,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("experimental-contexts-all"), namedParameters, new ExperimentalContextMapper());
 	}
 
-	@Override
-	public ExperimentalContext findExperimentalContextByProperties(long tissueId, long developmentalStageId, long detectionMethodId) {
-		return null;
-	}
-
+	// TODO: handle erase
 	@Override
 	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean erase) throws SQLException {
 		java.sql.Statement deleteStatement = null;
@@ -65,16 +61,8 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 				.map(experimentalContext -> ExperimentalContextUtil.computeMd5ForBgee(experimentalContext.getTissueAC(), experimentalContext.getDevelopmentalStageAC(), experimentalContext.getDetectionMethodAC()))
 				.collect(Collectors.toSet());
 
+		int loadCount = 0;
 		try (Connection conn = dsLocator.getDataSource().getConnection()) {
-			if (erase) {
-			}
-
-			// Column names
-			String columnNames = "tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id";
-
-			// Values
-			String bindVariables = "?tissue_id, ?developmental_stage_id, ?detection_method_id";
-
 			pstmt = conn.prepareStatement(
 					"INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) "
 							+ "VALUES ( ?,?,?,?,?)"
@@ -83,7 +71,6 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			sqlStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) ";
 
 			for (ExperimentalContextStatement expStatements : experimentalContextStatements) {
-
 				String expMD5 = ExperimentalContextUtil.computeMd5ForBgee(
 						expStatements.getTissueAC(),
 						expStatements.getDevelopmentStageAC(),
@@ -113,7 +100,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					pstmt.setString(4, expMD5);
 					pstmt.setLong(5, METADATA_ID);
 					pstmt.addBatch();
-
+					loadCount++;
 					// Adds the record to the sql statement
 					sqlStatement += "VALUES ( " + tissueID + "," + devStageID + "," + detectionMethodID + "," + expMD5 + "," + METADATA_ID + ")";
 				}
@@ -133,7 +120,8 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			if(pstmt  != null){
 				pstmt.close();
 			}
-
+			System.out.println("SQL statement " + sqlStatement);
+			System.out.println("Load " + loadCount + " statements");
 			return sqlStatement;
 		}
 	}
