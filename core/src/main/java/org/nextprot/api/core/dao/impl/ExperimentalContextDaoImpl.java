@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ExperimentalContextDao;
@@ -78,21 +79,24 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 				if (!existingContexts.contains(expMD5)) {
 					String tissueAC = expStatements.getTissueAC();
 					if (tissueAC == null) continue;
-					CvTerm tissue = terminologyService.findCvTermByAccession(tissueAC);
+					//CvTerm tissue = terminologyService.findCvTermByAccession(tissueAC);
+					CvTerm tissue = terminologyService.findCvTermInOntology(tissueAC, TerminologyCv.NextprotAnatomyCv);
 					if (tissue == null) continue;
 					long tissueID = tissue.getId();
 					pstmt.setLong(1, tissueID);
 
 					String devStageAC = expStatements.getDevelopmentStageAC();
 					if (devStageAC == null) continue;
-					CvTerm devStage = terminologyService.findCvTermByAccession(devStageAC);
+					//CvTerm devStage = terminologyService.findCvTermByAccession(devStageAC);
+					CvTerm devStage = terminologyService.findCvTermInOntology(devStageAC, TerminologyCv.BgeeDevelopmentalStageCv);
 					if (devStage == null) continue;
 					long devStageID = devStage.getId();
 					pstmt.setLong(2, devStageID);
 
 					String detectionMethodAC = expStatements.getDetectionMethodAC();
 					if (detectionMethodAC == null) continue;
-					CvTerm detectionMethod = terminologyService.findCvTermByAccession(detectionMethodAC);
+					//CvTerm detectionMethod = terminologyService.findCvTermByAccession(detectionMethodAC);
+					CvTerm detectionMethod = terminologyService.findCvTermInOntology(detectionMethodAC, TerminologyCv.EvidenceCodeOntologyCv);
 					if (detectionMethod == null) continue;
 					long detectionMethodID = detectionMethod.getId();
 					pstmt.setLong(3, detectionMethodID);
