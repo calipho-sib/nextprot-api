@@ -386,11 +386,16 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
 
     private class BgeePreProcessor implements StatementETLServiceImpl.PreTransformProcessor {
 
+        private final String RNA_SEQ_EVIDENCE = "ECO:0000295";
+        private final String POSITIVE_EXPRESSION = "positive";
+        private final String NEGATIVE_EXPRESSION = "negative";
+
         @Override
         public Set<Statement> process(Collection<Statement> statements) {
             // Read the ENSEMBL_ID from extra fields and converts it to the entry ID
             Set<Statement> preProcessedStatements = statements.stream()
                     .map((statement) -> {
+                        // Maps the gene with the corresponding
                         String ensemblID = statement.getValue(new CustomStatementField("ENSEMBL_ID"));
                         MasterIdentifierServiceImpl.MapStatus geneMapStatus = masterIdentifierService.getMapStatusForENSG(ensemblID);
                         LOGGER.info("Gene to entry map status " + geneMapStatus.getStatus());
@@ -408,6 +413,24 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                             String entryAccession = entries.get(0).toString();
                             LOGGER.info("Unique entry found for ensembl ID " + ensemblID + " entry " + entryAccession);
                             statement.put(ENTRY_ACCESSION, entryAccession);
+
+                            // Should transform the expression level
+                            // "detected", "not detected" instead of "positive", "negative when EVIDENCE_CODE == "ECO:0000295" ( RNA-sequencing evidence)
+                            String ecoCode = statement.getValue(EVIDENCE_CODE);
+                            if(ecoCode != null) {
+                                if(RNA_SEQ_EVIDENCE.equals(ecoCode)) {
+                                    CustomStatementField expressionLevelField = new CustomStatementField("EXPRESSION_LEVEL");
+                                    String expressionLevel = statement.getValue(expressionLevelField);
+                                    if(POSITIVE_EXPRESSION.equals(expressionLevel)) {
+                                        statement.put(expressionLevelField, "detected");
+                                    } else if(NEGATIVE_EXPRESSION.equals(expressionLevel)) {
+                                        statement.put(expressionLevelField, "undetected");
+                                    }
+                                }
+                            } else {
+                                LOGGER.info("ECO Code is null");
+                            }
+
                             return statement;
                         }
                     })
