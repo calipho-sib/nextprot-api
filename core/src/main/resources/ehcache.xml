@@ -94,7 +94,7 @@
 	<!-- 347609619 -->
 	<cache name="term-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
-		   maxEntriesLocalDisk="400000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   maxEntriesLocalDisk="700000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
 	
