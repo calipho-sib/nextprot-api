@@ -1,6 +1,5 @@
 package org.nextprot.api.etl.controller;
 
-import org.apache.zookeeper.data.Stat;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -79,6 +78,7 @@ public class StatementETLController {
 		}
 	}
 
+	// TODO: handle load or not parameter for the moment: false
 	@ApiMethod(path = "/etl/experimentalcontext/{source}/{release}", verb = ApiVerb.GET, description = "Loads experimental context data", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/etl/experimentalcontext/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
@@ -86,6 +86,6 @@ public class StatementETLController {
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
 			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-10-04" }) @PathVariable("release") String release,
 			HttpServletRequest request) {
-			return experimentalContextLoaderService.loadExperimentalConexts(StatementSource.valueOfKey(source), release, true);
+			return experimentalContextLoaderService.loadExperimentalContexts(StatementSource.valueOfKey(source), release, false);
 	}
 }

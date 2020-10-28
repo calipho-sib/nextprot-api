@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -10,6 +11,7 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -35,7 +37,12 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 	@Autowired
 	private TerminologyService terminologyService;
 
+	@Autowired(required=false)
+	private CacheManager cacheManager;
+
 	private final long METADATA_ID = 29348710;
+
+	protected final Logger LOGGER = Logger.getLogger(ExperimentalContextDaoImpl.class);
 
 	@Override
 	public List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids) {
@@ -51,26 +58,28 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 	// TODO: handle erase
 	@Override
-	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean erase) throws SQLException {
-		java.sql.Statement deleteStatement = null;
+	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean load) throws SQLException {
 		PreparedStatement pstmt = null;
 		String sqlStatement = null;
 
 		// Construct a set of MD5s of experimental context exist in DB
 		List<ExperimentalContext> experimentalContexts = findAllExperimentalContexts();
 		Set<String> existingContexts = experimentalContexts.stream()
-				.map(experimentalContext -> ExperimentalContextUtil.computeMd5ForBgee(experimentalContext.getTissueAC(), experimentalContext.getDevelopmentalStageAC(), experimentalContext.getDetectionMethodAC()))
+				.map(experimentalContext -> experimentalContext.getMd5())
 				.collect(Collectors.toSet());
+		LOGGER.info("Existing experimental contexts " + existingContexts.size());
 
-		int loadCount = 0;
+		// Clear the experimental context cache
+		//cacheManager.getCache("term-map-by-ontology").clear();
+
 		try (Connection conn = dsLocator.getDataSource().getConnection()) {
 			pstmt = conn.prepareStatement(
 					"INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) "
 							+ "VALUES ( ?,?,?,?,?)"
 			);
 
-			sqlStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) ";
-
+			sqlStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) VALUES";
+			List<String> values = new ArrayList<>();
 			for (ExperimentalContextStatement expStatements : experimentalContextStatements) {
 				String expMD5 = ExperimentalContextUtil.computeMd5ForBgee(
 						expStatements.getTissueAC(),
@@ -78,54 +87,66 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 						expStatements.getDetectionMethodAC());
 				if (!existingContexts.contains(expMD5)) {
 					String tissueAC = expStatements.getTissueAC();
-					if (tissueAC == null) continue;
-					//CvTerm tissue = terminologyService.findCvTermByAccession(tissueAC);
+					if (tissueAC == null) {
+						LOGGER.error("Tissue accession is null, ignoring the experimental context statement");
+						continue;
+					}
 					CvTerm tissue = terminologyService.findCvTermInOntology(tissueAC, TerminologyCv.NextprotAnatomyCv);
-					if (tissue == null) continue;
+					if (tissue == null) {
+						LOGGER.error("Term for accession " + tissueAC + " not found, ignoring the experimental context statement");
+						continue;
+					}
 					long tissueID = tissue.getId();
 					pstmt.setLong(1, tissueID);
 
 					String devStageAC = expStatements.getDevelopmentStageAC();
-					if (devStageAC == null) continue;
-					//CvTerm devStage = terminologyService.findCvTermByAccession(devStageAC);
+					if (devStageAC == null) {
+						LOGGER.error("Dev stage accession is null, ignoring the experimental context statement");
+						continue;
+					}
 					CvTerm devStage = terminologyService.findCvTermInOntology(devStageAC, TerminologyCv.BgeeDevelopmentalStageCv);
-					if (devStage == null) continue;
+					if (devStage == null) {
+						LOGGER.error("Term for accession " + devStageAC + " not found, ignoring the experimental context statement");
+						continue;
+					}
 					long devStageID = devStage.getId();
 					pstmt.setLong(2, devStageID);
 
 					String detectionMethodAC = expStatements.getDetectionMethodAC();
-					if (detectionMethodAC == null) continue;
-					//CvTerm detectionMethod = terminologyService.findCvTermByAccession(detectionMethodAC);
+					if (detectionMethodAC == null) {
+						LOGGER.error("Detection method accession is null, ignoring the experimental context statement");
+						continue;
+					}
 					CvTerm detectionMethod = terminologyService.findCvTermInOntology(detectionMethodAC, TerminologyCv.EvidenceCodeOntologyCv);
-					if (detectionMethod == null) continue;
+					if (detectionMethod == null) {
+						LOGGER.error("Term for accession " + detectionMethodAC + " not found, ignoring the experimental context statement");
+						continue;
+					}
 					long detectionMethodID = detectionMethod.getId();
 					pstmt.setLong(3, detectionMethodID);
 
 					pstmt.setString(4, expMD5);
 					pstmt.setLong(5, METADATA_ID);
 					pstmt.addBatch();
-					loadCount++;
 					// Adds the record to the sql statement
-					sqlStatement += "VALUES ( " + tissueID + "," + devStageID + "," + detectionMethodID + "," + expMD5 + "," + METADATA_ID + ")";
+					values.add("( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
+					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
+				} else {
+					LOGGER.info("Experimental context already exists for MD5 " + expMD5);
 				}
 			}
-
-			if (deleteStatement != null) {
-				deleteStatement.executeBatch();
+			LOGGER.info("Statements to be loaded : " + values.size());
+			sqlStatement += String.join(",", values);
+			if(load) {
+				pstmt.executeBatch();
 			}
-			pstmt.executeBatch();
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			if(deleteStatement != null){
-				deleteStatement.close();
-			}
-
 			if(pstmt  != null){
 				pstmt.close();
 			}
-			System.out.println("SQL statement " + sqlStatement);
-			System.out.println("Load " + loadCount + " statements");
+			LOGGER.info("SQL statement for the load " + sqlStatement);
 			return sqlStatement;
 		}
 	}
@@ -139,6 +160,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 			ec.setContextId(rs.getLong("context_id"));
 			ec.setMetadataId(rs.getLong("metadataId"));
+			ec.setMD5(rs.getString("md5"));
 			ec.setCellLine(asTerminology(rs.getString("cellLineAC")));
 			ec.setTissue(asTerminology(rs.getString("tissueAC")));
 			ec.setOrganelle(asTerminology(rs.getString("organelleAC")));

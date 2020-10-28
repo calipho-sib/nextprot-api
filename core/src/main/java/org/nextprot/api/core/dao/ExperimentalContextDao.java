@@ -13,6 +13,6 @@ public interface ExperimentalContextDao {
 	List<ExperimentalContext> findAllExperimentalContexts();
 
 	// Loads a set of experimental context statements and returns the corresponding SQL Statement
-	String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContexts, boolean erase) throws SQLException;
+	String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContexts, boolean load) throws SQLException;
 	
 }

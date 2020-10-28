@@ -50,7 +50,7 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		List<ExperimentalContext> experimentalContexts = ecDao.findAllExperimentalContexts();
 		Map<String, ExperimentalContext> experimentalContextByPropertyMap = new HashMap<>();
 		for( ExperimentalContext experimentalContext : experimentalContexts) {
-			experimentalContextByPropertyMap.put(ExperimentalContextUtil.computeMd5ForBgee(experimentalContext.getTissueAC(), experimentalContext.getDevelopmentalStageAC(), experimentalContext.getDetectionMethodAC()), experimentalContext);
+			experimentalContextByPropertyMap.put(experimentalContext.getMd5(), experimentalContext);
 		}
 		return experimentalContextByPropertyMap;
 	}

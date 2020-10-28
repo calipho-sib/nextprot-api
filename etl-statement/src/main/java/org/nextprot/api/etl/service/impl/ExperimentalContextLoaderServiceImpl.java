@@ -31,9 +31,6 @@ public class ExperimentalContextLoaderServiceImpl implements ExperimentalContext
     @Autowired
     ExperimentalContextDao experimentalContextDao;
 
-    @Autowired(required=false)
-    CacheManager cacheManager;
-
     String EXPERIMENTAL_CONTEXT_CACHE = "experimental-context-dictionary";
 
     protected static final Logger LOGGER = Logger.getLogger(ExperimentalContextLoaderServiceImpl.class);
@@ -42,23 +39,22 @@ public class ExperimentalContextLoaderServiceImpl implements ExperimentalContext
      *  Loads the experimental contexts read from the source files and returns the
      * @param source
      * @param release
-     * @param erase
+     * @param load
      * @return SQL statement for insertion
      */
     @Override
-    public String loadExperimentalConexts(StatementSource source, String release, boolean erase) {
-        // Clear the experimental context cache
-        //cacheManager.getCache("experimental-context-dictionary").clear();
-
+    public String loadExperimentalContexts(StatementSource source, String release, boolean load) {
         // Uses the statement source service to get the input files
         try {
             Set<String> sourceFiles  = statementSourceService.getJsonFilenamesForRelease(source, release);
             ArrayList<String> sqlStatements = new ArrayList<>();
             for(String sourceFile : sourceFiles) {
+                // Read the statements at once (unlike in the streaming approach)
                 List<ExperimentalContextStatement> experimentalContextStatements = readStatements(source, release, sourceFile);
                 LOGGER.info("Read " + experimentalContextStatements.size() + " statements from " + sourceFile);
                 try {
-                    sqlStatements.add(experimentalContextDao.loadExperimentalContexts(experimentalContextStatements, false));
+                    // Loads the read contexts
+                    sqlStatements.add(experimentalContextDao.loadExperimentalContexts(experimentalContextStatements, load));
                     LOGGER.info("Loaded " + experimentalContextStatements.size() + " statements ");
                 } catch(Exception e) {
                     e.printStackTrace();

@@ -7,5 +7,5 @@ import org.nextprot.api.core.app.StatementSource;
  */
 public interface ExperimentalContextLoaderService {
 
-    String loadExperimentalConexts(StatementSource source, String release, boolean erase);
+    String loadExperimentalContexts(StatementSource source, String release, boolean load);
 }
