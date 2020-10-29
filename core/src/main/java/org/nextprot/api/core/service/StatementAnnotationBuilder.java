@@ -193,8 +193,13 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // All the other annotations with inherent experimental contexts are inherited from NP1 data model itself
         if("Bgee".equals(s.getValue(SOURCE))) {
             ExperimentalContext experimentalContext = experimentalContextService.findExperimentalContextByProperties(s.getValue(ANNOT_CV_TERM_ACCESSION), stageName, s.getValue(EVIDENCE_CODE));
-            long expContextId = experimentalContext.getContextId();
-            evidence.setExperimentalContextId(expContextId);
+            if(experimentalContext != null) {
+                long expContextId = experimentalContext.getContextId();
+                evidence.setExperimentalContextId(expContextId);
+            } else {
+                LOGGER.info("Experiemental context not found for " + s.getValue(ANNOT_CV_TERM_ACCESSION) + " " + stageName + " " + s.getValue(EVIDENCE_CODE));
+            }
+
         }
 
         return evidence;
