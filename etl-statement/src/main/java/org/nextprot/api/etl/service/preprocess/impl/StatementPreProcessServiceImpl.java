@@ -424,7 +424,7 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                                     if(POSITIVE_EXPRESSION.equals(expressionLevel)) {
                                         statement.put(expressionLevelField, "detected");
                                     } else if(NEGATIVE_EXPRESSION.equals(expressionLevel)) {
-                                        statement.put(expressionLevelField, "undetected");
+                                        statement.put(expressionLevelField, "not detected");
                                     }
                                 }
                             } else {
