@@ -60,7 +60,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 	@Override
 	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean load) throws SQLException {
 		PreparedStatement pstmt = null;
-		String sqlStatement = null;
+		String insertStatements = "";
 
 		// Construct a set of MD5s of experimental context exist in DB
 		List<ExperimentalContext> experimentalContexts = findAllExperimentalContexts();
@@ -78,8 +78,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 							+ "VALUES ( ?,?,?,?,?)"
 			);
 
-			sqlStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) VALUES";
-			List<String> values = new ArrayList<>();
+			List<String> sqlStatements = new ArrayList<>();
 			for (ExperimentalContextStatement expStatements : experimentalContextStatements) {
 				String expMD5 = ExperimentalContextUtil.computeMd5ForBgee(
 						expStatements.getTissueAC(),
@@ -128,15 +127,18 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					pstmt.setString(4, expMD5);
 					pstmt.setLong(5, METADATA_ID);
 					pstmt.addBatch();
+
 					// Adds the record to the sql statement
-					values.add("( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
+					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) VALUES";
+					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")";
+					sqlStatements.add(insertStatement);
 					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
 				} else {
 					LOGGER.info("Experimental context already exists for MD5 " + expMD5);
 				}
 			}
-			LOGGER.info("Statements to be loaded : " + values.size());
-			sqlStatement += String.join(",", values);
+			LOGGER.info("Statements to be loaded : " + sqlStatements.size());
+			insertStatements += String.join(";", sqlStatements);
 			if(load) {
 				pstmt.executeBatch();
 			}
@@ -146,8 +148,8 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			if(pstmt  != null){
 				pstmt.close();
 			}
-			LOGGER.info("SQL statement for the load " + sqlStatement);
-			return sqlStatement;
+			LOGGER.info("SQL statement for the load " + insertStatements);
+			return insertStatements;
 		}
 	}
 
