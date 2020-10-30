@@ -33,7 +33,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 
 	IntAct("IntAct", "http://kant.sib.swiss:9001/intact",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("PSIMI_ID", "XENO"))
+					.withExtraFields(Arrays.asList("PSIMI_ID", "XENO", "ASSIGMENT_COUNT"))
 					.build());
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =

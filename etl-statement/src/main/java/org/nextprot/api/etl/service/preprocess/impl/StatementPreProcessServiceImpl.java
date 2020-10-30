@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.MainNames;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.annotation.merge.AnnotationDescriptionParser;
@@ -38,6 +40,9 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
     @Autowired
     MasterIdentifierService masterIdentifierService;
 
+    @Autowired
+    MainNamesService mainNamesService;
+
     @Override
     public Set<Statement> process(StatementSource source, Collection<Statement> statements) {
         if (source == StatementSource.GlyConnect) {
@@ -50,6 +55,9 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
         } else if (source == StatementSource.Bgee) {
             return new BgeePreProcessor()
                     .process(statements);
+        } else if (source == StatementSource.IntAct) {
+            StatementETLServiceImpl.ReportBuilder report = new StatementETLServiceImpl.ReportBuilder();
+            return new IntActPreProcessor(report).process(statements);
         }
         return new StatementIdBuilder()
                 .process(statements);
@@ -439,4 +447,52 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
             return preProcessedStatements;
         }
     }
+
+    private class IntActPreProcessor implements StatementETLServiceImpl.PreTransformProcessor {
+
+        private final StatementETLServiceImpl.ReportBuilder report;
+
+        private IntActPreProcessor(StatementETLServiceImpl.ReportBuilder report) {
+            this.report = report;
+        }
+
+        @Override
+        public Set<Statement> process(Collection<Statement> statements) {
+            Set<Statement> filteredStatements = filterStatements(statements);
+            report.addInfo("Filtering " + filteredStatements.size() +  " IntAct raw statements over " + statements.size());
+            return setAdditionalFieldsForIntActStatements(filteredStatements);
+        }
+
+        private Set<Statement> filterStatements(Collection<Statement> statements) {
+            // Filter out statements with unknown NEXTPROT_ACCESSION
+            return statements.stream()
+                             .filter(statement -> {
+                                 String nxAcc = statement.getValue(NEXTPROT_ACCESSION);
+                                 Optional<MainNames> isoformOrEntryMainName = mainNamesService.findIsoformOrEntryMainName(nxAcc);
+                                 return isoformOrEntryMainName.isPresent() ;
+                             })
+                             .collect(Collectors.toSet());
+        }
+
+        private Set<Statement> setAdditionalFieldsForIntActStatements(Set<Statement> statements) {
+
+            Set<Statement> statementSet = new HashSet<>();
+
+            statements.forEach(st -> {
+                        StatementBuilder builder = new StatementBuilder(st);
+                        if (st.getValue(new CustomStatementField("XENO")).equals("YES")) {
+                            builder.addField(BIOLOGICAL_OBJECT_DATABASE, "UniProtKB");
+                        }
+                        statementSet.add(builder.build());
+                    }
+            );
+
+            report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (RESOURCE_TYPE, STATEMENT_ID, and BIOLOGICAL_OBJECT_DATABASE)");
+
+            return statementSet;
+        }
+
+
+    }
+
 }
