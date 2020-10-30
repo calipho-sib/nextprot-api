@@ -60,7 +60,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 	@Override
 	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean load) throws SQLException {
 		PreparedStatement pstmt = null;
-		String insertStatements = "";
+		StringBuffer insertStatements = new StringBuffer();
 
 		// Construct a set of MD5s of experimental context exist in DB
 		List<ExperimentalContext> experimentalContexts = findAllExperimentalContexts();
@@ -68,9 +68,6 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 				.map(experimentalContext -> experimentalContext.getMd5())
 				.collect(Collectors.toSet());
 		LOGGER.info("Existing experimental contexts " + existingContexts.size());
-
-		// Clear the experimental context cache
-		//cacheManager.getCache("term-map-by-ontology").clear();
 
 		try (Connection conn = dsLocator.getDataSource().getConnection()) {
 			pstmt = conn.prepareStatement(
@@ -130,16 +127,16 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 					// Adds the record to the sql statement
 					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) VALUES";
-					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")";
-					sqlStatements.add(insertStatement);
+					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ");\n";
+					insertStatements.append(insertStatement);
 					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
 				} else {
 					LOGGER.info("Experimental context already exists for MD5 " + expMD5);
 				}
 			}
 			LOGGER.info("Statements to be loaded : " + sqlStatements.size());
-			insertStatements += String.join(";", sqlStatements);
 			if(load) {
+				LOGGER.info("Loading the experimental contexts to " + dsLocator.getDataSource().getConnection().toString());
 				pstmt.executeBatch();
 			}
 		} catch(Exception e) {
@@ -148,8 +145,8 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			if(pstmt  != null){
 				pstmt.close();
 			}
-			LOGGER.info("SQL statement for the load " + insertStatements);
-			return insertStatements;
+			LOGGER.info("SQL statement for the load " + insertStatements.toString());
+			return insertStatements.toString();
 		}
 	}
 

@@ -39,6 +39,7 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	@Override
 	public ExperimentalContext findExperimentalContextByProperties(String tissueAC, String developmentalStageAC, String detectionMethodAC) {
 		String key = ExperimentalContextUtil.computeMd5ForBgee(tissueAC, developmentalStageAC, detectionMethodAC);
+		//TODO: clear the cache?
 		return ecDico.getExperimentalContextByProperties().get(key);
 	}
 

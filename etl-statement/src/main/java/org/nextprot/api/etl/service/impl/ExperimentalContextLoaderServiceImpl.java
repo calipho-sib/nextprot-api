@@ -47,21 +47,21 @@ public class ExperimentalContextLoaderServiceImpl implements ExperimentalContext
         // Uses the statement source service to get the input files
         try {
             Set<String> sourceFiles  = statementSourceService.getJsonFilenamesForRelease(source, release);
-            ArrayList<String> sqlStatements = new ArrayList<>();
+            String insertStatements = null;
             for(String sourceFile : sourceFiles) {
                 // Read the statements at once (unlike in the streaming approach)
                 List<ExperimentalContextStatement> experimentalContextStatements = readStatements(source, release, sourceFile);
                 LOGGER.info("Read " + experimentalContextStatements.size() + " statements from " + sourceFile);
                 try {
                     // Loads the read contexts
-                    sqlStatements.add(experimentalContextDao.loadExperimentalContexts(experimentalContextStatements, load));
+                    insertStatements = experimentalContextDao.loadExperimentalContexts(experimentalContextStatements, load);
                     LOGGER.info("Loaded " + experimentalContextStatements.size() + " statements ");
                 } catch(Exception e) {
                     e.printStackTrace();
                     return e.getLocalizedMessage();
                 }
             }
-            return sqlStatements.toString();
+            return insertStatements;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

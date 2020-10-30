@@ -80,12 +80,13 @@ public class StatementETLController {
 
 	// TODO: handle load or not parameter for the moment: false
 	@ApiMethod(path = "/etl/experimentalcontext/{source}/{release}", verb = ApiVerb.GET, description = "Loads experimental context data", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/etl/experimentalcontext/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/etl/experimentalcontext/{source}/{release}/{load}", method = { RequestMethod.GET }, produces = { MediaType.TEXT_PLAIN_VALUE})
 	@ResponseBody
 	public String loadStatementsExperimentalContext(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
 			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-10-04" }) @PathVariable("release") String release,
+			@ApiPathParam(name = "load", description = "Should the experimental contexts to be loaded", allowedvalues = { "false" }) @PathVariable("load") boolean load,
 			HttpServletRequest request) {
-			return experimentalContextLoaderService.loadExperimentalContexts(StatementSource.valueOfKey(source), release, false);
+			return experimentalContextLoaderService.loadExperimentalContexts(StatementSource.valueOfKey(source), release, load);
 	}
 }

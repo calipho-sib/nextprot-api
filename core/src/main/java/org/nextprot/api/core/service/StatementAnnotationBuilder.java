@@ -197,9 +197,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 long expContextId = experimentalContext.getContextId();
                 evidence.setExperimentalContextId(expContextId);
             } else {
-                LOGGER.info("Experiemental context not found for " + s.getValue(ANNOT_CV_TERM_ACCESSION) + " " + stageName + " " + s.getValue(EVIDENCE_CODE));
+                LOGGER.info("Experimental context not found for " + s.getValue(ANNOT_CV_TERM_ACCESSION) + " " + stageName + " " + s.getValue(EVIDENCE_CODE));
             }
-
         }
 
         return evidence;
