@@ -17,7 +17,6 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
@@ -170,8 +169,13 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
         AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
 
+        // IntAct statement custom fields, ASSIGMENT_COUNT
+        String expNb = s.getValue(new CustomStatementField("ASSIGMENT_COUNT"));
+        AnnotationEvidenceProperty expNbProperty = addPropertyIfPresent(expNb, PropertyApiModel.NAME_NUMBER_EXPERIMENTS);
+
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty, expressionLevelProperty, expressionScoreProperty)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin,
+                psimiIdProperty, psimiTermProperty, expressionLevelProperty, expressionScoreProperty, expNbProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
@@ -388,12 +392,13 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         return annotations;
     }
 
-    private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
+    private BioObject newBioObject(Statement statement, AnnotationCategory annotationCategory) {
 
-        String bioObjectAnnotationHash = firstStatement.getValue(OBJECT_ANNOTATION_IDS);
-        String bioObjectAccession = firstStatement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
-        String bioObjectType = firstStatement.getValue(BIOLOGICAL_OBJECT_TYPE);
-        String bioObjectName = firstStatement.getValue(BIOLOGICAL_OBJECT_NAME);
+        String bioObjectAnnotationHash = statement.getValue(OBJECT_ANNOTATION_IDS);
+        String bioObjectAccession = statement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
+        String bioObjectType = statement.getValue(BIOLOGICAL_OBJECT_TYPE);
+        String bioObjectName = statement.getValue(BIOLOGICAL_OBJECT_NAME);
+        String bioObjectDb = statement.getValue(BIOLOGICAL_OBJECT_DATABASE);
 
         BioObject bioObject;
 
@@ -401,17 +406,28 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
 
             if (!bioObjectAccession.startsWith("NX_")) {
+                if (bioObjectDb == null) {
+                    throw new NextProtException("Cannot create a binary interaction from statement " + statement +
+                            ": database is null for BioObject " + bioObjectAccession);
+                }
+                bioObject = BioObject.external(BioType.PROTEIN, bioObjectDb);
 
-                throw new NextProtException("Binary Interaction only expects to be a nextprot entry starting with NX_ but found " + bioObjectAccession + " with type " + bioObjectType);
-            }
+                if (!bioObjectDb.equals("UniProtKB")) {
+                    throw new NextProtException("Cannot create a binary interaction from statement " + statement +
+                            ": database is not UniProtKB for BioObject " + bioObjectAccession);
+                }
+                bioObject.putPropertyNameValue("url", "http://www.uniprot.org/uniprot/" + bioObjectAccession);
 
-            if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+            } else if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
 
                 bioObject = BioObject.internal(BioType.PROTEIN);
 
                 bioObject.putPropertyNameValue("proteinName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown protein accession " + bioObjectAccession))
+                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + statement +
+                                ": unknown protein accession " + bioObjectAccession))
                         .getName());
+
+                bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
             }
             // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
             else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
@@ -419,15 +435,18 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
 
                 bioObject.putPropertyNameValue("isoformName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown isoform accession " + bioObjectAccession))
+                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + statement +
+                                ": unknown isoform accession " + bioObjectAccession))
                         .getName());
+
+                bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
             } else {
                 throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
             }
 
             bioObject.setAccession(bioObjectAccession);
             bioObject.putPropertyNameValue("geneName", bioObjectName);
-            bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
+
         } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
