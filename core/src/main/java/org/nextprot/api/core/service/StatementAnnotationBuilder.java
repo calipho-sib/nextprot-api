@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -378,6 +379,10 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             } else if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
                 String p1 = firstStatement.getEntryAccession();
+                Optional<String> isoformSpecificOptional = firstStatement.getOptionalIsoformAccession();
+                if (isoformSpecificOptional.isPresent()) {
+                    p1 = isoformSpecificOptional.get();
+                }
                 String p2 = annotation.getBioObject().getAccession();
                 AnnotationProperty annotationProperty = new AnnotationProperty();
                 annotationProperty.setAnnotationId(annotation.getAnnotationId());
