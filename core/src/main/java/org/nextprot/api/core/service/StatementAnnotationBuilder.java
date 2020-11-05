@@ -169,8 +169,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
         AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
 
-        // IntAct statement custom fields, ASSIGMENT_COUNT
-        String expNb = s.getValue(new CustomStatementField("ASSIGMENT_COUNT"));
+        // IntAct statement custom fields, NUMBER_OF_EXPERIMENTS
+        String expNb = s.getValue(new CustomStatementField("NUMBER_OF_EXPERIMENTS"));
         AnnotationEvidenceProperty expNbProperty = addPropertyIfPresent(expNb, PropertyApiModel.NAME_NUMBER_EXPERIMENTS);
 
         //Set properties which are not null
