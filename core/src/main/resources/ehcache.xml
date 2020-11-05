@@ -27,8 +27,6 @@
 
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
-
-	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 	
 	<cache name="master-unique-names-chromosome" maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
@@ -417,6 +415,14 @@
 	maxEntriesLocalHeap="4" 
 	mostly used on building experimental context dictionary for bgee (psimi, stages, eco, tissues = 4 ontologies) 
 -->
+
+    <cache name="id-experimental-context-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
+
+    <cache name="md5-experimental-context-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
 
     <cache name="term-map-by-ontology" 
     		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="4" >

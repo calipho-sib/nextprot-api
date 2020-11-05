@@ -15,6 +15,7 @@ import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.specs.CoreStatementField;
@@ -46,11 +47,12 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
     private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 
-    protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
+    protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService, ExperimentalContextService experimentalContextService ) {
         this.terminologyService = terminologyService;
         this.publicationService = publicationService;
         this.mainNamesService = mainNamesService;
         this.dbXrefService = dbXrefService;
+        this.experimentalContextService = experimentalContextService;
     }
 
 
@@ -141,7 +143,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     }
 
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
-
+    	
         AnnotationEvidence evidence = new AnnotationEvidence();
         if (s.getValue(RESOURCE_TYPE) == null) {
             throw new NextProtException("resource type undefined");
@@ -149,7 +151,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         evidence.setResourceType(s.getValue(RESOURCE_TYPE));
         evidence.setResourceAssociationType("evidence");
         evidence.setQualityQualifier(s.getValue(EVIDENCE_QUALITY));
-
+        
         setResourceId(s, evidence);
 
         AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(EVIDENCE_INTENSITY), "intensity");
@@ -166,7 +168,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // Bgee statement custom fields, EXPRESSION_LEVEL, SCORE, STAGE_ID, STAGE_NAME
         String expressionLevel = s.getValue(new CustomStatementField("EXPRESSION_LEVEL"));
         String expressionScore = s.getValue(new CustomStatementField("SCORE"));
-        String stageName = s.getValue(new CustomStatementField("STAGE_NAME"));
+        String stage_ac = s.getValue(new CustomStatementField("STAGE_ID"));
         AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
         AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
 
@@ -182,22 +184,27 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
             evidence.setEvidenceCodeName(term.getName());
         }
+        
         evidence.setAssignedBy(s.getValue(ASSIGNED_BY));
         evidence.setAssignmentMethod(s.getValue(ASSIGMENT_METHOD));
         evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
         evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(IS_NEGATIVE)));
         evidence.setNote(s.getValue(EVIDENCE_NOTE));
 
-        //Set experimental context ID
+        // Set experimental context ID
         // Note that this currently concerns for bgee statements
         // All the other annotations with inherent experimental contexts are inherited from NP1 data model itself
         if("Bgee".equals(s.getValue(SOURCE))) {
-            ExperimentalContext experimentalContext = experimentalContextService.findExperimentalContextByProperties(s.getValue(ANNOT_CV_TERM_ACCESSION), stageName, s.getValue(EVIDENCE_CODE));
-            if(experimentalContext != null) {
-                long expContextId = experimentalContext.getContextId();
+        	String tissue_ac = s.getValue(ANNOT_CV_TERM_ACCESSION);
+        	String eco_ac = s.getValue(EVIDENCE_CODE);
+        	String md5 = ExperimentalContextUtil.computeMd5ForBgee(tissue_ac, stage_ac, eco_ac);
+        	//System.out.println("EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " : " + md5);
+            ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
+            if(ec != null) {
+                long expContextId = ec.getContextId();
                 evidence.setExperimentalContextId(expContextId);
             } else {
-                LOGGER.info("Experimental context not found for " + s.getValue(ANNOT_CV_TERM_ACCESSION) + " " + stageName + " " + s.getValue(EVIDENCE_CODE));
+                LOGGER.info("Experimental context not found for " + tissue_ac + " " + stage_ac + " " + eco_ac);
             }
         }
 

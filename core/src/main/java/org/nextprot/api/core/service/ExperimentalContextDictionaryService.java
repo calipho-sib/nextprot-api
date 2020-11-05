@@ -6,6 +6,6 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 
 public interface ExperimentalContextDictionaryService {
 
-	Map<Long,ExperimentalContext> getAllExperimentalContexts();
-	Map<String,ExperimentalContext> getExperimentalContextByProperties();
+	Map<Long,ExperimentalContext> getIdExperimentalContextMap();
+	Map<String,ExperimentalContext> getMd5ExperimentalContextMap();
 }

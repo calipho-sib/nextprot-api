@@ -1,22 +1,21 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.core.dao.ExperimentalContextDao;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.ExperimentalContextUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.nextprot.api.core.dao.ExperimentalContextDao;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 
 @Lazy
@@ -27,8 +26,8 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	@Autowired private TerminologyService terminologyService;
 	
 	@Override
-	@Cacheable(value = "experimental-context-dictionary", sync = true)
-	public Map<Long, ExperimentalContext> getAllExperimentalContexts() {
+	@Cacheable(value = "id-experimental-context-map", sync = true)
+	public Map<Long, ExperimentalContext> getIdExperimentalContextMap() {
 		
 		//long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
 
@@ -45,14 +44,15 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	}
 
 	@Override
-	@Cacheable(value = "experimental-context-dictionary-by-properties", sync = true)
-	public Map<String, ExperimentalContext> getExperimentalContextByProperties() {
-		List<ExperimentalContext> experimentalContexts = ecDao.findAllExperimentalContexts();
-		Map<String, ExperimentalContext> experimentalContextByPropertyMap = new HashMap<>();
-		for( ExperimentalContext experimentalContext : experimentalContexts) {
-			experimentalContextByPropertyMap.put(experimentalContext.getMd5(), experimentalContext);
+	@Cacheable(value = "md5-experimental-context-map", sync = true)
+	public Map<String, ExperimentalContext> getMd5ExperimentalContextMap() {
+		
+		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
+		Map<String, ExperimentalContext> md5ExperimentalContextMap = new HashMap<>();
+		for( ExperimentalContext experimentalContext : ecs) {
+			md5ExperimentalContextMap.put(experimentalContext.getMd5(), experimentalContext);
 		}
-		return experimentalContextByPropertyMap;
+		return md5ExperimentalContextMap;
 	}
 
 

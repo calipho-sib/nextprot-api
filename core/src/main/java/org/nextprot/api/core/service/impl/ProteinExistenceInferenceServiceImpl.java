@@ -157,7 +157,8 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	@Override
 	public boolean promotedAccordingToRule5(String entryAccession) {
 
-		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> annotationService.findAnnotations(entryAccession).stream()
+		return hasExperimentalEvidenceAssignedByNeXtProtOfQualityGOLD(() -> 
+			annotationService.findAnnotations(entryAccession).stream()
 				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.MUTAGENESIS));
 	}
 

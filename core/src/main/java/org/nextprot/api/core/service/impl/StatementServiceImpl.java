@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
@@ -47,6 +48,9 @@ public class StatementServiceImpl implements StatementService {
 
     @Autowired
     public DbXrefService dbXrefService;
+    
+    @Autowired
+    ExperimentalContextService experimentalContextService;
 
 
     private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
@@ -60,14 +64,14 @@ public class StatementServiceImpl implements StatementService {
 
         List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(subjectAnnotIds);
 
-        return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+        return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService, experimentalContextService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
     }
 
 
     private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
         List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
-        return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService).buildAnnotationList(entryAccession, normalStatements);
+        return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService, experimentalContextService).buildAnnotationList(entryAccession, normalStatements);
     }
 
 

@@ -335,7 +335,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
     private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
 
-        Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getAllExperimentalContexts();
+        Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getIdExperimentalContextMap();
 
         //long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
 
