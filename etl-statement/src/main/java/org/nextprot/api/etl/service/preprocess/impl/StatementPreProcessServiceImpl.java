@@ -487,12 +487,10 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                     }
             );
 
-            report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) + " GlyConnect statements: set additional fields (RESOURCE_TYPE, STATEMENT_ID, and BIOLOGICAL_OBJECT_DATABASE)");
+            report.addInfo("Updating " + statementSet.size() + "/" + (statements.size()) +
+                    " IntAct statements: set additional fields (RESOURCE_TYPE, STATEMENT_ID, and BIOLOGICAL_OBJECT_DATABASE)");
 
             return statementSet;
         }
-
-
     }
-
 }
