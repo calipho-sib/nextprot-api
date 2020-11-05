@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
@@ -409,48 +410,54 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         // Both binary interaction and interaction mapping annotations are handled in the same way
         if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
-
+            String url;
             if (!bioObjectAccession.startsWith("NX_")) {
+                if (AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
+                    throw new NextProtException("Interaction mapping only expects to be a nextprot entry starting with NX_ but found "
+                            + bioObjectAccession + " with type " + bioObjectType);
+                }
                 if (bioObjectDb == null) {
                     throw new NextProtException("Cannot create a binary interaction from statement " + statement +
                             ": database is null for BioObject " + bioObjectAccession);
                 }
-                bioObject = BioObject.external(BioType.PROTEIN, bioObjectDb);
-
                 if (!bioObjectDb.equals("UniProtKB")) {
                     throw new NextProtException("Cannot create a binary interaction from statement " + statement +
                             ": database is not UniProtKB for BioObject " + bioObjectAccession);
                 }
-                bioObject.putPropertyNameValue("url", "http://www.uniprot.org/uniprot/" + bioObjectAccession);
 
-            } else if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+                bioObject = BioObject.external(BioType.PROTEIN, bioObjectDb);
 
-                bioObject = BioObject.internal(BioType.PROTEIN);
+                url = "http://www.uniprot.org/uniprot/" + bioObjectAccession;
 
-                bioObject.putPropertyNameValue("proteinName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + statement +
-                                ": unknown protein accession " + bioObjectAccession))
-                        .getName());
-
-                bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
-            }
-            // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
-            else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
-
-                bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
-
-                bioObject.putPropertyNameValue("isoformName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + statement +
-                                ": unknown isoform accession " + bioObjectAccession))
-                        .getName());
-
-                bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
             } else {
-                throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
-            }
+                // Here, it's supposed to be neXtProt accession
+                MainNames mainNames = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                                                      .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " +
+                                                              statement + ": unknown isoform accession " + bioObjectAccession));
+                url = "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions";
+                bioObjectName = (!mainNames.getGeneNameList().isEmpty()) ? mainNames.getGeneNameList().get(0) : bioObjectName;
 
+                if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+
+                    bioObject = BioObject.internal(BioType.PROTEIN);
+
+                    bioObject.putPropertyNameValue("proteinName", mainNames.getName());
+
+                }
+                // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
+                else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
+
+                    bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
+
+                    bioObject.putPropertyNameValue("isoformName", mainNames.getName());
+
+                } else {
+                    throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
+                }
+            }
+            bioObject.putPropertyNameValue("url", url);
             bioObject.setAccession(bioObjectAccession);
-            bioObject.putPropertyNameValue("geneName", bioObjectName);
+            bioObject.putPropertyNameValue("geneName", bioObjectName == null? "-" : bioObjectName);
 
         } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
 
