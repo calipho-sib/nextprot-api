@@ -17,12 +17,13 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ActiveProfiles({ "dev" })
 public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired private InteractionService interactionService;
+	@Autowired private StatementService statementService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private MainNamesService mainNamesService;
 
@@ -89,17 +90,11 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 	 * and there should at least 1 interaction declared as isoform specific
 	 * 
 	 * see query above to find other examples if necessary in future releases
-	 * 
-	 * 
-	 * Pam 07/10/2020:
-	 * We are now using NP2 pipeline to get IntAct (and other) binary interactions.
-	 * This test should work again once we have the nxflat db filled with IntAct data
-	 * 
 	 */
 	@Test
 	public void shouldDealWithAnyInteractionSpecialInteraction() {
 		String entry_ac="NX_Q9UNQ0";
-		List<Annotation> annots = this.interactionService.findInteractionsAsAnnotationsByEntry(entry_ac);
+		List<Annotation> annots = this.statementService.getAnnotations(entry_ac);
 		int numberOfExperiments = 0;
 		int withNxEntries = 0;
 		int withNxIsos = 0;
@@ -128,12 +123,20 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 			if (isAnnotationAnInteractionWithANextprotIsoformAsSubject(annot)) isoSpecs++;
 			
 			// evidences
-			assertTrue(annot.getEvidences().size()==1);
-			AnnotationEvidence evi = annot.getEvidences().get(0);
-			assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));
-			assertTrue(evi.getResourceDb().equals("IntAct"));
-			if (annot.getEvidences().get(0).getPropertyValue("numberOfExperiments") != null) numberOfExperiments++;
-			
+			assertTrue(annot.getEvidences().size() >= 1);
+			boolean hasPropertyNumberOfExperiments = false;
+			for (AnnotationEvidence evi : annot.getEvidences()) {
+				assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));
+				if ("database".equals(evi.getResourceType())) {
+					assertEquals("IntAct", evi.getResourceDb());
+				}
+				if (evi.getPropertyValue("numberOfExperiments") != null) {
+					hasPropertyNumberOfExperiments = true;
+				}
+			}
+			if (hasPropertyNumberOfExperiments) {
+				numberOfExperiments++;
+			}
 		}
 		/*
 		System.out.println("numberOfExperiments:" + numberOfExperiments);
@@ -143,14 +146,13 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 		System.out.println("withXrefs:" + withXrefs );
 		System.out.println("isoSpecs:" + isoSpecs );
 		*/
-		if (todayIsAfter("17 Oct 2020")) {
-			assertTrue(numberOfExperiments==annots.size()); // should exist for each interaction
-			assertTrue(withNxEntries >= 1); // 8 cases
-			assertTrue(withNxIsos >= 1); // 1 case
-			assertTrue(withXrefs >= 1); // 10 cases
-			assertTrue(withSelf == 1);  // 1 case
-			assertTrue(isoSpecs > 1);  // 16 cases
-		}
+
+		assertTrue(numberOfExperiments==annots.size()); // should exist for each interaction
+		assertTrue(withNxEntries >= 1); // 21 cases
+		assertTrue(withNxIsos >= 1); // 2 cases
+		assertTrue(withXrefs >= 1); // 11 cases
+		assertTrue(withSelf == 1);  // 1 case
+		assertTrue(isoSpecs > 1);  // 17 cases
 	}
 
 	private boolean isAnnotationASelfInteraction(Annotation annot, String entry_ac) {
