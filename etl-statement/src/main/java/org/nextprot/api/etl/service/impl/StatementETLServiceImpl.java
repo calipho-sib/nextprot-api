@@ -151,9 +151,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 	    List<Statement> statements = new ArrayList<>();
 	    for (String jsonFilename : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 
-		    JsonStatementReader reader = new JsonStatementReader(statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename),
+		    JsonStatementReader reader = new JsonStatementReader(
+		    		statementSourceService.getStatementsAsJsonArray(source, release, jsonFilename),
 				    source.getSpecifications());
 		    statements.addAll(reader.readStatements());
+		    reader.close();
 	    }
 	    return statements;
     }
