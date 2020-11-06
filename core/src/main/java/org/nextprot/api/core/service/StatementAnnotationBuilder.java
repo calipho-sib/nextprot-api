@@ -198,13 +198,14 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         	String tissue_ac = s.getValue(ANNOT_CV_TERM_ACCESSION);
         	String eco_ac = s.getValue(EVIDENCE_CODE);
         	String md5 = ExperimentalContextUtil.computeMd5ForBgee(tissue_ac, stage_ac, eco_ac);
-        	//System.out.println("EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " : " + md5);
             ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
             if(ec != null) {
-                long expContextId = ec.getContextId();
-                evidence.setExperimentalContextId(expContextId);
+                long ecId = ec.getContextId();
+                evidence.setExperimentalContextId(ecId);
             } else {
-                LOGGER.info("Experimental context not found for " + tissue_ac + " " + stage_ac + " " + eco_ac);
+            	String msg = "EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " " + md5 + " not found";
+            	LOGGER.error(msg);
+            	throw new NextProtException(msg);
             }
         }
 

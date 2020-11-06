@@ -71,7 +71,9 @@ public class StatementServiceImpl implements StatementService {
 
     private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
         List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
-        return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService, experimentalContextService).buildAnnotationList(entryAccession, normalStatements);
+        return StatementEntryAnnotationBuilder
+        		.newBuilder(terminologyService, publicationService, mainNamesService, dbXrefService, experimentalContextService)
+        		.buildAnnotationList(entryAccession, normalStatements);
     }
 
 

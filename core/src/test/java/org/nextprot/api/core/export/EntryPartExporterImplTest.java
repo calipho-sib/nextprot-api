@@ -58,15 +58,6 @@ public class EntryPartExporterImplTest extends CoreUnitBaseTest {
 
         List<Row> rows = exporter.exportRows(entry);
         
-/*        System.out.println("rows:" + rows.size());
-        System.out.println("cols:" + rows.get(0).size());
-        for (Row r: rows) {
-        	for (int i=0;i<r.size();i++) {
-        		System.out.print(r.getValue(i) + "\t");
-        	}
-        	System.out.println("");
-        }
-*/        
         Assert.assertTrue(rows.size() > 150);
         Assert.assertEquals(13, rows.get(0).size());
     }
@@ -75,7 +66,7 @@ public class EntryPartExporterImplTest extends CoreUnitBaseTest {
     @Test
     public void testPartialSortOrderForExpressionProfile() throws Exception {
 
-        // the sort order defined fro expression-profile is :
+        // the sort order defined for expression-profile is :
         // alpha(term name), alpha(eco_name), alpha(expression level), temporal(stage accession) 
         // here we test that the 3 first criteria are correct
 
