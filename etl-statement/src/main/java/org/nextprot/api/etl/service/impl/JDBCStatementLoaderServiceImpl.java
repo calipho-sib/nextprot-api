@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
@@ -15,9 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,16 +39,64 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	
 
 	@Override
-	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source, boolean erase) throws SQLException {
-		load(statements, rawTable, source, erase);
+	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
+		load(statements, rawTable, source);
 	}
 
 	@Override
-	public void loadStatementsMappedToEntrySpecAnnotationsForSource(Collection<Statement> statements, StatementSource source, boolean erase) throws SQLException {
-		load(statements, entryTable, source, erase);
+	public void loadEntryMappedStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
+		load(statements, entryTable, source);
+	}
+
+	@Override
+	public void deleteRawStatements(StatementSource source)  {
+		deleteStatements(rawTable, source);
+		
+	}
+
+	@Override
+	public void deleteEntryMappedStatements(StatementSource source)  {
+		deleteStatements(entryTable, source);
+	}
+
+		
+	private void deleteStatements(String tableName, StatementSource source)  {
+
+		java.sql.Statement delStmt = null; ResultSet rs = null;
+		
+		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection())  {
+			
+			String cntSql = "select count(*) as cnt FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'";
+			System.out.println(new Date() + " - Counting "  + source.getSourceName() + " statements in " + tableName + "...");
+			rs = conn.createStatement().executeQuery(cntSql);
+			rs.next();
+			long cnt = rs.getLong("cnt");
+			System.out.println(new Date() + " - Number of " + source.getSourceName() + " statements in " + tableName + " : " + cnt);
+			if (cnt > 0) {
+				System.out.println(new Date() + " - Deleting "  + source.getSourceName() + " statements in " + tableName + "...");
+				String delSql = "DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'";
+				conn.createStatement().execute(delSql);
+				System.out.println(new Date() + " - Deleted "  + source.getSourceName() + " statements in " + tableName );
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			try {
+				if (rs != null) rs.close();
+				if (delStmt != null) delStmt.close();	
+				
+	        } catch (SQLException e) {	
+	        	e.printStackTrace();        
+	        }
+
+		}
+
+		
 	}
 	
-	private void load(Collection<Statement> statements, String tableName, StatementSource source, boolean erase) throws SQLException {
+	private void load(Collection<Statement> statements, String tableName, StatementSource source) throws SQLException {
 
 		List<StatementField> customFields = source.getFields().stream()
 				.filter(field -> field instanceof CustomStatementField)
@@ -55,14 +106,9 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 				.filter(field -> field instanceof CoreStatementField)
 				.collect(Collectors.toList());
 
-		java.sql.Statement deleteStatement = null;
 		PreparedStatement pstmt = null;
 
 		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection())  {
-			if(erase) {
-				deleteStatement = conn.createStatement();
-				deleteStatement.addBatch("DELETE FROM nxflat." + tableName + " WHERE SOURCE = '" + source.getSourceName() + "'");
-			}
 
 			String columnNames = StringUtils.mkString(coreFields, "", ",", "");
 			if (customFields.size()>0) columnNames += ",EXTRA_FIELDS";
@@ -94,22 +140,14 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 				pstmt.addBatch();
 			}
 
-			if(deleteStatement != null ) {
-				deleteStatement.executeBatch();
-			}
 			pstmt.executeBatch();
 
 		} catch(Exception e) {
 			e.printStackTrace();
-		} finally {
 
-			if(deleteStatement != null){
-				deleteStatement.close();
-			}
-			
-			if(pstmt  != null){
-				pstmt.close();
-			}
+		} finally {
+			if(pstmt  != null) pstmt.close();
 		}
 	}
+
 }

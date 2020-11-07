@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.preprocess.StatementPreProcessService;
 import org.nextprot.commons.statements.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +26,17 @@ public class StatementETLPreProcessTest {
     @Autowired
     private StatementPreProcessService statementPreProcessService;
 
+//    @Autowired
+//    private StatementLoaderService statementLoaderService;
+//
+//    @Test
+//    public void shouldDoIt() throws SQLException {
+//    	
+//    	statementLoaderService.deleteRawStatements(StatementSource.ENYO);
+//    	statementLoaderService.deleteEntryMappedStatements(StatementSource.ENYO);
+//    }
+    
+    
     @Test
     public void shouldPreprocessBgeeRawStatementAndAddEntryAccession() throws Exception{
         StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();

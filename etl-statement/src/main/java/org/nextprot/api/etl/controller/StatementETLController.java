@@ -69,7 +69,7 @@ public class StatementETLController {
 			load = false;
 		}
 
-		boolean erase = false;
+		boolean erase = true;
 
 		try {
 			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase);
