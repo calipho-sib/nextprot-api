@@ -442,7 +442,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                                                       .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " +
                                                               statement + ": unknown isoform accession " + bioObjectAccession));
                 url = "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions";
-                bioObjectName = (!mainNames.getGeneNameList().isEmpty()) ? mainNames.getGeneNameList().get(0) : bioObjectName;
+                bioObjectName = ( mainNames.getGeneNameList() != null && !mainNames.getGeneNameList().isEmpty()) ? mainNames.getGeneNameList().get(0) : bioObjectName;
 
                 if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
 
