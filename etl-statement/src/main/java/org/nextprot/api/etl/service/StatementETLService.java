@@ -26,8 +26,10 @@ public interface StatementETLService {
 	 * @param source the statement source
 	 * @param release the source release
 	 * @param load load to db if true
+	 * @param erase erase existing statements in the db if true
+	 * @param dropIndex drops the index before the load and recreate if true from both raw and entry mapped tables
 	 * @return the log message
 	 * @throws IOException
 	 */
-	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException;
+	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase, boolean dropIndex) throws IOException;
 }

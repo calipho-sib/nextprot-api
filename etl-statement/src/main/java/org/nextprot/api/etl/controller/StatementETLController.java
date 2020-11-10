@@ -55,12 +55,13 @@ public class StatementETLController {
 		}
 	}
 
-	@ApiMethod(path = "/etl-streaming/{source}/{release}", verb = ApiVerb.GET, description = "Perform ETL on the source/release in streaming fashion", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/etl-streaming/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/etl-streaming/{source}/{release}/{dropIndex}", verb = ApiVerb.GET, description = "Perform ETL on the source/release in streaming fashion", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl-streaming/{source}/{release}/{dropIndex}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	public String loadStatementsStreaming(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
 			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-10-04" }) @PathVariable("release") String release,
+			@ApiPathParam(name = "dropIndex", description = "Flag to set if indexes should be dropped before loading ", allowedvalues = { "false" }) @PathVariable("dropIndex") boolean dropIndex,
 			HttpServletRequest request) {
 
 		boolean load = true;
@@ -72,7 +73,7 @@ public class StatementETLController {
 		boolean erase = true;
 
 		try {
-			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase);
+			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase, dropIndex);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}

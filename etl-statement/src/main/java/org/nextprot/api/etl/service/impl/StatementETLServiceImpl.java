@@ -97,9 +97,17 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 
 	@Override
-	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException {
+	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase, boolean dropIndex) throws IOException {
 		ReportBuilder report = new ReportBuilder();
 		long startETL = System.currentTimeMillis();
+
+		// Should drop the indexes
+		List<String> indexDefinitions = null;
+		if(dropIndex) {
+			LOGGER.info("Dropping the indexes of the raw and entry mapped tables");
+			indexDefinitions = statementLoadService.dropIndexes();
+			LOGGER.info("Dropped indexes:  " + indexDefinitions.size());
+		}
 
         // before doing anything, delete old statements for source if requested to do so
         if (erase) {
@@ -155,6 +163,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
 		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime);
+
+		if(dropIndex) {
+			LOGGER.info("Re-create indexes");
+			long startIndexCreate = System.currentTimeMillis();
+			statementLoadService.createIndexes(indexDefinitions);
+			long indexCreationTime = (System.currentTimeMillis() - startIndexCreate) / 1000;
+			report.addInfoWithElapsedTime("{ 'Step' : Reindexed, 'Time' : " + indexCreationTime);
+		}
 		return report.toString();
 	}
 
