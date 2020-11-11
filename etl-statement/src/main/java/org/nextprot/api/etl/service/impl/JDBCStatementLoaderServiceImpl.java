@@ -36,6 +36,13 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 	private String entryMappedTable =  StatementTableNames.ENTRY_TABLE;
 	private String rawTable = StatementTableNames.RAW_TABLE;
 
+	private final String entryMappedAccessionIndex = "CREATE INDEX idx_ems_by_entry_ac ON nxflat.entry_mapped_statements USING btree (entry_accession)";
+	private final String entryMappedAnnotationIndex = "CREATE INDEX idx_ems_by_annot_id ON nxflat.entry_mapped_statements USING btree (annotation_id)";
+
+	private final String rawAccessionIndex = "CREATE INDEX new_raw_statem_entry_ac_idx ON nxflat.raw_statements USING btree (entry_accession)";
+	private final String rawAnnotationIndex = "CREATE INDEX statem_annot_id_idx ON nxflat.raw_statements USING btree (annotation_id)";
+
+
 	@Override
 	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
 		load(statements, rawTable, source);
@@ -192,22 +199,30 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 	/**
 	 * Creates indices with given index definition SQL statements
-	 * @param indexdefinitions
 	 */
 	@Override
-	public void createIndexes(List<String> indexdefinitions) {
-		if(indexdefinitions == null) {
-			LOGGER.error("Index names cannot be null");
-		}
+	public List<String> createIndexes() {
 
+		List<String>  indexdefinitions = new ArrayList<>();
+		indexdefinitions.add(entryMappedAccessionIndex);
+		indexdefinitions.add(entryMappedAnnotationIndex);
+		indexdefinitions.add(rawAccessionIndex);
+		indexdefinitions.add(rawAnnotationIndex);
+		LOGGER.info("Creating 4 indexes on entry mapped and raw tables");
 		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection()) {
 			java.sql.Statement createStatement = conn.createStatement();
 			for(String indexDefinition : indexdefinitions) {
 				LOGGER.info("Executing index update statements : " + indexDefinition);
-				createStatement.executeUpdate(indexDefinition);
+				try {
+					createStatement.executeUpdate(indexDefinition);
+				} catch(SQLException e) {
+					LOGGER.error(e.getMessage());
+				}
 			}
+			return indexdefinitions;
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 }

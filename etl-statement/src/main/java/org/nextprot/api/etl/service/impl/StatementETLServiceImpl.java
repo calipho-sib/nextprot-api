@@ -97,17 +97,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 
 	@Override
-	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase, boolean dropIndex) throws IOException {
+	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException {
 		ReportBuilder report = new ReportBuilder();
 		long startETL = System.currentTimeMillis();
-
-		// Should drop the indexes
-		List<String> indexDefinitions = null;
-		if(dropIndex) {
-			LOGGER.info("Dropping the indexes of the raw and entry mapped tables");
-			indexDefinitions = statementLoadService.dropIndexes();
-			LOGGER.info("Dropped indexes:  " + indexDefinitions.size());
-		}
 
         // before doing anything, delete old statements for source if requested to do so
         if (erase) {
@@ -164,13 +156,30 @@ public class StatementETLServiceImpl implements StatementETLService {
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
 		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime);
 
-		// Recreates the dropped indexes from the index definitions
-		if(dropIndex) {
-			LOGGER.info("Re-create indexes : " + indexDefinitions.size());
-			long startIndexCreate = System.currentTimeMillis();
-			statementLoadService.createIndexes(indexDefinitions);
-			long indexCreationTime = (System.currentTimeMillis() - startIndexCreate) / 1000;
-			report.addInfoWithElapsedTime("{ 'Step' : Reindexed, 'Time' : " + indexCreationTime);
+		return report.toString();
+	}
+
+	public String dropIndex() {
+		List<String> indexStatements = statementLoadService.dropIndexes();
+
+		ReportBuilder report = new ReportBuilder();
+		report.addInfo(indexStatements.size() + "indexes dropped");
+		for (String indexStatement : indexStatements) {
+			LOGGER.info(indexStatement);
+			report.addInfo(indexStatement);
+		}
+		LOGGER.info(indexStatements.size() + "iendexes are dropped");
+		return report.toString();
+	}
+
+	public String createIndex() {
+		List<String> indexDefinitions = statementLoadService.createIndexes();
+
+		ReportBuilder report = new ReportBuilder();
+		if(indexDefinitions == null) {
+			report.addInfo("Error creating indexes");
+		} else {
+			report.addInfo("Indexes created : " + indexDefinitions.size() + " Index definitoins: " + String.join(";", indexDefinitions));
 		}
 		return report.toString();
 	}
@@ -318,7 +327,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		Collection<Statement> process(Collection<Statement> statements);
 	}
-
 
 
 

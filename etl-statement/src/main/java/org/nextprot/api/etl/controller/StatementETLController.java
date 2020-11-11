@@ -8,6 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.ExperimentalContextLoaderService;
 import org.nextprot.api.etl.service.StatementETLService;
+import org.nextprot.api.etl.service.impl.JDBCStatementLoaderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @Api(name = "ETL", description = "Extract Transform And Load Statements", group="ETL")
@@ -55,13 +57,12 @@ public class StatementETLController {
 		}
 	}
 
-	@ApiMethod(path = "/etl-streaming/{source}/{release}/{dropIndex}", verb = ApiVerb.GET, description = "Perform ETL on the source/release in streaming fashion", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/etl-streaming/{source}/{release}/{dropIndex}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/etl-streaming/{source}/{release}", verb = ApiVerb.GET, description = "Perform ETL on the source/release in streaming fashion", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl-streaming/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	public String loadStatementsStreaming(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
 			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2018-10-04" }) @PathVariable("release") String release,
-			@ApiPathParam(name = "dropIndex", description = "Flag to set if indexes should be dropped before loading ", allowedvalues = { "false" }) @PathVariable("dropIndex") boolean dropIndex,
 			HttpServletRequest request) {
 
 		boolean load = true;
@@ -73,7 +74,7 @@ public class StatementETLController {
 		boolean erase = true;
 
 		try {
-			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase, dropIndex);
+			return statementETLService.extractTransformLoadStatementsStreaming(StatementSource.valueOfKey(source), release, load, erase);
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}
@@ -89,5 +90,19 @@ public class StatementETLController {
 			@ApiPathParam(name = "load", description = "Should the experimental contexts to be loaded", allowedvalues = { "false" }) @PathVariable("load") boolean load,
 			HttpServletRequest request) {
 			return experimentalContextLoaderService.loadExperimentalContexts(StatementSource.valueOfKey(source), release, load);
+	}
+
+	@ApiMethod(path = "/etl/dropIndex", verb = ApiVerb.GET, description = "Drops the indexes of raw and entry mapped tables", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl/dropIndex", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public String dropIndexes(HttpServletRequest request) {
+		return statementETLService.dropIndex();
+	}
+
+	@ApiMethod(path = "/etl/createIndex", verb = ApiVerb.GET, description = "Creates the indexes of raw and entry mapped tables", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl/createIndex", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public String createIndexes(HttpServletRequest request) {
+		return statementETLService.createIndex();
 	}
 }

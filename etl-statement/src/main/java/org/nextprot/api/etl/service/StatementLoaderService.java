@@ -15,5 +15,5 @@ public interface StatementLoaderService {
 	void deleteRawStatements(StatementSource source) ;
 	void deleteEntryMappedStatements(StatementSource source);
 	List<String> dropIndexes();
-	void createIndexes(List<String> indexDefinitions);
+	List<String> createIndexes();
 } 
