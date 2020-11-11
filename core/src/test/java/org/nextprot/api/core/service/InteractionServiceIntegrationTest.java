@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -94,7 +95,10 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 	@Test
 	public void shouldDealWithAnyInteractionSpecialInteraction() {
 		String entry_ac="NX_Q9UNQ0";
-		List<Annotation> annots = this.statementService.getAnnotations(entry_ac);
+		List<Annotation> annots = this.statementService.getAnnotations(entry_ac)
+				.stream()
+				.filter(a -> "BinaryInteraction".equals(a.getCategory()))
+				.collect(Collectors.toList());
 		int numberOfExperiments = 0;
 		int withNxEntries = 0;
 		int withNxIsos = 0;
