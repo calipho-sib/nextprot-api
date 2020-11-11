@@ -164,8 +164,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
 		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime);
 
+		// Recreates the dropped indexes from the index definitions
 		if(dropIndex) {
-			LOGGER.info("Re-create indexes");
+			LOGGER.info("Re-create indexes : " + indexDefinitions.size());
 			long startIndexCreate = System.currentTimeMillis();
 			statementLoadService.createIndexes(indexDefinitions);
 			long indexCreationTime = (System.currentTimeMillis() - startIndexCreate) / 1000;
