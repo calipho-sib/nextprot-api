@@ -1,7 +1,6 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.StatementLoaderService;
@@ -34,9 +33,15 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 	@Autowired private DataSourceServiceLocator dataSourceServiceLocator = null;
 	
-	private String entryTable =  StatementTableNames.ENTRY_TABLE;
+	private String entryMappedTable =  StatementTableNames.ENTRY_TABLE;
 	private String rawTable = StatementTableNames.RAW_TABLE;
-	
+
+	private final String entryMappedAccessionIndex = "CREATE INDEX idx_ems_by_entry_ac ON nxflat.entry_mapped_statements USING btree (entry_accession)";
+	private final String entryMappedAnnotationIndex = "CREATE INDEX idx_ems_by_annot_id ON nxflat.entry_mapped_statements USING btree (annotation_id)";
+
+	private final String rawAccessionIndex = "CREATE INDEX new_raw_statem_entry_ac_idx ON nxflat.raw_statements USING btree (entry_accession)";
+	private final String rawAnnotationIndex = "CREATE INDEX statem_annot_id_idx ON nxflat.raw_statements USING btree (annotation_id)";
+
 
 	@Override
 	public void loadRawStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
@@ -45,7 +50,7 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 	@Override
 	public void loadEntryMappedStatementsForSource(Collection<Statement> statements, StatementSource source) throws SQLException {
-		load(statements, entryTable, source);
+		load(statements, entryMappedTable, source);
 	}
 
 	@Override
@@ -56,7 +61,7 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 
 	@Override
 	public void deleteEntryMappedStatements(StatementSource source)  {
-		deleteStatements(entryTable, source);
+		deleteStatements(entryMappedTable, source);
 	}
 
 		
@@ -150,4 +155,74 @@ public class JDBCStatementLoaderServiceImpl implements StatementLoaderService {
 		}
 	}
 
+	/**
+	 * Drops the indices on raw and entry mapped tables
+	 * @return List of index definitions
+	 */
+	@Override
+	public List<String> dropIndexes() {
+		List<String> indexDefinitions = new ArrayList<>();
+
+		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection())  {
+			java.sql.Statement dropStatement = conn.createStatement();
+			// Read the indexname and indexdef from the pg_indexes table
+            // Index def is the SQL statement, which created the index, so that this can be used to recreate the index
+			ResultSet indices = conn.createStatement().executeQuery("SELECT indexname,indexdef FROM pg_indexes WHERE tablename = 'raw_statements'");
+			while(indices.next()) {
+				// Drop each index
+				String indexName = indices.getString(1);
+				String indexDefinition = indices.getString(2);
+				dropStatement.executeUpdate("DROP INDEX nxflat." + indexName);
+				LOGGER.info("Dropped the index " + indexName + " on " + rawTable);
+				indexDefinitions.add(indexDefinition);
+			}
+
+			// Raw table
+			ResultSet entryMappedIndices = conn.createStatement().executeQuery("SELECT indexname,indexdef FROM pg_indexes WHERE tablename = 'entry_mapped_statements'");
+			while(entryMappedIndices.next()) {
+				// Drop each index
+				String indexName = entryMappedIndices.getString(1);
+				String indexDefinition = entryMappedIndices.getString(2);
+				dropStatement.executeUpdate("DROP INDEX nxflat." + indexName);
+				LOGGER.info("Dropped the index " + indexName + " on " + entryMappedTable);
+				indexDefinitions.add(indexDefinition);
+			}
+
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			return indexDefinitions;
+		}
+	}
+
+
+	/**
+	 * Creates indices with given index definition SQL statements
+	 */
+	@Override
+	public List<String> createIndexes() {
+
+		List<String>  indexdefinitions = new ArrayList<>();
+		indexdefinitions.add(entryMappedAccessionIndex);
+		indexdefinitions.add(entryMappedAnnotationIndex);
+		indexdefinitions.add(rawAccessionIndex);
+		indexdefinitions.add(rawAnnotationIndex);
+		LOGGER.info("Creating 4 indexes on entry mapped and raw tables");
+		try (Connection conn = dataSourceServiceLocator.getStatementsDataSource().getConnection()) {
+			java.sql.Statement createStatement = conn.createStatement();
+			for(String indexDefinition : indexdefinitions) {
+				LOGGER.info("Executing index update statements : " + indexDefinition);
+				try {
+					createStatement.executeUpdate(indexDefinition);
+				} catch(SQLException e) {
+					LOGGER.error(e.getMessage());
+				}
+			}
+			return indexdefinitions;
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

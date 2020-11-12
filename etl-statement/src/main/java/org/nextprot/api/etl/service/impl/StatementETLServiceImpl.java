@@ -97,20 +97,28 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 
 	@Override
-	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException {
+	public String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase, boolean dropIndex) throws IOException {
 		ReportBuilder report = new ReportBuilder();
 		long startETL = System.currentTimeMillis();
 
+		// Should drop the indexes
+		List<String> indexDefinitions = null;
+		if(dropIndex) {
+			LOGGER.info("Dropping the indexes of the raw and entry mapped tables");
+			indexDefinitions = statementLoadService.dropIndexes();
+			LOGGER.info("Dropped indexes:  " + indexDefinitions.size());
+		}
+
         // before doing anything, delete old statements for source if requested to do so
         if (erase) {
-            report.addInfoWithElapsedTime("Starting deletion of statements of " + source.getSourceName());
+            LOGGER.info("Starting deletion of statements of " + source.getSourceName());
 	        statementLoadService.deleteRawStatements(source);
 	        statementLoadService.deleteEntryMappedStatements(source);
-            report.addInfoWithElapsedTime("Completed deletion of statements of " + source.getSourceName());
+            LOGGER.info("Completed deletion of statements of " + source.getSourceName());
         }		
 		
 		// Reads the source in a streaming fashion and process transform statement by statement
-        int stmtProcessedSoFar = 0;
+        int stmtProcessedSoFar = 0, rawStatementsLoaded = 0, entryMappedStatementsLoaded = 0;
 		for( String jsonFileName : statementSourceService.getJsonFilenamesForRelease(source, release)) {
 			LOGGER.info("Processing source file " + jsonFileName);
 			long start = System.currentTimeMillis();
@@ -120,41 +128,79 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
-				report.addInfoWithElapsedTime("step: extract, read_statements: " + currentStatements.size() + ", time:  -");
+				LOGGER.info("step: extract, read_statements: " + currentStatements.size() + ", time:  -");
 				Set<Statement> rawStatements = new HashSet<>(currentStatements);
-				report.addInfoWithElapsedTime("step: extract, raw_statements: " + rawStatements.size() + ", time:  -");
+				LOGGER.info("step: extract, raw_statements: " + rawStatements.size() + ", time:  -");
 				if (!currentStatements.isEmpty()) {
 					// transform the batch of statements
 					long transformStart = System.currentTimeMillis();
 					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 					long transformTime = (System.currentTimeMillis() - transformStart) / 1000;
 					if(mappedStatements == null) {
-						report.addInfoWithElapsedTime("'step' : transform, statements: 0, time:" + transformTime);
+						LOGGER.info("'step' : transform, statements: 0, time:" + transformTime);
 						// Still need to store the raw statements
 						long loadStart = System.currentTimeMillis();
 						loadStatements(source, currentStatements, null, load, report);
 						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-						report.addInfoWithElapsedTime("'step' : load , mappedStatements: rowStatements: " + currentStatements.size() + ", time: " + loadTime);
+						rawStatementsLoaded += currentStatements.size();
+						LOGGER.info("'step' : load , mappedStatements: rowStatements: " + currentStatements.size() + ", time: " + loadTime);
 					} else {
-						report.addInfoWithElapsedTime("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
+						LOGGER.info("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
 						if(!mappedStatements.isEmpty()) {
 							long loadStart = System.currentTimeMillis();
 							loadStatements(source, currentStatements, mappedStatements, load, report);
+							rawStatementsLoaded += currentStatements.size();
+							entryMappedStatementsLoaded += mappedStatements.size();
 							long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-							report.addInfoWithElapsedTime("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + currentStatements.size() + ", time: " + loadTime);
+							LOGGER.info("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + currentStatements.size() + ", time: " + loadTime);
 						}					
 					}
 				}
 				stmtProcessedSoFar += currentStatements.size();
-				report.addInfoWithElapsedTime("'step' : status, statements processed so far: " + stmtProcessedSoFar);
+				LOGGER.info("'step' : status, statements processed so far: " + stmtProcessedSoFar + ",raw_statements: " + rawStatementsLoaded + ", entryMapped: " + entryMappedStatementsLoaded);
 			}
 			bufferedJsonStatementReader.close();
 			long processingTime = (System.currentTimeMillis() - start) / 1000;
-			report.addInfoWithElapsedTime("{ 'File' : " + jsonFileName + " , 'time' : " + processingTime);
+			LOGGER.info("{ 'File' : " + jsonFileName + " , 'time' : " + processingTime);
 		}
 
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
-		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime);
+		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime + " Seconds, loaded_raw_statements: " + rawStatementsLoaded + ", loaded_entry_mapped: " + entryMappedStatementsLoaded);
+
+		// Recreates the dropped indexes from the index definitions
+		if(dropIndex) {
+			LOGGER.info("Re-create indexes : " + indexDefinitions.size());
+			long startIndexCreate = System.currentTimeMillis();
+			statementLoadService.createIndexes();
+			long indexCreationTime = (System.currentTimeMillis() - startIndexCreate) / 1000;
+			LOGGER.info("Reindexed in " + indexCreationTime + " seconds");
+		}
+
+		return report.toString();
+	}
+
+	public String dropIndex() {
+		List<String> indexStatements = statementLoadService.dropIndexes();
+
+		ReportBuilder report = new ReportBuilder();
+		report.addInfo(indexStatements.size() + "indexes dropped");
+		for (String indexStatement : indexStatements) {
+			LOGGER.info(indexStatement);
+			report.addInfo(indexStatement);
+		}
+		LOGGER.info(indexStatements.size() + "iendexes are dropped");
+		return report.toString();
+	}
+
+	public String createIndex() {
+		List<String> indexDefinitions = statementLoadService.createIndexes();
+
+		ReportBuilder report = new ReportBuilder();
+		if(indexDefinitions == null) {
+			report.addInfo("Error creating indexes");
+		} else {
+			report.addInfo("Indexes created : " + indexDefinitions.size() + " Index definitoins: " + String.join(";", indexDefinitions));
+		}
 		return report.toString();
 	}
 
@@ -206,17 +252,16 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public Collection<Statement> transformStatements(StatementSource source, Collection<Statement> rawStatements, ReportBuilder report) {
 
-		report.addInfoWithElapsedTime("Starting transformStatements(), raw statements count:" + rawStatements.size());
+		LOGGER.info("Starting transformStatements(), raw statements count:" + rawStatements.size());
 		Collection<Statement> preTransformStatements = preTransformStatements(source, rawStatements);
 		if(preTransformStatements.isEmpty()) {
 			LOGGER.debug("Raw statements are empty");
-			report.addInfoWithElapsedTime("Pre-transformation returned empty");
 			return null;
 		}
 
-		report.addInfoWithElapsedTime("Finished pre transformation, raw statements count:" + preTransformStatements.size());
+		LOGGER.info("Finished pre transformation, raw statements count:" + preTransformStatements.size());
 		Collection<Statement> statements = statementTransformerService.transformStatements(preTransformStatements, report);
-        report.addInfo("Transformed " + preTransformStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
+        LOGGER.info("Transformed " + preTransformStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
         return statements;
     }
@@ -226,20 +271,20 @@ public class StatementETLServiceImpl implements StatementETLService {
         try {
             if (load) {
             	if(rawStatements != null && rawStatements.size() > 0) {
-					report.addInfo("Loading raw statements for source " + source + ": " + rawStatements.size());
+					LOGGER.info("Loading raw statements for source " + source + ": " + rawStatements.size());
 					long start = System.currentTimeMillis();
 					statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), source);
-					report.addInfo("Finish load raw statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+					LOGGER.info("Finish load raw statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 				}
 
 				if(mappedStatements != null && mappedStatements.size() > 0) {
-					report.addInfo("Loading entry statements: " + mappedStatements.size());
+					LOGGER.info("Loading entry statements: " + mappedStatements.size());
 					long start = System.currentTimeMillis();
 					statementLoadService.loadEntryMappedStatementsForSource(mappedStatements, source);
-					report.addInfo("Finish load mapped statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+					LOGGER.info("Finish load mapped statements for source " + source + " in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
 				}
             } else {
-                report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source " + source);
+                LOGGER.info("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements for source " + source);
             }
         } catch (BatchUpdateException e) {
             throw new NextProtException("Failed to load in source " + source + ":" + e + ", cause=" + e.getNextException());
@@ -301,7 +346,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		Collection<Statement> process(Collection<Statement> statements);
 	}
-
 
 
 
