@@ -97,7 +97,7 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 		String entry_ac="NX_Q9UNQ0";
 		List<Annotation> annots = this.statementService.getAnnotations(entry_ac)
 				.stream()
-				.filter(a -> AnnotationCategory.BINARY_INTERACTION.equals(a.getCategory()))
+				.filter(a -> "BinaryInteraction".equals(a.getCategory()))
 				.collect(Collectors.toList());
 		int numberOfExperiments = 0;
 		int withNxEntries = 0;
