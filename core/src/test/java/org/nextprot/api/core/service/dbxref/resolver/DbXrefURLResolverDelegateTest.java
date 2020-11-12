@@ -411,38 +411,17 @@ public class DbXrefURLResolverDelegateTest {
 
     // entry/P51610/xref.json
     @Test
-    public void testResolveBgeeENSGAndOther() throws Exception {
+    public void testResolveBgeeENSG() throws Exception {
 
-    	String dbURL = "http://bgee.org/?page=gene&gene_id=%s";
-    	String evidenceURL = "http://bgee.org/bgee/bgee?page=expression&action=data&";
-    	String ac = "stage_id=HsapDO:0000044&organ_id=EV:0100146&gene_id=ENSG00000124532";
+    	String dbURL = "https://bgee.org/bgee14_1/?page=gene&gene_id=%s";
+    	String evidenceURL = "https://bgee.org/bgee14_1/?page=gene&gene_id=";
+    	String ac = "ENSG00000124532";
     	
         DbXref xref = createDbXref(ac, "Bgee", dbURL);
 
         Assert.assertEquals(evidenceURL + ac, resolver.resolve(xref));
         Assert.assertEquals(evidenceURL + "%s", xref.getLinkUrl());
     }
-
-    // entry/P51610/xref.json
-    @Test
-    public void testResolveBgeeNoENSG() throws Exception {
-
-        DbXref xref = createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
-
-        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
-    }
-
- 
-    @Test
-    public void testResolveBgeeSingleENSG() throws Exception {
-
-        DbXref xref = createDbXref("ENSG000012345", "Bgee", "http://bgee.unil.ch/whatever");
-
-        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&gene_id=ENSG000012345", resolver.resolve(xref));
-    }
-
-    
 
     // entry/NX_P01308/xref.json
     @Test
