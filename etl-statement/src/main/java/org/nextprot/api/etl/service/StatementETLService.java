@@ -30,7 +30,7 @@ public interface StatementETLService {
 	 * @return the log message
 	 * @throws IOException
 	 */
-	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase) throws IOException;
+	String extractTransformLoadStatementsStreaming(StatementSource source, String release, boolean load, boolean erase, boolean dropIndex) throws IOException;
 
 	/**
 	 * Drops the indexes of raw and entry mapped tables
