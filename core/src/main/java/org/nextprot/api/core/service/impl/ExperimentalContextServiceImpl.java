@@ -6,12 +6,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 
 @Lazy
@@ -20,7 +25,15 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
 	@Autowired
 	private ExperimentalContextDictionaryService ecDico;
-	
+
+	@Autowired
+	private CacheManager cacheManager;
+
+	@PostConstruct
+	public void init() {
+		cacheManager.getCache("md5-experimental-context-map").clear();
+	}
+
 	@Override
 	public List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds) {
 		
@@ -35,7 +48,6 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 
 	@Override
 	public ExperimentalContext findExperimentalContextByMd5(String md5) {
-		//TODO: clear the cache?
 		return ecDico.getMd5ExperimentalContextMap().get(md5);
 	}
 
