@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.release.ReleaseDataSources;
 
 public enum CvDatabasePreferredLink {
 
-	BGEE(ReleaseDataSources.BGee.getUrl()+"?page=gene&gene_id=%s"),
+	BGEE(ReleaseDataSources.Bgee.getUrl()+"?page=gene&gene_id=%s"),
 	BRENDA("https://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u"),
 	BRENDA_BTO("http://purl.obolibrary.org/obo/%s"),
 	CELLOSAURUS("https://web.expasy.org/cellosaurus/%s"),
