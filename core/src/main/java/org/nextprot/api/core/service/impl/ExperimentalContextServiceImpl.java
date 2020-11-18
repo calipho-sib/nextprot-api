@@ -10,8 +10,11 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 
 @Lazy
@@ -20,6 +23,17 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
 	@Autowired
 	private ExperimentalContextDictionaryService ecDico;
+
+	@Autowired(required=false)
+	private CacheManager cacheManager;
+
+	@PostConstruct
+	public void init() {
+		if (cacheManager != null) {
+			cacheManager.getCache("md5-experimental-context-map").clear();
+		}
+		System.out.println("Inited");
+	}
 	
 	@Override
 	public List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds) {
