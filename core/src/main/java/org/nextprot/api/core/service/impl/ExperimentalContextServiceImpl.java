@@ -32,7 +32,6 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 		if (cacheManager != null) {
 			cacheManager.getCache("md5-experimental-context-map").clear();
 		}
-		System.out.println("Inited");
 	}
 	
 	@Override
