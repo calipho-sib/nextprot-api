@@ -1,10 +1,14 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.GlobalPublicationService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
@@ -18,6 +22,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.nextprot.api.commons.constants.AnnotationCategory.BINARY_INTERACTION;
+import static org.nextprot.api.commons.constants.AnnotationCategory.EXPRESSION_PROFILE;
+
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
 
@@ -28,7 +35,34 @@ public class StatisticsServiceImpl implements StatisticsService {
     private GlobalPublicationService globalPublicationService;
 
     @Autowired
+    private AnnotationService annotationService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+
+    @Autowired
     private ReleaseInfoService releaseInfoService;
+
+    @Cacheable(value = "global-entry-statistics", sync = true)
+    @Override
+    public GlobalEntryStatistics getGlobalEntryStatistics() {
+
+        GlobalEntryStatistics globalEntryStatistics = new GlobalEntryStatistics();
+
+        masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
+
+            List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
+                globalEntryStatistics.incrementNumberOfEntriesWithExpressionProfile();
+            }
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(BINARY_INTERACTION))) {
+                globalEntryStatistics.incrementNumberOfEntriesWithBinaryInteraction();
+            }
+
+        });
+
+        return globalEntryStatistics;
+    }
 
     @Cacheable(value = "global-publication-statistics", sync = true)
     @Override

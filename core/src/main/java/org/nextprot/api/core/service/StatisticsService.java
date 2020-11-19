@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 
 import java.util.Arrays;
@@ -32,6 +33,8 @@ public interface StatisticsService {
             return dbTags;
         }
     }
+
+    GlobalEntryStatistics getGlobalEntryStatistics();
 
     GlobalPublicationStatistics getGlobalPublicationStatistics();
 
