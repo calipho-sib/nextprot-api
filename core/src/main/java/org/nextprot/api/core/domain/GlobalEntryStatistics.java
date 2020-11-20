@@ -31,4 +31,8 @@ public class GlobalEntryStatistics implements Serializable {
     public void incrementNumberOfEntriesWithBinaryInteraction() {
         this.numberOfEntriesWithBinaryInteraction++;
     }
+
+    public void setNumberOfEntriesWithBinaryInteraction(int nb) {
+        this.numberOfEntriesWithBinaryInteraction = this.numberOfEntriesWithBinaryInteraction + nb;
+    }
 }

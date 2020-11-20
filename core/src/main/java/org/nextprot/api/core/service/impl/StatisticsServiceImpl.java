@@ -16,11 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.nextprot.api.commons.constants.AnnotationCategory.BINARY_INTERACTION;
 import static org.nextprot.api.commons.constants.AnnotationCategory.EXPRESSION_PROFILE;
@@ -48,18 +50,27 @@ public class StatisticsServiceImpl implements StatisticsService {
     public GlobalEntryStatistics getGlobalEntryStatistics() {
 
         GlobalEntryStatistics globalEntryStatistics = new GlobalEntryStatistics();
+        Set<String> distinctInteractions = new HashSet<>();
 
         masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
 
+            // Count number of entries with expression profile
             List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
             if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
                 globalEntryStatistics.incrementNumberOfEntriesWithExpressionProfile();
             }
-            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(BINARY_INTERACTION))) {
-                globalEntryStatistics.incrementNumberOfEntriesWithBinaryInteraction();
-            }
 
+            // Get distinct interactions to be counted at the end (defined as interactant1::interactant2)
+            Set<String> interactants = annotations.stream()
+                                             .filter(a -> a.getAPICategory().equals(BINARY_INTERACTION))
+                                             .map(a -> a.getBioObject().getAccession())
+                                             .collect(Collectors.toSet());
+            for (String interactant : interactants) {
+                // We sort interactants to not count reverse interactions such as interactant2::interactant1
+                distinctInteractions.add(Stream.of(interactant, uniqueName).sorted().collect(Collectors.joining("::")));
+            }
         });
+        globalEntryStatistics.setNumberOfEntriesWithBinaryInteraction(distinctInteractions.size());
 
         return globalEntryStatistics;
     }
