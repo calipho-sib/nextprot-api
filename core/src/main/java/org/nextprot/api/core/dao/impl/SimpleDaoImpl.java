@@ -23,17 +23,17 @@ public class SimpleDaoImpl implements SimpleDao {
 
 	public List<CvDatabase> findAllCvDatabases() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<CvDatabase> terms = new NamedParameterJdbcTemplate(
+		List<CvDatabase> dbs = new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 				sqlDictionary.getSQLQuery("cv-database-all"), params, new CvDatabaseRowMapper());
-		return terms;
+		return dbs;
 	}
 	
 	private static class CvDatabaseRowMapper extends SingleColumnRowMapper<CvDatabase> {
 
 		public CvDatabase mapRow(ResultSet rs, int row) throws SQLException {
 			return new CvDatabase(
-				rs.getLong("db_id"), rs.getString("db_name"),
+				rs.getLong("db_id"), rs.getString("db_name"), rs.getString("db_url"),
 				rs.getLong("cat_id"),rs.getString("cat_name"));
 		}
 	}

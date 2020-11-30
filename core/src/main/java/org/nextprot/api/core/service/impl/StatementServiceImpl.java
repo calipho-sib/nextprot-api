@@ -1,24 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.dao.StatementDao;
-import org.nextprot.api.core.domain.BioObject;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.ExperimentalContextService;
-import org.nextprot.api.core.service.MainNamesService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
-import org.nextprot.api.core.service.StatementService;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.service.dbxref.XrefDatabase;
-import org.nextprot.commons.statements.Statement;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_DATABASE;
+import static org.nextprot.commons.statements.specs.CoreStatementField.RESOURCE_TYPE;
+import static org.nextprot.commons.statements.specs.CoreStatementField.SUBJECT_ANNOTATION_IDS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,28 +14,38 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.nextprot.commons.statements.specs.CoreStatementField.*;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.dao.StatementDao;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.CvDatabase;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.MainNamesService;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.SimpleService;
+import org.nextprot.api.core.service.StatementEntryAnnotationBuilder;
+import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
+import org.nextprot.commons.statements.Statement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 @Service
 public class StatementServiceImpl implements StatementService {
 
-    @Autowired
-    public StatementDao statementDao;
-
-    @Autowired
-    public TerminologyService terminologyService;
-
-    @Autowired
-    public PublicationService publicationService;
-
-    @Autowired
-    public MainNamesService mainNamesService;
-
-    @Autowired
-    public DbXrefService dbXrefService;
-    
-    @Autowired
-    ExperimentalContextService experimentalContextService;
+    @Autowired private StatementDao statementDao;
+    @Autowired private TerminologyService terminologyService;
+    @Autowired private PublicationService publicationService;
+    @Autowired private MainNamesService mainNamesService;
+    @Autowired private DbXrefService dbXrefService;
+    @Autowired private ExperimentalContextService experimentalContextService;
+    @Autowired private SimpleService simpleService;
 
 
     private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
@@ -98,56 +93,36 @@ public class StatementServiceImpl implements StatementService {
                 .collect(Collectors.toSet());
     }
 
-    // TODO: replace the if statements by something generic
     private DbXref createDbXref(Statement statement) {
     	
-        if (statement.hasField(REFERENCE_DATABASE.getName())) {
-        	if (statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.INT_ACT.getName())) {
-                return newIntActXref(statement);
-        	}
-        	else if (statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
-                return newGlyConnectXref(statement);
-        	}
-        }
-        return null;
+    	if (! "database".equals(statement.getValue(RESOURCE_TYPE))) return null; // skip publications
+    	String db = statement.getValue(REFERENCE_DATABASE);
+    	String expectedDbs = "Bgee,IntAct,GlyConnect";
+    	if (! expectedDbs.contains(db)) {
+    		System.out.println("WARNING: trying to build xref from statement with unexpected REFERENCE_DATABASE: " + statement.toString());
+    	}
+    	return newStatementXref(statement);    	
     }
 
-    
-    // TODO: 
-    // replace by something generic (using RESOURCE_DATABASE value in statement 
-    // and ResolverDelegate to get url template...)
-    private DbXref newIntActXref(Statement statement) {
 
-        String referenceDB = XrefDatabase.INT_ACT.getName();
+    private DbXref newStatementXref(Statement statement) {
+
+        String referenceDB = statement.getValue(REFERENCE_DATABASE);
         String referenceAC = statement.getValue(REFERENCE_ACCESSION);
-        DbXref dbXRef = new DbXref();
-        dbXRef.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
-        dbXRef.setAccession(referenceAC);
-        dbXRef.setDatabaseCategory("Protein-protein interaction databases");
-        dbXRef.setDatabaseName(referenceDB);
-        dbXRef.setUrl("https://www.ebi.ac.uk/intact/");
-        dbXRef.setLinkUrl(CvDatabasePreferredLink.INTACT_BINARY.getLink());
-        dbXRef.setProperties(new ArrayList<>());
-        return dbXRef;  		
+        DbXref xref = new DbXref();
+        xref.setAccession(referenceAC);
+        xref.setDatabaseName(referenceDB);
+        xref.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
+        DbXrefURLResolverDelegate resolver = new DbXrefURLResolverDelegate(); // IMPORTANT: helps to fill xref linkUrl and resolvedUrl fields
+        resolver.resolve(xref); 
+        CvDatabase db = simpleService.getNameDatabaseMap().get(referenceDB);  // IMPORTANT: helps to fill some other less crucial xref fields
+        xref.setDatabaseCategory(db.getCatName());    
+        xref.setUrl(db.getUrl());
+        //System.out.println("new xref with ac: " + referenceAC + " db:" + referenceDB + " id:" + xref.getDbXrefId() + " ru:" + xref.getResolvedUrl() +  " url:" + xref.getUrl());
+        xref.setProperties(new ArrayList<>());
+        return xref;	
     }
 
-    // TODO: 
-    // replace by something generic (using RESOURCE_DATABASE value in statement 
-    // and ResolverDelegate to get url template...)
-    private DbXref newGlyConnectXref(Statement statement) {
-    	
-        String referenceDB = XrefDatabase.GLY_CONNECT.getName();
-        String referenceAC = statement.getValue(REFERENCE_ACCESSION);
-        DbXref dbXRef = new DbXref();
-        dbXRef.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
-        dbXRef.setAccession(referenceAC);
-        dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(referenceDB);
-        dbXRef.setUrl("https://glyconnect.expasy.org");
-        dbXRef.setLinkUrl(CvDatabasePreferredLink.GLY_CONNECT.getLink());
-        dbXRef.setProperties(new ArrayList<>());
-        return dbXRef;
-    }
 
     /**
      * Matches the interaction mapping and binary interaction annotations

@@ -196,9 +196,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
+		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));   // xrefs of statements (but not gnomad ones)
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
