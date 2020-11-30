@@ -98,38 +98,55 @@ public class StatementServiceImpl implements StatementService {
                 .collect(Collectors.toSet());
     }
 
+    // TODO: replace the if statements by something generic
     private DbXref createDbXref(Statement statement) {
-
-        if (statement.hasField(REFERENCE_DATABASE.getName()) &&
-                statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
-
-            return newGlyConnectXref(statement);
+    	
+        if (statement.hasField(REFERENCE_DATABASE.getName())) {
+        	if (statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.INT_ACT.getName())) {
+                return newIntActXref(statement);
+        	}
+        	else if (statement.getValue(REFERENCE_DATABASE).equals(XrefDatabase.GLY_CONNECT.getName())) {
+                return newGlyConnectXref(statement);
+        	}
         }
-
         return null;
     }
 
-    private DbXref newGlyConnectXref(Statement statement) {
+    
+    // TODO: 
+    // replace by something generic (using RESOURCE_DATABASE value in statement 
+    // and ResolverDelegate to get url template...)
+    private DbXref newIntActXref(Statement statement) {
 
+        String referenceDB = XrefDatabase.INT_ACT.getName();
+        String referenceAC = statement.getValue(REFERENCE_ACCESSION);
+        DbXref dbXRef = new DbXref();
+        dbXRef.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
+        dbXRef.setAccession(referenceAC);
+        dbXRef.setDatabaseCategory("Protein-protein interaction databases");
+        dbXRef.setDatabaseName(referenceDB);
+        dbXRef.setUrl("https://www.ebi.ac.uk/intact/");
+        dbXRef.setLinkUrl(CvDatabasePreferredLink.INTACT_BINARY.getLink());
+        dbXRef.setProperties(new ArrayList<>());
+        return dbXRef;  		
+    }
+
+    // TODO: 
+    // replace by something generic (using RESOURCE_DATABASE value in statement 
+    // and ResolverDelegate to get url template...)
+    private DbXref newGlyConnectXref(Statement statement) {
+    	
         String referenceDB = XrefDatabase.GLY_CONNECT.getName();
         String referenceAC = statement.getValue(REFERENCE_ACCESSION);
-
-        try {
-            DbXref dbXRef = new DbXref();
-
-            dbXRef.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
-            dbXRef.setAccession(referenceAC);
-            dbXRef.setDatabaseCategory("Sequence databases");
-            dbXRef.setDatabaseName(referenceDB);
-            dbXRef.setUrl("https://glyconnect.expasy.org");
-            dbXRef.setLinkUrl(CvDatabasePreferredLink.GLY_CONNECT.getLink());
-            dbXRef.setProperties(new ArrayList<>());
-
-            return dbXRef;
-        } catch (DbXrefServiceImpl.MissingCvDatabaseException e) {
-
-            throw new NextProtException("Cannot create dbxref for GlyConnect statement " + statement.getStatementId() + ": " + e.getMessage());
-        }
+        DbXref dbXRef = new DbXref();
+        dbXRef.setDbXrefId(dbXrefService.findXrefId(referenceDB, referenceAC));
+        dbXRef.setAccession(referenceAC);
+        dbXRef.setDatabaseCategory("Sequence databases");
+        dbXRef.setDatabaseName(referenceDB);
+        dbXRef.setUrl("https://glyconnect.expasy.org");
+        dbXRef.setLinkUrl(CvDatabasePreferredLink.GLY_CONNECT.getLink());
+        dbXRef.setProperties(new ArrayList<>());
+        return dbXRef;
     }
 
     /**

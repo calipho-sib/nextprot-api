@@ -295,7 +295,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	}
 
     @Override
-    public Optional<Long> findXrefId(String database, String accession) {
+    public Long findXrefId(String database, String accession) {
 
         Map<String, Object> params = new HashMap<>();
         params.put("dbName", database);
@@ -304,34 +304,17 @@ public class DbXrefDaoImpl implements DbXrefDao {
         List<DbXref> list = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
                 .query(sqlDictionary.getSQLQuery("dbxref-by-accession-and-dbname"), params, new DbXRefRowMapper());
 
+        //System.out.println("xref from db=" + database + " and ac=" + accession + ": " + list.size() + " - id: " + (list.isEmpty() ? "not found" : list.get(0).getDbXrefId()));
+        
         if (list.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         else if (list.size() > 1) {
             throw new NextProtException("Multiple xref ids ("+list+"): should obtain a single xref id for db "+database+ " and accession "+ accession);
         }
-        return Optional.of(list.get(0).getDbXrefId());
+        return list.get(0).getDbXrefId();
     }
 
-    @Override
-    public Optional<Integer> findDatabaseId(String databaseName) {
-
-        SqlParameterSource params = new MapSqlParameterSource("cvName", databaseName);
-        List<Integer> list = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
-                .queryForList(sqlDictionary.getSQLQuery("cvid-by-cvname"), params, Integer.class);
-
-        if (list.isEmpty()) {
-            LOGGER.error("Missing database: "+ databaseName+ " does not exist in table nextprot.cv_databases");
-            return Optional.empty();
-        }
-        else if (list.size() > 1) {
-            String message = "Multiple db ids ("+list+"): should find a single db id for db "+databaseName;
-            LOGGER.error(message);
-            throw new NextProtException(message);
-        }
-        return Optional.of(list.get(0));
-    }
-    
     
 	private static class EntryBkLinkRowMapper extends SingleColumnRowMapper<String> {
 		@Override

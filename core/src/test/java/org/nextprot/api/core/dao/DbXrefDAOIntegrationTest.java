@@ -64,20 +64,6 @@ limit 100
 		));
 	}
 
-    @Test
-    public void shouldFindNextprotDb() {
-
-        Optional<Integer> id = xrefdao.findDatabaseId("neXtProt");
-        Assert.assertTrue(id.isPresent());
-        Assert.assertEquals(175, id.get().intValue());
-    }
-
-    @Test
-    public void shouldNotFindRoudoudouDb() {
-
-        Optional<Integer> id = xrefdao.findDatabaseId("roudoudou");
-        Assert.assertFalse(id.isPresent());
-    }
 
     @Ignore
     @Test
