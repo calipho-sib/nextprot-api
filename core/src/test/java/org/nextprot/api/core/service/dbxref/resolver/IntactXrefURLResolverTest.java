@@ -20,7 +20,7 @@ public class IntactXrefURLResolverTest {
 
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
     }
 
     @Test
