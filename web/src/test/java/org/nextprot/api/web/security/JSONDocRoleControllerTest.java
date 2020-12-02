@@ -1,5 +1,6 @@
 package org.nextprot.api.web.security;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 	@Test
+	@Ignore
 	public void sheldonShouldBeAbleToSeeHisSuperGeniousQuery() throws Exception {
 
 		String sheldonToken = generateTokenWithExpirationDate("Sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -49,6 +51,7 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void adminUserShouldBeAbleToSeeAllData() throws Exception {
 
 		String adminToken = generateTokenWithExpirationDate("AdminUser", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ADMIN", "ROLE_USER"));
@@ -77,6 +80,7 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void anonymousShouldBeAbleToSeeSimpleData() throws Exception {
 
 		String adminToken = generateTokenWithExpirationDate("Anonymous", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ANONYMOUS"));

@@ -25,7 +25,7 @@ public class JWTCodecImpl implements JWTCodec<Map<String, Object>>, Initializing
 	private String clientId = null;
 
 	// EMAIL claim from the auth0 token payload
-	private final String EMAIL = "email";
+	public static final String EMAIL = "email";
 
 	@Override
 	public String encodeJWT(Map<String, Object> properties, int expiration) {

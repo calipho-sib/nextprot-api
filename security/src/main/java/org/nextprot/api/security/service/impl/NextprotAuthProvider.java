@@ -30,30 +30,32 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
     private String clientId;
     private final Log logger = LogFactory.getLog(NextprotAuthProvider.class);
 
-    //@Autowired
-    //private NextprotAuth0Endpoint nextprotAuth0Endpoint;
-
     @Autowired
     private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JWTCodec<Map<String, Object>> codec;
 
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         String token = ((Auth0JWT) authentication).getJwt();
         Map<String, Object> map = null;
 
-        //Auth0 Universal login flow is implemented now
-        //Only an access token, signed with RSA256 should be passed to the API with Authorization header
-        if (token.split("\\.").length == 3) {
-            JWTCodec jwtCodec = new JWTCodecImpl();
-            map = (Map<String, Object>) jwtCodec.decodeJWT(token);
+        try {
+            //Auth0 Universal login flow is implemented now
+            //Only an access token, signed with RSA256 should be passed to the API with Authorization header
+            if (token.split("\\.").length == 3) {
+                JWTCodec jwtCodec = new JWTCodecImpl();
+                map = (Map<String, Object>) jwtCodec.decodeJWT(token);
+            }
+            this.logger.debug("Decoded JWT token" + map);
+
+        } catch(Exception e) {
+            //e.printStackTrace();
+            NextprotUserToken userToken = new NextprotUserToken();
+            userToken.setAuthenticated(false);
+            return userToken;
         }
-        this.logger.debug("Decoded JWT token" + map);
 
         UserDetails userDetails;
-        String username = (String) map.get("email");
+        String username = (String) map.get(JWTCodecImpl.EMAIL);
         if (username != null) {
             userDetails = userDetailsService.loadUserByUsername(username);
             authentication.setAuthenticated(true);
