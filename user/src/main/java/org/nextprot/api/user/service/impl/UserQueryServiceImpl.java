@@ -1,5 +1,6 @@
 package org.nextprot.api.user.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.commons.utils.StringGenService;
@@ -121,7 +122,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	public UserQuery getUserQueryByPublicId(String id) 
 	{
 		UserQuery uq = null;
-		if(org.apache.commons.lang3.StringUtils.isNumeric(id.replace("NXQ_", ""))){
+		if(StringUtils.isNumeric(id.replace("NXQ_", ""))){
 			uq = getTutorialQueryById(Long.valueOf(id.replace("NXQ_", "")));
 		}
 		if(uq != null) return uq;
