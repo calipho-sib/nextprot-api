@@ -42,6 +42,10 @@ public class NextprotAuth0AuthenticationFilter extends GenericFilterBean {
                 Auth0JWT token = new Auth0JWT(jwt);
                 Authentication authResult = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authResult);
+
+                if(!authResult.isAuthenticated()) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
                 entryPoint.commence(request, response, failed);
