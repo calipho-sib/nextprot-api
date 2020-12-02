@@ -30,7 +30,7 @@ http://www.springframework.org/schema/security/spring-security.xsd">
 
 		<security:global-method-security pre-post-annotations="enabled" />
 
-		<bean id="auth0EntryPoint" class="com.auth0.spring.security.auth0.Auth0AuthenticationEntryPoint" />
+		<bean id="auth0EntryPoint" class="org.nextprot.api.security.service.NextprotAuth0Entrypoint" />
 
 		<security:http auto-config="true" use-expressions="true" pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
             <security:csrf disabled="true" />
@@ -38,7 +38,7 @@ http://www.springframework.org/schema/security/spring-security.xsd">
 			<security:custom-filter ref="auth0Filter" after="SECURITY_CONTEXT_FILTER"></security:custom-filter>
 		</security:http>
 
-		<bean id="auth0Filter" class="com.auth0.spring.security.auth0.Auth0AuthenticationFilter">
+		<bean id="auth0Filter" class="org.nextprot.api.security.service.NextprotAuth0AuthenticationFilter">
 			<property name="entryPoint" ref="auth0EntryPoint"></property>
 		</bean>
 
