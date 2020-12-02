@@ -264,17 +264,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     }
 
     long findXrefId(Statement statement) {
-
         String referenceDB = statement.getValue(REFERENCE_DATABASE);
         String referenceAC = statement.getValue(REFERENCE_ACCESSION);
-
-        try {
-            return dbXrefService.findXrefId(referenceDB, referenceAC);
-        } catch (DbXrefServiceImpl.MissingCvDatabaseException e) {
-
-            LOGGER.error(e.getMessage());
-            throw new NextProtException(e.getMessage());
-        }
+        return dbXrefService.findXrefId(referenceDB, referenceAC);
     }
 
     protected Annotation buildAnnotation(String isoformName, List<Statement> flatStatements) {

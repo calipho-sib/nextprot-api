@@ -433,4 +433,13 @@
     		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="4" >
     </cache>
 
+    <cache name="name-database-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
+
+    <cache name="xrefid-by-dbac" 
+    		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500" >
+    </cache>
+
+
 </ehcache>
