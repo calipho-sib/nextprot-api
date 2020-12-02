@@ -46,14 +46,8 @@ public interface DbXrefDao {
      * Find a xref id given an accession number an a database name
      * @param database the database name
      * @param accession the xref accession number
-     * @return an optional xref id
+     * @return a Long xref id or null if not found
      */
-    Optional<Long> findXrefId(String database, String accession);
+    Long findXrefId(String database, String accession);
 
-    /**
-     * Find the database id given a database name
-     * @param databaseName the database name
-     * @return an optional db id
-     */
-    Optional<Integer> findDatabaseId(String databaseName);
 }

@@ -150,6 +150,11 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 			else if ("W_EXPRESSION_MASTER".equals(statsTag.getTag())) {
 				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithExpressionProfile());
 			}
+
+			// Update other stats
+			else if ("CVTERM".equals(statsTag.getTag())) {
+				statsTag.setCount(statisticsService.getCvTermCount());
+			}
 		}
 	}
 

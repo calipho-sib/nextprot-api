@@ -38,5 +38,7 @@ public interface StatisticsService {
 
     GlobalPublicationStatistics getGlobalPublicationStatistics();
 
+    int getCvTermCount();
+
     Map<Counter, Integer> getStatsByPlaceholder(Set<Counter> stat);
 }

@@ -44,6 +44,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private static final Set<String> HIDDEN_PROPERTY_NAME_SET = Sets.newHashSet("match status", "organism ID", "organism name");
 
 	@Autowired private DbXrefDao dbXRefDao;
+	@Autowired private SimpleService simpleService;
 	@Autowired private PeptideNamesService peptideNamesService;
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
@@ -195,9 +196,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
+		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));   // xrefs of statements (but not gnomad ones)
 
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
@@ -317,25 +318,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
     @Override
-    public long findXrefId(String database, String accession) throws MissingCvDatabaseException {
-
-        return dbXRefDao.findXrefId(database, accession).orElse(generateXrefProtocolId(database, accession));
+	@Cacheable(value = "xrefid-by-dbac", sync = true)
+    public long findXrefId(String database, String accession) {
+    	// search db first
+    	Long id = dbXRefDao.findXrefId(database, accession);
+    	// if not found create one based on db and ac
+    	if (id == null) id = generateXrefProtocolId(database, accession);
+    	return id.longValue();
     }
 
-    private long generateXrefProtocolId(String database, String accession) throws MissingCvDatabaseException {
+    private long generateXrefProtocolId(String dbName, String accession)  {
 
-        // xref type statement: generate a xref id
-        return dbXRefDao.findDatabaseId(database)
-                .map(dbId -> new XRefProtocolId(dbId, accession).id())
-                .orElseThrow(() -> new MissingCvDatabaseException(database));
-    }
-
-    public static class MissingCvDatabaseException extends Exception {
-
-	    MissingCvDatabaseException(String database) {
-
-	        super("Missing cv database "+ database+ " in table nextprot.cv_databases");
-        }
+    	long dbId = simpleService.getNameDatabaseMap().get(dbName).getId();
+    	long xrefId = new XRefProtocolId(dbId, accession).id();
+    	return xrefId;
     }
 
 	@Override

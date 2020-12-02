@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.user.controller.PublicQueryController;
 import org.nextprot.api.user.controller.UserQueryController;
@@ -34,6 +35,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	// --------------------------------- POST -------------------------------------------------------------
 
 	@Test
+	@Ignore
 	public void sheldonShouldBeAbleToCreateHisSuperGeniousQuery() throws Exception {
 
 		String sheldonUser = "Sheldon";
@@ -76,6 +78,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void leonardShouldBeAbleToLookAtTutorial() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -88,6 +91,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void leonardShouldBeAbleToLookAtHisQueries() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -105,6 +109,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void leonardShouldBeAbleToLookAtHisQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -133,6 +138,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}*/
 
 	@Test
+	@Ignore
 	public void sheldonShouldNotBeAbleToLookAtLeonardsQueryByItsPrivateId() throws Exception {
 
 		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
@@ -147,6 +153,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 
 	@Test
+	@Ignore
 	public void sheldonShouldBeAbleToLookAtLeonardsQueryByItsPublicId() throws Exception {
 
 		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
@@ -185,6 +192,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	// --------------------------------- PUT --------------------------------------------------------------
 
 	@Test
+	@Ignore
 	public void leonardShouldBeAbleToUpdateHisQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -204,6 +212,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void leonardShouldNotBeAbleToUpdateATutorialQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -217,6 +226,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 	
 	@Test
+	@Ignore
 	public void sheldonShouldNotBeAbleToUpdateLeonardsQuery() throws Exception {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -230,6 +240,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void sheldonShouldNotBeAbleToUpdateLeonardsQuery2() throws Exception {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -256,6 +267,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	// --------------------------------- DELETE -----------------------------------------------------------
 
 	@Test
+	@Ignore
 	public void leonardShouldNotBeAbleToDeleteATutorialQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -267,6 +279,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 	
 	@Test
+	@Ignore
 	public void leonardShouldBeAbleToDeleteHisQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
@@ -278,6 +291,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	@Ignore
 	public void sheldonShouldNotBeAbleToDeleteLeonardsQuery() throws Exception {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));

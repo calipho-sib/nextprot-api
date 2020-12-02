@@ -12,6 +12,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private ReleaseInfoService releaseInfoService;
+
+    @Autowired
+    private TerminologyService terminologyService;
 
     @Cacheable(value = "global-entry-statistics", sync = true)
     @Override
@@ -106,6 +110,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         });
 
         return globalPublicationStatistics;
+    }
+
+    @Override
+    public int getCvTermCount() {
+        return terminologyService.findAllCVTerms().size();
     }
 
     @Override
