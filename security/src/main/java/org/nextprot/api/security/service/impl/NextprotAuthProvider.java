@@ -25,98 +25,77 @@ import org.springframework.stereotype.Component;
 @Component
 public class NextprotAuthProvider implements AuthenticationProvider, InitializingBean {
 
-	private JWTVerifier jwtVerifier;
-	private String clientSecret;
-	private String clientId;
-	private final Log logger = LogFactory.getLog(NextprotAuthProvider.class);
+    private JWTVerifier jwtVerifier;
+    private String clientSecret;
+    private String clientId;
+    private final Log logger = LogFactory.getLog(NextprotAuthProvider.class);
 
-	//@Autowired
-	//private NextprotAuth0Endpoint nextprotAuth0Endpoint;
+    //@Autowired
+    //private NextprotAuth0Endpoint nextprotAuth0Endpoint;
 
-	@Autowired
-	private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
-	@Autowired
-	private JWTCodec<Map<String, Object>> codec;
+    @Autowired
+    private JWTCodec<Map<String, Object>> codec;
 
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-		String token = ((Auth0JWT) authentication).getJwt();
+        String token = ((Auth0JWT) authentication).getJwt();
+        Map<String, Object> map = null;
 
-		//this.logger.debug("Trying to authenticate with token: " + token);
-		//try {
+        //Auth0 Universal login flow is implemented now
+        //Only an access token, signed with RSA256 should be passed to the API with Authorization header
+        if (token.split("\\.").length == 3) {
+            JWTCodec jwtCodec = new JWTCodecImpl();
+            map = (Map<String, Object>) jwtCodec.decodeJWT(token);
+        }
+        this.logger.debug("Decoded JWT token" + map);
 
-			Map<String, Object> map = null;
-			//Auth0User auth0User = null;
-			
-			//Should put this in 2 different providers
-			if(token.split("\\.").length == 3){
+        UserDetails userDetails;
+        String username = (String) map.get("email");
+        if (username != null) {
+            userDetails = userDetailsService.loadUserByUsername(username);
+            authentication.setAuthenticated(true);
 
-				JWTCodec jwtCodec = new JWTCodecImpl();
-				map = (Map<String, Object>) jwtCodec.decodeJWT(token);
-			}
-			/* else { // not using access token for now
-				try {
-					
-					this.logger.debug("Will ask auth0 service");
-					
-					//in case we send the access token
-					auth0User = nextprotAuth0Endpoint.fetchUser(token);
-					this.logger.debug("Authenticating with access token (asking auth0 endpoint)" + auth0User);
-					
-				}catch (Exception e){
-					e.printStackTrace();
-					this.logger.error(e.getMessage());
-					throw new SecurityException("client id not found");
-				}
-			}*/
-			
-			this.logger.debug("Decoded JWT token" + map);
+            return createSuccessAuthentication(userDetails, map);
+        } else {
+            throw new SecurityException("client id not found");
+        }
+    }
 
-			UserDetails userDetails;
-			String username = (String) map.get("email");
-			if (username != null) {
-				userDetails = userDetailsService.loadUserByUsername(username);
-				authentication.setAuthenticated(true);
-					
-				return createSuccessAuthentication(userDetails, map);
-			} else {
-				throw new SecurityException("client id not found");
-			}
-	}
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return Auth0JWT.class.isAssignableFrom(authentication);
+    }
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return Auth0JWT.class.isAssignableFrom(authentication);
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if ((this.clientSecret == null) || (this.clientId == null)) {
+            throw new RuntimeException("client secret and client id are not set for Auth0AuthenticationProvider");
+        }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if ((this.clientSecret == null) || (this.clientId == null)) {
-			throw new RuntimeException("client secret and client id are not set for Auth0AuthenticationProvider");
-		}
+        //this.jwtVerifier = new JWTVerifier(this.clientSecret, this.clientId);
+    }
 
-		//this.jwtVerifier = new JWTVerifier(this.clientSecret, this.clientId);
-	}
+    public String getClientSecret() {
+        return this.clientSecret;
+    }
 
-	public String getClientSecret() {
-		return this.clientSecret;
-	}
+    @Value("${auth0.clientSecret}")
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 
-	@Value("${auth0.clientSecret}")
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
-	}
+    public String getClientId() {
+        return this.clientId;
+    }
 
-	public String getClientId() {
-		return this.clientId;
-	}
+    @Value("${auth0.clientId}")
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
-	@Value("${auth0.clientId}")
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
-	}
-	
 
     /**
      * Creates a successful {@link Authentication} object
@@ -124,16 +103,15 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
      * @return the successful authentication token
      */
     private final Authentication createSuccessAuthentication(UserDetails userDetails, Map<String, Object> map) {
-        
-    	NextprotUserToken usrToken = new NextprotUserToken();
-    	usrToken.setAuthenticated(true);
-    	usrToken.setPrincipal(userDetails);
-    	usrToken.setDetails(map);
-    	usrToken.getAuthorities().addAll(userDetails.getAuthorities());
-    	
+
+        NextprotUserToken usrToken = new NextprotUserToken();
+        usrToken.setAuthenticated(true);
+        usrToken.setPrincipal(userDetails);
+        usrToken.setDetails(map);
+        usrToken.getAuthorities().addAll(userDetails.getAuthorities());
+
         return usrToken;
     }
 
- 
 
 }

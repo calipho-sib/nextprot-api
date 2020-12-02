@@ -36,24 +36,19 @@ public class NextprotAuth0AuthenticationFilter extends GenericFilterBean {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
 
-        String jwt = getToken((HttpServletRequest) request);
-
+        String jwt = getToken(request);
         if (jwt != null) {
             try {
-
                 Auth0JWT token = new Auth0JWT(jwt);
                 Authentication authResult = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authResult);
-
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
                 entryPoint.commence(request, response, failed);
                 return;
             }
         }
-
         chain.doFilter(request, response);
-
     }
 
     /**
