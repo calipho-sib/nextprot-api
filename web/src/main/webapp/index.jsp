@@ -661,7 +661,8 @@
 </script>
 
 <script>
-	var model,userProfile;
+	var model;
+	var userProfile;
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
 
 	if($.cookie("nxprofile") && $.cookie("nxtoken")) {
@@ -676,7 +677,7 @@
 		$('.li-logout').show();
 		checkURLExistence()
 	} else {
-
+		const query = window.location.search;
 		const shouldParseResult = query.includes("code=") && query.includes("state=");
 		if (shouldParseResult) {
 			var auth0 = createAuth0Client({
@@ -685,7 +686,6 @@
 				audience: "https://nextprot.auth0.com/api/v2/"
 			}).then(function(auth0) {
 				// Handle auth0 redirect
-				const query = window.location.search;
 				try {
 					const result = auth0.handleRedirectCallback()
 							.then(function() {
