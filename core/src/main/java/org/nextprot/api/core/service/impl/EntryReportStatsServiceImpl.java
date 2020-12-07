@@ -69,6 +69,7 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
         setIsAntibody(xrefs, annotations, ers);
         setIs3D(annotations, ers);
         setIsDisease(xrefs, annotations, ers);
+        setIsExpression(annotations, ers);
         setIsoformCount(entryAccession, ers);
         setVariantCount(annotations, ers);
         setPTMCount(annotations, ers);
@@ -181,6 +182,23 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
     private boolean hasDiseaseCategory(Annotation a) {
     	return a.getAPICategory()==AnnotationCategory.DISEASE;
+    }
+
+    /*
+     * NP1 specifications: returns true if one of the criteria below is met	
+	 * - annotations contains an EXPRESSION_PROFILE annotation 
+	 * - annotations contains an EXPRESSION_INFO annotation 
+     */
+    
+    private void setIsExpression(List<Annotation> annotations, EntryReportStats report) {
+    	boolean hasExpressionAnnotation =  annotations.stream().anyMatch(a -> isExpressionAnnotation(a));
+    	report.setPropertyTest(EntryReportStats.IS_EXPRESSION, hasExpressionAnnotation);
+    }
+    
+    private boolean isExpressionAnnotation(Annotation a) {
+    	if (a.getAPICategory()!=AnnotationCategory.EXPRESSION_PROFILE) return true;
+    	if (a.getAPICategory()!=AnnotationCategory.EXPRESSION_INFO) return true;
+   		return false;
     }
     
     private boolean hasDiseaseKeywordTerm(Annotation a) {
