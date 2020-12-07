@@ -1303,9 +1303,18 @@
    			if (window.location.hostname === "localhost") {
 				$.removeCookie("nxprofile", { path: "/nextprot-api-web" });
 				$.removeCookie("nxtoken", { path: "/nextprot-api-web" });
-			} else {
-				$.removeCookie("nxprofile", { path: "/", domain: ".nextprot.org" });
-				$.removeCookie("nxtoken", { path: "/", domain: ".nextprot.org" });
+			} else if(window.location.hostname === "dev-api.nextprot.org"){
+				$.removeCookie("nxprofile", { path: "/", domain: "dev-api.nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: "dev-api.nextprot.org" });
+			} else if(window.location.hostname === "alpha-api.nextprot.org"){
+				$.removeCookie("nxprofile", { path: "/", domain: "alpha-api.nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: "alpha-api.nextprot.org" });
+			} else if(window.location.hostname === "build-api.nextprot.org"){
+				$.removeCookie("nxprofile", { path: "/", domain: "alpha-api.nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: "alpha-api.nextprot.org" });
+			} else if(window.location.hostname === "api.nextprot.org"){
+				$.removeCookie("nxprofile", { path: "/", domain: "api.nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: "api.nextprot.org" });
 			}
 
 
