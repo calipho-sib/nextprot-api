@@ -15,7 +15,8 @@
 <script type="text/javascript" src="js/handlebars-1.0.0.beta.6.js"></script>
 <script type="text/javascript" src="js/jlinq.js"></script>
 <script type="text/javascript" src="js/prettify.js"></script>
-
+	<script src="https://cdn.auth0.com/js/auth0-spa-js/1.12/auth0-spa-js.production.js"></script>
+	<script src="js/jquery.cookie.js"></script>
 <!-- Le styles -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
@@ -660,41 +661,77 @@
 </script>
 
 <script>
-	var model;
+	var model,userProfile;
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
 
-
-	$(document).ready(async function() {
-
-		var auth0 = await createAuth0Client({
-			domain: "nextprot.auth0.com",
-			client_id: "7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW",
-			audience: "https://nextprot.auth0.com/api/v2/"
-		});
-
-		// Handle auth0 redirect
-		const query = window.location.search;
-		const shouldParseResult = query.includes("code=") && query.includes("state=");
-
-		if (shouldParseResult) {
-			console.log("> Parsing redirect");
-			try {
-				const result = await auth0.handleRedirectCallback();
-
-				if (result.appState && result.appState.targetUrl) {
-					showContentFromUrl(result.appState.targetUrl);
-				}
-
-				console.log("Logged in!");
-			} catch (err) {
-				console.log("Error parsing redirect:", err);
-			}
-
-			window.history.replaceState({}, document.title, "/");
+	if($.cookie("nxprofile") && $.cookie("nxtoken")) {
+		// Update login text (set to user email)
+		userProfile = JSON.parse($.cookie("nxprofile"));
+		if (userProfile.name) {
+			$('.user').text(userProfile.name);
+		} else {
+			$('.user').text(userProfile.email);
 		}
+		$('.li-login').hide();
+		$('.li-logout').show();
+		checkURLExistence()
+	} else {
+
+		const shouldParseResult = query.includes("code=") && query.includes("state=");
+		if (shouldParseResult) {
+			var auth0 = createAuth0Client({
+				domain: "nextprot.auth0.com",
+				client_id: "7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW",
+				audience: "https://nextprot.auth0.com/api/v2/"
+			}).then(function(auth0) {
+				// Handle auth0 redirect
+				const query = window.location.search;
+				try {
+					const result = auth0.handleRedirectCallback()
+							.then(function() {
+								if (result.appState && result.appState.targetUrl) {
+									showContentFromUrl(result.appState.targetUrl);
+								}
+
+								auth0.getUser()
+										.then(function (userData) {
+											auth0.getTokenSilently()
+													.then(function (token) {
+														$.cookie("nxprofile", JSON.stringify(userData));
+														$.cookie("nxtoken", token);
+														// Save the profile
+														userProfile = JSON.parse($.cookie("nxprofile"));
+
+														// Update login text (set to user email)
+														if (userProfile.name) {
+															$('.user').text(userProfile.name);
+														} else {
+															$('.user').text(userProfile.email);
+														}
+
+														$('.li-login').hide();
+														$('.li-logout').show();
+
+														if (window.location.hostname === "localhost") {
+															window.history.replaceState({}, document.title, "/nextprot-api-web/");
+														} else {
+															window.history.replaceState({}, document.title, "/");
+														}
+														checkURLExistence()
+													})
+										})
+							})
+				} catch (err) {
+					console.log("Error in login:", err);
+				}
+			});
+		}
+	}
 
 
 
+
+	$(document).ready(function() {
 
 		// update year in copyright anchor text
         $('#copyright').html('&copy; 2011 - ' + new Date().getFullYear() + ' SIB Swiss Institute of Bioinformatics');		
@@ -1226,86 +1263,11 @@
 
 	$(document).ready(function() {
 
-
-		// Handle auth0 redirect
-		const query = window.location.search;
-		const shouldParseResult = query.includes("code=") && query.includes("state=");
-
-		if (shouldParseResult) {
-			console.log("> Parsing redirect");
-			try {
-				createAuth0Client({
-					domain: "nextprot.auth0.com",
-					client_id: "7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW",
-					audience: "https://nextprot.auth0.com/api/v2/"
-				}).then(function(auth0) {
-					const result =  auth0.handleRedirectCallback();
-
-					if (result.appState && result.appState.targetUrl) {
-						showContentFromUrl(result.appState.targetUrl);
-					}
-
-					auth0.getUser()
-							.then(function (userData) {
-								auth0.getTokenSilently()
-										.then(function (token) {
-
-											$.cookie("nxprofile", userData);
-											$.cookie("nxtoken", token);
-
-											$('.li-login').hide();
-											$('.li-logout').show();
-
-											// Save the profile
-											userProfile = JSON.parse($.cookie("nxprofile"));
-
-											// Update login text (set to user email)
-											if (userProfile.name) {
-												$('.user').text(userProfile.name);
-											} else {
-												$('.user').text(userProfile.email);
-											}
-										})
-							})
-
-					console.log("Logged in!");
-
-				})
-
-
-			} catch (err) {
-				console.log("Error parsing redirect:", err);
-			}
-
-			window.history.replaceState({}, document.title, "/");
-		}
-
 		if (typeof String.prototype.endsWith !== 'function') {
 		    String.prototype.endsWith = function(suffix) {
 		        return this.indexOf(suffix, this.length - suffix.length) !== -1;
 		    };
 		}
-
-		//lock = new Auth0Lock('7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW', 'nextprot.auth0.com');
-
-   		var userProfile;
-
-   		if ($.cookie("nxprofile") && $.cookie("nxtoken")) {
-   			// If there is already a cookie
-   			// Update login text (set to user email)
-			$('.li-login').hide();
-			$('.li-logout').show();
-
-			// Save the profile
-			userProfile = JSON.parse($.cookie("nxprofile"));
-
-   			// Update login text (set to user email)
-			if (userProfile.name) {
-				$('.user').text(userProfile.name);
-			} else {
-				$('.user').text(userProfile.email);
-			}
-   		}
 
    		$('.btn-login').click(async function(e) {
    			// When click on "Login"
@@ -1327,7 +1289,6 @@
 				const options = {
 					redirect_uri: redirect_url
 				};
-
 				await auth0.loginWithRedirect(options);
 
 			} catch (err) {
@@ -1340,8 +1301,8 @@
    			// When click on "Logout"
    			// Remove cookies
    			if (window.location.hostname === "localhost") {
-				$.removeCookie("nxprofile", { path: "/" });
-				$.removeCookie("nxtoken", { path: "/" });
+				$.removeCookie("nxprofile", { path: "/nextprot-api-web" });
+				$.removeCookie("nxtoken", { path: "/nextprot-api-web" });
 			} else {
 				$.removeCookie("nxprofile", { path: "/", domain: ".nextprot.org" });
 				$.removeCookie("nxtoken", { path: "/", domain: ".nextprot.org" });
