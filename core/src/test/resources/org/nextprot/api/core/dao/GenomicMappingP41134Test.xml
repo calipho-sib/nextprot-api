@@ -7,7 +7,7 @@
 
 	<cv_databases cv_id="32" cv_name="Ensembl" url="http://www.ensembl.org/" link_url="http://www.ensembl.org/id/%s" />
 	
-	<sequence_identifiers unique_name="NX_P41134" identifier_id="615979" cv_type_id="1" db_xref_id="1579939" />
+	<sequence_identifiers unique_name="NX_P41134" identifier_id="615979" cv_type_id="1" db_xref_id="1579939" cv_status_id="1" />
 	<mapping_annotations annotation_id="625541" reference_identifier_id="270075" mapped_identifier_id="615979" cv_type_id="3" cv_quality_qualifier_id="10" />
 	
 	<sequence_identifiers unique_name="NX_P41134-1" identifier_id="615980" cv_type_id="2" db_xref_id="1579940" />
@@ -16,7 +16,7 @@
 	<sequence_identifiers unique_name="NX_ENST00000376105" identifier_id="270080" cv_type_id="5" db_xref_id="332804" />
 	<sequence_identifiers unique_name="NX_ENST00000376112" identifier_id="270079" cv_type_id="5" db_xref_id="332803" />
 
-	<sequence_identifiers unique_name="NX_ENSG00000125968" identifier_id="270075" cv_type_id="3" db_xref_id="332799" />
+	<sequence_identifiers unique_name="NX_ENSG00000125968" identifier_id="270075" cv_type_id="3" db_xref_id="332799" cv_status_id="1"  />
 	<db_xrefs resource_id="332799" accession="ENSG00000125968" cv_database_id="32" />
 	
 	<mapping_annotations annotation_id="625543" reference_identifier_id="270079" mapped_identifier_id="615980" cv_type_id="7" cv_quality_qualifier_id="10" />

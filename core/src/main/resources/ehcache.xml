@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- 
+
+	excerpt doc from http://www.ehcache.org/ehcache.xml
+
+    maxEntriesLocalHeap:
+    Sets the maximum number of objects that will be created in memory.  0 = no limit.
+    overflowToOffHeap:
+    (boolean) This feature is available only in enterprise versions of Ehcache.
+    When set to true, enables the cache to utilize off-heap memory	
+    eternal:
+    Sets whether elements are eternal. If eternal,  timeouts are ignored and the
+    element is never expired.
+    memoryStoreEvictionPolicy:
+    Policy would be enforced upon reaching the maxEntriesLocalHeap limit. Default
+    policy is Least Recently Used (specified as LRU). Other policies available -
+    First In First Out (specified as FIFO) and Less Frequently Used
+    (specified as LFU)
+    
+ -->
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
@@ -8,8 +27,6 @@
 
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
-
-	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 	
 	<cache name="master-unique-names-chromosome" maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
@@ -75,7 +92,7 @@
 	<!-- 347609619 -->
 	<cache name="term-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
-		   maxEntriesLocalDisk="400000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   maxEntriesLocalDisk="700000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
 	
@@ -339,7 +356,12 @@
            eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
 
-  	<cache name="equivalent-isoforms" overflowToOffHeap="false"
+	<cache name="global-entry-statistics" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="1"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+
+	<cache name="equivalent-isoforms" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
@@ -355,6 +377,11 @@
 	</cache>
 	
 	<cache name="antibody-name-unicity-map" overflowToOffHeap="false"
+		   overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
+		   memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<cache name="entry-ensg-map" overflowToOffHeap="false"
 		   overflowToDisk="false" diskPersistent="true" maxEntriesLocalHeap="1"
 		   memoryStoreEvictionPolicy="LRU">
 	</cache>
@@ -388,4 +415,31 @@
     <cache name="all-tryptic-digests" overflowToOffHeap="false"
            overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1">
     </cache>
+
+<!--  
+	maxEntriesLocalHeap="4" 
+	mostly used on building experimental context dictionary for bgee (psimi, stages, eco, tissues = 4 ontologies) 
+-->
+
+    <cache name="id-experimental-context-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
+
+    <cache name="md5-experimental-context-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
+
+    <cache name="term-map-by-ontology" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="4" >
+    </cache>
+
+    <cache name="name-database-map" 
+    		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1" >
+    </cache>
+
+    <cache name="xrefid-by-dbac" 
+    		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500" >
+    </cache>
+
+
 </ehcache>

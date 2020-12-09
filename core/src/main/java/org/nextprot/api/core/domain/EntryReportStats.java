@@ -20,6 +20,7 @@ import static org.nextprot.api.core.domain.EntryReportStats.*;
         IS_ANTIBODY,
         IS_3D,
         IS_DISEASE,
+        IS_EXPRESSION,
         ISOFORM_COUNT,
         VARIANT_COUNT,
         PTM_COUNT,
@@ -32,9 +33,9 @@ import static org.nextprot.api.core.domain.EntryReportStats.*;
 })
 public class EntryReportStats implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 272012765108766053L;
 
-    public static final String ENTRY_ACCESSION = "entryAccession";
+	public static final String ENTRY_ACCESSION = "entryAccession";
     public static final String ENTRY_DESCRIPTION = "entryDescription";
     public static final String PROTEIN_EXISTENCE = "proteinExistence";
     public static final String IS_PROTEOMICS = "proteomics";
@@ -42,6 +43,7 @@ public class EntryReportStats implements Serializable {
     public static final String IS_ANTIBODY = "antibody";
     public static final String IS_3D = "3D";
     public static final String IS_DISEASE = "disease";
+    public static final String IS_EXPRESSION = "expression";
     public static final String ISOFORM_COUNT = "isoforms";
     public static final String VARIANT_COUNT = "variants";
     public static final String PTM_COUNT = "ptms";
@@ -101,6 +103,12 @@ public class EntryReportStats implements Serializable {
     public boolean isDisease() {
 
         return testProperty(IS_DISEASE);
+    }
+
+    @JsonProperty(IS_EXPRESSION)
+    public boolean isExpression() {
+
+        return testProperty(IS_EXPRESSION);
     }
 
     @JsonProperty(ISOFORM_COUNT)

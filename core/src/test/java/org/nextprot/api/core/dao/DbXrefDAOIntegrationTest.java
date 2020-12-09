@@ -43,6 +43,11 @@ limit 100
 
  */
 	
+	/*
+	 * Pam: 07.10.2020
+	 * This test and related DAO method are absolete after we retrieve all interactions from NP2 pipeline
+	 */
+	@Ignore
 	@Test
 	public void shouldReturn_2_XenoInteractantXrefs() {
 
@@ -59,20 +64,6 @@ limit 100
 		));
 	}
 
-    @Test
-    public void shouldFindNextprotDb() {
-
-        Optional<Integer> id = xrefdao.findDatabaseId("neXtProt");
-        Assert.assertTrue(id.isPresent());
-        Assert.assertEquals(175, id.get().intValue());
-    }
-
-    @Test
-    public void shouldNotFindRoudoudouDb() {
-
-        Optional<Integer> id = xrefdao.findDatabaseId("roudoudou");
-        Assert.assertFalse(id.isPresent());
-    }
 
     @Ignore
     @Test

@@ -10,13 +10,15 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -41,14 +44,16 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     protected PublicationService publicationService;
     protected MainNamesService mainNamesService;
     protected DbXrefService dbXrefService;
+    protected ExperimentalContextService experimentalContextService;
 
     private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 
-    protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
+    protected StatementAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService, ExperimentalContextService experimentalContextService ) {
         this.terminologyService = terminologyService;
         this.publicationService = publicationService;
         this.mainNamesService = mainNamesService;
         this.dbXrefService = dbXrefService;
+        this.experimentalContextService = experimentalContextService;
     }
 
 
@@ -131,7 +136,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 .toString();
 
         String psimiAC = evidence.getProperties().get(PropertyApiModel.NAME_PSIMI_AC);
-        if(psimiAC != null) {
+        if (psimiAC != null) {
             keyBuilder.append(psimiAC);
         }
 
@@ -139,7 +144,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     }
 
     private AnnotationEvidence buildAnnotationEvidence(Statement s) {
-
+    	
         AnnotationEvidence evidence = new AnnotationEvidence();
         if (s.getValue(RESOURCE_TYPE) == null) {
             throw new NextProtException("resource type undefined");
@@ -147,7 +152,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         evidence.setResourceType(s.getValue(RESOURCE_TYPE));
         evidence.setResourceAssociationType("evidence");
         evidence.setQualityQualifier(s.getValue(EVIDENCE_QUALITY));
-
+        
         setResourceId(s, evidence);
 
         AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(EVIDENCE_INTENSITY), "intensity");
@@ -157,12 +162,24 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         // PSIMI_ID custom statement field becomes a property with name = PropertyApiModel.NAME_PSIMI_AC
         String psimiAC = s.getValue(new CustomStatementField("PSIMI_ID"));
         CvTerm t = terminologyService.findCvTermByAccession(psimiAC);
-        String psimiCvName = t==null ? null : t.getName();
+        String psimiCvName = t == null ? null : t.getName();
         AnnotationEvidenceProperty psimiIdProperty = addPropertyIfPresent(psimiAC, PropertyApiModel.NAME_PSIMI_AC);
         AnnotationEvidenceProperty psimiTermProperty = addPropertyIfPresent(psimiCvName, PropertyApiModel.NAME_PSIMI_CV_NAME);
 
+        // Bgee statement custom fields, EXPRESSION_LEVEL, SCORE, STAGE_ID, STAGE_NAME
+        String expressionLevel = s.getValue(new CustomStatementField("EXPRESSION_LEVEL"));
+        String expressionScore = s.getValue(new CustomStatementField("SCORE"));
+        String stage_ac = s.getValue(new CustomStatementField("STAGE_ID"));
+        AnnotationEvidenceProperty expressionLevelProperty = addPropertyIfPresent(expressionLevel, PropertyApiModel.NAME_EXPRESSION_LEVEL);
+        AnnotationEvidenceProperty expressionScoreProperty = addPropertyIfPresent(expressionScore, PropertyApiModel.NAME_EXPRESSION_SCORE);
+
+        // IntAct statement custom fields, NUMBER_OF_EXPERIMENTS
+        String expNb = s.getValue(new CustomStatementField("NUMBER_OF_EXPERIMENTS"));
+        AnnotationEvidenceProperty expNbProperty = addPropertyIfPresent(expNb, PropertyApiModel.NAME_NUMBER_EXPERIMENTS);
+
         //Set properties which are not null
-        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, psimiIdProperty, psimiTermProperty)
+        evidence.setProperties(Stream.of(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin,
+                psimiIdProperty, psimiTermProperty, expressionLevelProperty, expressionScoreProperty, expNbProperty)
                 .filter(p -> p != null)
                 .collect(Collectors.toList())
         );
@@ -173,13 +190,30 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             CvTerm term = terminologyService.findCvTermByAccessionOrThrowRuntimeException(statementEvidenceCode);
             evidence.setEvidenceCodeName(term.getName());
         }
+        
         evidence.setAssignedBy(s.getValue(ASSIGNED_BY));
         evidence.setAssignmentMethod(s.getValue(ASSIGMENT_METHOD));
         evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
         evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(IS_NEGATIVE)));
         evidence.setNote(s.getValue(EVIDENCE_NOTE));
 
-        //TODO create experimental contexts!
+        // Set experimental context ID
+        // Note that this currently concerns for bgee statements
+        // All the other annotations with inherent experimental contexts are inherited from NP1 data model itself
+        if("Bgee".equals(s.getValue(SOURCE))) {
+        	String tissue_ac = s.getValue(ANNOT_CV_TERM_ACCESSION);
+        	String eco_ac = s.getValue(EVIDENCE_CODE);
+        	String md5 = ExperimentalContextUtil.computeMd5ForBgee(tissue_ac, stage_ac, eco_ac);
+            ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
+            if(ec != null) {
+                long ecId = ec.getContextId();
+                evidence.setExperimentalContextId(ecId);
+            } else {
+            	String msg = "EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " " + md5 + " not found";
+            	LOGGER.error(msg);
+            	throw new NextProtException(msg);
+            }
+        }
 
         return evidence;
     }
@@ -230,17 +264,9 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
     }
 
     long findXrefId(Statement statement) {
-
         String referenceDB = statement.getValue(REFERENCE_DATABASE);
         String referenceAC = statement.getValue(REFERENCE_ACCESSION);
-
-        try {
-            return dbXrefService.findXrefId(referenceDB, referenceAC);
-        } catch (DbXrefServiceImpl.MissingCvDatabaseException e) {
-
-            LOGGER.error(e.getMessage());
-            throw new NextProtException(e.getMessage());
-        }
+        return dbXrefService.findXrefId(referenceDB, referenceAC);
     }
 
     protected Annotation buildAnnotation(String isoformName, List<Statement> flatStatements) {
@@ -260,7 +286,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             Annotation annotation = get();
 
             Statement firstStatement = statements.get(0);
-            
+
             annotation.setAnnotationHash(firstStatement.getValue(ANNOTATION_ID));
             annotation.setAnnotationId(NXFLAT_ANNOTATION_ID_COUNTER.incrementAndGet());
 
@@ -342,7 +368,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             }
 
             // For interaction mappings, add the interacting region from statement as a property
-            if(AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
+            if (AnnotationCategory.INTERACTION_MAPPING.equals(annotation.getAPICategory())) {
                 AnnotationProperty annotationProperty = new AnnotationProperty();
                 annotationProperty.setAnnotationId(annotation.getAnnotationId());
                 annotationProperty.setName("mapping-sequence");
@@ -350,15 +376,19 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotation.addProperty(annotationProperty);
                 // Adds the description
                 annotation.setDescription("Interaction with " + annotation.getBioObject().getPropertyValue("geneName"));
-                
+
             } else if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
-            	String p1 = firstStatement.getEntryAccession();
-            	String p2 = annotation.getBioObject().getAccession();
+                String p1 = firstStatement.getEntryAccession();
+                Optional<String> isoformSpecificOptional = firstStatement.getOptionalIsoformAccession();
+                if (isoformSpecificOptional.isPresent()) {
+                    p1 = isoformSpecificOptional.get();
+                }
+                String p2 = annotation.getBioObject().getAccession();
                 AnnotationProperty annotationProperty = new AnnotationProperty();
                 annotationProperty.setAnnotationId(annotation.getAnnotationId());
                 annotationProperty.setName("selfInteraction");
                 annotationProperty.setValue(String.valueOf(p1.equals(p2)));
-                annotation.addProperty(annotationProperty);            		
+                annotation.addProperty(annotationProperty);
             }
 
             annotations.add(annotation);
@@ -367,46 +397,67 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         return annotations;
     }
 
-    private BioObject newBioObject(Statement firstStatement, AnnotationCategory annotationCategory) {
+    private BioObject newBioObject(Statement statement, AnnotationCategory annotationCategory) {
 
-        String bioObjectAnnotationHash = firstStatement.getValue(OBJECT_ANNOTATION_IDS);
-        String bioObjectAccession = firstStatement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
-        String bioObjectType = firstStatement.getValue(BIOLOGICAL_OBJECT_TYPE);
-        String bioObjectName = firstStatement.getValue(BIOLOGICAL_OBJECT_NAME);
+        String bioObjectAnnotationHash = statement.getValue(OBJECT_ANNOTATION_IDS);
+        String bioObjectAccession = statement.getValue(BIOLOGICAL_OBJECT_ACCESSION);
+        String bioObjectType = statement.getValue(BIOLOGICAL_OBJECT_TYPE);
+        String bioObjectName = statement.getValue(BIOLOGICAL_OBJECT_NAME);
+        String bioObjectDb = statement.getValue(BIOLOGICAL_OBJECT_DATABASE);
 
         BioObject bioObject;
 
         // Both binary interaction and interaction mapping annotations are handled in the same way
         if (AnnotationCategory.BINARY_INTERACTION.equals(annotationCategory) || AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
-
+            String url;
             if (!bioObjectAccession.startsWith("NX_")) {
+                if (AnnotationCategory.INTERACTION_MAPPING.equals(annotationCategory)) {
+                    throw new NextProtException("Interaction mapping only expects to be a nextprot entry starting with NX_ but found "
+                            + bioObjectAccession + " with type " + bioObjectType);
+                }
+                if (bioObjectDb == null) {
+                    throw new NextProtException("Cannot create a binary interaction from statement " + statement +
+                            ": database is null for BioObject " + bioObjectAccession);
+                }
+                if (!bioObjectDb.equals("UniProtKB")) {
+                    throw new NextProtException("Cannot create a binary interaction from statement " + statement +
+                            ": database is not UniProtKB for BioObject " + bioObjectAccession);
+                }
 
-                throw new NextProtException("Binary Interaction only expects to be a nextprot entry starting with NX_ but found " + bioObjectAccession + " with type " + bioObjectType);
-            }
+                bioObject = BioObject.external(BioType.PROTEIN, bioObjectDb);
 
-            if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+                url = "http://www.uniprot.org/uniprot/" + bioObjectAccession;
 
-                bioObject = BioObject.internal(BioType.PROTEIN);
-
-                bioObject.putPropertyNameValue("proteinName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown protein accession " + bioObjectAccession))
-                        .getName());
-            }
-            // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
-            else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
-
-                bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
-
-                bioObject.putPropertyNameValue("isoformName", mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
-                        .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " + firstStatement + ": unknown isoform accession " + bioObjectAccession))
-                        .getName());
             } else {
-                throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
-            }
+                // Here, it's supposed to be neXtProt accession
+                MainNames mainNames = mainNamesService.findIsoformOrEntryMainName(bioObjectAccession)
+                                                      .orElseThrow(() -> new NextProtException("Cannot create a binary interaction from statement " +
+                                                              statement + ": unknown isoform accession " + bioObjectAccession));
+                url = "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions";
+                bioObjectName = ( mainNames.getGeneNameList() != null && !mainNames.getGeneNameList().isEmpty()) ? mainNames.getGeneNameList().get(0) : bioObjectName;
 
+                if (BioType.PROTEIN.name().equalsIgnoreCase(bioObjectType)) {
+
+                    bioObject = BioObject.internal(BioType.PROTEIN);
+
+                    bioObject.putPropertyNameValue("proteinName", mainNames.getName());
+
+                }
+                // add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
+                else if (BioType.PROTEIN_ISOFORM.name().equalsIgnoreCase(bioObjectType)) {
+
+                    bioObject = BioObject.internal(BioType.PROTEIN_ISOFORM);
+
+                    bioObject.putPropertyNameValue("isoformName", mainNames.getName());
+
+                } else {
+                    throw new NextProtException("Binary Interaction only expects to be a nextprot or an isoform entry but found " + bioObjectAccession + " with type " + bioObjectType);
+                }
+            }
+            bioObject.putPropertyNameValue("url", url);
             bioObject.setAccession(bioObjectAccession);
-            bioObject.putPropertyNameValue("geneName", bioObjectName);
-            bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
+            bioObject.putPropertyNameValue("geneName", bioObjectName == null? "-" : bioObjectName);
+
         } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);

@@ -1,5 +1,14 @@
 package org.nextprot.api.core.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -10,16 +19,10 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
@@ -50,7 +53,42 @@ having sum(a.cnt)=1
 
 
  */
+	@Test
+	public void shouldFindOrCreateDbXrefId() throws Exception {
+		long id;
+		id = xrefService.findXrefId("IntAct", "EBI-2115799,EBI-21199571"); // in db
+		Assert.assertEquals(55711538L, id);
+		id = xrefService.findXrefId("IntAct", "EBI-2115799,EBI-11156432"); // NOT in db
+		Assert.assertEquals(7066117270788987512L, id);
+		
+	}
+
+	@Test
+	public void shouldUseDbXrefIdToDetermineIdentify()  {
+		
+		DbXref x1 = new DbXref();
+		x1.setAccession("toto");
+		x1.setDatabaseName("IntAct");
+		x1.setDbXrefId(1234L);
+		DbXref x2 = new DbXref();
+		x2.setAccession("totoAsWell");
+		x2.setDatabaseName("IntAct");
+		x2.setDbXrefId(1234L);
+		DbXref x3 = new DbXref();
+		x3.setAccession("toto");
+		x3.setDatabaseName("IntAct");
+		x3.setDbXrefId(3333L);
+		Set<DbXref> set = new HashSet<>();
+		set.add(x1);
+		set.add(x2);
+		set.add(x3);
+		Assert.assertEquals(2, set.size());
+		for (DbXref x: set) System.out.println(x.getDbXrefId() + " " + x.getAccession() + " " + x.getDatabaseName());
+				
+	}
+
 	
+		
 	@Test
 	public void shouldReturn_1_ReactomeXrefAsAnnotation() {
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_A0AVF1");
@@ -273,20 +311,20 @@ having sum(a.cnt)=1
 	}
 
     @Test
-    public void shouldFindExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
+    public void shouldFindExistingXrefId()  {
 
         long id = xrefService.findXrefId("UniProt", "Q8WV60-1");
         Assert.assertEquals(1537966, id);
     }
 
-    @Test(expected = DbXrefServiceImpl.MissingCvDatabaseException.class)
-    public void shouldNotFindXrefIdMissingDb() throws DbXrefServiceImpl.MissingCvDatabaseException {
+    @Test(expected = Exception.class)
+    public void shouldNotFindXrefIdMissingDb()  {
 
         xrefService.findXrefId("roudoudou", "Q8WV60-1");
     }
 
     @Test
-    public void shouldGenerateNonExistingXrefId() throws DbXrefServiceImpl.MissingCvDatabaseException {
+    public void shouldGenerateNonExistingXrefId()  {
 
         long id = xrefService.findXrefId("UniProt", "Q8WV60-4");
         Assert.assertEquals(7143053370951092528L, id);

@@ -31,7 +31,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 				.addField(REFERENCE_ACCESSION, "123").build();
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 		ab.findPublicationId(sb1);
 	}
 
@@ -41,14 +41,14 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 		Statement sb1 = new StatementBuilder().addField(REFERENCE_DATABASE, "PubMed")
 				.addField(REFERENCE_ACCESSION, "000").build();
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 		ab.findPublicationId(sb1);
 	}
 
 	@Override
 	protected StatementAnnotationBuilder newAnnotationBuilder() {
 		return StatementEntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService,
-				dbXrefService);
+				dbXrefService, experimentalContextService);
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturnPsimiAsEvidenceProperty() { // T01
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb1 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
@@ -148,7 +148,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturn2DifferentEvidencesFor1Publication1PPi2Psimi() { // T02
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb_psimi1 = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
@@ -184,7 +184,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturn2DifferentEvidencesForIntactAndEnyoWithPsimi() { // T03
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb_intact = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
@@ -220,7 +220,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturn3DifferentEvidencesForIntactAndEnyoWith2Psimi() { // T04
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb_intact = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
@@ -269,7 +269,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturn2DifferentEvidencesForNextprotAndEnyoWithPsimi() { // T053
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb_nextprot = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)
@@ -306,7 +306,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 	public void shouldReturn3DifferentEvidencesForNextprotAndEnyoWith2Psimi() { // T054
 
 		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
-				publicationService, mainNamesService, dbXrefService);
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
 
 		Statement sb_nextprot = new StatementBuilder()
 				.addCompulsoryFields("NX_P38398", "NX_P38398", "binary-interaction", QualityQualifier.GOLD)

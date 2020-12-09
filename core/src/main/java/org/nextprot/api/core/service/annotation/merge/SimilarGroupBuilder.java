@@ -129,6 +129,7 @@ public class SimilarGroupBuilder {
                 case GO_BIOLOGICAL_PROCESS:
                 case GO_CELLULAR_COMPONENT:
                 case GO_MOLECULAR_FUNCTION:
+                case EXPRESSION_PROFILE:
                     // TODO: there is a 'is_negative' field to consider in the future
                     conjunctivePredicates.add(new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode));
                     break;

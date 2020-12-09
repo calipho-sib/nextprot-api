@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.IsoformGeneMapping;
 import org.nextprot.api.core.domain.TranscriptGeneMapping;
 import org.nextprot.api.core.domain.exon.SimpleExon;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -189,4 +191,33 @@ public class GeneDAOImpl implements GeneDAO {
 		return isoformMappings.values().stream()
 				.collect(Collectors.groupingBy(IsoformGeneMapping::getIsoformAccession, Collectors.toList()));
 	}
+
+	/*
+	 * Builds a bi-directional dictionary between entries and ensg genes
+	 */
+	@Override
+	public Map<String, List<String>> getEntryENSGMap() {
+		
+		List<String> entryEnsgList = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+				.query(sqlDictionary.getSQLQuery("entry-ensg-mapping"),new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int row) throws SQLException {
+				return rs.getString("entry") + ":" + rs.getString("ensg"); 
+			}
+		});
+		Map<String,List<String>> finalMap = new HashMap<>();
+		for (String item: entryEnsgList) {
+			String[] pair = item.split(":");
+			String entry = pair[0];
+			String ensg = pair[1];
+			// add relationship to ensg for key = entry
+			if (! finalMap.containsKey(entry)) finalMap.put(entry, new ArrayList<String>());
+			finalMap.get(entry).add(ensg);
+			// add relationship to entries for key = ensg
+			if (! finalMap.containsKey(ensg)) finalMap.put(ensg, new ArrayList<String>());
+			finalMap.get(ensg).add(entry);
+		}
+		return finalMap;			
+	}
+
 }

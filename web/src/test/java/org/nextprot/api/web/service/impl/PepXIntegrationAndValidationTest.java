@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
-import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -25,8 +24,7 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     @Autowired
     private PepXService pepXService;
     
-	@Autowired
-	private DataSourceServiceLocator dsLocator;
+	//@Autowired	private DataSourceServiceLocator dsLocator;
 
 	
     @Test
@@ -216,7 +214,6 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
     	// YPVVKRTEGPAGHSKGELAP 
     	
     	String peptide = "YPVVKRTEGPAGHSKGELAP"; 
-    	Set<String> equivIsoSet = new TreeSet<String>();
     	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
     	assertTrue( result.size() == 1); // single entry 
     	assertTrue(result.stream()

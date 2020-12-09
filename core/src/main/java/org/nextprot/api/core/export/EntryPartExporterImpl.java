@@ -101,6 +101,16 @@ public class EntryPartExporterImpl implements EntryPartExporter {
             setRowValue(row, EXPRESSION_LEVEL,    evidence.getExpressionLevel());
             setRowValue(row, SOURCE,              evidence.getAssignedBy());
             setRowValue(row, URL,                 entry.getXref(evidence.getResourceId()).map(DbXref::getResolvedUrl).orElse("null"));
+            
+//            System.out.println(
+//	            annotation.getAnnotationId() + " " +
+//	            annotation.getCategoryName()  + " " +
+//	            annotation.getCvTermName()  + " " +
+//	            evidence.getEvidenceId()  + " " +
+//	            evidence.getEvidenceCodeAC()  + " " +
+//	            evidence.getExperimentalContextId()  + " " +
+//	            evidence.getAssignedBy() + " ");
+                        
             setExperimentalContextRowValues(row, entry, evidence);
 
             rows.add(row);
@@ -110,7 +120,7 @@ public class EntryPartExporterImpl implements EntryPartExporter {
     private void setExperimentalContextRowValues(Row row , Entry entry, AnnotationEvidence evidence) {
 
         ExperimentalContext ec = entry.getExperimentalContext(evidence.getExperimentalContextId())
-                .orElseThrow(() -> new NextProtException("missing experimental context for " + evidence.getEvidenceCodeAC()));
+                .orElseThrow(() -> new NextProtException("missing experimental context with id " + evidence.getExperimentalContextId() + ": " + evidence.getEvidenceCodeAC()));
 
         if (ec.getDevelopmentalStage() != null) {
             setRowValue(row, STAGE_ACCESSION, ec.getDevelopmentalStageAC());

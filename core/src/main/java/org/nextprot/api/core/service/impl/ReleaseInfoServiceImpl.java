@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseInfoDataSources;
@@ -89,16 +90,17 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
 
-		updatePECountAndPubliCountTags(stats);
+		updateTagCounts(stats);
 
 		rs.setTagStatistics(stats);
 
 		return rs;
 	}
 
-	private void updatePECountAndPubliCountTags(List<ReleaseStatsTag> stats) {
+	private void updateTagCounts(List<ReleaseStatsTag> stats) {
 
 		GlobalPublicationStatistics publisStats = statisticsService.getGlobalPublicationStatistics();
+		GlobalEntryStatistics globalEntryStats = statisticsService.getGlobalEntryStatistics();
 
 		for (ReleaseStatsTag statsTag : stats) {
 
@@ -138,6 +140,20 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 			else if ("CURATED_PUBLI".equals(statsTag.getTag())) {
 				statsTag.setCount(publisStats.getNumberOfCuratedPublications());
+			}
+
+			// Update global entry stats
+			else if ("INTERACTION".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithBinaryInteraction());
+			}
+
+			else if ("W_EXPRESSION_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithExpressionProfile());
+			}
+
+			// Update other stats
+			else if ("CVTERM".equals(statsTag.getTag())) {
+				statsTag.setCount(statisticsService.getCvTermCount());
 			}
 		}
 	}

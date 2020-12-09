@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -139,6 +140,8 @@ public class StatementTransformServiceTest {
 	}
 
 	@Test
+	@Ignore
+	// As per 2020/07 ENYO Raw statements contains the TARGET_ISOFORM field, so we do not propagate the region
 	public void shouldTransformIntMapStatmentWithMultipleTargetIsoforms() throws IOException{
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");

@@ -9,5 +9,5 @@ public interface ExperimentalContextService {
 
 	List<ExperimentalContext> findAllExperimentalContexts();
 	List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds);
-
+	ExperimentalContext findExperimentalContextByMd5(String md5);
 }

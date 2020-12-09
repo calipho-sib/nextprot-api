@@ -8,7 +8,6 @@ import org.nextprot.commons.utils.EnumDictionarySupplier;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 public enum StatementSource implements StatementSpecifications, EnumDictionarySupplier<StatementSource> {
@@ -27,14 +26,15 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 					.withExtraFields(Arrays.asList("PSIMI_ID", "MAPPING_SEQUENCE", "TARGET_ISOFORM"))
 					.build()),
 
-	// unused code afaik (Kasun and Pam)
-	GnomAD("gnomAD",
-			"http://kant.sib.swiss:9001/gnomad",
+	Bgee("Bgee", "http://kant.sib.swiss:9001/bgee",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("CANONICAL", "ALLELE_COUNT", "ALLELE_SAMPLED"))
-					.withExtraFieldsContributingToUnicityKey(Collections.singletonList("DBSNP_ID"))
-					.build())
-	;
+					.withExtraFields(Arrays.asList("ENSEMBL_ID", "STAGE_ID", "STAGE_NAME", "EXPRESSION_LEVEL", "SCORE"))
+					.build()),
+
+	IntAct("IntAct", "http://kant.sib.swiss:9001/intact",
+			new Specifications.Builder()
+					.withExtraFields(Arrays.asList("PSIMI_ID", "XENO", "NUMBER_OF_EXPERIMENTS"))
+					.build());
 
 	private static EnumConstantDictionary<StatementSource> dictionaryOfConstants =
 			new EnumConstantDictionary<StatementSource>(StatementSource.class, values()) {

@@ -15,23 +15,14 @@ public class BgeeXrefURLResolverTest {
         resolver = new BgeeXrefURLResolver();
     }
 
-    // entry/P51610/xref.json
     @Test
     public void testResolveBgeeENSG() throws Exception {
 
-    	String cleanAC ="stage_id=HsapDO:0000083&organ_id=EV:0100046&gene_id=ENSG00000124532&stage_children=on";
+    	String cleanAC ="gene_id=ENSG00000124532";
     	  
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref(cleanAC, "Bgee", "http://bgee.org/bgee/bgee?page=expression&action=data&%");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref(cleanAC, "Bgee", "https://bgee.org/bgee14_1/?page=gene&gene_id=%s");
 
-        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&" + cleanAC, resolver.resolve(xref));
+        Assert.assertEquals("https://bgee.org/bgee14_1/?page=gene&gene_id=" + cleanAC, resolver.resolve(xref));
     }
 
-    // entry/P51610/xref.json
-    @Test
-    public void testResolveBgeeNoENSG() throws Exception {
-
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
-
-        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
-    }
 }

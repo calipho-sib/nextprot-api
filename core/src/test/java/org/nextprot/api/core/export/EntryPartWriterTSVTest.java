@@ -34,9 +34,9 @@ public class EntryPartWriterTSVTest extends CoreUnitBaseTest {
         String output = baos.toString(StandardCharsets.UTF_8.name());
         baos.close();
 
-        String[] headers = output.split("\n");
+        String[] lines = output.split("\n");
 
-        Assert.assertTrue(headers.length > 534);
-        Assert.assertEquals("ENTRY_ACCESSION\tCATEGORY\tTERM_ACCESSION\tTERM_NAME\tQUALITY\tECO_ACCESSION\tECO_NAME\tNEGATIVE\tEXPRESSION_LEVEL\tSTAGE_ACCESSION\tSTAGE_NAME\tSOURCE\tURL", headers[0]);
+        Assert.assertTrue(lines.length > 150);
+        Assert.assertEquals("ENTRY_ACCESSION\tCATEGORY\tTERM_ACCESSION\tTERM_NAME\tQUALITY\tECO_ACCESSION\tECO_NAME\tNEGATIVE\tEXPRESSION_LEVEL\tSTAGE_ACCESSION\tSTAGE_NAME\tSOURCE\tURL", lines[0]);
     }
 }

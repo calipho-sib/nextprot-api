@@ -14,13 +14,13 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.TARGET_IS
 
 public class StatementEntryAnnotationBuilder extends StatementAnnotationBuilder {
 
-	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
-		super(terminologyService, publicationService,mainNamesService, dbXrefService);
+	protected StatementEntryAnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService, ExperimentalContextService experimentalContextService) {
+		super(terminologyService, publicationService,mainNamesService, dbXrefService, experimentalContextService);
 	}
 
 	
-	public static StatementEntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService) {
-		return new StatementEntryAnnotationBuilder(terminologyService, publicationService, mainNamesService, dbXrefService);
+	public static StatementEntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService, DbXrefService dbXrefService, ExperimentalContextService experimentalContextService) {
+		return new StatementEntryAnnotationBuilder(terminologyService, publicationService, mainNamesService, dbXrefService, experimentalContextService);
 	}
 
 	@Override

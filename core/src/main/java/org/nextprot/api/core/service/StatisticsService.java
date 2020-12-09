@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 
 import java.util.Arrays;
@@ -33,7 +34,11 @@ public interface StatisticsService {
         }
     }
 
+    GlobalEntryStatistics getGlobalEntryStatistics();
+
     GlobalPublicationStatistics getGlobalPublicationStatistics();
+
+    int getCvTermCount();
 
     Map<Counter, Integer> getStatsByPlaceholder(Set<Counter> stat);
 }

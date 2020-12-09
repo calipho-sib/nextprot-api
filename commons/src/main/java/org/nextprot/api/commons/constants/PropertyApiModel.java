@@ -36,6 +36,7 @@ public class PropertyApiModel {
 	// annotation evidence properties
 	public static final String NAME_GO_QUALIFIER = "go_qualifier";
 	public static final String NAME_EXPRESSION_LEVEL="expressionLevel";
+	public static final String NAME_EXPRESSION_SCORE="expressionScore";
 	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
@@ -81,6 +82,7 @@ public class PropertyApiModel {
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODIES_ACC,"antibodiesAcc","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"expressionLevel","string", true, true, Parent.EVIDENCE), 
+						new PropertyApiModel(NAME_EXPRESSION_SCORE,"expressionScore","double", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_INTEGRATION_LEVEL,"integrationLevel","string", true, true, Parent.EVIDENCE)))); 
 		anno2props.put(AnnotationCategory.PDB_MAPPING,
 				new HashSet<>(Arrays.asList(
