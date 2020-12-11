@@ -666,7 +666,7 @@
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
 
 	if($.cookie("nxprofile") && $.cookie("nxtoken")) {
-		// Update login text (set to user email)
+		// Update login text (set to user email)s
 		userProfile = JSON.parse($.cookie("nxprofile"));
 		if (userProfile.name) {
 			$('.user').text(userProfile.name);
@@ -697,8 +697,14 @@
 										.then(function (userData) {
 											auth0.getTokenSilently()
 													.then(function (token) {
-														$.cookie("nxprofile", JSON.stringify(userData));
-														$.cookie("nxtoken", token);
+														if (window.location.hostname === "localhost") {
+															$.cookie("nxprofile", JSON.stringify(userData));
+															$.cookie("nxtoken", token);
+														} else {
+															$.cookie("nxprofile", JSON.stringify(userData), { path: "/", domain: ".nextprot.org"});
+															$.cookie("nxtoken", token, { path: "/", domain: ".nextprot.org"});
+														}
+
 														// Save the profile
 														userProfile = JSON.parse($.cookie("nxprofile"));
 
@@ -1304,8 +1310,8 @@
 				$.removeCookie("nxprofile", { path: "/nextprot-api-web" });
 				$.removeCookie("nxtoken", { path: "/nextprot-api-web" });
 			} else {
-				$.removeCookie("nxprofile", { path: "/" });
-				$.removeCookie("nxtoken", { path: "/" });
+				$.removeCookie("nxprofile", { path: "/", domain: ".nextprot.org"});
+				$.removeCookie("nxtoken", { path: "/" , domain: ".nextprot.org"});
 			}
 
 
