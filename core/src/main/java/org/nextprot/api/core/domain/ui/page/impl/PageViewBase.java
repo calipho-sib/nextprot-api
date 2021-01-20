@@ -54,20 +54,17 @@ public abstract class PageViewBase implements PageView {
 
 		// test xrefs
 		if (entry.getXrefs().stream()
-				.filter(xref -> !filterOutXref(xref))
 				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName())))
 			return true;
 
 		// then annotations
 		if (entry.getAnnotations().stream()
-				.filter(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory()))
-				.anyMatch(a -> ! filterOutAnnotation(a)))
+				.anyMatch(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory())))
 			return true;
 
 		// then features
 		return entry.getAnnotations().stream()
-				.filter(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()))
-				.anyMatch(a -> ! filterOutFeature(a));
+				.anyMatch(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()));
 	}
 
 	@Override
@@ -90,11 +87,16 @@ public abstract class PageViewBase implements PageView {
 		List<DbXref> xrefs = 
 				entry.getXrefs().stream()
 				.filter(x -> getXrefDbNameWhiteList().contains(x.getDatabaseName()))
-				.filter(x -> ! filterOutXref(x))
 				.collect(Collectors.toList());
+
+		// get list of annotations listed in the page
+		List<Annotation> displayedAnnots = entry.getAnnotations().stream().
+				filter(a -> doesDisplayAnnotationCategory(a.getAPICategory()))
+				.collect(Collectors.toList());
+
 		
 		// remove xrefs already mentioned in annotations 
-		Set<Long> idsToRemove = AnnotationUtils.getXrefIdsForAnnotations(entry.getAnnotations());
+		Set<Long> idsToRemove = AnnotationUtils.getXrefIdsForAnnotations(displayedAnnots);
 		
 		if (keepUniprotEntryXref()) {
 			xrefs.stream()
@@ -109,7 +111,6 @@ public abstract class PageViewBase implements PageView {
 	}
 
 	/**
-	 * (Not used yet)
 	 * Default implementation 
 	 * Subclasses should only override getAnnotationCategoryWhiteList() and optionally override filterOutAnnotation()
 	 */
@@ -117,12 +118,10 @@ public abstract class PageViewBase implements PageView {
 	public List<Annotation> getAnnotationsForGenericAnnotationViewer(Entry entry) {
 		return entry.getAnnotations().stream()
 				.filter(a -> getAnnotationCategoryWhiteList().contains(a.getAPICategory()))
-				.filter(a -> ! filterOutAnnotation(a))
 				.collect(Collectors.toList());
 	}
 
 	/**
-	 * (Not used yet)
 	 * Default implementation 
 	 * Subclasses should only override getFeatureCategoryWhiteList() and optionally override filterOutFeature()
 	 */
@@ -130,46 +129,12 @@ public abstract class PageViewBase implements PageView {
 	public List<Annotation> getAnnotationsForTripleAnnotationViewer(Entry entry) {
 		return entry.getAnnotations().stream()
 				.filter(a -> getFeatureCategoryWhiteList().contains(a.getAPICategory()))
-				.filter(a -> ! filterOutFeature(a))
 				.collect(Collectors.toList());
 	}
 	
 	@Override
 	public boolean doesDisplayAnnotationCategory(AnnotationCategory cat) {
 		return getFeatureCategoryWhiteList().contains(cat) || getAnnotationCategoryWhiteList().contains(cat);
-	}
-	
-	/**
-	 * Default implementation (subclasses should override this method if needed)
-	 *
-	 * Filter entry annotations based on any criteria
-	 * @param annotation annotation category to test
-	 * @return true if annotation category passes the filter
-	 */
-	protected boolean filterOutAnnotation(Annotation annotation) {
-		return false;
-	}
-
-	/**
-	 * Default implementation (subclasses should override this method if needed)
-	 *
-	 * Filter entry features based on any criteria
-	 * @param feature feature category to test
-	 * @return true if feature category passes the filter
-	 */
-	protected boolean filterOutFeature(Annotation feature) {
-		return false;
-	}
-
-	/**
-	 * Default implementation (subclasses should override this method if needed)
-	 *
-	 * Filter entry xrefs
-	 * @param xref cross ref to test
-	 * @return true if xref passes the filter
-	 */
-	protected boolean filterOutXref(DbXref xref) {
-		return false;
 	}
 
 	/**
