@@ -5,15 +5,10 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.core.domain.BioObject;
+
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
-import sun.applet.Main;
-
-import javax.swing.text.html.Option;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public abstract class AnnotationBuilderBastUnitTest {
