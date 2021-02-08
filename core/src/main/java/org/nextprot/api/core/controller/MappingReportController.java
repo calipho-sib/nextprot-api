@@ -27,7 +27,7 @@ public class MappingReportController {
 	MappingReportService mappingReportService;
 
 
-	@ApiMethod(path = "/mapping/hpa", verb = ApiVerb.GET, description = "Export mapping of HPA antibodies to neXtProt entries",
+	@ApiMethod(path = "/mapping/nextprot_hpa", verb = ApiVerb.GET, description = "Export mapping of HPA antibodies to neXtProt entries",
 			produces = { NextprotMediaType.SPLOG_MEDIATYPE_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/mapping/nextprot_hpa", method = {RequestMethod.GET})
 	public void exportHPAMappingReportFile(HttpServletRequest request, HttpServletResponse response) {
@@ -46,5 +46,27 @@ public class MappingReportController {
 			throw new NextProtException(e.getMessage()+": cannot export HPA antibodies mapping as "+ mediaType);
 		}
 	}
+
+	@ApiMethod(path = "/mapping/nextprot_refseq", verb = ApiVerb.GET, description = "Export mapping of RefSeq to neXtProt entries and/or isoforms",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/mapping/nextprot_refseq", method = {RequestMethod.GET})
+	public void exportRefSeqMappingReportFile(HttpServletRequest request, HttpServletResponse response) {
+
+		NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+		try (OutputStream os = response.getOutputStream()) {
+			String filename = "nextprot_ref." + mediaType.getExtension();
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+			List<String> data = mappingReportService.findRefSeqMapping();
+			MappingReportWriter writer = new MappingReportWriter(os);
+			writer.writeRefSeqMapping(data, mediaType);
+			writer.close();
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export HPA antibodies mapping as "+ mediaType);
+		}
+	}
+
+	
 	
 }

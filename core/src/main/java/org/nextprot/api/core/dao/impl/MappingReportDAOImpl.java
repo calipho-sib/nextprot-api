@@ -34,6 +34,18 @@ public class MappingReportDAOImpl implements MappingReportDAO {
 		});
 	}
 
+	@Override
+	public List<String> findRefSeqMapping() {
+		Map<String,Object> params = new HashMap<String,Object>();
+		SqlParameterSource namedParams = new MapSqlParameterSource(params);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("refseq-mapping-report"), namedParams, new RowMapper<String>() {
+			@Override
+			public String mapRow(ResultSet rs, int row) throws SQLException {
+				return rs.getString("nx_ac") + "|" + rs.getString("refseq_id") + "|" + rs.getString("refseq_nsid");
+			}
+		});
+	}
+
 
 
 

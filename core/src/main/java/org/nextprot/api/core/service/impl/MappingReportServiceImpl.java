@@ -20,4 +20,10 @@ class MappingReportServiceImpl implements MappingReportService {
 		return mappingReportDao.findHpaMapping();
 	}
 
+	@Override
+	@Cacheable(value = "nextprot-refseq-mapping", sync = true)
+	public List<String> findRefSeqMapping() {     
+		return mappingReportDao.findRefSeqMapping();
+	}
+
 }

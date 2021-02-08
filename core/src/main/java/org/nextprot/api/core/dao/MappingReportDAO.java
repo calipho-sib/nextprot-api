@@ -5,5 +5,6 @@ import java.util.List;
 public interface MappingReportDAO {
 
 	public List<String> findHpaMapping();
+	public List<String> findRefSeqMapping();
 
 }

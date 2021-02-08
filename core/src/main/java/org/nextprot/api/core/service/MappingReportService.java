@@ -5,6 +5,7 @@ import java.util.List;
 public interface MappingReportService {
 	
 	List<String> findHPAMapping();
+	List<String> findRefSeqMapping();
 
 
 }

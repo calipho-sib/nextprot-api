@@ -445,6 +445,10 @@
 			overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1">
 	</cache>
 
+	<cache name="nextprot-refseq-mapping" 
+			overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1">
+	</cache>
+
 
 
 </ehcache>
