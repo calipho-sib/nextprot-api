@@ -441,5 +441,10 @@
     		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500" >
     </cache>
 
+	<cache name="nextprot-hpa-mapping" 
+			overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1">
+	</cache>
+
+
 
 </ehcache>
