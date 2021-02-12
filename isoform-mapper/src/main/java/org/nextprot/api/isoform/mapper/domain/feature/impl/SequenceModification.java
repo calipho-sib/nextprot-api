@@ -116,6 +116,7 @@ public class SequenceModification extends SequenceFeatureBase {
             rules.put("PTM-0254", new Rule("PTM-0254",AminoAcidCode.THREONINE));
             rules.put("PTM-0255", new Rule("PTM-0255",AminoAcidCode.TYROSINE));
             rules.put("PTM-0237", new Rule("PTM-0237",AminoAcidCode.ARGININE));
+            rules.put("PTM-0505", new Rule("PTM-0250",AminoAcidCode.TRYPTOPHAN));
             rules.put("PTM-0565", new Rule("PTM-0565",AminoAcidCode.SERINE));
             rules.put("PTM-0550", new Rule("PTM-0550",AminoAcidCode.SERINE));
             rules.put("PTM-0551", new Rule("PTM-0551",AminoAcidCode.SERINE));
