@@ -47,6 +47,10 @@ public enum AnnotationCategory implements Serializable {
 	GENERIC_EXPRESSION(-15, "GenericExpression", "expression", "Expression", GENERAL_ANNOTATION),
 	MEDICAL(-13, "Medical", "medical", "Medical", GENERAL_ANNOTATION),
 	KEYWORD(-14, "Keyword", "keyword", "Keywords", GENERAL_ANNOTATION),
+	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", GENERAL_ANNOTATION),
+	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERAL_ANNOTATION),
+
+
 
 
 	//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
@@ -75,7 +79,6 @@ public enum AnnotationCategory implements Serializable {
 
 	NON_CONSECUTIVE_RESIDUE(1031, "non-consecutive residues", "nonConsecutiveResidue", "Non-consecutive residue", POSITIONAL_ANNOTATION),
 	NON_TERMINAL_RESIDUE(1032, "non-terminal residue", "nonTerminalResidue", "Non-terminal residue", POSITIONAL_ANNOTATION),
-	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", POSITIONAL_ANNOTATION),
 
 	INITIATOR_METHIONINE(1000, "initiator methionine", "initiatorMethionine", "Initiator methionine", PROCESSING_PRODUCT),
 	SIGNAL_PEPTIDE(1001, "signal peptide", "signalPeptide", "Signal peptide", PROCESSING_PRODUCT),
@@ -115,7 +118,6 @@ public enum AnnotationCategory implements Serializable {
 	CROSS_LINK(1023, "cross-link", "crossLink", "Cross-link", GENERIC_PTM),
 	DISULFIDE_BOND(1022, "disulfide bond", "disulfideBond", "Disulfide bond", GENERIC_PTM),
 	MODIFIED_RESIDUE(13, "amino acid modification", "modifiedResidue", "Modified residue", GENERIC_PTM),
-	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERIC_PTM),
 
 	HELIX(1024, "helix", "helix", "Helix", SECONDARY_STRUCTURE),
 	TURN(1025, "turn", "turn", "Turn", SECONDARY_STRUCTURE),

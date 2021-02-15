@@ -30,23 +30,32 @@ public class QuickAndDirtyKeywordProcessor {
 		for (Annotation a:annotations) {
 						
 			if (a.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE) {
-				if ("PTM-0528".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0529".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0530".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0531".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0532".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0551".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0565".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
-				if ("PTM-0568".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;				
+				if      ("PTM-0528".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0529".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0530".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0531".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0532".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0551".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0565".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0568".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;	
+				else if ("PTM-0553".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0574".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0552".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0550".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0505".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0582".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+				else if ("PTM-0580".equals(a.getCvTermAccessionCode())) shouldHaveKW_0325 = true;
+			    
 			} else if (a.getAPICategory() == AnnotationCategory.MODIFIED_RESIDUE) {				
-				if ("PTM-0237".equals(a.getCvTermAccessionCode())) shouldHaveKW_0488 = true;
-				if ("PTM-0253".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
-				if ("PTM-0254".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
-				if ("PTM-0255".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;				
+				if      ("PTM-0237".equals(a.getCvTermAccessionCode())) shouldHaveKW_0488 = true;
+				else if ("PTM-0253".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
+				else if ("PTM-0254".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
+				else if ("PTM-0255".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;				
+
 			} else if (a.getAPICategory() == AnnotationCategory.UNIPROT_KEYWORD) {
-				if ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
-				if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
-				if ("KW-0597".equals(a.getCvTermAccessionCode())) hasKW_0597 = true;								
+				if      ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
+				else if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
+				else if ("KW-0597".equals(a.getCvTermAccessionCode())) hasKW_0597 = true;								
 			}
 		}
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
