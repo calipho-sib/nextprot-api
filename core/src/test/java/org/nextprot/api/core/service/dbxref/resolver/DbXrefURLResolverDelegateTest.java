@@ -55,6 +55,16 @@ public class DbXrefURLResolverDelegateTest {
     }
     
     @Test
+    public void testResolveMassive() throws Exception {
+
+        DbXref xref = createDbXref("MSVp000780371", "MassIVE", "");
+        Assert.assertEquals(
+        		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=MSVp000780371", 
+        		resolver.resolve(xref)
+        );
+    }
+
+    @Test
     public void testResolveWEBINFO() throws Exception {
 
         DbXref xref = createDbXref("babebibobu", "WEBINFO", "");
