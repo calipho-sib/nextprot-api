@@ -56,6 +56,11 @@ public class ProteomicsPageView extends PageViewBase {
 	}
 
 	@Override
+	public boolean keepHpaENSGXrefs() { 
+		return false; 
+	}
+	
+	@Override
 	public String getLabel() {
 		return "Proteomics";
 	}
