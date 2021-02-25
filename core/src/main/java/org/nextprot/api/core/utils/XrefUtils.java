@@ -40,4 +40,15 @@ public class XrefUtils {
 		return xrefsFiltered;
 	}
 
+	public static List<DbXref> filterOutHpaENSGXrefs(List<DbXref> xrefs) {
+		List<DbXref> xrefsFiltered = new ArrayList<DbXref>();
+		for (DbXref xref : xrefs) {
+			if (xref.getDatabaseName().equals("HPA") && xref.getAccession().startsWith("ENSG")) continue;
+			xrefsFiltered.add(xref);
+		}
+		return xrefsFiltered;
+	}
+
+	
+	
 }

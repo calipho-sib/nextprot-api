@@ -55,6 +55,16 @@ public class DbXrefURLResolverDelegateTest {
     }
     
     @Test
+    public void testResolveMassive() throws Exception {
+
+        DbXref xref = createDbXref("MSVp000780371", "MassIVE", "");
+        Assert.assertEquals(
+        		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=MSVp000780371", 
+        		resolver.resolve(xref)
+        );
+    }
+
+    @Test
     public void testResolveWEBINFO() throws Exception {
 
         DbXref xref = createDbXref("babebibobu", "WEBINFO", "");
@@ -366,8 +376,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647", "HPA", "whatever");
 
-        Assert.assertEquals("https://v19.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
-        Assert.assertEquals("https://v19.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v20.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+        Assert.assertEquals("https://v20.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -376,8 +386,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
-        Assert.assertEquals("https://v19.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
-        Assert.assertEquals("https://v19.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v20.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
+        Assert.assertEquals("https://v20.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -386,8 +396,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("HPA018312", "HPA", "whatever");
 
-        Assert.assertEquals("https://v19.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
-        Assert.assertEquals("https://v19.proteinatlas.org/search/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v20.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+        Assert.assertEquals("https://v20.proteinatlas.org/search/%s", xref.getLinkUrl());
     }
 
 
