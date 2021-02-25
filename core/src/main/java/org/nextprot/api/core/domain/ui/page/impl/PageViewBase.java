@@ -72,6 +72,11 @@ public abstract class PageViewBase implements PageView {
 		return false;
 	}
 		
+	@Override
+	public boolean keepHpaENSGXrefs() {
+		return true;
+	}
+		
 	/**
 	 * Default implementation
 	 * Subclasses should only override getXrefDatabaseWhiteList() and optionally override keepUniprotEntryXref()
@@ -97,15 +102,18 @@ public abstract class PageViewBase implements PageView {
 		
 		// remove xrefs already mentioned in annotations 
 		Set<Long> idsToRemove = AnnotationUtils.getXrefIdsForAnnotations(displayedAnnots);
-		
 		if (keepUniprotEntryXref()) {
 			xrefs.stream()
 				.filter(x -> x.getAccession().equals(entry.getUniprotName()) && x.getDatabaseName().equals("UniProt"))
 				.findFirst()
-				.ifPresent(x -> idsToRemove.remove(x.getDbXrefId()));
-		
+				.ifPresent(x -> idsToRemove.remove(x.getDbXrefId()));		
 		}
 		xrefs = XrefUtils.filterOutXrefsByIds(xrefs, idsToRemove);
+		
+		// remove xrefs from HPA for ENSG expression if requested
+		if (! keepHpaENSGXrefs()) {
+			xrefs = XrefUtils.filterOutHpaENSGXrefs(xrefs);
+		}
 		return xrefs;
 
 	}

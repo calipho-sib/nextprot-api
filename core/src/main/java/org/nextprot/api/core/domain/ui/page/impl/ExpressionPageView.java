@@ -38,7 +38,7 @@ public class ExpressionPageView extends PageViewBase {
 	@Nonnull
 	@Override
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
-		return Arrays.asList(ABCD, ANTIBODYPEDIA, BGEE, GERM_ONLINE, HPA, EXPRESSION_ATLAS, GENEVISIBLE);
+		return Arrays.asList(ABCD, ANTIBODYPEDIA, BGEE, CPTC, EXPRESSION_ATLAS, GENEVISIBLE, GERM_ONLINE, HPA);
 	}
 
 	@Override

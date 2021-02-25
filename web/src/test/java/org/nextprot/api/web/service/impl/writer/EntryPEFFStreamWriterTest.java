@@ -19,6 +19,36 @@ public class EntryPEFFStreamWriterTest extends WebIntegrationBaseTest {
     private EntryReportStatsService entryReportStatsService;
 
     @Test
+    public void testPeffExportWithRightTermNameForMOD_00156() throws Exception {
+        // new name in psi-mod.obo from
+        // https://raw.githubusercontent.com/HUPO-PSI/psi-mod-CV/master/PSI-MOD.obo
+        // copied as a resource in /nextprot-api-core/src/main/resources/org/nextprot/api/core/service/impl/peff/PSI-MOD.obo
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out, entryBuilderService, entryReportStatsService);
+        exporter.write(Arrays.asList("NX_O75106"));
+        Assert.assertTrue(out.toString().contains("MOD:00156|L-2',4',5'-topaquinone"));        
+        exporter.close();
+    }
+    
+    @Test
+    public void testPeffExportWithRightTermNameFor_MOD_00186() throws Exception {
+        // new name in psi-mod.obo from
+        // https://raw.githubusercontent.com/HUPO-PSI/psi-mod-CV/master/PSI-MOD.obo
+        // copied as a resource in /nextprot-api-core/src/main/resources/org/nextprot/api/core/service/impl/peff/PSI-MOD.obo
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        EntryPEFFStreamWriter exporter = new EntryPEFFStreamWriter(out, entryBuilderService, entryReportStatsService);
+        exporter.write(Arrays.asList("NX_P01266"));
+        Assert.assertTrue(out.toString().contains("MOD:00186|3,3',5-triiodo-L-thyronine"));
+
+        exporter.close();
+    }
+    
+    
+    @Test
     public void testPeffExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -54,5 +84,7 @@ public class EntryPEFFStreamWriterTest extends WebIntegrationBaseTest {
                 "FEDMENVPLDRSSHCQREEAGGRDGGSSLGFKRSYEEHIPYTHMNGGKKNGRILTLPRSN\r\n" +
                 "PS\r\n"));
         Assert.assertFalse(out.toString().contains("\\DbUniqueId"));
+        
+        exporter.close();
     }
 }

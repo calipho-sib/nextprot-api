@@ -57,6 +57,12 @@ public interface PageView {
 	boolean keepUniprotEntryXref();
 
 	/**
+	 * Used by getFurtherExternalLinksXrefs()
+	 * @return true in default implementation, only Proteomics page should override it and set to false
+	 */
+	boolean keepHpaENSGXrefs();
+
+	/**
 	 * Used by EntryPublicationUtils to build the "Cited for" field content
 	 * @param annotationCategory
 	 * @return true it the view displays the annotation category either in the generic annotation viewer or in the feature triple viewer
