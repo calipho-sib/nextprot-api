@@ -80,7 +80,7 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
                 "\"geneName\" : \"INS\"",
                 "\"chromosomalLocation\" : \"11p15.5\"",
                 "\"geneStartPosition\" : \"2159779\"",
-                "\"geneEndPosition\" : \"2161341\"",
+                "\"geneEndPosition\" : \"2161221\"",
                 "\"codingStrand\" : \"reverse\"",
                 "\"entryAccession\" : \"NX_P01308\"",
                 "\"proteinExistence\" : \"protein level\"",

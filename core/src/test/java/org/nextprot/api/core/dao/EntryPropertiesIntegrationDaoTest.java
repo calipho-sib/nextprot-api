@@ -17,7 +17,6 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 	public void testFindEntryProperties() {
 		EntryProperties props = this.entryPropertieDao.findEntryProperties("NX_P51659");
 		assertTrue(props.getMaxSeqLen() > 760);
-		assertTrue(props.getInteractionCount() > 17);
 		assertTrue(props.getFilterstructure());
 		assertTrue(props.getFilterdisease());
 		assertTrue(props.getFilterexpressionprofile());
