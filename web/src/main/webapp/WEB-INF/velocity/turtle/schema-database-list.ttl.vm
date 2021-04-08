@@ -7,19 +7,16 @@
 :Database
       rdf:type owl:Class ;
       rdfs:comment "Database of the cross-reference"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       .
 
 :Xref
       rdf:type owl:Class ;
       rdfs:comment "Cross reference"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       .
       
 :Identifier
       rdf:type owl:Class ;
       rdfs:comment "Identifier type"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       .
       
       
