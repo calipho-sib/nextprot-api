@@ -7,7 +7,6 @@
 :Term
       rdf:type owl:Class ;
       rdfs:comment "A concept used to classify resources."^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       owl:equivalentClass up:Concept;
       .
        

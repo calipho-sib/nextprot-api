@@ -7,5 +7,4 @@
 :ExperimentalContext
       rdf:type owl:Class ;
       rdfs:comment "Experimental variables related to evidences"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       .

@@ -8,8 +8,8 @@
 
 #foreach($annotation in $annotationList)
 #if($annotation.apiTypeName != "Root")
-:$annotation.apiTypeName
-   rdf:type :AnnotationType;
+##:$annotation.apiTypeName
+  ## rdf:type :AnnotationType;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
 #end

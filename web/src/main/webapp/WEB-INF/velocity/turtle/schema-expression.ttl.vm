@@ -8,7 +8,6 @@
 
 :ExpressionLevel
       rdf:type owl:Class ;
-      rdfs:subClassOf owl:Thing ;
       rdfs:comment "Expression levels detected during experiment"^^xsd:string ;
       .
 
@@ -42,7 +41,7 @@
 :Negative
       rdf:type :ExpressionLevel ;
       rdfs:comment "High level of expression"^^xsd:string ;
-      .      
+      .        
 
 #
 # what about not detected?
