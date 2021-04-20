@@ -1,6 +1,6 @@
-package org.nextprot.api.user.dao;
+package org.nextprot.api.core.dao;
 
-import org.nextprot.api.user.domain.FunctionPrediction;
+import org.nextprot.api.core.domain.FunctionPrediction;
 import java.util.List;
 
 public interface FunctionPredictionDAO {
