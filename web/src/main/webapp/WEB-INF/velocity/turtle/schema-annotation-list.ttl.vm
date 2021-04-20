@@ -3,21 +3,25 @@
 #end
 
 #
-# Define super classes for annotations
+# Define classes for annotations
 #
 
+:AnnotationType 
+  rdf:type owl:Class;
+  rdfs:label "Annotation type"^^xsd:string;  
+  rdfs:comment "Most generic annotation class"^^xsd:string;
+  .
+ 
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "Root")
+#if($annotation.apiTypeName != "AnnotationType")
 :$annotation.apiTypeName
-   rdf:type :AnnotationType;
+   rdfs:subClassOf :$annotation.parent.apiTypeName ;
+   rdfs:label "$annotation.label"^^xsd:string;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
-#end
-   rdfs:label "$annotation.label"^^xsd:string;
-#foreach($parent in $annotation.getAllParentsButRoot())
-   rdfs:subClassOf :$parent.apiTypeName;
-#end
-   .   
+#end   
+   .
+   
 #end
 #end
 
