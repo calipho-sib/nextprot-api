@@ -37,7 +37,7 @@ public class FunctionPredictionServiceImpl implements FunctionPredictionService 
                     String cvTermAccession = functionPrediction.getCvTermAccession();
                     CvTerm cvTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(cvTermAccession);
                     functionPrediction.setType(cvTerm.getOntologyAltname());
-                    functionPrediction.setCvName(cvTerm.getName());
+                    functionPrediction.setCvTermName(cvTerm.getName());
                     functionPrediction.setCvTermDescription(cvTerm.getDescription());
 
                     //Evidences

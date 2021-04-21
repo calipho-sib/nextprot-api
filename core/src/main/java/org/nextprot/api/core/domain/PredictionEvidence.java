@@ -7,18 +7,18 @@ public class PredictionEvidence {
 
     private String statementID;
 
-    private String ecoCodeAccession;
+    private String evidenceCodeAC;
 
-    private String ecoCodeName;
+    private String evidenceCodeName;
 
-    private String publicationAccession;
+    private String publicationAc;
 
     private String publicationDatabaseName;
 
     private List<String> orcIDs = new ArrayList<>();
 
     public PredictionEvidence(String ecoCodeAccession) {
-        this.ecoCodeAccession = ecoCodeAccession;
+        this.evidenceCodeAC = ecoCodeAccession;
     }
 
     public void setStatementID(String statementID) {
@@ -26,7 +26,7 @@ public class PredictionEvidence {
     }
 
     public void setPublicationAccession(String publicationAccession) {
-        this.publicationAccession = publicationAccession;
+        this.publicationAc = publicationAccession;
     }
 
     public void setPublicationDatabaseName(String publicationDatabaseName) {
@@ -34,7 +34,7 @@ public class PredictionEvidence {
     }
 
     public void setEcoCodeName(String ecoCodeName) {
-        this.ecoCodeName = ecoCodeName;
+        this.evidenceCodeName = ecoCodeName;
     }
 
     public void addOcrIDs(String orcID) {
@@ -46,7 +46,7 @@ public class PredictionEvidence {
     }
 
     public String getPublicationAccession() {
-        return this.publicationAccession;
+        return this.publicationAc;
     }
 
     public String getPublicationDatabaseName() {
@@ -54,11 +54,11 @@ public class PredictionEvidence {
     }
 
     public String getEcoCodeAccession() {
-        return this.ecoCodeAccession;
+        return this.evidenceCodeAC;
     }
 
     public String getEcoCodeName() {
-        return this.ecoCodeName;
+        return this.evidenceCodeName;
     }
 
     public List<String> getOrcIDs() {

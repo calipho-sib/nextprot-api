@@ -10,16 +10,16 @@ public class FunctionPrediction {
 
     private String entryAC;
 
-    private String cvTermAccession;
+    private String cvTermAccessionCode;
 
-    private String cvName;
+    private String cvTermName;
 
     private String cvTermDescription;
 
     private List<PredictionEvidence> evidences = new ArrayList<>();
 
     public FunctionPrediction(String cvTermAccession) {
-        this.cvTermAccession = cvTermAccession;
+        this.cvTermAccessionCode = cvTermAccession;
     }
 
     public void setEntryAC(String entryAC) {
@@ -30,8 +30,8 @@ public class FunctionPrediction {
         this.type = type;
     }
 
-    public void setCvName(String cvName) {
-        this.cvName = cvName;
+    public void setCvTermName(String cvTermName) {
+        this.cvTermName = cvTermName;
     }
 
     public void setCvTermDescription(String cvTermDescription) {
@@ -47,11 +47,11 @@ public class FunctionPrediction {
     }
 
     public String getCvTermAccession() {
-        return this.cvTermAccession;
+        return this.cvTermAccessionCode;
     }
 
-    public String getCvName() {
-        return this.cvName;
+    public String getCvTermName() {
+        return this.cvTermName;
     }
 
     public String getCvTermDescription() {
