@@ -43,9 +43,9 @@ public class FunctionPredictionServiceImpl implements FunctionPredictionService 
                     //Evidences
                     functionPrediction.getEvidences()
                             .forEach(predictionEvidence -> {
-                                String ecoCodeAccession = predictionEvidence.getEcoCodeAccession();
+                                String ecoCodeAccession = predictionEvidence.getEvidenceCodeAC();
                                 CvTerm ecoCVTerm = terminologyService.findCvTermByAccessionOrThrowRuntimeException(ecoCodeAccession);
-                                predictionEvidence.setEcoCodeName(ecoCVTerm.getName());
+                                predictionEvidence.setEvidenceCodeName(ecoCVTerm.getName());
                             });
 
                     aggregateFunctionPrediction.addPrediction(functionPrediction);

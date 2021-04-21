@@ -5,10 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.FunctionPredictionDAO;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.FunctionPrediction;
 import org.nextprot.api.core.domain.PredictionEvidence;
-import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -58,7 +56,7 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
 
             PredictionEvidence predictionEvidence = new PredictionEvidence(ecoCodeAccession);
             predictionEvidence.setStatementID(statementID);
-            predictionEvidence.setPublicationAccession(publicationAccession);
+            predictionEvidence.setPublicationAc(publicationAccession);
             predictionEvidence.setPublicationDatabaseName(publicationDB);
             StringTokenizer tokenizer = new StringTokenizer(userOrcIDs,",");
             while(tokenizer.hasMoreTokens()) {
