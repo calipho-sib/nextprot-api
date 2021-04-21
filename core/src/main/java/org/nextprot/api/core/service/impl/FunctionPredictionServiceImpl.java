@@ -1,17 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
-import com.sun.xml.internal.rngom.digested.DGroupPattern;
 import org.nextprot.api.core.dao.FunctionPredictionDAO;
 import org.nextprot.api.core.domain.AggregateFunctionPrediction;
 import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.FunctionPrediction;
 import org.nextprot.api.core.service.FunctionPredictionService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+
 
 @Service
 public class FunctionPredictionServiceImpl implements FunctionPredictionService {
