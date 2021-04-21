@@ -1,9 +1,8 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.FunctionPrediction;
-import java.util.List;
+import org.nextprot.api.core.domain.AggregateFunctionPrediction;
 
 public interface FunctionPredictionService {
 
-    List<FunctionPrediction> getFunctionPredictions();
+    AggregateFunctionPrediction getFunctionPredictions(String entryAccession);
 }

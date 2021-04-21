@@ -1,16 +1,14 @@
 package org.nextprot.api.core.domain;
 
-import org.nextprot.api.core.service.TerminologyService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class FunctionPrediction {
 
     // GO Function type: biological process or molecular function
     private String type;
+
+    private String entryAC;
 
     private String cvTermAccession;
 
@@ -24,12 +22,28 @@ public class FunctionPrediction {
         this.cvTermAccession = cvTermAccession;
     }
 
+    public void setEntryAC(String entryAC) {
+        this.entryAC = entryAC;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public void setCvName(String cvName) {
         this.cvName = cvName;
     }
 
     public void setCvTermDescription(String cvTermDescription) {
         this.cvTermDescription = cvTermDescription;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getEntryAC() {
+        return this.entryAC;
     }
 
     public String getCvTermAccession() {

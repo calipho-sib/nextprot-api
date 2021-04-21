@@ -32,9 +32,10 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
     private DataSourceServiceLocator dsLocator;
 
     @Override
-    public List<FunctionPrediction> getPredictions() {
+    public List<FunctionPrediction> getPredictions(String entryAccession) {
 
         MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("entry_ac", entryAccession);
         return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())
                 .query(sqlDictionary.getSQLQuery("read-prediction-list"), namedParameters, new FunctionPredictionRowMapper());
     }
@@ -43,7 +44,10 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
 
         public FunctionPrediction mapRow(ResultSet resultSet, int row) throws SQLException {
             String cvTermAccession = resultSet.getString("cv_term_ac");
+            String entryAccession = resultSet.getString("entry_ac");
+
             FunctionPrediction prediction = new FunctionPrediction(cvTermAccession);
+            prediction.setEntryAC(entryAccession);
 
             //Evidence
             String ecoCodeAccession = resultSet.getString("evidence_code_ac");
