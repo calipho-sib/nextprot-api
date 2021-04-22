@@ -1,9 +1,6 @@
 package org.nextprot.api.core.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AggregateFunctionPrediction {
 
@@ -15,15 +12,26 @@ public class AggregateFunctionPrediction {
         this.entryAC = entryAC;
     }
 
-    public void addPrediction(FunctionPrediction functionPrediction) {
-        String type = functionPrediction.getType();
+    public void addPrediction(FunctionPrediction newFunctionPrediction) {
+        String type = newFunctionPrediction.getType();
         if(predictions.get(type) == null) {
             List<FunctionPrediction> predictionsByType = new ArrayList<>();
-            predictionsByType.add(functionPrediction);
+            predictionsByType.add(newFunctionPrediction);
             predictions.put(type, predictionsByType);
         } else {
             List<FunctionPrediction> predictionsByType = predictions.get(type);
-            predictionsByType.add(functionPrediction);
+
+            // Evidence aggregation: only add an evidence if the GO term is the same
+            Optional<FunctionPrediction> functionPredictionByCVTerm = predictionsByType.stream()
+                    .filter(functionPrediction -> functionPrediction.getCvTermAccession().equals(newFunctionPrediction.getCvTermAccession()))
+                    .findAny();
+
+            if(functionPredictionByCVTerm.isPresent()){
+                functionPredictionByCVTerm.get()
+                        .addEvidence(newFunctionPrediction.getEvidences().get(0));
+            } else {
+                predictionsByType.add(newFunctionPrediction);
+            }
         }
     }
     public String getEntryAC() {
