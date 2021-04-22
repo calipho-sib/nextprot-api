@@ -17,6 +17,8 @@ public class PredictionEvidence {
 
     private List<String> orcIDs = new ArrayList<>();
 
+    private boolean userHidden;
+
     public PredictionEvidence(String evidenceCodeAC) {
         this.evidenceCodeAC = evidenceCodeAC;
     }
@@ -41,6 +43,10 @@ public class PredictionEvidence {
         this.orcIDs.add(orcID);
     }
 
+    public void setUserHidden(boolean userHidden) {
+        this.userHidden = userHidden;
+    }
+
     public String getStatementID() {
         return this.statementID;
     }
@@ -63,5 +69,9 @@ public class PredictionEvidence {
 
     public List<String> getOrcIDs() {
         return this.orcIDs;
+    }
+
+    public boolean getUserHidden() {
+        return this.userHidden;
     }
 }

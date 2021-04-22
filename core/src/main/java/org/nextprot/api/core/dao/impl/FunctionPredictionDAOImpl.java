@@ -51,6 +51,7 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
             String ecoCodeAccession = resultSet.getString("evidence_code_ac");
             String statementID = resultSet.getString("statement_id");
             String userOrcIDs = resultSet.getString( "user_orcid");
+            boolean userHidden = resultSet.getBoolean( "user_hidden");
             String publicationAccession = resultSet.getString( "publication_ac");
             String publicationDB = resultSet.getString( "publication_db");
 
