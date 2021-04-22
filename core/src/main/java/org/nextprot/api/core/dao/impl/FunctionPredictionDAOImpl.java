@@ -59,6 +59,7 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
             predictionEvidence.setStatementID(statementID);
             predictionEvidence.setPublicationAc(publicationAccession);
             predictionEvidence.setPublicationDatabaseName(publicationDB);
+            predictionEvidence.setUserHidden(userHidden);
             StringTokenizer tokenizer = new StringTokenizer(userOrcIDs,",");
             while(tokenizer.hasMoreTokens()) {
                 predictionEvidence.adduserOrcIDs(tokenizer.nextToken());
