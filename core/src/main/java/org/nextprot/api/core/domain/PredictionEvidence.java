@@ -15,7 +15,7 @@ public class PredictionEvidence {
 
     private String publicationDatabaseName;
 
-    private List<String> orcIDs = new ArrayList<>();
+    private List<String> userOrcIDs = new ArrayList<>();
 
     private boolean userHidden;
 
@@ -39,8 +39,8 @@ public class PredictionEvidence {
         this.evidenceCodeName = ecoCodeName;
     }
 
-    public void addOcrIDs(String orcID) {
-        this.orcIDs.add(orcID);
+    public void adduserOrcIDs(String orcID) {
+        this.userOrcIDs.add(orcID);
     }
 
     public void setUserHidden(boolean userHidden) {
@@ -67,8 +67,8 @@ public class PredictionEvidence {
         return this.evidenceCodeName;
     }
 
-    public List<String> getOrcIDs() {
-        return this.orcIDs;
+    public List<String> getUserOrcIDs() {
+        return this.userOrcIDs;
     }
 
     public boolean getUserHidden() {
