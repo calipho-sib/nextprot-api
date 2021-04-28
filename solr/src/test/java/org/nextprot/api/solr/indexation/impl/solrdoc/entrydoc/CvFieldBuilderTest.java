@@ -38,7 +38,7 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		// evidence - experimentalContext - Disease
 		Assert.assertTrue(cvAcs.contains("C3059"));
 		// evidence - experimentalContext - Tissue
-		Assert.assertTrue(cvAcs.contains("TS-0285"));
+		Assert.assertTrue(cvAcs.contains("TS-2578"));
 
 		// evidence - experimentalContext - DevelopmentalStage : see shouldContainCvTermsFromExperimentalContext_devStage
 		// evidence - experimentalContext - CellLine: no example found

@@ -84,17 +84,19 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         int[] roots = graph.getSources();
           
-        // pam 20.07.2020
-        // we normally expect 1 root, but here we have a node beeing a child of 
-        // a biological process (another go terminology) so it appears as a root
-        // it doesn't seem to disturb any functionality
-        Assert.assertEquals(2, roots.length);
+        Assert.assertEquals(1, roots.length);
 
         List<String> accessions = new ArrayList<>();
         for (int i=0 ; i<roots.length ; i++) accessions.add(graph.getCvTermAccessionById(roots[i]));
 
         Assert.assertTrue(accessions.contains("GO:0003674")); // Molecular function (the real root)
-        Assert.assertTrue(accessions.contains("GO:0140312")); // Cargo adaptor activity (the fake root)
+        // pam 20.07.2020
+        // we normally expect 1 root, but, on 20.07.2020, here we have a node being a child of
+        // a biological process (another go terminology) so it appears as a root
+        // it doesn't seem to disturb any functionality
+        // val 26.03.2021
+        // the child has disappeared, so now, we check that that child doesn't exist.
+        Assert.assertFalse(accessions.contains("GO:0140312")); // Cargo adaptor activity (the fake root)
         
     }
 

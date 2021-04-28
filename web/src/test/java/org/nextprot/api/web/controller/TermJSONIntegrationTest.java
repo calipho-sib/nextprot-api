@@ -112,7 +112,7 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
         String content = result.getResponse().getContentAsString();
         int count = StringUtils.countOccurrencesOf(content, "accession");
 
-        Assert.assertEquals(1100, count, 50);
+        Assert.assertEquals(1200, count, 50);
 
     }
 

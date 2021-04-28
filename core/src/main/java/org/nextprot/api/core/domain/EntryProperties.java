@@ -14,6 +14,7 @@ public class EntryProperties  implements Serializable {
 	private boolean filterexpressionprofile;
 
 	@Deprecated
+	// Computed in NP2 (nextprot-api)
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
 	}
@@ -38,6 +39,8 @@ public class EntryProperties  implements Serializable {
 		this.filterstructure = filterstructure;
 	}
 
+	@Deprecated
+	// Computed in NP2 (nextprot-api)
 	public int getInteractionCount() {
 		return interactionCount;
 	}
