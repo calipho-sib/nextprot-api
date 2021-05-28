@@ -36,9 +36,11 @@ public class EntriesSearchController {
 			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "NDVVPTMAQGVLEYK" }) 
 			@RequestParam(value = "peptide", required = true) String peptide,
 			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "false" })
-			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch) {
+			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch,
+			@ApiQueryParam(name = "mode I/L", description = "Tells if leucine and isoleucine are considered to be equivalent. Default is true.", allowedvalues = { "true" })
+			@RequestParam(value = "mode-il", required = false) Boolean modeIL) {
 		checkPeptideLength(Arrays.stream(peptide.split(",")));
-		return getEntriesWithPeptides(peptide, "GET", noVariantMatch);
+		return getEntriesWithPeptides(peptide, "GET", noVariantMatch, modeIL);
 	}
 
 	@ResponseBody
@@ -47,19 +49,24 @@ public class EntriesSearchController {
 	// TODO: add description of body
 	public List<Entry> pepx(@ApiBodyObject @RequestBody List<String> peptideList,
 			@ApiQueryParam(name = "no variant match", description = "Tells if the variants should be taken into account for match", allowedvalues = { "false" })
-			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch) {
+			@RequestParam(value = "no-variant-match", required = false) boolean noVariantMatch,
+			@ApiQueryParam(name = "mode I/L", description = "Tells if leucine and isoleucine are considered to be equivalent. Default is true.", allowedvalues = { "true" })
+			@RequestParam(value = "mode-il", required = false) Boolean modeIL) {
 		NPreconditions.checkNotNull(peptideList, "The peptide list must be not null");
 		NPreconditions.checkNotEmpty(peptideList, "The peptide list must be not empty");
 		checkPeptideLength(peptideList.stream());
-		return getEntriesWithPeptides(String.join(",", peptideList), "POST", noVariantMatch);
+		return getEntriesWithPeptides(String.join(",", peptideList), "POST", noVariantMatch, modeIL);
 	}
 
 	private void checkPeptideLength(Stream<String> peptideList) {
 		NPreconditions.checkTrue(peptideList.allMatch(p -> p.length() >= 6), "The minimum length of all peptides must be 6");
 	}
 
-	private List<Entry> getEntriesWithPeptides(String peptide, String method, boolean ignoreVariantMatches) {
-		Boolean modeIL = new Boolean(true);
+	private List<Entry> getEntriesWithPeptides(String peptide, String method, boolean ignoreVariantMatches, Boolean modeIL) {
+		// Default value for modeIL is true due to legacy (when the parameter didn't exit)
+		if (modeIL == null) {
+			modeIL = true;
+		}
 		return pepXService.findEntriesWithPeptides(peptide, modeIL, method, ignoreVariantMatches);
 	}
 }
