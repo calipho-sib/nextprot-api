@@ -1,11 +1,13 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
 import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
+import org.nextprot.api.etl.service.preprocess.impl.StatementPreProcessServiceImpl;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
@@ -30,6 +32,8 @@ import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementTransformerServiceImpl implements StatementTransformerService {
+
+	protected final Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
 
 	@Autowired
 	private SequenceFeatureFactoryService sequenceFeatureFactoryService;
@@ -75,6 +79,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 			int cpt = 0;
 			for (Statement rawStatement : rawStatements) {
+				LOGGER.info("Transforming statement " + rawStatement.toJsonString());
 				cpt++;
 				//System.out.println("Handling rawStatement " + cpt + " / " + this.rawStatements.size());
 				if (isPhenotypicVariation(rawStatement)) {
