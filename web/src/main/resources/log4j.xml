@@ -105,8 +105,8 @@
 		<level value="INFO" />
 	</logger>
 
-	<logger name="org.nextprot.api.core.dao.IsoformDAO">
-		<level value="DEBUG" />
+	<logger name="org.nextprot.api.core.dao">
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.apache.http">
