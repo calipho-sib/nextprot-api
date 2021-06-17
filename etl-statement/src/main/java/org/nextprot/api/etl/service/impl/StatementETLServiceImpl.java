@@ -128,36 +128,36 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			while(bufferedJsonStatementReader.hasStatement()) {
 				List<Statement> currentStatements = bufferedJsonStatementReader.readStatements();
-				LOGGER.info("step: extract, read_statements: " + currentStatements.size() + ", time:  -");
+				LOGGER.info("step: extract, 'read_statements': " + currentStatements.size() + ", time:  -");
 				Set<Statement> rawStatements = new HashSet<>(currentStatements);
-				LOGGER.info("step: extract, raw_statements: " + rawStatements.size() + ", time:  -");
+				LOGGER.info("{ 'step': extract, 'raw_statements': " + rawStatements.size() + ", time:  -");
 				if (!currentStatements.isEmpty()) {
 					// transform the batch of statements
 					long transformStart = System.currentTimeMillis();
 					Collection<Statement> mappedStatements = transformStatements(source, rawStatements, report);
 					long transformTime = (System.currentTimeMillis() - transformStart) / 1000;
 					if(mappedStatements == null) {
-						LOGGER.info("'step' : transform, statements: 0, time:" + transformTime);
+						LOGGER.info("{ 'step' : transform, 'statements': 0, time:" + transformTime + " }");
 						// Still need to store the raw statements
 						long loadStart = System.currentTimeMillis();
 						loadStatements(source, currentStatements, null, load, report);
 						long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
 						rawStatementsLoaded += currentStatements.size();
-						LOGGER.info("'step' : load , mappedStatements: rowStatements: " + currentStatements.size() + ", time: " + loadTime);
+						LOGGER.info("{ 'step' : load , 'mappedStatements': rowStatements: " + currentStatements.size() + ", 'time': " + loadTime + " }");
 					} else {
-						LOGGER.info("'step' : transform, statements: " + mappedStatements.size() + ", time:" + transformTime);
+						LOGGER.info("{ 'step' : transform, 'statements': " + mappedStatements.size() + ", 'time':" + transformTime + " }");
 						if(!mappedStatements.isEmpty()) {
 							long loadStart = System.currentTimeMillis();
 							loadStatements(source, currentStatements, mappedStatements, load, report);
 							rawStatementsLoaded += currentStatements.size();
 							entryMappedStatementsLoaded += mappedStatements.size();
 							long loadTime = (System.currentTimeMillis() - loadStart) / 1000;
-							LOGGER.info("'step' : load , mappedStatements: " + mappedStatements.size() + ", rowStatements: " + currentStatements.size() + ", time: " + loadTime);
+							LOGGER.info("{'step' : load , 'mappedStatements': " + mappedStatements.size() + ", 'rowStatements': " + currentStatements.size() + ", 'time': " + loadTime + " }");
 						}					
 					}
 				}
 				stmtProcessedSoFar += currentStatements.size();
-				LOGGER.info("'step' : status, statements processed so far: " + stmtProcessedSoFar + ",raw_statements: " + rawStatementsLoaded + ", entryMapped: " + entryMappedStatementsLoaded);
+				LOGGER.info("{'step' : status, 'statements processed so far': " + stmtProcessedSoFar + ",'raw_statements': " + rawStatementsLoaded + ", 'entryMapped': " + entryMappedStatementsLoaded + " }");
 			}
 			bufferedJsonStatementReader.close();
 			long processingTime = (System.currentTimeMillis() - start) / 1000;
@@ -165,7 +165,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		}
 
 		long etlProcessingTime = (System.currentTimeMillis() - startETL) / 1000;
-		report.addInfoWithElapsedTime("{ 'Step' : Done, 'Time' : " + etlProcessingTime + " Seconds, loaded_raw_statements: " + rawStatementsLoaded + ", loaded_entry_mapped: " + entryMappedStatementsLoaded);
+		report.addInfoWithElapsedTime("{'Step' : Done, 'Time' : " + etlProcessingTime + " Seconds, 'loaded_raw_statements': " + rawStatementsLoaded + ", 'loaded_entry_mapped': " + entryMappedStatementsLoaded + " }");
 
 		// Recreates the dropped indexes from the index definitions
 		if(dropIndex) {
