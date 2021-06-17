@@ -77,11 +77,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			Set<Statement> mappedStatements = new HashSet<>();
 			trackedRawStatementIds.clear();
 
-			int cpt = 0;
 			for (Statement rawStatement : rawStatements) {
-				LOGGER.info("Transforming statement " + rawStatement.toJsonString());
-				cpt++;
-				//System.out.println("Handling rawStatement " + cpt + " / " + this.rawStatements.size());
 				if (isPhenotypicVariation(rawStatement)) {
 					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
 				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) { // single
@@ -174,13 +170,8 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 
 
 		private boolean isPhenotypicVariation(Statement statement) {
-
 			return statement.getValue(ANNOTATION_CATEGORY).equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName());
 		}
-
-		private boolean isInteractionMapping(Statement statement) {
-		    return statement.getValue(ANNOTATION_CATEGORY).equals(INTERACTION_MAPPING.getDbAnnotationTypeName());
-        }
 
 		private String getIsoAccession(Statement statement) {
 
