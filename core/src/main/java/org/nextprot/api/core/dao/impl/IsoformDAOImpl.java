@@ -36,20 +36,20 @@ public class IsoformDAOImpl implements IsoformDAO {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
 		try {
 			List<Isoform> isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new IsoformRowMapper());
-			System.out.println("Isoforms found for entry " + entryName  + " " + isoforms.stream()
+			LOGGER.info("Isoforms found for entry " + entryName  + " " + isoforms.stream()
 					.map(Isoform::getIsoformAccession)
 					.collect(Collectors.joining(", ")));
 			if(isoforms.isEmpty()){
 				//If nothing is found, remove the condition for the synonym type
 				isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql.replace("and syn.cv_type_id = 1 ", ""), namedParameters, new IsoformRowMapper());
-				System.out.println("Isoforms found removing the condition for the synonym type for entry " + entryName  + " " + isoforms.stream()
+				LOGGER.info("Isoforms found removing the condition for the synonym type for entry " + entryName  + " " + isoforms.stream()
 						.map(Isoform::getIsoformAccession)
 						.collect(Collectors.joining(", ")));
 			}
 			return isoforms;
 		} catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("Error finding isoforms for the given entry " + entryName);
+			LOGGER.info("Error finding isoforms for the given entry " + entryName);
 			return new ArrayList<>();
 		}
 	}
