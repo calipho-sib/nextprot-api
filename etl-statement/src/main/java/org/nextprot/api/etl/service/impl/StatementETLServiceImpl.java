@@ -260,9 +260,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		}
 
 		LOGGER.info("Finished pre transformation, raw statements count:" + preTransformStatements.size());
-		for(Statement statement: preTransformStatements) {
-			LOGGER.info("Transforming " + statement.toJsonString());
-		}
 		Collection<Statement> statements = statementTransformerService.transformStatements(preTransformStatements, report);
         LOGGER.info("Transformed " + preTransformStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
 
