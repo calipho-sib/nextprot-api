@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IsoformDAO;
@@ -15,13 +16,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class IsoformDAOImpl implements IsoformDAO {
+
+	protected final Logger LOGGER = Logger.getLogger(IsoformDAOImpl.class);
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -32,17 +33,25 @@ public class IsoformDAOImpl implements IsoformDAO {
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
 
 		String sql = sqlDictionary.getSQLQuery("isoforms-by-entry-name");
-
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
-		List<Isoform> isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new IsoformRowMapper());
-		
-		if(isoforms.isEmpty()){
-			//If nothing is found, remove the condition for the synonym type
-			isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql.replace("and syn.cv_type_id = 1 ", ""), namedParameters, new IsoformRowMapper());
+		try {
+			List<Isoform> isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new IsoformRowMapper());
+			LOGGER.info("Isoforms found for entry " + entryName  + " " + isoforms.stream()
+					.map(Isoform::getIsoformAccession)
+					.collect(Collectors.joining(", ")));
+			if(isoforms.isEmpty()){
+				//If nothing is found, remove the condition for the synonym type
+				isoforms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql.replace("and syn.cv_type_id = 1 ", ""), namedParameters, new IsoformRowMapper());
+				LOGGER.info("Isoforms found removing the condition for the synonym type for entry " + entryName  + " " + isoforms.stream()
+						.map(Isoform::getIsoformAccession)
+						.collect(Collectors.joining(", ")));
+			}
+			return isoforms;
+		} catch(Exception e) {
+			e.printStackTrace();
+			LOGGER.info("Error finding isoforms for the given entry " + entryName);
+			return new ArrayList<>();
 		}
-		
-		return isoforms;
-
 	}
 
 	@Override

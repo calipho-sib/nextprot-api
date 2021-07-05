@@ -12,35 +12,40 @@
       .
 
    
-:Positive
-      rdf:type :ExpressionLevel ;
-      rdfs:comment "Positive expression"^^xsd:string ;
-      :notIn :Low,:Medium,:High;
+:PositiveExpressionLevel
+      rdfs:subClassOf :ExpressionLevel ;
+      rdfs:comment "Class of positive expression level"^^xsd:string ;
+      :notIn :NegativeExpressionLevel;
       .
       
+:Positive
+      rdf:type :PositiveExpressionLevel ;
+      rdfs:comment "Positive level of expression"^^xsd:string ;
+      .
+
 :High
-      rdf:type :ExpressionLevel ;
+      rdf:type :PositiveExpressionLevel ;
       rdfs:comment "High level of expression"^^xsd:string ;
-      rdfs:subClassOf :Positive ;
-      :notIn :Low,:Medium,:Positive;
       .
 
 :Medium
-      rdf:type :ExpressionLevel ;
+      rdf:type :PositiveExpressionLevel ;
       rdfs:comment "High level of expression"^^xsd:string ;
-      rdfs:subClassOf :Positive ;
-      :notIn :Low,:High,:Positive;
       .
 :Low
-      rdf:type :ExpressionLevel ;
+      rdf:type :PositiveExpressionLevel ;
       rdfs:comment "High level of expression"^^xsd:string ;
-      rdfs:subClassOf :Positive ;
-      :notIn :Medium,:High,:Positive;
+      .
+
+:NegativeExpressionLevel
+      rdfs:subClassOf :ExpressionLevel ;
+      rdfs:comment "Class of negative level of expression"^^xsd:string ;
+      :notIn :PositiveExpressionLevel;
       .
 
 :Negative
-      rdf:type :ExpressionLevel ;
-      rdfs:comment "High level of expression"^^xsd:string ;
+      rdf:type :NegativeExpressionLevel ;
+      rdfs:comment "Negative level of expression"^^xsd:string ;
       .        
 
 #

@@ -57,9 +57,11 @@ public class GoDatasource {
 		ref2src.put("GO_REF:0000054", "LIFEdb");
 		ref2src.put("GO_REF:0000056", "GO consortium");
 		ref2src.put("GO_REF:0000057", "GO apoptosis working group");
+		ref2src.put("GO_REF:0000096", "Mouse Genome Informatics scientific curators");
 		ref2src.put("GO_REF:0000107", "GOA curators");
 		ref2src.put("GO_REF:0000108", "GOA curators");
 		ref2src.put("GO_REF:0000111", "GOA curators");
 		ref2src.put("GO_REF:0000113", "GOA curators");
+		ref2src.put("GO_REF:0000116", "GO Central curators, GOA curators, Rhea curators");
 	}
 }

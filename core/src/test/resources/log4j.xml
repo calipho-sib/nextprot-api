@@ -26,6 +26,10 @@
 		<level value="FATAL" />
 	</logger>
 
+	<logger name="org.nextprot.api.core.dao.IsoformDAO" additivity="false">
+		<level value="INFO" />
+	</logger>
+
 	<!-- root element must be below all others otherwise errors -->
 	<root>
 		<level value="WARN" />

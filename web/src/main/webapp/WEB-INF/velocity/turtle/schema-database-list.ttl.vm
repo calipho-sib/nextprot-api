@@ -23,7 +23,6 @@
 #foreach($db in $databaseList)
   
 db:$StringUtils.slug($db.name) rdf:type :Database;
-  rdfs:subClassOf owl:Thing;
   rdfs:comment "$db.description"^^xsd:string;
   :category "$db.category"^^xsd:string;
 #if($db.getURL())
