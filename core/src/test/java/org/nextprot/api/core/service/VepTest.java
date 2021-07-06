@@ -1,13 +1,11 @@
 package org.nextprot.api.core.service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import jaligner.Alignment;
+import jaligner.NeedlemanWunsch;
+import jaligner.Sequence;
+import jaligner.formats.Pair;
+import jaligner.matrix.Matrix;
+import jaligner.matrix.MatrixGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.GenomicMapping;
@@ -18,12 +16,9 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import jaligner.Alignment;
-import jaligner.NeedlemanWunsch;
-import jaligner.Sequence;
-import jaligner.formats.Pair;
-import jaligner.matrix.Matrix;
-import jaligner.matrix.MatrixGenerator;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 @ActiveProfiles({ "dev", "cache" })
 public class VepTest extends CoreUnitBaseTest {
