@@ -5,5 +5,5 @@ package org.nextprot.api.tasks.service;
  */
 public interface ENSPLoadService {
 
-    void loadService();
+    void loadENSPSequences();
 }
