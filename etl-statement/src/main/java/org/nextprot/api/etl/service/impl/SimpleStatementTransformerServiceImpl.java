@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.nextprot.api.commons.constants.AnnotationCategory.PHENOTYPIC_VARIATION;
+import static org.nextprot.api.commons.constants.AnnotationCategory.DISEASE_RELATED_VARIANT;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
@@ -31,7 +32,8 @@ public class SimpleStatementTransformerServiceImpl implements SimpleStatementTra
 
 		String category = simpleStatement.getValue(ANNOTATION_CATEGORY);
 
-		if (category.equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName())) {
+		if (category.equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName())
+				|| category.equals(DISEASE_RELATED_VARIANT.getDbAnnotationTypeName())) {
 			throw new NextProtException("Not expecting phenotypic variation at this stage.");
 		}
 

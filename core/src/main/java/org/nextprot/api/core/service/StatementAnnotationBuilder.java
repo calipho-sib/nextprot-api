@@ -13,9 +13,12 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
@@ -241,6 +244,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         String original = variantStatement.getValue(VARIANT_ORIGINAL_AMINO_ACID);
         String variant = variantStatement.getValue(VARIANT_VARIATION_AMINO_ACID);
+        // TODO: add diseaseTerms
         AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
         annotation.setVariant(annotationVariant);
 
@@ -300,6 +304,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             setIsoformName(annotation, isoformName);
 
+            // TODO: fix description
             annotation.setDescription(firstStatement.getValue(ANNOT_DESCRIPTION));
 
             String cvTermAccession = firstStatement.getValue(ANNOT_CV_TERM_ACCESSION);
@@ -389,7 +394,14 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotationProperty.setName("selfInteraction");
                 annotationProperty.setValue(String.valueOf(p1.equals(p2)));
                 annotation.addProperty(annotationProperty);
+            } else if (AnnotationCategory.DISEASE_RELATED_VARIANT.equals(annotation.getAPICategory())) {
+                AnnotationProperty annotationProperty = new AnnotationProperty();
+                annotationProperty.setAnnotationId(annotation.getAnnotationId());
+                annotationProperty.setName("disease-related");
+                annotationProperty.setValue("true");
+                annotation.addProperty(annotationProperty);
             }
+            //TODO add AnnotationProperty for variant disease related
 
             annotations.add(annotation);
         });
@@ -458,7 +470,8 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             bioObject.setAccession(bioObjectAccession);
             bioObject.putPropertyNameValue("geneName", bioObjectName == null? "-" : bioObjectName);
 
-        } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)) {
+        } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)
+                || AnnotationCategory.DISEASE_RELATED_VARIANT.equals(annotationCategory)) {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);

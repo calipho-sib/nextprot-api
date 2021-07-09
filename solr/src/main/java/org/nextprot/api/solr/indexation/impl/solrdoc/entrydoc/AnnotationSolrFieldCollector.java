@@ -127,7 +127,8 @@ public class AnnotationSolrFieldCollector extends EntrySolrFieldCollector {
 																		// not
 																		// description
 					if (!isGold || quality.equals("GOLD")) {
-						if (apiCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
+						if (apiCategory == AnnotationCategory.PHENOTYPIC_VARIATION
+								|| apiCategory == AnnotationCategory.DISEASE_RELATED_VARIANT) {
 							// Get BED data (also get the notes ? )
 							Map<String, AnnotationIsoformSpecificity> annotSpecs = currannot.getTargetingIsoformsMap();
 							for (Map.Entry<String, AnnotationIsoformSpecificity> mapentry : annotSpecs.entrySet()) {

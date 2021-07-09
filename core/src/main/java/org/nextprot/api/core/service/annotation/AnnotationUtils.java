@@ -125,8 +125,8 @@ public class AnnotationUtils {
 			}
 		}
 
-		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
-			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
+		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION || annotationCategory == AnnotationCategory.DISEASE_RELATED_VARIANT) {
+			Collections.sort(filteredAnnotations, AnnotationComparators.newProteoformVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
 		} else {
 			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));
 		}
