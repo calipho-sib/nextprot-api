@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @Api(name = "ENSP loading tasks", description = "ENSP sequence loading task", group="Task")
 public class ENSPLoadController {
@@ -20,11 +23,9 @@ public class ENSPLoadController {
     ENSPLoadService enspLoadService;
 
     @ResponseBody
-    @RequestMapping(value = "/tasks/ensp-load", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = "/tasks/ensp-load", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiMethod(path = "/tasks/ensp-load", verb = ApiVerb.GET, description = "Load the ENSP sequences for each nextprot Isoform")
-    public String loadENSPSequences() {
-
-        enspLoadService.loadENSPSequences();
-        return null;
+    public List<Map<String, String>> loadENSPSequences() {
+        return enspLoadService.loadENSPSequences();
     }
 }
