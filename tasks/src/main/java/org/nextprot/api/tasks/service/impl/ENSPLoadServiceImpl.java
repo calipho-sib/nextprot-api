@@ -35,7 +35,10 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                 .forEach((entryAccession -> {
                     System.out.println("Entry " + entryAccession + "---------");
                     // Get the isoforms for each entry
+                    Map<String, String> isoformMappings = new HashMap<>();
+                    isoformMappings.put("entry", entryAccession);
                     for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
+
                         String isoformAccession = isoform.getIsoformAccession();
                         Map<String, String> result = getEnstAlignedWithIsoform(isoformAccession);
 
@@ -45,7 +48,7 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                             String ensp = result.get("ENSP");
                             System.out.println(isoformAccession + "," + ensg  + "," + enst + "," + ensp);
 
-                            Map<String, String> isoformMappings = new HashMap<>();
+                            isoformMappings.put("entry", entryAccession);
                             isoformMappings.put("isoform", isoformAccession);
                             isoformMappings.put("ENSG", ensg);
                             isoformMappings.put("ENST", enst);
