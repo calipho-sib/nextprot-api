@@ -48,7 +48,6 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                             String ensp = result.get("ENSP");
                             System.out.println(isoformAccession + "," + ensg  + "," + enst + "," + ensp);
 
-                            isoformMappings.put("entry", entryAccession);
                             isoformMappings.put("isoform", isoformAccession);
                             isoformMappings.put("ENSG", ensg);
                             isoformMappings.put("ENST", enst);
