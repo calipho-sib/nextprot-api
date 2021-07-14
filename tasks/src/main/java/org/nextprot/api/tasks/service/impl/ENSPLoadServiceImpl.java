@@ -26,18 +26,21 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
     private GenomicMappingService genomicMappingService;
 
     @Override
-    public List<Map<String, String>> loadENSPSequences() {
+    public List<Map<String, Object>> loadENSPSequences() {
         // Get all the nextprot entries
         Set<String> entryAccessions = masterIdentifierService.findUniqueNames();
 
-        List<Map<String, String>> isoforms = new ArrayList<>();
+        List<Map<String, Object>> entries = new ArrayList<>();
         entryAccessions.stream()
                 .forEach((entryAccession -> {
                     System.out.println("Entry " + entryAccession + "---------");
                     // Get the isoforms for each entry
-                    Map<String, String> isoformMappings = new HashMap<>();
-                    isoformMappings.put("entry", entryAccession);
+                    List isoforms = new ArrayList();
+                    Map<String, Object> entry = new HashMap<>();
+                    entry.put("entry", entryAccession);
+
                     for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
+                        Map<String, String> isoformMappings = new HashMap<>();
 
                         String isoformAccession = isoform.getIsoformAccession();
                         Map<String, String> result = getEnstAlignedWithIsoform(isoformAccession);
@@ -48,21 +51,23 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                             String ensp = result.get("ENSP");
                             System.out.println(isoformAccession + "," + ensg  + "," + enst + "," + ensp);
 
+                            entry.put("ENSG", ensg);
                             isoformMappings.put("isoform", isoformAccession);
-                            isoformMappings.put("ENSG", ensg);
+                            isoformMappings.put("sequence", isoform.getSequence());
                             isoformMappings.put("ENST", enst);
                             isoformMappings.put("ENSP", ensp);
                             isoforms.add(isoformMappings);
+                            entry.put("isoforms", isoforms);
                         } else {
                             System.out.println("No aligned isoforms for the entry " + entryAccession);
                         }
                     }
-
+                    entries.add(entry);
                     System.out.println("---------");
                 }));
 
 
-        return isoforms;
+        return entries;
     }
 
     private GenomicMapping getGenomicMappingOfEnsgAlignedWithEntry(String entryAc) {

@@ -8,5 +8,5 @@ import java.util.Map;
  */
 public interface ENSPLoadService {
 
-    List<Map<String,String>> loadENSPSequences();
+    List<Map<String,Object>> loadENSPSequences();
 }

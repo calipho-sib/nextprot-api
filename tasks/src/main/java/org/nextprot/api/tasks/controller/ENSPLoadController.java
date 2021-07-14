@@ -25,7 +25,7 @@ public class ENSPLoadController {
     @ResponseBody
     @RequestMapping(value = "/tasks/ensp-load", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiMethod(path = "/tasks/ensp-load", verb = ApiVerb.GET, description = "Load the ENSP sequences for each nextprot Isoform")
-    public List<Map<String, String>> loadENSPSequences() {
+    public List<Map<String, Object>> loadENSPSequences() {
         return enspLoadService.loadENSPSequences();
     }
 }
