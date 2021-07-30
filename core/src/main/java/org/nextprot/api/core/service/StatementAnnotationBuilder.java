@@ -306,7 +306,12 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             // TODO: fix description
             annotation.setDescription(firstStatement.getValue(ANNOT_DESCRIPTION));
-
+            if (AnnotationCategory.DISEASE.equals(category)) {
+                CvTerm cvTerm = terminologyService.findCvTermByAccession(firstStatement.getValue(ANNOT_CV_TERM_ACCESSION));
+                annotation.setDescription(
+                        cvTerm.getName() + " (" + cvTerm.getAccession()+ ") [" + cvTerm.getOntologyDisplayName() + ":" + cvTerm.getAccession() + "]: " +
+                        cvTerm.getDescription());
+            }
             String cvTermAccession = firstStatement.getValue(ANNOT_CV_TERM_ACCESSION);
 
             //Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
