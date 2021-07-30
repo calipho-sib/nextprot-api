@@ -339,10 +339,18 @@ public class AnnotationServiceImpl implements AnnotationService {
 
         //long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
 
+        List<String> diseaseRelatedVariants = new ArrayList<>();
+        for (Annotation a: annotations) {
+            if (!a.getAPICategory().getDbAnnotationTypeName().equals(AnnotationCategory.DISEASE_RELATED_VARIANT.getDbAnnotationTypeName())) {
+                continue;
+            }
+            diseaseRelatedVariants.addAll(a.getSubjectComponents());
+        }
         // add property if annotation is a variant related to disease
         for (Annotation annot : annotations) {
             if (AnnotationCategory.VARIANT == annot.getAPICategory()) {
-                boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap);
+                boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap)
+                        || annot.getAnnotationHash() != null && diseaseRelatedVariants.contains(annot.getAnnotationHash());
                 AnnotationProperty prop = new AnnotationProperty();
                 prop.setAnnotationId(annot.getAnnotationId());
                 prop.setName("disease-related");

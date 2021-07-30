@@ -399,12 +399,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotationProperty.setName("selfInteraction");
                 annotationProperty.setValue(String.valueOf(p1.equals(p2)));
                 annotation.addProperty(annotationProperty);
-            } else if (AnnotationCategory.DISEASE_RELATED_VARIANT.equals(annotation.getAPICategory())) {
-                AnnotationProperty annotationProperty = new AnnotationProperty();
-                annotationProperty.setAnnotationId(annotation.getAnnotationId());
-                annotationProperty.setName("disease-related");
-                annotationProperty.setValue("true");
-                annotation.addProperty(annotationProperty);
             }
             //TODO add AnnotationProperty for variant disease related
 
