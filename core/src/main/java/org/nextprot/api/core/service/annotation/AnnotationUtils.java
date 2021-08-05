@@ -402,7 +402,8 @@ public class AnnotationUtils {
 	 * otherwise returns false.
 	 * @param annot any annotation
 	 */
-	public static boolean isVariantRelatedToDiseaseProperty(Annotation annot, Map<Long,ExperimentalContext> ecs) {
+	public static boolean isVariantRelatedToDiseaseProperty(Annotation annot, Map<Long,ExperimentalContext> ecs,
+															Set<String> diseaseRelatedVariants) {
 		
 		if (AnnotationCategory.VARIANT != annot.getAPICategory()) return false;
 		
@@ -442,6 +443,9 @@ public class AnnotationUtils {
 		if (desc.startsWith("in")) return true;
 		if (desc.contains("found in")) return true;
 		if (desc.contains("associated with")) return true;
+		
+		// condition 4: variants involved in at least one disease-related-variant annotation (data coming from Bioeditor)
+		if (annot.getAnnotationHash() != null && diseaseRelatedVariants.contains(annot.getAnnotationHash())) return true;
 		
 		// else  > 3'000'000 cases
 		
