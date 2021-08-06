@@ -427,7 +427,11 @@ public class AnnotationUtils {
 			if (annot.getVariant().getDiseaseTerms().size() > 0) return true;
 		}
 		
-		// condition 3: description matches some patterns, return true > 5'000 cases
+		// condition 3: variants involved in at least one disease-related-variant annotation (data coming from Bioeditor)
+		
+		if (annot.getAnnotationHash() != null && diseaseRelatedVariants.contains(annot.getAnnotationHash())) return true;
+		
+		// condition 4: description matches some patterns, return true > 5'000 cases
 		
 		if (annot.getDescription()==null) return false;
 		
@@ -443,9 +447,6 @@ public class AnnotationUtils {
 		if (desc.startsWith("in")) return true;
 		if (desc.contains("found in")) return true;
 		if (desc.contains("associated with")) return true;
-		
-		// condition 4: variants involved in at least one disease-related-variant annotation (data coming from Bioeditor)
-		if (annot.getAnnotationHash() != null && diseaseRelatedVariants.contains(annot.getAnnotationHash())) return true;
 		
 		// else  > 3'000'000 cases
 		
