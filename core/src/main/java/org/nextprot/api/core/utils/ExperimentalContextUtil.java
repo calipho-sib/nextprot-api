@@ -34,6 +34,14 @@ public class ExperimentalContextUtil {
 		return computeMd5(tissueAc, null, cellLineAc, diseaseAc, null, detectionMethodAc, "MDATA_0040");
 	}
 	
+	public static String computeMd5ForBioeditorVAs(String tissueAc, String cellLineAc, String detectionMethodAc) {
+		return computeMd5(tissueAc, null, cellLineAc, null, null, detectionMethodAc, "MDATA_0407");
+	}
+	
+	public static String computeMd5ForCellosaurus(String diseaseAc, String cellLineAc, String detectionMethodAc) {
+		return computeMd5(null, null, cellLineAc, diseaseAc, null, detectionMethodAc, "MDATA_0408");
+	}
+	
 	/*
 	 * pam, 16 Oct 2020
 	 * md5 is a column in the NP1 experimental_contexts table

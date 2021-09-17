@@ -3,22 +3,16 @@ package org.nextprot.api.etl.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.etl.service.ExperimentalContextLoaderService;
-import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
 import org.nextprot.api.etl.service.StatementSourceService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +48,7 @@ public class ExperimentalContextLoaderServiceImpl implements ExperimentalContext
                 LOGGER.info("Read " + experimentalContextStatements.size() + " statements from " + sourceFile);
                 try {
                     // Loads the read contexts
-                    insertStatements = experimentalContextDao.loadExperimentalContexts(experimentalContextStatements, load);
+                    insertStatements = experimentalContextDao.loadExperimentalContexts(source, experimentalContextStatements, load);
                     LOGGER.info("Loaded " + experimentalContextStatements.size() + " statements ");
                 } catch(Exception e) {
                     e.printStackTrace();

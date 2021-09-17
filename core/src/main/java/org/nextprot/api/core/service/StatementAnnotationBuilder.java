@@ -7,6 +7,7 @@ import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
@@ -36,6 +37,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.nextprot.api.commons.constants.AnnotationCategory.DISEASE_RELATED_VARIANT;
 import static org.nextprot.api.commons.constants.IdentifierOffset.NXFLAT_ANNOTATION_ID_COUNTER;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
@@ -201,7 +203,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
         evidence.setNote(s.getValue(EVIDENCE_NOTE));
 
         // Set experimental context ID
-        // Note that this currently concerns for bgee statements
+        // Note that this currently concerns for bgee, bioeditor VA and cellosaurus statements
         // All the other annotations with inherent experimental contexts are inherited from NP1 data model itself
         if("Bgee".equals(s.getValue(SOURCE))) {
         	String tissue_ac = s.getValue(ANNOT_CV_TERM_ACCESSION);
@@ -212,10 +214,38 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 long ecId = ec.getContextId();
                 evidence.setExperimentalContextId(ecId);
             } else {
-            	String msg = "EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " " + md5 + " not found";
+            	String msg = "Bgee EC with " + tissue_ac + " " + stage_ac + " " + eco_ac + " " + md5 + " not found";
             	LOGGER.error(msg);
             	throw new NextProtException(msg);
             }
+        } else if (StatementSource.BioEditor.toString().equals(s.getValue(SOURCE))
+                && DISEASE_RELATED_VARIANT.getDbAnnotationTypeName().equals(s.getValue(ANNOTATION_CATEGORY))) {
+            String tissueAc = s.getValue(new CustomStatementField("TISSUE_ACC"));
+            String cellLineAc = s.getValue(new CustomStatementField("CELL_LINE_ACC"));
+            if (org.apache.commons.lang.StringUtils.isNotBlank(tissueAc)
+                    || org.apache.commons.lang.StringUtils.isNotBlank(cellLineAc) ) {
+                String md5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(tissueAc, cellLineAc, s.getValue(EVIDENCE_CODE));
+                ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
+                if (ec != null) {
+                    evidence.setExperimentalContextId(ec.getContextId());
+                } else {
+                    String msg = "BioEditor EC with " + tissueAc + " " + cellLineAc + " " + md5 + " not found";
+                    LOGGER.error(msg);
+                    throw new NextProtException(msg);
+                }
+            }
+        } else if (StatementSource.Cellosaurus.toString().equals(s.getValue(SOURCE))) {
+            String diseaseAcc = s.getValue(new CustomStatementField("DISEASE_ACC"));
+            String cellLineAc = s.getValue(new CustomStatementField("CELL_LINE_ACC"));
+                String md5 = ExperimentalContextUtil.computeMd5ForCellosaurus(diseaseAcc, cellLineAc, s.getValue(EVIDENCE_CODE));
+                ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
+                if (ec != null) {
+                    evidence.setExperimentalContextId(ec.getContextId());
+                } else {
+                    String msg = "Cellosaurus EC with " + diseaseAcc + " " + cellLineAc + " " + md5 + " not found";
+                    LOGGER.error(msg);
+                    throw new NextProtException(msg);
+                }
         }
 
         return evidence;
@@ -244,7 +274,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
         String original = variantStatement.getValue(VARIANT_ORIGINAL_AMINO_ACID);
         String variant = variantStatement.getValue(VARIANT_VARIATION_AMINO_ACID);
-        // TODO: add diseaseTerms
         AnnotationVariant annotationVariant = new AnnotationVariant(original, variant.equals("-") ? "" : variant);
         annotation.setVariant(annotationVariant);
 
@@ -304,7 +333,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
 
             setIsoformName(annotation, isoformName);
 
-            // TODO: fix description
             annotation.setDescription(firstStatement.getValue(ANNOT_DESCRIPTION));
             if (AnnotationCategory.DISEASE.equals(category)) {
                 CvTerm cvTerm = terminologyService.findCvTermByAccession(firstStatement.getValue(ANNOT_CV_TERM_ACCESSION));
@@ -400,7 +428,6 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 annotationProperty.setValue(String.valueOf(p1.equals(p2)));
                 annotation.addProperty(annotationProperty);
             }
-            //TODO add AnnotationProperty for variant disease related
 
             annotations.add(annotation);
         });
@@ -470,7 +497,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             bioObject.putPropertyNameValue("geneName", bioObjectName == null? "-" : bioObjectName);
 
         } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)
-                || AnnotationCategory.DISEASE_RELATED_VARIANT.equals(annotationCategory)) {
+                || DISEASE_RELATED_VARIANT.equals(annotationCategory)) {
 
             bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
             bioObject.setAnnotationHash(bioObjectAnnotationHash);
