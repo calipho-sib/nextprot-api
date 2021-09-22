@@ -42,7 +42,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 	
 	private final long BGEE_METADATA_ID = 29348710;
 	private final long BIOEDITOR_VA_METADATA_ID = 62032179;
-	private final long CELLOSAURUS_METADATA_ID = 62032179;
+	private final long CELLOSAURUS_METADATA_ID = 62032180;
 
 	protected final Logger LOGGER = Logger.getLogger(ExperimentalContextDaoImpl.class);
 
