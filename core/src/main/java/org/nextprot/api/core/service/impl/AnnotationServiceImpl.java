@@ -341,7 +341,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 
         Set<String> diseaseRelatedVariants = new HashSet<>();
         for (Annotation a: annotations) {
-            if (!a.getAPICategory().getDbAnnotationTypeName().equals(AnnotationCategory.DISEASE_RELATED_VARIANT.getDbAnnotationTypeName())) {
+            if (a.getAPICategory() == null || a.getAPICategory().getDbAnnotationTypeName() == null
+                    || !a.getAPICategory().getDbAnnotationTypeName().equals(AnnotationCategory.DISEASE_RELATED_VARIANT.getDbAnnotationTypeName())) {
                 continue;
             }
             // Get all subjects of DISEASE_RELATED_VARIANT annotations
