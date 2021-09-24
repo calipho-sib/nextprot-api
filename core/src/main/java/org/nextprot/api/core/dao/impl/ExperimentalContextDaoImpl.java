@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao.impl;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.app.StatementSource;
@@ -22,7 +23,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.sql.Types;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -125,7 +128,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					if (tissueAC == null) {
 						pstmt.setNull(1, Types.BIGINT);
 					} else {
-						CvTerm tissue = terminologyService.findCvTermByAccession(tissueAC);
+						CvTerm tissue = terminologyService.findCvTermInOntology(tissueAC, TerminologyCv.NextprotAnatomyCv);
 						if (tissue == null) {
 							LOGGER.error("Term for accession " + tissueAC + " not found, ignoring the experimental context statement");
 							continue;
@@ -139,7 +142,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					if (devStageAC == null) {
 						pstmt.setNull(2, Types.BIGINT);
 					} else {
-						CvTerm devStage = terminologyService.findCvTermByAccession(devStageAC);
+						CvTerm devStage = terminologyService.findCvTermInOntology(devStageAC, TerminologyCv.BgeeDevelopmentalStageCv);
 						if (devStage == null) {
 							LOGGER.error("Term for accession " + devStageAC + " not found, ignoring the experimental context statement");
 							continue;
@@ -153,7 +156,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					if (detectionMethodAC == null) {
 						pstmt.setNull(3, Types.BIGINT);
 					} else {
-						CvTerm detectionMethod = terminologyService.findCvTermByAccession(detectionMethodAC);
+						CvTerm detectionMethod = terminologyService.findCvTermInOntology(detectionMethodAC, TerminologyCv.EvidenceCodeOntologyCv);
 						if (detectionMethod == null) {
 							LOGGER.error("Term for accession " + detectionMethodAC + " not found, ignoring the experimental context statement");
 							continue;
@@ -167,7 +170,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					if (cellLineAC == null) {
 						pstmt.setNull(4, Types.BIGINT);
 					} else {
-						CvTerm cellLine = terminologyService.findCvTermByAccession(cellLineAC);
+						CvTerm cellLine = terminologyService.findCvTermInOntology(cellLineAC, TerminologyCv.NextprotCellosaurusCv);
 						if (cellLine == null) {
 							LOGGER.error("Term for accession " + cellLineAC + " not found, ignoring the experimental context statement");
 							continue;
@@ -181,7 +184,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					if (diseaseAC == null) {
 						pstmt.setNull(5, Types.BIGINT);
 					} else {
-						CvTerm disease = terminologyService.findCvTermByAccession(diseaseAC);
+						CvTerm disease = terminologyService.findCvTermInOntology(diseaseAC, TerminologyCv.NciThesaurusCv);
 						if (disease == null) {
 							LOGGER.error("Term for accession " + diseaseAC + " not found, ignoring the experimental context statement");
 							continue;
