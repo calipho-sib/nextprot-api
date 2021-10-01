@@ -16,6 +16,8 @@ public class PhenotypeUtils {
     	// iterate over phenotypic annotations
     	Map<String,List<String>> varEffects = new HashMap<>();
     	for (Annotation a: annotations) {
+    		if (a.getAPICategory()==null) continue; // this should not accur but it DOES occurs in a mockito test i don't understand
+    		System.out.println("api cat:" + a.getAPICategory());
     		if (a.getAPICategory().equals(AnnotationCategory.PHENOTYPIC_VARIATION) || 
     			a.getAPICategory().equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)) {
     			if (a.getSubjectComponents()==null) continue;
@@ -44,6 +46,7 @@ public class PhenotypeUtils {
     	
     	// now for each variant
     	for (Annotation a: annotations) {
+    		if (a.getAPICategory()==null) continue; // this should not accur but it DOES occurs in a mockito test i don't understand
     		if (a.getAPICategory().equals(AnnotationCategory.VARIANT) || 
 	    		a.getAPICategory().equals(AnnotationCategory.MUTAGENESIS)) {
     			// for which we have collected one or more effects
