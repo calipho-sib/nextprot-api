@@ -127,6 +127,7 @@ public enum AnnotationCategory implements Serializable {
 
 	MUTAGENESIS(1028, "mutagenesis site", "mutagenesis", "Mutagenesis", POSITIONAL_ANNOTATION),
 	SEQUENCE_CONFLICT(1029, "sequence conflict", "sequenceConflict", "Sequence conflict", POSITIONAL_ANNOTATION),
+	DISEASE_RELATED_VARIANT(-9990, "disease-related-variant", "diseaseRelatedVariant", "Disease-related variant", POSITIONAL_ANNOTATION),
 
 	// instances of general annotations
 	

@@ -9,7 +9,6 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.etl.service.ExperimentalContextLoaderService;
 import org.nextprot.api.etl.service.StatementETLService;
-import org.nextprot.api.etl.service.impl.JDBCStatementLoaderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.List;
 
 @Controller
 @Api(name = "ETL", description = "Extract Transform And Load Statements", group="ETL")
@@ -80,7 +78,7 @@ public class StatementETLController {
 	}
 
 	// TODO: handle load or not parameter for the moment: false
-	@ApiMethod(path = "/etl/experimentalcontext/{source}/{release}", verb = ApiVerb.GET, description = "Loads experimental context data", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/etl/experimentalcontext/{source}/{release}", verb = ApiVerb.GET, description = "Loads experimental context data", produces = MediaType.TEXT_PLAIN_VALUE)
 	@RequestMapping(value = "/etl/experimentalcontext/{source}/{release}/{load}", method = { RequestMethod.GET }, produces = { MediaType.TEXT_PLAIN_VALUE})
 	@ResponseBody
 	public String loadStatementsExperimentalContext(
