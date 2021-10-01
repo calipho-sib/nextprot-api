@@ -26,6 +26,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
+import org.nextprot.api.core.service.annotation.PhenotypeUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,13 +281,18 @@ public class AnnotationServiceImpl implements AnnotationService {
         updateSubcellularLocationTermNameWithAncestors(annotations);
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
-
+        updatePhenotypicEffectProperty(annotations, entryName);
         QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
 
         //returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
         return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
     }
 
+    private void updatePhenotypicEffectProperty(List<Annotation> annotations, String entryName) {
+    	System.out.println("I was there");
+    	PhenotypeUtils.updatePhenotypicEffectProperty(annotations, entryName);
+    }
+    
     private List<Annotation> createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(String entryName, List<Annotation> existingAnnotations, boolean ignoreStatements) {
         List<Annotation> smiAnnotations = new ArrayList<>();
         List<DbXref> entryXrefs = ignoreStatements ? xrefService.findDbXrefsByMasterExcludingBed(entryName) : xrefService.findDbXrefsByMaster(entryName);

@@ -2,6 +2,8 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:        2021/09/03
+    Database category removed: Variant database (now gnomAD db in category Polymorphism and mutation databases)     
 
     Date:        2020/07/01
     1) New annotation category added: interaction-mapping
@@ -1471,7 +1473,6 @@
 						<xs:enumeration value="Proteomic databases"/>
 						<xs:enumeration value="Protocols and materials databases"/>
 						<xs:enumeration value="Publication databases"/>
-                        <xs:enumeration value="Variant databases"/>
 						<xs:enumeration value="Sequence databases"/>
 					</xs:restriction>
 				</xs:simpleType>
