@@ -115,6 +115,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		if (AnnotationCategory.PROTEIN_PROPERTY == this.apiCategory) return false;
 		if (AnnotationCategory.MAMMALIAN_PHENOTYPE == this.apiCategory) return false;
 		if (AnnotationCategory.PHENOTYPIC_VARIATION ==  this.apiCategory) return false;
+		if (AnnotationCategory.DISEASE_RELATED_VARIANT ==  this.apiCategory) return false;
 		return true;
 	}
 	

@@ -20,7 +20,7 @@ public class AnnotationComparators {
         }
     }
 
-    public static Comparator<Annotation> newPhenotypicVariationComparator(Map<String, Annotation> annotationByHash) {
+    public static Comparator<Annotation> newProteoformVariationComparator(Map<String, Annotation> annotationByHash) {
 
         return new ByAnnotationSubjectComparator(annotationByHash)
                 .thenComparing(new ByAnnotationBioObjectComparator(annotationByHash))
