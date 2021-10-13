@@ -27,6 +27,7 @@ import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
 import org.nextprot.api.core.service.annotation.PhenotypeUtils;
+import org.nextprot.api.core.service.annotation.VariantUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,23 +262,23 @@ public class AnnotationServiceImpl implements AnnotationService {
         annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));
         annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));
         annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
-
         // Adds the variant frequencies to variant annotations
         addGnomeADVariantFrequencies(entryName, annotations);
+
+        String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
+                .filter(entityName -> entityName.isMain())
+                .map(entityName -> entityName.getName())
+                .findFirst()
+                .orElse("");
+               
         if (!ignoreStatements) {
-
-            String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
-                    .filter(entityName -> entityName.isMain())
-                    .map(entityName -> entityName.getName())
-                    .findFirst()
-                    .orElse("");
-
             annotations = new AnnotationListMerger(geneName, annotations).merge(statementService.getAnnotations(entryName));
         }
 
         // post-processing of annotations
         updateIsoformsDisplayedAsSpecific(annotations, entryName);
         updateVariantsRelatedToDisease(annotations);
+        updateVariantsHgvsNames(annotations, isoformService.findIsoformsByEntryName(entryName), geneName);
         updateSubcellularLocationTermNameWithAncestors(annotations);
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
@@ -289,7 +290,7 @@ public class AnnotationServiceImpl implements AnnotationService {
     }
 
     private void updatePhenotypicEffectProperty(List<Annotation> annotations, String entryName) {
-    	System.out.println("I was there");
+    	//System.out.println("I was there");
     	PhenotypeUtils.updatePhenotypicEffectProperty(annotations, entryName);
     }
     
@@ -339,6 +340,19 @@ public class AnnotationServiceImpl implements AnnotationService {
 
     }
 
+    private void updateVariantsHgvsNames(List<Annotation> annotations, List<Isoform> isoforms, String geneName) {
+    	
+    	for (Annotation a: annotations) {
+    		if (a.getAPICategory()==null) continue; // this should not accur but it DOES occur in a mockito test i don't understand
+    		if (a.getAPICategory().equals(AnnotationCategory.VARIANT) || 
+	    		a.getAPICategory().equals(AnnotationCategory.MUTAGENESIS)) {
+    			for (Isoform iso : isoforms) VariantUtils.updateHGVSName(a, iso, geneName);
+    		}
+    	}
+    }
+    	
+
+    
     private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
 
         Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getIdExperimentalContextMap();

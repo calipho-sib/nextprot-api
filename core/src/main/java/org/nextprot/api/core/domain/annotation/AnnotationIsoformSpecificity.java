@@ -38,7 +38,17 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 
 	private String name;
 
+	private String hgvs;
+	
 	private String _comparableName;
+	
+	public void setHgvs(String hgvs) {
+		this.hgvs = hgvs;
+	}
+	
+	public String getHgvs() {
+		return this.hgvs;
+	}
 	
 	public String getSpecificity() {
 		return specificityInfo.get(specificity);
