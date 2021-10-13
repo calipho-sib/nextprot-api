@@ -369,6 +369,13 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 
+	public String getHgvsForIsoform(String isoformName) {
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getHgvs();
+		return null;
+		
+	}
+	
 	/** @return the first position or null if unknown */
 	public Integer getStartPositionForIsoform(String isoformName) {
 
