@@ -9,8 +9,10 @@ import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.commons.utils.XRefProtocolId;
 import org.nextprot.api.core.dao.DbXrefDao;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -18,6 +20,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
@@ -49,6 +52,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 	@Autowired private StatementService statementService;
+	@Autowired private OverviewService overviewService;
+	
 
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
@@ -179,6 +184,25 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 	
+	@Override
+	public DbXref createDecipherXref(String entryName) {
+		
+		List<EntityName> entityNames = overviewService.findOverviewByEntry(entryName).getGeneNames();
+		if (entityNames==null || entityNames.size()==0) return null;
+		
+		DbXref xref = new DbXref();
+		String ac = entityNames.get(0).getName();
+		xref.setAccession(ac);
+		xref.setDatabaseCategory("Polymorphism and mutation databases");
+		String db = XrefDatabase.DECIPHER.getName();
+		xref.setDatabaseName(db);
+		long id = generateXrefProtocolId(db, ac);
+		xref.setDbXrefId(id);
+		xref.setLinkUrl(CvDatabasePreferredLink.DECIPHER.getLink());
+		xref.setUrl("https://www.deciphergenomics.org");
+		return xref;
+	}
+	
 	private List<DbXref> findDbXrefsByMaster(String entryName, boolean ignoreStatements) {
 		
 		// build a comparator for the tree set: order by database name, accession, case insensitive
@@ -193,13 +217,14 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		addPeptideXrefs(entryName, xrefs);
 		addAntibodyXrefs(entryName, xrefs);
-		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
+		xrefs.addAll(dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryAttachedXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryIdentifierXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
+		xrefs.addAll(dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
+		xrefs.add(createDecipherXref(entryName));
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));   // xrefs of statements (but not gnomad ones)
-
+		
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		

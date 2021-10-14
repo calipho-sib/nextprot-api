@@ -22,6 +22,7 @@ public enum DbXrefURLResolverSupplier {
     CHITARS(XrefDatabase.CHITARS,                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),
     CLINVAR(XrefDatabase.CLINVAR,                   new ClinvarXrefURLResolver()),
     COSMIC(XrefDatabase.COSMIC,                     new CosmicXrefURLResolver()),
+    DECIPHER(XrefDatabase.DECIPHER,                 new DecipherXrefURLResolver()),
     ECO(XrefDatabase.ECO,                         	new EcoXrefURLResolver()),
     EMBL(XrefDatabase.EMBL,                         new EmblXrefURLResolver()),
     EMBL_CDS(XrefDatabase.EMBL_CDS,                 new EmblCdsXrefURLResolver()),

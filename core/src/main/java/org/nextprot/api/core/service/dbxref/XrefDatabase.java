@@ -16,7 +16,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGRID"), BIO_GRID_ORCS("BioGRID-ORCS"), BIO_MUTA("BioMuta"), BRENDA, BMRB,
     CARBONYL_DB("CarbonylDB"), CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"), COMPLEX_PORTAL("ComplexPortal"), CPTC,
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CPTAC, CTD,
-    DB_SNP("dbSNP"), DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"), DRUG_CENTRAL("DrugCentral"),
+    DB_SNP("dbSNP"), DECIPHER, DEPOD, DIP, DIS_GE_NET("DisGeNET"), DISPROT("DisProt"), DMDM, DNASU, DOI, DOSAC_COBS_2DPAGE("DOSAC-COBS-2DPAGE"), DRUG_CENTRAL("DrugCentral"),
     ECO, EGG_NOG("eggNOG"), ELM, EMBL, EMBL_CDS("EMBL-CDS"), ENSEMBL("Ensembl"), ENSG, EPD, ESTHER, EU_PATH_DB("EuPathDB"),
     EVOLUTIONARY_TRACE("EvolutionaryTrace"), EXPRESSION_ATLAS("ExpressionAtlas"), EVOC("eVOC"),
     GENE_3D("Gene3D"), GENE_CARDS("GeneCards"), GENE_ID("GeneID"), GENE_REVIEWS("GeneReviews"), GENE_TREE("GeneTree"),
