@@ -67,7 +67,7 @@ having sum(a.cnt)=1
 
 	@Test
 	public void shouldCreateDecipherXref() {
-		DbXref x = xrefService.createDecipherXref("NX_P35498");
+		DbXref x = xrefService.createDecipherXref("SCN1A");
 		Assert.assertEquals("SCN1A", x.getAccession());
 		Assert.assertEquals("Polymorphism and mutation databases",x.getDatabaseCategory());
 		Assert.assertEquals("DECIPHER", x.getDatabaseName());
