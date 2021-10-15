@@ -218,7 +218,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             	LOGGER.error(msg);
             	throw new NextProtException(msg);
             }
-        } else if (StatementSource.BioEditor.toString().equals(s.getValue(SOURCE))
+        } else if (StatementSource.BioEditor.getSourceName().equals(s.getValue(SOURCE))
                 && DISEASE_RELATED_VARIANT.getDbAnnotationTypeName().equals(s.getValue(ANNOTATION_CATEGORY))) {
             String tissueAc = s.getValue(new CustomStatementField("TISSUE_ACC"));
             String cellLineAc = s.getValue(new CustomStatementField("CELL_LINE_ACC"));
@@ -229,12 +229,12 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 if (ec != null) {
                     evidence.setExperimentalContextId(ec.getContextId());
                 } else {
-                    String msg = "BioEditor EC with " + tissueAc + " " + cellLineAc + " " + md5 + " not found";
+                    String msg = "BioEditor EC with " + tissueAc + " " + cellLineAc + " " + s.getValue(EVIDENCE_CODE) + " " + md5 + " not found";
                     LOGGER.error(msg);
                     throw new NextProtException(msg);
                 }
             }
-        } else if (StatementSource.Cellosaurus.toString().equals(s.getValue(SOURCE))) {
+        } else if (StatementSource.Cellosaurus.getSourceName().equals(s.getValue(SOURCE))) {
             String diseaseAcc = s.getValue(new CustomStatementField("DISEASE_ACC"));
             String cellLineAc = s.getValue(new CustomStatementField("CELL_LINE_ACC"));
                 String md5 = ExperimentalContextUtil.computeMd5ForCellosaurus(diseaseAcc, cellLineAc, s.getValue(EVIDENCE_CODE));
