@@ -200,10 +200,10 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					// Adds the record to the sql statement
 					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, cell_line_id, disease_id, md5, metadata_id ) VALUES";
 					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
-							+ cellLineID + ",'" + diseaseID + ",'" + expMD5 + "'," + mdata + ");\n";
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ");\n";
 					insertStatements.append(insertStatement);
 					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
-							+ cellLineID + ",'" + diseaseID + ",'" + expMD5 + "'," + mdata + ")");
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ")");
 					newStmtCount ++;
 				} else {
 					LOGGER.info("Experimental context already exists for MD5 " + expMD5);
