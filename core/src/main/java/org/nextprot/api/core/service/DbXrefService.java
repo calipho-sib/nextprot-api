@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface DbXrefService {
 	
-	DbXref createDecipherXref(String entryName);
+	DbXref createDecipherXref(String geneName);
 	
 	List<DbXref> findDbXrefsByMaster(@ValidEntry String uniqueName);
 

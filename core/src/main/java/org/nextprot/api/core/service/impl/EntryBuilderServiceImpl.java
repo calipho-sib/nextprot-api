@@ -1,9 +1,12 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
@@ -174,17 +177,27 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	}
 
 	private void setXrefs(Entry entry, String entryName) {
+
 		// Generates the dbxrefs
 		List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
-
+		
+		// Generate special Decipher xref
+		DbXref decipherXref = null;
+		List<EntityName> entityNames = this.overviewService.findOverviewByEntry(entryName).getGeneNames();
+		if (entityNames!=null && entityNames.size()>0) {
+			String geneName = entityNames.get(0).getName();
+			decipherXref = this.xrefService.createDecipherXref(geneName);
+		}
+		
 		// Generates the gnomad xrefs
 		List<DbXref> gnomadXrefs = this.gnomadXrefService.findGnomadDbXrefsByMaster(entryName);
 
-		List<DbXref> allXrefs = new ImmutableList.Builder<DbXref>()
-										.addAll(dbXrefs)
-										.addAll(gnomadXrefs)
-										.build();
-		entry.setXrefs(allXrefs);
+		// Build immutable list
+		Builder<DbXref> immuBuilder = new ImmutableList.Builder<DbXref>();
+		immuBuilder.addAll(dbXrefs);
+		if (decipherXref!=null)	immuBuilder.add(decipherXref);
+		immuBuilder.addAll(gnomadXrefs);
+		entry.setXrefs(immuBuilder.build());
 	}
 
 	@Override

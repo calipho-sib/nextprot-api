@@ -1,34 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
-import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.constants.Xref2Annotation;
-import org.nextprot.api.commons.utils.XRefProtocolId;
-import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.EntityName;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.core.service.dbxref.XrefDatabase;
-import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
-import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
-import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +10,39 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.Xref2Annotation;
+import org.nextprot.api.commons.utils.XRefProtocolId;
+import org.nextprot.api.core.dao.DbXrefDao;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.AntibodyResourceIdsService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.service.SimpleService;
+import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
+import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
+import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 @Lazy
 @Service
@@ -52,7 +56,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 	@Autowired private StatementService statementService;
-	@Autowired private OverviewService overviewService;
 	
 
 	@Override
@@ -185,23 +188,21 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 	
 	@Override
-	public DbXref createDecipherXref(String entryName) {
-		
-		List<EntityName> entityNames = overviewService.findOverviewByEntry(entryName).getGeneNames();
-		if (entityNames==null || entityNames.size()==0) return null;
-		
+	public DbXref createDecipherXref(String geneName) {
+						
 		DbXref xref = new DbXref();
-		String ac = entityNames.get(0).getName();
-		xref.setAccession(ac);
+		xref.setAccession(geneName);
 		xref.setDatabaseCategory("Polymorphism and mutation databases");
 		String db = XrefDatabase.DECIPHER.getName();
 		xref.setDatabaseName(db);
-		long id = generateXrefProtocolId(db, ac);
+		long id = generateXrefProtocolId(db, geneName);
 		xref.setDbXrefId(id);
 		xref.setLinkUrl(CvDatabasePreferredLink.DECIPHER.getLink());
 		xref.setUrl("https://www.deciphergenomics.org");
 		return xref;
 	}
+	
+	
 	
 	private List<DbXref> findDbXrefsByMaster(String entryName, boolean ignoreStatements) {
 		
@@ -222,7 +223,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(dbXRefDao.findEntryIdentifierXrefs(entryName));
 		xrefs.addAll(dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
 		xrefs.addAll(dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
-		xrefs.add(createDecipherXref(entryName));
 		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));   // xrefs of statements (but not gnomad ones)
 		
 		// turn the set into a list to match the signature expected elsewhere
