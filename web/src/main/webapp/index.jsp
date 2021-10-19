@@ -81,9 +81,7 @@
 						</ul></li>
 
 					<li><a href="javascript:void(0)" onclick="showMarkdownPreview('nextprot')">About</a></li>
-					<li><a
-						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
-							us</a></li>
+					<li><a href="mailto:support@nextprot.org?subject=[neXtProt%20API]">Contact us</a></li>
 
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
