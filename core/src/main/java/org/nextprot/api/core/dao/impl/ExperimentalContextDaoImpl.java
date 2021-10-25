@@ -5,6 +5,7 @@ import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextState
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
@@ -22,7 +23,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.sql.Types;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,8 +42,10 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 	@Autowired(required=false)
 	private CacheManager cacheManager;
-
-	private final long METADATA_ID = 29348710;
+	
+	private final long BGEE_METADATA_ID = 29348710;
+	private final long BIOEDITOR_VA_METADATA_ID = 62032179;
+	private final long CELLOSAURUS_METADATA_ID = 62032180;
 
 	protected final Logger LOGGER = Logger.getLogger(ExperimentalContextDaoImpl.class);
 
@@ -58,7 +63,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 	// TODO: handle erase
 	@Override
-	public String loadExperimentalContexts(List<ExperimentalContextStatement> experimentalContextStatements, boolean load) throws SQLException {
+	public String loadExperimentalContexts(StatementSource source, List<ExperimentalContextStatement> experimentalContextStatements, boolean load) throws SQLException {
 		PreparedStatement pstmt = null;
 		StringBuffer insertStatements = new StringBuffer();
 
@@ -71,70 +76,140 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 
 		try (Connection conn = dsLocator.getDataSource().getConnection()) {
 			pstmt = conn.prepareStatement(
-					"INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) "
-							+ "VALUES ( ?,?,?,?,?)"
+					"INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id," +
+							" cell_line_id, disease_id, md5, metadata_id ) "
+							+ "VALUES (?,?,?,?,?,?,?)"
 			);
 
-			List<String> sqlStatements = new ArrayList<>();
+			int newStmtCount = 0;
 			for (ExperimentalContextStatement expStatements : experimentalContextStatements) {
-				String expMD5 = ExperimentalContextUtil.computeMd5ForBgee(
-						expStatements.getTissueAC(),
-						expStatements.getDevelopmentStageAC(),
-						expStatements.getDetectionMethodAC());
+				String expMD5;
+				long mdata;
+				if (expStatements.getDetectionMethodAC() == null) {
+					throw new IllegalArgumentException("EC should have a detection method.");
+				}
+				switch (source) {
+					case BioEditor:
+						if (expStatements.getTissueAC() == null && expStatements.getCellLineAC() == null) {
+							throw new IllegalArgumentException("EC for BioEditor should have a tissue or a cell line.");
+						}
+						expMD5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(
+								expStatements.getTissueAC(),
+								expStatements.getCellLineAC(),
+								expStatements.getDetectionMethodAC());
+						mdata = BIOEDITOR_VA_METADATA_ID;
+						break;
+					case Cellosaurus:
+						if (expStatements.getDiseaseAC() == null || expStatements.getCellLineAC() == null) {
+							throw new IllegalArgumentException("EC for Cellosaurus should have a disease and a cell line.");
+						}
+						expMD5 = ExperimentalContextUtil.computeMd5ForCellosaurus(
+								expStatements.getDiseaseAC(),
+								expStatements.getCellLineAC(),
+								expStatements.getDetectionMethodAC());
+						mdata = CELLOSAURUS_METADATA_ID;
+						break;
+					case Bgee:
+						if (expStatements.getTissueAC() == null || expStatements.getDevelopmentStageAC() == null) {
+							throw new IllegalArgumentException("EC for Bgee should have a tissue and a dev. stage.");
+						}
+						expMD5 = ExperimentalContextUtil.computeMd5ForBgee(
+								expStatements.getTissueAC(),
+								expStatements.getDevelopmentStageAC(),
+								expStatements.getDetectionMethodAC());
+						mdata = BGEE_METADATA_ID;
+						break;
+					default:
+						throw new UnsupportedOperationException("Unsupported source " + source + " for loading experimental contexts");
+				}
 				if (!existingContexts.contains(expMD5)) {
 					String tissueAC = expStatements.getTissueAC();
+					Long tissueID = null;
 					if (tissueAC == null) {
-						LOGGER.error("Tissue accession is null, ignoring the experimental context statement");
-						continue;
+						pstmt.setNull(1, Types.BIGINT);
+					} else {
+						CvTerm tissue = terminologyService.findCvTermInOntology(tissueAC, TerminologyCv.NextprotAnatomyCv);
+						if (tissue == null) {
+							LOGGER.error("Term for accession " + tissueAC + " not found, ignoring the experimental context statement");
+							continue;
+						}
+						tissueID = tissue.getId();
+						pstmt.setLong(1, tissueID);
 					}
-					CvTerm tissue = terminologyService.findCvTermInOntology(tissueAC, TerminologyCv.NextprotAnatomyCv);
-					if (tissue == null) {
-						LOGGER.error("Term for accession " + tissueAC + " not found, ignoring the experimental context statement");
-						continue;
-					}
-					long tissueID = tissue.getId();
-					pstmt.setLong(1, tissueID);
 
 					String devStageAC = expStatements.getDevelopmentStageAC();
+					Long devStageID = null;
 					if (devStageAC == null) {
-						LOGGER.error("Dev stage accession is null, ignoring the experimental context statement");
-						continue;
+						pstmt.setNull(2, Types.BIGINT);
+					} else {
+						CvTerm devStage = terminologyService.findCvTermInOntology(devStageAC, TerminologyCv.BgeeDevelopmentalStageCv);
+						if (devStage == null) {
+							LOGGER.error("Term for accession " + devStageAC + " not found, ignoring the experimental context statement");
+							continue;
+						}
+						devStageID = devStage.getId();
+						pstmt.setLong(2, devStageID);
 					}
-					CvTerm devStage = terminologyService.findCvTermInOntology(devStageAC, TerminologyCv.BgeeDevelopmentalStageCv);
-					if (devStage == null) {
-						LOGGER.error("Term for accession " + devStageAC + " not found, ignoring the experimental context statement");
-						continue;
-					}
-					long devStageID = devStage.getId();
-					pstmt.setLong(2, devStageID);
 
 					String detectionMethodAC = expStatements.getDetectionMethodAC();
+					Long detectionMethodID = null;
 					if (detectionMethodAC == null) {
-						LOGGER.error("Detection method accession is null, ignoring the experimental context statement");
-						continue;
+						pstmt.setNull(3, Types.BIGINT);
+					} else {
+						CvTerm detectionMethod = terminologyService.findCvTermInOntology(detectionMethodAC, TerminologyCv.EvidenceCodeOntologyCv);
+						if (detectionMethod == null) {
+							LOGGER.error("Term for accession " + detectionMethodAC + " not found, ignoring the experimental context statement");
+							continue;
+						}
+						detectionMethodID = detectionMethod.getId();
+						pstmt.setLong(3, detectionMethodID);
 					}
-					CvTerm detectionMethod = terminologyService.findCvTermInOntology(detectionMethodAC, TerminologyCv.EvidenceCodeOntologyCv);
-					if (detectionMethod == null) {
-						LOGGER.error("Term for accession " + detectionMethodAC + " not found, ignoring the experimental context statement");
-						continue;
+					
+					String cellLineAC = expStatements.getCellLineAC();
+					Long cellLineID = null;
+					if (cellLineAC == null) {
+						pstmt.setNull(4, Types.BIGINT);
+					} else {
+						CvTerm cellLine = terminologyService.findCvTermInOntology(cellLineAC, TerminologyCv.NextprotCellosaurusCv);
+						if (cellLine == null) {
+							LOGGER.error("Term for accession " + cellLineAC + " not found, ignoring the experimental context statement");
+							continue;
+						}
+						cellLineID = cellLine.getId();
+						pstmt.setLong(4, cellLineID);
 					}
-					long detectionMethodID = detectionMethod.getId();
-					pstmt.setLong(3, detectionMethodID);
-
-					pstmt.setString(4, expMD5);
-					pstmt.setLong(5, METADATA_ID);
+					
+					String diseaseAC = expStatements.getDiseaseAC();
+					Long diseaseID = null;
+					if (diseaseAC == null) {
+						pstmt.setNull(5, Types.BIGINT);
+					} else {
+						CvTerm disease = terminologyService.findCvTermInOntology(diseaseAC, TerminologyCv.NciThesaurusCv);
+						if (disease == null) {
+							LOGGER.error("Term for accession " + diseaseAC + " not found, ignoring the experimental context statement");
+							continue;
+						}
+						diseaseID = disease.getId();
+						pstmt.setLong(5, diseaseID);
+					}
+					
+					pstmt.setString(6, expMD5);
+					pstmt.setLong(7, mdata);
 					pstmt.addBatch();
 
 					// Adds the record to the sql statement
-					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, md5, metadata_id ) VALUES";
-					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ");\n";
+					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, cell_line_id, disease_id, md5, metadata_id ) VALUES";
+					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ");\n";
 					insertStatements.append(insertStatement);
-					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID + ",'" + expMD5 + "'," + METADATA_ID + ")");
+					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ")");
+					newStmtCount ++;
 				} else {
 					LOGGER.info("Experimental context already exists for MD5 " + expMD5);
 				}
 			}
-			LOGGER.info("Statements to be loaded : " + sqlStatements.size());
+			LOGGER.info("Statements to be loaded : " + newStmtCount);
 			if(load) {
 				LOGGER.info("Loading the experimental contexts to " + dsLocator.getDataSource().getConnection().toString());
 				pstmt.executeBatch();

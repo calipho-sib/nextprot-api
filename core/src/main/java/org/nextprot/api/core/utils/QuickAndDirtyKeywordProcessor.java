@@ -24,9 +24,12 @@ public class QuickAndDirtyKeywordProcessor {
 		boolean shouldHaveKW_0325 = false; // Glyco
 		boolean shouldHaveKW_0488 = false; // Methyl
 		boolean shouldHaveKW_0597 = false; // Phospho
+		boolean shouldHaveKW_2001 = false; // Rare disease (new :-)
 		boolean hasKW_0325 = false;
 		boolean hasKW_0488 = false;
 		boolean hasKW_0597 = false;
+		boolean hasKW_2001 = false;
+		
 		for (Annotation a:annotations) {
 						
 			if (a.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE) {
@@ -52,6 +55,13 @@ public class QuickAndDirtyKeywordProcessor {
 				else if ("PTM-0254".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
 				else if ("PTM-0255".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;				
 
+			} else if (a.getAPICategory() == AnnotationCategory.DISEASE) {	
+				for (AnnotationEvidence evi: a.getEvidences()) {
+					if (evi.getAssignedBy().equals("Orphanet") && ! a.getDescription().contains("NON RARE")) {
+						shouldHaveKW_2001 = true;
+					}
+				}
+				
 			} else if (a.getAPICategory() == AnnotationCategory.UNIPROT_KEYWORD) {
 				if      ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
 				else if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
@@ -61,21 +71,28 @@ public class QuickAndDirtyKeywordProcessor {
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
 		if (shouldHaveKW_0325) {
 			if (! hasKW_0325) {
-				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", entryName,  isoforms));
+				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", "PTM", entryName,  isoforms));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
 			}
 		}
 		if (shouldHaveKW_0488) {
 			if (! hasKW_0488) {
-				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", "PTM", entryName, isoforms));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
 			}
 		}
 		if (shouldHaveKW_0597) {
 			if (! hasKW_0597) {
-				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", "PTM", entryName, isoforms));
+			} else {
+				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
+			}
+		}
+		if (shouldHaveKW_2001) {
+			if (! hasKW_2001) {
+				annotations.add(createKeywordAnnotation("KW-2001", "Rare disease", "Disease", entryName, isoforms));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
@@ -83,7 +100,7 @@ public class QuickAndDirtyKeywordProcessor {
 		
 	}
 	
-	public static Annotation createKeywordAnnotation(String kwAccession, String kwName, String entryName, List<Isoform> isoforms) {
+	public static Annotation createKeywordAnnotation(String kwAccession, String kwName, String kwCategory, String entryName, List<Isoform> isoforms) {
 
 		long annotId = IdentifierOffset.KEYWORD_ANNOTATION_ID_COUNTER.incrementAndGet();
 		Annotation annot = new Annotation();
@@ -92,7 +109,7 @@ public class QuickAndDirtyKeywordProcessor {
 		annot.setCvTermAccessionCode(kwAccession);
 		annot.setCvTermName(kwName);
 		annot.setCvApiName("UniprotKeywordCv");
-		annot.setCvTermType("PTM");         // should be read from property of term category
+		annot.setCvTermType(kwCategory);      // should be read from property of term category
 		annot.setCvTermDescription(kwName); // should be read from property of term 
 		annot.setDescription(kwName);
 		annot.setParentXref(null);

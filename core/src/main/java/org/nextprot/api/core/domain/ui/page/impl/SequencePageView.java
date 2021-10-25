@@ -101,7 +101,7 @@ public class SequencePageView extends PageViewBase {
 				ENSEMBL, KEGG, UCSC,
 				
 				// ORGANISM-SPECIFIC DATABASES
-				MGI, EU_PATH_DB,
+				MGI, VEU_PATH_DB,
 				
 				// OTHER
 				CHITARS, EVOLUTIONARY_TRACE, PIRNR, PMAP_CUT_DB, PIRSR,

@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface DbXrefService {
-
+	
+	DbXref createDecipherXref(String geneName);
+	
 	List<DbXref> findDbXrefsByMaster(@ValidEntry String uniqueName);
 
 	List<DbXref> findDbXrefByAccession(String accession);
