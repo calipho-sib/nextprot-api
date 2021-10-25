@@ -25,6 +25,8 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
     @Autowired
     private GenomicMappingService genomicMappingService;
 
+    HashMap<String, Integer> statistics = new LinkedHashMap<>();
+
     @Override
     public List<Map<String, Object>> loadENSPSequences() {
         // Get all the nextprot entries
@@ -38,7 +40,9 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                     List isoforms = new ArrayList();
                     Map<String, Object> entry = new HashMap<>();
                     entry.put("entry", entryAccession);
+                    updateStatistics("entry", 1);
 
+                    int mappedIsoforms = 0;
                     for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
                         Map<String, String> isoformMappings = new HashMap<>();
 
@@ -49,7 +53,7 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                             String ensg = result.get("ENSG");
                             String enst = result.get("ENST");
                             String ensp = result.get("ENSP");
-                            System.out.println(isoformAccession + "," + ensg  + "," + enst + "," + ensp);
+                            System.out.println("Aligned " + isoformAccession + "," + ensg  + "," + enst + "," + ensp);
 
                             entry.put("ENSG", ensg);
                             isoformMappings.put("isoform", isoformAccession);
@@ -58,15 +62,20 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                             isoformMappings.put("ENSP", ensp);
                             isoforms.add(isoformMappings);
                             entry.put("isoforms", isoforms);
+                            mappedIsoforms++;
+                            updateStatistics("Aligned isoform", 1);
                         } else {
-                            System.out.println("No aligned isoforms for the entry " + entryAccession);
+                            System.out.println("No aligned ENST for isform " + isoformAccession);
+                            updateStatistics("No aligned ENST", 1);
                         }
+                    }
+                    if(mappedIsoforms == 0) {
+                        updateStatistics("Full entry without mappings", 1);
                     }
                     entries.add(entry);
                     System.out.println("---------");
                 }));
-
-
+        printStatics();
         return entries;
     }
 
@@ -102,5 +111,20 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
             }
         }
         return null;
+    }
+
+    private void updateStatistics(String key, int statistic) {
+        if(!statistics.containsKey(key)) {
+            statistics.put(key, 1);
+        } else {
+            Integer currentValue = statistics.get(key);
+            statistics.put(key, currentValue + 1);
+        }
+    }
+
+    private void printStatics() {
+        for(String key : statistics.keySet()) {
+            System.out.println(key + " " + statistics.get(key));
+        }
     }
 }
