@@ -34,8 +34,13 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 	public void shouldGetAnOrphanetAnnotationFromService() {
 
 		List<Annotation> annotations = annotationService.findAnnotationsExcludingBed("NX_P10000");
-		assertEquals(1,annotations.size());
-		Annotation a = annotations.get(0);
+		Annotation a = null;
+		// now we get more that 1 annotation because a keyword annot "Rare disease" is created 
+		// when an orphanet disease annot is encountered
+		for (Annotation ax: annotations) {
+			//System.out.println(ax.getCategory());
+			if (ax.getCategory().equals("disease")) a = ax;
+		}
 		assertEquals("disease",a.getCategory());
 		assertEquals("Some XR_ORPHA_100021 xref disease property value", a.getDescription());
 		assertEquals("GOLD", a.getQualityQualifier());

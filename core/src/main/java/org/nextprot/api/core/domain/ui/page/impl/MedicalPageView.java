@@ -41,7 +41,7 @@ public class MedicalPageView extends PageViewBase {
 		return Arrays.asList(
 				DRUG_CENTRAL, GENE_REVIEWS, CTD, PHARM_GKB,
 				ALLERGOME, DMDM, BIO_MUTA, MALA_CARDS,NIAGADS,
-				DIS_GE_NET, OPEN_TARGETS
+				DIS_GE_NET, OPEN_TARGETS, DECIPHER
 			);
 	}
 

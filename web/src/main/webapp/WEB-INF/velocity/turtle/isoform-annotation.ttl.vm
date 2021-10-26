@@ -91,5 +91,8 @@ annotation:$annotation-uri a :$annotation-type;
 #if($annotation.getEndPositionForIsoform($isoform-name))
   :end "$annotation.getEndPositionForIsoform($isoform-name)"^^xsd:integer;
 #end
+#if($annotation.getHgvsForIsoform($isoform-name))
+  :hgvs "$annotation.getHgvsForIsoform($isoform-name)"^^xsd:string;
+#end
   .     
 #parse("turtle/isoform-annotation-evidence-list.ttl.vm")

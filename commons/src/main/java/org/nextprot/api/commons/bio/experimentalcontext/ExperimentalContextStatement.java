@@ -2,6 +2,8 @@ package org.nextprot.api.commons.bio.experimentalcontext;
 
 public class ExperimentalContextStatement {
     private String tissueAC;
+    private String cellLineAC;
+    private String diseaseAC;
     private String developmentStageAC;
     private String detectionMethodAC;
 
@@ -9,6 +11,14 @@ public class ExperimentalContextStatement {
         this.tissueAC = tissueAC;
     }
 
+    public void setCellLineAC(String cellLineAC) {
+        this.cellLineAC = cellLineAC;
+    }
+    
+    public void setDiseaseAC(String diseaseAC) {
+        this.diseaseAC = diseaseAC;
+    }
+    
     public void setDevelopmentStageAC(String developmentStageAC) {
         this.developmentStageAC = developmentStageAC;
     }
@@ -21,6 +31,14 @@ public class ExperimentalContextStatement {
         return this.tissueAC;
     }
 
+    public String getCellLineAC() {
+        return cellLineAC;
+    }
+    
+    public String getDiseaseAC() {
+        return diseaseAC;
+    }
+    
     public String getDevelopmentStageAC() {
         return this.developmentStageAC;
     }
