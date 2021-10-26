@@ -31,9 +31,6 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
     public List<Map<String, Object>> loadENSPSequences() {
         // Get all the nextprot entries
         Set<String> entryAccessions = masterIdentifierService.findUniqueNames();
-        entryAccessions.clear();
-        entryAccessions.add("NX_A0A087WSY4");
-        entryAccessions.add("NX_A0A075B6L2");
 
         List<Map<String, Object>> entries = new ArrayList<>();
         entryAccessions.stream()
