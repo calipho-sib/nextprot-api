@@ -89,19 +89,17 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
     }
 
     private Map<String,String> getEnstAlignedWithIsoform(String isoformAccession) {
-        Map<String,String> result = new HashMap<>();
-        result.put("ENSG", "");
-        result.put("ENST", "");
-        result.put("ENSP", "");
-        result.put("quality", "----");
+
         String entryAc = isoformAccession.split("-")[0];
         GenomicMapping gm = getGenomicMappingOfEnsgAlignedWithEntry(entryAc);
-        if (gm==null) return result;
-        result.put("ENSG", gm.getAccession());
+        if (gm==null) return null;
+
         for (IsoformGeneMapping igm : gm.getIsoformGeneMappings()) {
             if (igm.getIsoformAccession().equals(isoformAccession)) {
                 List<TranscriptGeneMapping> tgmList = igm.getTranscriptGeneMappings();
-                if (tgmList==null || tgmList.size()==0) return result;
+                if (tgmList==null || tgmList.size()==0) return null;
+                Map<String,String> result = new HashMap<>();
+                result.put("ENSG", gm.getAccession());
                 // the first mapping in list is the shortest and is always chosen as "main" (or best) transcript
                 TranscriptGeneMapping tgm = tgmList.get(0);
                 result.put("ENST", tgm.getDatabaseAccession());
