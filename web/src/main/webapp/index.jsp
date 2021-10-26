@@ -82,7 +82,7 @@
 
 					<li><a href="javascript:void(0)" onclick="showMarkdownPreview('nextprot')">About</a></li>
 					<li><a
-						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
+						href="mailto:support@nextprot.org?subject=[neXtProt%20API]">Contact
 							us</a></li>
 
 				</ul>
