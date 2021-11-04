@@ -234,6 +234,17 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
+    public void shouldNotValidateVariantWithStopAsAffectedAA() {
+        
+        SingleFeatureQuery query = new SingleFeatureQuery("CDKN2A-p.Ter157Ser", AnnotationCategory.VARIANT.getApiTypeName(), "");
+    
+        FeatureQueryResult result = service.validateFeature(query);
+    
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryFormatException(query,
+                new ParseException("should not contain STOP codon as affected amino acid (e.g. p.Ter23Ser is not allowed), it should be an extension (e.g. p.*23Serext*13)", 0)));
+    }
+    
+    @Test
     public void shouldValidateMutagenesisOnCanonicalIsoform() throws Exception {
 
     	FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("ACVR1-p.Gln207Asp", AnnotationCategory.MUTAGENESIS.getApiTypeName(), ""));
