@@ -11,8 +11,6 @@ import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceModification;
-import org.nextprot.api.isoform.mapper.domain.feature.impl.SequenceVariant;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -58,6 +56,29 @@ public class SequenceVariantTest extends IsoformMappingBaseTest {
         Assert.assertFalse(variant.isIsoformSpecific());
     }
 
+    @Test
+    public void testIsospecFeatureWithDashInGeneName() throws Exception {
+        
+        SequenceVariant variant = SequenceVariant.variant("H3-3A-p.Lys28Met");
+        
+        Isoform isoform = mockIsoform("NX_P84243", "Iso 1", true);
+        
+        Assert.assertEquals("H3-3A-iso1-p.Lys28Met", variant.formatIsoSpecificFeature(isoform, 28, 28));
+        Assert.assertFalse(variant.isIsoformSpecific());
+    }
+    
+    
+    @Test
+    public void testIsospecFeatureWithDashInGeneNameFromIsoFeature() throws Exception {
+        
+        SequenceVariant variant = SequenceVariant.variant("H3-3A-p.Lys28Met");
+        
+        Isoform isoform = mockIsoform("NX_P84243", "Iso 2", true);
+        
+        Assert.assertEquals("H3-3A-iso2-p.Lys15Met", variant.formatIsoSpecificFeature(isoform, 15, 15));
+        Assert.assertFalse(variant.isIsoformSpecific());
+    }
+    
     @Test
     public void testIsospecFeatureFromIsoFeature() throws Exception {
 
