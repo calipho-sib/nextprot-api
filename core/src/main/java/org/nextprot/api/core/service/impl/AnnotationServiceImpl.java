@@ -283,7 +283,8 @@ public class AnnotationServiceImpl implements AnnotationService {
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
         updatePhenotypicEffectProperty(annotations, entryName);
-        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
+        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName,
+                isoformService.findIsoformsByEntryName(entryName), terminologyService);
 
         //returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
         return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
