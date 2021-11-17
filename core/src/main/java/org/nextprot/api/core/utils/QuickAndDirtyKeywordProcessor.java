@@ -74,28 +74,28 @@ public class QuickAndDirtyKeywordProcessor {
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
 		if (shouldHaveKW_0325) {
 			if (! hasKW_0325) {
-				annotations.add(createKeywordAnnotation("KW-0325", "PTM", entryName,  isoforms, terminologyService));
+				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", "PTM", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
 			}
 		}
 		if (shouldHaveKW_0488) {
 			if (! hasKW_0488) {
-				annotations.add(createKeywordAnnotation("KW-0488", "PTM", entryName, isoforms, terminologyService));
+				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", "PTM", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
 			}
 		}
 		if (shouldHaveKW_0597) {
 			if (! hasKW_0597) {
-				annotations.add(createKeywordAnnotation("KW-0597", "PTM", entryName, isoforms, terminologyService));
+				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", "PTM", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
 		}
 		if (shouldHaveKW_2001) {
 			if (! hasKW_2001) {
-				annotations.add(createKeywordAnnotation("KW-2001", "Disease", entryName, isoforms, terminologyService));
+				annotations.add(createKeywordAnnotation("KW-2001", "Rare disease", "Disease", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
@@ -103,13 +103,22 @@ public class QuickAndDirtyKeywordProcessor {
 		
 	}
 	
-	private static Annotation createKeywordAnnotation(String kwAccession, String kwCategory, String entryName,
-													  List<Isoform> isoforms, TerminologyService terminologyService) {
-		CvTerm cvTerm = terminologyService.findCvTermByAccession(kwAccession);
-		CvTerm.TermProperty categoryTerm = cvTerm.getProperty("category").orElse(null);
+	private static Annotation createKeywordAnnotation(String kwAccession, String kwName, String kwCategory,
+													  String entryName, List<Isoform> isoforms,
+													  TerminologyService terminologyService) {
+		String name = kwName;
+		String desc = kwName;
 		String category = kwCategory;
-		if (categoryTerm != null) {
-			category = categoryTerm.getPropertyValue();
+		
+		CvTerm cvTerm = terminologyService.findCvTermByAccession(kwAccession);
+		if (cvTerm != null) {
+			CvTerm.TermProperty categoryTerm = cvTerm.getProperty("category")
+													 .orElse(null);
+			if (categoryTerm != null) {
+				category = categoryTerm.getPropertyValue();
+			}
+			name = cvTerm.getName();
+			desc = cvTerm.getDescription();
 		}
 
 		long annotId = IdentifierOffset.KEYWORD_ANNOTATION_ID_COUNTER.incrementAndGet();
@@ -117,18 +126,18 @@ public class QuickAndDirtyKeywordProcessor {
 		annot.setAnnotationId(annotId);
 		annot.setCategory(AnnotationCategory.UNIPROT_KEYWORD.getDbAnnotationTypeName());
 		annot.setCvTermAccessionCode(kwAccession);
-		annot.setCvTermName(cvTerm.getName());
+		annot.setCvTermName(name);
 		annot.setCvApiName("UniprotKeywordCv");
 		annot.setCvTermType(category);
-		annot.setCvTermDescription(cvTerm.getDescription());
-		annot.setDescription(cvTerm.getName());
+		annot.setCvTermDescription(desc);
+		annot.setDescription(name);
 		annot.setParentXref(null);
 		annot.setQualityQualifier("GOLD");  // like in NP1 processor
 		annot.setSynonym(null);
 		annot.setUniqueName("AN_"+ entryName.substring(3) + "_KW_" + annotId);
 		annot.setVariant(null);		
 
-		System.out.println("Creating NEW KEYWORD annotation " + annot.getUniqueName() + " with keyword " + cvTerm.getAccession() + ":" + cvTerm.getName());
+		System.out.println("Creating NEW KEYWORD annotation " + annot.getUniqueName() + " with keyword " + kwAccession + ":" + name);
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// empty list of annotation evidences
