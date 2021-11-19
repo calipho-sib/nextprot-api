@@ -338,7 +338,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
                 CvTerm cvTerm = terminologyService.findCvTermByAccession(firstStatement.getValue(ANNOT_CV_TERM_ACCESSION));
                 annotation.setDescription(
                         cvTerm.getName() + " (" + cvTerm.getAccession()+ ") [" + cvTerm.getOntologyDisplayName() + ":" + cvTerm.getAccession() + "]: " +
-                        cvTerm.getDescription());
+                        cvTerm.getDescription() + " The disease is caused by mutations affecting the gene represented in this entry.");
             }
             String cvTermAccession = firstStatement.getValue(ANNOT_CV_TERM_ACCESSION);
 
