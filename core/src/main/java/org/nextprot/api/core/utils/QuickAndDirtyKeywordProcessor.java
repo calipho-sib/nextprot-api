@@ -112,8 +112,7 @@ public class QuickAndDirtyKeywordProcessor {
 		
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(kwAccession);
 		if (cvTerm != null) {
-			CvTerm.TermProperty categoryTerm = cvTerm.getProperty("category")
-													 .orElse(null);
+			CvTerm.TermProperty categoryTerm = cvTerm.getProperty("Category").orElse(null);
 			if (categoryTerm != null) {
 				category = categoryTerm.getPropertyValue();
 			}
