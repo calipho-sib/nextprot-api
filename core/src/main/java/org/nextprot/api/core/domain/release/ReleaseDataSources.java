@@ -15,6 +15,7 @@ public enum ReleaseDataSources {
 
 	UniProtKBSwissProt("UniProtKB/Swiss-Prot", "UniProtKB", "UniProt knowledgebase Swiss-Prot section", "http://www.uniprot.org/"),
 	Bgee("Bgee", "BGee", "Database for gene expression evolution", "https://bgee.org/bgee14_1/"),  // change 14_1 to something else when required by new data release
+	Cellosaurus("Cellosaurus", "neXtProt cell line", "Manually curated cell line data", "https://web.expasy.org/cellosaurus/"),
 	COSMIC("COSMIC", "Cosmic", "Catalogue of somatic mutations in cancer", "http://www.sanger.ac.uk/genetics/CGP/cosmic/"),
 	Ensembl("Ensembl", "Ensembl genome", "Ensembl human genome browser", "http://www.ensembl.org/"),
 	ENZYME("ENZYME", "UniProtKB enzyme classification", "Enzyme nomenclature database", "http://www.expasy.org/enzyme/"),

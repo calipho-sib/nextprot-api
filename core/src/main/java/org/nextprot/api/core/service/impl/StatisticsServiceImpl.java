@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.nextprot.api.commons.constants.AnnotationCategory.BINARY_INTERACTION;
+import static org.nextprot.api.commons.constants.AnnotationCategory.DISEASE;
 import static org.nextprot.api.commons.constants.AnnotationCategory.EXPRESSION_PROFILE;
 
 @Service
@@ -66,7 +67,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
 
             // Count number of entries with disease
-            if (annotations.stream().anyMatch(a -> (a.getPropertiesByKey("disease-related").isEmpty()))) {
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(DISEASE))) {
                 globalEntryStatistics.incrementNumberOfEntriesWithDisease();
             }
 
