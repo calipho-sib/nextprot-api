@@ -6,4 +6,5 @@ import java.util.List;
 public interface FunctionPredictionDAO {
 
     List<FunctionPrediction> getPredictions(String entry);
+    List<FunctionPrediction> getAllPredictions();
 }
