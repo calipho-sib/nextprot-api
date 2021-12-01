@@ -494,7 +494,7 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             }
             bioObject.putPropertyNameValue("url", url);
             bioObject.setAccession(bioObjectAccession);
-            bioObject.putPropertyNameValue("geneName", bioObjectName == null? "-" : bioObjectName);
+            bioObject.putPropertyNameValue("geneName", bioObjectName == null || bioObjectName == "" ? "-" : bioObjectName);
 
         } else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotationCategory)
                 || DISEASE_RELATED_VARIANT.equals(annotationCategory)) {
