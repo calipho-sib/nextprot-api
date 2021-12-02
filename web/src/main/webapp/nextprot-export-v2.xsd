@@ -1479,6 +1479,7 @@
 						<xs:enumeration value="Protocols and materials databases"/>
 						<xs:enumeration value="Publication databases"/>
 						<xs:enumeration value="Sequence databases"/>
+                        <xs:enumeration value="Genetic variation databases"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
