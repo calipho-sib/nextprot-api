@@ -17,6 +17,9 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.nextprot.api.core.service.dbxref.XrefDatabase.CELLOSAURUS;
+import static org.nextprot.api.core.service.dbxref.XrefDatabase.COSMIC;
+
 /**
  * Merge annotations by updating and returning target annotation with source annotations
  */
@@ -99,10 +102,16 @@ public class ReducedAnnotation implements AnnotationListReduction {
     private void updateDestEvidences() {
 
         List<AnnotationEvidence> destEvidences = new ArrayList<>(destAnnotation.getEvidences());
+        
+        boolean hasCosmicEvidence = annotations.stream()
+                                               .flatMap(annotation -> annotation.getEvidences().stream())
+                                               .anyMatch(annotationEvidence -> COSMIC.getName().equals(annotationEvidence.getAssignedBy()));
 
         destEvidences.addAll(sourceAnnotations.stream()
                 .flatMap(annotation -> annotation.getEvidences().stream())
                 .filter(e -> !destEvidences.contains(e))
+                // Remove evidences from Cellosaurus is there is already at least on Cosmic evidence (see SP_CLL_16).
+                .filter(e -> !(hasCosmicEvidence && CELLOSAURUS.getName().equals(e.getAssignedBy())))
                 .peek(e -> e.setAnnotationId(destAnnotation.getAnnotationId()))
                 .collect(Collectors.toList()));
 
