@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,7 +88,11 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		if (ec.getTissue() != null) ec.setTissue(map.get(ec.getTissueAC()));
 		if (ec.getOrganelle() != null) ec.setOrganelle(map.get(ec.getOrganelleAC()));
 		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(map.get(ec.getDetectionMethodAC()));
-		if (ec.getDisease() != null) ec.setDisease(map.get(ec.getDiseaseAC()));
+		if (ec.getDisease() != null) {
+			CvTerm cvTerm = map.get(ec.getDiseaseAC());
+			cvTerm.setXrefs(new ArrayList<>());
+			ec.setDisease(cvTerm);
+		}
 		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(map.get(ec.getDevelopmentalStageAC()));
 	}
 
