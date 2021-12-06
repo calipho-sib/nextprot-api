@@ -90,8 +90,10 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(map.get(ec.getDetectionMethodAC()));
 		if (ec.getDisease() != null) {
 			CvTerm cvTerm = map.get(ec.getDiseaseAC());
-			cvTerm.setXrefs(new ArrayList<>());
-			ec.setDisease(cvTerm);
+			if(cvTerm != null) {
+				cvTerm.setXrefs(new ArrayList<>());
+				ec.setDisease(cvTerm);
+			}
 		}
 		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(map.get(ec.getDevelopmentalStageAC()));
 	}
