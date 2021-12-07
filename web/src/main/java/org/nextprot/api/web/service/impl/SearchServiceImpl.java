@@ -105,7 +105,8 @@ public class SearchServiceImpl implements SearchService {
 			//  if high number of entries (see also https://lucene.apache.org/solr/guide/7_4/pagination-of-results.html)
 			sortingRequest.setRows("100000");
 
-			Query query = queryBuilderService.buildQueryForSearch(sortingRequest, Entity.Entry);
+			//Query query = queryBuilderService.buildQueryForSearch(sortingRequest, Entity.Entry);
+			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, sortingRequest);
 			SearchResult result = solrQueryService.executeQuery(query);
 
 			List<Map<String, Object>> results = result.getResults();
