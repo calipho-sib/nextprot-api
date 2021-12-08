@@ -16,6 +16,7 @@ public class GlobalEntryStatistics implements Serializable {
     private int numberOfEntriesWithExpressionProfile;
     private int numberOfEntriesWithBinaryInteraction;
     private int numberOfEntriesWithDisease;
+    private int numberOfVariants;
 
     public int getNumberOfEntriesWithExpressionProfile() {
         return numberOfEntriesWithExpressionProfile;
@@ -43,5 +44,13 @@ public class GlobalEntryStatistics implements Serializable {
     
     public void incrementNumberOfEntriesWithDisease() {
         this.numberOfEntriesWithDisease++;
+    }
+    
+    public int getNumberOfVariants() {
+        return numberOfVariants;
+    }
+    
+    public void incrementNumberOfVariants(long incrementation) {
+        this.numberOfVariants = this.numberOfVariants + (int) incrementation;
     }
 }
