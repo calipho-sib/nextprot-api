@@ -72,7 +72,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             // Count number of variants
             globalEntryStatistics.incrementNumberOfVariants(
                     annotations.stream()
-                               .filter(a -> a.getAPICategory().equals(VARIANT) || a.getAPICategory().equals(MUTAGENESIS))
+                               .filter(a -> a.getAPICategory().equals(VARIANT))
                                .count());
 
             // Get distinct interactions to be counted at the end (defined as interactant1::interactant2)
