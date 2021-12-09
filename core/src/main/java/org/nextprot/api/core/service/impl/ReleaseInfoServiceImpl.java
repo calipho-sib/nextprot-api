@@ -154,6 +154,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 			else if ("W_DISEASE_MASTER".equals(statsTag.getTag())) {
 				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithDisease());
 			}
+			
+			else if ("PROTEIN_SEQUENCE_VARIANT".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfVariants());
+			}
 
 			// Update other stats
 			else if ("CVTERM".equals(statsTag.getTag())) {
