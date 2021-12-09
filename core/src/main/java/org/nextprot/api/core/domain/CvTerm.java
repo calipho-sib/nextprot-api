@@ -99,9 +99,6 @@ public class CvTerm implements Serializable {
 	}
 
 	public String getOntology() {
-		if(ontology == null){
-			return null;
-		}
 
 		String o = StringUtils.toCamelCase(ontology, false);
 		try {
