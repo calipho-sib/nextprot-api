@@ -45,7 +45,7 @@ public class GnomadXrefServiceImpl implements GnomadXrefService {
                                     long xrefId = xrefService.findXrefId("gnomAD", annotationEvidence.getResourceAccession());
                                     gnomadXref.setDbXrefId(xrefId);
                                     gnomadXref.setAccession(annotationEvidence.getResourceAccession());
-                                    gnomadXref.setDatabaseCategory("Variant databases");
+                                    gnomadXref.setDatabaseCategory("Polymorphism and mutation databases");
                                     gnomadXref.setDatabaseName("gnomAD");
                                     gnomadXref.setUrl("https://gnomad.broadinstitute.org");
                                     gnomadXref.setLinkUrl(CvDatabasePreferredLink.GNOMAD.getLink());

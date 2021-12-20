@@ -19,6 +19,8 @@ import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.core.service.export.io.EntryProteinExistenceReportTSVWriter;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.query.dto.QueryRequest;
+import org.nextprot.api.solr.service.SolrService;
+import org.nextprot.api.solr.service.SolrServiceImpl;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.StreamEntryService;
@@ -82,7 +84,7 @@ public class ExportController {
                                      @RequestParam(value = "order", required = false) String order,
                                      @RequestParam(value = "quality", required = false) String quality) {
 
-        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order, SolrService.INFINITE);
 
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), view, response);
     }
@@ -99,7 +101,7 @@ public class ExportController {
                               @RequestParam(value = "order", required = false) String order,
                               @RequestParam(value = "quality", required = false) String quality) {
 
-        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
+        QueryRequest qr = buildQueryRequest(request, query, listId, queryId, sparql, chromosome, filter, quality, sort, order, SolrService.INFINITE);
 
         streamEntryService.streamQueriedEntries(qr, NextprotMediaType.valueOf(request), "entry", response);
     }
@@ -194,7 +196,7 @@ public class ExportController {
         }
     }
 
-    private static QueryRequest buildQueryRequest(HttpServletRequest request, String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
+    private static QueryRequest buildQueryRequest(HttpServletRequest request, String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order, String rows) {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuery(query);
@@ -211,7 +213,7 @@ public class ExportController {
         }
 
         qr.setQueryId(queryId);
-        qr.setRows("50");
+        qr.setRows(rows);
         qr.setFilter(filter);
         qr.setSort(sort);
         qr.setOrder(order);

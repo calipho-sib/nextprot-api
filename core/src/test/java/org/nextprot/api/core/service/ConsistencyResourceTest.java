@@ -25,11 +25,11 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Autowired private MainNamesService mainNamesService;		
 	
 	@Test
-	public void shouldFindAllPublications_After_Jul_06() {
+	public void shouldFindAllPublications_After_Jul_20() {
 
 		// We assume that at this date the nextprot db declared in application-dev.properties
 		// will contain the all publications declared in nxflat db
-		if (!CoreUnitBaseTest.todayIsAfter("06 Jul 2020")) {
+		if (!CoreUnitBaseTest.todayIsAfter("20 Jul 2021")) {
 			return;
 		}
 

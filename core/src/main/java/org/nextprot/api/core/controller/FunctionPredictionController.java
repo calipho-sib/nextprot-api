@@ -6,7 +6,6 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.core.domain.AggregateFunctionPrediction;
-import org.nextprot.api.core.domain.FunctionPrediction;
 import org.nextprot.api.core.service.FunctionPredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -40,4 +39,13 @@ public class FunctionPredictionController {
             @PathVariable("entry")  String entryAccession) {
         return functionPredictionService.getFunctionPredictions(entryAccession);
     }
+    
+    // pam: we keep this API method undocumented in the API page
+    //@ApiMethod(verb = ApiVerb.GET, description = "Gets errors in function prediction data", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    @RequestMapping(value = "/invalid-predictions", method = { RequestMethod.GET })
+    @ResponseBody
+    public Map<String,List<String>> getInvalidPredictions() {
+        return functionPredictionService.getInvalidPredictions();
+    }
+
 }

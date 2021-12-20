@@ -125,8 +125,8 @@ public class AnnotationUtils {
 			}
 		}
 
-		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
-			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
+		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION || annotationCategory == AnnotationCategory.DISEASE_RELATED_VARIANT) {
+			Collections.sort(filteredAnnotations, AnnotationComparators.newProteoformVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
 		} else {
 			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));
 		}
@@ -402,7 +402,8 @@ public class AnnotationUtils {
 	 * otherwise returns false.
 	 * @param annot any annotation
 	 */
-	public static boolean isVariantRelatedToDiseaseProperty(Annotation annot, Map<Long,ExperimentalContext> ecs) {
+	public static boolean isVariantRelatedToDiseaseProperty(Annotation annot, Map<Long,ExperimentalContext> ecs,
+															Set<String> diseaseRelatedVariants) {
 		
 		if (AnnotationCategory.VARIANT != annot.getAPICategory()) return false;
 		
@@ -426,7 +427,11 @@ public class AnnotationUtils {
 			if (annot.getVariant().getDiseaseTerms().size() > 0) return true;
 		}
 		
-		// condition 3: description matches some patterns, return true > 5'000 cases
+		// condition 3: variants involved in at least one disease-related-variant annotation (data coming from Bioeditor)
+		
+		if (annot.getAnnotationHash() != null && diseaseRelatedVariants.contains(annot.getAnnotationHash())) return true;
+		
+		// condition 4: description matches some patterns, return true > 5'000 cases
 		
 		if (annot.getDescription()==null) return false;
 		

@@ -26,6 +26,8 @@ import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
+import org.nextprot.api.core.service.annotation.PhenotypeUtils;
+import org.nextprot.api.core.service.annotation.VariantUtils;
 import org.nextprot.api.core.service.annotation.merge.impl.AnnotationListMerger;
 import org.nextprot.api.core.utils.QuickAndDirtyKeywordProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,33 +262,39 @@ public class AnnotationServiceImpl implements AnnotationService {
         annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));
         annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));
         annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
-
         // Adds the variant frequencies to variant annotations
         addGnomeADVariantFrequencies(entryName, annotations);
+
+        String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
+                .filter(entityName -> entityName.isMain())
+                .map(entityName -> entityName.getName())
+                .findFirst()
+                .orElse("");
+               
         if (!ignoreStatements) {
-
-            String geneName = entityNameService.findNamesByEntityNameClass(entryName, GENE_NAMES).stream()
-                    .filter(entityName -> entityName.isMain())
-                    .map(entityName -> entityName.getName())
-                    .findFirst()
-                    .orElse("");
-
             annotations = new AnnotationListMerger(geneName, annotations).merge(statementService.getAnnotations(entryName));
         }
 
         // post-processing of annotations
         updateIsoformsDisplayedAsSpecific(annotations, entryName);
         updateVariantsRelatedToDisease(annotations);
+        updateVariantsHgvsNames(annotations, isoformService.findIsoformsByEntryName(entryName), geneName);
         updateSubcellularLocationTermNameWithAncestors(annotations);
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
-
-        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
+        updatePhenotypicEffectProperty(annotations, entryName);
+        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName,
+                isoformService.findIsoformsByEntryName(entryName), terminologyService);
 
         //returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
         return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
     }
 
+    private void updatePhenotypicEffectProperty(List<Annotation> annotations, String entryName) {
+    	//System.out.println("I was there");
+    	PhenotypeUtils.updatePhenotypicEffectProperty(annotations, entryName);
+    }
+    
     private List<Annotation> createSmallMoleculeInteractionAnnotationsFromCatalyticActivities(String entryName, List<Annotation> existingAnnotations, boolean ignoreStatements) {
         List<Annotation> smiAnnotations = new ArrayList<>();
         List<DbXref> entryXrefs = ignoreStatements ? xrefService.findDbXrefsByMasterExcludingBed(entryName) : xrefService.findDbXrefsByMaster(entryName);
@@ -333,16 +341,38 @@ public class AnnotationServiceImpl implements AnnotationService {
 
     }
 
+    private void updateVariantsHgvsNames(List<Annotation> annotations, List<Isoform> isoforms, String geneName) {
+    	
+    	for (Annotation a: annotations) {
+    		if (a.getAPICategory()==null) continue; // this should not accur but it DOES occur in a mockito test i don't understand
+    		if (a.getAPICategory().equals(AnnotationCategory.VARIANT) || 
+	    		a.getAPICategory().equals(AnnotationCategory.MUTAGENESIS)) {
+    			for (Isoform iso : isoforms) VariantUtils.updateHGVSName(a, iso, geneName);
+    		}
+    	}
+    }
+    	
+
+    
     private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
 
         Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getIdExperimentalContextMap();
 
         //long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
 
+        Set<String> diseaseRelatedVariants = new HashSet<>();
+        for (Annotation a: annotations) {
+            if (a.getAPICategory() == null || a.getAPICategory().getDbAnnotationTypeName() == null
+                    || !a.getAPICategory().getDbAnnotationTypeName().equals(AnnotationCategory.DISEASE_RELATED_VARIANT.getDbAnnotationTypeName())) {
+                continue;
+            }
+            // Get all subjects of DISEASE_RELATED_VARIANT annotations
+            diseaseRelatedVariants.addAll(a.getSubjectComponents());
+        }
         // add property if annotation is a variant related to disease
         for (Annotation annot : annotations) {
             if (AnnotationCategory.VARIANT == annot.getAPICategory()) {
-                boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap);
+                boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap, diseaseRelatedVariants);
                 AnnotationProperty prop = new AnnotationProperty();
                 prop.setAnnotationId(annot.getAnnotationId());
                 prop.setName("disease-related");

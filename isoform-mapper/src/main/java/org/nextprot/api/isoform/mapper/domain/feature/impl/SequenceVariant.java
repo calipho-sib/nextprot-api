@@ -61,8 +61,8 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     private String parseGeneName(String sequenceIdPart) {
 
-        if (sequenceIdPart.contains("-"))
-            return sequenceIdPart.substring(0, sequenceIdPart.indexOf("-"));
+        if (sequenceIdPart.contains("-iso"))
+            return sequenceIdPart.substring(0, sequenceIdPart.indexOf("-iso"));
 
         return sequenceIdPart;
     }
@@ -117,7 +117,7 @@ public class SequenceVariant extends SequenceFeatureBase {
             return Optional.empty();
         }
 
-        int indexOfDash = sequenceIdPart.indexOf("-");
+        int indexOfDash = sequenceIdPart.indexOf("-iso");
 
         if (indexOfDash >= 0) {
             String featureIsoname = sequenceIdPart.substring(indexOfDash + 1);

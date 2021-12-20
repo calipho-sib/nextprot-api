@@ -2,6 +2,11 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:        2019/10/08
+    New annotation category added: disease-related-variant
+
+    Date:        2021/09/03
+    Database category removed: Variant database (now gnomAD db in category Polymorphism and mutation databases)     
 
     Date:        2020/07/01
     1) New annotation category added: interaction-mapping
@@ -946,6 +951,7 @@
 						<xs:enumeration value="cross-link"/>
 						<xs:enumeration value="developmental-stage-info"/>
 						<xs:enumeration value="disease"/>
+                        <xs:enumeration value="disease-related-variant"/>
 						<xs:enumeration value="disulfide-bond"/>
 						<xs:enumeration value="dna-binding-region"/>
 						<xs:enumeration value="domain"/>
@@ -1259,6 +1265,7 @@
 			</xs:sequence>
 			<xs:attribute ref="accession" use="required"/>
 			<xs:attribute name="name" use="optional"/>
+			<xs:attribute name="hgvs" use="optional"/>
 			<xs:attribute name="specificity" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
@@ -1471,8 +1478,8 @@
 						<xs:enumeration value="Proteomic databases"/>
 						<xs:enumeration value="Protocols and materials databases"/>
 						<xs:enumeration value="Publication databases"/>
-                        <xs:enumeration value="Variant databases"/>
 						<xs:enumeration value="Sequence databases"/>
+                        <xs:enumeration value="Genetic variation databases"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>

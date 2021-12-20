@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import com.google.common.base.Preconditions;
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.service.SimpleStatementTransformerService;
 import org.nextprot.api.etl.service.StatementIsoformPositionService;
@@ -24,12 +25,14 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.nextprot.api.commons.constants.AnnotationCategory.INTERACTION_MAPPING;
 import static org.nextprot.api.commons.constants.AnnotationCategory.PHENOTYPIC_VARIATION;
+import static org.nextprot.api.commons.constants.AnnotationCategory.DISEASE_RELATED_VARIANT;
 import static org.nextprot.commons.statements.specs.CoreStatementField.*;
 
 @Service
 public class StatementTransformerServiceImpl implements StatementTransformerService {
+
+	protected final Logger LOGGER = Logger.getLogger(StatementTransformerServiceImpl.class);
 
 	@Autowired
 	private SequenceFeatureFactoryService sequenceFeatureFactoryService;
@@ -73,12 +76,9 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			Set<Statement> mappedStatements = new HashSet<>();
 			trackedRawStatementIds.clear();
 
-			int cpt = 0;
 			for (Statement rawStatement : rawStatements) {
-				cpt++;
-				//System.out.println("Handling rawStatement " + cpt + " / " + this.rawStatements.size());
-				if (isPhenotypicVariation(rawStatement)) {
-					mappedStatements.addAll(transformPhenotypicVariationStatement(rawStatement));
+				if (isProteoformVariation(rawStatement)) {
+					mappedStatements.addAll(transformProteoformVariationStatement(rawStatement));
 				} else if (!trackedRawStatementIds.contains(rawStatement.getStatementId())) { // single
 					simpleStatementTransformerService.transformStatement(rawStatement).ifPresent(s -> mappedStatements.add(s));
 					trackedRawStatementIds.add(rawStatement.getStatementId());
@@ -89,7 +89,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		}
 
 		/**
-		 * <h3> Phenotypic variation stmt</h3>
+		 * <h3> Proteoform variation stmt</h3>
 		 *
 		 * <h3>Example</h3>
 		 * MSH6-p.Ser144Ile decreases mismatch repair (BED CAVA-VP011468)
@@ -99,15 +99,15 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		 * 2. stmt OBJECT (ex: GO: mismatch repair)
 		 * 3. a stmt VERB, ANNOT_CV_TERM (ex: stmt 1. decreases stmt 2.)
 		 **/
-		private Set<Statement> transformPhenotypicVariationStatement(Statement rawPhenotypicVariationStatement) {
+		private Set<Statement> transformProteoformVariationStatement(Statement rawProteoformVariationStatement) {
 
-			Set<Statement> rawStatementSubjects = getRawStatementSubjects(rawPhenotypicVariationStatement.getSubjectStatementIdsArray());
+			Set<Statement> rawStatementSubjects = getRawStatementSubjects(rawProteoformVariationStatement.getSubjectStatementIdsArray());
 			if (rawStatementSubjects == null || rawStatementSubjects.isEmpty()) {
-				throw new NextProtException("missing subject statement in phenotypic-variation statement "+rawPhenotypicVariationStatement);
+				throw new NextProtException("missing subject statement in proteoform-variation statement "+rawProteoformVariationStatement);
 			}
-			Statement rawStatementObject = rawStatementsById.get(rawPhenotypicVariationStatement.getObjectStatementId());
+			Statement rawStatementObject = rawStatementsById.get(rawProteoformVariationStatement.getObjectStatementId());
 			if (rawStatementObject == null) {
-				throw new NextProtException("missing object statement in phenotypic-variation statement "+rawPhenotypicVariationStatement);
+				throw new NextProtException("missing object statement in proteoform-variation statement "+rawProteoformVariationStatement);
 			}
 
 			String isoformSpecificAccession = null;
@@ -118,7 +118,7 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			}
 
 			// FIXME: deduce isIsoSpecific from isoAccession existence
-			return transformPhenotypicVariationStatement(rawPhenotypicVariationStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
+			return transformProteoformVariationStatement(rawProteoformVariationStatement, rawStatementSubjects, isIsoSpecific, isoformSpecificAccession);
 		}
 
 		private void trackStatementId(String statementId) {
@@ -168,14 +168,10 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 		}
 
 
-		private boolean isPhenotypicVariation(Statement statement) {
-
-			return statement.getValue(ANNOTATION_CATEGORY).equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName());
+		private boolean isProteoformVariation(Statement statement) {
+			return statement.getValue(ANNOTATION_CATEGORY).equals(PHENOTYPIC_VARIATION.getDbAnnotationTypeName())
+					|| statement.getValue(ANNOTATION_CATEGORY).equals(DISEASE_RELATED_VARIANT.getDbAnnotationTypeName());
 		}
-
-		private boolean isInteractionMapping(Statement statement) {
-		    return statement.getValue(ANNOTATION_CATEGORY).equals(INTERACTION_MAPPING.getDbAnnotationTypeName());
-        }
 
 		private String getIsoAccession(Statement statement) {
 
@@ -189,31 +185,31 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			}
 		}
 
-		private Set<Statement> transformPhenotypicVariationStatement(Statement rawPhenotypicVariationStatement, Set<Statement> subjectStatementSet,
-		                                                 boolean isIsoSpecific, String isoSpecificAccession) {
+		private Set<Statement> transformProteoformVariationStatement(Statement rawProteoformVariationStatement, Set<Statement> subjectStatementSet,
+																	 boolean isIsoSpecific, String isoSpecificAccession) {
 			Set<Statement> statementsToLoad = new HashSet<>();
 
 			// 1. transform subjects: add mapping infos on each subjects
 			List<Statement> transformedSubjectStatements = transformSubjects(subjectStatementSet);
 
 			if (transformedSubjectStatements.isEmpty()) {
-				report.addWarning("Empty subjects are not allowed for " + rawPhenotypicVariationStatement.getValue(ENTRY_ACCESSION) + " skipping... case for 1 variant");
+				report.addWarning("Empty subjects are not allowed for " + rawProteoformVariationStatement.getValue(ENTRY_ACCESSION) + " skipping... case for 1 variant");
 			}
 
 			TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement =
 					statementIsoformPositionService.computeTargetIsoformsForProteoformAnnotation(transformedSubjectStatements, isIsoSpecific, isoSpecificAccession);
 
 			// 2. transform object
-			Statement objectStatement = transformObject(rawPhenotypicVariationStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
+			Statement objectStatement = transformObject(rawProteoformVariationStatement, isIsoSpecific, targetIsoformsSetForPhenotypicVariationStatement);
 
-			Statement phenotypeVariationStatement = new StatementBuilder(rawPhenotypicVariationStatement)
+			Statement phenotypeVariationStatement = new StatementBuilder(rawProteoformVariationStatement)
 					.addField(TARGET_ISOFORMS, targetIsoformsSetForPhenotypicVariationStatement.serializeToJsonString())
 					.addSubjects(transformedSubjectStatements)
 					.addObject(objectStatement)
 					.removeField(STATEMENT_ID)
 					.removeField(SUBJECT_STATEMENT_IDS)
 					.removeField(OBJECT_STATEMENT_IDS)
-					.addField(RAW_STATEMENT_ID, rawPhenotypicVariationStatement.getStatementId())
+					.addField(RAW_STATEMENT_ID, rawProteoformVariationStatement.getStatementId())
 					.withAnnotationHash()
 					.build();
 
@@ -238,12 +234,12 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 			return statementsToLoad;
 		}
 
-		private Statement transformObject(Statement originalStatement, boolean isIsoSpecific, TargetIsoformSet targetIsoformsSetForPhenotypicVariationStatement) {
+		private Statement transformObject(Statement originalStatement, boolean isIsoSpecific, TargetIsoformSet targetIsoformsSetForProteoformVariationStatement) {
 
 			Statement originalObjectStatement = rawStatementsById.get(originalStatement.getObjectStatementId());
 
 			TargetIsoformSet targetIsoformsForObjectStatement =
-					computeTargetIsoformForObject(isIsoSpecific, originalObjectStatement, targetIsoformsSetForPhenotypicVariationStatement);
+					computeTargetIsoformForObject(isIsoSpecific, originalObjectStatement, targetIsoformsSetForProteoformVariationStatement);
 
 			return new StatementBuilder(originalObjectStatement)
 					.addField(TARGET_ISOFORMS, targetIsoformsForObjectStatement.serializeToJsonString())
@@ -276,13 +272,13 @@ public class StatementTransformerServiceImpl implements StatementTransformerServ
 					.collect(Collectors.toList());
 		}
 
-		private TargetIsoformSet computeTargetIsoformForObject(boolean isIsoSpecific, Statement originalObjectStatement, TargetIsoformSet targetIsoformsSetOfPhenotypicVariation) {
+		private TargetIsoformSet computeTargetIsoformForObject(boolean isIsoSpecific, Statement originalObjectStatement, TargetIsoformSet targetIsoformsSetOfProteoformVariation) {
 			TargetIsoformSet targetIsoformsForObject;
 
 			if (isIsoSpecific) {//If it is iso specific
 				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
 
-				for (TargetIsoformStatementPosition tisp : targetIsoformsSetOfPhenotypicVariation) {
+				for (TargetIsoformStatementPosition tisp : targetIsoformsSetOfProteoformVariation) {
 					targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
 				}
 				targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet);

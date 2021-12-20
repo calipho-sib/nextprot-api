@@ -1,6 +1,7 @@
 package org.nextprot.api.rdf.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jsondoc.core.annotation.ApiObject;
@@ -10,11 +11,11 @@ public class Version implements Serializable{
 
 	private static final long serialVersionUID = -7029978352134310155L;
 
-	private String name="unknow";
-	private String version="unknow";
-	private String date;
+	private String name="unknown";
+	private String version="unknown";
+	private Date date;
 	public Version() {
-		date=new Date().toLocaleString();
+		date=new Date();
 	}
 	
 	public String getName() {
@@ -24,8 +25,9 @@ public class Version implements Serializable{
 		this.name = name;
 	}
 	
-	public String getDate(){
-		return date;
+	public String getDate() {
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+		return sdf.format(this.date);
 	}
 
 	public void setVersion(String version) {

@@ -2,6 +2,9 @@ package org.nextprot.api.core.domain;
 
 import java.util.*;
 
+/**
+ * Represents all the function predictios for a given entry
+ */
 public class AggregateFunctionPrediction {
 
     private String entryAC;
@@ -14,23 +17,25 @@ public class AggregateFunctionPrediction {
 
     public void addPrediction(FunctionPrediction newFunctionPrediction) {
         String type = newFunctionPrediction.getType();
-        if(predictions.get(type) == null) {
-            List<FunctionPrediction> predictionsByType = new ArrayList<>();
-            predictionsByType.add(newFunctionPrediction);
-            predictions.put(type, predictionsByType);
-        } else {
-            List<FunctionPrediction> predictionsByType = predictions.get(type);
-
-            // Evidence aggregation: only add an evidence if the GO term is the same
-            Optional<FunctionPrediction> functionPredictionByCVTerm = predictionsByType.stream()
-                    .filter(functionPrediction -> functionPrediction.getCvTermAccession().equals(newFunctionPrediction.getCvTermAccession()))
-                    .findAny();
-
-            if(functionPredictionByCVTerm.isPresent()){
-                functionPredictionByCVTerm.get()
-                        .addEvidence(newFunctionPrediction.getEvidences().get(0));
-            } else {
+        if(type != null) {
+            if(predictions.get(type) == null) {
+                List<FunctionPrediction> predictionsByType = new ArrayList<>();
                 predictionsByType.add(newFunctionPrediction);
+                predictions.put(type, predictionsByType);
+            } else {
+                List<FunctionPrediction> predictionsByType = predictions.get(type);
+
+                // Evidence aggregation: only add an evidence if the GO term is the same
+                Optional<FunctionPrediction> functionPredictionByCVTerm = predictionsByType.stream()
+                        .filter(functionPrediction -> functionPrediction.getCvTermAccession().equals(newFunctionPrediction.getCvTermAccession()))
+                        .findAny();
+
+                if(functionPredictionByCVTerm.isPresent()){
+                    functionPredictionByCVTerm.get()
+                            .addEvidence(newFunctionPrediction.getEvidences().get(0));
+                } else {
+                    predictionsByType.add(newFunctionPrediction);
+                }
             }
         }
     }

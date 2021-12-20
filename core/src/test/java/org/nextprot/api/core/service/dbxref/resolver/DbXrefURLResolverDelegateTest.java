@@ -20,6 +20,8 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     
+    
+    
     @Test
     public void testsUsefulForNP2Pipeline() throws Exception {
     	DbXref xref;
@@ -133,6 +135,14 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     
+    @Test
+    public void testResolveDECIPHER() throws Exception {
+
+        DbXref xref = createDbXref("SCN1A", "DECIPHER", "http://www.ebi.ac.uk/whatnnever/%s");
+        Assert.assertEquals("https://www.deciphergenomics.org/gene/SCN1A/overview/clinical-info", resolver.resolve(xref));
+        Assert.assertEquals("https://www.deciphergenomics.org/gene/%s/overview/clinical-info", xref.getLinkUrl());
+
+    }
     
     
     

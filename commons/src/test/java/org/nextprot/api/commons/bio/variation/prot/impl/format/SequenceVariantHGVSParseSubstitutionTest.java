@@ -10,6 +10,8 @@ import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Substitution;
 
 import java.text.ParseException;
 
+import static org.junit.Assert.fail;
+
 public class SequenceVariantHGVSParseSubstitutionTest {
 
     VariantHGVSFormat format = new VariantHGVSFormat();
@@ -81,30 +83,34 @@ public class SequenceVariantHGVSParseSubstitutionTest {
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getSequenceChange().getValue());
     }
 
-    @Test
+    @Test(expected = ParseException.class)
     public void testParseAATerSubstitutionFixCode1() throws Exception {
-
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
-        SequenceVariation pm = format.parse("p.*104E");
-
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getFirstAminoAcid());
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getLastAminoAcid());
-        Assert.assertEquals(104, pm.getVaryingSequence().getFirstAminoAcidPos());
-        Assert.assertTrue(pm.getSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcidCode.GLUTAMIC_ACID, pm.getSequenceChange().getValue());
+        try {
+            format.parse("p.*104E");
+            fail();
+        } catch (ParseException e) {
+            if (e.getMessage().contains("should not contain STOP codon as affected amino acid")) {
+                throw e; // success tests
+            } else {
+                fail();
+            }
+        }
     }
-
-    @Test
+    
+    @Test(expected = ParseException.class)
     public void testParseAATerSubstitutionFixCode3() throws Exception {
-
         format = new VariantHGVSFormat(ParsingMode.PERMISSIVE);
-        SequenceVariation pm = format.parse("p.Ter104Glu");
-
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getFirstAminoAcid());
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getVaryingSequence().getLastAminoAcid());
-        Assert.assertEquals(104, pm.getVaryingSequence().getFirstAminoAcidPos());
-        Assert.assertTrue(pm.getSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcidCode.GLUTAMIC_ACID, pm.getSequenceChange().getValue());
+        try {
+            format.parse("p.Ter104Glu");
+            fail();
+        } catch (ParseException e) {
+            if (e.getMessage().contains("should not contain STOP codon as affected amino acid")) {
+                throw e; // success tests
+            } else {
+                fail();
+            }
+        }
     }
 
     @Ignore

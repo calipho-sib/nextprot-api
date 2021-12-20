@@ -15,6 +15,7 @@ public enum CvDatabasePreferredLink {
 	COSMIC_SAMPLE( "http://cancer.sanger.ac.uk/cosmic/sample/overview?id=%s"),
 	COSMIC_MUTATION( "http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=%s"),
 	COSMIC_GENE( "http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=%s"),
+	DECIPHER("https://www.deciphergenomics.org/gene/%s/overview/clinical-info"),
 	ECO("http://purl.obolibrary.org/obo/%s"),
 	EMBL("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=%s"),
 	EMBL_GENE("http://www.ebi.ac.uk/ena/data/view/%s"),

@@ -12,7 +12,6 @@
   
 source:$StringUtils.slug($datasource.getName())
   rdf:type :Source;
-  rdfs:subClassOf owl:Thing;
   rdfs:comment "$datasource.getDescription()"^^xsd:string;
 #if($datasource.getURL())
   rdfs:seeAlso "$datasource.getURL()"^^xsd:anyURI;

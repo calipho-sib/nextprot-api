@@ -469,7 +469,11 @@ public class StatementPreProcessServiceImpl implements StatementPreProcessServic
                              .filter(statement -> {
                                  String nxAcc = statement.getValue(NEXTPROT_ACCESSION);
                                  Optional<MainNames> isoformOrEntryMainName = mainNamesService.findIsoformOrEntryMainName(nxAcc);
-                                 return isoformOrEntryMainName.isPresent() ;
+                                 boolean isPresent = isoformOrEntryMainName.isPresent() ;
+                                 if(!isPresent) {
+                                     LOGGER.info("{ 'step': 'Filter', 'Raw statement':" + statement.toJsonString() + "}");
+                                 }
+                                 return isPresent;
                              })
                              .collect(Collectors.toSet());
         }

@@ -92,6 +92,7 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 	 * 
 	 * see query above to find other examples if necessary in future releases
 	 */
+	@Ignore
 	@Test
 	public void shouldDealWithAnyInteractionSpecialInteraction() {
 		String entry_ac="NX_Q9UNQ0";

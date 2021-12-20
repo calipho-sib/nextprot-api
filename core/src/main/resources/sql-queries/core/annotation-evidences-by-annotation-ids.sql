@@ -33,7 +33,8 @@ left join nextprot.cv_term_categories cvcat on (eco.cv_category_id = cvcat.cv_id
 -- evidence with type 1 (source) are now ignored (Anne)
 -- evidence with type 2 (relative) exist for cofactor, sequence caution, and disease annotation types:
 -- they are turned into properties and to build the description of the annotation, see CALIPHOMISC-277
-where assoc.cv_type_id in (3,2)
+where assoc.cv_type_id in (3,2) 
+and assoc.cv_quality_qualifier_id in (10,50)
 and assoc.annotation_id in (:ids) 
 
 

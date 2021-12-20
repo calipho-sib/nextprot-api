@@ -2,18 +2,21 @@ package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.TerminologyService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class QuickAndDirtyKeywordProcessor {
 
-	public static void processKeywordAnnotations(List<Annotation> annotations, String entryName, List<Isoform> isoforms) {
+	public static void processKeywordAnnotations(List<Annotation> annotations, String entryName, List<Isoform> isoforms,
+												 TerminologyService terminologyService) {
 		
 		// embryo of what should be generalized for all keywords
 		
@@ -24,9 +27,12 @@ public class QuickAndDirtyKeywordProcessor {
 		boolean shouldHaveKW_0325 = false; // Glyco
 		boolean shouldHaveKW_0488 = false; // Methyl
 		boolean shouldHaveKW_0597 = false; // Phospho
+		boolean shouldHaveKW_2001 = false; // Rare disease (new :-)
 		boolean hasKW_0325 = false;
 		boolean hasKW_0488 = false;
 		boolean hasKW_0597 = false;
+		boolean hasKW_2001 = false;
+		
 		for (Annotation a:annotations) {
 						
 			if (a.getAPICategory() == AnnotationCategory.GLYCOSYLATION_SITE) {
@@ -52,6 +58,13 @@ public class QuickAndDirtyKeywordProcessor {
 				else if ("PTM-0254".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;
 				else if ("PTM-0255".equals(a.getCvTermAccessionCode())) shouldHaveKW_0597 = true;				
 
+			} else if (a.getAPICategory() == AnnotationCategory.DISEASE) {	
+				for (AnnotationEvidence evi: a.getEvidences()) {
+					if (evi.getAssignedBy().equals("Orphanet") && ! a.getDescription().contains("NON RARE")) {
+						shouldHaveKW_2001 = true;
+					}
+				}
+				
 			} else if (a.getAPICategory() == AnnotationCategory.UNIPROT_KEYWORD) {
 				if      ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
 				else if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
@@ -61,21 +74,28 @@ public class QuickAndDirtyKeywordProcessor {
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
 		if (shouldHaveKW_0325) {
 			if (! hasKW_0325) {
-				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", entryName,  isoforms));
+				annotations.add(createKeywordAnnotation("KW-0325", "Glycoprotein", "PTM", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0325 - Glycoprotein");
 			}
 		}
 		if (shouldHaveKW_0488) {
 			if (! hasKW_0488) {
-				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0488", "Methylation", "PTM", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0488 - Methylation");				
 			}
 		}
 		if (shouldHaveKW_0597) {
 			if (! hasKW_0597) {
-				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", entryName, isoforms));
+				annotations.add(createKeywordAnnotation("KW-0597", "Phosphoprotein", "PTM", entryName, isoforms, terminologyService));
+			} else {
+				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
+			}
+		}
+		if (shouldHaveKW_2001) {
+			if (! hasKW_2001) {
+				annotations.add(createKeywordAnnotation("KW-2001", "Rare disease", "Disease", entryName, isoforms, terminologyService));
 			} else {
 				//System.out.println("KEYWORD annotation already exists for " + entryName + " : KW-0597 - Phosphoprotein");				
 			}
@@ -83,25 +103,40 @@ public class QuickAndDirtyKeywordProcessor {
 		
 	}
 	
-	public static Annotation createKeywordAnnotation(String kwAccession, String kwName, String entryName, List<Isoform> isoforms) {
+	private static Annotation createKeywordAnnotation(String kwAccession, String kwName, String kwCategory,
+													  String entryName, List<Isoform> isoforms,
+													  TerminologyService terminologyService) {
+		String name = kwName;
+		String desc = kwName;
+		String category = kwCategory;
+		
+		CvTerm cvTerm = terminologyService.findCvTermByAccession(kwAccession);
+		if (cvTerm != null) {
+			CvTerm.TermProperty categoryTerm = cvTerm.getProperty("Category").orElse(null);
+			if (categoryTerm != null) {
+				category = categoryTerm.getPropertyValue();
+			}
+			name = cvTerm.getName();
+			desc = cvTerm.getDescription();
+		}
 
 		long annotId = IdentifierOffset.KEYWORD_ANNOTATION_ID_COUNTER.incrementAndGet();
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
 		annot.setCategory(AnnotationCategory.UNIPROT_KEYWORD.getDbAnnotationTypeName());
 		annot.setCvTermAccessionCode(kwAccession);
-		annot.setCvTermName(kwName);
+		annot.setCvTermName(name);
 		annot.setCvApiName("UniprotKeywordCv");
-		annot.setCvTermType("PTM");         // should be read from property of term category
-		annot.setCvTermDescription(kwName); // should be read from property of term 
-		annot.setDescription(kwName);
+		annot.setCvTermType(category);
+		annot.setCvTermDescription(desc);
+		annot.setDescription(name);
 		annot.setParentXref(null);
 		annot.setQualityQualifier("GOLD");  // like in NP1 processor
 		annot.setSynonym(null);
 		annot.setUniqueName("AN_"+ entryName.substring(3) + "_KW_" + annotId);
 		annot.setVariant(null);		
 
-		System.out.println("Creating NEW KEYWORD annotation " + annot.getUniqueName() + " with keyword " + kwAccession + ":" + kwName);
+		System.out.println("Creating NEW KEYWORD annotation " + annot.getUniqueName() + " with keyword " + kwAccession + ":" + name);
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// empty list of annotation evidences
