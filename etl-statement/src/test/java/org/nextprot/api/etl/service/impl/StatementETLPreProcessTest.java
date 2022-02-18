@@ -41,7 +41,9 @@ public class StatementETLPreProcessTest {
     public void shouldPreprocessBgeeRawStatementAndAddEntryAccession() throws Exception{
         StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
         Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "bgee-statements");
+        System.out.println("raw: " + rawStatements.size());
         Set<Statement> preprocessedStatements = statementPreProcessService.process(StatementSource.valueOfKey("Bgee"), rawStatements);
+        for (Statement s: preprocessedStatements) System.out.println(s);
         Assert.assertEquals(preprocessedStatements.size(),1);
 
         for (Statement preprocessedStatement : preprocessedStatements) {
