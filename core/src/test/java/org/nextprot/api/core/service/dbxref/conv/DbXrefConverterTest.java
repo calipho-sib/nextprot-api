@@ -50,7 +50,7 @@ public class DbXrefConverterTest {
 
         DbXrefPropertyToXrefConverter converter =  DbXrefConverter.getInstance();
 
-        DbXref xref = createDbXref("AAA59172.1", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena");
+        DbXref xref = createDbXref("AAA59172.1", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(1724225, "genomic sequence ID", "J00265")));
 
         List<DbXref> xrefs = converter.convert(xref);
@@ -62,9 +62,9 @@ public class DbXrefConverterTest {
         Assert.assertTrue(ref.getProperties().isEmpty());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XrefDatabase.EMBL.getName(), ref.getDatabaseName());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/%s", ref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/J00265", ref.getResolvedUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL, String url) {
