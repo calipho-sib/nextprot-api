@@ -65,7 +65,7 @@ public class EmblDbXrefConverterTest {
 
         EmblDbXrefConverter converter = new EmblDbXrefConverter();
 
-        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "http://www.ebi.ac.uk/ena");
+        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena");
         xref.setProperties(Arrays.asList(
                 createDbXrefProperty(1935564, "genomic sequence ID", "M27429"),
                 createDbXrefProperty(1935565, "genomic sequence ID", "M27428"),
