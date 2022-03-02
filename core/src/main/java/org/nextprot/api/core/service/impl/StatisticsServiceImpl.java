@@ -25,8 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.nextprot.api.commons.constants.AnnotationCategory.BINARY_INTERACTION;
-import static org.nextprot.api.commons.constants.AnnotationCategory.EXPRESSION_PROFILE;
+import static org.nextprot.api.commons.constants.AnnotationCategory.*;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -58,11 +57,23 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
 
-            // Count number of entries with expression profile
             List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
+            
+            // Count number of entries with expression profile
             if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
                 globalEntryStatistics.incrementNumberOfEntriesWithExpressionProfile();
             }
+
+            // Count number of entries with disease
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(DISEASE))) {
+                globalEntryStatistics.incrementNumberOfEntriesWithDisease();
+            }
+
+            // Count number of variants
+            globalEntryStatistics.incrementNumberOfVariants(
+                    annotations.stream()
+                               .filter(a -> a.getAPICategory().equals(VARIANT))
+                               .count());
 
             // Get distinct interactions to be counted at the end (defined as interactant1::interactant2)
             Set<String> interactants = annotations.stream()

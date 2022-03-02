@@ -17,12 +17,12 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {
     public void shouldExportJsonEntry() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/entry/NX_P01308.json").accept(MediaType.APPLICATION_JSON))
+                .get("/entry/NX_P01112.json").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
 
-        Assert.assertTrue(content.contains("\"uniqueName\" : \"NX_P01308\""));
+        Assert.assertTrue(content.contains("\"uniqueName\" : \"NX_P01112\""));
         Assert.assertTrue(!content.contains("peffByIsoform"));
     }
 

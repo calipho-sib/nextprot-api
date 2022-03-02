@@ -16,7 +16,6 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryFailure;
@@ -34,9 +33,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -62,6 +61,14 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
     }
 
+    @Test
+    public void shouldValidateGeneNameWithDash() throws Exception {
+        
+        FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("H3-3A-p.Lys28Met", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P84243"));
+        
+        assertIsoformFeatureValid(result, "NX_P84243-1", 28, 28, true);
+    }
+    
     @Test
     public void shouldNotValidateIncompatibleProteinAndGeneName() throws Exception {
 
@@ -233,6 +240,17 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
                 Sets.newHashSet("NX_Q06430", "NX_Q8N0V5", "NX_Q8NFS9")));
     }
 
+    @Test
+    public void shouldNotValidateVariantWithStopAsAffectedAA() {
+        
+        SingleFeatureQuery query = new SingleFeatureQuery("CDKN2A-p.Ter157Ser", AnnotationCategory.VARIANT.getApiTypeName(), "");
+    
+        FeatureQueryResult result = service.validateFeature(query);
+    
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new InvalidFeatureQueryFormatException(query,
+                new ParseException("should not contain STOP codon as affected amino acid (e.g. p.Ter23Ser is not allowed), it should be an extension (e.g. p.*23Serext*13)", 0)));
+    }
+    
     @Test
     public void shouldValidateMutagenesisOnCanonicalIsoform() throws Exception {
 

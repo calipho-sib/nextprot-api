@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.bio.experimentalcontext.ExperimentalContextStatement;
 import org.nextprot.api.commons.constants.TerminologyCv;
@@ -85,8 +86,20 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			for (ExperimentalContextStatement expStatements : experimentalContextStatements) {
 				String expMD5;
 				long mdata;
-				if (expStatements.getDetectionMethodAC() == null) {
+				if (StringUtils.isEmpty(expStatements.getDetectionMethodAC())) {
 					throw new IllegalArgumentException("EC should have a detection method.");
+				}
+				if (StringUtils.isEmpty(expStatements.getTissueAC())) {
+					expStatements.setTissueAC(null);
+				}
+				if (StringUtils.isEmpty(expStatements.getDevelopmentStageAC())) {
+					expStatements.setDevelopmentStageAC(null);
+				}
+				if (StringUtils.isEmpty(expStatements.getCellLineAC())) {
+					expStatements.setCellLineAC(null);
+				}
+				if (StringUtils.isEmpty(expStatements.getDiseaseAC())) {
+					expStatements.setDiseaseAC(null);
 				}
 				switch (source) {
 					case BioEditor:
@@ -100,8 +113,8 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 						mdata = BIOEDITOR_VA_METADATA_ID;
 						break;
 					case Cellosaurus:
-						if (expStatements.getDiseaseAC() == null || expStatements.getCellLineAC() == null) {
-							throw new IllegalArgumentException("EC for Cellosaurus should have a disease and a cell line.");
+						if (expStatements.getCellLineAC() == null) {
+							throw new IllegalArgumentException("EC for Cellosaurus should have a cell line.");
 						}
 						expMD5 = ExperimentalContextUtil.computeMd5ForCellosaurus(
 								expStatements.getDiseaseAC(),
@@ -198,12 +211,12 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 					pstmt.addBatch();
 
 					// Adds the record to the sql statement
-					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, cell_line_id, disease_id, md5, metadata_id ) VALUES";
+					String insertStatement = "INSERT INTO nextprot.experimental_contexts ( tissue_id, developmental_stage_id, detection_method_id, cell_line_id, disease_id, md5, metadata_id ) VALUES ";
 					insertStatement += "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
-							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ");\n";
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + " );\n";
 					insertStatements.append(insertStatement);
-					LOGGER.info("Adds values for insert: " + "( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
-							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + ")");
+					LOGGER.info("Adds values for insert: ( " + tissueID + "," + devStageID + "," + detectionMethodID +  ","
+							+ cellLineID + "," + diseaseID + ",'" + expMD5 + "'," + mdata + " )");
 					newStmtCount ++;
 				} else {
 					LOGGER.info("Experimental context already exists for MD5 " + expMD5);

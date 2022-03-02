@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.rdf.service.SchemaService;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class SchemaController {
 
 	@Autowired private SchemaService schemaService;
 	@Autowired private SparqlService advancedQueryService;
+	@Autowired private ReleaseInfoService releaseInfoService;
 
 	@ApiMethod(path = "/rdf/schema/protein", verb = ApiVerb.GET, description = "RDF schema for neXtProt ", produces = { "text/turtle"})
 	@RequestMapping("/rdf/schema/protein")
@@ -83,6 +85,7 @@ public class SchemaController {
 		model.addAttribute("annotationList", this.schemaService.findAllAnnotation());
 		model.addAttribute("evidenceList", this.schemaService.findAllEvidence());
 		model.addAttribute("version", this.schemaService.getTemplateVersion());
+		model.addAttribute("releaseInfoVersions", this.releaseInfoService.findReleaseVersions());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "schema-all";
 	}	

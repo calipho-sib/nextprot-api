@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.FunctionPredictionDAO;
@@ -15,13 +13,13 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 @Repository
 public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
-
-    private final Log Logger = LogFactory.getLog(FunctionPredictionDAOImpl.class);
 
     @Autowired
     private SQLDictionary sqlDictionary;
@@ -69,5 +67,14 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
             return prediction;
         }
     }
+
+	@Override
+	public List<FunctionPrediction> getAllPredictions() {
+
+		Map<String, Object> params = new HashMap<>();
+        List<FunctionPrediction> fpList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())
+                .query(sqlDictionary.getSQLQuery("read-full-prediction-list"), params, new FunctionPredictionRowMapper());
+        return fpList;
+	}
 }
 

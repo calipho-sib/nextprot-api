@@ -31,7 +31,6 @@ import org.nextprot.api.core.service.StatementService;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.dbxref.XrefDatabase;
 import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
-import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -260,7 +259,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, DbXrefProperty::getDbXrefId);
 
-		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(uniqueName, xrefs);
+		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(xrefs);
 
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
@@ -282,18 +281,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 
-	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
+	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(List<DbXref> xrefs) {
 
 		List<Long> ensemblRefIds = xrefs.stream().filter(xref -> xref.getAccession().startsWith("ENST")).map(DbXref::getDbXrefId).collect(Collectors.toList());
 
-		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
-
-		EnsemblXrefPropertyConverter converter = EnsemblXrefPropertyConverter.getInstance();
+		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(ensemblRefIds);
 
 		Map<Long, List<DbXrefProperty>> map = new HashMap<>();
-		for (DbXref.EnsemblInfos infos : ensemblXRefInfosList) {
-
-			map.put(infos.getTranscriptXrefId(), converter.convert(infos));
+		for (DbXref.EnsemblInfos info : ensemblXRefInfosList) {
+			Long enstXrefId = info.getEnstXrefId();
+			if (!map.containsKey(enstXrefId)) map.put(enstXrefId, new ArrayList<>());
+			
+			DbXrefProperty prop = info.toDbXrefProperty();
+			//System.out.println(prop);
+			map.get(enstXrefId).add(prop);
 		}
 
 		return map;

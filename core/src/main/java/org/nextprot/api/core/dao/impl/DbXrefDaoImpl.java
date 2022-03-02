@@ -1,6 +1,14 @@
 package org.nextprot.api.core.dao.impl;
 
-import org.apache.log4j.Logger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -16,21 +24,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 @Repository
 public class DbXrefDaoImpl implements DbXrefDao {
-
-    private static final Logger LOGGER = Logger.getLogger(DbXrefDaoImpl.class);
 
     @Autowired private SQLDictionary sqlDictionary;
 
@@ -77,8 +72,8 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	}
 
 	// helper function to split a list
-	private List<List> splitList(List list) {
-		List<List> result = new ArrayList<>();
+	private List<List<Long>> splitList(List<Long> list) {
+		List<List<Long>> result = new ArrayList<>();
 		//System.out.println("AAA splitting list of size " + list.size());
 		for (int i=0;i<list.size();i+=10000) {
 			int maxIndex = Math.min(i+10000, list.size());
@@ -95,8 +90,8 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		List<DbXrefProperty> result = new ArrayList<>();
 		// we must split the query into multiple queries otherwise we get an SQL error:
 		// the number of parameters (list of resource id) cannot exceed 32767 and miss titin has now 43012 xrefs !
-		List<List> paramsList = splitList(resourceIds);
-		for (List l: paramsList) {
+		List<List<Long>> paramsList = splitList(resourceIds);
+		for (List<Long> l: paramsList) {
 
 			Map<String,Object> params = new HashMap<>();
 
@@ -114,14 +109,12 @@ public class DbXrefDaoImpl implements DbXrefDao {
 
 
 	@Override
-	public List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(String uniqueName, List<Long> xrefIds) {
+	public List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(List<Long> xrefIds) {
 
 		if (!xrefIds.isEmpty()) {
 
 			Map<String, Object> params = new HashMap<>();
-			params.put("uniqueName", uniqueName);
 			params.put("xrefIds", xrefIds);
-
 			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("ensembl-props-by-xref-accession"), params, new EnsemblInfosRowMapper());
 		}
 
@@ -193,12 +186,15 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		@Override
 		public DbXref.EnsemblInfos mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			return new DbXref.EnsemblInfos(
-					resultSet.getLong("db_xref_id"),
-					resultSet.getString("gene_ac"),
-					resultSet.getLong("gt_link_id"),
-					resultSet.getString("protein_ac"),
-					resultSet.getLong("tp_link_id"));
+			long enstXrefId = resultSet.getLong("enst_xref_id");
+			long enstIsoMapId = resultSet.getLong("enst_iso_map_id");
+			long enstIsoMapQual = resultSet.getLong("enst_iso_map_qual");
+			String  enst = resultSet.getString("enst");
+			String  iso = resultSet.getString("iso");
+			String  ensg = resultSet.getString("ensg");
+			String  ensp = resultSet.getString("ensp");
+			
+			return new DbXref.EnsemblInfos(enstXrefId, enstIsoMapId, enstIsoMapQual, enst, ensg, ensp, iso);
 		}
 	}
 	

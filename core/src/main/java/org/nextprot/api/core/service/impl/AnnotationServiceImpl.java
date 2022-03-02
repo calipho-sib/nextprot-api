@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.mchange.v2.sql.filter.SynchronizedFilterDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -283,7 +284,8 @@ public class AnnotationServiceImpl implements AnnotationService {
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
         updatePhenotypicEffectProperty(annotations, entryName);
-        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName, isoformService.findIsoformsByEntryName(entryName));
+        QuickAndDirtyKeywordProcessor.processKeywordAnnotations(annotations, entryName,
+                isoformService.findIsoformsByEntryName(entryName), terminologyService);
 
         //returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
         return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
@@ -511,7 +513,7 @@ public class AnnotationServiceImpl implements AnnotationService {
             }
 
             variantAnnotations.stream()
-                    .filter(annotation -> AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
+                    .filter(annotation ->  AnnotationCategory.VARIANT.getDbAnnotationTypeName().equals(annotation.getCategory()))
                     .forEach(annotation -> {
                         List<AnnotationEvidence> annotationEvidences = annotation.getEvidences();
                         logStack.push("LANNOT:" + annotation.getAnnotationId());

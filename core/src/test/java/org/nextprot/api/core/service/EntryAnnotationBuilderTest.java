@@ -375,4 +375,63 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest {
 
 	}
 
+	// Should ignore non NX accessions
+	@Test
+	public void shouldCreateXREFforNonNXInteractant() {
+		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
+
+		Statement statement_with_non_nx_bioobject = new StatementBuilder()
+				.addCompulsoryFields("NX_Q9NNX6", "NX_Q9NNX6", "binary-interaction", QualityQualifier.GOLD)
+				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
+				.addField(ASSIGNED_BY, "IntAct").addTargetIsoformsField(new TargetIsoformSet())
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "Q03463")
+				.addField(BIOLOGICAL_OBJECT_NAME, "Q03463")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.addField(BIOLOGICAL_OBJECT_DATABASE,"UniProtKB")
+				.withAnnotationHash().build();
+
+		List<Statement> statements = Arrays.asList(statement_with_non_nx_bioobject);
+		Annotation annotation = ab.buildAnnotation("NX_P38398", statements);
+
+
+		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
+
+		String geneName = annotation.getBioObject().getPropertyValue("geneName");
+		Assert.assertEquals(geneName, "Q03463");
+
+		String url = annotation.getBioObject().getPropertyValue("url");
+		Assert.assertEquals(url, "http://www.uniprot.org/uniprot/Q03463");
+	}
+
+	@Test
+	public void shouldCreateDashForGeneNameWhenNoGeneName() {
+		StatementAnnotationBuilder ab = StatementEntryAnnotationBuilder.newBuilder(terminologyService,
+				publicationService, mainNamesService, dbXrefService, experimentalContextService);
+
+		Statement statement_with_non_nx_bioobject = new StatementBuilder()
+				.addCompulsoryFields("NX_Q9NNX6", "NX_Q9NNX6", "binary-interaction", QualityQualifier.GOLD)
+				.addField(EVIDENCE_CODE, "ECO:0000353").addField(REFERENCE_DATABASE, "PubMed")
+				.addField(ASSIGNED_BY, "IntAct").addTargetIsoformsField(new TargetIsoformSet())
+				.addField(REFERENCE_ACCESSION, "123").addField(RESOURCE_TYPE, "publication")
+				.addField(BIOLOGICAL_OBJECT_ACCESSION, "Q03463")
+				.addField(BIOLOGICAL_OBJECT_NAME, "")
+				.addField(BIOLOGICAL_OBJECT_TYPE, "PROTEIN")
+				.addField(BIOLOGICAL_OBJECT_DATABASE,"UniProtKB")
+				.withAnnotationHash().build();
+
+		List<Statement> statements = Arrays.asList(statement_with_non_nx_bioobject);
+		Annotation annotation = ab.buildAnnotation("NX_P38398", statements);
+
+
+		Assert.assertEquals(annotation.getAPICategory(), AnnotationCategory.BINARY_INTERACTION);
+
+		String geneName = annotation.getBioObject().getPropertyValue("geneName");
+		Assert.assertEquals(geneName, "-");
+
+		String url = annotation.getBioObject().getPropertyValue("url");
+		Assert.assertEquals(url, "http://www.uniprot.org/uniprot/Q03463");
+	}
+
 }

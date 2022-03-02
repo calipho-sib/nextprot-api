@@ -34,6 +34,23 @@ public class ReducedAnnotationTest {
         Assert.assertTrue(annot.getEvidences().stream().allMatch(e -> e.getAnnotationId() == 1L));
     }
 
+    @Test
+    public void testReducingEvidences_CellosaurusCosmic() throws SimilarGroupBuilder.SimilarAnnotationGroup.InvalidAnnotationGroupCategoryException {
+        
+        ReducedAnnotation reducedAnnotation = new ReducedAnnotation("spongebob", newGroup(
+                newAnnotation(1L, "hash1", AnnotationCategory.MODIFIED_RESIDUE, QualityQualifier.GOLD, Arrays.asList(
+                        mockAnnotationEvidence(1L, "Cosmic"))
+                ),
+                newAnnotation(2L, "hash2", AnnotationCategory.MODIFIED_RESIDUE, QualityQualifier.GOLD, Arrays.asList(
+                        mockAnnotationEvidence(2L, "Cellosaurus"))
+                )
+        ));
+        
+        Annotation annot = reducedAnnotation.reduce();
+        Assert.assertEquals(1L, annot.getAnnotationId());
+        Assert.assertEquals(1, annot.getEvidences().size());
+    }
+    
     private static SimilarGroupBuilder.SimilarAnnotationGroup newGroup(Annotation annotation, Annotation... others)
             throws SimilarGroupBuilder.SimilarAnnotationGroup.InvalidAnnotationGroupCategoryException {
 
@@ -52,6 +69,7 @@ public class ReducedAnnotationTest {
 
         evidence.setAnnotationId(annotId);
         evidence.setResourceDb(db);
+        evidence.setAssignedBy(db);
 
         return evidence;
     }

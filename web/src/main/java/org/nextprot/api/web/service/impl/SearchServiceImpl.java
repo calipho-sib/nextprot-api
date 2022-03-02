@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Lazy
@@ -104,6 +105,7 @@ public class SearchServiceImpl implements SearchService {
 			//  if high number of entries (see also https://lucene.apache.org/solr/guide/7_4/pagination-of-results.html)
 			sortingRequest.setRows("100000");
 
+			//Query query = queryBuilderService.buildQueryForSearch(sortingRequest, Entity.Entry);
 			Query query = queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.PROTEIN_LIST_SEARCH, sortingRequest);
 			SearchResult result = solrQueryService.executeQuery(query);
 
@@ -122,13 +124,18 @@ public class SearchServiceImpl implements SearchService {
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
 		Set<String> set = new LinkedHashSet<>();
-		Query query = this.queryBuilderService.buildQueryForSearchIndexes(Entity.Entry, QueryMode.SIMPLE, queryRequest);
-		SearchResult results = solrQueryService.executeIdQuery(query);
-		for (Map<String, Object> f : results.getFoundFacets("id")) {
-			String entry = (String) f.get("name");
-			set.add(entry);
+		Query query = this.queryBuilderService.buildQueryForSearch(queryRequest,Entity.Entry);
+		SearchResult results = null;
+		try {
+			results = solrQueryService.executeQuery(query);
+		} catch (QueryConfiguration.MissingSortConfigException e) {
+			e.printStackTrace();
 		}
-		return set;
+		Set<String> entrySet = results.getResults()
+				.stream()
+				.map(result -> (String) result.get("id"))
+				.collect(Collectors.toSet());
+		return entrySet;
 	}
 
 }

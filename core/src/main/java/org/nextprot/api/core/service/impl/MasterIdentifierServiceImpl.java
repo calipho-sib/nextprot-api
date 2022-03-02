@@ -103,6 +103,12 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 		}
 		public Status getStatus() { return this.status; }
 		public List<String> getEntries() { return this.entries; } 
+		public String toString() { 
+			StringBuffer buf = new StringBuffer(); 
+			buf.append(this.status.toString() + " ");
+			for (String e: this.entries) buf.append(e + " ");
+			return buf.toString();
+		}
 	}
 	
 }

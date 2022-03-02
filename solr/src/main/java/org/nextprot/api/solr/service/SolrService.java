@@ -10,6 +10,9 @@ import org.nextprot.api.solr.query.dto.SearchResult;
 
 public interface SolrService {
 
+	String INFINITE = "INFINITE";
+	String DEFAULT_ROWS = "50";
+
 	/** Clear all entry indexes */
 	String initIndexEntries(boolean isGold);
 

@@ -59,10 +59,10 @@ public class GeneServiceImplTest extends CoreUnitBaseTest {
     	Assert.assertTrue(map.size() > 40000);
     	
     	// some one to one relationship between entry and ensg should exist
-    	Assert.assertTrue(map.get("NX_Q8N816").contains("ENSG00000167920"));
+    	Assert.assertTrue(map.get("NX_A4D1N5").contains("ENSG00000183470"));
     	
     	// symmetric relationship between same ensg and entry should exist as well
-    	Assert.assertTrue(map.get("ENSG00000167920").contains("NX_Q8N816"));
+    	Assert.assertTrue(map.get("ENSG00000183470").contains("NX_A4D1N5"));
     	
     	// we should encounter some multi-gene entry
     	Assert.assertTrue(map.get("NX_Q0WX57").size() > 1);
