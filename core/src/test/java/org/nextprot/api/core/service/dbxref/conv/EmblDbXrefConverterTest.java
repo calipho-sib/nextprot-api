@@ -21,7 +21,7 @@ public class EmblDbXrefConverterTest {
 
         EmblDbXrefConverter converter = new EmblDbXrefConverter();
 
-        DbXref xref = createDbXref("AAA59172.1", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena");
+        DbXref xref = createDbXref("AAA59172.1", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "http://www.ebi.ac.uk/ena");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(1724225, "genomic sequence ID", "J00265")));
 
         List<DbXref> xrefs = converter.convert(xref);
@@ -33,8 +33,8 @@ public class EmblDbXrefConverterTest {
         Assert.assertTrue(ref.getProperties().isEmpty());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XrefDatabase.EMBL.getName(), ref.getDatabaseName());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/%s", ref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/J00265", ref.getResolvedUrl());
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
@@ -43,7 +43,7 @@ public class EmblDbXrefConverterTest {
 
         EmblDbXrefConverter converter = new EmblDbXrefConverter();
 
-        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena");
+        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "http://www.ebi.ac.uk/ena");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(1724230, "protein sequence ID", "AAW83741.1")));
 
         List<DbXref> xrefs = converter.convert(xref);
@@ -55,8 +55,8 @@ public class EmblDbXrefConverterTest {
         Assert.assertTrue(ref.getProperties().isEmpty());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XrefDatabase.EMBL.getName(), ref.getDatabaseName());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741", ref.getResolvedUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/%s", ref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/AAW83741", ref.getResolvedUrl());
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
@@ -65,7 +65,7 @@ public class EmblDbXrefConverterTest {
 
         EmblDbXrefConverter converter = new EmblDbXrefConverter();
 
-        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena");
+        DbXref xref = createDbXref("AY899304", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(), "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena");
         xref.setProperties(Arrays.asList(
                 createDbXrefProperty(1935564, "genomic sequence ID", "M27429"),
                 createDbXrefProperty(1935565, "genomic sequence ID", "M27428"),
@@ -82,21 +82,21 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals(8, xrefs.size());
 
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935564, "M27429", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27429");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27429");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935565, "M27428", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27428");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27428");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935566, "M27427", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27427");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27427");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935567, "M27426", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27426");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27426");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935568, "M27425", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27425");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27425");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935569, "M27424", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27424");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27424");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935570, "M27423", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27423");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27423");
         assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935572, "M27430", DbXrefURLResolverSupplier.EMBL.getXrefDatabase().getName(),
-                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27430");
+                "Sequence databases", "https://www.ebi.ac.uk/ena", "https://www.ebi.ac.uk/ena/browser/view/%s", "https://www.ebi.ac.uk/ena/browser/view/M27430");
     }
 
     private void assertProducedXrefListContains(List<DbXref> producedXrefs, long expectedId, String expectedAccession, String expectedDbName,

@@ -21,7 +21,7 @@ public interface DbXrefDao {
 	List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName);
 	
 	List<DbXrefProperty> findDbXrefsProperties(String entryName, List<Long> resourceIds);
-	List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(String uniqueName, List<Long> xrefIds);
+	List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(List<Long> xrefIds);
 
 	List<DbXref> findDbXrefByAccession(String accession);
 

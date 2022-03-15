@@ -20,7 +20,21 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     
-    
+    @Test
+    public void test1() throws Exception {
+    	DbXref xref;
+    	
+    	xref = createDbXref("Mobi-DB", "SAM", "https://mobidb.bio.unipd.it/%u" );
+    	xref.setProteinAccessionReferer("NX_U23Z22");
+    	String result = resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
+    	Assert.assertEquals("https://mobidb.bio.unipd.it/U23Z22", result);
+    	System.out.println("res:" + result);
+    	System.out.println("ac:" + xref.getAccession());
+    	System.out.println("db:" + xref.getDatabaseName());
+    	System.out.println("lu:" + xref.getLinkUrl());
+    	System.out.println("ru:" + xref.getResolvedUrl());
+    	
+    }
     
     @Test
     public void testsUsefulForNP2Pipeline() throws Exception {
@@ -386,8 +400,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647", "HPA", "whatever");
 
-        Assert.assertEquals("https://v20.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
-        Assert.assertEquals("https://v20.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -396,8 +410,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
-        Assert.assertEquals("https://v20.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
-        Assert.assertEquals("https://v20.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -406,8 +420,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("HPA018312", "HPA", "whatever");
 
-        Assert.assertEquals("https://v20.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
-        Assert.assertEquals("https://v20.proteinatlas.org/search/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/search/%s", xref.getLinkUrl());
     }
 
 

@@ -58,6 +58,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
 
             List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
+
+            // Count number of annotations with a non empty term
+            globalEntryStatistics.incrementNumberOfEntryTermLink(
+            	(int)annotations.stream().filter(a -> a.getCvTermAccessionCode() != null && a.getCvTermAccessionCode().length()>0).count()
+            );
             
             // Count number of entries with expression profile
             if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
@@ -123,6 +128,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         return globalPublicationStatistics;
     }
 
+    
+    
     @Override
     public int getCvTermCount() {
         return terminologyService.findAllCVTerms().size();

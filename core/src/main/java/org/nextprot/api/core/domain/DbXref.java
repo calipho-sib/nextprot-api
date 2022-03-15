@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
@@ -208,47 +209,110 @@ public class DbXref implements Serializable {
 		public void setValue(String value) {
 			this.value = value;
 		}
+		
+		public String toString() {
+			StringBuffer sb = new StringBuffer();
+			sb.append("xrefId=" + this.dbXrefId);
+			sb.append(" propId=" + this.getPropertyId());
+			sb.append(" " + this.getName()+ "=" + this.getValue());
+			return sb.toString();
+		}
+
 	}
 
 	public static class EnsemblInfos {
 
-		private final long transcriptXrefId;
-		private final String geneAc;
-		private final String proteinAc;
-		private final long genePropertyId;
-		private final long proteinPropertyId;
+		private final long enstXrefId; 			// db_xrefs.resource_id of ENST
+		private final long enstIsoMapId;		// mapping_annotations.annotation_id as the unique identifier for ENST-iso pairs
+		private final long enstIsoMapQual;		// quality of ENST-iso alignment
+		private final String enst;		
+		private final String iso;
+		private final String ensg;
+		private final String ensp;
 
-		public EnsemblInfos(long transcriptXrefId, String geneAc, long genePropertyId, String proteinAc, long proteinPropertyId) {
+		public EnsemblInfos(long enstXrefId, long enstIsoMapId, long enstIsoMapQual, 
+				String enst, String ensg, String ensp, String iso) {
 
-			Preconditions.checkArgument(geneAc.startsWith("ENSG"));
-			Preconditions.checkArgument(proteinAc.startsWith("ENSP"));
+			Preconditions.checkArgument(ensg.startsWith("ENSG"));
+			Preconditions.checkArgument(ensp==null || ensp.startsWith("ENSP"));
 
-			this.transcriptXrefId = transcriptXrefId;
-			this.geneAc = geneAc;
-			this.proteinAc = proteinAc;
-			this.genePropertyId = genePropertyId;
-			this.proteinPropertyId = proteinPropertyId;
+			this.enstXrefId = enstXrefId;
+			this.enstIsoMapId = enstIsoMapId;
+			this.enstIsoMapQual = enstIsoMapQual;
+			this.enst = enst;
+			this.iso = iso;
+			this.ensg = ensg;
+			this.ensp = ensp;
+			
 		}
 
-		public long getTranscriptXrefId() {
-			return transcriptXrefId;
+		public EnsemblInfos(DbXref.DbXrefProperty prop) {
+
+			if (! prop.getName().equals("nxmap")) 
+				throw new RuntimeException("Error on trying to create new EnsemblInfo from nxmap property, but property name was: " + prop.getName() );
+			
+			this.enstXrefId = prop.getDbXrefId();
+			this.enstIsoMapId = prop.getPropertyId() - IdentifierOffset.XREF_PROPERTY_OFFSET;
+			String[] fields = prop.getValue().split("\\|");
+	        //"ENST1|ENSG2|ENSP3|NX_A00001-1|GOLD"
+			this.enst = fields[0];
+			this.ensg = fields[1];
+			this.ensp = fields[2].length()==0 ? null : fields[2];
+			this.iso = fields[3]; 
+			this.enstIsoMapQual = fields[4].equals("GOLD") ? 10 : fields[4].equals("SILVER") ? 50 : 100;
+		}
+		
+		public DbXref.DbXrefProperty toDbXrefProperty() {
+
+			DbXref.DbXrefProperty prop = new DbXref.DbXrefProperty();
+	        prop.setDbXrefId(this.getEnstXrefId());
+	        prop.setPropertyId(IdentifierOffset.XREF_PROPERTY_OFFSET + this.getEnstIsoMapId());
+	        //prop.setName("nxmap_" + this.getEnstIsoMapId());
+	        prop.setName("nxmap"); // multiple props with same name are allowed
+	        //"ENST1|ENSG2|ENSP3|NX_A00001-1|GOLD"
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(this.getEnst());
+	        sb.append("|");
+	        sb.append(this.getEnsg());
+	        sb.append("|");
+	        sb.append(this.getEnsp()==null ? "" : this.getEnsp());
+	        sb.append("|");
+	        sb.append(this.getIso());
+	        sb.append("|");
+	        sb.append(this.getEnstIsoMapQual()==10 ? "GOLD" : this.getEnstIsoMapQual()==50 ? "SILVER" : "BRONZE");
+	        prop.setValue(sb.toString());
+			return prop;
+		}
+		
+		
+		public long getEnstXrefId() {
+			return enstXrefId;
 		}
 
-		public String getGeneAc() {
-			return geneAc;
+		public String getIso() {
+			return iso;
 		}
 
-		public String getProteinAc() {
-			return proteinAc;
+		public String getEnsg() {
+			return ensg;
 		}
 
-		public long getGenePropertyId() {
-			return genePropertyId;
+		public String getEnsp() {
+			return ensp;
 		}
 
-		public long getProteinPropertyId() {
-			return proteinPropertyId;
+		public long getEnstIsoMapId() {
+			return enstIsoMapId;
 		}
+
+		public long getEnstIsoMapQual() {
+			return enstIsoMapQual;
+		}
+
+		public String getEnst() {
+			return enst;
+		}
+
 	}
 
 }

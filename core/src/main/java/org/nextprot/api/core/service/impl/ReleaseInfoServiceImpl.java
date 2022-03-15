@@ -159,10 +159,17 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 				statsTag.setCount(globalEntryStats.getNumberOfVariants());
 			}
 
-			// Update other stats
+			// Update term stats
 			else if ("CVTERM".equals(statsTag.getTag())) {
 				statsTag.setCount(statisticsService.getCvTermCount());
 			}
+			
+			// Update entry-term link stats
+			else if ("MASTER_CVTERM_LINK".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntryTermLink());
+			}
+			
+			
 		}
 	}
 

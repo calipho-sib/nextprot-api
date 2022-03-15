@@ -63,5 +63,6 @@ public class GoDatasource {
 		ref2src.put("GO_REF:0000111", "GOA curators");
 		ref2src.put("GO_REF:0000113", "GOA curators");
 		ref2src.put("GO_REF:0000116", "GO Central curators, GOA curators, Rhea curators");
+		ref2src.put("GO_REF:0000117", "Electronic Gene Ontology annotations created by ARBA machine learning models");
 	}
 }
