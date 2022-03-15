@@ -17,7 +17,16 @@ public class GlobalEntryStatistics implements Serializable {
     private int numberOfEntriesWithBinaryInteraction;
     private int numberOfEntriesWithDisease;
     private int numberOfVariants;
+    private int numberOfEntryTermlinks;
 
+    public int getNumberOfEntryTermLink() {
+    	return numberOfEntryTermlinks;
+    }
+    
+    public void incrementNumberOfEntryTermLink(int nb) {
+    	numberOfEntryTermlinks += nb;
+    }
+    
     public int getNumberOfEntriesWithExpressionProfile() {
         return numberOfEntriesWithExpressionProfile;
     }
