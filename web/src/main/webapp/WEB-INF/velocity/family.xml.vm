@@ -1,7 +1,7 @@
 #if(!$hierarchy.isEmpty())
 #set($currentFamily=$hierarchy.remove(0))
 <family family-type="$currentFamily.level">
-    <cv-term accession="$currentFamily.accession" terminology="uniprot-family-cv">$currentFamily.name</cv-term>
+    <cv-term accession="$currentFamily.accession" terminology="nextprot-family-cv">$currentFamily.name</cv-term>
     #if($currentFamily.region)
         <family-region>$currentFamily.region</family-region>
     #end
