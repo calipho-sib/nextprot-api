@@ -4,8 +4,12 @@
 #set( $geneName = $geneName + "_" + $entry.getUniqueName() )
 #end
 entry:$entry.getUniqueName() :gene gene:$geneName.
+
+name:geneNameRec_$geneName rdf:type :GeneName;
+    rdfs:label "$chromosomalLocation.getRecommendedName()"^^xsd:string.
+
 gene:$geneName a :Gene;
-    :name "$chromosomalLocation.getRecommendedName()"^^xsd:string;
+    :recommendedName name:geneNameRec_$geneName;
     :band "$chromosomalLocation.getBand()"^^xsd:string; 
     :strand "$chromosomalLocation.getStrand()"^^xsd:string;
     :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string;

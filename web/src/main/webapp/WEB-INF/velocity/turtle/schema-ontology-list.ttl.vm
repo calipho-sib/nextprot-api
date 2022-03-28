@@ -3,7 +3,13 @@
 #end
 #
 # Define Ontology
-# 
+#
+
+:Terminology
+    rdf:type owl:Class ;
+    rdfs:comment "A concept that represents vocabularies to classify terms."^^xsd:string ;
+    .
+
 :Term
       rdf:type owl:Class ;
       rdfs:comment "A concept used to classify resources."^^xsd:string ;
@@ -21,6 +27,67 @@
       rdfs:domain :Term ;
       rdfs:range :Term;
       .
+
+:Name
+    rdf:type owl:Class ;
+    rdfs:label xsd:string ;
+    .
+
+:ShortName
+        rdfs:subClassOf :Name ;
+        .
+
+:AllergenName
+        rdfs:subClassOf :Name ;
+        .
+
+:EnzymeName
+        rdfs:subClassOf :Name ;
+        .
+
+:InternationalNonproprietaryName
+        rdfs:subClassOf :Name ;
+        .
+
+:CDAntigenName
+        rdfs:subClassOf :Name ;
+        .
+
+:ProteinName
+        rdfs:subClassOf :Name ;
+        :hasShortName :ShortName ;
+        :hasAllergenName :AllergenName ;
+        :hasEnzymeName :EnzymeName ;
+        :hasINNName :InternationalNonproprietaryName ;
+        :hasCDAntigenName :CDAntigenName ;
+        .
+
+:RegionName
+        rdfs:subClassOf :Name ;
+        :hasShortName :ShortName ;
+        :hasAllergenName :AllergenName ;
+        :hasINNName :InternationalNonproprietaryName ;
+        :hasCDAntigenName :CDAntigenName ;
+        :hasEnzymeName :EnzymeName ;
+        .
+:CleavedRegionName
+        rdfs:subClassOf :Name ;
+        :hasShortName :ShortName ;
+        :hasAllergenName :AllergenName ;
+        :hasINNName :InternationalNonproprietaryName ;
+        :hasCDAntigenName :CDAntigenName ;
+        :hasEnzymeName :EnzymeName ;
+        .
+
+:ORFName
+        rdfs:subClassOf :Name ;
+        .
+
+:GeneName
+        rdfs:subClassOf :Name ;
+        :hasOrfName :ORFName ;
+        .
+
 
 # ECO_0000045 IHC =>A spatial pattern of protein expression evidence
 cv:ECO_0000045 rdfs:subClassOf :IHC .
@@ -41,12 +108,21 @@ cv:ECO_0000104 rdfs:subClassOf :EST .
 
 #foreach($ontology in $ontologyList)
   
-:$ontology.getOntology()
+#*:$ontology.getOntology()
   rdf:type owl:Class ;
   rdfs:subClassOf :Term;
   rdfs:label "$ontology.getName()"^^xsd:string;
   rdfs:comment "$ontology.getDescription()"^^xsd:string;
   rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
-  .      
+  .
+
+ *#
+:$ontology.getOntology()
+    rdf:type owl:Class ;
+    rdfs:subClassOf :Terminology;
+    rdfs:label "$ontology.getName()"^^xsd:string;
+    rdfs:comment "$ontology.getDescription()"^^xsd:string;
+    rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
+    .
 #end
 

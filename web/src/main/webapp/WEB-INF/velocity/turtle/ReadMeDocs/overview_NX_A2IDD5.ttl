@@ -1,0 +1,91 @@
+
+# 
+entry:NX_A2IDD5 a :Entry;
+  skos:exactMatch uniprot:A2IDD5;
+  :swissprotPage unipage:A2IDD5;
+  :isoformCount "$entry.getIsoforms().size()"^^xsd:integer;
+  .
+
+
+
+# Overview
+entry:NX_A2IDD5
+    :existence      :Evidence_at_protein_level;
+    :family [
+       rdf:type :FamilyInfo ;
+       :term cv:FA-05233 ;
+       :description "Belongs to the CCDC78 family."^^xsd:string ;
+      ].
+name:entryNameRec_PR_643478 rdf:type :ProteinName.
+name:entryNameRec_PR_643478 rdfs:label "Coiled-coil domain-containing protein 78"^^xsd:string.
+
+entry:NX_A2IDD5 :recommendedName name:entryNameRec_PR_643478.
+
+        
+name:entryNameAlt0_PR_2875354 rdf:type :ProteinName.
+name:entryNameAlt0_PR_2875354 rdfs:label "hsCCDC78"^^xsd:string.
+
+entry:NX_A2IDD5 :alternativeName name:entryNameAlt0_PR_2875354.
+
+
+
+name:geneNameRec_PR_1162168 rdf:type :GeneName;
+  rdfs:label "CCDC78"^^xsd:string.
+
+entry:NX_A2IDD5 :recommendedName name:geneNameRec_PR_1162168.
+
+
+
+name:geneNameAlt0_PR_1162167 rdf:type :GeneName;
+  rdfs:label "C16orf25"^^xsd:string.
+
+name:geneNameRec_PR_1162168 :alternativeName name:geneNameAlt0_PR_1162167.
+
+
+
+name:geneNameOrf0_PR_1162166 rdf:type :ORFName;
+  rdfs:label "JFP10"^^xsd:string.
+
+name:geneNameRec_PR_1162168 :hasOrfName name:geneNameOrf0_PR_1162166.
+
+
+
+entry:NX_A2IDD5 :history[
+      rdf:type :History;
+      :name "neXtProt"^^xsd:string; 
+      :integrated "2010-03-01"^^xsd:string; 
+      :updated "2022-02-15"^^xsd:string;
+    ].
+entry:NX_A2IDD5 :history[
+        rdf:type :History;
+        :name "UniProtKB"^^xsd:string;
+        :integrated "2007-06-26"^^xsd:string;
+        :updated "2021-09-29"^^xsd:string;
+        :version "110"^^xsd:string;
+        :lastSequenceUpdate "2007-02-20"^^xsd:string;
+        :sequenceVersion "1"^^xsd:string;
+    ].
+
+
+# Keywords 
+
+# Gene
+
+
+
+# - - - - - - - -
+# Xrefs v3
+# - - - - - - - -
+
+
+
+# - - - - - - - -
+# Identifiers
+# - - - - - - - -
+
+
+# - - - - - - - -
+# Publications
+# - - - - - - - -
+
+

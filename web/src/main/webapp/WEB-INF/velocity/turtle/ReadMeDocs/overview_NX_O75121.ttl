@@ -1,0 +1,93 @@
+
+# 
+entry:NX_O75121 a :Entry;
+  skos:exactMatch uniprot:O75121;
+  :swissprotPage unipage:O75121;
+  :isoformCount "$entry.getIsoforms().size()"^^xsd:integer;
+  .
+
+
+
+# Overview
+entry:NX_O75121
+    :existence      :Evidence_at_protein_level;
+name:entryNameRec_PR_4769078 rdf:type :ProteinName.
+name:entryNameRec_PR_4769078 rdfs:label "Microfibrillar-associated protein 3-like"^^xsd:string.
+
+entry:NX_O75121 :recommendedName name:entryNameRec_PR_4769078.
+
+        
+name:entryNameAlt0_PR_817971 rdf:type :ProteinName.
+name:entryNameAlt0_PR_817971 rdfs:label "Testis development protein NYD-SP9"^^xsd:string.
+
+entry:NX_O75121 :alternativeName name:entryNameAlt0_PR_817971.
+
+
+
+name:geneNameRec_PR_1168821 rdf:type :GeneName;
+  rdfs:label "MFAP3L"^^xsd:string.
+
+entry:NX_O75121 :recommendedName name:geneNameRec_PR_1168821.
+
+
+
+name:geneNameOrf0_PR_1168823 rdf:type :ORFName;
+  rdfs:label "HSD-39"^^xsd:string.
+
+name:geneNameRec_PR_1168821 :hasOrfName name:geneNameOrf0_PR_1168823.
+
+
+
+name:geneNameOrf1_PR_1168820 rdf:type :ORFName;
+  rdfs:label "HSD39"^^xsd:string.
+
+name:geneNameRec_PR_1168821 :hasOrfName name:geneNameOrf1_PR_1168820.
+
+
+
+name:geneNameAlt0_PR_1168822 rdf:type :GeneName;
+  rdfs:label "KIAA0626"^^xsd:string.
+
+name:geneNameRec_PR_1168821 :alternativeName name:geneNameAlt0_PR_1168822.
+
+
+
+entry:NX_O75121 :history[
+      rdf:type :History;
+      :name "neXtProt"^^xsd:string; 
+      :integrated "2010-03-02"^^xsd:string; 
+      :updated "2022-02-15"^^xsd:string;
+    ].
+entry:NX_O75121 :history[
+        rdf:type :History;
+        :name "UniProtKB"^^xsd:string;
+        :integrated "2004-07-19"^^xsd:string;
+        :updated "2021-09-29"^^xsd:string;
+        :version "171"^^xsd:string;
+        :lastSequenceUpdate "2004-07-19"^^xsd:string;
+        :sequenceVersion "3"^^xsd:string;
+    ].
+
+
+# Keywords 
+
+# Gene
+
+
+
+# - - - - - - - -
+# Xrefs v3
+# - - - - - - - -
+
+
+
+# - - - - - - - -
+# Identifiers
+# - - - - - - - -
+
+
+# - - - - - - - -
+# Publications
+# - - - - - - - -
+
+
