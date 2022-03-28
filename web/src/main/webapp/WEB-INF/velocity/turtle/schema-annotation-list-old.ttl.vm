@@ -9,7 +9,6 @@
       rdfs:comment "All facts of a protein."^^xsd:string ;
       rdfs:label "all annotation "^^xsd:string ;
       rdfs:seeAlso "http://www.nextprot.org/manual/Annotation"^^xsd:anyURI ;
-      rdfs:subClassOf owl:Thing;
       .
 
 :GeneralAnnotation
@@ -128,6 +127,11 @@
       rdf:type owl:ObjectProperty ;
       rdfs:domain :Annotation ;
       rdfs:range :Term.
+
+:refersTo
+      rdf:type owl:ObjectProperty ;
+      rdfs:domain :Term ;
+      rdfs:range :Terminology.
 
 ## this is a trick to ensure the known predicats list is cleared after a reload 
 $annotationList.get(0).clearPredicatList()      

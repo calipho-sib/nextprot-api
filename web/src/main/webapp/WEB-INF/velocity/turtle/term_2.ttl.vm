@@ -1,0 +1,18 @@
+## repeat annotation for each isoform
+cv:$StringUtils.slug($terminology.getAccession()) :refersTo :$terminology.getOntology();
+  rdfs:subClassOf :Term;
+  rdfs:label "$StringUtils.clean($terminology.getName())"^^xsd:string;
+##  rdfs:comment "$StringUtils.clean($terminology.getDescription())"^^xsd:string;
+#if($terminology.getAncestorAccession())
+#foreach($ancestor in $terminology.getAncestorAccession())
+  rdfs:subClassOf cv:$StringUtils.slug($ancestor);
+#end  
+#end
+#if($terminology.getACsOfRelatedTerms())
+## we add the term itself to make the query  in one shot   
+  :related cv:$StringUtils.slug($terminology.getAccession());
+#foreach($termAc in $terminology.getACsOfRelatedTerms())
+  :related cv:$StringUtils.slug($termAc);
+#end  
+#end
+  .      
