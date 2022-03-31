@@ -17,7 +17,7 @@
 	</developers>
 
 	<properties>
-		<spring.version>4.3.21.RELEASE</spring.version>
+		<spring.version>5.3.18</spring.version>
 		<project.version>${project.version}</project.version>
 		<spring-security.version>4.2.10.RELEASE</spring-security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
