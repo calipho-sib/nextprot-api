@@ -12,6 +12,8 @@ public interface HttpSparqlService {
 
 	SparqlResponse executeSparqlQuery(String query);
 
+	String executeSparqlQuery(String sparqlUrl, String query, String outputType);
+
 	class SparqlResponse {
 
 		private final Map<String, List<String>> results = new HashMap<>();
