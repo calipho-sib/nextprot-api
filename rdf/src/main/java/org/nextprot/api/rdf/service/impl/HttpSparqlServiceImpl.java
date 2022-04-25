@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -18,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,18 +69,18 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 	@Override
 	public String executeSparqlQuery(String sparqlUrl, String query, String outputType) {
 		CloseableHttpClient client = HttpClients.createDefault();
-		HttpPost post = new HttpPost(sparqlUrl);
-		post.setHeader("Accept", "application/*");
+
 
 		StringBuilder payload=new StringBuilder();
 		try {
-			List<NameValuePair> params = new ArrayList<>();
+			// Prepare the sparql query URL
+			URIBuilder urlBuilder = new URIBuilder(sparqlUrl);
+			urlBuilder.addParameter("query", PREFIX + query);
+			urlBuilder.addParameter("output", outputType);
 
-			params.add(new BasicNameValuePair("query", PREFIX + query));
-			params.add(new BasicNameValuePair("output", outputType));
-			post.setEntity(new UrlEncodedFormEntity(params));
-
-			CloseableHttpResponse response = client.execute(post);
+			HttpGet sparqlRequest = new HttpGet(urlBuilder.toString());
+			sparqlRequest.setHeader("Accept", "*/*");
+			CloseableHttpResponse response = client.execute(sparqlRequest);
 
 			try (BufferedReader in = new BufferedReader(
 					new InputStreamReader(response.getEntity().getContent()))) {

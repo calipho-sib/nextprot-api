@@ -28,7 +28,7 @@ public class RDFDereferencingController {
     @Autowired
     private HttpSparqlService sparqlService;
 
-    @RequestMapping(value = "/rdf/{entity}/{id}", produces = {MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE})
+    @RequestMapping(value = "/rdf/{entity}/{id}", produces = {"application/rdf+xml", MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE})
     @ResponseBody
     public String dereferenceRDFByContentType(
             @PathVariable("entity") String entity,
@@ -40,17 +40,13 @@ public class RDFDereferencingController {
         Enumeration<String> acceptHeaders = request.getHeaders(ACCEPT_HEADER);
         while(acceptHeaders.hasMoreElements()) {
             String header = acceptHeaders.nextElement();
-            if(header.contains("rdf+xml")) {
-                requestedContentType = "rdf";
-            } else if(header.contains("xml")) {
+            if(header.contains("rdf+xml") || header.contains("xml")) {
                 requestedContentType = "xml";
             } else if(header.contains("text/turtle")) {
                 requestedContentType = "ttl";
             }
         }
         String sparqlResponse = sparqlService.executeSparqlQuery(HttpSparqlServiceImpl.SPARQL_DEFAULT_URL,"DESCRIBE :Entry", requestedContentType);
-        System.out.println(sparqlResponse);
-        //response.setHeader("Content-Type", requestedContentType);
         return sparqlResponse;
     }
 
