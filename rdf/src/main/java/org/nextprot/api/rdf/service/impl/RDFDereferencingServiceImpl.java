@@ -53,6 +53,7 @@ public class RDFDereferencingServiceImpl implements RDFDereferencingService {
         UserQueryUtils.filterByTag(queries, DEREF_INSTANCE_TAG)
                 .stream()
                 .forEach(query -> queryMap.put(DEREF_INSTANCE_TAG +  query.getTitle(), query));
+        LOGGER.info("Dereferencing queires loaded: " + queryMap.keySet().size());
     }
 
     @Override
@@ -64,9 +65,11 @@ public class RDFDereferencingServiceImpl implements RDFDereferencingService {
 
         String queryString = generateQueryString(entity, accession);
         if(queryString != null) {
+            LOGGER.info("Query string generated " + queryString);
             return sparqlService.executeSparqlQuery(sparqlEndpoint,
                     queryString, contentType);
         } else {
+            LOGGER.error("No query string generated");
             return null;
         }
 
