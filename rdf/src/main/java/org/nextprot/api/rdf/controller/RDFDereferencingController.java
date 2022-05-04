@@ -2,6 +2,7 @@ package org.nextprot.api.rdf.controller;
 
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.rdf.service.HttpSparqlService;
+import org.nextprot.api.rdf.service.RDFDereferencingService;
 import org.nextprot.api.rdf.service.impl.HttpSparqlServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,23 +17,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class RDFDereferencingController {
 
-    @Value("${sparql.url}")
-    private String sparqlEndpoint;
+    private final RDFDereferencingService rdfDereferencingService;
 
     private final String ACCEPT_HEADER = "Accept";
 
-    @Autowired
-    private HttpSparqlService sparqlService;
+    public RDFDereferencingController(RDFDereferencingService rdfDereferencingService) {
+        this.rdfDereferencingService = rdfDereferencingService;
+    }
 
-    @RequestMapping(value = "/rdf/{entity}/{id}", produces = {"application/rdf+xml", MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE})
+    @RequestMapping(value = {"/rdf/{entity}/{accession}", "/rdf/{entity}/"},
+            produces = {"application/rdf+xml", MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TURTLE_MEDIATYPE_VALUE})
     @ResponseBody
     public String dereferenceRDFByContentType(
             @PathVariable("entity") String entity,
-            @PathVariable("id") String id,
+            @PathVariable("accession") Optional<String> accession,
             HttpServletRequest request, HttpServletResponse response) {
 
         // Response content type determined by the request content type header
@@ -46,7 +49,7 @@ public class RDFDereferencingController {
                 requestedContentType = "ttl";
             }
         }
-        String sparqlResponse = sparqlService.executeSparqlQuery(HttpSparqlServiceImpl.SPARQL_DEFAULT_URL,"DESCRIBE :Entry", requestedContentType);
+        String sparqlResponse = rdfDereferencingService.generateRDFContent(entity, accession, requestedContentType);
         return sparqlResponse;
     }
 
