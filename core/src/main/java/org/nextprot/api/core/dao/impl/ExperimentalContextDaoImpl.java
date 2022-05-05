@@ -109,6 +109,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 						expMD5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(
 								expStatements.getTissueAC(),
 								expStatements.getCellLineAC(),
+								expStatements.getDiseaseAC(),
 								expStatements.getDetectionMethodAC());
 						mdata = BIOEDITOR_VA_METADATA_ID;
 						break;
