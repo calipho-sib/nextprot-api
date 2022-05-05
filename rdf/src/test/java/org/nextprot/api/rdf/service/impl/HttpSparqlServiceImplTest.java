@@ -62,7 +62,7 @@ public class HttpSparqlServiceImplTest {
 	}
 
 	private boolean runTest() {
-		// The test should be performed if the current date is after than 2022-04-28
-		return LocalDate.now().isAfter(LocalDate.of(2022, 4, 28));
+		// The test should be performed if the current date is after than 2022-04-12
+		return LocalDate.now().isAfter(LocalDate.of(2022, 5, 12));
 	}
 }
