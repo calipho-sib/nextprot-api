@@ -105,9 +105,7 @@
 		<level value="INFO" />
 	</logger>
 
-	<logger name="org.nextprot.api.core.dao">
-		<level value="INFO" />
-	</logger>
+
 
 	<logger name="org.apache.http">
 		<level value="INFO" />
