@@ -16,15 +16,15 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api(name = "ENSP loading tasks", description = "ENSP sequence loading task", group="Task")
+@Api(name = "Sequence data", description = "Sequence data with ENS(*) identifiers ", group="Task")
 public class ENSPLoadController {
 
     @Autowired
     ENSPLoadService enspLoadService;
 
     @ResponseBody
-    @RequestMapping(value = "/tasks/ensp-load", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
-    @ApiMethod(path = "/tasks/ensp-load", verb = ApiVerb.GET, description = "Load the ENSP sequences for each nextprot Isoform")
+    @RequestMapping(value = "/tasks/sequence-data", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/tasks/sequence-data", verb = ApiVerb.GET, description = "Load the ENSP sequences for each nextprot Isoform")
     public List<Map<String, Object>> loadENSPSequences() {
         return enspLoadService.loadENSPSequences();
     }
