@@ -218,18 +218,20 @@ abstract class StatementAnnotationBuilder implements Supplier<Annotation> {
             	LOGGER.error(msg);
             	throw new NextProtException(msg);
             }
-        } else if (StatementSource.BioEditor.getSourceName().equals(s.getValue(SOURCE))
-                && DISEASE_RELATED_VARIANT.getDbAnnotationTypeName().equals(s.getValue(ANNOTATION_CATEGORY))) {
+        } else if (StatementSource.BioEditor.getSourceName().equals(s.getValue(SOURCE))) {
+            String diseaseAc = s.getValue(new CustomStatementField("DISEASE_ACC"));
             String tissueAc = s.getValue(new CustomStatementField("TISSUE_ACC"));
             String cellLineAc = s.getValue(new CustomStatementField("CELL_LINE_ACC"));
             if (org.apache.commons.lang.StringUtils.isNotBlank(tissueAc)
-                    || org.apache.commons.lang.StringUtils.isNotBlank(cellLineAc) ) {
-                String md5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(tissueAc, cellLineAc, s.getValue(EVIDENCE_CODE));
+                    || org.apache.commons.lang.StringUtils.isNotBlank(cellLineAc)
+                    || org.apache.commons.lang.StringUtils.isNotBlank(diseaseAc)) {
+                String md5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(tissueAc, cellLineAc, diseaseAc, s.getValue(EVIDENCE_CODE));
                 ExperimentalContext ec = experimentalContextService.findExperimentalContextByMd5(md5);
                 if (ec != null) {
                     evidence.setExperimentalContextId(ec.getContextId());
                 } else {
-                    String msg = "BioEditor EC with " + tissueAc + " " + cellLineAc + " " + s.getValue(EVIDENCE_CODE) + " " + md5 + " not found";
+                    String msg = "BioEditor EC with " + tissueAc + " " + cellLineAc + " " + diseaseAc + " "
+                            + s.getValue(EVIDENCE_CODE) + " " + md5 + " not found";
                     LOGGER.error(msg);
                     throw new NextProtException(msg);
                 }

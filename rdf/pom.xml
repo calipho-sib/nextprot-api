@@ -37,6 +37,11 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-user</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	</dependencies>
 
