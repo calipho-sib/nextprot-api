@@ -140,7 +140,7 @@ public class VepTest extends CoreUnitBaseTest {
 	@Test
 	public void testENSGAlignedWithEntry() {
 		Assert.assertEquals("ENSG00000116062", getGenomicMappingOfEnsgAlignedWithEntry("NX_P52701").getAccession());
-		Assert.assertEquals("ENSG00000227488", getGenomicMappingOfEnsgAlignedWithEntry("NX_A1L429").getAccession());		
+		Assert.assertEquals("ENSG00000216649", getGenomicMappingOfEnsgAlignedWithEntry("NX_A1L429").getAccession());
 	}
 	
 	
