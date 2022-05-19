@@ -15,7 +15,7 @@ public enum StatementSource implements StatementSpecifications, EnumDictionarySu
 	BioEditor("neXtProt",
 			"http://kant.sib.swiss:9001/bioeditor",
 			new Specifications.Builder()
-					.withExtraFields(Arrays.asList("TISSUE_ACC", "CELL_LINE_ACC"))
+					.withExtraFields(Arrays.asList("DISEASE_ACC", "TISSUE_ACC", "CELL_LINE_ACC"))
 					.build()),
 	
 	Cellosaurus("Cellosaurus",
