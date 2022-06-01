@@ -158,16 +158,16 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
 				mockEntityNameWithOtherRecNames("(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "1.1.1.n12", "chain", "EC")
+							mockEntityName( "1.1.1.n12", "EC", "EC")
 						)
 				),
 				mockEntityNameWithSynonymsAndOtherRecNames( "Enoyl-CoA hydratase 2", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "protein", "full")
 						),
 						Arrays.asList(
-							mockEntityName("4.2.1.107", "chain", "EC"),
-							mockEntityName( "4.2.1.119", "chain", "EC")
+							mockEntityName("4.2.1.107", "EC", "EC"),
+							mockEntityName( "4.2.1.119", "EC", "EC")
 						)
 				)
 		)));
