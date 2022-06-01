@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -14,9 +16,11 @@ import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +28,7 @@ import java.util.Map;
 @Service
 public class HttpSparqlServiceImpl implements HttpSparqlService {
 
-	static final String SPARQL_DEFAULT_URL = "https://sparql.nextprot.org";
+	public static final String SPARQL_DEFAULT_URL = "https://sparql.nextprot.org";
 
 	private static final String PREFIX = "PREFIX : <http://nextprot.org/rdf#>\n" +
 			"PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
@@ -60,6 +64,38 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 	public SparqlResponse executeSparqlQuery(String query) {
 
 		return executeSparqlQuery(sparqlEndpoint.getUrl(), query);
+	}
+
+	@Override
+	public String executeSparqlQuery(String sparqlUrl, String query, String outputType) {
+		CloseableHttpClient client = HttpClients.createDefault();
+
+
+		StringBuilder payload=new StringBuilder();
+		try {
+			// Prepare the sparql query URL
+			URIBuilder urlBuilder = new URIBuilder(sparqlUrl);
+			urlBuilder.addParameter("query", PREFIX + query);
+			urlBuilder.addParameter("output", outputType);
+
+			HttpGet sparqlRequest = new HttpGet(urlBuilder.toString());
+			sparqlRequest.setHeader("Accept", "*/*");
+			CloseableHttpResponse response = client.execute(sparqlRequest);
+
+			try (BufferedReader in = new BufferedReader(
+					new InputStreamReader(response.getEntity().getContent()))) {
+
+				String line;
+				while ((line = in.readLine()) != null) {
+					payload.append(line);
+					payload.append(System.lineSeparator());
+				}
+			}
+			return payload.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	// http://uat-web2:8890/sparql

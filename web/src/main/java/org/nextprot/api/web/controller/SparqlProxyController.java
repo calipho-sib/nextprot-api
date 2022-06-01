@@ -55,6 +55,14 @@ public class SparqlProxyController extends ServletWrappingController implements 
 			WebUtils.writeHtmlContent("welcome-sparql-page.html", response, servletContext);
 		}else {
 
+			// For dereferencing, check if the query string contains an "entity" parameter
+			String queryString = request.getQueryString();
+			if(queryString.contains("entity")) {
+				String entityURI = queryString.substring(queryString.indexOf("="));
+				String entity = entityURI.split("/")[1];
+				String accession = entityURI.split("/")[2];
+			}
+
 			boolean requestAcceptsGzipEncoding = acceptsGzipEncoding(request);
 
 			setStatus(response, pageInfo);
@@ -312,5 +320,9 @@ public class SparqlProxyController extends ServletWrappingController implements 
 				10000, wrapper.getAllHeaders());
 	}
 
+	// Generates the respective Sparql query
+	private String generateQuery(String entity, String accession) {
+		return "DESCRIBE <http://nextprot.org/rdf/" + entity + "/" + accession;
+	}
 
 }

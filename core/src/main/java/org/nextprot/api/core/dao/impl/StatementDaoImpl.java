@@ -84,6 +84,12 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
+	public List<String> findDistinctExtraFieldsTerms(String termField) {
+		String sql = "SELECT DISTINCT extra_fields FROM nxflat.entry_mapped_statements WHERE extra_fields LIKE '%" + termField + "%'";
+		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sql, String.class);
+	}
+	
+	@Override
 	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementSimpleWhereClauseQueryDSL... conditions) {
 
 		String sql = "select distinct " + field.getName() + " from nxflat.entry_mapped_statements where ";
