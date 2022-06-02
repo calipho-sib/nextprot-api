@@ -7,12 +7,15 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 
 public interface AnnotationService {
 
 	List<Annotation> findAnnotations(@ValidEntry String entryName);
+
+	Map<String, List<Annotation>> findAnnotationsByCategory(@ValidEntry String entryName, List<String> annotationCategory);
 
 	List<Feature> findPtmsByMaster(String uniqueName);
 
