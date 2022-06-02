@@ -19,6 +19,37 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 	@Autowired
 	private OverviewService overviewService;
 
+	private void displayEntityName(String prefix, int indent, EntityName name) {
+		
+		String pfx = prefix;
+		for (int i=0;i<indent;i++) pfx= "-"+pfx;
+		if (pfx.length()>0) {
+			while (pfx.length()<16) pfx += " ";
+		}
+		StringBuffer sb = new StringBuffer();
+		sb.append(pfx + name.getId());		
+		sb.append(" - " + "parentId: " + name.getParentId());
+		sb.append(" - " + name.getClazz());
+		sb.append(" - "  + name.getQualifier() + " - " + name.getCategory() + 
+				" - " + name.getComposedName() + " - " + name.getType());
+		sb.append(" = " + name.getName());
+		System.out.println(sb.toString());
+		for (EntityName syn : name.getSynonyms()) displayEntityName( "synonym", indent +1, syn);
+		for (EntityName oth : name.getOtherRecommendedEntityNames()) displayEntityName("other", indent +1, oth);
+	}
+	
+	@Test
+	public void testNamesForQ13043() {
+		// temp code for new tests
+		Overview overview = overviewService.findOverviewByEntry("NX_Q13043");
+		for (EntityName name : overview.getProteinNames()) displayEntityName("main", 0, name);
+		for (EntityName name : overview.getAlternativeProteinNames()) displayEntityName("alt", 0, name);
+		for (EntityName name : overview.getAdditionalNames()) displayEntityName("add", 0, name);
+		for (EntityName name : overview.getFunctionalRegionNames()) displayEntityName("fun", 0, name);
+		for (EntityName name : overview.getCleavedRegionNames()) displayEntityName("cleav", 0, name);
+	}
+	
+	
 	@Test
 	public void testNamesForQ86X52() {
 
@@ -127,16 +158,16 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
 				mockEntityNameWithOtherRecNames("(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "1.1.1.n12", "chain", "EC")
+							mockEntityName( "1.1.1.n12", "EC", "EC")
 						)
 				),
 				mockEntityNameWithSynonymsAndOtherRecNames( "Enoyl-CoA hydratase 2", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "protein", "full")
 						),
 						Arrays.asList(
-							mockEntityName("4.2.1.107", "chain", "EC"),
-							mockEntityName( "4.2.1.119", "chain", "EC")
+							mockEntityName("4.2.1.107", "EC", "EC"),
+							mockEntityName( "4.2.1.119", "EC", "EC")
 						)
 				)
 		)));
