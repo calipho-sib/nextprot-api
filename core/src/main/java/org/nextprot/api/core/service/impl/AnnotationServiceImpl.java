@@ -188,6 +188,23 @@ public class AnnotationServiceImpl implements AnnotationService {
         return findAnnotations(entryName, false);
     }
 
+    @Override
+    public Map<String, List<Annotation>> findAnnotationsByCategory(String entryName, List<String> annotationCategories) {
+        Set<String> annotationCategorySet = new HashSet<>(annotationCategories);
+
+        List<Annotation> annotations = findAnnotations(entryName);
+        Map<AnnotationCategory, List<Annotation>> groupedAnnotations = annotations
+                .parallelStream()
+                .filter(annotation -> annotationCategorySet.contains(annotation.getAPICategory().getApiTypeName()))
+                .collect(Collectors.groupingBy(Annotation::getAPICategory));
+        Map<String, List<Annotation>> annotationsByCategories = new HashMap<>();
+        for (AnnotationCategory cat : groupedAnnotations.keySet()) {
+            annotationsByCategories.put(cat.getApiTypeName(), groupedAnnotations.get(cat));
+        }
+
+        return annotationsByCategories;
+    }
+
     /**
      * pam: useful for test AnnotationServiceTest to work and for other tests
      */
@@ -354,7 +371,6 @@ public class AnnotationServiceImpl implements AnnotationService {
     }
     	
 
-    
     private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
 
         Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getIdExperimentalContextMap();

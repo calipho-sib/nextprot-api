@@ -1,6 +1,7 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiBodyObject;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -129,6 +130,17 @@ public class EntryController {
 		return entryGeneReportService.reportEntry(entryName).stream()
 				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(EntryReport.newByChromosomalPositionComparator()))
 				.collect(Collectors.toList());
+	}
+
+	@ApiMethod(path = "/entry/{entry}/annotations", verb = ApiVerb.POST, description = "Annotations by category", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/annotations", method = { RequestMethod.POST }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public Map<String, List<Annotation>> getAnnotationsByCategories(
+			@ApiBodyObject @RequestBody List<String> annotationCategories,
+			@PathVariable("entry") String entryName){
+
+    	return annotationService.findAnnotationsByCategory(entryName, annotationCategories);
+
 	}
 
 	@ApiMethod(path = "/isoforms", verb = ApiVerb.GET, description = "Retrieves all isoforms", produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE})
