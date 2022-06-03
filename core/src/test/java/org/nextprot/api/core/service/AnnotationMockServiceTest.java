@@ -203,8 +203,10 @@ public class AnnotationMockServiceTest {
 					case "annotation_id":
 						evidence.setAnnotationId(Long.valueOf(value));
 						break;
-					case "assigned_by":
-						evidence.setAssignedBy(value);
+					case "assigned_by_id":
+						if("1".equals(value)) {
+							evidence.setAssignedBy("NextProt");
+						}
 						break;
 					case "experimental_context_id":
 						if(value != null) {
@@ -215,7 +217,7 @@ public class AnnotationMockServiceTest {
 			}
 		};
 
-		return extractor.extractDataList("annotation_resource_assoc", factory, "assoc_id", "annotation_id", "assigned_by", "experimental_context_id");
+		return extractor.extractDataList("annotation_resource_assoc", factory, "assoc_id", "annotation_id", "assigned_by_id", "experimental_context_id");
 	}
 
 	private static List<AnnotationIsoformSpecificity> extractIsoformSpecificity(FlatXmlDataSetExtractor extractor) throws DataSetException {
