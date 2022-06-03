@@ -1,3 +1,7 @@
+## ----------------------------------------------------------------------------
+## not used anymore pam, 03.06.2022, replaced with macro in overview.ttl.vm
+## ----------------------------------------------------------------------------
+
 #if($entityName.isMain())
 ##Create ProteineName individual - *** TODO:Create prefix name: ***
 name:entryNameRec_$entityName.id rdf:type :$className.

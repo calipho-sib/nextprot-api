@@ -6,6 +6,7 @@ PREFIX dc: <http://purl.org/dc/elements/1.1/>
 PREFIX up: <http://purl.uniprot.org/core/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX entry: <http://nextprot.org/rdf/entry/>
+PREFIX name: <http://nextprot.org/rdf/name/>
 PREFIX isoform: <http://nextprot.org/rdf/isoform/>
 PREFIX annotation: <http://nextprot.org/rdf/annotation/>
 PREFIX evidence: <http://nextprot.org/rdf/evidence/>

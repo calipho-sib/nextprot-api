@@ -1,8 +1,37 @@
-entry:$entry.getUniqueName()
-#set($entryUniqueName = $entry.getUniqueName())
+## -------------------------------------------------
+#macro(displayEntityName $thisName)
+## -------------------------------------------------
+#set($entryAC = $entry.getUniqueName() )
+#set($nameIRI = "name:" + "$entryAC" + "_" + "$thisName.id" )	
+$nameIRI 
+	rdf:type :$NXUtils.getRdfClass($thisName) ;
+	rdfs:label "$StringUtils.clean($thisName.name)"^^xsd:string ;
+	.
+entry:$entryAC :name $nameIRI .
+entry:$entryAC :$NXUtils.getRdfPropertyToEntry($thisName) $nameIRI .
+#if($thisName.parentId)
+#set($parentIRI = "name:" + "$entryAC" + "_" + "$thisName.parentId" )
+$parentIRI :otherName $nameIRI .
+#end
+
+#foreach($synonym in $thisName.synonyms)
+# name synonym
+#displayEntityName($synonym)
+#end
+
+#foreach($synonym in $thisName.otherRecommendedEntityNames)
+# other rec name
+#displayEntityName($synonym)
+#end
+#end 
+## -------------------------------------------------
+
 ## ----------------- PROTEIN EXISTENCE -----------------------------
+#set($entryUniqueName = $entry.getUniqueName())
+entry:$entry.getUniqueName()
     :existence      :$entry.overview.getProteinExistence().descriptionName;
-## ----------------- FAMILIES ------------------------------------------
+
+## ----------------- FAMILIES --------------------------------------
 #if($entry.overview.families.size() > 0)
 #foreach($family in $entry.overview.families)
     :family [
@@ -14,68 +43,51 @@ entry:$entry.getUniqueName()
        :description "$family.description"^^xsd:string ;
       ].
 #end
-#end## ----------------- PROTEIN NAMES ---------------------------------
-#set($className = "Name")
-#set($qualifier = "fullName")
+#end
+
+## ----------------- PROTEIN NAMES ---------------------------------
+
+# protein names
 #if($entry.overview.proteinNames)
-#foreach($entityName in $entry.overview.proteinNames)
-#set($className = "ProteinName")
-#set($altNamesCount = 0)
-#set($parentName = 0)
-#set($parentUri = "")
-#parse('turtle/entity-name.ttl.vm')
+  #foreach($entityName in $entry.overview.proteinNames)
+    #displayEntityName($entityName)
+  #end
 #end
-#end## ----------------- GENE NAMES ---------------------------------
-#set($className = "Name")
-#set($qualifier = "fullName")
+
+## ----------------- GENE NAMES ---------------------------------
+# gene names
 #if($entry.overview.geneNames)
-#foreach($geneName in $entry.overview.geneNames)
-#set($className = "GeneName")
-#set($altNamesCount = 0)
-#set($orfNamesCount = 0)
-#set($parentName = 0)
-#set($parentUri = "")
-#parse('turtle/gene-name.ttl.vm')
-#end
+  #foreach($entityName in $entry.overview.geneNames)
+    #displayEntityName($entityName)
+  #end
 #end
 
 ## ----------------- ADDITIONAL NAMES ---------------------------------
+# additional names
 #if($entry.overview.additionalNames)
-##entry:$entry.getUniqueName() :additionalNames[
-##        rdf:type :NameList;
-#foreach($entityName in $entry.overview.additionalNames)
-#set($className = "Name")
-#set($parentName = 0)
-#set($parentUri = "")
-#parse('turtle/entity-name.ttl.vm')
+  #foreach($entityName in $entry.overview.additionalNames)
+    #displayEntityName($entityName)
+  #end
 #end
-## ]..
-#end
+
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
+# functional region names
 #if($entry.overview.functionalRegionNames)
-##entry:$entry.getUniqueName() :fonctionalRegionNames[
-##        rdf:type :NameList;
-#foreach($entityName in $entry.overview.functionalRegionNames)
-#set($className = "RegionName")
-#set($parentName = 0)
-#set($parentUri = "")
-#parse('turtle/entity-name.ttl.vm')
+  #foreach($entityName in $entry.overview.functionalRegionNames)
+    #displayEntityName($entityName)
+  #end
 #end
-##]...
-#end
+
 ## ----------------- CLEAVED REGION NAMES ------------------------------
+# cleaved region names
 #if($entry.overview.cleavedRegionNames)
-##entry:$entry.getUniqueName() :cleavedRegionNames[
-##rdf:type :NameList;
-#foreach($entityName in $entry.overview.cleavedRegionNames)
-#set($className = "CleavedRegionName")
-#set($parentName = 0)
-#set($parentUri = "")
-#parse('turtle/entity-name.ttl.vm')
+  #foreach($entityName in $entry.overview.cleavedRegionNames)
+    #displayEntityName($entityName)
+  #end
 #end
-##]....
-#end
+
 ## ----------------- BIOPHYSICALCHEMICAL properties --------------------
+# biochemical properties
 #if($entry.overview.bioPhyChemProps.size() > 0)
 entry:$entry.getUniqueName()
 #foreach($prop in $entry.overview.bioPhyChemProps)
@@ -85,7 +97,9 @@ entry:$entry.getUniqueName()
     ].
 #end 
 #end
+
 ## ----------------- HISTORY ----------------------------------------
+# history
 #if($entry.overview.history.nextprotIntegrationDate)
 entry:$entry.getUniqueName() :history[
       rdf:type :History;
