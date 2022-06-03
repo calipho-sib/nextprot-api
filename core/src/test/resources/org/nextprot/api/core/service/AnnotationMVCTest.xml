@@ -48,6 +48,9 @@
 	<annotation_protein_assoc annotation_id="14" protein_id="11" assoc_id="14" />
 	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="14" position_id="14"/>
 
+	<annotation_protein_assoc annotation_id="15" protein_id="11" assoc_id="14" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="15" position_id="14"/>
+
 	<!-- ontology annotation -->
     <cv_terms cv_id="1301" cv_name="go molecular function" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
     <cv_terms cv_id="1302" cv_name="go biological process" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
@@ -72,6 +75,13 @@
 	<annotations annotation_id="14" unique_name="AN_P12345_014" identifier_id="10"
 		cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB5 and AB4."
 		datasource_id="1" cv_quality_qualifier_id="1" />
+
+	<annotations annotation_id="15" unique_name="AN_P12345_015" identifier_id="10"
+				 cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB6 and AB4."
+				 datasource_id="1" cv_quality_qualifier_id="1" api_category="variant"/>
+
+	<annotation_resource_assoc assoc_id="1" assigned_by="NextProt" experimental_context_id="1" annotation_id="15"/>
+	<annotation_resource_assoc assoc_id="2" assigned_by="NextProt" annotation_id="15"/>
 		
 	<annotation_resource_assoc annotation_id="10" resource_id="10" cv_qualifier_type_id="1" cv_type_id="1"/>
 	<db_xrefs accession="AC_TEST1" resource_id="20" description="some description of an evidence"/>
