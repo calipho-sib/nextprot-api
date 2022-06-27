@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.DbXrefDao;
@@ -16,14 +17,13 @@ import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
 
 import java.io.FileNotFoundException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -115,16 +115,40 @@ public class AnnotationMockServiceTest {
 		stubAnnotationDAO("NX_P12345", flatXmlDataSetExtractor, annotationDAO);
 
 		List<Annotation> annotations = annotationService.findAnnotations("NX_P12345");
-		assertEquals(5, annotations.size());
+		assertEquals(6, annotations.size());
+	}
+
+	@Test
+	public void shouldRemoveAnnotationEvidenceWithoutExperimentalContextForNextprotVariants() throws DataSetException {
+
+		stubAnnotationDAO("NX_P12345", flatXmlDataSetExtractor, annotationDAO);
+
+		List<Annotation> annotations = annotationService.findAnnotations("NX_P12345");
+		List<AnnotationEvidence> annotationEvidences = annotations.stream()
+				.filter(annotation -> annotation.getAnnotationId() == 15).findFirst().get().getEvidences();
+		assertEquals(1, annotationEvidences.size());
 	}
 
 
 	private static void stubAnnotationDAO(String isoformId, FlatXmlDataSetExtractor flatXmlDataSetExtractor, AnnotationDAO annotationDAO) throws DataSetException {
 
 		List<Annotation> annotations = extractAnnotations(flatXmlDataSetExtractor);
+
+		// Bit of a hack, make annotation with annotation id = 15 a type VARIANT
+		annotations.stream()
+				.forEach(annotation -> {
+					if(annotation.getAnnotationId() == 15) {
+						annotation.setAnnotationCategory(AnnotationCategory.VARIANT);
+					}
+				});
+		List<AnnotationEvidence> evidences = extractAnnotationEvidences(flatXmlDataSetExtractor);
 		List<AnnotationIsoformSpecificity> specs = extractIsoformSpecificity(flatXmlDataSetExtractor);
 
 		when(annotationDAO.findAnnotationsByEntryName(isoformId)).thenReturn(annotations);
+		List<Long> annotationIds = annotations.stream()
+				.map(annotation -> annotation.getAnnotationId())
+				.collect(Collectors.toList());
+		when(annotationDAO.findAnnotationEvidencesByAnnotationIds(annotationIds)).thenReturn(evidences);
 		when(annotationDAO.findAnnotationIsoformsByAnnotationIds(Mockito.anyListOf(Long.class))).thenReturn(Lists.newArrayList(specs));
 	}
 
@@ -159,6 +183,41 @@ public class AnnotationMockServiceTest {
 		};
 
 		return extractor.extractDataList("annotations", factory, "annotation_id", "unique_name", "description", "cv_quality_qualifier_id");
+	}
+
+	private static List<AnnotationEvidence> extractAnnotationEvidences(FlatXmlDataSetExtractor extractor) throws DataSetException{
+		FlatXmlDataSetExtractor.Factory<AnnotationEvidence> factory = new FlatXmlDataSetExtractor.Factory<AnnotationEvidence>() {
+
+			@Override
+			public AnnotationEvidence create() {
+				return new AnnotationEvidence();
+			}
+
+			@Override
+			public void setField(AnnotationEvidence evidence, String key, String value) {
+				switch (key) {
+
+					case "assoc_id":
+						evidence.setEvidenceId(Long.valueOf(value));
+						break;
+					case "annotation_id":
+						evidence.setAnnotationId(Long.valueOf(value));
+						break;
+					case "assigned_by_id":
+						if("1".equals(value)) {
+							evidence.setAssignedBy("NextProt");
+						}
+						break;
+					case "experimental_context_id":
+						if(value != null) {
+							evidence.setExperimentalContextId(Long.valueOf(value));
+							break;
+						}
+				}
+			}
+		};
+
+		return extractor.extractDataList("annotation_resource_assoc", factory, "assoc_id", "annotation_id", "assigned_by_id", "experimental_context_id");
 	}
 
 	private static List<AnnotationIsoformSpecificity> extractIsoformSpecificity(FlatXmlDataSetExtractor extractor) throws DataSetException {

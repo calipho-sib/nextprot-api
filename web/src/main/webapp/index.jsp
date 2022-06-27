@@ -81,13 +81,7 @@
 						</ul></li>
 
 					<li><a href="javascript:void(0)" onclick="showMarkdownPreview('nextprot')">About</a></li>
-<<<<<<< HEAD
 					<li><a href="mailto:support@nextprot.org?subject=[neXtProt%20API]">Contact us</a></li>
-=======
-					<li><a
-						href="mailto:support@nextprot.org?subject=[neXtProt%20API]">Contact
-							us</a></li>
->>>>>>> hotfix-2.30.2
 
 				</ul>
 				<ul class="nav navbar-nav navbar-right">

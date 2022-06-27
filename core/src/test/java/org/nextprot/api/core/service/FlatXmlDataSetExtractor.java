@@ -77,8 +77,9 @@ public class FlatXmlDataSetExtractor {
             A element = factory.create();
 
             for (int j=0 ; j<fields.length ; j++) {
-
-                factory.setField(element, fields[j], table.getValue(i, fields[j]).toString());
+                if (table.getValue(i, fields[j]) != null) {
+                    factory.setField(element, fields[j], table.getValue(i, fields[j]).toString());
+                }
             }
 
             dataList.add(element);

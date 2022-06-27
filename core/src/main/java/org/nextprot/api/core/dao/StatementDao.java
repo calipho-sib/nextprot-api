@@ -18,4 +18,5 @@ public interface StatementDao {
 
 	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementSimpleWhereClauseQueryDSL... conditions);
 
+	public List<String> findDistinctExtraFieldsTerms(String termField);
 }

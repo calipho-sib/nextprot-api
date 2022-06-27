@@ -5,7 +5,6 @@ ct.cv_name as name_type,
   	   asy.is_main, 
 	   CASE  WHEN ct.cv_name='enzyme name' THEN substr(asy.synonym_name,4)  -- remove the 'EC ' and keep just the enzyme code
   	   ELSE asy.synonym_name END as synonym_name, 
-  	   asy.synonym_name, 
   	   ('MP_' ||asy.synonym_id)::text as synonym_id, ('MP_' || asy.parent_id)::text as parent_id
 from nextprot.annotation_synonyms asy
 inner join nextprot.annotations an on asy.annotation_id=an.annotation_id

@@ -103,12 +103,13 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 				}
 				switch (source) {
 					case BioEditor:
-						if (expStatements.getTissueAC() == null && expStatements.getCellLineAC() == null) {
-							throw new IllegalArgumentException("EC for BioEditor should have a tissue or a cell line.");
+						if (expStatements.getTissueAC() == null && expStatements.getCellLineAC() == null && expStatements.getDiseaseAC() == null) {
+							throw new IllegalArgumentException("EC for BioEditor should have a tissue, a cell line or a disease.");
 						}
 						expMD5 = ExperimentalContextUtil.computeMd5ForBioeditorVAs(
 								expStatements.getTissueAC(),
 								expStatements.getCellLineAC(),
+								expStatements.getDiseaseAC(),
 								expStatements.getDetectionMethodAC());
 						mdata = BIOEDITOR_VA_METADATA_ID;
 						break;

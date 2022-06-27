@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.mchange.v2.sql.filter.SynchronizedFilterDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -188,6 +187,23 @@ public class AnnotationServiceImpl implements AnnotationService {
         return findAnnotations(entryName, false);
     }
 
+    @Override
+    public Map<String, List<Annotation>> findAnnotationsByCategory(String entryName, List<String> annotationCategories) {
+        Set<String> annotationCategorySet = new HashSet<>(annotationCategories);
+
+        List<Annotation> annotations = findAnnotations(entryName);
+        Map<AnnotationCategory, List<Annotation>> groupedAnnotations = annotations
+                .parallelStream()
+                .filter(annotation -> annotationCategorySet.contains(annotation.getAPICategory().getApiTypeName()))
+                .collect(Collectors.groupingBy(Annotation::getAPICategory));
+        Map<String, List<Annotation>> annotationsByCategories = new HashMap<>();
+        for (AnnotationCategory cat : groupedAnnotations.keySet()) {
+            annotationsByCategories.put(cat.getApiTypeName(), groupedAnnotations.get(cat));
+        }
+
+        return annotationsByCategories;
+    }
+
     /**
      * pam: useful for test AnnotationServiceTest to work and for other tests
      */
@@ -280,6 +296,7 @@ public class AnnotationServiceImpl implements AnnotationService {
         updateIsoformsDisplayedAsSpecific(annotations, entryName);
         updateVariantsRelatedToDisease(annotations);
         updateVariantsHgvsNames(annotations, isoformService.findIsoformsByEntryName(entryName), geneName);
+        updateVariantEvidences(annotations);
         updateSubcellularLocationTermNameWithAncestors(annotations);
         updateMiscRegionsRelatedToInteractions(annotations);
         updatePtmAndPeptideMappingWithMdata(annotations, entryName);
@@ -291,6 +308,47 @@ public class AnnotationServiceImpl implements AnnotationService {
         return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
     }
 
+    /**
+     * Update evidences of variant annotations by filter out evidences from neXtProt WITHOUT experimental context
+     * when there is another same evidence from neXtProt WITH an experimental context.
+     */
+    private void updateVariantEvidences(List<Annotation> annotations) {
+        for (Annotation a: annotations) {
+            if (AnnotationCategory.VARIANT.equals(a.getAPICategory())) {
+                Set<AnnotationEvidence> similarNpEv = a.getEvidences().stream()
+                                                     .filter(ev1 -> "NextProt".equals(ev1.getAssignedBy()))
+                                                     .filter(ev1 -> a.getEvidences().stream().anyMatch(ev2 -> !ev1.equals(ev2) && equalsExceptEC(ev1, ev2)))
+                                                     .collect(Collectors.toSet());
+                if (similarNpEv.size() > 1) {
+                    a.getEvidences().removeAll(similarNpEv.stream().filter(e -> e.getExperimentalContextId() == null).collect(Collectors.toSet()));
+                }
+            }
+        }
+    }
+    
+    private boolean equalsExceptEC(AnnotationEvidence ev1, AnnotationEvidence ev2) {
+        return ev1.getResourceId() == ev2.getResourceId() &&
+                ev1.isNegativeEvidence() == ev2.isNegativeEvidence() &&
+                // ev1.getEvidenceId() == ev2.getEvidenceId() &&
+                Objects.equals(ev1.getProperties(), ev2.getProperties()) &&
+                Objects.equals(ev1.getResourceType(), ev2.getResourceType()) &&
+                Objects.equals(ev1.getResourceAccession(), ev2.getResourceAccession()) &&
+                Objects.equals(ev1.getResourceDb(), ev2.getResourceDb()) &&
+                Objects.equals(ev1.getResourceDescription(), ev2.getResourceDescription()) &&
+                // Objects.equals(ev1.experimentalContextId, ev2.experimentalContextId) &&
+                Objects.equals(ev1.getMdataId(), ev2.getMdataId()) &&
+                Objects.equals(ev1.getQualifierType(), ev2.getQualifierType()) &&
+                Objects.equals(ev1.getQualityQualifier(), ev2.getQualityQualifier()) &&
+                Objects.equals(ev1.getAssignedBy(), ev2.getAssignedBy()) &&
+                Objects.equals(ev1.getGoAssignedBy(), ev2.getGoAssignedBy()) &&
+                Objects.equals(ev1.getAssignmentMethod(), ev2.getAssignmentMethod()) &&
+                Objects.equals(ev1.getEvidenceCodeAC(), ev2.getEvidenceCodeAC()) &&
+                Objects.equals(ev1.getEvidenceCodeName(), ev2.getEvidenceCodeName()) &&
+                Objects.equals(ev1.getEvidenceCodeOntology(), ev2.getEvidenceCodeOntology()) &&
+                Objects.equals(ev1.getNote(), ev2.getNote()) &&
+                Objects.equals(ev1.getResourceAssociationType(), ev2.getResourceAssociationType());
+    }
+    
     private void updatePhenotypicEffectProperty(List<Annotation> annotations, String entryName) {
     	//System.out.println("I was there");
     	PhenotypeUtils.updatePhenotypicEffectProperty(annotations, entryName);
@@ -354,7 +412,6 @@ public class AnnotationServiceImpl implements AnnotationService {
     }
     	
 
-    
     private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
 
         Map<Long, ExperimentalContext> ecMap = experimentalContextDictionaryService.getIdExperimentalContextMap();

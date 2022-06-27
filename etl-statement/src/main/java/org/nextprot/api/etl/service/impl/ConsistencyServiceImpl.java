@@ -1,5 +1,8 @@
 package org.nextprot.api.etl.service.impl;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.StatementDao;
 import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
@@ -13,13 +16,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.nextprot.commons.statements.specs.CoreStatementField.*;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_CV_TERM_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_DATABASE;
 
 @Service
 public class ConsistencyServiceImpl implements ConsistencyService{
-
+	
+	private static final Log LOGGER = LogFactory.getLog(ConsistencyServiceImpl.class);
+	
+	private static final Set<String> EXTRA_FIELD_TERM_NAMES = new HashSet<>(Arrays.asList("DISEASE_ACC", "TISSUE_ACC", "CELL_LINE_ACC"));
+	
 	@Autowired PublicationService publicationService;
 	@Autowired TerminologyService terminologyService;
 	@Autowired StatementDao statementDao;
@@ -52,22 +65,37 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 	@Override
 	public List<String> findMissingCvTerms() {
 		
-
-		List<String> missingCvTerms = new ArrayList<>();
+		// Get term values stored in ANNOT_CV_TERM_ACCESSION
+		Set<String> terms = new HashSet<>(statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION));
 		
-		List<String> terms = statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION);
-		for(String t : terms) {
-			if(t != null){
-				CvTerm term = terminologyService.findCvTermByAccession(t);
-				if(term == null){
-					missingCvTerms.add(t);
-				}
-			}
+		// Get term values stored in EXTRA_FIELDS
+		for (String termFieldName: EXTRA_FIELD_TERM_NAMES) {
+			List<String> extraFields = statementDao.findDistinctExtraFieldsTerms(termFieldName);
+			terms.addAll(extraFields.stream()
+									.filter(StringUtils::isNotBlank)
+									.map(extraValue -> {
+										Map<String, String> extraMap = org.nextprot.commons.utils.StringUtils.deserializeAsMapOrNull(extraValue);
+										String termAcc = extraMap == null? null: extraMap.get(termFieldName);
+										if (StringUtils.isNotBlank(termAcc)) {
+											return termAcc;
+										}
+										return null;
+									})
+									.collect(Collectors.toSet()));
 		}
 		
-		return missingCvTerms;
-
+		// an ANNOT_CV_TERM_ACCESSION or an EXTRA_FIELD can be null
+		terms.remove(null);
+		
+		Set<String> cvTerms = terminologyService.findCvTermsByAccessions(terms).stream()
+												.map(CvTerm::getAccession)
+												.collect(Collectors.toSet());
+		terms.removeAll(cvTerms);
+		
+		if (terms.size() > 0) {
+			LOGGER.error("Missing terms: " + terms);
+		}
+		
+		return new ArrayList<>(terms);
 	}
-
-
 }
