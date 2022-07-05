@@ -1,24 +1,53 @@
 #foreach($chromosomalLocation in $entry.chromosomalLocations)
 #set( $geneName = $StringUtils.slug($chromosomalLocation.getAccession()) )
 #if( $StringUtils.isVirtualGeneAccession($geneName) )
-#set( $geneName = $geneName + "_" + $entry.getUniqueName() )
+#set( $geneName = $entry.getUniqueName() + "_gene_" + $geneName )
 #end
+
 entry:$entry.getUniqueName() :gene gene:$geneName.
 
-name:geneNameRec_$geneName rdf:type :GeneName;
-    rdfs:label "$chromosomalLocation.getRecommendedName()"^^xsd:string.
+#set($gene-name-entity = $entry.overview.findGeneEntityName($chromosomalLocation.getRecommendedName()) )
 
-gene:$geneName a :Gene;
-    :recommendedName name:geneNameRec_$geneName;
-    :band "$chromosomalLocation.getBand()"^^xsd:string; 
-    :strand "$chromosomalLocation.getStrand()"^^xsd:string;
-    :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string;
-    :begin "$chromosomalLocation.getFirstPosition()"^^xsd:integer; 
-    :end "$chromosomalLocation.getLastPosition()"^^xsd:integer;  
-    :length "$chromosomalLocation.getLength()"^^xsd:integer;  
-##    :bestGeneLocation "$chromosomalLocation.isBestGeneLocation()"^^xsd:boolean; 
-#if($chromosomalLocation.isBestGeneLocation())
-    :bestGeneMapping entry:$entry.getUniqueName(); 
+## we don't need to create a name entity for genes having no name
+###if($gene-name-entity)
+#### do nothing now
+###else
+###set($special-gene-name-iri = "name:" + $geneName)
+##$special-gene-name-iri
+##  rdf:type :GeneName ;
+##  rdfs:label "$chromosomalLocation.getRecommendedName()"^^xsd:string ;
+##  .
+###end
+
+gene:$geneName 
+  a :Gene ;
+## ------- recommended name referenced below is defined in overview.ttl.vm -------
+#if($gene-name-entity)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $gene-name-entity.id)
+  :name $gene-name-iri ;
+  :recommendedName $gene-name-iri ;
+## ------- alternative names referenced below are defined in overview.ttl.vm-------
+#if($gene-name-entity.synonyms)
+#foreach($syn in $gene-name-entity.synonyms)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $syn.id)
+  :name $gene-name-iri
+  :alternativeName $gene-name-iri ;
 #end
-    .
+#end
+### ------- special name "unknown" or "-" that could be defined above -------
+###else
+##  :name $special-gene-name-iri ;
+##  :recommendedName $special-gene-name-iri ;  
+## ------- end names ------------------------
+#end
+  :band "$chromosomalLocation.getBand()"^^xsd:string ; 
+  :strand "$chromosomalLocation.getStrand()"^^xsd:string ;
+  :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string ;
+  :begin "$chromosomalLocation.getFirstPosition()"^^xsd:integer ; 
+  :end "$chromosomalLocation.getLastPosition()"^^xsd:integer ;  
+  :length "$chromosomalLocation.getLength()"^^xsd:integer ;  
+#if($chromosomalLocation.isBestGeneLocation())
+  :bestGeneMapping entry:$entry.getUniqueName() ;
+#end
+  .
 #end
