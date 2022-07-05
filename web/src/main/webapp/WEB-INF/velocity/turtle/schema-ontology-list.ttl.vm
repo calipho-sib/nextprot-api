@@ -65,6 +65,10 @@
    rdfs:label "Protein name"^^xsd:string;
    rdfs:comment "Class for protein names"xsd:string;
         .
+:IsoformName rdfs:subClassOf :Name ;
+   rdfs:label "Protein isoform name"^^xsd:string;
+   rdfs:comment "Class for protein isoform names"xsd:string;
+        .
 :FunctionalRegionName rdfs:subClassOf :Name ;
    rdfs:label "Functional region name"^^xsd:string;
    rdfs:comment "Class for names related to a functional region of a protein"xsd:string;
@@ -81,33 +85,43 @@
    rdfs:label "Gene name"^^xsd:string;
    rdfs:comment "Class for gene names"xsd:string;
         .
+
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## Name properties
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 :name a owl:ObjectProperty ;
    rdfs:label "name"^^xsd:string;
-   rdfs:comment "Most general property linking a protein entry to a name"^^xsd:string;
-   rdfs:domain :Entry;
+   rdfs:comment "Most general property linking a protein to a name"^^xsd:string;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform) 
+   ];
    rdfs:range :Name;
         .
 :recommendedName  a owl:ObjectProperty ;
    rdfs:label "recommended name"^^xsd:string;
-   rdfs:comment "Property linkng a protein entry to a recommended name"^^xsd:string;
+   rdfs:comment "Property linkng a protein to a recommended name"^^xsd:string;
    rdfs:subPropertyOf :name;
-   rdfs:domain :Entry;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform) 
+   ];
    rdfs:range :Name;
         .
 :alternativeName a owl:ObjectProperty ;
    rdfs:label "alternative name"^^xsd:string;
-   rdfs:comment "Property linking a protein entry to an alternative name"^^xsd:string;
+   rdfs:comment "Property linking a protein to an alternative name"^^xsd:string;
    rdfs:subPropertyOf :name;
-   rdfs:domain :Entry;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform) 
+   ];
    rdfs:range :Name;
         .
 :orfName a owl:ObjectProperty ;
    rdfs:label "ORF name"^^xsd:string;
-   rdfs:comment "Property linking a protein entry with an ORF name"^^xsd:string;
+   rdfs:comment "Property linking a protein with an ORF name"^^xsd:string;
    rdfs:subPropertyOf :name;
    rdfs:domain :Entry;
    rdfs:range :ORFName;

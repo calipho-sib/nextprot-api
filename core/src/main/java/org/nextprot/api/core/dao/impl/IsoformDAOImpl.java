@@ -75,6 +75,8 @@ public class IsoformDAOImpl implements IsoformDAO {
 			entityName.setType(resultSet.getString("syn_type"));
 			entityName.setValue(resultSet.getString("synonym_name"));
 			entityName.setMainEntityName(resultSet.getString("unique_name"));
+			entityName.setId(resultSet.getString("synonym_id"));
+			entityName.setParentId(resultSet.getString("parent_id"));
 
 			return entityName;
 		}
@@ -112,6 +114,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 			mainEntity.setQualifier(null); // always null in data
 			mainEntity.setType("name");    // can be "name" or "accession code" but we want it to be "name" !
 			mainEntity.setValue(resultSet.getString("synonym_name"));
+			mainEntity.setId(resultSet.getString("synonym_id"));
 
 			// there are > 9400 isoforms without a "name" synonym and they are ALL the only isoform of their entry
 			// in this case all we have is an accession code we replace it with "Iso 1"
