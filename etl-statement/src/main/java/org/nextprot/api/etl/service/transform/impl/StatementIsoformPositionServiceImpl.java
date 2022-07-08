@@ -1,15 +1,14 @@
-package org.nextprot.api.etl.service.impl;
+package org.nextprot.api.etl.service.transform.impl;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.domain.IsoformPositions;
-import org.nextprot.api.etl.service.StatementIsoformPositionService;
+import org.nextprot.api.etl.service.transform.StatementIsoformPositionService;
 import org.nextprot.api.isoform.mapper.domain.query.result.impl.RegionFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.query.result.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.query.RegionalFeatureQuery;
@@ -25,7 +24,6 @@ import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.specs.CoreStatementField;
 import org.nextprot.commons.statements.specs.CustomStatementField;
-import org.nextprot.commons.statements.specs.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

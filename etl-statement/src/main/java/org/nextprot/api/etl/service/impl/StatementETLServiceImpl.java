@@ -8,7 +8,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementLoaderService;
 import org.nextprot.api.etl.service.StatementSourceService;
-import org.nextprot.api.etl.service.StatementTransformerService;
+import org.nextprot.api.etl.service.transform.StatementTransformerService;
 import org.nextprot.api.etl.service.preprocess.impl.StatementPreProcessServiceImpl;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.reader.BufferedJsonStatementReader;

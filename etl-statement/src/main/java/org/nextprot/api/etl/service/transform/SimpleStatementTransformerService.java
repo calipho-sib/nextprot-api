@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.service;
+package org.nextprot.api.etl.service.transform;
 
 import org.nextprot.commons.statements.Statement;
 
