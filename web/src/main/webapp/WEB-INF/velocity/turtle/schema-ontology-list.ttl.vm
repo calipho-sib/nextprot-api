@@ -123,7 +123,10 @@
    rdfs:label "ORF name"^^xsd:string;
    rdfs:comment "Property linking a protein with an ORF name"^^xsd:string;
    rdfs:subPropertyOf :name;
-   rdfs:domain :Entry;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Gene) 
+   ];
    rdfs:range :ORFName;
         .
 :otherName a owl:ObjectProperty ;
