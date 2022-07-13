@@ -20,7 +20,7 @@ gene:$geneName
 #if($gene-name-entity.synonyms)
 #foreach($syn in $gene-name-entity.synonyms)
 #set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $syn.id)
-  :name $gene-name-iri
+  :name $gene-name-iri ;
   :$NXUtils.getRdfPropertyToEntry($syn) $gene-name-iri ;
 #end
 #end
