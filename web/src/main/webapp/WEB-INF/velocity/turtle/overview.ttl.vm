@@ -49,41 +49,41 @@ entry:$entry.getUniqueName()
 
 # protein names
 #if($entry.overview.proteinNames)
-  #foreach($entityName in $entry.overview.proteinNames)
-    #displayEntityName($entityName)
-  #end
+#foreach($entityName in $entry.overview.proteinNames)
+#displayEntityName($entityName)
+#end
 #end
 
 ## ----------------- GENE NAMES ---------------------------------
 # gene names
 #if($entry.overview.geneNames)
-  #foreach($entityName in $entry.overview.geneNames)
-    #displayEntityName($entityName)
-  #end
+#foreach($entityName in $entry.overview.geneNames)
+#displayEntityName($entityName)
+#end
 #end
 
 ## ----------------- ADDITIONAL NAMES ---------------------------------
 # additional names
 #if($entry.overview.additionalNames)
-  #foreach($entityName in $entry.overview.additionalNames)
-    #displayEntityName($entityName)
-  #end
+#foreach($entityName in $entry.overview.additionalNames)
+#displayEntityName($entityName)
+#end
 #end
 
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 # functional region names
 #if($entry.overview.functionalRegionNames)
-  #foreach($entityName in $entry.overview.functionalRegionNames)
-    #displayEntityName($entityName)
-  #end
+#foreach($entityName in $entry.overview.functionalRegionNames)
+#displayEntityName($entityName)
+#end
 #end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 # cleaved region names
 #if($entry.overview.cleavedRegionNames)
-  #foreach($entityName in $entry.overview.cleavedRegionNames)
-    #displayEntityName($entityName)
-  #end
+#foreach($entityName in $entry.overview.cleavedRegionNames)
+#displayEntityName($entityName)
+#end
 #end
 
 ## ----------------- BIOPHYSICALCHEMICAL properties --------------------

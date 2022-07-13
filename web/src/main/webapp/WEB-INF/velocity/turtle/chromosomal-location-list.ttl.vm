@@ -6,40 +6,35 @@
 
 entry:$entry.getUniqueName() :gene gene:$geneName.
 
+## try to get recommended name of the gene 
 #set($gene-name-entity = $entry.overview.findGeneEntityName($chromosomalLocation.getRecommendedName()) )
 
-## we don't need to create a name entity for genes having no name
-###if($gene-name-entity)
-#### do nothing now
-###else
-###set($special-gene-name-iri = "name:" + $geneName)
-##$special-gene-name-iri
-##  rdf:type :GeneName ;
-##  rdfs:label "$chromosomalLocation.getRecommendedName()"^^xsd:string ;
-##  .
-###end
 
 gene:$geneName 
   a :Gene ;
-## ------- recommended name referenced below is defined in overview.ttl.vm -------
+## ------- names referenced below are defined in overview.ttl.vm, no need to redefine them here -------
 #if($gene-name-entity)
 #set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $gene-name-entity.id)
   :name $gene-name-iri ;
-  :recommendedName $gene-name-iri ;
-## ------- alternative names referenced below are defined in overview.ttl.vm-------
+  :$NXUtils.getRdfPropertyToEntry($gene-name-entity) $gene-name-iri ;
 #if($gene-name-entity.synonyms)
 #foreach($syn in $gene-name-entity.synonyms)
 #set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $syn.id)
   :name $gene-name-iri
-  :alternativeName $gene-name-iri ;
+  :$NXUtils.getRdfPropertyToEntry($syn) $gene-name-iri ;
 #end
 #end
-### ------- special name "unknown" or "-" that could be defined above -------
-###else
-##  :name $special-gene-name-iri ;
-##  :recommendedName $special-gene-name-iri ;  
+## if gene has no recommended name try to find entry ORF name(s)
+#else 
+#if($entry.overview.geneNames)
+#foreach($gene-name-entity in $entry.overview.geneNames)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $gene-name-entity.id)
+  :name $gene-name-iri ;
+  :$NXUtils.getRdfPropertyToEntry($gene-name-entity) $gene-name-iri ;
+#end
+#end
+#end
 ## ------- end names ------------------------
-#end
   :band "$chromosomalLocation.getBand()"^^xsd:string ; 
   :strand "$chromosomalLocation.getStrand()"^^xsd:string ;
   :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string ;
