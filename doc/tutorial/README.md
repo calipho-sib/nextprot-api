@@ -34,6 +34,7 @@ PREFIX ov: <http://open.vocab.org/terms/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX : <http://nextprot.org/rdf#>
 PREFIX entry: <http://nextprot.org/rdf/entry/>
+PREFIX name: <http://nextprot.org/rdf/name/>
 PREFIX isoform: <http://nextprot.org/rdf/isoform/>
 PREFIX annotation: <http://nextprot.org/rdf/annotation/>
 PREFIX evidence: <http://nextprot.org/rdf/evidence/>

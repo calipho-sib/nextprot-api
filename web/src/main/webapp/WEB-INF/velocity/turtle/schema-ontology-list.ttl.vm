@@ -1,14 +1,22 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
 #end
-#
-# Define Ontology
-# 
+
+##
+## Define Ontology
+##
+
+:Terminology
+    rdf:type owl:Class ;
+    rdfs:comment "A concept that represents vocabularies to classify terms."^^xsd:string ;
+    .
+
 :Term
       rdf:type owl:Class ;
       rdfs:comment "A concept used to classify resources."^^xsd:string ;
       owl:equivalentClass up:Concept;
       .
+       
        
 :childOf
       a rdf:Property, owl:TransitiveProperty ;
@@ -21,6 +29,114 @@
       rdfs:domain :Term ;
       rdfs:range :Term;
       .
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name related entities
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name classes
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##
+
+:Name rdf:type owl:Class ;
+   rdfs:label "Name"^^xsd:string;
+   rdfs:comment "Most general class for names"xsd:string;
+    .
+:ShortName rdfs:subClassOf :Name ;
+   rdfs:label "Short name"^^xsd:string;
+   rdfs:comment "Class for short names related to another name"xsd:string;
+        .
+:AllergenName rdfs:subClassOf :Name ;
+   rdfs:label "Allergen name"^^xsd:string;
+   rdfs:comment "Class for allergen names"xsd:string;
+        .
+:EnzymeName rdfs:subClassOf :Name ;
+   rdfs:label "Enzyme name"^^xsd:string;
+   rdfs:comment "Class for enzyme names"xsd:string;
+        .
+:InternationalNonproprietaryName rdfs:subClassOf :Name ;
+   rdfs:label "International Non proprietary Name"^^xsd:string;
+   rdfs:comment "Class for international non proprietary names (INN)"xsd:string;
+        .
+:CDAntigenName rdfs:subClassOf :Name ;
+   rdfs:label "CD Antigen name"^^xsd:string;
+   rdfs:comment "Class for antigen names according to the cluster of differentiation nomenclature"xsd:string;
+        .
+:ProteinName rdfs:subClassOf :Name ;
+   rdfs:label "Protein name"^^xsd:string;
+   rdfs:comment "Class for protein names"xsd:string;
+        .
+:IsoformName rdfs:subClassOf :Name ;
+   rdfs:label "Protein isoform name"^^xsd:string;
+   rdfs:comment "Class for protein isoform names"xsd:string;
+        .
+:FunctionalRegionName rdfs:subClassOf :Name ;
+   rdfs:label "Functional region name"^^xsd:string;
+   rdfs:comment "Class for names related to a functional region of a protein"xsd:string;
+        .
+:CleavedRegionName rdfs:subClassOf :Name ;
+   rdfs:label "Cleaved region name"^^xsd:string;
+   rdfs:comment "Class for names related to a cleaved region of protein"xsd:string;
+        .
+:ORFName rdfs:subClassOf :Name ;
+   rdfs:label "ORF name"^^xsd:string;
+   rdfs:comment "Class for names of open reading frames"xsd:string;
+        .
+:GeneName rdfs:subClassOf :Name ;
+   rdfs:label "Gene name"^^xsd:string;
+   rdfs:comment "Class for gene names"xsd:string;
+        .
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name properties
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:name a owl:ObjectProperty ;
+   rdfs:label "name"^^xsd:string;
+   rdfs:comment "Most general property linking a protein to a name"^^xsd:string;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene) 
+   ];
+   rdfs:range :Name;
+        .
+:recommendedName  a owl:ObjectProperty ;
+   rdfs:label "recommended name"^^xsd:string;
+   rdfs:comment "Property linkng a protein to a recommended name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene) 
+   ];
+   rdfs:range :Name;
+        .
+:alternativeName a owl:ObjectProperty ;
+   rdfs:label "alternative name"^^xsd:string;
+   rdfs:comment "Property linking a protein to an alternative name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene) 
+   ];
+   rdfs:range :Name;
+        .
+:orfName a owl:ObjectProperty ;
+   rdfs:label "ORF name"^^xsd:string;
+   rdfs:comment "Property linking a protein with an ORF name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain :Entry;
+   rdfs:range :ORFName;
+        .
+:otherName a owl:ObjectProperty ;
+   rdfs:label "other name"^^xsd:string;
+   rdfs:comment "Property linking a name with another name when a connection exists between the two names"^^xsd:string;
+   rdfs:domain :Name;
+   rdfs:range :Name;
+        .
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+
 
 # ECO_0000045 IHC =>A spatial pattern of protein expression evidence
 cv:ECO_0000045 rdfs:subClassOf :IHC .
@@ -41,12 +157,21 @@ cv:ECO_0000104 rdfs:subClassOf :EST .
 
 #foreach($ontology in $ontologyList)
   
-:$ontology.getOntology()
+#*:$ontology.getOntology()
   rdf:type owl:Class ;
   rdfs:subClassOf :Term;
   rdfs:label "$ontology.getName()"^^xsd:string;
   rdfs:comment "$ontology.getDescription()"^^xsd:string;
   rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
-  .      
+  .
+
+ *#
+:$ontology.getOntology()
+    rdf:type owl:Class ;
+    rdfs:subClassOf :Terminology;
+    rdfs:label "$ontology.getName()"^^xsd:string;
+    rdfs:comment "$ontology.getDescription()"^^xsd:string;
+    rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
+    .
 #end
 

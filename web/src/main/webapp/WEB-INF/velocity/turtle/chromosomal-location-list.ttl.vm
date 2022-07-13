@@ -1,20 +1,48 @@
 #foreach($chromosomalLocation in $entry.chromosomalLocations)
 #set( $geneName = $StringUtils.slug($chromosomalLocation.getAccession()) )
 #if( $StringUtils.isVirtualGeneAccession($geneName) )
-#set( $geneName = $geneName + "_" + $entry.getUniqueName() )
+#set( $geneName = $entry.getUniqueName() + "_gene_" + $geneName )
 #end
+
 entry:$entry.getUniqueName() :gene gene:$geneName.
-gene:$geneName a :Gene;
-    :name "$chromosomalLocation.getRecommendedName()"^^xsd:string;
-    :band "$chromosomalLocation.getBand()"^^xsd:string; 
-    :strand "$chromosomalLocation.getStrand()"^^xsd:string;
-    :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string;
-    :begin "$chromosomalLocation.getFirstPosition()"^^xsd:integer; 
-    :end "$chromosomalLocation.getLastPosition()"^^xsd:integer;  
-    :length "$chromosomalLocation.getLength()"^^xsd:integer;  
-##    :bestGeneLocation "$chromosomalLocation.isBestGeneLocation()"^^xsd:boolean; 
-#if($chromosomalLocation.isBestGeneLocation())
-    :bestGeneMapping entry:$entry.getUniqueName(); 
+
+## try to get recommended name of the gene 
+#set($gene-name-entity = $entry.overview.findGeneEntityName($chromosomalLocation.getRecommendedName()) )
+
+
+gene:$geneName 
+  a :Gene ;
+## ------- names referenced below are defined in overview.ttl.vm, no need to redefine them here -------
+#if($gene-name-entity)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $gene-name-entity.id)
+  :name $gene-name-iri ;
+  :$NXUtils.getRdfPropertyToEntry($gene-name-entity) $gene-name-iri ;
+#if($gene-name-entity.synonyms)
+#foreach($syn in $gene-name-entity.synonyms)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $syn.id)
+  :name $gene-name-iri
+  :$NXUtils.getRdfPropertyToEntry($syn) $gene-name-iri ;
 #end
-    .
+#end
+## if gene has no recommended name try to find entry ORF name(s)
+#else 
+#if($entry.overview.geneNames)
+#foreach($gene-name-entity in $entry.overview.geneNames)
+#set($gene-name-iri = "name:" + $entry.getUniqueName() + "_" + $gene-name-entity.id)
+  :name $gene-name-iri ;
+  :$NXUtils.getRdfPropertyToEntry($gene-name-entity) $gene-name-iri ;
+#end
+#end
+#end
+## ------- end names ------------------------
+  :band "$chromosomalLocation.getBand()"^^xsd:string ; 
+  :strand "$chromosomalLocation.getStrand()"^^xsd:string ;
+  :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string ;
+  :begin "$chromosomalLocation.getFirstPosition()"^^xsd:integer ; 
+  :end "$chromosomalLocation.getLastPosition()"^^xsd:integer ;  
+  :length "$chromosomalLocation.getLength()"^^xsd:integer ;  
+#if($chromosomalLocation.isBestGeneLocation())
+  :bestGeneMapping entry:$entry.getUniqueName() ;
+#end
+  .
 #end

@@ -1,5 +1,5 @@
+# Protein entry and its isoforms
 
-# 
 entry:$entry.getUniqueName() a :Entry;
   skos:exactMatch uniprot:$entry.getUniprotName();
   :swissprotPage unipage:$entry.getUniprotName();
@@ -11,20 +11,52 @@ entry:$entry.getUniqueName() a :Entry;
 #end
   .
 
+# Names of isoforms
+
 #foreach($isoform in $entry.getIsoforms())
 #set($isoform-name =  $isoform.getUniqueName())
+isoform:$isoform-name
 #if($isoform.isSwissProtDisplayedIsoform()) 
-isoform:$isoform-name :swissprotDisplayed "true"^^xsd:boolean . 
+  :swissprotDisplayed "true"^^xsd:boolean ;
 #else
-isoform:$isoform-name :swissprotDisplayed "false"^^xsd:boolean . 
+  :swissprotDisplayed "false"^^xsd:boolean ; 
 #end
 #if($isoform.isCanonicalIsoform()) 
-isoform:$isoform-name :canonicalIsoform "true"^^xsd:boolean . 
+  :canonicalIsoform "true"^^xsd:boolean ;
 #else
-isoform:$isoform-name :canonicalIsoform "false"^^xsd:boolean . 
+  :canonicalIsoform "false"^^xsd:boolean ;
+#end
+  .
+#if($isoform.getMainEntityName())
+#if($isoform.getMainEntityName().getValue())
+#set($mainEntityName = $isoform.getMainEntityName())  
+#set($name-iri = "name:" + "$isoform-name" + "_" + "$mainEntityName.id" )	
+$name-iri 
+  rdf:type :IsoformName ;
+  rdfs:label "$StringUtils.clean($mainEntityName.name)"^^xsd:string ;
+  .
+isoform:$isoform-name  
+  :name $name-iri ;
+  :recommendedName $name-iri ;
 #end
 #end
-
+  .
+#if($isoform.getSynonyms())
+#foreach($syn in $isoform.getSynonyms())
+#set($name-iri = "name:" + "$isoform-name" + "_" + "$syn.id" )	
+#set($parent-name-iri = "name:" + "$isoform-name" + "_" + "$syn.parentId" )	
+$name-iri 
+  rdf:type :IsoformName ;
+  rdfs:label "$StringUtils.clean($syn.name)"^^xsd:string ;
+  .
+$parent-name-iri :otherName $name-iri .
+isoform:$isoform-name  
+  :name $name-iri ;
+  :alternativeName $name-iri ;
+  .
+#end
+#end
+#end
 
 # Overview
 #parse('turtle/overview.ttl.vm')

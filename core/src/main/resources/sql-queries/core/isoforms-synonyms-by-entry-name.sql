@@ -1,4 +1,4 @@
-select isoforms.unique_name unique_name, syn.synonym_name, syn_types.cv_name syn_type, syn_qualifiers.cv_name syn_qualifier 
+select isoforms.unique_name unique_name, syn.synonym_id, syn.parent_id, syn.synonym_name, syn_types.cv_name syn_type, syn_qualifiers.cv_name syn_qualifier 
 from nextprot.bio_sequences seqs 
 inner join nextprot.sequence_identifiers isoforms on (seqs.identifier_id = isoforms.identifier_id) 
 inner join nextprot.mapping_annotations mapping on (mapping.mapped_identifier_id = isoforms.identifier_id) 

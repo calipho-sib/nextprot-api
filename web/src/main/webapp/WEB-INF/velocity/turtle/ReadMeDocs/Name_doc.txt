@@ -1,0 +1,24 @@
+REPORT DOCUMENT ON THE NEXTPROT RDF MODEL MODIFICATIONS FOR THE NAME CLASS
+Author: Vincenzo Daponte.
+
+The modifications have affected the velocity templates that produces the .ttl files referring to the Entry names,
+in particular the ones contributing to the production of the "Overview" of each Entry.
+
+The velocity template files concerned by this modifications are:
+- entity-name.ttl.vm
+- overview.ttl.vm
+- schema-ontology-list.ttl.vm
+- chromosomal-location-list.ttl.vm
+- gene-name.ttl.vm (NEW FILE!)
+
+The modifications to these templates aim to implement the following tasks:
+- Include the missing classes and relationships included in the modifications proposed, .
+    implemented in the schema-ontology-list.ttl.vm file;
+- Build a new routine to build the names according to the modifications, names to be listed and correctly linked in the Entry overview.
+    This routine involves the overview.ttl.vm file and the entity-name file for the entity names and other names besides gene names.
+- For gene names specifics and examples were given, these specifics are in the .pdf file "How_to_add_gene_and_ORF_names_to_velocity_templates_Vincenzo_Daponte.pdf".
+    To reproduce these specifics and the examples given a special "Gene Name" section has been created in the overview.ttl.vm that calls the newly created gene-name.ttl.vm file.
+    In this file are implemented the paths to produces the gene name specific individuals such as the ORF name individuals for all the name synonyms.
+- In the chromosomal-location-list.ttl.vm has been corrected the Name specific class declaration into GeneName.
+
+The listed files are updated in this brach and in this folder are available the overview.ttl files for the entries NX_A2IDD5, NX_A4D1E9, NX_A6QL64 and NX_O75121 also present as examples in the specifications .pdf file.

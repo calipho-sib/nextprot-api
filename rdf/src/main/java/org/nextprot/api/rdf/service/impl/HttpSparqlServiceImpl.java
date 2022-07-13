@@ -38,6 +38,7 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 			"PREFIX up: <http://purl.uniprot.org/core/>\n" +
 			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
 			"PREFIX entry: <http://nextprot.org/rdf/entry/>\n" +
+			"PREFIX name: <http://nextprot.org/rdf/name/>\n" +
 			"PREFIX isoform: <http://nextprot.org/rdf/isoform/>\n" +
 			"PREFIX annotation: <http://nextprot.org/rdf/annotation/>\n" +
 			"PREFIX evidence: <http://nextprot.org/rdf/evidence/>\n" +

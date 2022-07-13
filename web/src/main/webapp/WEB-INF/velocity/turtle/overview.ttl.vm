@@ -1,7 +1,37 @@
-entry:$entry.getUniqueName() 
+## -------------------------------------------------
+#macro(displayEntityName $thisName)
+## -------------------------------------------------
+#set($entryAC = $entry.getUniqueName() )
+#set($nameIRI = "name:" + "$entryAC" + "_" + "$thisName.id" )	
+$nameIRI 
+	rdf:type :$NXUtils.getRdfClass($thisName) ;
+	rdfs:label "$StringUtils.clean($thisName.name)"^^xsd:string ;
+	.
+entry:$entryAC :name $nameIRI .
+entry:$entryAC :$NXUtils.getRdfPropertyToEntry($thisName) $nameIRI .
+#if($thisName.parentId)
+#set($parentIRI = "name:" + "$entryAC" + "_" + "$thisName.parentId" )
+$parentIRI :otherName $nameIRI .
+#end
+
+#foreach($synonym in $thisName.synonyms)
+# name synonym
+#displayEntityName($synonym)
+#end
+
+#foreach($synonym in $thisName.otherRecommendedEntityNames)
+# other rec name
+#displayEntityName($synonym)
+#end
+#end 
+## -------------------------------------------------
+
 ## ----------------- PROTEIN EXISTENCE -----------------------------
+#set($entryUniqueName = $entry.getUniqueName())
+entry:$entry.getUniqueName()
     :existence      :$entry.overview.getProteinExistence().descriptionName;
-## ----------------- FAMILIES ------------------------------------------
+
+## ----------------- FAMILIES --------------------------------------
 #if($entry.overview.families.size() > 0)
 #foreach($family in $entry.overview.families)
     :family [
@@ -11,61 +41,75 @@ entry:$entry.getUniqueName()
        :region "$family.region"^^xsd:string ;
 #end
        :description "$family.description"^^xsd:string ;
-      ];
+      ].
 #end
-#end## ----------------- PROTEIN NAMES ---------------------------------
+#end
+
+## ----------------- PROTEIN NAMES ---------------------------------
+
+# protein names
 #if($entry.overview.proteinNames)
 #foreach($entityName in $entry.overview.proteinNames)
-    #parse('turtle/entity-name.ttl.vm')
+#displayEntityName($entityName)
 #end
 #end
+
+## ----------------- GENE NAMES ---------------------------------
+# gene names
+#if($entry.overview.geneNames)
+#foreach($entityName in $entry.overview.geneNames)
+#displayEntityName($entityName)
+#end
+#end
+
 ## ----------------- ADDITIONAL NAMES ---------------------------------
+# additional names
 #if($entry.overview.additionalNames)
-    :additionalNames[ 
-        rdf:type :NameList;
 #foreach($entityName in $entry.overview.additionalNames)
-    #parse('turtle/entity-name.ttl.vm')
+#displayEntityName($entityName)
 #end
-    ];
 #end
+
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
+# functional region names
 #if($entry.overview.functionalRegionNames)
-    :fonctionalRegionNames[
-        rdf:type :NameList;
 #foreach($entityName in $entry.overview.functionalRegionNames)
-        #parse('turtle/entity-name.ttl.vm')
+#displayEntityName($entityName)
 #end
-    ];
 #end
+
 ## ----------------- CLEAVED REGION NAMES ------------------------------
+# cleaved region names
 #if($entry.overview.cleavedRegionNames)
-    :cleavedRegionNames[
-        rdf:type :NameList;
 #foreach($entityName in $entry.overview.cleavedRegionNames)
-        #parse('turtle/entity-name.ttl.vm')
+#displayEntityName($entityName)
 #end
-    ];
 #end
+
 ## ----------------- BIOPHYSICALCHEMICAL properties --------------------
+# biochemical properties
 #if($entry.overview.bioPhyChemProps.size() > 0)
+entry:$entry.getUniqueName()
 #foreach($prop in $entry.overview.bioPhyChemProps)
     :biophysicochemical[  
         :name "$prop.getFirst()"^^xsd:string;
         :value "$prop.getSecond()"^^xsd:string;
-    ];
+    ].
 #end 
 #end
+
 ## ----------------- HISTORY ----------------------------------------
+# history
 #if($entry.overview.history.nextprotIntegrationDate)
-    :history[
+entry:$entry.getUniqueName() :history[
       rdf:type :History;
       :name "neXtProt"^^xsd:string; 
       :integrated "$entry.overview.history.getFormattedNextprotIntegrationDate()"^^xsd:string; 
       :updated "$entry.overview.history.getFormattedNextprotUpdateDate()"^^xsd:string;
-    ];
+    ].
 #end
 #if($entry.overview.history.uniprotIntegrationDate)
-    :history[   
+entry:$entry.getUniqueName() :history[
         rdf:type :History;
         :name "UniProtKB"^^xsd:string;
         :integrated "$entry.overview.history.getFormattedUniprotIntegrationDate()"^^xsd:string;
@@ -73,6 +117,6 @@ entry:$entry.getUniqueName()
         :version "$entry.overview.history.uniprotVersion"^^xsd:string;
         :lastSequenceUpdate "$entry.overview.history.lastSequenceUpdate"^^xsd:string;
         :sequenceVersion "$entry.overview.history.sequenceVersion"^^xsd:string;
-    ];    
+    ].
 #end
-    .
+

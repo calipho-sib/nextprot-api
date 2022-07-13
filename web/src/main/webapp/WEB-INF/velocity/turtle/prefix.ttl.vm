@@ -6,6 +6,7 @@
 @prefix up: <http://purl.uniprot.org/core/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix entry: <http://nextprot.org/rdf/entry/> .
+@prefix name: <http://nextprot.org/rdf/name/> .
 @prefix isoform: <http://nextprot.org/rdf/isoform/> .
 @prefix annotation: <http://nextprot.org/rdf/annotation/> .
 @prefix evidence: <http://nextprot.org/rdf/evidence/> .
