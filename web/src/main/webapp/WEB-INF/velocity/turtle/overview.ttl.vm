@@ -28,19 +28,18 @@ $parentIRI :otherName $nameIRI .
 
 ## ----------------- PROTEIN EXISTENCE -----------------------------
 #set($entryUniqueName = $entry.getUniqueName())
-entry:$entry.getUniqueName()
-    :existence      :$entry.overview.getProteinExistence().descriptionName;
+entry:$entry.getUniqueName() :existence :$entry.overview.getProteinExistence().descriptionName .
 
 ## ----------------- FAMILIES --------------------------------------
 #if($entry.overview.families.size() > 0)
 #foreach($family in $entry.overview.families)
-    :family [
+entry:$entry.getUniqueName() :family [
        rdf:type :FamilyInfo ;
        :term cv:$StringUtils.slug($family.accession) ;
+       :description "$family.description"^^xsd:string ;
 #if($family.region)
        :region "$family.region"^^xsd:string ;
 #end
-       :description "$family.description"^^xsd:string ;
       ].
 #end
 #end
@@ -89,13 +88,12 @@ entry:$entry.getUniqueName()
 ## ----------------- BIOPHYSICALCHEMICAL properties --------------------
 # biochemical properties
 #if($entry.overview.bioPhyChemProps.size() > 0)
-entry:$entry.getUniqueName()
 #foreach($prop in $entry.overview.bioPhyChemProps)
-    :biophysicochemical[  
+entry:$entry.getUniqueName()  :biophysicochemical[  
         :name "$prop.getFirst()"^^xsd:string;
         :value "$prop.getSecond()"^^xsd:string;
     ].
-#end 
+#end
 #end
 
 ## ----------------- HISTORY ----------------------------------------

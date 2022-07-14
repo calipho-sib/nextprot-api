@@ -39,51 +39,51 @@
 
 :Name rdf:type owl:Class ;
    rdfs:label "Name"^^xsd:string;
-   rdfs:comment "Most general class for names"xsd:string;
-    .
+   rdfs:comment "Most general class for names"^^xsd:string;
+        .
 :ShortName rdfs:subClassOf :Name ;
    rdfs:label "Short name"^^xsd:string;
-   rdfs:comment "Class for short names related to another name"xsd:string;
+   rdfs:comment "Class for short names related to another name"^^xsd:string;
         .
 :AllergenName rdfs:subClassOf :Name ;
    rdfs:label "Allergen name"^^xsd:string;
-   rdfs:comment "Class for allergen names"xsd:string;
+   rdfs:comment "Class for allergen names"^^xsd:string;
         .
 :EnzymeName rdfs:subClassOf :Name ;
    rdfs:label "Enzyme name"^^xsd:string;
-   rdfs:comment "Class for enzyme names"xsd:string;
+   rdfs:comment "Class for enzyme names"^^xsd:string;
         .
 :InternationalNonproprietaryName rdfs:subClassOf :Name ;
    rdfs:label "International Non proprietary Name"^^xsd:string;
-   rdfs:comment "Class for international non proprietary names (INN)"xsd:string;
+   rdfs:comment "Class for international non proprietary names (INN)"^^xsd:string;
         .
 :CDAntigenName rdfs:subClassOf :Name ;
    rdfs:label "CD Antigen name"^^xsd:string;
-   rdfs:comment "Class for antigen names according to the cluster of differentiation nomenclature"xsd:string;
+   rdfs:comment "Class for antigen names according to the cluster of differentiation nomenclature"^^xsd:string;
         .
 :ProteinName rdfs:subClassOf :Name ;
    rdfs:label "Protein name"^^xsd:string;
-   rdfs:comment "Class for protein names"xsd:string;
+   rdfs:comment "Class for protein names"^^xsd:string;
         .
 :IsoformName rdfs:subClassOf :Name ;
    rdfs:label "Protein isoform name"^^xsd:string;
-   rdfs:comment "Class for protein isoform names"xsd:string;
+   rdfs:comment "Class for protein isoform names"^^xsd:string;
         .
 :FunctionalRegionName rdfs:subClassOf :Name ;
    rdfs:label "Functional region name"^^xsd:string;
-   rdfs:comment "Class for names related to a functional region of a protein"xsd:string;
+   rdfs:comment "Class for names related to a functional region of a protein"^^xsd:string;
         .
 :CleavedRegionName rdfs:subClassOf :Name ;
    rdfs:label "Cleaved region name"^^xsd:string;
-   rdfs:comment "Class for names related to a cleaved region of protein"xsd:string;
+   rdfs:comment "Class for names related to a cleaved region of protein"^^xsd:string;
         .
 :ORFName rdfs:subClassOf :Name ;
    rdfs:label "ORF name"^^xsd:string;
-   rdfs:comment "Class for names of open reading frames"xsd:string;
+   rdfs:comment "Class for names of open reading frames"^^xsd:string;
         .
 :GeneName rdfs:subClassOf :Name ;
    rdfs:label "Gene name"^^xsd:string;
-   rdfs:comment "Class for gene names"xsd:string;
+   rdfs:comment "Class for gene names"^^xsd:string;
         .
 
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
