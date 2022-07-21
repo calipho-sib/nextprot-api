@@ -47,7 +47,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldNotMatchRule2OnlyOnePeptideProteotypic() {
 
-		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule2("NX_P69849"));
+		Assert.assertFalse(proteinExistenceInferenceService.promotedAccordingToRule2("NX_A0A075B6N3")); //NX_P69849"));
 	}
 
     @Test
@@ -167,7 +167,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 
 		if (todayIsAfter("06 Jul 2020")) {
 
-			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_P59646");
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A2A368"); // "NX_P59646");
 			Assert.assertEquals(ProteinExistence.TRANSCRIPT_LEVEL, pe.getProteinExistence());
 			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_04, pe.getRule());
 		}
@@ -200,7 +200,7 @@ public class ProteinExistenceServiceTest extends CoreUnitBaseTest {
 		// if this fails after July 06, then install nextprot and nxflat db of release 2020_09 to DEV pleatform (crick)
 
 		if (todayIsAfter("06 Jul 2020")) {
-			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A2RRL7");
+			ProteinExistenceInferred pe = proteinExistenceInferenceService.inferProteinExistence("NX_A1L443"); //"NX_A2RRL7");
 			Assert.assertEquals(ProteinExistence.PROTEIN_LEVEL, pe.getProteinExistence());
 			Assert.assertEquals(ProteinExistenceInferred.ProteinExistenceRule.SP_PER_06, pe.getRule());
 		}

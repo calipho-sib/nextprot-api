@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.SequenceUnicity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
@@ -129,19 +130,38 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
         // NX_PEPT01180319 AAQEJQEGQR is pseudo unique
     	// equivalent isoforms are "NX_P35520-1","NX_P0DN79-1"
     	
-    	String peptide = "AAQEIQEGQR"; // replaced any J in original with L otherwise pepx don't match the peptide !!!!
-    	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_P35520-1","NX_P0DN79-1" ));
+    	Set<String> equivIsoSet = new TreeSet<String>(Arrays.asList("NX_Q495Y8-2","NX_A6NHP3-2" ));
+    	// Replaced any J in original with L otherwise pepx don't match the peptide !!!!
+    	//String peptide = "AAQEIQEGQR"; 
+    	// Pam: I took a long part of the NX_Q495Y8-2 sequence to get this pseudo-unique peptide
+    	String peptide = "RKVLAPEPEEIWVAEMLCGLKMKLKRRRVSLVLPEHHEAFNRLLEDPVIKRFLAWDKDLRVSDKYLLAMVIAYFSRAGFPSWQYQRIHFFLALYLANDMEEDDEDSKQNIFHFLYRKNRSRIPLLRKPWFQLGHSMNPRARKNRSRIPLLRKRRFQLYRSTNPRARKNRSRIPLLRKRRFQLYRSMNSRARKNRSQIVLFQKRRFH";
+    	
     	List<Entry> result = pepXService.findEntriesWithPeptides(peptide, true, "GET");
+    	System.out.println("result size: " + result.size() );
     	assertTrue( result.size() > 1); // multiple entries but they're sharing an isoform having the same sequence
-    	assertTrue( result.stream()
-    		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
-    		.allMatch(a -> 
-    			a.getCvTermName().equals(peptide)  && 
-    	    	a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY).stream().allMatch(p -> p.getValue().equals("Y")) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.PSEUDO_UNIQUE.name())) &&
-    			a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS).stream().allMatch(p -> p.getValue().equals(SequenceUnicity.Value.PSEUDO_UNIQUE.name())) &&
-    			new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet))
-    	);
+    	
+    	result.stream()
+        		.flatMap(entry -> entry.getAnnotationsByCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION).stream())
+        		.forEach(a -> {
+        			//System.out.println("expected:" + peptide);
+        			//System.out.println("found   :" + a.getCvTermName());
+        			//System.out.println(a.getCvTermName().equals(peptide) ? "OK" : "ERROR");
+        			assertTrue(a.getCvTermName().equals(peptide));
+        			for (AnnotationProperty ap: a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY)) {
+        				//System.out.println("NAME_PEPTIDE_PROTEOTYPICITY: " + ap.getValue());
+        				assertTrue(ap.getValue().equals("Y"));
+        			}
+        			for (AnnotationProperty ap: a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY)) {
+        				//System.out.println("NAME_PEPTIDE_UNICITY: " + ap.getValue());
+        				assertTrue(ap.getValue().equals("PSEUDO_UNIQUE"));
+        			}
+        			for (AnnotationProperty ap: a.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_UNICITY_WITH_VARIANTS)) {
+        				//System.out.println("NAME_PEPTIDE_UNICITY_WITH_VARIANTS: " + ap.getValue());
+        				assertTrue(ap.getValue().equals(SequenceUnicity.Value.PSEUDO_UNIQUE.name()));
+        			}
+        			assertTrue(new TreeSet<String>(a.getSynonyms()).equals(equivIsoSet));
+        			
+        		});        		
     }    
 
     @Test
