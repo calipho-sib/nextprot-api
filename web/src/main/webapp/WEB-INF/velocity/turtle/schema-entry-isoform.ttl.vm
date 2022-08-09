@@ -2,125 +2,153 @@
 #parse("turtle/prefix.ttl.vm")
 #end
 
-<http://np.org/rdf>
-      rdf:type owl:Ontology ;
-      owl:imports owl: , <http://www.w3.org/2004/02/skos/core> ;
-      owl:versionInfo "Initial release"^^xsd:string .
-
-
 :Entry
       rdf:type owl:Class ;
       rdfs:comment "General information of a protein."^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass up:Protein;
       .
 
 :Isoform
       rdf:type owl:Class ;
       rdfs:comment "Specific information of a protein isoform."^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Proteoform
       rdf:type owl:Class ;
       rdfs:comment "Description of a protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;      
       .
 
 :ProteinSequence
       rdf:type owl:Class ;
       rdfs:comment "Protein sequence object"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :History
       rdf:type owl:Class ;
       rdfs:comment "A history of a protein entry"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
-
-# Isoform annotation specificity qualifier
-
-:IsoformAnnotationSpecificityQualifier
-      rdf:type owl:Class ;
-      rdfs:comment "Specificity qualifiers are used to describe the isoform specificity of an annotation"^^xsd:string ;
-      .
-      
-:UNKNOWN
-      rdf:type :IsoformAnnotationSpecificityQualifier ;
-      rdfs:comment "Not applicable or not known."^^xsd:string ;
-      .
-
-:SPECIFIC
-      rdf:type :IsoformAnnotationSpecificityQualifier ;
-      rdfs:comment "the annotation is explicitly linked to this isoform in swissprot."^^xsd:string ;
-      .
-
-:BY_DEFAULT
-      rdf:type :IsoformAnnotationSpecificityQualifier ;
-      rdfs:comment "the annotation is by default propagated from the master to the isoform."^^xsd:string ;
-      .
-
-
-# quality qualifiers
+# quality qualifier class and individuals defining its extension
 
 :QualityQualifier
       rdf:type owl:Class ;
       rdfs:comment "Quality qualifiers are used to describe the reliability of an annotation or evidence"^^xsd:string ;
+	  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      owl:equivalentClass [ 
+        a owl:Class ;
+      	owl:oneOf (
+	      	:GOLD 
+	      	:SILVER 
+	      	:BRONZE
+        ) 
+      ];
+      
       .
-
 :GOLD
-      rdf:type :QualityQualifier ;
-      rdfs:comment "High level of confidence"^^xsd:string ;
-      .
+	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdfs:label "Gold"^^xsd:string ;
+	rdfs:comment "High level of confidence"^^xsd:string ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> .
+    .
 
 :SILVER
-      rdf:type :QualityQualifier ;
-      rdfs:comment "Medium level of confidence"^^xsd:string ;
-      .
+	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdfs:label "Gold"^^xsd:string ;
+    rdfs:comment "Medium level of confidence"^^xsd:string ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> .
+    .
       
 :BRONZE
-      rdf:type :QualityQualifier ;
-      rdfs:comment "Low level of confidence"^^xsd:string ;
-      .
+	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdfs:label "Gold"^^xsd:string ;
+    rdfs:comment "Low level of confidence"^^xsd:string ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> .
+
+
+# protein existence level class and individuals defining its extension
       
-# protein existence
 :ProteinExistence
       rdf:type owl:Class ;
       rdfs:comment "Protein existence detection method and reliabilty level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      owl:equivalentClass [ 
+        a owl:Class ;
+      	oneOf (
+	      	:Evidence_at_protein_level 
+	      	:Evidence_at_transcript_level 
+	      	:Inferred_from_homology
+	      	:Predicted
+	      	:Uncertain
+        ) 
+      ];
       .
 
 :Evidence_at_protein_level
+	  rdf:type owl:Class ;
       rdf:type :ProteinExistence ;
       :level "1"^^xsd:integer ;
       rdfs:label "Evidence at protein level"^^xsd:string ;
+      rdfs:comment "Protein existence is supported by evidence at protein level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Evidence_at_transcript_level
+	  rdf:type owl:Class ;
       rdf:type :ProteinExistence ;
       :level "2"^^xsd:integer ;
       rdfs:label "Evidence at transcript level"^^xsd:string ;
+      rdfs:comment "Protein existence is supported by evidence at transcript level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Inferred_from_homology
+	  rdf:type owl:Class ;
       rdf:type :ProteinExistence ;
       :level "3"^^xsd:integer ;
       rdfs:label "Inferred from homology"^^xsd:string ;
+      rdfs:comment "Protein existence is inferred by homology"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
       
 :Predicted
+	  rdf:type owl:Class ;
       rdf:type :ProteinExistence ;
       :level "4"^^xsd:integer ;
       rdfs:label "Predicted"^^xsd:string ;
+      rdfs:comment "Protein existence is supported by some algorithm"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Uncertain
+	  rdf:type owl:Class ;
       rdf:type :ProteinExistence ;
       :level "5"^^xsd:integer ;
       rdfs:label "Uncertain"^^xsd:string ;
+      rdfs:comment "Protein existence is uncertain"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
-      
+
 
       
-#TODO generate specific owl for the publication hierarchy       
-:Publication
-      rdf:type owl:Class ;
-      rdfs:subClassOf owl:Thing ;
-      .
+## --- Publication classes
       
+:Publication
+	rdf:type owl:Class ;
+	rdfs:label "Publication"^^xsd:string;
+	rdfs:comment "Scientific publication"^^xsd:string;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    .
+
+:LargeScalePublication
+	rdf:type owl:Class ;
+	rdfs:subClassOf :Publication ;
+	rdfs:label "Large scale publication"^^xsd:string;
+	rdfs:comment "A publication is considered a large scale publication when its content is regarding 15 proteins or more"^^xsd:string;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    .
+

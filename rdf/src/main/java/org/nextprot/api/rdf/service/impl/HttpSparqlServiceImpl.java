@@ -52,6 +52,8 @@ public class HttpSparqlServiceImpl implements HttpSparqlService {
 			"PREFIX context: <http://nextprot.org/rdf/context/>\n" +
 			"PREFIX interaction: <http://nextprot.org/rdf/interaction/>\n" +
 			"PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n" +
+			"PREFIX sdo: <https://schema.org/>\n" +
+			"PREFIX dct: <http://purl.org/dc/terms/>\n" +
 			"PREFIX uniprot: <http://purl.uniprot.org/uniprot/>\n" +
 			"PREFIX unipage: <http://www.uniprot.org/uniprot/>\n" +
 			"PREFIX chebi: <http://purl.obolibrary.org/obo/>\n" +

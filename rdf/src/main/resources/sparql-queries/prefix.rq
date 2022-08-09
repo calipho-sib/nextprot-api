@@ -20,6 +20,8 @@ PREFIX db: <http://nextprot.org/rdf/db/>
 PREFIX context: <http://nextprot.org/rdf/context/>
 PREFIX interaction: <http://nextprot.org/rdf/interaction/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX sdo: <https://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX uniprot: <http://purl.uniprot.org/uniprot/>
 PREFIX unipage: <http://www.uniprot.org/uniprot/>
 PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>
