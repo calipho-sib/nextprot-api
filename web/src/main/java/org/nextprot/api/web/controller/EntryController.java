@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -132,14 +133,21 @@ public class EntryController {
 				.collect(Collectors.toList());
 	}
 
-	@ApiMethod(path = "/entry/{entry}/annotations", verb = ApiVerb.POST, description = "Annotations by category", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/entry/{entry}/annotations", method = { RequestMethod.POST }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public Map<String, List<Annotation>> getAnnotationsByCategories(
-			@ApiBodyObject @RequestBody List<String> annotationCategories,
-			@PathVariable("entry") String entryName){
+	@RequestMapping(value = "/entry/{entry}/annotations", method = { RequestMethod.GET })
+	public String getAnnotationsByCategories(
+			@RequestParam List<String> categories,
+			@PathVariable("entry") String entryName,
+			HttpServletRequest request, Model model){
 
-    	return annotationService.findAnnotationsByCategory(entryName, annotationCategories);
+    	categories = categories.stream()
+				.map(category -> category.toLowerCase(Locale.ROOT))
+				.collect(Collectors.toList());
+    	Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName)
+				.withSubParts(categories)
+				.withBed(true));
+
+		model.addAttribute("entry", entry);
+		return "entry";
 
 	}
 
