@@ -8,56 +8,69 @@
 
 :ExpressionLevel
       rdf:type owl:Class ;
+      rdfs:label "Expression level"^^xsd:string ;
       rdfs:comment "Expression levels detected during experiment"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
-
    
 :PositiveExpressionLevel
+      rdf:type owl:Class ;
       rdfs:subClassOf :ExpressionLevel ;
+      rdfs:label "Positive expression level"^^xsd:string ;
       rdfs:comment "Class of positive expression level"^^xsd:string ;
-      :notIn :NegativeExpressionLevel;
-      .
-      
-:Positive
-      rdf:type :PositiveExpressionLevel ;
-      rdfs:comment "Positive level of expression"^^xsd:string ;
-      .
-
-:High
-      rdf:type :PositiveExpressionLevel ;
-      rdfs:comment "High level of expression"^^xsd:string ;
-      .
-
-:Medium
-      rdf:type :PositiveExpressionLevel ;
-      rdfs:comment "High level of expression"^^xsd:string ;
-      .
-:Low
-      rdf:type :PositiveExpressionLevel ;
-      rdfs:comment "High level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      owl:equivalentClass [ 
+        a owl:Class ;
+      	owl:oneOf ( :Positive :High :Medium :Low )
+      ];
       .
 
 :NegativeExpressionLevel
+      rdf:type owl:Class ;
       rdfs:subClassOf :ExpressionLevel ;
+      rdfs:label "Negative expression level"^^xsd:string ;
       rdfs:comment "Class of negative level of expression"^^xsd:string ;
-      :notIn :PositiveExpressionLevel;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      owl:equivalentClass [ 
+        a owl:Class ;
+      	owl:oneOf ( :Negative )
+      ];
+      .
+
+:Positive
+      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdfs:label "Expression detected"^^xsd:string ;
+      rdfs:comment "Positive level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      .
+
+:High
+      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdfs:label "High expression detected"^^xsd:string ;
+      rdfs:comment "High level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      .
+
+:Medium
+      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdfs:label "Medium expression detected"^^xsd:string ;
+      rdfs:comment "Medium level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      .
+
+:Low
+      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdfs:label "Low expression detected"^^xsd:string ;
+      rdfs:comment "Low level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Negative
-      rdf:type :NegativeExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :NegativeExpressionLevel ;
+      rdfs:label "No expression detected"^^xsd:string ;
       rdfs:comment "Negative level of expression"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .        
-
-#
-# what about not detected?
-:NotDetected owl:sameAs :Negative.
-
-
-      
-#:expressed      
-#:highlyExpressed
-#:notHighlyExpressed     
-#:notExpressed
 
 
  

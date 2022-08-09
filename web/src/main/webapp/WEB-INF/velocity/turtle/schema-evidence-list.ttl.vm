@@ -8,103 +8,82 @@
 
 :Evidence
       rdf:type owl:Class ;
+      rdfs:label "Evidence"^^xsd:string ;
+      rdfs:comment "Evidence"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
-:CuratedEvidence
-      rdf:type owl:Class ;
-      :notIn :ComputedEvidence;
-      rdfs:subClassOf :Evidence;
+:evidence
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "evidence"^^xsd:string ;
+      rdfs:comment "Links an annotation with the evidence supporting it"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :AnnotationType ;
+      rdfs:range :Evidence ;
       .
 
-:ComputedEvidence
-      rdf:type owl:Class ;
-      :notIn :CuratedEvidence;
-      rdfs:subClassOf :Evidence;
+:negativeEvidence
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "evidence"^^xsd:string ;
+      rdfs:comment "Links an annotation with an evidence unsupporting it"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :AnnotationType ;
+      rdfs:range :Evidence ;
       .
-      
+
 :assignedBy
-      a rdf:Property, owl:FunctionalProperty ;
+      a rdf:Property, owl:FunctionalProperty, owl:ObjectProperty ;
+      rdfs:label "assigned by"^^xsd:string ;
+      rdfs:comment "Links an evidence to its source"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :Evidence ;
-      rdfs:range :Source
+      rdfs:range :Source ;
       .
       
-:Integrated
+ 
+ :AntibodyIntegrationLevel
       rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Selected,:Single;
+      rdfs:label "Antibody integration level"^^xsd:string ;
+      rdfs:comment "Antibody integration level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      owl:equivalentClass [ 
+        a owl:Class ;
+      	owl:oneOf (
+	      	:Integrated 
+	      	:Selected 
+	      	:Single
+        ) 
+      ];
+      .
+
+ :integrationLevel
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "integration level"^^xsd:string ;
+      rdfs:comment "antibody integration level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :Evidence ;
+      rdfs:range :AntibodyIntegrationLevel ;
+       
+ 
+:Integrated
+	  rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
+      rdfs:label "Integrated"^^xsd:string ;
+      rdfs:comment "Integrated"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Selected
-      rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Integrated,:Single;
+	  rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
+      rdfs:label "Selected"^^xsd:string ;
+      rdfs:comment "Selected"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Single
-      rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Selected,:Integrated;
+	  rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
+      rdfs:label "Single"^^xsd:string ;
+      rdfs:comment "Single"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
       
-
-:GOEvidenceCode
-      rdf:type owl:Class ;
-      rdfs:comment "GO evidence code"^^xsd:string ;
-      .
-
-# Links between :GOEvidenceCode  :EvidenceCodeOntology
-## Uniprot mapping: source http://evidenceontology.googlecode.com/svn/trunk/gaf-eco-mapping.txt
-:EXP :related cv:ECO_0000269 .
-:IBA :related cv:ECO_0000318 .
-:IBD :related cv:ECO_0000319 .
-:IC  :related cv:ECO_0000305 .
-:IDA :related cv:ECO_0000314 .
-:IEA :related cv:ECO_0000501 .
-:IEP :related cv:ECO_0000270 .
-:IGC :related cv:ECO_0000317 .
-:IGC :related cv:ECO_0000354 .
-:IGI :related cv:ECO_0000316 .
-:IKR :related cv:ECO_0000320 .
-:IMP :related cv:ECO_0000315 .
-:IMR :related cv:ECO_0000320 .
-:IPI :related cv:ECO_0000353 .
-:IRD :related cv:ECO_0000321 .
-:ISA :related cv:ECO_0000247 .
-:ISM :related cv:ECO_0000255 .
-:ISO :related cv:ECO_0000266 .
-:ISS :related cv:ECO_0000250 .
-:NAS :related cv:ECO_0000303 .
-:ND  :related cv:ECO_0000307 .
-:RCA :related cv:ECO_0000245 .
-:TAS :related cv:ECO_0000304 .
-
-
-#foreach($evidence in $evidenceList)
-:$evidence.getType()
-   rdf:type :GOEvidenceCode; 
-   rdfs:comment "$evidence.getDescription()"^^xsd:string;
-   rdfs:label "$evidence.getType()"^^xsd:string; 
-   rdfs:seeAlso "http://www.nextprot.org/manual/$evidence.getType()"^^xsd:anyURI; 
-   rdfs:subClassOf owl:Thing;
-   :notIn :$evidence.getDisjointWith(", :");
-   .    
-
-
-
-
-
-#end
-##
-## Define evidences properties
-##
- 
-##foreach($evidence in $evidenceList)
-## -------  $evidence.getType() 
-##:$evidence.getType()
-##   a rdf:Property, owl:FunctionalProperty;
-##   rdfs:subPropertyOf :evidence;
-##   rdfs:label "$evidence.getDescription()"^^xsd:string 
-##   rdfs:domain :Annotation;
-##   rdfs:range :$StringUtils.toCamelCase($evidence.getDescription(), false);
-##   .
-###end
+      

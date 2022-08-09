@@ -21,7 +21,7 @@
       rdf:type owl:Class ;
       rdfs:label "Proteoform"^^xsd:string ;
       rdfs:comment "Protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
-      rdfs:subClassOf :Publication ;
+      rdfs:subClassOf :Isoform ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;      
       .
 
@@ -54,34 +54,49 @@
 	      	:BRONZE
         ) 
       ];
-      
       .
+      
+:quality
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "quality"^^xsd:string ;
+      rdfs:comment "link between an annotation or evidence and its quality"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain owl:equivalentClass [ 
+        a owl:Class ;
+      	owl:unionOf ( :AnnotationType :Evidence ) 
+      ];
+      rdfs:range :QualityQualifier ;
+      .      
+      
 :GOLD
-	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
 	rdfs:comment "High level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> .
     .
 
 :SILVER
-	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
     rdfs:comment "Medium level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> .
     .
       
 :BRONZE
-	rdf:type owl:Thing, owl:NamedIndividual, rdf:type :QualityQualifier ;
+	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
     rdfs:comment "Low level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> .
 
 
+
+
+
 # protein existence level class and individuals defining its extension
       
-:ProteinExistence
+:ProteinExistenceLevel
       rdf:type owl:Class ;
-      rdfs:label ""^^xsd:string ;
+      rdfs:label "Protein existence level"^^xsd:string ;
       rdfs:comment "Protein existence detection method and reliabilty level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass [ 
@@ -96,9 +111,17 @@
       ];
       .
 
+:existence
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "existence"^^xsd:string ;
+      rdfs:comment "link between a protein entry and its existence level"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :Entry ;
+      rdfs:range :ProteinExistenceLevel ;
+      .
+
 :Evidence_at_protein_level
-	  rdf:type owl:Class ;
-      rdf:type :ProteinExistence ;
+	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "1"^^xsd:integer ;
       rdfs:label "Evidence at protein level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at protein level"^^xsd:string ;
@@ -106,8 +129,7 @@
       .
 
 :Evidence_at_transcript_level
-	  rdf:type owl:Class ;
-      rdf:type :ProteinExistence ;
+	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "2"^^xsd:integer ;
       rdfs:label "Evidence at transcript level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at transcript level"^^xsd:string ;
@@ -115,8 +137,7 @@
       .
 
 :Inferred_from_homology
-	  rdf:type owl:Class ;
-      rdf:type :ProteinExistence ;
+	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "3"^^xsd:integer ;
       rdfs:label "Inferred from homology"^^xsd:string ;
       rdfs:comment "Protein existence is inferred by homology"^^xsd:string ;
@@ -124,8 +145,7 @@
       .
       
 :Predicted
-	  rdf:type owl:Class ;
-      rdf:type :ProteinExistence ;
+	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "4"^^xsd:integer ;
       rdfs:label "Predicted"^^xsd:string ;
       rdfs:comment "Protein existence is supported by some algorithm"^^xsd:string ;
@@ -133,8 +153,7 @@
       .
 
 :Uncertain
-	  rdf:type owl:Class ;
-      rdf:type :ProteinExistence ;
+	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "5"^^xsd:integer ;
       rdfs:label "Uncertain"^^xsd:string ;
       rdfs:comment "Protein existence is uncertain"^^xsd:string ;

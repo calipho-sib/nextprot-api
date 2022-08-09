@@ -10,6 +10,7 @@
   rdf:type owl:Class;
   rdfs:label "Annotation type"^^xsd:string;  
   rdfs:comment "Most generic annotation class"^^xsd:string;
+  rdfs:isDefinedBy <http://nextprot.org/rdf> ;  
   .
  
 #foreach($annotation in $annotationList)
@@ -19,7 +20,8 @@
    rdfs:label "$annotation.label"^^xsd:string;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
-#end   
+#end
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
    .
    
 #end
