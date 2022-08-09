@@ -4,31 +4,37 @@
 
 :Entry
       rdf:type owl:Class ;
-      rdfs:comment "General information of a protein."^^xsd:string ;
+      rdfs:label "Protein"^^xsd:string ;
+      rdfs:comment "General information about a protein."^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass up:Protein;
       .
 
 :Isoform
       rdf:type owl:Class ;
-      rdfs:comment "Specific information of a protein isoform."^^xsd:string ;
+      rdfs:label "Isoform"^^xsd:string ;
+      rdfs:comment "Protein isoform."^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :Proteoform
       rdf:type owl:Class ;
-      rdfs:comment "Description of a protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
+      rdfs:label "Proteoform"^^xsd:string ;
+      rdfs:comment "Protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
+      rdfs:subClassOf :Publication ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;      
       .
 
 :ProteinSequence
       rdf:type owl:Class ;
+      rdfs:label "Protein sequence"^^xsd:string ;
       rdfs:comment "Protein sequence object"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 :History
       rdf:type owl:Class ;
+      rdfs:label "Protein record history"^^xsd:string ;
       rdfs:comment "A history of a protein entry"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
@@ -37,6 +43,7 @@
 
 :QualityQualifier
       rdf:type owl:Class ;
+      rdfs:label ""^^xsd:string ;
       rdfs:comment "Quality qualifiers are used to describe the reliability of an annotation or evidence"^^xsd:string ;
 	  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass [ 
@@ -74,6 +81,7 @@
       
 :ProteinExistence
       rdf:type owl:Class ;
+      rdfs:label ""^^xsd:string ;
       rdfs:comment "Protein existence detection method and reliabilty level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass [ 
