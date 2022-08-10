@@ -14,7 +14,7 @@
       rdfs:label "experimental context"^^xsd:string ;
       rdfs:comment "Links an evidence with its experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-	  rdfs:domain : :Evidence ;
+	  rdfs:domain :Evidence ;
       rdfs:range :ExperimentalContext ;
       .
 
@@ -55,7 +55,6 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
 	  rdfs:domain :ExperimentalContext ;
       rdfs:range :NextprotAnatomyCv ; 
-      ] ;
       .
 
       
