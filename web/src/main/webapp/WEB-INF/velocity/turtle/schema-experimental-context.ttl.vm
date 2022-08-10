@@ -8,3 +8,54 @@
       rdf:type owl:Class ;
       rdfs:comment "Experimental variables related to evidences"^^xsd:string ;
       .
+
+:experimentalContext
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "experimental context"^^xsd:string ;
+      rdfs:comment "Links an evidence with its experimental context"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  rdfs:domain : :Evidence ;
+      rdfs:range :ExperimentalContext ;
+      .
+
+:cellLine
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "cell line"^^xsd:string ;
+      rdfs:comment "Links a particular cell line used in the experimental context"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  rdfs:domain :ExperimentalContext ;
+      rdfs:range :NextprotCellosaurusCv ;
+      .
+
+:developmentalStage
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "developmental stage"^^xsd:string ;
+      rdfs:comment "Links a developmental stage associated to the sample used in the experimental context"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  rdfs:domain :ExperimentalContext ;
+      rdfs:range :BgeeDevelopmentalStageCv ;
+      .
+
+:disease
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "disease"^^xsd:string ;
+      rdfs:comment "Links a paricular disease associated to the sample used in the experimental context"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  rdfs:domain :ExperimentalContext ;
+      rdfs:range [
+        a owl:Class; 
+        owl:unionOf (:NciMetathesaurusCv :NciThesaurusCv ); 
+      ] ;
+      .
+
+:tissue
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "disease"^^xsd:string ;
+      rdfs:comment "Links a paricular tissue associated to the sample used in the experimental context"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  rdfs:domain :ExperimentalContext ;
+      rdfs:range :NextprotAnatomyCv ; 
+      ] ;
+      .
+
+      
