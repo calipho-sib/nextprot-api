@@ -61,7 +61,7 @@
       rdfs:label "quality"^^xsd:string ;
       rdfs:comment "link between an annotation or evidence and its quality"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      rdfs:domain owl:equivalentClass [ 
+      rdfs:domain [ 
         a owl:Class ;
       	owl:unionOf ( :AnnotationType :Evidence ) 
       ];
@@ -72,24 +72,22 @@
 	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
 	rdfs:comment "High level of confidence"^^xsd:string ;
-	rdfs:isDefinedBy <http://nextprot.org/rdf> .
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     .
 
 :SILVER
 	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
-    rdfs:comment "Medium level of confidence"^^xsd:string ;
-	rdfs:isDefinedBy <http://nextprot.org/rdf> .
+	rdfs:comment "Medium level of confidence"^^xsd:string ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     .
       
 :BRONZE
 	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
 	rdfs:label "Gold"^^xsd:string ;
-    rdfs:comment "Low level of confidence"^^xsd:string ;
-	rdfs:isDefinedBy <http://nextprot.org/rdf> .
-
-
-
+	rdfs:comment "Low level of confidence"^^xsd:string ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    .
 
 
 # protein existence level class and individuals defining its extension
