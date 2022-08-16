@@ -2,14 +2,6 @@
 #parse("turtle/prefix.ttl.vm")
 #end
 
-## TODO see Vincenzo's work
-
-:Terminology
-    rdf:type owl:Class ;
-    rdfs:label "Terminology"^^xsd:string;
-    rdfs:comment "A concept that represents vocabularies to classify terms."^^xsd:string ;
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    .
 
 :Term
       rdf:type owl:Class ;
@@ -37,6 +29,20 @@
       rdfs:range :Term;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
+
+
+## TODO: check after Vin's work integration
+
+#foreach($ontology in $ontologyList)
+:$ontology.getOntology()
+    rdf:type owl:Class ;
+    rdfs:subClassOf :Term ;
+    rdfs:label "$ontology.getName()"^^xsd:string ;
+    rdfs:comment "$ontology.getDescription()"^^xsd:string ;
+    rdfs:seeAlso <http://www.nextprot.org/manual/$ontology.getOntology()> ;
+    .
+#end
+
 
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ## Name related entities
@@ -174,16 +180,4 @@
 
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-## TODO: check after Vin's work integration
-
-#foreach($ontology in $ontologyList)
-:$ontology.getOntology()
-    rdf:type owl:Class ;
-    rdfs:subClassOf :Terminology;
-    rdfs:label "$ontology.getName()"^^xsd:string;
-    rdfs:comment "$ontology.getDescription()"^^xsd:string;
-    rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
-    .
-#end
 
