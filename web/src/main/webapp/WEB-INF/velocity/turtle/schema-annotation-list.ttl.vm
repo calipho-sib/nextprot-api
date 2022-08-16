@@ -16,6 +16,7 @@
 #foreach($annotation in $annotationList)
 #if($annotation.apiTypeName != "AnnotationType")
 :$annotation.apiTypeName
+   rdf:type owl:Class;
    rdfs:subClassOf :$annotation.parent.apiTypeName ;
    rdfs:label "$annotation.label"^^xsd:string;
 #if ($annotation.description) 
