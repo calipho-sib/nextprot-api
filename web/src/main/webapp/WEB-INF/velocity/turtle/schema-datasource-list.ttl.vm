@@ -4,17 +4,18 @@
 #
 # Define Datasource
 # 
+
 :Source
       rdf:type owl:Class ;
-      rdfs:label "Originator of the data"^^xsd:string ;
-      rdfs:comment "Originator of the data"^^xsd:string ;
+      rdfs:label "Source"^^xsd:string ;
+      rdfs:comment "Data originator"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       .
 
 # datasource list
 
 #foreach($datasource in $datasourceList)
-  
+#if(! $StringUtils.contains($datasource.getName(), "obsolete"))  
 source:$StringUtils.slug($datasource.getName())
   rdf:type owl:Thing, owl:NamedIndividual, :Source ;
   rdfs:label "$datasource.getName()"^^xsd:string ;
@@ -24,4 +25,5 @@ source:$StringUtils.slug($datasource.getName())
 #end
   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
   .      
+#end
 #end

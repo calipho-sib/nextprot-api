@@ -14,7 +14,7 @@
   .
  
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "AnnotationType")
+#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
 :$annotation.apiTypeName
    rdf:type owl:Class;
    rdfs:subClassOf :$annotation.parent.apiTypeName ;
@@ -27,4 +27,31 @@
    
 #end
 #end
+
+
+#
+# Define properties for annotations
+#
+
+#foreach($annotation in $annotationList)
+#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
+:$StringUtils.lowerFirstChar($annotation.apiTypeName)
+   a rdf:Property, owl:ObjectProperty ;
+#if($annotation.apiTypeName == "FamilyName")
+   rdfs:domain :Entry ;
+#else
+   rdfs:domain :Isoform ;
+#end 
+   rdfs:range :$annotation.apiTypeName ;
+#if($annotation.parent.apiTypeName != "AnnotationType")
+   rdfs:subPropertyOf :$StringUtils.lowerFirstChar($annotation.parent.apiTypeName) ;
+#end
+   rdfs:label "$StringUtils.lower($annotation.label)"^^xsd:string;
+   rdfs:comment "Links an isoform to an annotation"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   .
+   
+#end
+#end
+
 

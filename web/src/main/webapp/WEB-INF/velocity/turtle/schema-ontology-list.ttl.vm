@@ -37,7 +37,7 @@
 :$ontology.getOntology()
     rdf:type owl:Class ;
     rdfs:subClassOf :Term ;
-    rdfs:label "$ontology.getName()"^^xsd:string ;
+    rdfs:label "$ontology.getName() term"^^xsd:string ;
     rdfs:comment "$ontology.getDescription()"^^xsd:string ;
     rdfs:seeAlso <http://www.nextprot.org/manual/$ontology.getOntology()> ;
     .
@@ -160,7 +160,7 @@
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
         .
 :orfName a owl:ObjectProperty ;
-   rdfs:label "ORF name"^^xsd:string;
+   rdfs:label "orf name"^^xsd:string;
    rdfs:comment "Property linking a protein or a gene with an ORF name"^^xsd:string;
    rdfs:subPropertyOf :name;
    rdfs:domain [ 

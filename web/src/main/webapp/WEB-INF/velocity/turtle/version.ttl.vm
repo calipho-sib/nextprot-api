@@ -4,7 +4,7 @@
 
 <http://nextprot.org/rdf>
   a owl:Ontology ;
-  owl:imports dct: , skos: ;
+# owl:imports dct: , skos: , uniprot: ;
   dct:description "The neXtProt ontology is used to represent various evidence based statements (multiple annotation types) regarding human proteins";
   dct:created "2015-05-12"^^xsd:date ;
   dct:creator [

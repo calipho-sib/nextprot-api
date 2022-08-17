@@ -33,8 +33,8 @@ entry:$entry.getUniqueName() :existence :$entry.overview.getProteinExistence().d
 ## ----------------- FAMILIES --------------------------------------
 #if($entry.overview.families.size() > 0)
 #foreach($family in $entry.overview.families)
-entry:$entry.getUniqueName() :family [
-       rdf:type :FamilyInfo ;
+entry:$entry.getUniqueName() :familyName [
+       rdf:type :FamilyName ;
        :term cv:$StringUtils.slug($family.accession) ;
        :description "$family.description"^^xsd:string ;
 #if($family.region)

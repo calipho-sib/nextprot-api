@@ -1,0 +1,888 @@
+ 
+# Properties already partially defined
+ 
+# nothing to add for property: :quality
+ 
+# nothing to add for property: :existence
+ 
+# nothing to add for property: :name
+ 
+# nothing to add for property: :recommendedName
+ 
+# nothing to add for property: :alternativeName
+ 
+# nothing to add for property: :orfName
+ 
+# nothing to add for property: :otherName
+ 
+# nothing to add for property: :familyName
+ 
+# nothing to add for property: :positionalAnnotation
+ 
+# nothing to add for property: :processingProduct
+ 
+# nothing to add for property: :topology
+ 
+# nothing to add for property: :region
+ 
+# nothing to add for property: :site
+ 
+# nothing to add for property: :ptm
+ 
+# nothing to add for property: :secondaryStructure
+ 
+# nothing to add for property: :mapping
+ 
+# nothing to add for property: :generalAnnotation
+ 
+# nothing to add for property: :function
+ 
+# nothing to add for property: :interaction
+ 
+# nothing to add for property: :cellularComponent
+ 
+# nothing to add for property: :expression
+ 
+# nothing to add for property: :medical
+ 
+# nothing to add for property: :keyword
+ 
+# nothing to add for property: :domainInfo
+ 
+# nothing to add for property: :ptmInfo
+ 
+# nothing to add for property: :enzymeClassification
+ 
+# nothing to add for property: :pdbMapping
+ 
+# nothing to add for property: :peptideMapping
+ 
+# nothing to add for property: :srmPeptideMapping
+ 
+# nothing to add for property: :antibodyMapping
+ 
+# nothing to add for property: :interactionMapping
+ 
+# nothing to add for property: :nonConsecutiveResidue
+ 
+# nothing to add for property: :nonTerminalResidue
+ 
+# nothing to add for property: :initiatorMethionine
+ 
+# nothing to add for property: :signalPeptide
+ 
+# nothing to add for property: :peroxisomeTransitPeptide
+ 
+# nothing to add for property: :mitochondrialTransitPeptide
+ 
+# nothing to add for property: :propeptide
+ 
+# nothing to add for property: :matureProtein
+ 
+# nothing to add for property: :transmembraneRegion
+ 
+# nothing to add for property: :intramembraneRegion
+ 
+# nothing to add for property: :topologicalDomain
+ 
+# nothing to add for property: :domain
+ 
+# nothing to add for property: :repeat
+ 
+# nothing to add for property: :calciumBindingRegion
+ 
+# nothing to add for property: :zincFingerRegion
+ 
+# nothing to add for property: :dnaBindingRegion
+ 
+# nothing to add for property: :nucleotidePhosphateBindingRegion
+ 
+# nothing to add for property: :coiledCoilRegion
+ 
+# nothing to add for property: :shortSequenceMotif
+ 
+# nothing to add for property: :compositionallyBiasedRegion
+ 
+# nothing to add for property: :miscellaneousRegion
+ 
+# nothing to add for property: :interactingRegion
+ 
+# nothing to add for property: :activeSite
+ 
+# nothing to add for property: :metalBindingSite
+ 
+# nothing to add for property: :bindingSite
+ 
+# nothing to add for property: :cleavageSite
+ 
+# nothing to add for property: :miscellaneousSite
+ 
+# nothing to add for property: :selenocysteine
+ 
+# nothing to add for property: :lipidationSite
+ 
+# nothing to add for property: :glycosylationSite
+ 
+# nothing to add for property: :crossLink
+ 
+# nothing to add for property: :disulfideBond
+ 
+# nothing to add for property: :modifiedResidue
+ 
+# nothing to add for property: :helix
+ 
+# nothing to add for property: :turn
+ 
+# nothing to add for property: :betaStrand
+ 
+# nothing to add for property: :variant
+ 
+# nothing to add for property: :mutagenesis
+ 
+# nothing to add for property: :sequenceConflict
+ 
+# nothing to add for property: :diseaseRelatedVariant
+ 
+# nothing to add for property: :variantInfo
+ 
+# nothing to add for property: :induction
+ 
+# nothing to add for property: :miscellaneous
+ 
+# nothing to add for property: :caution
+ 
+# nothing to add for property: :sequenceCaution
+ 
+# nothing to add for property: :uniprotKeyword
+ 
+# nothing to add for property: :functionInfo
+ 
+# nothing to add for property: :catalyticActivity
+ 
+# nothing to add for property: :cofactor
+ 
+# nothing to add for property: :cofactorInfo
+ 
+# nothing to add for property: :activityRegulation
+ 
+# nothing to add for property: :transportActivity
+ 
+# nothing to add for property: :pathway
+ 
+# nothing to add for property: :goMolecularFunction
+ 
+# nothing to add for property: :goBiologicalProcess
+ 
+# nothing to add for property: :smallMoleculeInteraction
+ 
+# nothing to add for property: :interactionInfo
+ 
+# nothing to add for property: :binaryInteraction
+ 
+# nothing to add for property: :subcellularLocation
+ 
+# nothing to add for property: :subcellularLocationNote
+ 
+# nothing to add for property: :goCellularComponent
+ 
+# nothing to add for property: :developmentalStageInfo
+ 
+# nothing to add for property: :expressionInfo
+ 
+# nothing to add for property: :expressionProfile
+ 
+# nothing to add for property: :disease
+ 
+# nothing to add for property: :allergen
+ 
+# nothing to add for property: :pharmaceutical
+ 
+# nothing to add for property: :biophysicochemicalProperty
+ 
+# nothing to add for property: :absorptionMax
+ 
+# nothing to add for property: :kineticKM
+ 
+# nothing to add for property: :kineticVmax
+ 
+# nothing to add for property: :kineticNote
+ 
+# nothing to add for property: :phDependence
+ 
+# nothing to add for property: :redoxPotential
+ 
+# nothing to add for property: :temperatureDependence
+ 
+# nothing to add for property: :electrophysiologicalParameter
+ 
+# nothing to add for property: :genericPhenotype
+ 
+# nothing to add for property: :phenotypicVariation
+ 
+# nothing to add for property: :evidence
+ 
+# nothing to add for property: :negativeEvidence
+ 
+# nothing to add for property: :assignedBy
+ 
+# nothing to add for property: :provenance
+ 
+# nothing to add for property: :accession
+ 
+# nothing to add for property: :category
+ 
+# nothing to add for property: :experimentalContext
+ 
+# nothing to add for property: :cellLine
+ 
+# nothing to add for property: :developmentalStage
+ 
+# nothing to add for property: :disease
+ 
+# nothing to add for property: :tissue
+ 
+ 
+# Properties not defined at all
+ 
+# added with rdfhelp data for property: :entryAnnotationId
+:entryAnnotationId
+    rdfs:label "entry annotation id"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:GeneralAnnotation :PositionalAnnotation ) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :end
+:end
+    rdfs:label "end"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :PositionalAnnotation ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :start
+:start
+    rdfs:label "start"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :PositionalAnnotation ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :antibodyName
+:antibodyName
+    rdfs:label "antibody name"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :AntibodyMapping ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :antibodyUnicity
+:antibodyUnicity
+    rdfs:label "antibody unicity"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :AntibodyMapping ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :interactant
+:interactant
+    rdfs:label "interactant"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:BinaryInteraction :SmallMoleculeInteraction :Cofactor :InteractionMapping) ; ] ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Xref :Entry :Isoform) ; ] ;
+    . 
+ 
+# added with rdfhelp data for property: :selfInteraction
+:selfInteraction
+    rdfs:label "self interaction"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :BinaryInteraction ;
+    rdfs:range xsd:boolean ;
+    . 
+ 
+# added with rdfhelp data for property: :term
+:term
+    rdfs:label "term"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:GeneralAnnotation :PositionalAnnotation ) ; ] ;
+    rdfs:range :Term ;
+    . 
+ 
+# added with rdfhelp data for property: :impactedObject
+:impactedObject
+    rdfs:label "impacted object"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:DiseaseRelatedVariant :PhenotypicVariation) ; ] ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:MammalianPhenotype :GoMolecularFunction :ElectrophysiologicalParameter :GoBiologicalProcess :GoCellularComponent :ProteinProperty :BinaryInteraction :Disease) ; ] ;
+    . 
+ 
+# added with rdfhelp data for property: :classifiedWith
+:classifiedWith
+    rdfs:label "classified with"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range :EnzymeClassificationCv ;
+    . 
+ 
+# added with rdfhelp data for property: :gene
+:gene
+    rdfs:label "gene"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range :Gene ;
+    . 
+ 
+# added with rdfhelp data for property: :history
+:history
+    rdfs:label "history"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range :History ;
+    . 
+ 
+# added with rdfhelp data for property: :isoform
+:isoform
+    rdfs:label "isoform"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range :Isoform ;
+    . 
+ 
+# added with rdfhelp data for property: :isoformCount
+:isoformCount
+    rdfs:label "isoform count"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :reference
+:reference
+    rdfs:label "reference"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:Evidence :Entry) ; ] ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Xref :Identifier :Publication) ; ] ;
+    . 
+ 
+# added with rdfhelp data for property: :swissprotPage
+:swissprotPage
+    rdfs:label "swissprot page"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range rdfs:Resource ;
+    . 
+ 
+# added with rdfhelp data for property: :alleleCount
+:alleleCount
+    rdfs:label "allele count"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :alleleFrequency
+:alleleFrequency
+    rdfs:label "allele frequency"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:double ;
+    . 
+ 
+# added with rdfhelp data for property: :alleleNumber
+:alleleNumber
+    rdfs:label "allele number"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :antibodiesAcc
+:antibodiesAcc
+    rdfs:label "antibodies acc"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :evidenceCode
+:evidenceCode
+    rdfs:label "evidence code"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :EvidenceCodeOntologyCv ;
+    . 
+ 
+# added with rdfhelp data for property: :expressionLevel
+:expressionLevel
+    rdfs:label "expression level"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:PositiveExpressionLevel :NegativeExpressionLevel) ; ] ;
+    . 
+ 
+# added with rdfhelp data for property: :expressionScore
+:expressionScore
+    rdfs:label "expression score"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:double ;
+    . 
+ 
+# added with rdfhelp data for property: :fromXref
+:fromXref
+    rdfs:label "from xref"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :Database ;
+    . 
+ 
+# added with rdfhelp data for property: :goQualifier
+:goQualifier
+    rdfs:label "go qualifier"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :homozygoteCount
+:homozygoteCount
+    rdfs:label "homozygote count"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :integrationLevel
+:integrationLevel
+    rdfs:label "integration level"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :AntibodyIntegrationLevel ;
+    . 
+ 
+# added with rdfhelp data for property: :intensity
+:intensity
+    rdfs:label "intensity"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :interactionDetectionMethod
+:interactionDetectionMethod
+    rdfs:label "interaction detection method"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :PsiMiCv ;
+    . 
+ 
+# added with rdfhelp data for property: :negative
+:negative
+    rdfs:label "negative"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:boolean ;
+    . 
+ 
+# added with rdfhelp data for property: :numberOfExperiments
+:numberOfExperiments
+    rdfs:label "number of experiments"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :metadata
+:metadata
+    rdfs:label "metadata"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :ExperimentalContext ;
+    rdfs:range  :Publication ;
+    . 
+ 
+# added with rdfhelp data for property: :description
+:description
+    rdfs:label "description"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :FamilyName ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :band
+:band
+    rdfs:label "band"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Gene ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :begin
+:begin
+    rdfs:label "begin"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Gene ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :bestGeneMapping
+:bestGeneMapping
+    rdfs:label "best gene mapping"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Gene ;
+    rdfs:range :Entry ;
+    . 
+ 
+# added with rdfhelp data for property: :chromosome
+:chromosome
+    rdfs:label "chromosome"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Gene ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :length
+:length
+    rdfs:label "length"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:Gene :ProteinSequence) ; ] ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :strand
+:strand
+    rdfs:label "strand"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Gene ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :integrated
+:integrated
+    rdfs:label "integrated"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :lastSequenceUpdate
+:lastSequenceUpdate
+    rdfs:label "last sequence update"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :sequenceVersion
+:sequenceVersion
+    rdfs:label "sequence version"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :updated
+:updated
+    rdfs:label "updated"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :version
+:version
+    rdfs:label "version"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :canonicalIsoform
+:canonicalIsoform
+    rdfs:label "canonical isoform"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range xsd:boolean ;
+    . 
+ 
+# added with rdfhelp data for property: :detectedExpression
+:detectedExpression
+    rdfs:label "detected expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+# added with rdfhelp data for property: :highExpression
+:highExpression
+    rdfs:label "high expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+# added with rdfhelp data for property: :lowExpression
+:lowExpression
+    rdfs:label "low expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+# added with rdfhelp data for property: :mediumExpression
+:mediumExpression
+    rdfs:label "medium expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+# added with rdfhelp data for property: :proteoform
+:proteoform
+    rdfs:label "proteoform"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :Proteoform ;
+    . 
+ 
+# added with rdfhelp data for property: :sequence
+:sequence
+    rdfs:label "sequence"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ProteinSequence ;
+    . 
+ 
+# added with rdfhelp data for property: :swissprotDisplayed
+:swissprotDisplayed
+    rdfs:label "swissprot displayed"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range xsd:boolean ;
+    . 
+ 
+# added with rdfhelp data for property: :undetectedExpression
+:undetectedExpression
+    rdfs:label "undetected expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+# added with rdfhelp data for property: :author
+:author
+    rdfs:label "author"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Person :Consortium) ; ] ;
+    . 
+ 
+# added with rdfhelp data for property: :city
+:city
+    rdfs:label "city"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :editor
+:editor
+    rdfs:label "editor"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range :Person ;
+    . 
+ 
+# added with rdfhelp data for property: :firstPage
+:firstPage
+    rdfs:label "first page"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :from
+:from
+    rdfs:label "from"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :issue
+:issue
+    rdfs:label "issue"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :journal
+:journal
+    rdfs:label "journal"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :lastPage
+:lastPage
+    rdfs:label "last page"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :pubType
+:pubType
+    rdfs:label "pub type"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :publisher
+:publisher
+    rdfs:label "publisher"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :title
+:title
+    rdfs:label "title"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :volume
+:volume
+    rdfs:label "volume"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :year
+:year
+    rdfs:label "year"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Publication ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :hgvs
+:hgvs
+    rdfs:label "hgvs"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :original
+:original
+    rdfs:label "original"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:SequenceConflict :Mutagenesis :Variant) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :variation
+:variation
+    rdfs:label "variation"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:SequenceConflict :Mutagenesis :Variant) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :method
+:method
+    rdfs:label "method"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :PdbMapping ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :peptideName
+:peptideName
+    rdfs:label "peptide name"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:SrmPeptideMapping :PeptideMapping) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :peptideSet
+:peptideSet
+    rdfs:label "peptide set"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :PeptideMapping ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :peptideUnicity
+:peptideUnicity
+    rdfs:label "peptide unicity"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:SrmPeptideMapping :PeptideMapping) ; ] ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :proteotypic
+:proteotypic
+    rdfs:label "proteotypic"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:SrmPeptideMapping :PeptideMapping) ; ] ;
+    rdfs:range xsd:boolean ;
+    . 
+ 
+# added with rdfhelp data for property: :suffix
+:suffix
+    rdfs:label "suffix"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Person ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :level
+:level
+    rdfs:label "level"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :ProteinExistenceLevel ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+# added with rdfhelp data for property: :chain
+:chain
+    rdfs:label "chain"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :ProteinSequence ;
+    rdfs:range xsd:string ;
+    . 
+ 
+# added with rdfhelp data for property: :isoelectricPoint
+:isoelectricPoint
+    rdfs:label "isoelectric point"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :ProteinSequence ;
+    rdfs:range xsd:double ;
+    . 
+ 
+# added with rdfhelp data for property: :molecularWeight
+:molecularWeight
+    rdfs:label "molecular weight"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :ProteinSequence ;
+    rdfs:range xsd:double ;
+    . 
+ 
+# added with rdfhelp data for property: :modification
+:modification
+    rdfs:label "modification"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
+    rdfs:domain :Proteoform ;
+        
+    . 
+ 
+ 

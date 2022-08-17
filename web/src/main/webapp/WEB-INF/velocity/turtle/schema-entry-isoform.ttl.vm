@@ -2,6 +2,15 @@
 #parse("turtle/prefix.ttl.vm")
 #end
 
+
+
+:Gene
+      rdf:type owl:Class ;
+      rdfs:label "Gene"^^xsd:string ;
+      rdfs:comment "General information about a gene."^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      .
+
 :Entry
       rdf:type owl:Class ;
       rdfs:label "Protein"^^xsd:string ;
@@ -43,7 +52,7 @@
 
 :QualityQualifier
       rdf:type owl:Class ;
-      rdfs:label ""^^xsd:string ;
+      rdfs:label "Quality qualifier"^^xsd:string ;
       rdfs:comment "Quality qualifiers are used to describe the reliability of an annotation or evidence"^^xsd:string ;
 	  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass [ 
@@ -99,7 +108,7 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       owl:equivalentClass [ 
         a owl:Class ;
-      	oneOf (
+      	owl:oneOf (
 	      	:Evidence_at_protein_level 
 	      	:Evidence_at_transcript_level 
 	      	:Inferred_from_homology
@@ -119,7 +128,7 @@
       .
 
 :Evidence_at_protein_level
-	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "1"^^xsd:integer ;
       rdfs:label "Evidence at protein level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at protein level"^^xsd:string ;
@@ -127,7 +136,7 @@
       .
 
 :Evidence_at_transcript_level
-	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "2"^^xsd:integer ;
       rdfs:label "Evidence at transcript level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at transcript level"^^xsd:string ;
@@ -135,7 +144,7 @@
       .
 
 :Inferred_from_homology
-	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "3"^^xsd:integer ;
       rdfs:label "Inferred from homology"^^xsd:string ;
       rdfs:comment "Protein existence is inferred by homology"^^xsd:string ;
@@ -143,7 +152,7 @@
       .
       
 :Predicted
-	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "4"^^xsd:integer ;
       rdfs:label "Predicted"^^xsd:string ;
       rdfs:comment "Protein existence is supported by some algorithm"^^xsd:string ;
@@ -151,7 +160,7 @@
       .
 
 :Uncertain
-	  rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
       :level "5"^^xsd:integer ;
       rdfs:label "Uncertain"^^xsd:string ;
       rdfs:comment "Protein existence is uncertain"^^xsd:string ;
@@ -160,13 +169,13 @@
 
 
       
-## --- Publication classes
+## --- Publication-related classes
       
 :Publication
 	rdf:type owl:Class ;
 	rdfs:label "Publication"^^xsd:string;
 	rdfs:comment "Scientific publication"^^xsd:string;
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     .
 
 :LargeScalePublication
@@ -176,4 +185,19 @@
 	rdfs:comment "A publication is considered a large scale publication when its content is regarding 15 proteins or more"^^xsd:string;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     .
+
+:Person
+	rdf:type owl:Class ;
+	rdfs:label "Person"^^xsd:string;
+	rdfs:comment "Person"^^xsd:string;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    .
+
+:Consortium
+	rdf:type owl:Class ;
+	rdfs:label "Consortium"^^xsd:string;
+	rdfs:comment "Consortium"^^xsd:string;
+	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    .
+
 
