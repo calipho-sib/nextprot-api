@@ -26,6 +26,7 @@
 
 :Version
   rdf:type owl:Class ;
+  :sourceFile "version.ttl.vm"^^xsd:string ;
   rdfs:comment "The nextprot api version that generate those current data."^^xsd:string ;
   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
   :ttlGenerationDate "$version.date"^^xsd:date ;

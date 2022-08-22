@@ -10,6 +10,7 @@
       rdfs:label "Database"^^xsd:string ;
       rdfs:comment "Database of the cross-reference"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
 
 :Xref
@@ -17,6 +18,7 @@
       rdfs:label "Cross reference"^^xsd:string ;
       rdfs:comment "Cross reference"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
       
 :Identifier
@@ -24,6 +26,7 @@
       rdfs:label "Identifier"^^xsd:string ;
       rdfs:comment "Identifier"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
 
 :provenance
@@ -31,6 +34,7 @@
       rdfs:label "provenance"^^xsd:string ;
       rdfs:comment "Links a cross-reference or identifier to its database"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
 	  rdfs:domain [ 
 	    a owl:Class ;
 	    owl:unionOf (:Xref :Identifier) 
@@ -43,6 +47,7 @@
       rdfs:label "accession"^^xsd:string ;
       rdfs:comment "Links a cross-reference to a string uniquely identifying it in its database"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
 	  rdfs:domain [ 
 	    a owl:Class ;
 	    owl:unionOf (:Xref :Identifier) 
@@ -55,6 +60,7 @@
       rdfs:label "category"^^xsd:string ;
       rdfs:comment "Links a a database to its category"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
 	  rdfs:domain :Database ;
       rdfs:range xsd:string ;
       .
@@ -69,5 +75,6 @@ db:$StringUtils.slug($db.name) rdf:type owl:Thing, owl:NamedIndividual, :Databas
   rdfs:seeAlso "$db.getURL()"^^xsd:anyURI ;
 #end
   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "uniprot|controlled-vocabulary/more-dbxrefs.txt"^^xsd:string ;
   .      
 #end

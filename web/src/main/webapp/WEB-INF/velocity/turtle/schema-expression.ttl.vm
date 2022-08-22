@@ -11,6 +11,7 @@
       rdfs:label "Expression level"^^xsd:string ;
       rdfs:comment "Expression levels detected during experiment"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;      
       .
    
 :PositiveExpressionLevel
@@ -19,6 +20,7 @@
       rdfs:label "Positive expression level"^^xsd:string ;
       rdfs:comment "Class of positive expression level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       owl:equivalentClass [ 
         a owl:Class ;
       	owl:oneOf ( :Positive :High :Medium :Low )
@@ -31,6 +33,7 @@
       rdfs:label "Negative expression level"^^xsd:string ;
       rdfs:comment "Class of negative level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       owl:equivalentClass [ 
         a owl:Class ;
       	owl:oneOf ( :Negative )
@@ -42,6 +45,7 @@
       rdfs:label "Expression detected"^^xsd:string ;
       rdfs:comment "Positive level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .
 
 :High
@@ -49,6 +53,7 @@
       rdfs:label "High expression detected"^^xsd:string ;
       rdfs:comment "High level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .
 
 :Medium
@@ -56,6 +61,7 @@
       rdfs:label "Medium expression detected"^^xsd:string ;
       rdfs:comment "Medium level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .
 
 :Low
@@ -63,6 +69,7 @@
       rdfs:label "Low expression detected"^^xsd:string ;
       rdfs:comment "Low level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .
 
 :Negative
@@ -70,6 +77,7 @@
       rdfs:label "No expression detected"^^xsd:string ;
       rdfs:comment "Negative level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .        
 
 

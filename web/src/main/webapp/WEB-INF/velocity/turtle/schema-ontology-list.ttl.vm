@@ -9,6 +9,7 @@
       rdfs:comment "A concept used to classify resources."^^xsd:string ;
       owl:equivalentClass up:Concept;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
 ## --       
        
@@ -19,6 +20,7 @@
       rdfs:domain :Term ;
       rdfs:range :Term;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
 
 :related
@@ -28,6 +30,7 @@
       rdfs:domain :Term ;
       rdfs:range :Term;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
 
 
@@ -40,6 +43,8 @@
     rdfs:label "$ontology.getName() term"^^xsd:string ;
     rdfs:comment "$ontology.getDescription()"^^xsd:string ;
     rdfs:seeAlso <http://www.nextprot.org/manual/$ontology.getOntology()> ;
+     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "nextprot.cv_term_categories.cv_display_name:label,description:comment"^^xsd:string ;
     .
 #end
 
@@ -55,72 +60,84 @@
    rdfs:label "Name"^^xsd:string;
    rdfs:comment "Most general class for names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :ShortName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Short name"^^xsd:string;
    rdfs:comment "Class for short names related to another name"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :AllergenName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Allergen name"^^xsd:string;
    rdfs:comment "Class for allergen names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :EnzymeName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Enzyme name"^^xsd:string;
    rdfs:comment "Class for enzyme names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :InternationalNonproprietaryName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "International Non proprietary Name"^^xsd:string;
    rdfs:comment "Class for international non proprietary names (INN)"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :CDAntigenName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "CD Antigen name"^^xsd:string;
    rdfs:comment "Class for antigen names according to the cluster of differentiation nomenclature"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :ProteinName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Protein name"^^xsd:string;
    rdfs:comment "Class for protein names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :IsoformName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Protein isoform name"^^xsd:string;
    rdfs:comment "Class for protein isoform names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :FunctionalRegionName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Functional region name"^^xsd:string;
    rdfs:comment "Class for names related to a functional region of a protein"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :CleavedRegionName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "Cleaved region name"^^xsd:string;
    rdfs:comment "Class for names related to a cleaved region of protein"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :ORFName a owl:Class ;
    rdfs:subClassOf :Name ;
    rdfs:label "ORF name"^^xsd:string;
    rdfs:comment "Class for names of open reading frames"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :GeneName a owl:Class ; 
    rdfs:subClassOf :Name ;
    rdfs:label "Gene name"^^xsd:string;
    rdfs:comment "Class for gene names"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -136,6 +153,7 @@
    ];
    rdfs:range :Name;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :recommendedName a owl:ObjectProperty ;
    rdfs:label "recommended name"^^xsd:string;
@@ -147,6 +165,7 @@
    ];
    rdfs:range :Name;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :alternativeName a owl:ObjectProperty ;
    rdfs:label "alternative name"^^xsd:string;
@@ -158,6 +177,7 @@
    ];
    rdfs:range :Name;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :orfName a owl:ObjectProperty ;
    rdfs:label "orf name"^^xsd:string;
@@ -169,6 +189,7 @@
    ];
    rdfs:range :ORFName;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
 :otherName a owl:ObjectProperty ;
    rdfs:label "other name"^^xsd:string;
@@ -176,6 +197,7 @@
    rdfs:domain :Name;
    rdfs:range :Name;      
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
      .
 
 ## - - - - - - - - - - - - - - - - - - - - - - - - - - -

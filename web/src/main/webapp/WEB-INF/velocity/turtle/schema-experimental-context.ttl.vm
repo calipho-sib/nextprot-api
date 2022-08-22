@@ -7,6 +7,8 @@
 :ExperimentalContext
       rdf:type owl:Class ;
       rdfs:comment "Experimental variables related to evidences"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
       .
 
 :experimentalContext
@@ -14,6 +16,7 @@
       rdfs:label "experimental context"^^xsd:string ;
       rdfs:comment "Links an evidence with its experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
 	  rdfs:domain :Evidence ;
       rdfs:range :ExperimentalContext ;
       .
@@ -23,6 +26,7 @@
       rdfs:label "cell line"^^xsd:string ;
       rdfs:comment "Links a particular cell line used in the experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
 	  rdfs:domain :ExperimentalContext ;
       rdfs:range :NextprotCellosaurusCv ;
       .
@@ -32,6 +36,7 @@
       rdfs:label "developmental stage"^^xsd:string ;
       rdfs:comment "Links a developmental stage associated to the sample used in the experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
 	  rdfs:domain :ExperimentalContext ;
       rdfs:range :BgeeDevelopmentalStageCv ;
       .
@@ -41,6 +46,7 @@
       rdfs:label "disease"^^xsd:string ;
       rdfs:comment "Links a paricular disease associated to the sample used in the experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
 	  rdfs:domain :ExperimentalContext ;
       rdfs:range [
         a owl:Class; 
@@ -53,6 +59,7 @@
       rdfs:label "disease"^^xsd:string ;
       rdfs:comment "Links a paricular tissue associated to the sample used in the experimental context"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
 	  rdfs:domain :ExperimentalContext ;
       rdfs:range :NextprotAnatomyCv ; 
       .

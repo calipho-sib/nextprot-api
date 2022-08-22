@@ -9,6 +9,7 @@
       rdfs:label "Gene"^^xsd:string ;
       rdfs:comment "General information about a gene."^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :Entry
@@ -16,6 +17,7 @@
       rdfs:label "Protein"^^xsd:string ;
       rdfs:comment "General information about a protein."^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       owl:equivalentClass up:Protein;
       .
 
@@ -24,6 +26,7 @@
       rdfs:label "Isoform"^^xsd:string ;
       rdfs:comment "Protein isoform."^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :Proteoform
@@ -32,6 +35,7 @@
       rdfs:comment "Protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
       rdfs:subClassOf :Isoform ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;      
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :ProteinSequence
@@ -39,6 +43,7 @@
       rdfs:label "Protein sequence"^^xsd:string ;
       rdfs:comment "Protein sequence object"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :History
@@ -46,6 +51,7 @@
       rdfs:label "Protein record history"^^xsd:string ;
       rdfs:comment "A history of a protein entry"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 # quality qualifier class and individuals defining its extension
@@ -55,6 +61,7 @@
       rdfs:label "Quality qualifier"^^xsd:string ;
       rdfs:comment "Quality qualifiers are used to describe the reliability of an annotation or evidence"^^xsd:string ;
 	  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       owl:equivalentClass [ 
         a owl:Class ;
       	owl:oneOf (
@@ -70,6 +77,7 @@
       rdfs:label "quality"^^xsd:string ;
       rdfs:comment "link between an annotation or evidence and its quality"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       rdfs:domain [ 
         a owl:Class ;
       	owl:unionOf ( :AnnotationType :Evidence ) 
@@ -82,30 +90,34 @@
 	rdfs:label "Gold"^^xsd:string ;
 	rdfs:comment "High level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 :SILVER
 	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
-	rdfs:label "Gold"^^xsd:string ;
+	rdfs:label "Silver"^^xsd:string ;
 	rdfs:comment "Medium level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
       
 :BRONZE
 	rdf:type owl:Thing, owl:NamedIndividual, :QualityQualifier ;
-	rdfs:label "Gold"^^xsd:string ;
+	rdfs:label "Bronze"^^xsd:string ;
 	rdfs:comment "Low level of confidence"^^xsd:string ;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 
 # protein existence level class and individuals defining its extension
       
-:ProteinExistenceLevel
+:ProteinExistence
       rdf:type owl:Class ;
       rdfs:label "Protein existence level"^^xsd:string ;
       rdfs:comment "Protein existence detection method and reliabilty level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       owl:equivalentClass [ 
         a owl:Class ;
       	owl:oneOf (
@@ -123,48 +135,54 @@
       rdfs:label "existence"^^xsd:string ;
       rdfs:comment "link between a protein entry and its existence level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       rdfs:domain :Entry ;
-      rdfs:range :ProteinExistenceLevel ;
+      rdfs:range :ProteinExistence ;
       .
 
 :Evidence_at_protein_level
-      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistence ;
       :level "1"^^xsd:integer ;
       rdfs:label "Evidence at protein level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at protein level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :Evidence_at_transcript_level
-      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistence ;
       :level "2"^^xsd:integer ;
       rdfs:label "Evidence at transcript level"^^xsd:string ;
       rdfs:comment "Protein existence is supported by evidence at transcript level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :Inferred_from_homology
-      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistence ;
       :level "3"^^xsd:integer ;
       rdfs:label "Inferred from homology"^^xsd:string ;
       rdfs:comment "Protein existence is inferred by homology"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
       
 :Predicted
-      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistence ;
       :level "4"^^xsd:integer ;
       rdfs:label "Predicted"^^xsd:string ;
       rdfs:comment "Protein existence is supported by some algorithm"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 :Uncertain
-      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistenceLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ProteinExistence ;
       :level "5"^^xsd:integer ;
       rdfs:label "Uncertain"^^xsd:string ;
       rdfs:comment "Protein existence is uncertain"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
 
@@ -176,6 +194,7 @@
 	rdfs:label "Publication"^^xsd:string;
 	rdfs:comment "Scientific publication"^^xsd:string;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 :LargeScalePublication
@@ -184,6 +203,7 @@
 	rdfs:label "Large scale publication"^^xsd:string;
 	rdfs:comment "A publication is considered a large scale publication when its content is regarding 15 proteins or more"^^xsd:string;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 :Person
@@ -191,6 +211,7 @@
 	rdfs:label "Person"^^xsd:string;
 	rdfs:comment "Person"^^xsd:string;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 :Consortium
@@ -198,6 +219,7 @@
 	rdfs:label "Consortium"^^xsd:string;
 	rdfs:comment "Consortium"^^xsd:string;
 	rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	:sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
     .
 
 

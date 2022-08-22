@@ -11,6 +11,7 @@
       rdfs:label "Evidence"^^xsd:string ;
       rdfs:comment "Evidence"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
 :evidence
@@ -20,6 +21,7 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :AnnotationType ;
       rdfs:range :Evidence ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
 :negativeEvidence
@@ -29,6 +31,7 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :AnnotationType ;
       rdfs:range :Evidence ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
 :assignedBy
@@ -38,6 +41,7 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :Evidence ;
       rdfs:range :Source ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
       
  
@@ -46,6 +50,7 @@
       rdfs:label "Antibody integration level"^^xsd:string ;
       rdfs:comment "Antibody integration level"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       owl:equivalentClass [ 
         a owl:Class ;
       	owl:oneOf (
@@ -63,6 +68,7 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :Evidence ;
       rdfs:range :AntibodyIntegrationLevel ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
        
  
@@ -71,6 +77,7 @@
       rdfs:label "Integrated"^^xsd:string ;
       rdfs:comment "Integrated"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
 :Selected
@@ -78,6 +85,7 @@
       rdfs:label "Selected"^^xsd:string ;
       rdfs:comment "Selected"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
 :Single
@@ -85,6 +93,7 @@
       rdfs:label "Single"^^xsd:string ;
       rdfs:comment "Single"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
       
       

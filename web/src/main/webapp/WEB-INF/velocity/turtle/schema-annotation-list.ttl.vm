@@ -11,6 +11,7 @@
   rdfs:label "Annotation type"^^xsd:string;  
   rdfs:comment "Most generic annotation class"^^xsd:string;
   rdfs:isDefinedBy <http://nextprot.org/rdf> ;  
+  :sourceFile "schema-annotation-list.ttl.vm"^^xsd:string ;
   .
  
 #foreach($annotation in $annotationList)
@@ -23,6 +24,7 @@
    rdfs:comment "$annotation.description"^^xsd:string;
 #end
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "AnnotationCategory.java:label,nextprot.cv_terms:comment"^^xsd:string ;
    .
    
 #end
@@ -49,6 +51,7 @@
    rdfs:label "$StringUtils.lower($annotation.label)"^^xsd:string;
    rdfs:comment "Links an isoform to an annotation"^^xsd:string;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "AnnotationCategory.java:label,schema-annotation-list.ttl.vm:comment"^^xsd:string ;
    .
    
 #end

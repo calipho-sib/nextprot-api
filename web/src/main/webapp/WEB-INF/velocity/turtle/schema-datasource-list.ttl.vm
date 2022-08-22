@@ -10,6 +10,7 @@
       rdfs:label "Source"^^xsd:string ;
       rdfs:comment "Data originator"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-datasource-list.ttl.vm"^^xsd:string ;
       .
 
 # datasource list
@@ -24,6 +25,7 @@ source:$StringUtils.slug($datasource.getName())
   rdfs:seeAlso <$datasource.getURL()> ;
 #end
   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "controlled-vocabulary/cv_datasources.txt"^^xsd:string ;
   .      
 #end
 #end
