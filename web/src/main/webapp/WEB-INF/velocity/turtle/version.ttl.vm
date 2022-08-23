@@ -32,6 +32,6 @@
   :ttlGenerationDate "$version.date"^^xsd:date ;
   :databaseRelease "$releaseInfoVersions.databaseRelease"^^xsd:string ;
   :apiRelease "$releaseInfoVersions.apiRelease"^^xsd:string ;
-  :genomeAssembly: "GRCh38"^^xsd:string ;  
+  :genomeAssembly "GRCh38"^^xsd:string ;  
   .
  
