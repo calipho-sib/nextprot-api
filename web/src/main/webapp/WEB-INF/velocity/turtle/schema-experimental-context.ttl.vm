@@ -46,9 +46,9 @@
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
     rdfs:comment "Links a an isoform to an annotation or an experimental context to the disease associated with the sample"^^xsd:string ;
-    rdfs:domain : [ a owl:Class ; owl:unionOf ( :ExperimentalContext :Isoform) ] ; 
-    rdfs:range [ a owl:Class ;    owl:unionOf ( :NciMetathesaurusCv :NciThesaurusCv :Disease) ] ;
-    rdfs:subPropertyOf :medical .
+    rdfs:domain [ a owl:Class ; owl:unionOf ( :ExperimentalContext :Isoform) ; ] ; 
+    rdfs:range  [ a owl:Class ; owl:unionOf ( :NciMetathesaurusCv :NciThesaurusCv :Disease) ; ] ;
+    rdfs:subPropertyOf :medical ;
     .
 
 :tissue
