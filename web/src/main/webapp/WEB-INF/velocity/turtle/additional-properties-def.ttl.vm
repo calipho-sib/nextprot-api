@@ -502,17 +502,7 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Evidence ;
     rdfs:range xsd:integer ;
-    . 
- 
-# added with rdfhelp data for property: :integrationLevel
-:integrationLevel
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "integration level"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range :AntibodyIntegrationLevel ;
-    . 
+    .  
  
 # added with rdfhelp data for property: :intensity
 :intensity
