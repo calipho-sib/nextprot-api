@@ -16,4 +16,4 @@ select name, 'Identifier subtype'::varchar as description, null::varchar as url,
 select coalesce(a.db_name, a.type) as name,(select cv_id from nextprot.cv_databases db where db.cv_Name = a.db_name) as hasDb from (
 select type, db_name, count(*) from nextprot.view_master_identifier_identifiers
 group by type, db_name
-) a ) b where hasDb is null
+) a ) b where hasDb is null and name not in ('PIR','IPI', 'HGNC')
