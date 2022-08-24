@@ -41,18 +41,15 @@
       rdfs:range :BgeeDevelopmentalStageCv ;
       .
 
-:disease
-      a rdf:Property, owl:ObjectProperty ;
-      rdfs:label "disease"^^xsd:string ;
-      rdfs:comment "Links a paricular disease associated to the sample used in the experimental context"^^xsd:string ;
-      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
-	  rdfs:domain :ExperimentalContext ;
-      rdfs:range [
-        a owl:Class; 
-        owl:unionOf (:NciMetathesaurusCv :NciThesaurusCv ); 
-      ] ;
-      .
+:disease a rdf:Property, owl:ObjectProperty ;
+    rdfs:label "disease"^^xsd:string ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-experimental-context.ttl.vm"^^xsd:string ;
+    rdfs:comment "Links a an isoform to an annotation or an experimental context to the disease associated with the sample"^^xsd:string ;
+    rdfs:domain : [ a owl:Class ; owl:unionOf ( :ExperimentalContext :Isoform) ] ; 
+    rdfs:range [ a owl:Class ;    owl:unionOf ( :NciMetathesaurusCv :NciThesaurusCv :Disease) ] ;
+    rdfs:subPropertyOf :medical .
+    .
 
 :tissue
       a rdf:Property, owl:ObjectProperty ;
