@@ -47,14 +47,6 @@ evidence:$evidence-uri
 
 ## next property is useful for debug purpose
 #if($evidence.getResourceAssociationType())
-  :assocType "$evidence.getResourceAssociationType()"^^xsd:string;
-#end
-## next property is useful for debug purpose
-#if($evidence.getIsoformSpecificity())
-  :isoformSpecificity "$evidence.getIsoformSpecificity()"^^xsd:string;
-#end
-## next property is useful for debug purpose
-#if($evidence.getNegativeIsoformSpecificity())
-  :negativeIsoformSpecificity "$evidence.getNegativeIsoformSpecificity()"^^xsd:string;
+  :assocType "$evidence.getResourceAssociationType()"^^xsd:string ;
 #end
   .
