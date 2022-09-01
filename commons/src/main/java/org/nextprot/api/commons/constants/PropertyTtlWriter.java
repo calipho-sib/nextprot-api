@@ -18,7 +18,7 @@ public class PropertyTtlWriter extends PropertyApiModel implements PropertyWrite
 	
 	public String formatValue(String value) {
 		// the values of these are URIs
-		if (dbName.equals(NAME_INTEGRATION_LEVEL) || dbName.equals(NAME_EXPRESSION_LEVEL)) {
+		if (dbName.equals(NAME_EXPRESSION_LEVEL)) {
 			return ":" + super.formatValue(value);
 		} else if (dbName.equals(NAME_PSIMI_AC)) {
 			return "cv:" + super.formatValue(value);

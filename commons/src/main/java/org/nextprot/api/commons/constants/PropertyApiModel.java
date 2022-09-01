@@ -37,7 +37,6 @@ public class PropertyApiModel {
 	public static final String NAME_GO_QUALIFIER = "go_qualifier";
 	public static final String NAME_EXPRESSION_LEVEL="expressionLevel";
 	public static final String NAME_EXPRESSION_SCORE="expressionScore";
-	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
 	public static final String NAME_PSIMI_AC="psimiAC";
@@ -82,8 +81,7 @@ public class PropertyApiModel {
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODIES_ACC,"antibodiesAcc","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"expressionLevel","string", true, true, Parent.EVIDENCE), 
-						new PropertyApiModel(NAME_EXPRESSION_SCORE,"expressionScore","double", true, true, Parent.EVIDENCE), 
-						new PropertyApiModel(NAME_INTEGRATION_LEVEL,"integrationLevel","string", true, true, Parent.EVIDENCE)))); 
+						new PropertyApiModel(NAME_EXPRESSION_SCORE,"expressionScore","double", true, true, Parent.EVIDENCE)))); 
 		anno2props.put(AnnotationCategory.PDB_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_RESOLUTION,"resolution","double", true, true, Parent.ANNOTATION), 
@@ -182,16 +180,7 @@ public class PropertyApiModel {
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_EXPRESSION_LEVEL );
 			}
 		}
-			
-		if (dbName.equals(PropertyApiModel.NAME_INTEGRATION_LEVEL)) {
-			switch (value) {
-				case "integrated" : return "Integrated";
-				case "selected"  : return "Selected";
-				case "single" : return "Single";
-				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_INTEGRATION_LEVEL );
-			}
-		}
-		
+					
 		if (dbName.equals(PropertyApiModel.NAME_PSIMI_AC)) {
 			return value.replace(":", "_");
 		}
