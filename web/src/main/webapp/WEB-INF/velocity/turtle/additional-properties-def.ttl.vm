@@ -432,18 +432,8 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Evidence ;
     rdfs:range xsd:integer ;
-    . 
- 
-# added with rdfhelp data for property: :antibodiesAcc
-:antibodiesAcc
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "antibodies acc"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range xsd:string ;
-    . 
- 
+    .
+  
 # added with rdfhelp data for property: :evidenceCode
 :evidenceCode
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
