@@ -38,6 +38,15 @@
 	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
+:difference
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "difference"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
+    rdfs:domain :Proteoform ;
+    . 
+
 :ProteinSequence
       rdf:type owl:Class ;
       rdfs:label "Protein sequence"^^xsd:string ;

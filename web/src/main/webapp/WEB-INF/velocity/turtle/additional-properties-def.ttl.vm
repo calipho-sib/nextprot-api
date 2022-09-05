@@ -984,14 +984,4 @@
     rdfs:range xsd:double ;
     . 
  
-# added with rdfhelp data for property: :modification
-:modification
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "modification"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:range [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
-    rdfs:domain :Proteoform ;
-    . 
- 
  
