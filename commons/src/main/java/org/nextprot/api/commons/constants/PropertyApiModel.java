@@ -89,20 +89,20 @@ public class PropertyApiModel {
 		anno2props.put(AnnotationCategory.PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
-						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUnicity","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_UNICITY, "peptideUniqueness","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_SET,"peptideSet","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.SRM_PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
-						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUnicity","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUniqueness","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.ANTIBODY_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODY_NAME, "antibodyName", "string", true, true, Parent.ANNOTATION),
-						new PropertyApiModel(NAME_ANTIBODY_UNICITY, "antibodyUnicity", "string", true, true, Parent.ANNOTATION)
+						new PropertyApiModel(NAME_ANTIBODY_UNICITY, "antibodyUniqueness", "string", true, true, Parent.ANNOTATION)
 						)));
 		
 		anno2props.put(AnnotationCategory.BINARY_INTERACTION,

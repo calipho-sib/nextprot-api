@@ -13,7 +13,16 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-expression.ttl.vm"^^xsd:string ;      
       .
-   
+      
+:expressionLevel
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
+    rdfs:label "expression level"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:PositiveExpressionLevel :NegativeExpressionLevel) ; ] ;
+    . 
+    
 :PositiveExpressionLevel
       rdf:type owl:Class ;
       rdfs:subClassOf :ExpressionLevel ;

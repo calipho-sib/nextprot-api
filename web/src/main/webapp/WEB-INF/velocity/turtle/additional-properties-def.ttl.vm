@@ -284,11 +284,11 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :antibodyUnicity
-:antibodyUnicity
+# added with rdfhelp data for property: :antibodyUniqueness
+:antibodyUniqueness
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "antibody unicity"^^xsd:string ;
+    rdfs:label "antibody uniqueness"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :AntibodyMapping ;
     rdfs:range xsd:string ;
@@ -442,16 +442,6 @@
     rdf:type  owl:ObjectProperty ;
     rdfs:domain :Evidence ;
     rdfs:range :EvidenceCodeOntologyCv ;
-    . 
- 
-# added with rdfhelp data for property: :expressionLevel
-:expressionLevel
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "expression level"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range [ a owl:Class ; owl:unionOf (:PositiveExpressionLevel :NegativeExpressionLevel) ; ] ;
     . 
  
 # added with rdfhelp data for property: :expressionScore
@@ -924,11 +914,11 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :peptideUnicity
-:peptideUnicity
+# added with rdfhelp data for property: :peptideUniqueness
+:peptideUniqueness
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "peptide unicity"^^xsd:string ;
+    rdfs:label "peptide uniqueness"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain [ a owl:Class ; owl:unionOf (:SrmPeptideMapping :PeptideMapping) ; ] ;
     rdfs:range xsd:string ;
