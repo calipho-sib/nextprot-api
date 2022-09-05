@@ -28,7 +28,7 @@ evidence:$evidence-uri
 #end
 #if($evidence.getResourceType().equals("database"))
 #set($UNESCAPED_CDATA = $evidence.resourceAccession)
-  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
+  :fromDatabase db:$StringUtils.slug($evidence.getResourceDb());
   :reference [
     rdf:type :Xref ;
     :accession "$UNESCAPED_CDATA"^^xsd:string;

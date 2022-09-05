@@ -455,7 +455,7 @@
     . 
  
 # added with rdfhelp data for property: :fromXref
-:fromXref
+:fromDatabase
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "from xref"^^xsd:string ;
