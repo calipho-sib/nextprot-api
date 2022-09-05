@@ -260,7 +260,7 @@
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "end"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :PositionalAnnotation ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:PositionalAnnotation :Gene ) ; ] ;
     rdfs:range xsd:integer ;
     . 
  
