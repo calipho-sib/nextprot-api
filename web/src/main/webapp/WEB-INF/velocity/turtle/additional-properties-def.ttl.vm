@@ -663,17 +663,7 @@
     rdfs:domain :History ;
     rdfs:range xsd:string ;
     . 
- 
-# added with rdfhelp data for property: :canonicalIsoform
-:canonicalIsoform
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "canonical isoform"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range xsd:boolean ;
-    . 
- 
+  
 # added with rdfhelp data for property: :detectedExpression
 :detectedExpression
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
