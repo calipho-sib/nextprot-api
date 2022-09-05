@@ -90,7 +90,7 @@ public class PropertyApiModel {
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_UNICITY, "peptideUniqueness","string", true, true, Parent.ANNOTATION), 
-						new PropertyApiModel(NAME_PEPTIDE_SET,"peptideSet","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_SET,"peptideSource","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.SRM_PEPTIDE_MAPPING,

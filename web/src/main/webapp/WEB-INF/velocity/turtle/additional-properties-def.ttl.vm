@@ -904,11 +904,11 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :peptideSet
-:peptideSet
+# added with rdfhelp data for property: :peptideSource
+:peptideSource
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "peptide set"^^xsd:string ;
+    rdfs:label "peptide source"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :PeptideMapping ;
     rdfs:range xsd:string ;
