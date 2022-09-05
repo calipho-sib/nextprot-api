@@ -51,7 +51,7 @@ proteoform:$pf.id a :Proteoform ;
 #set($annotation = $hashAnnotMap.get($compId))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
 ####set($annotation-type = $annotation.apiTypeName)
-  :modification annotation:$annotation-uri ;
+  :difference annotation:$annotation-uri ;
 #end ## foreach component
 .
 
