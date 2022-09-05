@@ -333,17 +333,7 @@
     rdfs:domain [ a owl:Class ; owl:unionOf (:DiseaseRelatedVariant :PhenotypicVariation) ; ] ;
     rdfs:range [ a owl:Class ; owl:unionOf (:MammalianPhenotype :GoMolecularFunction :ElectrophysiologicalParameter :GoBiologicalProcess :GoCellularComponent :ProteinProperty :BinaryInteraction :Disease) ; ] ;
     . 
- 
-# added with rdfhelp data for property: :classifiedWith
-:classifiedWith
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "classified with"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Entry ;
-    rdfs:range :EnzymeClassificationCv ;
-    . 
- 
+  
 # added with rdfhelp data for property: :gene
 :gene
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;

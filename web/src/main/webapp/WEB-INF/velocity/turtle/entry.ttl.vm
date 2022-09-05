@@ -56,9 +56,6 @@ isoform:$isoform-name
 # Overview
 #parse('turtle/overview.ttl.vm')
 
-# Keywords 
-#parse('turtle/classifications-list.ttl.vm')
-
 # Gene
 #parse('turtle/chromosomal-location-list.ttl.vm')
 
