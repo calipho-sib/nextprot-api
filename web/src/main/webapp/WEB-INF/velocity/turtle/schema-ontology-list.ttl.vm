@@ -149,9 +149,12 @@
    rdfs:comment "Most general property linking a protein or a gene to a name"^^xsd:string;
    rdfs:domain [ 
      a owl:Class;
-     owl:unionOf (:Entry :Isoform :Gene) 
-   ];
-   rdfs:range :Name;
+     owl:unionOf (:Entry :Isoform :Gene :Person :Consortium) 
+   ] ;
+   rdfs:range [ 
+     a owl:Class ;
+     owl:unionOf (:Name xsd:string ) 
+   ] ;
    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
    :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
         .
