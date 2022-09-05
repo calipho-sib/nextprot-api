@@ -543,17 +543,7 @@
     rdfs:domain :ExperimentalContext ;
     rdfs:range  :Publication ;
     . 
- 
-# added with rdfhelp data for property: :description
-:description
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "description"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :FamilyName ;
-    rdfs:range xsd:string ;
-    . 
- 
+  
 # added with rdfhelp data for property: :band
 :band
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;

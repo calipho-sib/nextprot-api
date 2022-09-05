@@ -36,7 +36,6 @@ entry:$entry.getUniqueName() :existence :$entry.overview.getProteinExistence().d
 entry:$entry.getUniqueName() :familyName [
        rdf:type :FamilyName ;
        :term cv:$StringUtils.slug($family.accession) ;
-       :description "$family.description"^^xsd:string ;
 #if($family.region)
        :region "$family.region"^^xsd:string ;
 #end
