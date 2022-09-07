@@ -47,6 +47,44 @@
     rdfs:domain :Proteoform ;
     . 
 
+:severity
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "severity"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :Severity ;
+    . 
+ 
+:Severity 
+	rdf:type owl:Class ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Severity"^^xsd:string ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( :Severe :Moderate :Mild ) ] ;
+    . 
+ 
+:Severe 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Severe"^^xsd:string ;
+    . 
+ 
+:Moderate 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Moderate"^^xsd:string ;
+    . 
+ 
+:Mild 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Mild"^^xsd:string ;
+    . 
+ 
 :ProteinSequence
       rdf:type owl:Class ;
       rdfs:label "Protein sequence"^^xsd:string ;

@@ -90,8 +90,15 @@
 						#set($epw=false)
 						#set($epw=$NXUtils.getXMLPropertyWriter($annotation.getAPICategory(), $pname))
 						#if($epw)
-							#set($UNESCAPED_CDATA = $epw.formatValue($evidence.getPropertyRawValue($pname)))
+							#set($UNESCAPED_CDATA=false)
+							#set($UNESCAPED_CDATA=$epw.formatValue($evidence.getPropertyRawValue($pname)))
+							#if($UNESCAPED_CDATA)
+							#if($pname == "intensity")
+							<property name="severity" value="$UNESCAPED_CDATA" />
+							#else
 							<property name="$pname" value="$UNESCAPED_CDATA" />
+							#end
+							#end
 						#else
 							<property name="$pname" value="$evidence.getPropertyValue($pname)" />
 						#end

@@ -40,8 +40,11 @@ evidence:$evidence-uri
 #set($epw=false)
 #set($epw=$NXUtils.getTtlPropertyWriter($annotation.getAPICategory(), $pname))
 #if($epw)
-#set($UNESCAPED_CDATA = $epw.formatValue($evidence.getPropertyRawValue($pname)))
+#set($UNESCAPED_CDATA=false)
+#set($UNESCAPED_CDATA=$epw.formatValue($evidence.getPropertyRawValue($pname)))
+#if($UNESCAPED_CDATA)
   :$epw.getName() $UNESCAPED_CDATA ;
+#end
 #end
 #end 
 

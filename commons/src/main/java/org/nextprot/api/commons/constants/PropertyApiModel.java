@@ -117,7 +117,7 @@ public class PropertyApiModel {
 
 		anno2props.put(AnnotationCategory.PHENOTYPIC_VARIATION,
 				new HashSet<>(Arrays.asList(
-						new PropertyApiModel(NAME_INTENSITY,"intensity","string", false, true, Parent.EVIDENCE)))); 
+						new PropertyApiModel( NAME_INTENSITY,"severity","string", true, true, Parent.EVIDENCE)))); 
 		// add other annotation - property links below
 		// ...
 	}
