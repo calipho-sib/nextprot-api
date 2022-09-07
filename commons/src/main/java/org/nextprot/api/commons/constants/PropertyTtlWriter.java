@@ -24,6 +24,8 @@ public class PropertyTtlWriter extends PropertyApiModel implements PropertyWrite
 			return "source:" + super.formatValue(value);
 		} else if (dbName.equals(NAME_PSIMI_AC)) {
 			return "cv:" + super.formatValue(value);
+		} else if (dbName.equals(NAME_GO_QUALIFIER)) {
+			return ":" + super.formatValue(value);
 		} else if (dbName.equals(NAME_INTENSITY)) {
 			if ("NA".equals(value)) return null; // we hide the property when it is not applicable (NA)
 			return ":" + super.formatValue(value);

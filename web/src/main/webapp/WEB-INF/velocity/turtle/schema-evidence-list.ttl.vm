@@ -44,3 +44,60 @@
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
       
+:goQualifier
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+    rdfs:label "go qualifier"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :GoQualifier ;
+    .
+    
+:GoQualifier
+      rdf:type owl:Class ;
+      rdfs:label "GO Qualifier"^^xsd:string ;
+      rdfs:comment "GO Qualifier"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      owl:equivalentClass [ a owl:Class ; owl:oneOf ( :Enables :Contributes_to :Is_active_in :Part_of :Located_in :Colocalizes_with ) ] ;
+      .
+
+:Enables
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Enables"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+
+:Contributes_to
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Contributes to"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Is_active_in
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Is active in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Part_of
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Part of"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Located_in
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Located in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Colocalizes_with
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Colocalizes with"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+
+      

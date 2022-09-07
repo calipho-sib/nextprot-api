@@ -454,15 +454,6 @@
     rdfs:range :Database ;
     . 
  
-# added with rdfhelp data for property: :goQualifier
-:goQualifier
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "go qualifier"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range xsd:string ;
-    . 
  
 # added with rdfhelp data for property: :homozygoteCount
 :homozygoteCount

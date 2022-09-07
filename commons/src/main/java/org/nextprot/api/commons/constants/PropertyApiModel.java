@@ -187,6 +187,11 @@ public class PropertyApiModel {
 			}
 		}
 		
+		if (dbName.equals(PropertyApiModel.NAME_GO_QUALIFIER)) {
+			String tmp = value.split(",")[0];
+			return tmp.substring(0, 1).toUpperCase() + tmp.substring(1);
+		}
+		
 		if (dbName.equals(PropertyApiModel.NAME_PSIMI_AC)) {
 			return value.replace(":", "_");
 		}
