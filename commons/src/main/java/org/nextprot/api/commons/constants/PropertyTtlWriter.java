@@ -20,6 +20,8 @@ public class PropertyTtlWriter extends PropertyApiModel implements PropertyWrite
 		// the values of these are URIs
 		if (dbName.equals(NAME_EXPRESSION_LEVEL)) {
 			return ":" + super.formatValue(value);
+		} else if (dbName.equals(NAME_PEPTIDE_SET)) {
+			return "source:" + super.formatValue(value);
 		} else if (dbName.equals(NAME_PSIMI_AC)) {
 			return "cv:" + super.formatValue(value);
 		}

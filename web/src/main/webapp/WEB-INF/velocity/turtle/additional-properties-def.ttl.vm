@@ -901,7 +901,7 @@
     rdfs:label "peptide source"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :PeptideMapping ;
-    rdfs:range xsd:string ;
+    rdfs:range :Source ;
     . 
  
 # added with rdfhelp data for property: :peptideUniqueness

@@ -179,7 +179,14 @@ public class PropertyApiModel {
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_EXPRESSION_LEVEL );
 			}
 		}
-					
+		
+		if (dbName.equals(PropertyApiModel.NAME_PEPTIDE_SET)) {
+			switch (value) {
+				case "PeptideAtlas human phosphoproteome" : return "PeptideAtlas_human_phosphoproteome";
+				default: return value;
+			}
+		}
+		
 		if (dbName.equals(PropertyApiModel.NAME_PSIMI_AC)) {
 			return value.replace(":", "_");
 		}
