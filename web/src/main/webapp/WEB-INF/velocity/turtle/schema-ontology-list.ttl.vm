@@ -149,7 +149,7 @@
    rdfs:comment "Most general property linking a protein or a gene to a name"^^xsd:string;
    rdfs:domain [ 
      a owl:Class;
-     owl:unionOf (:Entry :Isoform :Gene :Person :Consortium :History ) 
+     owl:unionOf (:Entry :Isoform :Gene :Person :Consortium ) 
    ] ;
    rdfs:range [ 
      a owl:Class ;

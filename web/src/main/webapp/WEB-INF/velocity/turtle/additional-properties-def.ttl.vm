@@ -344,16 +344,6 @@
     rdfs:range :Gene ;
     . 
  
-# added with rdfhelp data for property: :history
-:history
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "history"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Entry ;
-    rdfs:range :History ;
-    . 
- 
 # added with rdfhelp data for property: :isoform
 :isoform
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -565,56 +555,6 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :integrated
-:integrated
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "integrated"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :lastSequenceUpdate
-:lastSequenceUpdate
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "last sequence update"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :sequenceVersion
-:sequenceVersion
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "sequence version"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :updated
-:updated
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "updated"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :version
-:version
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "version"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
-  
 # added with rdfhelp data for property: :detectedExpression
 :detectedExpression
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;

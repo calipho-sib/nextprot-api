@@ -99,16 +99,14 @@ entry:$entry.getUniqueName()  :biophysicochemical[
 # history
 #if($entry.overview.history.nextprotIntegrationDate)
 entry:$entry.getUniqueName() :history [
-      rdf:type :History;
-      :name "neXtProt"^^xsd:string; 
+      rdf:type :NextprotHistory;
       :integrated "$entry.overview.history.getFormattedNextprotIntegrationDate()"^^xsd:date; 
       :updated "$entry.overview.history.getFormattedNextprotUpdateDate()"^^xsd:date;
     ].
 #end
 #if($entry.overview.history.uniprotIntegrationDate)
 entry:$entry.getUniqueName() :history [
-        rdf:type :History;
-        :name "UniProtKB"^^xsd:string;
+        rdf:type :UniprotHistory;
         :integrated "$entry.overview.history.getFormattedUniprotIntegrationDate()"^^xsd:date;
         :updated "$entry.overview.history.getFormattedUniprotUpdateDate()"^^xsd:date;
         :version "$entry.overview.history.uniprotVersion"^^xsd:integer;
