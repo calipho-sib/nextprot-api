@@ -555,46 +555,7 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :detectedExpression
-:detectedExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "detected expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :highExpression
-:highExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "high expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :lowExpression
-:lowExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "low expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :mediumExpression
-:mediumExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "medium expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
+
 # added with rdfhelp data for property: :proteoform
 :proteoform
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -623,16 +584,6 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Isoform ;
     rdfs:range xsd:boolean ;
-    . 
- 
-# added with rdfhelp data for property: :undetectedExpression
-:undetectedExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "undetected expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
     . 
  
 # added with rdfhelp data for property: :author

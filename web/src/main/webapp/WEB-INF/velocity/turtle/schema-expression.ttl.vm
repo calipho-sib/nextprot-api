@@ -90,4 +90,47 @@
       .        
 
 
+:undetectedExpression
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:label "undetected expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    .  
+
+:detectedExpression
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:label "detected expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
  
+:highExpression
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:label "high expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+:lowExpression
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:label "low expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
+ 
+:mediumExpression
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:label "medium expression"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Isoform ;
+    rdfs:range :ExpressionProfile ;
+    . 
