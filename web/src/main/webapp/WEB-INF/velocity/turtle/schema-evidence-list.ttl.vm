@@ -44,56 +44,60 @@
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
       
- 
- :AntibodyIntegrationLevel
+:goQualifier
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+    rdfs:label "go qualifier"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :GoQualifier ;
+    .
+    
+:GoQualifier
       rdf:type owl:Class ;
-      rdfs:label "Antibody integration level"^^xsd:string ;
-      rdfs:comment "Antibody integration level"^^xsd:string ;
+      rdfs:label "GO Qualifier"^^xsd:string ;
+      rdfs:comment "GO Qualifier"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
-      owl:equivalentClass [ 
-        a owl:Class ;
-      	owl:oneOf (
-	      	:Integrated 
-	      	:Selected 
-	      	:Single
-        ) 
-      ];
+      owl:equivalentClass [ a owl:Class ; owl:oneOf ( :Enables :Contributes_to :Is_active_in :Part_of :Located_in :Colocalizes_with ) ] ;
       .
 
- :integrationLevel
-      a rdf:Property, owl:ObjectProperty ;
-      rdfs:label "integration level"^^xsd:string ;
-      rdfs:comment "antibody integration level"^^xsd:string ;
-      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      rdfs:domain :Evidence ;
-      rdfs:range :AntibodyIntegrationLevel ;
-      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
-      .
-       
- 
-:Integrated
-	  rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
-      rdfs:label "Integrated"^^xsd:string ;
-      rdfs:comment "Integrated"^^xsd:string ;
+:Enables
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Enables"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
-:Selected
-      rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
-      rdfs:label "Selected"^^xsd:string ;
-      rdfs:comment "Selected"^^xsd:string ;
+:Contributes_to
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Contributes to"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Is_active_in
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Is active in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Part_of
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Part of"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Located_in
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Located in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Colocalizes_with
+      rdf:type owl:Class, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Colocalizes with"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
-:Single
-      rdf:type owl:Thing, owl:NamedIndividual, :AntibodyIntegrationLevel ;
-      rdfs:label "Single"^^xsd:string ;
-      rdfs:comment "Single"^^xsd:string ;
-      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
-      .
-      
       

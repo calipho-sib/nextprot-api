@@ -15,7 +15,7 @@
   .
  
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
+#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
 :$annotation.apiTypeName
    rdf:type owl:Class;
    rdfs:subClassOf :$annotation.parent.apiTypeName ;
@@ -36,7 +36,7 @@
 #
 
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "Disease" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
+#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Expression" && $annotation.apiTypeName != "MammalianPhenotype" && $annotation.apiTypeName != "ProteinProperty" && $annotation.apiTypeName != "Disease" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
 :$StringUtils.lowerFirstChar($annotation.apiTypeName)
    a rdf:Property, owl:ObjectProperty ;
 #if($annotation.apiTypeName == "FamilyName")

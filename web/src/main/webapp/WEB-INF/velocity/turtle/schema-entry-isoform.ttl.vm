@@ -38,6 +38,53 @@
 	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
+:difference
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "difference"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:range [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
+    rdfs:domain :Proteoform ;
+    . 
+
+:severity
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "severity"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :Severity ;
+    . 
+ 
+:Severity 
+	rdf:type owl:Class ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Severity"^^xsd:string ;
+    owl:equivalentClass [ a owl:Class ; owl:oneOf ( :Severe :Moderate :Mild ) ] ;
+    . 
+ 
+:Severe 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Severe"^^xsd:string ;
+    . 
+ 
+:Moderate 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Moderate"^^xsd:string ;
+    . 
+ 
+:Mild 
+	rdf:type owl:Thing, owl:NamedIndividual, :Severity ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry.isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "Mild"^^xsd:string ;
+    . 
+ 
 :ProteinSequence
       rdf:type owl:Class ;
       rdfs:label "Protein sequence"^^xsd:string ;
@@ -54,8 +101,81 @@
 	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       .
 
-# quality qualifier class and individuals defining its extension
+:NextprotHistory
+      rdf:type owl:Class ;
+      rdfs:subClassOf :History ;
+      rdfs:label "Nextprot history record"^^xsd:string ;
+      rdfs:comment "A history of a protein entry in neXtProt"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+      .
 
+:UniprotHistory
+      rdf:type owl:Class ;
+      rdfs:subClassOf :History ;
+      rdfs:label "Uniprot history record"^^xsd:string ;
+      rdfs:comment "A history of a protein entry in Uniprot"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+      .
+
+:history
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "history"^^xsd:string ;
+    rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Entry ;
+    rdfs:range :History ;
+    . 
+
+:integrated
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "integrated"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:date ;
+    . 
+ 
+:lastSequenceUpdate
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "last sequence update"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :UniprotHistory ;
+    rdfs:range xsd:date ;
+    . 
+ 
+:sequenceVersion
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "sequence version"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :UniprotHistory ;
+    rdfs:range xsd:integer ;
+    . 
+ 
+:updated
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "updated"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:date ;
+    . 
+ 
+:version
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
+    rdfs:label "version"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :History ;
+    rdfs:range xsd:date ;
+    . 
+  
+
+
+# quality qualifier class and individuals defining its extension
 :QualityQualifier
       rdf:type owl:Class ;
       rdfs:label "Quality qualifier"^^xsd:string ;

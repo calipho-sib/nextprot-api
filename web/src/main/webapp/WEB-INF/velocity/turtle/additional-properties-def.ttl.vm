@@ -260,7 +260,7 @@
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "end"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :PositionalAnnotation ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:PositionalAnnotation :Gene ) ; ] ;
     rdfs:range xsd:integer ;
     . 
  
@@ -284,11 +284,11 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :antibodyUnicity
-:antibodyUnicity
+# added with rdfhelp data for property: :antibodyUniqueness
+:antibodyUniqueness
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "antibody unicity"^^xsd:string ;
+    rdfs:label "antibody uniqueness"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :AntibodyMapping ;
     rdfs:range xsd:string ;
@@ -333,17 +333,7 @@
     rdfs:domain [ a owl:Class ; owl:unionOf (:DiseaseRelatedVariant :PhenotypicVariation) ; ] ;
     rdfs:range [ a owl:Class ; owl:unionOf (:MammalianPhenotype :GoMolecularFunction :ElectrophysiologicalParameter :GoBiologicalProcess :GoCellularComponent :ProteinProperty :BinaryInteraction :Disease) ; ] ;
     . 
- 
-# added with rdfhelp data for property: :classifiedWith
-:classifiedWith
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "classified with"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Entry ;
-    rdfs:range :EnzymeClassificationCv ;
-    . 
- 
+  
 # added with rdfhelp data for property: :gene
 :gene
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -352,16 +342,6 @@
     rdf:type  owl:ObjectProperty ;
     rdfs:domain :Entry ;
     rdfs:range :Gene ;
-    . 
- 
-# added with rdfhelp data for property: :history
-:history
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "history"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Entry ;
-    rdfs:range :History ;
     . 
  
 # added with rdfhelp data for property: :isoform
@@ -432,18 +412,8 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Evidence ;
     rdfs:range xsd:integer ;
-    . 
- 
-# added with rdfhelp data for property: :antibodiesAcc
-:antibodiesAcc
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "antibodies acc"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range xsd:string ;
-    . 
- 
+    .
+  
 # added with rdfhelp data for property: :evidenceCode
 :evidenceCode
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -452,16 +422,6 @@
     rdf:type  owl:ObjectProperty ;
     rdfs:domain :Evidence ;
     rdfs:range :EvidenceCodeOntologyCv ;
-    . 
- 
-# added with rdfhelp data for property: :expressionLevel
-:expressionLevel
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "expression level"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range [ a owl:Class ; owl:unionOf (:PositiveExpressionLevel :NegativeExpressionLevel) ; ] ;
     . 
  
 # added with rdfhelp data for property: :expressionScore
@@ -475,7 +435,7 @@
     . 
  
 # added with rdfhelp data for property: :fromXref
-:fromXref
+:fromDatabase
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "from xref"^^xsd:string ;
@@ -484,15 +444,6 @@
     rdfs:range :Database ;
     . 
  
-# added with rdfhelp data for property: :goQualifier
-:goQualifier
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "go qualifier"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range xsd:string ;
-    . 
  
 # added with rdfhelp data for property: :homozygoteCount
 :homozygoteCount
@@ -503,16 +454,6 @@
     rdfs:domain :Evidence ;
     rdfs:range xsd:integer ;
     .  
- 
-# added with rdfhelp data for property: :intensity
-:intensity
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "intensity"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range xsd:string ;
-    . 
  
 # added with rdfhelp data for property: :interactionDetectionMethod
 :interactionDetectionMethod
@@ -553,17 +494,7 @@
     rdfs:domain :ExperimentalContext ;
     rdfs:range  :Publication ;
     . 
- 
-# added with rdfhelp data for property: :description
-:description
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "description"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :FamilyName ;
-    rdfs:range xsd:string ;
-    . 
- 
+  
 # added with rdfhelp data for property: :band
 :band
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -624,106 +555,7 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :integrated
-:integrated
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "integrated"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :lastSequenceUpdate
-:lastSequenceUpdate
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "last sequence update"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :sequenceVersion
-:sequenceVersion
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "sequence version"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :updated
-:updated
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "updated"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :version
-:version
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "version"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :History ;
-    rdfs:range xsd:string ;
-    . 
- 
-# added with rdfhelp data for property: :canonicalIsoform
-:canonicalIsoform
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "canonical isoform"^^xsd:string ;
-    rdf:type  owl:DatatypeProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range xsd:boolean ;
-    . 
- 
-# added with rdfhelp data for property: :detectedExpression
-:detectedExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "detected expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :highExpression
-:highExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "high expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :lowExpression
-:lowExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "low expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
-# added with rdfhelp data for property: :mediumExpression
-:mediumExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "medium expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
-    . 
- 
+
 # added with rdfhelp data for property: :proteoform
 :proteoform
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -752,16 +584,6 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Isoform ;
     rdfs:range xsd:boolean ;
-    . 
- 
-# added with rdfhelp data for property: :undetectedExpression
-:undetectedExpression
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "undetected expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Isoform ;
-    rdfs:range :ExpressionProfile ;
     . 
  
 # added with rdfhelp data for property: :author
@@ -944,21 +766,21 @@
     rdfs:range xsd:string ;
     . 
  
-# added with rdfhelp data for property: :peptideSet
-:peptideSet
+# added with rdfhelp data for property: :peptideSource
+:peptideSource
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "peptide set"^^xsd:string ;
+    rdfs:label "peptide source"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :PeptideMapping ;
-    rdfs:range xsd:string ;
+    rdfs:range :Source ;
     . 
  
-# added with rdfhelp data for property: :peptideUnicity
-:peptideUnicity
+# added with rdfhelp data for property: :peptideUniqueness
+:peptideUniqueness
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "peptide unicity"^^xsd:string ;
+    rdfs:label "peptide uniqueness"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain [ a owl:Class ; owl:unionOf (:SrmPeptideMapping :PeptideMapping) ; ] ;
     rdfs:range xsd:string ;
@@ -1022,16 +844,6 @@
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :ProteinSequence ;
     rdfs:range xsd:double ;
-    . 
- 
-# added with rdfhelp data for property: :modification
-:modification
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "modification"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:range [ a owl:Class ; owl:unionOf (:Mutagenesis :Variant) ; ] ;
-    rdfs:domain :Proteoform ;
     . 
  
  

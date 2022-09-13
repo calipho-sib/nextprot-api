@@ -15,6 +15,7 @@ public class PropertyXMLWriter extends PropertyApiModel implements PropertyWrite
 	
 	public String formatValue(String value) {
 		if (dbName.equals(NAME_EXPRESSION_LEVEL)) return super.formatValue(value);
+		if (dbName.equals(NAME_INTENSITY) && "NA".equals(value)) return null;
 		return value;
 	}
 	
