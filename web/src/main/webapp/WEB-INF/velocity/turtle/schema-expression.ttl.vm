@@ -13,41 +13,6 @@
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-expression.ttl.vm"^^xsd:string ;      
       .
-      
-:expressionLevel
-    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-    :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
-    rdfs:label "expression level"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
-    rdfs:domain :Evidence ;
-    rdfs:range [ a owl:Class ; owl:unionOf (:PositiveExpressionLevel :NegativeExpressionLevel) ; ] ;
-    . 
-    
-:PositiveExpressionLevel
-      rdf:type owl:Class ;
-      rdfs:subClassOf :ExpressionLevel ;
-      rdfs:label "Positive expression level"^^xsd:string ;
-      rdfs:comment "Class of positive expression level"^^xsd:string ;
-      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
-      owl:equivalentClass [ 
-        a owl:Class ;
-      	owl:oneOf ( :Positive :High :Medium :Low )
-      ];
-      .
-
-:NegativeExpressionLevel
-      rdf:type owl:Class ;
-      rdfs:subClassOf :ExpressionLevel ;
-      rdfs:label "Negative expression level"^^xsd:string ;
-      rdfs:comment "Class of negative level of expression"^^xsd:string ;
-      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
-      owl:equivalentClass [ 
-        a owl:Class ;
-      	owl:oneOf ( :Negative )
-      ];
-      .
 
 :Positive
       rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
@@ -89,48 +54,78 @@
       :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .        
 
-
-:undetectedExpression
+:expressionLevel
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
-    rdfs:label "undetected expression"^^xsd:string ;
+    rdfs:label "expression level"^^xsd:string ;
     rdf:type  owl:ObjectProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range [ a owl:Class ; owl:oneOf (:Positive :High :Medium :Low :Negative) ; ] ;
+    . 
+    
+
+:expression
+   a rdf:Property, owl:ObjectProperty ;
+   rdfs:domain :Isoform ;
+   rdfs:range :Expression ;
+   rdfs:subPropertyOf :generalAnnotation ;
+   rdfs:label "expression"^^xsd:string;
+   rdfs:comment "Links an isoform to an expression annotation"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+   .
+   
+:undetectedExpression
+    a rdf:Property, owl:ObjectProperty ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:subPropertyOf :expression ;
+    rdfs:label "undetectable expression"^^xsd:string ;
+    rdfs:comment "Links an isoform to a undetected level of expression"^^xsd:string;
     rdfs:domain :Isoform ;
     rdfs:range :ExpressionProfile ;
     .  
 
 :detectedExpression
+    a rdf:Property, owl:ObjectProperty ;
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:subPropertyOf :expression ;
     rdfs:label "detected expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
+    rdfs:comment "Links an isoform to a detectable level of expression"^^xsd:string;
     rdfs:domain :Isoform ;
     rdfs:range :ExpressionProfile ;
     . 
  
 :highExpression
+    a rdf:Property, owl:ObjectProperty ;
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:subPropertyOf :detectedExpression ;
     rdfs:label "high expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
+    rdfs:comment "Links an isoform to a high level of expression"^^xsd:string;
     rdfs:domain :Isoform ;
     rdfs:range :ExpressionProfile ;
     . 
  
 :lowExpression
+    a rdf:Property, owl:ObjectProperty ;
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:subPropertyOf :detectedExpression ;
     rdfs:label "low expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
+    rdfs:comment "Links an isoform to a low level of expression"^^xsd:string;
     rdfs:domain :Isoform ;
     rdfs:range :ExpressionProfile ;
     . 
  
 :mediumExpression
+   a rdf:Property, owl:ObjectProperty ;
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
+    rdfs:subPropertyOf :detectedExpression ;
     rdfs:label "medium expression"^^xsd:string ;
-    rdf:type  owl:ObjectProperty ;
+    rdfs:comment "Links an isoform to a medium level of expression"^^xsd:string;
     rdfs:domain :Isoform ;
     rdfs:range :ExpressionProfile ;
     . 
