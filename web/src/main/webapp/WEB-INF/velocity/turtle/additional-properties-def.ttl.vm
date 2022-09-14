@@ -633,7 +633,7 @@
     rdfs:label "from"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :Publication ;
-    rdfs:range xsd:string ;
+    rdfs:range :Xref ;
     . 
  
 # added with rdfhelp data for property: :issue
