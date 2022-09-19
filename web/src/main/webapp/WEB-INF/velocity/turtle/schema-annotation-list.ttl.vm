@@ -42,6 +42,8 @@
    a rdf:Property, owl:ObjectProperty ;
 #if($annotation.apiTypeName == "FamilyName")
    rdfs:domain :Entry ;
+#elseif($annotation.apiTypeName == "DiseaseRelatedVariant" || $annotation.apiTypeName == "PhenotypeVariation")
+   rdfs:domain :Proteoform ;
 #else
    rdfs:domain :Isoform ;
 #end 
