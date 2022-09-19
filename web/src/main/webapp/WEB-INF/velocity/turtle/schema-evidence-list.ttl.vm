@@ -19,7 +19,7 @@
       rdfs:label "evidence"^^xsd:string ;
       rdfs:comment "Links an annotation with the evidence supporting it"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      rdfs:domain :AnnotationType ;
+      rdfs:domain :Annotation ;
       rdfs:range :Evidence ;
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
@@ -29,7 +29,7 @@
       rdfs:label "evidence"^^xsd:string ;
       rdfs:comment "Links an annotation with an evidence unsupporting it"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
-      rdfs:domain :AnnotationType ;
+      rdfs:domain :Annotation ;
       rdfs:range :Evidence ;
       :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .

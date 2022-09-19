@@ -17,7 +17,7 @@ import java.util.*;
 public enum AnnotationCategory implements Serializable {
 
 	//Special node for the root
-	ROOT(0, "Root", "annotationType", "Annotation type", null),
+	ROOT(0, "Root", "annotation", "Annotation", null),
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type

@@ -200,7 +200,7 @@
 	  :sourceFile "schema-entry-isoform.ttl.vm"^^xsd:string ;
       rdfs:domain [ 
         a owl:Class ;
-      	owl:unionOf ( :AnnotationType :Evidence ) 
+      	owl:unionOf ( :Annotation :Evidence ) 
       ];
       rdfs:range :QualityQualifier ;
       .      
