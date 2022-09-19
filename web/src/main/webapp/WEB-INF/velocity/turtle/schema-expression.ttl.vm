@@ -6,7 +6,7 @@
 # Define Expresion specialisation
 # 
 
-:ExpressionLevel
+:ObservedExpression
       rdf:type owl:Class ;
       rdfs:label "Expression level"^^xsd:string ;
       rdfs:comment "Expression levels detected during experiment"^^xsd:string ;
@@ -15,7 +15,7 @@
       .
 
 :Positive
-      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ObservedExpression ;
       rdfs:label "Expression detected"^^xsd:string ;
       rdfs:comment "Positive level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -23,7 +23,7 @@
       .
 
 :High
-      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ObservedExpression ;
       rdfs:label "High expression detected"^^xsd:string ;
       rdfs:comment "High level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -31,7 +31,7 @@
       .
 
 :Medium
-      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ObservedExpression ;
       rdfs:label "Medium expression detected"^^xsd:string ;
       rdfs:comment "Medium level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -39,7 +39,7 @@
       .
 
 :Low
-      rdf:type owl:Thing, owl:NamedIndividual, :PositiveExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ObservedExpression ;
       rdfs:label "Low expression detected"^^xsd:string ;
       rdfs:comment "Low level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
@@ -47,20 +47,20 @@
       .
 
 :Negative
-      rdf:type owl:Thing, owl:NamedIndividual, :NegativeExpressionLevel ;
+      rdf:type owl:Thing, owl:NamedIndividual, :ObservedExpression ;
       rdfs:label "No expression detected"^^xsd:string ;
       rdfs:comment "Negative level of expression"^^xsd:string ;
       rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
       .        
 
-:expressionLevel
+:observedExpression
     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "schema-expression.ttl.vm"^^xsd:string ;
-    rdfs:label "expression level"^^xsd:string ;
+    rdfs:label "observed expression"^^xsd:string ;
     rdf:type  owl:ObjectProperty ;
     rdfs:domain :Evidence ;
-    rdfs:range [ a owl:Class ; owl:oneOf (:Positive :High :Medium :Low :Negative) ; ] ;
+    rdfs:range :ObservedExpression ;
     . 
     
 
