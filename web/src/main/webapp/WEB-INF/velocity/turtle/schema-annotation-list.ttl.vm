@@ -31,12 +31,13 @@
 #end
 
 
+
 #
 # Define properties for annotations
 #
 
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Expression" && $annotation.apiTypeName != "MammalianPhenotype" && $annotation.apiTypeName != "ProteinProperty" && $annotation.apiTypeName != "Disease" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
+#if($annotation.apiTypeName != "AnnotationType" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Expression" && $annotation.apiTypeName != "MammalianPhenotype" &&  $annotation.apiTypeName != "ProteinProperty" && $annotation.apiTypeName != "Disease" && $annotation.apiTypeName != "ElectrophysiologicalParameter" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
 :$StringUtils.lowerFirstChar($annotation.apiTypeName)
    a rdf:Property, owl:ObjectProperty ;
 #if($annotation.apiTypeName == "FamilyName")
