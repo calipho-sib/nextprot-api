@@ -86,7 +86,7 @@
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "impacted object"^^xsd:string ;
     rdf:type  owl:ObjectProperty ;
-    rdfs:domain [ a owl:Class ; owl:unionOf (:DiseaseRelatedVariant :PhenotypeVariation) ; ] ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:DiseaseRelatedVariant :PhenotypicVariation) ; ] ;
     rdfs:range [ a owl:Class ; owl:unionOf (:MammalianPhenotype :GoMolecularFunction :ElectrophysiologicalParameter :GoBiologicalProcess :GoCellularComponent :ProteinProperty :BinaryInteraction :Disease) ; ] ;
     . 
   

@@ -19,7 +19,7 @@ isoform:$isoform-name a :Isoform;
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName) ## used in child template(s)
 #set($annotation-type = $annotation.apiTypeName)                      ## used in child template(s)
 ## wild type: 
-## any type except ProteinProperty,MammalianPhenotype,PhenotypeVariation,DiseaseRelatedVariant,ElectrophysiologicalParameter
+## any type except ProteinProperty,MammalianPhenotype,PhenotypicVariation,DiseaseRelatedVariant,ElectrophysiologicalParameter
 #if($annotation.isWildTypeAnnotation()) 
 #foreach($parentPredicate in $annotation.parentPredicates)
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
