@@ -180,7 +180,7 @@ public enum AnnotationCategory implements Serializable {
 	//New categories added with BioEditor integration
 	ELECTROPHYSIOLOGICAL_PARAMETER(-9993, "electrophysiological-parameter", "electrophysiologicalParameter", "Electrophysiological parameter", GENERAL_ANNOTATION),
 	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
-	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypeVariation", "Phenotype variation", GENERAL_ANNOTATION),
+	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERAL_ANNOTATION),
 	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERAL_ANNOTATION),
 	
 	//Virtual annotations (for pepx)
