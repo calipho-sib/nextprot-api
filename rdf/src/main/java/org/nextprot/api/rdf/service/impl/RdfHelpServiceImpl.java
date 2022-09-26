@@ -111,7 +111,9 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		Map<String, RdfTypeInfo> fullMap = new HashMap<String, RdfTypeInfo>();
 		for (RdfTypeInfo rti : rdfTypes) {
-			fullMap.put(rti.getTypeName(), rti);
+			if (rti.getParents().size()>0) {
+				fullMap.put(rti.getTypeName(), rti);
+			}
 		}
 
 		if (fullMap.containsKey(":Entry")) buildPathToOrigin(fullMap, fullMap.get(":Entry"), "?entry ", 0);
