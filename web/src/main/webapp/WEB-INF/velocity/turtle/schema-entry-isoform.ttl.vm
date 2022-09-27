@@ -170,7 +170,7 @@
     rdfs:label "version"^^xsd:string ;
     rdf:type  owl:DatatypeProperty ;
     rdfs:domain :History ;
-    rdfs:range xsd:date ;
+    rdfs:range xsd:integer ;
     . 
   
 
