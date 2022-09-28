@@ -119,6 +119,16 @@ public class StringUtils {
 		return s.substring(0,1).toLowerCase() + s.substring(1);
 	}
 
+	static public String lower(String s) {
+		if (null==s) return null;
+		return s.toLowerCase();
+	}
+
+	static public boolean contains(String s, String substr) {
+		if (null==s) return false;
+		return s.contains(substr);
+	}
+
 	/**
 	 * Remove the <+> characters from a string
 	 * Used for suggestions retuurned by solr service

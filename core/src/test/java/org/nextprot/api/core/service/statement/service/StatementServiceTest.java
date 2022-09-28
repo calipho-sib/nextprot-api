@@ -35,7 +35,7 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		System.out.println(modifiedIsoformAnnotation.size());
 	}*/
 
-	// TODO: this test do nothing and f90790567dc0650b5737fa62332bb38a does not exist
+	//TODO: this test do nothing and f90790567dc0650b5737fa62332bb38a does not exist
 	//TODO to unignore
 	@Ignore
 	@Test
@@ -105,7 +105,8 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		Assert.assertTrue(a.getEvidences().stream().allMatch(e -> e.getResourceType().equals("database")));
 		Assert.assertTrue(a.getEvidences().stream().allMatch(e -> e.getResourceAccession().equals("ENSG00000000003")));
 		if (todayIsAfter("17 Nov 2020")) {
-			Assert.assertTrue(a.getEvidences().stream().allMatch(e -> e.getAssignmentMethod().equals("curated")));
+			// it should be lower casae in db "curated", not "CURATED"
+			Assert.assertTrue(a.getEvidences().stream().allMatch(e -> e.getAssignmentMethod().equalsIgnoreCase("curated")));
 		}
 		Assert.assertTrue(a.getEvidences().stream()
 						   .allMatch(e -> e.getPropertiesNames().containsAll(Arrays.asList("expressionLevel", "expressionScore"))));

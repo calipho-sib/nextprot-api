@@ -6,15 +6,13 @@ import org.nextprot.api.rdf.service.HttpSparqlService;
 import org.nextprot.api.rdf.service.RDFDereferencingService;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.impl.SparqlQueryDictionary;
-import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RDFDereferencingServiceImpl implements RDFDereferencingService {
@@ -29,13 +27,15 @@ public class RDFDereferencingServiceImpl implements RDFDereferencingService {
 
     private final HttpSparqlService sparqlService;
 
-    private HashMap<String,UserQuery> queryMap;
+    private Map<String,UserQuery> queryMap;
 
     private final String DEREF_CLASS_TAG = "deref_class_";
 
     private final String DEREF_INSTANCE_TAG = "deref_instance_";
 
-    private final String DEFAULT_CLASS_QUERY = "DESCRIBE :Entity";
+    private final String NEXTPROT_CLASS_NAMESPACE = "http://nextprot.org/rdf#";
+
+    private final String NEXTPROT_INSTANCE_NAMESPACE = "http://nextprot.org/rdf/";
 
     public RDFDereferencingServiceImpl(HttpSparqlService sparqlService) {
         this.sparqlService = sparqlService;
@@ -45,14 +45,15 @@ public class RDFDereferencingServiceImpl implements RDFDereferencingService {
     private void loadQueries(){
         // Extracts the sparql queries for dereferencing from nextprot queries and generates a query map by title
         List<UserQuery> queries = sparqlQueryDictionary.getSparqlQueryList();
-        queryMap = new HashMap<>();
-        UserQueryUtils.filterByTag(queries, DEREF_CLASS_TAG)
-                .stream()
-                .forEach(query -> queryMap.put(DEREF_CLASS_TAG +  query.getTitle(), query));
 
-        UserQueryUtils.filterByTag(queries, DEREF_INSTANCE_TAG)
-                .stream()
-                .forEach(query -> queryMap.put(DEREF_INSTANCE_TAG +  query.getTitle(), query));
+        queryMap = queries.stream()
+                .filter(q -> q.getTags()
+                        .stream()
+                        .map(t -> t.contains(DEREF_INSTANCE_TAG) || t.contains(DEREF_CLASS_TAG))
+                        .reduce((a,b) -> a && b)
+                        .orElse(false))
+                .collect(Collectors.toMap(userQuery -> ((String) userQuery.getTags().toArray()[0]).toLowerCase(),
+                        userQuery -> userQuery));
         LOGGER.info("Dereferencing queires loaded: " + queryMap.keySet().size());
     }
 
@@ -78,25 +79,36 @@ public class RDFDereferencingServiceImpl implements RDFDereferencingService {
     private String generateQueryString(String entity, Optional<String> accession) {
 
         // Should handle both Class and Instance definitions
-        if(!accession.isPresent()) {
-            // Class query to be generated
-            return generateClassQueryString(entity);
-        } else {
+        if(accession.isPresent()) {
             // Instance query to be generated
-            return null;
-        }
-    }
-
-    private String generateClassQueryString(String entity) {
-        UserQuery query = queryMap.get(DEREF_CLASS_TAG + entity);
-        if(query != null) {
-            return query.getSparql();
+            // Check for specific queries
+            // Format of deref query tags are deref_instance_[entity] if entity exists
+            // Or get the default query with tag deref_instance_
+            UserQuery query = queryMap.get((DEREF_INSTANCE_TAG + entity).toLowerCase());
+            if(query == null) {
+                // Use default query
+                query = queryMap.get(DEREF_INSTANCE_TAG.toLowerCase());
+            }
+            return generateInstanceQueryString(query, entity, accession.get());
         } else {
-            return DEFAULT_CLASS_QUERY.replace("Entity", entity);
+            // Class query to be generated
+            // Check for specific queries
+            // Format of deref query tags are deref_class_[entity] if entity exists
+            // Or get the default query with tag deref_class_
+            UserQuery query = queryMap.get((DEREF_CLASS_TAG + entity).toLowerCase());
+            if(query == null) {
+                // Use default query
+                query = queryMap.get(DEREF_CLASS_TAG.toLowerCase());
+            }
+            return generateClassQueryString(query, entity);
         }
     }
 
-    private String generateInstanceQueryString(String entity, String accession) {
-        return null;
+    private String generateClassQueryString(UserQuery query, String entity) {
+        return query.getSparql().replace("CLASS", NEXTPROT_CLASS_NAMESPACE + entity);
+    }
+
+    private String generateInstanceQueryString(UserQuery query, String entity, String accession) {
+        return query.getSparql().replace("INSTANCE", NEXTPROT_INSTANCE_NAMESPACE + entity.toLowerCase() + "/" + accession);
     }
 }

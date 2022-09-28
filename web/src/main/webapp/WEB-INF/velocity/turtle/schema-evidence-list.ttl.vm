@@ -8,103 +8,96 @@
 
 :Evidence
       rdf:type owl:Class ;
+      rdfs:label "Evidence"^^xsd:string ;
+      rdfs:comment "Evidence"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
-:CuratedEvidence
-      rdf:type owl:Class ;
-      :notIn :ComputedEvidence;
-      rdfs:subClassOf :Evidence;
+:evidence
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "evidence"^^xsd:string ;
+      rdfs:comment "Links an annotation with the evidence supporting it"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :Annotation ;
+      rdfs:range :Evidence ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
-:ComputedEvidence
-      rdf:type owl:Class ;
-      :notIn :CuratedEvidence;
-      rdfs:subClassOf :Evidence;
+:negativeEvidence
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "evidence"^^xsd:string ;
+      rdfs:comment "Links an annotation with an evidence unsupporting it"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      rdfs:domain :Annotation ;
+      rdfs:range :Evidence ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
-      
+
 :assignedBy
-      a rdf:Property, owl:FunctionalProperty ;
+      a rdf:Property, owl:FunctionalProperty, owl:ObjectProperty ;
+      rdfs:label "assigned by"^^xsd:string ;
+      rdfs:comment "Links an evidence to its source"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
       rdfs:domain :Evidence ;
-      rdfs:range :Source
+      rdfs:range :Source ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
       
-:Integrated
+:goQualifier
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+    rdfs:label "go qualifier"^^xsd:string ;
+    rdf:type  owl:DatatypeProperty ;
+    rdfs:domain :Evidence ;
+    rdfs:range :GoQualifier ;
+    .
+    
+:GoQualifier
       rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Selected,:Single;
+      rdfs:label "GO Qualifier"^^xsd:string ;
+      rdfs:comment "GO Qualifier"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      owl:equivalentClass [ a owl:Class ; owl:oneOf ( :Enables :Contributes_to :Is_active_in :Part_of :Located_in :Colocalizes_with ) ] ;
       .
 
-:Selected
-      rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Integrated,:Single;
+:Enables
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Enables"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
 
-:Single
-      rdf:type owl:Class ;
-      rdfs:comment "level of integration"^^xsd:string ;
-      :notIn :Selected,:Integrated;
+:Contributes_to
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Contributes to"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
       .
+:Is_active_in
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Is active in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Part_of
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Part of"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Located_in
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Located in"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+:Colocalizes_with
+      rdf:type owl:Thing, owl:NamedIndividual, :GoQualifier  ;
+      rdfs:label "Colocalizes with"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-evidence-list.ttl.vm"^^xsd:string ;
+      .
+
       
-
-:GOEvidenceCode
-      rdf:type owl:Class ;
-      rdfs:comment "GO evidence code"^^xsd:string ;
-      .
-
-# Links between :GOEvidenceCode  :EvidenceCodeOntology
-## Uniprot mapping: source http://evidenceontology.googlecode.com/svn/trunk/gaf-eco-mapping.txt
-:EXP :related cv:ECO_0000269 .
-:IBA :related cv:ECO_0000318 .
-:IBD :related cv:ECO_0000319 .
-:IC  :related cv:ECO_0000305 .
-:IDA :related cv:ECO_0000314 .
-:IEA :related cv:ECO_0000501 .
-:IEP :related cv:ECO_0000270 .
-:IGC :related cv:ECO_0000317 .
-:IGC :related cv:ECO_0000354 .
-:IGI :related cv:ECO_0000316 .
-:IKR :related cv:ECO_0000320 .
-:IMP :related cv:ECO_0000315 .
-:IMR :related cv:ECO_0000320 .
-:IPI :related cv:ECO_0000353 .
-:IRD :related cv:ECO_0000321 .
-:ISA :related cv:ECO_0000247 .
-:ISM :related cv:ECO_0000255 .
-:ISO :related cv:ECO_0000266 .
-:ISS :related cv:ECO_0000250 .
-:NAS :related cv:ECO_0000303 .
-:ND  :related cv:ECO_0000307 .
-:RCA :related cv:ECO_0000245 .
-:TAS :related cv:ECO_0000304 .
-
-
-#foreach($evidence in $evidenceList)
-:$evidence.getType()
-   rdf:type :GOEvidenceCode; 
-   rdfs:comment "$evidence.getDescription()"^^xsd:string;
-   rdfs:label "$evidence.getType()"^^xsd:string; 
-   rdfs:seeAlso "http://www.nextprot.org/manual/$evidence.getType()"^^xsd:anyURI; 
-   rdfs:subClassOf owl:Thing;
-   :notIn :$evidence.getDisjointWith(", :");
-   .    
-
-
-
-
-
-#end
-##
-## Define evidences properties
-##
- 
-##foreach($evidence in $evidenceList)
-## -------  $evidence.getType() 
-##:$evidence.getType()
-##   a rdf:Property, owl:FunctionalProperty;
-##   rdfs:subPropertyOf :evidence;
-##   rdfs:label "$evidence.getDescription()"^^xsd:string 
-##   rdfs:domain :Annotation;
-##   rdfs:range :$StringUtils.toCamelCase($evidence.getDescription(), false);
-##   .
-###end

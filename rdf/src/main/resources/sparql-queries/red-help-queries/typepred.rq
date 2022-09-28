@@ -15,6 +15,7 @@ where
       ?s rdf:type ?subjType . 
       ?s ?p ?o . 
       optional { ?o rdf:type ?t .}
+	  filter (?t not in  (owl:NamedIndividual, owl:Thing, owl:Ontology))
       filter (?p not in (
       	rdf:type , :childOf , rdfs:subClassOf , :related , owl:disjointWith ,
       	:isoformSpecificity , :negativeIsoformSpecificity, :assocType , :notIn

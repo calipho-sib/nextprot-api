@@ -61,7 +61,7 @@ having sum(a.cnt)=1
 		id = xrefService.findXrefId("IntAct", "EBI-2115799,EBI-11156432"); // NOT in db
 		Assert.assertEquals(7066117270788987512L, id);
 		id = xrefService.findXrefId("DECIPHER", "SCN1A");
-		Assert.assertEquals(7371177140918988903L, id);
+		Assert.assertEquals(7372177140918988903L, id);
 		
 	}
 
@@ -74,7 +74,7 @@ having sum(a.cnt)=1
 		Assert.assertEquals("https://www.deciphergenomics.org/gene/%s/overview/clinical-info", x.getLinkUrl());
 		Assert.assertEquals("https://www.deciphergenomics.org/gene/SCN1A/overview/clinical-info", x.getResolvedUrl());
 		Assert.assertEquals("https://www.deciphergenomics.org", x.getUrl());
-		Assert.assertEquals(new Long(7371177140918988903L), x.getDbXrefId());
+		Assert.assertEquals(new Long(7372177140918988903L), x.getDbXrefId());
 	}
 	
 	@Test

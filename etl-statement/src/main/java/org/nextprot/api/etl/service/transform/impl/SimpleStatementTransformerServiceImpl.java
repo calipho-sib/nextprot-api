@@ -1,10 +1,10 @@
-package org.nextprot.api.etl.service.impl;
+package org.nextprot.api.etl.service.transform.impl;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.domain.IsoformPositions;
-import org.nextprot.api.etl.service.SimpleStatementTransformerService;
-import org.nextprot.api.etl.service.StatementIsoformPositionService;
+import org.nextprot.api.etl.service.transform.SimpleStatementTransformerService;
+import org.nextprot.api.etl.service.transform.StatementIsoformPositionService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.springframework.beans.factory.annotation.Autowired;

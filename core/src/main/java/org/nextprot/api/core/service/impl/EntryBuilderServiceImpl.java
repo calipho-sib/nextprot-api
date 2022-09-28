@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
@@ -118,7 +119,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
+			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart() || entryConfig.hasSubParts())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			}
 		}
@@ -144,13 +145,25 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	private void setEntryAdditionalInformation(Entry entry, EntryConfig config){
 
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
+			List<Annotation> annotations;
 			if (config.hasBed()) {
-				entry.setAnnotations(
-					this.annotationService.findAnnotations(entry.getUniqueName()));
+				annotations = this.annotationService.findAnnotations(entry.getUniqueName());
 			} else  {
-				entry.setAnnotations(
-					this.annotationService.findAnnotationsExcludingBed(entry.getUniqueName()));
+				annotations = this.annotationService.findAnnotationsExcludingBed(entry.getUniqueName());
 			}
+
+			if (config.hasSubParts()) {
+				List<String> selectedAnnotations = config.getSubparts()
+						.stream()
+						.map(a -> a.toString())
+						.collect(Collectors.toList());
+				annotations = annotations.parallelStream()
+						.filter(annotation -> selectedAnnotations.contains(
+								annotation.getAPICategory().toString()))
+						.collect(Collectors.toList());
+			}
+
+			entry.setAnnotations(annotations);
 		}
 		
 		if(!config.hasNoAdditionalReferences()){

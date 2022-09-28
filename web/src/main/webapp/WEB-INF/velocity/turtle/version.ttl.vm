@@ -1,10 +1,37 @@
+##
+## Define Ontology
+##
 
+<http://nextprot.org/rdf>
+  a owl:Ontology ;
+# owl:imports dct: , skos: , uniprot: ;
+  dct:description "The neXtProt ontology is used to represent various evidence based statements (multiple annotation types) regarding human proteins";
+  dct:created "2015-05-12"^^xsd:date ;
+  dct:creator [
+    a sdo:Person ;
+    sdo:affiliation <https://www.sib.swiss> ;
+    sdo:email "support@nextprot.org"^^xsd:string ;
+#   sdo:identifier <https://orcid.org/0000-0002-8742-7730> ; # as an example, Pam's orcid
+    sdo:name "CALIPHO team"^^xsd:string ;
+  ] ;
+  dct:license <http://creativecommons.org/licenses/by/4.0> ;
+  dct:modified "$releaseInfoVersions.databaseRelease"^^xsd:date ;
+  dct:title "neXtProt ontology" ;
+  owl:versionInfo "Current release"^^xsd:string ;
+  .
+
+##
+## Define neXtProt version
+##
 
 :Version
   rdf:type owl:Class ;
+  :sourceFile "version.ttl.vm"^^xsd:string ;
   rdfs:comment "The nextprot api version that generate those current data."^^xsd:string ;
+  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
   :ttlGenerationDate "$version.date"^^xsd:date ;
   :databaseRelease "$releaseInfoVersions.databaseRelease"^^xsd:string ;
   :apiRelease "$releaseInfoVersions.apiRelease"^^xsd:string ;
-  :genomeAssembly: "GRCh38"^^xsd:string ;  
+  :genomeAssembly "GRCh38"^^xsd:string ;  
   .
+ 

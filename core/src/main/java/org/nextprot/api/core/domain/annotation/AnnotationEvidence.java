@@ -340,9 +340,6 @@ public class AnnotationEvidence implements Serializable {
 		// special cases first
 		if ("expressionLevel".equals(name))
 			return getExpressionLevel();
-		if ("integrationLevel".equals(name))
-			return getIntegrationLevel();
-		// ...
 		// general case finally
 		return propertiesMap.get(name);
 	}
@@ -488,11 +485,6 @@ public class AnnotationEvidence implements Serializable {
 		}
 
 		return false;
-	}
-
-	@Deprecated
-	public String getIntegrationLevel() {
-		return extractProperty("integrationLevel");
 	}
 
 	public String getAntibodies() {

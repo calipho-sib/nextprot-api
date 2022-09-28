@@ -1,11 +1,11 @@
-package org.nextprot.api.etl.service.impl;
+package org.nextprot.api.etl.service.transform.impl;
 
 import com.google.common.base.Preconditions;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.service.SimpleStatementTransformerService;
-import org.nextprot.api.etl.service.StatementIsoformPositionService;
-import org.nextprot.api.etl.service.StatementTransformerService;
+import org.nextprot.api.etl.service.transform.SimpleStatementTransformerService;
+import org.nextprot.api.etl.service.transform.StatementIsoformPositionService;
+import org.nextprot.api.etl.service.transform.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.api.isoform.mapper.service.SequenceFeatureFactoryService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;

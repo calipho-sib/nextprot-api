@@ -18,7 +18,9 @@ isoform:$isoform-name a :Isoform;
 #foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name)) 
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName) ## used in child template(s)
 #set($annotation-type = $annotation.apiTypeName)                      ## used in child template(s)
-#if($annotation.isWildTypeAnnotation()) ## any type except PP,MP,ME
+## wild type: 
+## any type except ProteinProperty,MammalianPhenotype,PhenotypicVariation,DiseaseRelatedVariant,ElectrophysiologicalParameter
+#if($annotation.isWildTypeAnnotation()) 
 #foreach($parentPredicate in $annotation.parentPredicates)
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
 #end ## foreach parentPredicate
@@ -28,34 +30,37 @@ isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
 isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detectedExpression#else:undetectedExpression#end annotation:$annotation-uri .
 #end ## end if expression level detected  
 #end ## if is wildtype annotation
-#if (! $annotation.isProteoformAnnotation()) ## any type except ME
+## NOTE: wild type annotations are not connected to isoforms (see above)
+## but they are created below because they are referenced by ModificationEffect proteoform annotations 
+#if (! $annotation.isProteoformAnnotation()) ## any type except ModificationEffect
 #parse("turtle/isoform-annotation.ttl.vm")
 #end ## if is NOT proteoform annotation
 #end ## annotation
-
 
 ## TODO Pam: to be moved in parent template
 ## used to get info about an annotation which is a subject component or a object component
 #set($hashAnnotMap = $NXUtils.getHashAnnotationMap($entry))
 
-
 # Proteoform set
+
 #set($ProteoformAnnotationsMap = $NXUtils.getProteoformAnnotationsMap($entry,$isoform-name))
 #foreach($pf in $ProteoformAnnotationsMap.keySet())
 isoform:$pf.parentIsoformName :proteoform proteoform:$pf.id .
 
 # Proteoform definition
+
 proteoform:$pf.id a :Proteoform ;
   rdfs:label "$pf.label"^^xsd:string ;
 #foreach($compId in $pf.components)
 #set($annotation = $hashAnnotMap.get($compId))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
 ####set($annotation-type = $annotation.apiTypeName)
-  :modification annotation:$annotation-uri ;
+  :difference annotation:$annotation-uri ;
 #end ## foreach component
 .
 
 # Proteoform Annotations
+
 #foreach($annotation in $ProteoformAnnotationsMap.get($pf))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)    ## used in child template(s)
 #set($annotation-type = $annotation.apiTypeName)                         ## used in child template(s)
@@ -63,11 +68,8 @@ proteoform:$pf.id a :Proteoform ;
 proteoform:$pf.id :$parentPredicate annotation:$annotation-uri .
 #end ## foreach parentPredicate
 proteoform:$pf.id :$annotation.rdfPredicate annotation:$annotation-uri .
-
 # Proteoform annotation details
-
 #parse("turtle/isoform-annotation.ttl.vm")
-
 #end ## foreach annotation
 #end ## foreach proteoform
 

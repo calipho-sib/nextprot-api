@@ -35,6 +35,13 @@ public class Overview implements Serializable{
 		return history;
 	}
 	
+	public EntityName findGeneEntityName(String recName) {
+		for (EntityName e: this.getGeneNames()) {
+			if (e.getName().equals(recName)) return e;
+		}
+		return null;
+	}
+	
 	/**
 	 * The recommended name is composed by 1 full name and can optionally contain n short names and n ECs (enzyme names)
 	 * @return the recommended name as full and its synonyms (shorts ent ECs) if they exists

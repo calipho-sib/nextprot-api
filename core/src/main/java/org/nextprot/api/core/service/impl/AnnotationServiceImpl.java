@@ -23,6 +23,8 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.publication.EntryPublication;
+import org.nextprot.api.core.domain.publication.EntryPublications;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.service.annotation.CatalyticActivityUtils;
@@ -77,6 +79,8 @@ public class AnnotationServiceImpl implements AnnotationService {
     private EntityNameService entityNameService;
     @Autowired
     private VariantFrequencyService variantFrequencyService;
+    @Autowired
+    private EntryPublicationService entryPublicationService;
 
     private static void refactorDescription(Annotation annotation) {
 
@@ -197,6 +201,10 @@ public class AnnotationServiceImpl implements AnnotationService {
                 .filter(annotation -> annotationCategorySet.contains(annotation.getAPICategory().getApiTypeName()))
                 .collect(Collectors.groupingBy(Annotation::getAPICategory));
         Map<String, List<Annotation>> annotationsByCategories = new HashMap<>();
+        EntryPublications publications = entryPublicationService.findEntryPublications(entryName);
+        List<DbXref> xrefs = xrefService.findDbXrefByAccession(entryName);
+
+
         for (AnnotationCategory cat : groupedAnnotations.keySet()) {
             annotationsByCategories.put(cat.getApiTypeName(), groupedAnnotations.get(cat));
         }

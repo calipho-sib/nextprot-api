@@ -6,22 +6,58 @@
 # Define classes for annotations
 #
 
-:AnnotationType 
+:Annotation 
   rdf:type owl:Class;
-  rdfs:label "Annotation type"^^xsd:string;  
+  rdfs:label "Annotation"^^xsd:string;  
   rdfs:comment "Most generic annotation class"^^xsd:string;
+  rdfs:isDefinedBy <http://nextprot.org/rdf> ;  
+  :sourceFile "schema-annotation-list.ttl.vm"^^xsd:string ;
   .
  
 #foreach($annotation in $annotationList)
-#if($annotation.apiTypeName != "AnnotationType")
+#if($annotation.apiTypeName != "Annotation" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
 :$annotation.apiTypeName
+   rdf:type owl:Class;
    rdfs:subClassOf :$annotation.parent.apiTypeName ;
    rdfs:label "$annotation.label"^^xsd:string;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
-#end   
+#end
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "AnnotationCategory.java:label,nextprot.cv_terms:comment"^^xsd:string ;
    .
    
 #end
 #end
+
+
+
+#
+# Define properties for annotations
+#
+
+#foreach($annotation in $annotationList)
+#if($annotation.apiTypeName != "Annotation" && $annotation.apiTypeName != "TransitPeptide" && $annotation.apiTypeName != "Expression" && $annotation.apiTypeName != "MammalianPhenotype" &&  $annotation.apiTypeName != "ProteinProperty" && $annotation.apiTypeName != "Disease" && $annotation.apiTypeName != "ElectrophysiologicalParameter" && $annotation.apiTypeName != "Name" && $annotation.apiTypeName != "VirtualAnnotation" && $annotation.apiTypeName != "PepxVirtualAnnotation")
+:$StringUtils.lowerFirstChar($annotation.apiTypeName)
+   a rdf:Property, owl:ObjectProperty ;
+#if($annotation.apiTypeName == "FamilyName")
+   rdfs:domain :Entry ;
+#elseif($annotation.apiTypeName == "DiseaseRelatedVariant" || $annotation.apiTypeName == "PhenotypicVariation")
+   rdfs:domain :Proteoform ;
+#else
+   rdfs:domain :Isoform ;
+#end 
+   rdfs:range :$annotation.apiTypeName ;
+#if($annotation.parent.apiTypeName != "Annotation")
+   rdfs:subPropertyOf :$StringUtils.lowerFirstChar($annotation.parent.apiTypeName) ;
+#end
+   rdfs:label "$StringUtils.lower($annotation.label)"^^xsd:string;
+   rdfs:comment "Links an isoform to an annotation"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "AnnotationCategory.java:label,schema-annotation-list.ttl.vm:comment"^^xsd:string ;
+   .
+   
+#end
+#end
+
 

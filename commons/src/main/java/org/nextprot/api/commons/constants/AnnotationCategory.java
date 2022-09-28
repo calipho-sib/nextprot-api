@@ -17,7 +17,7 @@ import java.util.*;
 public enum AnnotationCategory implements Serializable {
 
 	//Special node for the root
-	ROOT(0, "Root", "annotationType", "Annotation type", null),
+	ROOT(0, "Root", "annotation", "Annotation", null),
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type
@@ -46,7 +46,6 @@ public enum AnnotationCategory implements Serializable {
 	CELLULAR_COMPONENT(-12, "GenericLocation", "cellularComponent", "Cellular component", GENERAL_ANNOTATION),
 	GENERIC_EXPRESSION(-15, "GenericExpression", "expression", "Expression", GENERAL_ANNOTATION),
 	MEDICAL(-13, "Medical", "medical", "Medical", GENERAL_ANNOTATION),
-	KEYWORD(-14, "Keyword", "keyword", "Keywords", GENERAL_ANNOTATION),
 	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", GENERAL_ANNOTATION),
 	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERAL_ANNOTATION),
 
@@ -138,7 +137,7 @@ public enum AnnotationCategory implements Serializable {
 	MISCELLANEOUS(1052, "miscellaneous", "miscellaneous", "Miscellaneous", GENERAL_ANNOTATION),
 	CAUTION(1054, "caution", "caution", "Caution", GENERAL_ANNOTATION),
 	SEQUENCE_CAUTION(1056, "sequence caution", "sequenceCaution", "Sequence caution", GENERAL_ANNOTATION),
-	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "Uniprot keyword", KEYWORD),
+	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "Uniprot keyword", GENERAL_ANNOTATION),
 
 	FUNCTION_INFO(1033, "function", "functionInfo", "Function info", GENERIC_FUNCTION),
 	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "Catalytic activity", GENERIC_FUNCTION),
@@ -181,10 +180,8 @@ public enum AnnotationCategory implements Serializable {
 	//New categories added with BioEditor integration
 	ELECTROPHYSIOLOGICAL_PARAMETER(-9993, "electrophysiological-parameter", "electrophysiologicalParameter", "Electrophysiological parameter", GENERAL_ANNOTATION),
 	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
-	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "Generic phenotype", GENERAL_ANNOTATION),
-	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERIC_PHENOTYPE),
-	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERIC_PHENOTYPE),
-
+	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERAL_ANNOTATION),
+	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERAL_ANNOTATION),
 	
 	//Virtual annotations (for pepx)
 	VIRTUAL_ANNOTATION(-70000, "virtual-annotation", "virtualAnnotation", "Virtual annotation", ROOT), //to represent stable form

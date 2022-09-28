@@ -219,7 +219,7 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setMode("advanced");
         qr.setQuality("gold");
         qr.setSparqlEngine("Jena");
-        qr.setSparql("#Proteins phosphorylated and located in the cytoplasm\nselect distinct ?entry where {\n  ?entry :isoform ?iso.\n  ?iso :keyword / :term cv:KW-0597.\n  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n}");
+        qr.setSparql("#Proteins phosphorylated and located in the cytoplasm\nselect distinct ?entry where {\n  ?entry :isoform ?iso.\n  ?iso :uniprotKeyword / :term cv:KW-0597.\n  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n}");
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
         SearchResult result = service.executeQuery(q);
@@ -268,8 +268,9 @@ public class SolrQueryServiceTest extends WebUnitBaseTest {
         qr.setQueryId("3K8W9PJT");
 
         Query q = queryBuilderService.buildQueryForSearch(qr, Entity.Entry);
+        System.out.println("query:" +q.getQueryString());
         SearchResult result = service.executeQuery(q);
-
+        System.out.println("found:" + result.getFound());
         assertTrue(result.getFound() >= 5636);
     }
 }

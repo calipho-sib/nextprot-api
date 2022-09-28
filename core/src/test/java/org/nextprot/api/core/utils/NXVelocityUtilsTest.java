@@ -37,7 +37,7 @@ public class NXVelocityUtilsTest extends CoreUnitBaseTest {
     	
     	PropertyWriter w = NXVelocityUtils.getTtlPropertyWriter(AnnotationCategory.EXPRESSION_PROFILE, PropertyApiModel.NAME_EXPRESSION_LEVEL);
     	Assert.assertTrue(w != null);
-    	Assert.assertTrue(w.getName().equals("expressionLevel"));
+    	Assert.assertTrue(w.getName().equals("observedExpression"));
     	Assert.assertTrue(w.formatValue("low").equals(":Low"));
     	Assert.assertTrue(w.getDataType().equals("string"));
     }
