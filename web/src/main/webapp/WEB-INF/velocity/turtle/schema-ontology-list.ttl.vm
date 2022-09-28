@@ -39,8 +39,7 @@
     rdfs:subClassOf :Term ;
     rdfs:label "$ontology.getName() term"^^xsd:string ;
     rdfs:comment "$ontology.getDescription()"^^xsd:string ;
-    rdfs:seeAlso <http://www.nextprot.org/manual/$ontology.getOntology()> ;
-     rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
     :sourceFile "nextprot.cv_term_categories.cv_display_name:label,description:comment"^^xsd:string ;
     .
 #end
