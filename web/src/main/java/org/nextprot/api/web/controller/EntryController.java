@@ -31,10 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -142,6 +139,40 @@ public class EntryController {
     	Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName)
 				.withSubParts(categories)
 				.withBed(true));
+
+		// Filters only the relevant publications and updates the entry with those
+    	Set<Long> relevantPublicationIds = new HashSet<>();
+    	Set<Long> relevantXrefIds = new HashSet<>();
+    	entry.getAnnotations()
+				.parallelStream()
+				.forEach(annotation -> {
+					annotation.getEvidences()
+							.stream()
+							.forEach(annotationEvidence -> {
+								if(annotationEvidence.getResourceType().equals("database")) {
+									relevantXrefIds.add(annotationEvidence.getResourceId());
+								} else if(annotationEvidence.getResourceType().equals("publication")) {
+									relevantPublicationIds.add(annotationEvidence.getResourceId());
+								}
+							});
+				});
+
+
+    	Set<Publication> relevantPublications = entry.getPublications()
+				.stream()
+				.filter(publication -> relevantPublicationIds.contains(publication.getPublicationId()))
+				.collect(Collectors.toSet());
+    	List<Publication> relevantPublicationList = new ArrayList<>();
+    	relevantPublicationList.addAll(relevantPublications);
+    	entry.setPublications(relevantPublicationList);
+
+    	Set<DbXref> relevantXrefs = entry.getXrefs()
+				.stream()
+				.filter(dbXref -> relevantXrefIds.contains(dbXref.getDbXrefId()))
+				.collect(Collectors.toSet());
+    	List<DbXref> relevantXrefList = new ArrayList<>();
+    	relevantXrefList.addAll(relevantXrefs);
+    	entry.setXrefs(relevantXrefList);
 
 		model.addAttribute("entry", entry);
 		return "entry";
