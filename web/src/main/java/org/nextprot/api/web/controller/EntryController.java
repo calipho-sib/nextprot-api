@@ -139,16 +139,12 @@ public class EntryController {
 			@PathVariable("entry") String entryName,
 			HttpServletRequest request, Model model){
 
-    	categories = categories.stream()
-				.map(category -> category.toLowerCase(Locale.ROOT))
-				.collect(Collectors.toList());
     	Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName)
 				.withSubParts(categories)
 				.withBed(true));
 
 		model.addAttribute("entry", entry);
 		return "entry";
-
 	}
 
 	@ApiMethod(path = "/isoforms", verb = ApiVerb.GET, description = "Retrieves all isoforms", produces = {MediaType.APPLICATION_JSON_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE})
