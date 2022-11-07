@@ -88,6 +88,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 				evidence.setAssignmentMethod(amam.getAssignmentMethod());
 				evidence.setEvidenceCodeAC(amam.getEcoAC());
 				evidence.setEvidenceCodeOntology(amam.getEcoOntology());
+				evidence.setQualityQualifier("GOLD");
 				evidence.setEvidenceCodeName(amam.getEcoName());
                 evidence.setResourceAssociationType("evidence");
                 evidence.setResourceAccession(resultSet.getString("resource_ac"));
