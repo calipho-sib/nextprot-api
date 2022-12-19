@@ -51,11 +51,13 @@ public class FunctionPredictionDAOImpl implements FunctionPredictionDAO {
             String userOrcIDs = resultSet.getString( "user_orcid");
             boolean userHidden = resultSet.getBoolean( "user_hidden");
             String publicationAccession = resultSet.getString( "publication_ac");
+            String proteinOrigin = resultSet.getString("protein_origin");
             String publicationDB = resultSet.getString( "publication_db");
 
             PredictionEvidence predictionEvidence = new PredictionEvidence(ecoCodeAccession);
             predictionEvidence.setStatementID(statementID);
             predictionEvidence.setPublicationAc(publicationAccession);
+            predictionEvidence.setProteinOrigin(proteinOrigin);
             predictionEvidence.setPublicationDatabaseName(publicationDB);
             predictionEvidence.setUserHidden(userHidden);
             if(userOrcIDs != null) {

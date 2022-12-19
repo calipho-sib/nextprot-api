@@ -15,6 +15,8 @@ public class PredictionEvidence {
 
     private String publicationDatabaseName;
 
+    private String proteinOrigin;
+
     private List<String> userOrcIDs = new ArrayList<>();
 
     private boolean userHidden;
@@ -30,6 +32,8 @@ public class PredictionEvidence {
     public void setPublicationAc(String publicationAccession) {
         this.publicationAc = publicationAccession;
     }
+
+    public void setProteinOrigin(String proteinOrigin) { this.proteinOrigin = proteinOrigin; }
 
     public void setPublicationDatabaseName(String publicationDatabaseName) {
         this.publicationDatabaseName = publicationDatabaseName;
@@ -54,6 +58,8 @@ public class PredictionEvidence {
     public String getPublicationAc() {
         return this.publicationAc;
     }
+
+    public String getProteinOrigin() { return this.proteinOrigin;}
 
     public String getPublicationDatabaseName() {
         return this.publicationDatabaseName;
