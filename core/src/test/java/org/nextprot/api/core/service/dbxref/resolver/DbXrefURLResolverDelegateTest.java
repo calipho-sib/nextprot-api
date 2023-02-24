@@ -46,8 +46,8 @@ public class DbXrefURLResolverDelegateTest {
     	System.out.println("db:" + xref.getDatabaseName());
     	System.out.println("lu:" + xref.getLinkUrl());
     	System.out.println("ru:" + xref.getResolvedUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=%s", xref.getLinkUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-bla,bla", xref.getResolvedUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/%s", xref.getLinkUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/EBI-bla,bla", xref.getResolvedUrl());
 
     	xref = createDbXref("ENSGblabla", "Bgee", null);
     	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
@@ -445,12 +445,10 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveIntAct() throws Exception {
 
-        DbXref xref = createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
+        DbXref xref = createDbXref("EBI-7064508", "IntAct", "whatever");
 
-        //Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
-        //Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=%s", xref.getLinkUrl());
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/EBI-7064508", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/%s", xref.getLinkUrl());
     }
 
     @Test

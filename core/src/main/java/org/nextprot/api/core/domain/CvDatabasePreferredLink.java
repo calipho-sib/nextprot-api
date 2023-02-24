@@ -32,7 +32,7 @@ public enum CvDatabasePreferredLink {
 	HPA_SUBCELL(ReleaseDataSources.HPA.getUrl()+"%s"),
 	HPA_ANTIBODY(ReleaseDataSources.HPA.getUrl()+ "search/%s"),
 	IFO("http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s"),
-	INTACT_BINARY("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=%s"),
+	INTACT_BINARY("https://www.ebi.ac.uk/intact/details/interaction/%s"),
 	JCRB("http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s"),
 	LOC("https://www.ncbi.nlm.nih.gov/gene?term=%s[All Fields]&cmd=DetailsSearch"),
 	MASSIVE("https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=%s"),

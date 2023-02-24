@@ -18,9 +18,9 @@ public class IntactXrefURLResolverTest {
     @Test
     public void testResolveIntAct() throws Exception {
 
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("EBI-1644164", "IntAct", "whatever");
 
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/EBI-1644164", resolver.resolve(xref));
     }
 
     @Test
