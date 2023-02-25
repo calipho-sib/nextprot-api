@@ -40,14 +40,14 @@ public class DbXrefURLResolverDelegateTest {
     public void testsUsefulForNP2Pipeline() throws Exception {
     	DbXref xref;
     	
-    	xref = createDbXref("EBI-bla,bla", "IntAct", null);
+    	xref = createDbXref("EBI-bla,EBI-blu", "IntAct", null);
     	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
     	System.out.println("ac:" + xref.getAccession());
     	System.out.println("db:" + xref.getDatabaseName());
     	System.out.println("lu:" + xref.getLinkUrl());
     	System.out.println("ru:" + xref.getResolvedUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/%s", xref.getLinkUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/EBI-bla,bla", xref.getResolvedUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-bla%20AND%20id:EBI-blu)#interactor", xref.getResolvedUrl());
 
     	xref = createDbXref("ENSGblabla", "Bgee", null);
     	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
@@ -445,10 +445,10 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveIntAct() throws Exception {
 
-        DbXref xref = createDbXref("EBI-7064508", "IntAct", "whatever");
+        DbXref xref = createDbXref("EBI-1234,EBI-98765", "IntAct", "whatever");
 
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/EBI-7064508", resolver.resolve(xref));
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/details/interaction/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-1234%20AND%20id:EBI-98765)#interactor", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
     }
 
     @Test
