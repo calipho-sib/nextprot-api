@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +29,12 @@ public class QuickAndDirtyKeywordProcessor {
 		boolean shouldHaveKW_0488 = false; // Methyl
 		boolean shouldHaveKW_0597 = false; // Phospho
 		boolean shouldHaveKW_2001 = false; // Rare disease (new :-)
+		boolean shouldHaveKW_1267 = false; // Proteomics ok for PE1 upgrade (PE Rule 2)
 		boolean hasKW_0325 = false;
 		boolean hasKW_0488 = false;
 		boolean hasKW_0597 = false;
 		boolean hasKW_2001 = false;
+		boolean hasKW_1267 = false;
 		
 		for (Annotation a:annotations) {
 						
@@ -69,6 +72,7 @@ public class QuickAndDirtyKeywordProcessor {
 				if      ("KW-0325".equals(a.getCvTermAccessionCode())) hasKW_0325 = true;				
 				else if ("KW-0488".equals(a.getCvTermAccessionCode())) hasKW_0488 = true;				
 				else if ("KW-0597".equals(a.getCvTermAccessionCode())) hasKW_0597 = true;								
+				else if ("KW_1267".equals(a.getCvTermAccessionCode())) hasKW_1267 = true;								
 			}
 		}
 		// at the moment we only add missing keywords for existing PTMs imported from nxflat on 9 Sept 2018
@@ -101,7 +105,17 @@ public class QuickAndDirtyKeywordProcessor {
 			}
 		}
 		
+		AnnotationUtils.Rule2Result result = AnnotationUtils.entryAnnotationsMeetProteinExistenceRule2(annotations);
+		if (result.success) shouldHaveKW_1267 = true;
+		if (shouldHaveKW_1267 && ! hasKW_1267) {
+			annotations.add(createKeywordAnnotation("KW-1267", "Proteomics identification", "Technical term ", entryName, isoforms, terminologyService));
+			//System.out.println("Added KW-1267 - " + result.peptideSet + " - " + result.pairFound);
+		} else {
+			//System.out.println("Did not add KW-1267");			
+		}
+	
 	}
+
 	
 	private static Annotation createKeywordAnnotation(String kwAccession, String kwName, String kwCategory,
 													  String entryName, List<Isoform> isoforms,
