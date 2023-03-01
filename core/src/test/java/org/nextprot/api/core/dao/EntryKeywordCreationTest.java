@@ -18,7 +18,7 @@ public class EntryKeywordCreationTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void testFindEntryProperties() {
-		// NX_A0A075B6K0 NX_A6NE52 NX_I6L899
+		// NX_A0A075B6K0 NX_A6NE52 NX_I6L899 should have result = true
 		boolean result = false;
 		List<Annotation> annots = annotService.findAnnotations("NX_A6NE52");
 		for (Annotation annot : annots) {
