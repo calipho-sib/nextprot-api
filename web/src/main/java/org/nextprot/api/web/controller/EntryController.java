@@ -5,6 +5,7 @@ import org.jsondoc.core.annotation.ApiBodyObject;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.*;
@@ -135,9 +136,20 @@ public class EntryController {
 			@RequestParam List<String> categories,
 			@PathVariable("entry") String entryName,
 			HttpServletRequest request, Model model){
+    	List<String> allCategories = new ArrayList<>();
+    	for(String annotationCatrgory : categories) {
+    		allCategories.add(annotationCatrgory);
+    		AnnotationCategory.getByDbAnnotationTypeName(annotationCatrgory)
+					.getChildren()
+					.stream()
+					.forEach(category -> {
+						System.out.println("Adding " + category.getApiTypeName());
+						allCategories.add(category.getApiTypeName());
+					});
+		}
 
     	Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName)
-				.withSubParts(categories)
+				.withSubParts(allCategories)
 				.withBed(true));
 
 		// Filters only the relevant publications and updates the entry with those
