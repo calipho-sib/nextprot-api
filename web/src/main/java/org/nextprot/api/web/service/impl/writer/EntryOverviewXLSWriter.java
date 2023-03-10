@@ -55,7 +55,8 @@ public class EntryOverviewXLSWriter extends EntryXLSWriter {
             values[8] = entryReport.countVariants();
             values[9] = entryReport.countPTMs();
             values[10] = booleanToYesNoString(entryReport.isMutagenesis());
-            values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
+            //values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile()); // deprecated method NP1 data only
+            values[11] = booleanToYesNoString(entryReport.isExpression());							 // new NP2 based computation
             values[12] = entry.getOverview().getProteinExistence().getDescription();
 
             Record record = new Record(values);

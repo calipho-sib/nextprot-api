@@ -69,6 +69,12 @@ public class GeneNameController {
 		return geneEntries;
 	}
 
+	@RequestMapping(value = "/entry-gene-names-and-alt-names", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String, List<String>> entryGeneNamesAndAltNames() {
+		return geneIdentifierService.findEntryGeneNamesAndAltNames();
+	}
+	
 	@RequestMapping(value = "/entry-gene-names", method = { RequestMethod.GET })
 	@ResponseBody
 	public Map<String, List<String>> entryGeneIdentifiers() {

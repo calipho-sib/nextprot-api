@@ -68,7 +68,8 @@ class EntityNameServiceImpl implements EntityNameService {
     private Map<Overview.EntityNameClass, List<EntityName>> findNamesByEntityNameClass(String uniqueName) {
 
         List<EntityName> entityNames = entryNameDao.findNames(uniqueName);
-        entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
+        // Pam, 31.05.2022 - line below obsolete, now we get all data we need from entryNameDao.findNames()
+        // entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
 
         Map<Overview.EntityNameClass, List<EntityName>> map = new EnumMap<>(Overview.EntityNameClass.class);
 

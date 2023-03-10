@@ -4,6 +4,7 @@ import org.nextprot.api.core.dao.GeneIdentifierDao;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.service.GeneIdentifierService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,9 +12,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 
@@ -26,6 +29,8 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 
 	@Autowired
 	private OverviewService overviewService;
+	@Autowired
+	private MasterIdentifierService masterService;
 
 	@Override
 	@Cacheable(value = "all-gene-names", sync = true)
@@ -62,6 +67,30 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 		return geneNames;
 	}
 
+	@Override
+	@Cacheable(value = "entry-gene-names-and-alt-names", sync = true)
+	public Map<String,List<String>> findEntryGeneNamesAndAltNames() {
+		Map<String,List<String>> result = new TreeMap<String,List<String>>();
+		Set<String> acs = masterService.findUniqueNames();
+		int cpt = 0;
+		for (String ac: acs) {
+			cpt++;
+			if (cpt % 500 == 0) System.out.println(new Date() + " - building entry gene names and alt names " + cpt + " / " + acs.size());
+	        List<String> geneNames = new ArrayList<>();
+			List<EntityName> entityNames = overviewService.findOverviewByEntry(ac).getGeneNames();
+			if (entityNames != null) {
+				for (EntityName entityName : entityNames) {
+		            geneNames.add(entityName.getName());
+		            geneNames.addAll(entityName.getSynonyms().stream().map(syn -> syn.getName()).collect(Collectors.toList()));
+		        }
+			}
+			result.put(ac, geneNames);
+		}
+		System.out.println(new Date() + " - built entry gene names and alt names " + cpt + " / " + acs.size());
+		return result;
+	}
+	
+	
 	@Override
 	@Cacheable(value = "all-entry-gene-names", sync = true)
 	public Map<String, List<String>> findEntryGeneNames() {

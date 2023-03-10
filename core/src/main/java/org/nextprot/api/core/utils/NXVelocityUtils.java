@@ -5,6 +5,7 @@ import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Isoform;
@@ -14,15 +15,81 @@ import org.nextprot.api.core.service.annotation.AnnotationUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class NXVelocityUtils {
+	
+	private static Map<String, String> name2RdfClass = new HashMap<>();
+	static {
+		// clazz.name | type | qualifier 
+		name2RdfClass.put("PROTEIN_NAMES | name | full",									"ProteinName");
+		name2RdfClass.put("PROTEIN_NAMES | name | short", 									"ShortName");
+		name2RdfClass.put("PROTEIN_NAMES | enzyme name | EC", 								"EnzymeName");
+		name2RdfClass.put("GENE_NAMES | gene name | null", 									"GeneName");
+		name2RdfClass.put("GENE_NAMES | open reading frame | null", 						"ORFName");
+		name2RdfClass.put("ADDITIONAL_NAMES | CD antigen | CD antigen", 					"CDAntigenName");
+		name2RdfClass.put("ADDITIONAL_NAMES | allergen | allergen",							"AllergenName");
+		name2RdfClass.put("ADDITIONAL_NAMES | International Nonproprietary Names | INN",	"InternationalNonproprietaryName");
+		name2RdfClass.put("CLEAVED_REGION_NAMES | name | full",								"CleavedRegionName");		
+		name2RdfClass.put("CLEAVED_REGION_NAMES | name | short", 							"ShortName");
+		name2RdfClass.put("CLEAVED_REGION_NAMES | enzyme name | EC", 						"EnzymeName");
+		name2RdfClass.put("FUNCTIONAL_REGION_NAMES | region name | short",					"ShortName");
+		name2RdfClass.put("FUNCTIONAL_REGION_NAMES | region name | full",					"FunctionalRegionName");
+	}
+
 	
     private NXVelocityUtils() {
         throw new AssertionError("should not be instanciable");
     }
 
+    
+	public static String getRdfClass(EntityName name) {
+		String key = name.getClazz().name() + " | " + name.getType() + " | " + name.getQualifier();
+		return name2RdfClass.getOrDefault(key, "Name");
+	}
+
+    public static String getRdfPropertyToEntry(EntityName name) { //, EntityName parentName) {
+    	
+    	final String REC = "recommendedName";
+    	final String ALT = "alternativeName";
+    	final String ORF = "orfName";
+    	final String NAM = "name";
+    	
+    	String rdfClass = getRdfClass(name);
+    	
+    	// algorithm depends upon Name class:
+		//    	protname: f(is_main)
+		//    	cleaved: f(is_main)
+		//    	gene:f(is_main)
+		//    	enzyme: f(is_main)
+		//    	allergen,f(is_main) // CDAntigen, INN, Allergen (always alternative)
+		//    	short: f(parent)    OR 'alternative' => to be discussed
+		//    	funct: f(has_parent)
+		//    	orf: orfName
+
+    	// most frequent class first to be a bit more efficient
+    	if (rdfClass.equals("ProteinName")) return name.isMain() ? REC : ALT;
+    	// --- to be discussed, pam 03.06.2022 ---
+    	//if (rdfClass.equals("ShortName")) return getRdfPropertyToEntry(parentName, null);
+    	if (rdfClass.equals("ShortName")) return ALT;
+    	// --- end to be discussed
+    	if (rdfClass.equals("CleavedRegionName")) return name.isMain() ? REC : ALT;
+    	if (rdfClass.equals("GeneName")) return name.isMain() ? REC : ALT;
+    	if (rdfClass.equals("EnzymeName")) return name.isMain() ? REC : ALT;
+    	if (rdfClass.equals("FunctionalRegionName")) return null==name.getParentId() ? REC : ALT; 
+    	if (rdfClass.equals("ORFName")) return ORF;
+    	if (rdfClass.equals("CDAntigenName")) return ALT;
+    	if (rdfClass.equals("AllergenName")) return ALT;
+    	if (rdfClass.equals("InternationalNonproprietaryName")) return ALT;    		
+    	return NAM;  // should not occur but...
+    	
+    }
+
+    
     public static Map<String,Annotation> getUniqueNameAnnotationMap(Entry entry) {
     	return EntryUtils.getUniqueNameAnnotationMap(entry);
     }
@@ -109,4 +176,11 @@ public class NXVelocityUtils {
 
 		return hierarchy;
 	}
+
+	public static Set<String> clonedSetWithoutElement(Set<String> originalSet, String el) {
+    	Set<String> result = new HashSet<>(originalSet);	
+		result.remove(el);
+    	return result;	
+	}
+	
 }

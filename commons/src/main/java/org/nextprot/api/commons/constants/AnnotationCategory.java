@@ -17,7 +17,7 @@ import java.util.*;
 public enum AnnotationCategory implements Serializable {
 
 	//Special node for the root
-	ROOT(0, "Root", "Root", "", null),
+	ROOT(0, "Root", "annotation", "Annotation", null),
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type
@@ -46,7 +46,10 @@ public enum AnnotationCategory implements Serializable {
 	CELLULAR_COMPONENT(-12, "GenericLocation", "cellularComponent", "Cellular component", GENERAL_ANNOTATION),
 	GENERIC_EXPRESSION(-15, "GenericExpression", "expression", "Expression", GENERAL_ANNOTATION),
 	MEDICAL(-13, "Medical", "medical", "Medical", GENERAL_ANNOTATION),
-	KEYWORD(-14, "Keyword", "keyword", "Keywords", GENERAL_ANNOTATION),
+	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", GENERAL_ANNOTATION),
+	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERAL_ANNOTATION),
+
+
 
 
 	//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
@@ -69,11 +72,12 @@ public enum AnnotationCategory implements Serializable {
 	PDB_MAPPING(116892, "3D structure", "pdbMapping", "PDB mapping", MAPPING),
 	PEPTIDE_MAPPING(-116892, "peptide mapping", "peptideMapping", "Peptide mapping", MAPPING),
 	SRM_PEPTIDE_MAPPING(-116893, "SRM peptide mapping", "srmPeptideMapping", "SRM Peptide mapping", MAPPING),
-	ANTIBODY_MAPPING(-116894, "antibody mapping", "antibodyMapping", "Antibody mapping", MAPPING),
+	ANTIBODY_MAPPING(-116894, "antibody mapping", "antibodyMapping", "Antibody mapping", MAPPING),	
+	// for ENYO data, similar to interacting region BUT not necessarily the minuimal region (may be larger than functional region)
+	INTERACTION_MAPPING(-116895, "interaction mapping", "interactionMapping", "Interaction mapping", MAPPING),
 
 	NON_CONSECUTIVE_RESIDUE(1031, "non-consecutive residues", "nonConsecutiveResidue", "Non-consecutive residue", POSITIONAL_ANNOTATION),
 	NON_TERMINAL_RESIDUE(1032, "non-terminal residue", "nonTerminalResidue", "Non-terminal residue", POSITIONAL_ANNOTATION),
-	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", POSITIONAL_ANNOTATION),
 
 	INITIATOR_METHIONINE(1000, "initiator methionine", "initiatorMethionine", "Initiator methionine", PROCESSING_PRODUCT),
 	SIGNAL_PEPTIDE(1001, "signal peptide", "signalPeptide", "Signal peptide", PROCESSING_PRODUCT),
@@ -113,7 +117,6 @@ public enum AnnotationCategory implements Serializable {
 	CROSS_LINK(1023, "cross-link", "crossLink", "Cross-link", GENERIC_PTM),
 	DISULFIDE_BOND(1022, "disulfide bond", "disulfideBond", "Disulfide bond", GENERIC_PTM),
 	MODIFIED_RESIDUE(13, "amino acid modification", "modifiedResidue", "Modified residue", GENERIC_PTM),
-	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERIC_PTM),
 
 	HELIX(1024, "helix", "helix", "Helix", SECONDARY_STRUCTURE),
 	TURN(1025, "turn", "turn", "Turn", SECONDARY_STRUCTURE),
@@ -123,6 +126,7 @@ public enum AnnotationCategory implements Serializable {
 
 	MUTAGENESIS(1028, "mutagenesis site", "mutagenesis", "Mutagenesis", POSITIONAL_ANNOTATION),
 	SEQUENCE_CONFLICT(1029, "sequence conflict", "sequenceConflict", "Sequence conflict", POSITIONAL_ANNOTATION),
+	DISEASE_RELATED_VARIANT(-9994, "disease-related-variant", "diseaseRelatedVariant", "Disease-related variant", POSITIONAL_ANNOTATION),
 
 	// instances of general annotations
 	
@@ -133,7 +137,7 @@ public enum AnnotationCategory implements Serializable {
 	MISCELLANEOUS(1052, "miscellaneous", "miscellaneous", "Miscellaneous", GENERAL_ANNOTATION),
 	CAUTION(1054, "caution", "caution", "Caution", GENERAL_ANNOTATION),
 	SEQUENCE_CAUTION(1056, "sequence caution", "sequenceCaution", "Sequence caution", GENERAL_ANNOTATION),
-	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "Uniprot keyword", KEYWORD),
+	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "Uniprot keyword", GENERAL_ANNOTATION),
 
 	FUNCTION_INFO(1033, "function", "functionInfo", "Function info", GENERIC_FUNCTION),
 	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "Catalytic activity", GENERIC_FUNCTION),
@@ -176,10 +180,8 @@ public enum AnnotationCategory implements Serializable {
 	//New categories added with BioEditor integration
 	ELECTROPHYSIOLOGICAL_PARAMETER(-9993, "electrophysiological-parameter", "electrophysiologicalParameter", "Electrophysiological parameter", GENERAL_ANNOTATION),
 	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
-	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "Generic phenotype", GENERAL_ANNOTATION),
-	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERIC_PHENOTYPE),
-	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERIC_PHENOTYPE),
-
+	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERAL_ANNOTATION),
+	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERAL_ANNOTATION),
 	
 	//Virtual annotations (for pepx)
 	VIRTUAL_ANNOTATION(-70000, "virtual-annotation", "virtualAnnotation", "Virtual annotation", ROOT), //to represent stable form

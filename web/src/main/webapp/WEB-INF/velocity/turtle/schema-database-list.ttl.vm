@@ -1,36 +1,80 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
 #end
+
 #
 # Define Database
 # 
 :Database
       rdf:type owl:Class ;
+      rdfs:label "Database"^^xsd:string ;
       rdfs:comment "Database of the cross-reference"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
 
 :Xref
       rdf:type owl:Class ;
+      rdfs:label "Cross reference"^^xsd:string ;
       rdfs:comment "Cross reference"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
       
 :Identifier
       rdf:type owl:Class ;
-      rdfs:comment "Identifier type"^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
+      rdfs:label "Identifier"^^xsd:string ;
+      rdfs:comment "Identifier"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
       .
-      
+
+:provenance
+      a rdf:Property, owl:ObjectProperty ;
+      rdfs:label "provenance"^^xsd:string ;
+      rdfs:comment "Links a cross-reference or identifier to its database"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
+	  rdfs:domain [ 
+	    a owl:Class ;
+	    owl:unionOf (:Xref :Identifier) 
+	  ] ;
+      rdfs:range :Database ;
+      .
+
+:accession
+      a rdf:Property, owl:DatatypeProperty ;
+      rdfs:label "accession"^^xsd:string ;
+      rdfs:comment "Links a cross-reference to a string uniquely identifying it in its database"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
+	  rdfs:domain [ 
+	    a owl:Class ;
+	    owl:unionOf (:Xref :Identifier) 
+	  ] ;
+      rdfs:range xsd:string ;
+      .
+
+:category
+      a rdf:Property, owl:DatatypeProperty ;
+      rdfs:label "category"^^xsd:string ;
+      rdfs:comment "Links a a database to its category"^^xsd:string ;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-database.ttl.vm"^^xsd:string ;
+	  rdfs:domain :Database ;
+      rdfs:range xsd:string ;
+      .
       
 #foreach($db in $databaseList)
   
-db:$StringUtils.slug($db.name) rdf:type :Database;
-  rdfs:subClassOf owl:Thing;
-  rdfs:comment "$db.description"^^xsd:string;
-  :category "$db.category"^^xsd:string;
+db:$StringUtils.slug($db.name) rdf:type owl:Thing, owl:NamedIndividual, :Database;
+  rdfs:label "$db.name"^^xsd:string ;
+  rdfs:comment "$db.description"^^xsd:string ;
+  :category "$db.category"^^xsd:string ;
 #if($db.getURL())
-  rdfs:seeAlso "$db.getURL()"^^xsd:anyURI;
+  rdfs:seeAlso "$db.getURL()"^^xsd:anyURI ;
 #end
+  rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+  :sourceFile "uniprot|controlled-vocabulary/more-dbxrefs.txt"^^xsd:string ;
   .      
 #end

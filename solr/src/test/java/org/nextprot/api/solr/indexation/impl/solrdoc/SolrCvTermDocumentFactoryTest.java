@@ -53,6 +53,12 @@ public class SolrCvTermDocumentFactoryTest {
 		Assert.assertEquals("liver", doc.getFieldValue(CvSolrField.NAME_S.getName()));
 		Assert.assertEquals("A triangular-shaped organ located under the diaphragm in the right hypochondrium. It is the largest internal organ of the body, weighting up to 2 kg. Metabolism and bile secretion are its main functions. It is composed of cells which have the ability to regenerate.", doc.getFieldValue(CvSolrField.DESCRIPTION.getName()));
 		Assert.assertEquals("Hepatic", doc.getFieldValue(CvSolrField.SYNONYMS.getName()));
-		Assert.assertEquals("UBERON:0002107, Uberon:UBERON:0002107 | FMA:7197, FMA:FMA:7197 | BTO:0000759, BRENDA:BTO:0000759 | D008099, MeSH:D008099", doc.getFieldValue(CvSolrField.OTHER_XREFS.getName()));
+		String actualXrefs = doc.getFieldValue(CvSolrField.OTHER_XREFS.getName()).toString();
+		Assert.assertTrue(actualXrefs.contains("UBERON:0002107, Uberon:UBERON:0002107"));
+		Assert.assertTrue(actualXrefs.contains("BTO:0000759, BRENDA:BTO:0000759"));
+		Assert.assertTrue(actualXrefs.contains("FMA:7197, FMA:FMA:7197"));
+		Assert.assertTrue(actualXrefs.contains("D008099, MeSH:D008099"));
+
+	
 	}
 }

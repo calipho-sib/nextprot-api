@@ -9,9 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +22,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup(value = "AnnotationMVCTest.xml", type = DatabaseOperation.INSERT)
 public class AnnotationDaoTest extends CoreUnitBaseTest {
 
-	@Autowired AnnotationDAO annotationDAO;
+	@Autowired
+	AnnotationDAO annotationDAO;
 
 	@Test
 	public void shouldGetTheListOfAnnotations() {
@@ -36,35 +34,36 @@ public class AnnotationDaoTest extends CoreUnitBaseTest {
 		long id = annotations.iterator().next().getAnnotationId();
 		List<Long> ids = Arrays.asList(id);
 
-		List<AnnotationEvidence> evidences = annotationDAO.findAnnotationEvidencesByAnnotationIds(ids);
-		List<AnnotationIsoformSpecificity> isoforms = annotationDAO.findAnnotationIsoformsByAnnotationIds(ids);
-		List<AnnotationProperty> property = annotationDAO.findAnnotationPropertiesByAnnotationIds(ids);
+		annotationDAO.findAnnotationEvidencesByAnnotationIds(ids);
+		annotationDAO.findAnnotationIsoformsByAnnotationIds(ids);
+		annotationDAO.findAnnotationPropertiesByAnnotationIds(ids);
 
 	}
-	
+
 	@Test
 	public void shouldTurnBiotechnologyAnnotationToMiscellaneous() {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_O43474");
 		assertEquals(annotations.get(0).getCategory(), AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName());
-		assertEquals(annotations.size(),1);		
+		assertEquals(annotations.size(), 1);
 	}
-	
+
 	@Test
 	public void shouldTurnTransmembraneAnnotationToIntramembrane() {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_P51797");
-		assertEquals(annotations.get(0).getCategory(), AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName());
-		assertEquals(annotations.size(),1);		
+		assertEquals(annotations.get(0).getCategory(),
+				AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName());
+		assertEquals(annotations.size(), 1);
 	}
-		
+
 	@Test
-	public void shouldSplitTransitPeptideAnnotations()  {
+	public void shouldSplitTransitPeptideAnnotations() {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_Q6P4F2");
 		List<String> list = new ArrayList<String>();
-		for (Annotation an: annotations) list.add(an.getCategory());
+		for (Annotation an : annotations)
+			list.add(an.getCategory());
 		assertEquals(list.contains(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
 		assertEquals(list.contains(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
-		assertEquals(annotations.size(),2);		
+		assertEquals(annotations.size(), 2);
 	}
-	
-	
+
 }

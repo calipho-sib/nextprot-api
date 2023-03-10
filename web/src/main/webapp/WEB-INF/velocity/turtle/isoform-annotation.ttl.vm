@@ -3,7 +3,6 @@ annotation:$annotation-uri a :$annotation-type;
 #if($annotation.getQualityQualifier())
   :quality :$annotation.getQualityQualifier();
 #end
-  :isoformSpecificity :$annotation.getSpecificityForIsoform($isoform-name);
 #if($annotation.getCvTermName())
   :term cv:$StringUtils.slug($annotation.getCvTermAccessionCode());
 #end
@@ -90,6 +89,9 @@ annotation:$annotation-uri a :$annotation-type;
 #end
 #if($annotation.getEndPositionForIsoform($isoform-name))
   :end "$annotation.getEndPositionForIsoform($isoform-name)"^^xsd:integer;
+#end
+#if($annotation.getHgvsForIsoform($isoform-name))
+  :hgvs "$annotation.getHgvsForIsoform($isoform-name)"^^xsd:string;
 #end
   .     
 #parse("turtle/isoform-annotation-evidence-list.ttl.vm")

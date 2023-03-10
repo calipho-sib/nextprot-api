@@ -1,6 +1,8 @@
 package org.nextprot.api.core.service;
 
 import com.google.common.base.Preconditions;
+
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
@@ -31,6 +33,11 @@ public interface TerminologyService {
 	 * @return a list of all {@code CvTerm}s of a given ontology
 	 */
 	List<CvTerm> findCvTermsByOntology(String ontology);
+
+	/**
+	 * @returns a {@code CvTerm} found in ontology or null if not found
+	 */
+	CvTerm findCvTermInOntology(String ac, TerminologyCv ontology);
 
 	/**
 	 * Retrieves terms sorted by ontology

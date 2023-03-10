@@ -1,53 +1,204 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
 #end
-#
-# Define Ontology
-# 
+
+
 :Term
       rdf:type owl:Class ;
+      rdfs:label "Term"^^xsd:string;
       rdfs:comment "A concept used to classify resources."^^xsd:string ;
-      rdfs:subClassOf owl:Thing;
       owl:equivalentClass up:Concept;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
        
 :childOf
       a rdf:Property, owl:TransitiveProperty ;
+      rdfs:label "child of"^^xsd:string;
+      rdfs:comment "A relationship between two terms meaning that the object term is more specific than the subjet term"^^xsd:string ;
       rdfs:domain :Term ;
       rdfs:range :Term;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
 
 :related
       a rdf:Property ;
+      rdfs:label "related"^^xsd:string;
+      rdfs:comment "A relationship between two terms meaning that the their meaning is close to each other"^^xsd:string ;
       rdfs:domain :Term ;
       rdfs:range :Term;
+      rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+      :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
       .
 
-# ECO_0000045 IHC =>A spatial pattern of protein expression evidence
-cv:ECO_0000045 rdfs:subClassOf :IHC .
-
-# ECO_0000104 EST =>microarray RNA expression level evidence
-cv:ECO_0000104 rdfs:subClassOf :EST .
-
-# ECO_0000220 microarray =>sequencing assay evidence
- cv:ECO_0000220 rdfs:subClassOf :Microarray .
- 
- 
-# alternative to rdfs:subClassOf (see later)
-#:IHC :related cv:ECO:0000045 .
-#:EST :related cv:ECO:0000104 .
-#:Microarray :related cv: ECO:0000220 .
-
- 
 
 #foreach($ontology in $ontologyList)
-  
 :$ontology.getOntology()
-  rdf:type owl:Class ;
-  rdfs:subClassOf :Term;
-  rdfs:label "$ontology.getName()"^^xsd:string;
-  rdfs:comment "$ontology.getDescription()"^^xsd:string;
-  rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
-  .      
+    rdf:type owl:Class ;
+    rdfs:subClassOf :Term ;
+    rdfs:label "$ontology.getName() term"^^xsd:string ;
+    rdfs:comment "$ontology.getDescription()"^^xsd:string ;
+    rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+    :sourceFile "nextprot.cv_term_categories.cv_display_name:label,description:comment"^^xsd:string ;
+    .
 #end
+
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name related entities
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name classes
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##
+
+:Name a owl:Class ;
+   rdfs:label "Name"^^xsd:string;
+   rdfs:comment "Most general class for names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:ShortName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Short name"^^xsd:string;
+   rdfs:comment "Class for short names related to another name"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:AllergenName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Allergen name"^^xsd:string;
+   rdfs:comment "Class for allergen names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:EnzymeName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Enzyme name"^^xsd:string;
+   rdfs:comment "Class for enzyme names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:InternationalNonproprietaryName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "International Non proprietary Name"^^xsd:string;
+   rdfs:comment "Class for international non proprietary names (INN)"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:CDAntigenName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "CD Antigen name"^^xsd:string;
+   rdfs:comment "Class for antigen names according to the cluster of differentiation nomenclature"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:ProteinName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Protein name"^^xsd:string;
+   rdfs:comment "Class for protein names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:IsoformName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Protein isoform name"^^xsd:string;
+   rdfs:comment "Class for protein isoform names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:FunctionalRegionName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Functional region name"^^xsd:string;
+   rdfs:comment "Class for names related to a functional region of a protein"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:CleavedRegionName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "Cleaved region name"^^xsd:string;
+   rdfs:comment "Class for names related to a cleaved region of protein"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:ORFName a owl:Class ;
+   rdfs:subClassOf :Name ;
+   rdfs:label "ORF name"^^xsd:string;
+   rdfs:comment "Class for names of open reading frames"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:GeneName a owl:Class ; 
+   rdfs:subClassOf :Name ;
+   rdfs:label "Gene name"^^xsd:string;
+   rdfs:comment "Class for gene names"^^xsd:string;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+## Name properties
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:name a owl:ObjectProperty ;
+   rdfs:label "name"^^xsd:string;
+   rdfs:comment "Most general property linking a protein or a gene to a name"^^xsd:string;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene :Person :Consortium ) 
+   ] ;
+   rdfs:range [ 
+     a owl:Class ;
+     owl:unionOf (:Name xsd:string ) 
+   ] ;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:recommendedName a owl:ObjectProperty ;
+   rdfs:label "recommended name"^^xsd:string;
+   rdfs:comment "Property linkng a protein or a gene to a recommended name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene) 
+   ];
+   rdfs:range :Name;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:alternativeName a owl:ObjectProperty ;
+   rdfs:label "alternative name"^^xsd:string;
+   rdfs:comment "Property linking a protein or a gene to an alternative name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Isoform :Gene) 
+   ];
+   rdfs:range :Name;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:orfName a owl:ObjectProperty ;
+   rdfs:label "orf name"^^xsd:string;
+   rdfs:comment "Property linking a protein or a gene with an ORF name"^^xsd:string;
+   rdfs:subPropertyOf :name;
+   rdfs:domain [ 
+     a owl:Class;
+     owl:unionOf (:Entry :Gene) 
+   ];
+   rdfs:range :ORFName;
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+        .
+:otherName a owl:ObjectProperty ;
+   rdfs:label "other name"^^xsd:string;
+   rdfs:comment "Property linking a recommended name with an other name sometimes used to refer to the same entity"^^xsd:string;
+   rdfs:domain :Name;
+   rdfs:range :Name;      
+   rdfs:isDefinedBy <http://nextprot.org/rdf> ;
+   :sourceFile "schema-ontology-list.ttl.vm"^^xsd:string ;
+     .
+
+## - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 

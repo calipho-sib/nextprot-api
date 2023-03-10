@@ -26,6 +26,9 @@ public class SubstitutionHGVSFormat implements SequenceChangeHGVSFormat<Substitu
         if (m.matches()) {
 
             AminoAcidCode affectedAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(1), m.group(2)));
+            if (AminoAcidCode.STOP.equals(affectedAA)) {
+                throw new ParseException("should not contain STOP codon as affected amino acid (e.g. p.Ter23Ser is not allowed), it should be an extension (e.g. p.*23Serext*13)", 0);
+            }
             int affectedAAPos = Integer.parseInt(m.group(3));
 
             AminoAcidCode substitutedAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(4), m.group(5)));

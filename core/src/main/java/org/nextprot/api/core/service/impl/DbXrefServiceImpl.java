@@ -1,31 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
-import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.constants.Xref2Annotation;
-import org.nextprot.api.commons.utils.XRefProtocolId;
-import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.annotation.AnnotationUtils;
-import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
-import org.nextprot.api.core.service.dbxref.conv.EnsemblXrefPropertyConverter;
-import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +11,38 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.Xref2Annotation;
+import org.nextprot.api.commons.utils.XRefProtocolId;
+import org.nextprot.api.core.dao.DbXrefDao;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.service.AntibodyResourceIdsService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.service.SimpleService;
+import org.nextprot.api.core.service.StatementService;
+import org.nextprot.api.core.service.annotation.AnnotationUtils;
+import org.nextprot.api.core.service.dbxref.XrefDatabase;
+import org.nextprot.api.core.service.dbxref.conv.DbXrefConverter;
+import org.nextprot.api.core.service.dbxref.resolver.DbXrefURLResolverSupplier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
+
 @Lazy
 @Service
 public class DbXrefServiceImpl implements DbXrefService {
@@ -44,10 +50,12 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private static final Set<String> HIDDEN_PROPERTY_NAME_SET = Sets.newHashSet("match status", "organism ID", "organism name");
 
 	@Autowired private DbXrefDao dbXRefDao;
+	@Autowired private SimpleService simpleService;
 	@Autowired private PeptideNamesService peptideNamesService;
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 	@Autowired private StatementService statementService;
+	
 
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationId(Long publicationId) {
@@ -178,6 +186,23 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 	
+	@Override
+	public DbXref createDecipherXref(String geneName) {
+						
+		DbXref xref = new DbXref();
+		xref.setAccession(geneName);
+		xref.setDatabaseCategory("Polymorphism and mutation databases");
+		String db = XrefDatabase.DECIPHER.getName();
+		xref.setDatabaseName(db);
+		long id = generateXrefProtocolId(db, geneName);
+		xref.setDbXrefId(id);
+		xref.setLinkUrl(CvDatabasePreferredLink.DECIPHER.getLink());
+		xref.setUrl("https://www.deciphergenomics.org");
+		return xref;
+	}
+	
+	
+	
 	private List<DbXref> findDbXrefsByMaster(String entryName, boolean ignoreStatements) {
 		
 		// build a comparator for the tree set: order by database name, accession, case insensitive
@@ -192,13 +217,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		addPeptideXrefs(entryName, xrefs);
 		addAntibodyXrefs(entryName, xrefs);
-		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));
-
+		xrefs.addAll(dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryAttachedXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryIdentifierXrefs(entryName));
+		xrefs.addAll(dbXRefDao.findEntryInteractionXrefs(entryName));                // xrefs of interactions evidences
+		xrefs.addAll(dbXRefDao.findEntryInteractionInteractantsXrefs(entryName));    // xrefs of xeno interactants
+		if (! ignoreStatements ) xrefs.addAll(statementService.findDbXrefs(entryName));   // xrefs of statements (but not gnomad ones)
+		
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
@@ -234,7 +259,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, DbXrefProperty::getDbXrefId);
 
-		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(uniqueName, xrefs);
+		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(xrefs);
 
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
@@ -256,18 +281,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 
-	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
+	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(List<DbXref> xrefs) {
 
 		List<Long> ensemblRefIds = xrefs.stream().filter(xref -> xref.getAccession().startsWith("ENST")).map(DbXref::getDbXrefId).collect(Collectors.toList());
 
-		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
-
-		EnsemblXrefPropertyConverter converter = EnsemblXrefPropertyConverter.getInstance();
+		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(ensemblRefIds);
 
 		Map<Long, List<DbXrefProperty>> map = new HashMap<>();
-		for (DbXref.EnsemblInfos infos : ensemblXRefInfosList) {
-
-			map.put(infos.getTranscriptXrefId(), converter.convert(infos));
+		for (DbXref.EnsemblInfos info : ensemblXRefInfosList) {
+			Long enstXrefId = info.getEnstXrefId();
+			if (!map.containsKey(enstXrefId)) map.put(enstXrefId, new ArrayList<>());
+			
+			DbXrefProperty prop = info.toDbXrefProperty();
+			//System.out.println(prop);
+			map.get(enstXrefId).add(prop);
 		}
 
 		return map;
@@ -317,25 +344,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
     @Override
-    public long findXrefId(String database, String accession) throws MissingCvDatabaseException {
-
-        return dbXRefDao.findXrefId(database, accession).orElse(generateXrefProtocolId(database, accession));
+	@Cacheable(value = "xrefid-by-dbac", sync = true)
+    public long findXrefId(String database, String accession) {
+    	// search db first
+    	Long id = dbXRefDao.findXrefId(database, accession);
+    	// if not found create one based on db and ac
+    	if (id == null) id = generateXrefProtocolId(database, accession);
+    	return id.longValue();
     }
 
-    private long generateXrefProtocolId(String database, String accession) throws MissingCvDatabaseException {
+    private long generateXrefProtocolId(String dbName, String accession)  {
 
-        // xref type statement: generate a xref id
-        return dbXRefDao.findDatabaseId(database)
-                .map(dbId -> new XRefProtocolId(dbId, accession).id())
-                .orElseThrow(() -> new MissingCvDatabaseException(database));
-    }
-
-    public static class MissingCvDatabaseException extends Exception {
-
-	    MissingCvDatabaseException(String database) {
-
-	        super("Missing cv database "+ database+ " in table nextprot.cv_databases");
-        }
+    	long dbId = simpleService.getNameDatabaseMap().get(dbName).getId();
+    	long xrefId = new XRefProtocolId(dbId, accession).id();
+    	return xrefId;
     }
 
 	@Override

@@ -49,12 +49,17 @@ public class ProteomicsPageView extends PageViewBase {
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 		
 		return Arrays.asList(
-				DOSAC_COBS_2DPAGE, OGP, REPRODUCTION_2DPAGE, SWISS_2DPAGE, UCD_2DPAGE,
+				ABCD, CPTAC, DOSAC_COBS_2DPAGE, GLYGEN, HPA, JPOST, OGP, REPRODUCTION_2DPAGE, SWISS_2DPAGE, UCD_2DPAGE,
 				PHOSPHO_SITE_PLUS,
-				EPD, MAX_QB, PAX_DB, PEPTIDE_ATLAS, PRIDE, TOP_DOWN_PROTEOMICS,
-				PROTEOMES, PROTEOMICS_DB);
+				EPD, MASSIVE, MAX_QB, PAX_DB, PEPTIDE_ATLAS, PRIDE, TOP_DOWN_PROTEOMICS,
+				PROTEOMES, PROTEOMICS_DB, METOSITE, SWISS_PALM);
 	}
 
+	@Override
+	public boolean keepHpaENSGXrefs() { 
+		return false; 
+	}
+	
 	@Override
 	public String getLabel() {
 		return "Proteomics";

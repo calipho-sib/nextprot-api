@@ -6,6 +6,7 @@ import org.nextprot.api.solr.core.impl.schema.EntrySolrField;
 import org.nextprot.api.solr.indexation.impl.solrdoc.entrydoc.integrationtest.SolrBuildIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,25 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 	public void shouldContainCvTermsFromExperimentalContext() {
 
 		Map<EntrySolrField, Object> collector = new HashMap<>();
-		cvSolrFieldCollector.collect(collector, "NX_Q9H207", true);
+		cvSolrFieldCollector.collect(collector, "NX_P27658", true);
 
 		Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
 		//noinspection unchecked
 		List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+		for (String s:cvAcs) System.out.println(s);
+
+		// evidence - evidenceCodeAC
 		Assert.assertTrue(cvAcs.contains("ECO:0000219"));
+		// evidence - experimentalContext - detectionMethod
+		Assert.assertFalse(cvAcs.contains("ECO:0000006"));
+		// evidence - experimentalContext - Disease
+		Assert.assertTrue(cvAcs.contains("C3059"));
+		// evidence - experimentalContext - Tissue
+		Assert.assertTrue(cvAcs.contains("TS-2578"));
+
+		// evidence - experimentalContext - DevelopmentalStage : see shouldContainCvTermsFromExperimentalContext_devStage
+		// evidence - experimentalContext - CellLine: no example found
+		// evidence - experimentalContext - Organelle: no example found
 
 		// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
 		Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
@@ -36,7 +50,49 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
 		Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
     }
+	
+	/*
+	 * Pam 07/10/2020:
+	 * We are now using NP2 pipeline to get Bgee expression profile annotations.
+	 * This test should work again once we have the nxflat db filled with Bgee data
+	 */
+	@Test
+	public void shouldContainCvTermsFromExperimentalContext_devStage() {
 
+		Map<EntrySolrField, Object> collector = new HashMap<>();
+		cvSolrFieldCollector.collect(collector, "NX_Q6NUJ2", true);
+
+		if (todayIsAfter("17 Oct 2020")) {
+
+			Assert.assertTrue(collector.get(EntrySolrField.CV_ACS) instanceof List);
+			//noinspection unchecked
+			List<String> cvAcs = (List<String>) collector.get(EntrySolrField.CV_ACS);
+			// evidence - experimentalContext - DevelopmentalStage
+			Assert.assertTrue(cvAcs.contains("HsapDO:0000037"));
+			Assert.assertFalse(cvAcs.contains("HsapDO:0000005")); // negative evidence
+	
+			// TODO: see with pam: See comment in CVSolrFieldCollector line 128 of why cvname has not been added
+			Assert.assertTrue(collector.get(EntrySolrField.CV_NAMES) instanceof List);
+			//noinspection unchecked
+			List<String> cvNames = (List<String>) collector.get(EntrySolrField.CV_NAMES);
+			Assert.assertTrue(!cvNames.contains("nucleotide sequencing assay evidence"));
+		}
+	}
+
+	@Test
+	public void shouldContainCvTermsFromPsimiEvidenceProperties() {
+
+		Map<EntrySolrField, Object> fields = new HashMap<>();
+		cvSolrFieldCollector.collect(fields, "NX_P08048", false);
+		List<String> cvAvs = getFieldValue(fields, EntrySolrField.CV_ACS, List.class);
+		List<String> cvNames = getFieldValue(fields, EntrySolrField.CV_NAMES, List.class);
+
+		assertTrue(cvAvs.contains("MI:0728"));
+		//The text should not be indexed
+		assertFalse(cvNames.contains("gal4 vp16 complementation"));
+	}
+	
+	
 	@Test
 	public void shouldContainCvTermsFromPropertyNamesSuchAsTopologyAndOrientation() {
 
@@ -81,4 +137,12 @@ public class CvFieldBuilderTest extends SolrBuildIntegrationTest {
 		List<String> ancestorsAcs = (List<String>) collector.get(EntrySolrField.CV_ANCESTORS_ACS);
 		Assert.assertTrue(ancestorsAcs.contains("FA-03241"));
 	}
+	
+	public static boolean todayIsAfter(String date) {
+		Date somedate = new Date(date);
+		Date now = new Date();
+		return now.after(somedate);
+		
+	}
+
 }

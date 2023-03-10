@@ -9,5 +9,5 @@ inner join nextprot.cv_resource_types rt on (res.cv_type_id = rt.cv_id)
 inner join nextprot.db_xrefs xr on (ira.resource_id=xr.resource_id)
 inner join nextprot.cv_databases db on (xr.cv_database_id=db.cv_id)
 inner join nextprot.cv_datasources ds on (ira.datasource_id=ds.cv_id)
-where ds.cv_name != 'PeptideAtlas' and :datasourceClause 
+where ds.cv_name != 'PeptideAtlas' and ds.cv_name != 'MassIVE' and :datasourceClause 
 and peptide.unique_name in (:names)

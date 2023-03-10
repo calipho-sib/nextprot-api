@@ -18,16 +18,17 @@ public class EmblXrefURLResolverTest {
     @Test
     public void testResolveEmbl() throws Exception {
 
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("AF009225", "EMBL", "https://www.ebi.ac.uk/ena/browser/view/%s");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", resolver.resolve(xref));
+        https://www.ebi.ac.uk/ena/browser/view/AF009225
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/AF009225", resolver.resolve(xref));
     }
 
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
 
-        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("CAH72401.1", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("AF009225.1", "EMBL", "https://www.ebi.ac.uk/ena/browser/view/%s");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/CAH72401", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/ena/browser/view/AF009225", resolver.resolve(xref));
     }
 }

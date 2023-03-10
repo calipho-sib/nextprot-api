@@ -59,7 +59,11 @@ publication:$publication.getPublicationId() a :Publication;
 #end
 #if($publication.hasDbXrefs())
 #foreach($xref in $publication.getDbXrefs())
-    :from "$StringUtils.slug($xref.getDatabaseName()):$xref.getAccession()"^^xsd:string;
+    :from [ 
+      rdf:type :Xref ;
+      :accession "$xref.getAccession()"^^xsd:string ;
+      :provenance db:$StringUtils.slug($xref.getDatabaseName()) ; 
+   ] ;
 #end
 #end
     .

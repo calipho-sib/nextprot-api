@@ -8,6 +8,7 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.CvTermGraph;
 import org.nextprot.api.core.service.CvTermGraphService;
+import org.nextprot.api.core.service.TermDictionaryService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,8 +32,11 @@ class TerminologyServiceImpl implements TerminologyService {
 
     @Autowired
 	private TerminologyDao terminologyDao;
-	@Autowired
+    @Autowired
 	private CvTermGraphService cvTermGraphService;
+    @Autowired
+	private TermDictionaryService termDicService;
+	
 
 	@Override
 	public CvTerm findCvTermByAccession(String cvTermAccession) {
@@ -178,5 +183,11 @@ class TerminologyServiceImpl implements TerminologyService {
 			}
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public CvTerm findCvTermInOntology(String ac, TerminologyCv ontology) {
+		Map<String,CvTerm> map = termDicService.getTermDictionary(ontology.toString());
+		return map.get(ac);
 	}
 }

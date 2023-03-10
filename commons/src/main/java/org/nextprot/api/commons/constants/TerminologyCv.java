@@ -38,7 +38,8 @@ public enum TerminologyCv {
 	UniprotPtmCv(false),
 	UniprotSubcellularLocationCv,
 	UniprotSubcellularOrientationCv(false),
-	UniprotSubcellularTopologyCv
+	UniprotSubcellularTopologyCv,
+	PsiMiCv
     ;
 
 	private final boolean isHierarchical;

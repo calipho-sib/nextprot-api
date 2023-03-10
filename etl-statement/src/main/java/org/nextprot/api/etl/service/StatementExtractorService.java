@@ -1,6 +1,6 @@
 package org.nextprot.api.etl.service;
 
-import org.nextprot.api.etl.StatementSource;
+import org.nextprot.api.core.app.StatementSource;
 import org.nextprot.commons.statements.Statement;
 
 import java.io.IOException;

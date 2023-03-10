@@ -2,9 +2,6 @@ context:$ec.getContextId() a :ExperimentalContext;
 #if ($ec.getTissueAC())
   :tissue cv:$StringUtils.slug($ec.getTissueAC());
 #end
-#if ($ec.getDetectionMethodAC())
-  :detectionMethod cv:$StringUtils.slug($ec.getDetectionMethodAC());
-#end
 #if ($ec.getDevelopmentalStageAC())
   :developmentalStage cv:$StringUtils.slug($ec.getDevelopmentalStageAC());
 #end

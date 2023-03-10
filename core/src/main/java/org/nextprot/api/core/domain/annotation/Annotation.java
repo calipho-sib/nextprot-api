@@ -83,6 +83,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
+	private List<String> relatedTo;
+
 	public String toString() {
 		return uniqueName + ": "  + 
 				"cvTermAccessionCode:" + cvTermAccessionCode +
@@ -113,6 +115,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 		if (AnnotationCategory.PROTEIN_PROPERTY == this.apiCategory) return false;
 		if (AnnotationCategory.MAMMALIAN_PHENOTYPE == this.apiCategory) return false;
 		if (AnnotationCategory.PHENOTYPIC_VARIATION ==  this.apiCategory) return false;
+		if (AnnotationCategory.DISEASE_RELATED_VARIANT ==  this.apiCategory) return false;
+		if (AnnotationCategory.ELECTROPHYSIOLOGICAL_PARAMETER ==  this.apiCategory) return false;
+		
 		return true;
 	}
 	
@@ -366,6 +371,13 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 
+	public String getHgvsForIsoform(String isoformName) {
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getHgvs();
+		return null;
+		
+	}
+	
 	/** @return the first position or null if unknown */
 	public Integer getStartPositionForIsoform(String isoformName) {
 
@@ -456,6 +468,17 @@ public class Annotation implements Serializable, IsoformSpecific {
 			indirectEvidenceRefList = new HashSet<String>();
 		}
 		this.indirectEvidenceRefList.add(indirectEvidenceId);
+	}
+
+	public void addRelatedAnnotationName(String annotationUniqueName) {
+		if(relatedTo == null) {
+			relatedTo = new ArrayList<>();
+		}
+		relatedTo.add(annotationUniqueName);
+	}
+
+	public List<String> getRelatedAnnotationNames() {
+		return relatedTo;
 	}
 
 }

@@ -2,6 +2,7 @@ package org.nextprot.api.core.service;
 
 import com.google.common.base.Function;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.utils.CollectionTester;
@@ -19,6 +20,79 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 	@Autowired
 	private OverviewService overviewService;
 
+	private void displayEntityName(String prefix, int indent, EntityName name) {
+		
+		String pfx = prefix;
+		for (int i=0;i<indent;i++) pfx= "-"+pfx;
+		if (pfx.length()>0) {
+			while (pfx.length()<16) pfx += " ";
+		}
+		StringBuffer sb = new StringBuffer();
+		sb.append(pfx + name.getId());		
+		sb.append(" - " + "parentId: " + name.getParentId());
+		sb.append(" - " + name.getClazz());
+		sb.append(" - "  + name.getQualifier() + " - " + name.getCategory() + 
+				" - " + name.getComposedName() + " - " + name.getType());
+		sb.append(" = " + name.getName());
+		System.out.println(sb.toString());
+		//for (EntityName syn : name.getSynonyms()) displayEntityName( "synonym", indent +1, syn);
+		//for (EntityName oth : name.getOtherRecommendedEntityNames()) displayEntityName("other", indent +1, oth);
+	}
+	
+
+	private void addToZoo(EntityName name, Map<String,Integer>zoo) {
+		String spec = "";
+		spec += name.getClazz().name() + " | ";
+		//spec += name.getClazz().getClassName() + " | ";
+		spec += name.getType() + " | ";
+		spec += name.getQualifier() + " | ";
+		//spec += name.getCategory();
+		if (!  zoo.containsKey(spec)) zoo.put(spec, 0);
+		zoo.put(spec, zoo.get(spec)+1);
+		for (EntityName syn : name.getSynonyms()) addToZoo(syn,zoo);
+		for (EntityName oth : name.getOtherRecommendedEntityNames()) addToZoo(oth,zoo);
+
+		
+	}
+	
+	
+	@Ignore
+	@Test
+	public void testNameZoology() {
+		String acs = "NX_P10599,NX_O75888,NX_P05408,NX_P18075,NX_O95479,NX_Q9QC07,NX_Q9H6Z9,NX_P04040,NX_P09668,NX_P14410,NX_Q9BVT8,NX_Q9UHT4,NX_Q93009,NX_Q16877,NX_Q9NQX3,NX_O60568,NX_P51677,NX_Q6PJP8,NX_P01275,NX_P01282,NX_P01160,NX_P0C7P3,NX_Q12884";
+		acs += ",NX_P48023,NX_P56975";  // short names for cleaved regions
+		acs += ",NX_P47989,NX_P11172";  // short names for functional regions
+		acs += ",NX_P58294,NX_P41146";  // short names for regular protein names
+		List<String> ac_list = Arrays.asList(acs.split(","));
+		Map<String,Integer> zoo = new HashMap<>(); 
+		for (String ac: ac_list) {
+			Overview overview = overviewService.findOverviewByEntry(ac);
+			for (EntityName name : overview.getProteinNames()) addToZoo(name, zoo);
+			System.out.println(ac + " main protein names count: " + overview.getProteinNames().size());
+			for (EntityName name : overview.getAlternativeProteinNames()) addToZoo(name, zoo);
+			for (EntityName name : overview.getAdditionalNames()) addToZoo(name, zoo);
+			for (EntityName name : overview.getFunctionalRegionNames()) addToZoo(name, zoo);
+			for (EntityName name : overview.getCleavedRegionNames()) addToZoo(name, zoo);
+			for (EntityName name : overview.getGeneNames()) addToZoo(name, zoo);
+		}
+		for (String k: zoo.keySet()) System.out.println(k + " : " + zoo.get(k));
+	}
+	
+	@Ignore
+	@Test
+	public void testNamesForQ13043() {
+		// temp code for new tests
+		Overview overview = overviewService.findOverviewByEntry("NX_Q13043");
+		//System.out.println("main:" + overview.getProteinNames().size());
+		for (EntityName name : overview.getProteinNames()) displayEntityName("main", 0, name);
+		for (EntityName name : overview.getAlternativeProteinNames()) displayEntityName("alt", 0, name);
+		for (EntityName name : overview.getAdditionalNames()) displayEntityName("add", 0, name);
+		for (EntityName name : overview.getFunctionalRegionNames()) displayEntityName("fun", 0, name);
+		for (EntityName name : overview.getCleavedRegionNames()) displayEntityName("cleav", 0, name);
+		for (EntityName name : overview.getGeneNames()) displayEntityName("gene", 0, name);
+	}
+	
+	
 	@Test
 	public void testNamesForQ86X52() {
 
@@ -127,16 +201,16 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
 				mockEntityNameWithOtherRecNames("(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "1.1.1.n12", "chain", "EC")
+							mockEntityName( "1.1.1.n12", "EC", "EC")
 						)
 				),
 				mockEntityNameWithSynonymsAndOtherRecNames( "Enoyl-CoA hydratase 2", "protein", "full",
 						Collections.singletonList(
-							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+							mockEntityName( "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "protein", "full")
 						),
 						Arrays.asList(
-							mockEntityName("4.2.1.107", "chain", "EC"),
-							mockEntityName( "4.2.1.119", "chain", "EC")
+							mockEntityName("4.2.1.107", "EC", "EC"),
+							mockEntityName( "4.2.1.119", "EC", "EC")
 						)
 				)
 		)));

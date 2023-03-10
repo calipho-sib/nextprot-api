@@ -111,7 +111,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		Map<String, RdfTypeInfo> fullMap = new HashMap<String, RdfTypeInfo>();
 		for (RdfTypeInfo rti : rdfTypes) {
-			fullMap.put(rti.getTypeName(), rti);
+				fullMap.put(rti.getTypeName(), rti);
 		}
 
 		if (fullMap.containsKey(":Entry")) buildPathToOrigin(fullMap, fullMap.get(":Entry"), "?entry ", 0);
@@ -121,7 +121,11 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		LOGGER.info("errors: " + errorCount);
 		LOGGER.info("duration: " + duration);
 		
-		return rdfTypes;
+		List<RdfTypeInfo> finalRdfTypes = new ArrayList<RdfTypeInfo>();
+		for (RdfTypeInfo rti : rdfTypes) {
+			if (rti.getParents().size()>0) finalRdfTypes.add(rti);
+		}		
+		return finalRdfTypes;
 	}
 
 	private static void buildPathToOrigin(final Map<String, RdfTypeInfo> fullMap, RdfTypeInfo currentEntry, String currentPath, int currenDepth) {

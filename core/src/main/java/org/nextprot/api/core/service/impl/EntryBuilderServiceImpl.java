@@ -1,9 +1,12 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.*;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
@@ -115,7 +119,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
+			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart() || entryConfig.hasSubParts())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			}
 		}
@@ -141,13 +145,25 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	private void setEntryAdditionalInformation(Entry entry, EntryConfig config){
 
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
+			List<Annotation> annotations;
 			if (config.hasBed()) {
-				entry.setAnnotations(
-					this.annotationService.findAnnotations(entry.getUniqueName()));
+				annotations = this.annotationService.findAnnotations(entry.getUniqueName());
 			} else  {
-				entry.setAnnotations(
-					this.annotationService.findAnnotationsExcludingBed(entry.getUniqueName()));
+				annotations = this.annotationService.findAnnotationsExcludingBed(entry.getUniqueName());
 			}
+
+			if (config.hasSubParts()) {
+				List<String> selectedAnnotations = config.getSubparts()
+						.stream()
+						.map(a -> a.toString())
+						.collect(Collectors.toList());
+				annotations = annotations.parallelStream()
+						.filter(annotation -> selectedAnnotations.contains(
+								annotation.getAPICategory().toString()))
+						.collect(Collectors.toList());
+			}
+
+			entry.setAnnotations(annotations);
 		}
 		
 		if(!config.hasNoAdditionalReferences()){
@@ -174,17 +190,27 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	}
 
 	private void setXrefs(Entry entry, String entryName) {
+
 		// Generates the dbxrefs
 		List<DbXref> dbXrefs = this.xrefService.findDbXrefsByMaster(entryName);
-
+		
+		// Generate special Decipher xref
+		DbXref decipherXref = null;
+		List<EntityName> entityNames = this.overviewService.findOverviewByEntry(entryName).getGeneNames();
+		if (entityNames!=null && entityNames.size()>0) {
+			String geneName = entityNames.get(0).getName();
+			decipherXref = this.xrefService.createDecipherXref(geneName);
+		}
+		
 		// Generates the gnomad xrefs
 		List<DbXref> gnomadXrefs = this.gnomadXrefService.findGnomadDbXrefsByMaster(entryName);
 
-		List<DbXref> allXrefs = new ImmutableList.Builder<DbXref>()
-										.addAll(dbXrefs)
-										.addAll(gnomadXrefs)
-										.build();
-		entry.setXrefs(allXrefs);
+		// Build immutable list
+		Builder<DbXref> immuBuilder = new ImmutableList.Builder<DbXref>();
+		immuBuilder.addAll(dbXrefs);
+		if (decipherXref!=null)	immuBuilder.add(decipherXref);
+		immuBuilder.addAll(gnomadXrefs);
+		entry.setXrefs(immuBuilder.build());
 	}
 
 	@Override

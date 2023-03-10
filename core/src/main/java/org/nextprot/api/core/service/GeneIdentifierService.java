@@ -17,6 +17,12 @@ public interface GeneIdentifierService {
 	 * @return gene names coding the given protein (the first gene name should be the recommended one)
 	 */
 	List<String> findGeneNamesByEntryAccession(String entryAccession);
+	
+	
+	/**
+	 * @return a map with entry accession as the key and gene name list as the value
+	 */
+	Map<String,List<String>> findEntryGeneNamesAndAltNames();
 
 	/**
 	 * @return all neXtProt entries mapped to gene name(s) (the first gene name should be the recommended one)

@@ -3,6 +3,7 @@ package org.nextprot.api.integration.tests.rdf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 
 import org.eclipse.rdf4j.model.Resource;
@@ -42,7 +43,11 @@ public class PhenotypicTTLIntegrationTest extends WebIntegrationBaseTest {
 		// Daniel: Missing terminologies and other things I guess...
 
 		String ttl = prefixes + ttlContent;
+		//FileWriter w = new FileWriter("toto");
+		//w.write(ttl);
+		//w.close();
 		//System.out.println(ttl);
+		
 		
 		testRepo = new SailRepository(new MemoryStore());
 		testRepo.initialize();

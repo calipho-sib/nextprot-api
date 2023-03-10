@@ -1,13 +1,14 @@
 package org.nextprot.api.etl.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.etl.StatementSource;
-import org.nextprot.api.etl.service.StatementTransformerService;
+import org.nextprot.api.core.app.StatementSource;
+import org.nextprot.api.etl.service.transform.StatementTransformerService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl.ReportBuilder;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.TargetIsoformSet;
@@ -18,8 +19,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.nextprot.api.commons.constants.AnnotationCategory.VARIANT;
 import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOTATION_CATEGORY;
@@ -132,6 +135,44 @@ public class StatementTransformServiceTest {
 
 		Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size());
 		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
+	}
+
+	@Test
+	@Ignore
+	// As per 2020/07 ENYO Raw statements contains the TARGET_ISOFORM field, so we do not propagate the region
+	public void shouldTransformIntMapStatmentWithMultipleTargetIsoforms() throws IOException{
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");
+
+		//Interaction mapping
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
+		Optional<Statement> regionalMappedStatement = mappedStatements.stream()
+				.filter(new AnnotationCategoryPredicate(AnnotationCategory.INTERACTION_MAPPING))
+				.filter(statement ->  "NX_Q9NR46".equals(statement.getEntryAccession()))
+				.findFirst();
+
+		Assert.assertTrue(regionalMappedStatement.isPresent());
+		String regionalMappedStatementIsoformJson = regionalMappedStatement.get().getValue(TARGET_ISOFORMS);
+		assertEquals(regionalMappedStatementIsoformJson, "[{\"isoformAccession\":\"NX_Q9NR46-1\",\"specificity\":\"SPECIFIC\",\"begin\":153,\"end\":395},{\"isoformAccession\":\"NX_Q9NR46-2\",\"specificity\":\"SPECIFIC\",\"begin\":153,\"end\":404}]");
+
+	}
+
+	@Test
+	public void shouldReturnSameTargetIsoformWhenSingleIsoform() throws IOException{
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
+		Collection<Statement> rawStatements = sle.getStatementsFromJsonFile(StatementSource.ENYO, null, "enyo-statements");
+
+		//Interaction mapping
+		Collection<Statement> mappedStatements = statementTransformerService.transformStatements(rawStatements, new ReportBuilder());
+		Optional<Statement> mappedStatementWithOneIsoform = mappedStatements.stream()
+				.filter(statement ->  "NX_Q02779".equals(statement.getEntryAccession()))
+				.findFirst();
+
+		if(mappedStatementWithOneIsoform.isPresent()) {
+			String regionalMappedStatementIsoformJson1 = mappedStatementWithOneIsoform.get().getValue(TARGET_ISOFORMS);
+			Assert.assertEquals(1, TargetIsoformSet.deSerializeFromJsonString(regionalMappedStatementIsoformJson1).size());
+			Assert.assertEquals("[{\"isoformAccession\":\"NX_Q02779-1\",\"specificity\":\"SPECIFIC\",\"begin\":854,\"end\":954}]", regionalMappedStatementIsoformJson1);
+		}
 	}
 
 	static class AnnotationCategoryPredicate implements Predicate<Statement>{

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
@@ -30,10 +31,18 @@ public class ReleaseStatsDaoImpl implements ReleaseStatsDao {
 	public List<ReleaseContentsDataSource> findReleaseInfoDataSources() {
 
 		Map<String, Object> params = new HashMap<>();
+		Set<String> baseSrcNames = ReleaseDataSources.getDistinctCvNamesExcept(ReleaseDataSources.PeptideAtlas, ReleaseDataSources.MassIVE);
+		params.put("cvNames", baseSrcNames);
+		String baseSrcQuery = sqlDictionary.getSQLQuery("release-contents");
+		
+		List<ReleaseContentsDataSource> ds = new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+				.query(baseSrcQuery, params, new ReleaseInfoRowMapper(null));
 
-		params.put("cvNames", ReleaseDataSources.getDistinctCvNamesExcept(ReleaseDataSources.PeptideAtlas));
-		List<ReleaseContentsDataSource> ds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-contents"), params, new ReleaseInfoRowMapper(null));
-		ds.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-contents-peptide-atlas"), params, new ReleaseInfoRowMapper(ReleaseDataSources.PeptideAtlas)));
+		ds.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+				.query(sqlDictionary.getSQLQuery("release-contents-peptide-atlas"), params, new ReleaseInfoRowMapper(ReleaseDataSources.PeptideAtlas)));
+
+		ds.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource())
+				.query(sqlDictionary.getSQLQuery("release-contents-massive"), params, new ReleaseInfoRowMapper(ReleaseDataSources.MassIVE)));
 
 		ds.sort((ds1, ds2) -> ds1.getSource().compareToIgnoreCase(ds2.getSource()));
 

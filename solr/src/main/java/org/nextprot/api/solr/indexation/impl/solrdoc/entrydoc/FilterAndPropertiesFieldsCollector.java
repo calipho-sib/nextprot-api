@@ -46,7 +46,8 @@ public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector 
 		String filters = "";
 		if (props.getFilterstructure()) filters += "filterstructure ";
 		if (props.getFilterdisease()) filters += "filterdisease ";
-		if (props.getFilterexpressionprofile()) filters += "filterexpressionprofile ";
+		//if (props.getFilterexpressionprofile()) filters += "filterexpressionprofile "; // old NP1 value
+		if (ers.isExpression()) filters += "filterexpressionprofile ";                   // new NP2 computed value
 		if (ers.isMutagenesis()) filters += "filtermutagenesis ";
 		if (ers.isProteomics()) filters += "filterproteomics ";
 		if (filters.length() > 0) {

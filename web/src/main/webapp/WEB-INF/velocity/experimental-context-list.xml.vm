@@ -10,10 +10,6 @@
         	<cv-term accession='$ctx.developmentalStageAC' terminology='$StringUtils.camelToKebabCase($ctx.getDevelopmentalStage().getOntology())'>$ctx.getDevelopmentalStage().getName()</cv-term>
 			#end
 
-			#if($ctx.detectionMethod)
-			<cv-term accession='$ctx.detectionMethodAC' terminology='$StringUtils.camelToKebabCase($ctx.getDetectionMethod().getOntology())'>$ctx.getDetectionMethod().getName()</cv-term>
-			#end
-
 			#if($ctx.cellLine)
 			<cv-term accession='$ctx.cellLineAC' terminology='$StringUtils.camelToKebabCase($ctx.getCellLine().getOntology())'>$ctx.getCellLine().getName()</cv-term>
 			#end

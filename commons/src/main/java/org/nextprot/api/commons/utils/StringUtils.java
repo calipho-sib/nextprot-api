@@ -21,6 +21,14 @@ public class StringUtils {
 		throw new AssertionError("should not be instanciable");
 	}
 
+	public static boolean isEnsgAccession(String accession) {
+		return accession !=null && accession.startsWith("ENSG");
+	}
+	
+	public static boolean isVirtualGeneAccession(String accession) {
+		return accession !=null && accession.startsWith("VG_");
+	}
+	
 	public static StringFormatter createXCaseBuilder(String string) {
 
 		return new StringFormatter(string);
@@ -109,6 +117,16 @@ public class StringUtils {
 		if (null==s) return null;
 		if (s.length()==0) return "";
 		return s.substring(0,1).toLowerCase() + s.substring(1);
+	}
+
+	static public String lower(String s) {
+		if (null==s) return null;
+		return s.toLowerCase();
+	}
+
+	static public boolean contains(String s, String substr) {
+		if (null==s) return false;
+		return s.contains(substr);
 	}
 
 	/**

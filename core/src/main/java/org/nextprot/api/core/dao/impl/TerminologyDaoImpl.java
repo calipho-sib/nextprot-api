@@ -91,18 +91,24 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	}
 
 
-	static List<CvTerm.TermAccessionRelation> extractPipeDelimitedRelations (String accession){
+	static Set<String> subsumingRelationSet = new HashSet<>(Arrays.asList("is_a", "part_of", "derives_from") );
+	
+	static List<CvTerm.TermAccessionRelation> extractPipeDelimitedRelations (String accession) {
 		if (accession == null)
 			return null;
 		else {
 			return Arrays.asList(accession.split("\\|")).stream().map(s -> {
 				int separatorIndex = s.indexOf("->");
-				return new CvTerm.TermAccessionRelation(s.substring(0, separatorIndex), s.substring(separatorIndex + 2, s.length()));
-			}).collect(Collectors.toList());
+				String ac = s.substring(0, separatorIndex);
+				String rel = s.substring(separatorIndex + 2, s.length());
+				return new CvTerm.TermAccessionRelation(ac, rel);
+			//}).collect(Collectors.toList());
+			}).filter(tar -> subsumingRelationSet.contains(tar.getRelationType())).collect(Collectors.toList());
+			//}).filter(tar -> ! "has_part".equals(tar.getRelationType())).collect(Collectors.toList());
 		}
 	}
 
-
+	
 
 	private static class DbTermRowMapper extends SingleColumnRowMapper<CvTerm> {
 

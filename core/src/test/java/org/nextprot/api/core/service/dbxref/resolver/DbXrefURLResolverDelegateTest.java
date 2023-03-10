@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.release.ReleaseDataSources;
 
 import java.util.Collections;
 
@@ -16,6 +17,67 @@ public class DbXrefURLResolverDelegateTest {
     public void setup() {
 
         resolver = new DbXrefURLResolverDelegate();
+    }
+
+    
+    @Test
+    public void test1() throws Exception {
+    	DbXref xref;
+    	
+    	xref = createDbXref("Mobi-DB", "SAM", "https://mobidb.bio.unipd.it/%u" );
+    	xref.setProteinAccessionReferer("NX_U23Z22");
+    	String result = resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
+    	Assert.assertEquals("https://mobidb.bio.unipd.it/U23Z22", result);
+    	System.out.println("res:" + result);
+    	System.out.println("ac:" + xref.getAccession());
+    	System.out.println("db:" + xref.getDatabaseName());
+    	System.out.println("lu:" + xref.getLinkUrl());
+    	System.out.println("ru:" + xref.getResolvedUrl());
+    	
+    }
+    
+    @Test
+    public void testsUsefulForNP2Pipeline() throws Exception {
+    	DbXref xref;
+    	
+    	xref = createDbXref("EBI-bla,EBI-blu", "IntAct", null);
+    	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
+    	System.out.println("ac:" + xref.getAccession());
+    	System.out.println("db:" + xref.getDatabaseName());
+    	System.out.println("lu:" + xref.getLinkUrl());
+    	System.out.println("ru:" + xref.getResolvedUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-bla%20AND%20id:EBI-blu)#interactor", xref.getResolvedUrl());
+
+    	xref = createDbXref("ENSGblabla", "Bgee", null);
+    	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
+    	System.out.println("ac:" + xref.getAccession());
+    	System.out.println("db:" + xref.getDatabaseName());
+    	System.out.println("lu:" + xref.getLinkUrl());
+    	System.out.println("ru:" + xref.getResolvedUrl());
+    	String baseUrl = ReleaseDataSources.Bgee.getUrl()+"?page=gene&gene_id=";
+    	Assert.assertEquals(baseUrl + "%s", xref.getLinkUrl());
+    	Assert.assertEquals(baseUrl + "ENSGblabla", xref.getResolvedUrl());
+
+    	xref = createDbXref("some/ac/path", "GlyConnect", null);
+    	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
+    	System.out.println("ac:" + xref.getAccession());
+    	System.out.println("db:" + xref.getDatabaseName());
+    	System.out.println("lu:" + xref.getLinkUrl());
+    	System.out.println("ru:" + xref.getResolvedUrl());
+    	//https://glyconnect.expasy.org/browser/proteins/560/sites/51
+    	Assert.assertEquals("https://glyconnect.expasy.org/browser/proteins/%s", xref.getLinkUrl());
+    	Assert.assertEquals("https://glyconnect.expasy.org/browser/proteins/some/ac/path", xref.getResolvedUrl());
+    }
+    
+    @Test
+    public void testResolveMassive() throws Exception {
+
+        DbXref xref = createDbXref("MSVp000780371", "MassIVE", "");
+        Assert.assertEquals(
+        		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=MSVp000780371", 
+        		resolver.resolve(xref)
+        );
     }
 
     @Test
@@ -43,6 +105,18 @@ public class DbXrefURLResolverDelegateTest {
         Assert.assertEquals("https://web.expasy.org/cellosaurus/CVCL_7180", resolver.resolve(xref));
         Assert.assertEquals("https://web.expasy.org/cellosaurus/%s", xref.getLinkUrl());
     }
+    
+    @Test
+    public void testResolveRNAct() throws Exception {
+
+        DbXref xref = createDbXref("Q8TCH9", "RNAct", "http://www.youpie.uk/whatever");
+
+        Assert.assertEquals("https://rnact.crg.eu/protein?query=Q8TCH9", resolver.resolve(xref));
+        Assert.assertEquals("https://rnact.crg.eu/protein?query=%s", xref.getLinkUrl());
+    }
+    
+    
+    
     
     @Test
     public void testResolveExpressionAtlas() throws Exception {
@@ -75,6 +149,14 @@ public class DbXrefURLResolverDelegateTest {
     }
 
     
+    @Test
+    public void testResolveDECIPHER() throws Exception {
+
+        DbXref xref = createDbXref("SCN1A", "DECIPHER", "http://www.ebi.ac.uk/whatnnever/%s");
+        Assert.assertEquals("https://www.deciphergenomics.org/gene/SCN1A/overview/clinical-info", resolver.resolve(xref));
+        Assert.assertEquals("https://www.deciphergenomics.org/gene/%s/overview/clinical-info", xref.getLinkUrl());
+
+    }
     
     
     
@@ -318,8 +400,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647", "HPA", "whatever");
 
-        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
-        Assert.assertEquals("https://v18.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -328,8 +410,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
-        Assert.assertEquals("https://v18.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
-        Assert.assertEquals("https://v18.proteinatlas.org/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/ENSG00000254647/cell", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/%s", xref.getLinkUrl());
     }
 
     // entry/NX_P51610/xref.json
@@ -338,8 +420,8 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("HPA018312", "HPA", "whatever");
 
-        Assert.assertEquals("https://v18.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
-        Assert.assertEquals("https://v18.proteinatlas.org/search/%s", xref.getLinkUrl());
+        Assert.assertEquals("https://v21.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+        Assert.assertEquals("https://v21.proteinatlas.org/search/%s", xref.getLinkUrl());
     }
 
 
@@ -363,10 +445,10 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveIntAct() throws Exception {
 
-        DbXref xref = createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
+        DbXref xref = createDbXref("EBI-1234,EBI-98765", "IntAct", "whatever");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
-        Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-1234%20AND%20id:EBI-98765)#interactor", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
     }
 
     @Test
@@ -399,38 +481,17 @@ public class DbXrefURLResolverDelegateTest {
 
     // entry/P51610/xref.json
     @Test
-    public void testResolveBgeeENSGAndOther() throws Exception {
+    public void testResolveBgeeENSG() throws Exception {
 
-    	String dbURL = "http://bgee.org/?page=gene&gene_id=%s";
-    	String evidenceURL = "http://bgee.org/bgee/bgee?page=expression&action=data&";
-    	String ac = "stage_id=HsapDO:0000044&organ_id=EV:0100146&gene_id=ENSG00000124532";
+    	String dbURL = "https://bgee.org/bgee14_1/?page=gene&gene_id=%s";
+    	String evidenceURL = "https://bgee.org/bgee14_1/?page=gene&gene_id=";
+    	String ac = "ENSG00000124532";
     	
         DbXref xref = createDbXref(ac, "Bgee", dbURL);
 
         Assert.assertEquals(evidenceURL + ac, resolver.resolve(xref));
         Assert.assertEquals(evidenceURL + "%s", xref.getLinkUrl());
     }
-
-    // entry/P51610/xref.json
-    @Test
-    public void testResolveBgeeNoENSG() throws Exception {
-
-        DbXref xref = createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
-
-        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.org/bgee/bgee?uniprot_id=%s", xref.getLinkUrl());
-    }
-
- 
-    @Test
-    public void testResolveBgeeSingleENSG() throws Exception {
-
-        DbXref xref = createDbXref("ENSG000012345", "Bgee", "http://bgee.unil.ch/whatever");
-
-        Assert.assertEquals("http://bgee.org/bgee/bgee?page=expression&action=data&gene_id=ENSG000012345", resolver.resolve(xref));
-    }
-
-    
 
     // entry/NX_P01308/xref.json
     @Test
@@ -575,8 +636,8 @@ public class DbXrefURLResolverDelegateTest {
     public void testResolveWithDefaultResolverBrenda() throws Exception {
 
         DbXref xref = createDbXrefWithEntry("NX_Q8NBS9", "2.7.11.21", "BRENDA", CvDatabasePreferredLink.BRENDA.getLink());
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref));
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
+        Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref));
+        Assert.assertEquals("https://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
     }
 
     @Test

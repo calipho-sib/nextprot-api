@@ -1,6 +1,8 @@
 package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 public class ExperimentalContext implements Serializable{
 
@@ -20,8 +22,9 @@ public class ExperimentalContext implements Serializable{
 
 	//The experimental context metadata document identifier
 	private Long metadataId; // publication id = resource id as well
-	
-	
+
+	// MD5 hash of the record, which is computed according to the source
+	private String md5;
 	
 	public Long getMetadataId() {
 		return metadataId;
@@ -29,6 +32,10 @@ public class ExperimentalContext implements Serializable{
 	public void setMetadataId(Long metadataId) {
 		this.metadataId = metadataId;
 	}
+
+	public String getMd5() { return md5; }
+	public void setMD5(String md5) { this.md5 = md5; }
+
 	public Long getContextId() {
 		return contextId;
 	}
@@ -88,9 +95,12 @@ public class ExperimentalContext implements Serializable{
 		this.organelle = organelle;
 	}
 
+    @JsonIgnore
 	public CvTerm getDetectionMethod() {
 		return detectionMethod;
 	}
+    
+    @JsonIgnore
 	public String getDetectionMethodAC() {
 		return (detectionMethod != null) ? detectionMethod.getAccession() : null;
 	}

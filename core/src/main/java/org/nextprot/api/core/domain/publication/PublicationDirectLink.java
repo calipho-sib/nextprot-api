@@ -185,6 +185,9 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		db2link.put("Reactome", "http://www.reactome.org/PathwayBrowser/#%s");
 		// The one below is not in NP1 db, Alain found it
 		db2link.put("PubTator", "https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/PubTator/index.cgi?searchtype=PubMed_Search&query=%s");
+		db2link.put("ORCID", "https://orcid.org/%s");
+		db2link.put("Alzforum", "https://www.alzforum.org/mutations/search?someid=%s");
+		
 	}
 
 	private static String getLinkFor(String dbName, String accession) {
@@ -193,6 +196,7 @@ public class PublicationDirectLink implements Comparable<PublicationDirectLink>,
 		xref.setAccession(accession);
 		xref.setDatabaseName(dbName);
 		xref.setLinkUrl(db2link.get(dbName));
-		return resolver.resolve(xref);
+		String result = resolver.resolve(xref);
+		return result;
 	}
 }

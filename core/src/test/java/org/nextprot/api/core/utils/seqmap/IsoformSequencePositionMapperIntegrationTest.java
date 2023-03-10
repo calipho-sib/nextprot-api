@@ -125,7 +125,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 				
 		String entry_ac = "NX_O00115";
 		String iso_ac = "NX_O00115-1";
-		String variant_ac = "AN_O00115_000472";
+		String variant_ac="AN_O00115_001183";
 		
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
 		for (Annotation a: entry.getAnnotations()) {
@@ -155,9 +155,9 @@ NX_Q9UJW3 has 1 ERROR(s)
 		
 		String entry_ac = "NX_P01308";
 		String iso_ac = "NX_P01308-1";
-		String variant_ac = "AN_P01308_001747";
-		int expectedBeginPosOnMaster = 502;
-		
+		String variant_ac = "AN_P01308_002762";
+		int expectedBeginPosOnMaster = 310;
+
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
 		for (Annotation a: entry.getAnnotations()) {
 			if (a.getUniqueName().equals(variant_ac)) {

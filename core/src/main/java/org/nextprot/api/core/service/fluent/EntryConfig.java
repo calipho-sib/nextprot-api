@@ -5,6 +5,9 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EntryConfig implements KeyValueRepresentation{
 	
 	private boolean overview, publications, genomicMappings, xrefs, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext, mdata;
@@ -14,6 +17,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts,mdata
 	private boolean withoutProperties = false; //by default we get properties
 	private AnnotationCategory subpart;
+	private List<AnnotationCategory> subparts = new ArrayList<>();
 	private final String entryName;
 
 	private EntryConfig(String entryName) {
@@ -84,6 +88,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		return (this.subpart != null);
 	}
 
+	public boolean hasSubParts() {
+		return this.subparts.size() > 0;
+	}
+
 	public boolean hasGoldOnly() {
 		return this.goldOnly;
 	}
@@ -102,6 +110,10 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public AnnotationCategory getSubpart() {
 		return subpart;
+	}
+
+	public List<AnnotationCategory> getSubparts() {
+		return subparts;
 	}
 
 	public EntryConfig withOverview() {
@@ -200,6 +212,17 @@ public class EntryConfig implements KeyValueRepresentation{
 				subpart = AnnotationCategory.getDecamelizedAnnotationTypeName(blockOrSubpart);
 			} catch (IllegalArgumentException ec) {
 				throw new NextProtException("Block or subpart " + blockOrSubpart + " not found. Please look into...");
+			}
+		}
+		return this;
+	}
+
+	public EntryConfig withSubParts(List<String> subparts) {
+		for(String category: subparts) {
+			try {
+				this.subparts.add(AnnotationCategory.getDecamelizedAnnotationTypeName(category));
+			} catch (IllegalArgumentException ec) {
+				throw new NextProtException("Block or subpart " + category + " not found. Please look into...");
 			}
 		}
 		return this;

@@ -103,8 +103,10 @@ public class XrefSolrFieldCollector extends EntrySolrFieldCollector {
         // Isoform ids
         List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
         for (Isoform iso : isoforms) {
-            String isoId = iso.getIsoformAccession().substring(3);
+            String nxIsoformId = iso.getIsoformAccession();
+            String isoId = nxIsoformId.substring(3);
             addEntrySolrFieldValue(fields, EntrySolrField.XREFS, "isoform ID:" + isoId + ", " + isoId);
+            addEntrySolrFieldValue(fields, EntrySolrField.XREFS, "NX isoform ID:" + nxIsoformId + ", " + nxIsoformId);
         }
         // Xrefs to publications (PubMed, DOIs)
         for (Publication currpubli : publicationService.findPublicationsByEntryName(entryAccession)) {

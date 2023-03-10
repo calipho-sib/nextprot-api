@@ -2,7 +2,6 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 
-
 public class EntryProperties  implements Serializable {
 	
 	private static final long serialVersionUID = 10L;
@@ -14,6 +13,8 @@ public class EntryProperties  implements Serializable {
 	private boolean filterdisease;
 	private boolean filterexpressionprofile;
 
+	@Deprecated
+	// Computed in NP2 (nextprot-api)
 	public boolean getFilterexpressionprofile() {
 		return filterexpressionprofile;
 	}
@@ -38,6 +39,8 @@ public class EntryProperties  implements Serializable {
 		this.filterstructure = filterstructure;
 	}
 
+	@Deprecated
+	// Computed in NP2 (nextprot-api)
 	public int getInteractionCount() {
 		return interactionCount;
 	}

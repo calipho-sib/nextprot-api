@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.dao.ReleaseStatsDao;
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
 import org.nextprot.api.core.domain.ProteinExistence;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseContentsStatQueries;
@@ -15,6 +16,7 @@ import org.nextprot.api.core.domain.release.ReleaseStatQueries;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,8 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private AnnotationService annotationService;
+	@Autowired private OverviewService overviewService;
+	
 
 	private static final Log LOGGER = LogFactory.getLog(ReleaseInfoServiceImpl.class);
 	private static final Set<String> NON_FUNCTIONAL_GO_ACC = new HashSet<>(Arrays.asList(
@@ -91,16 +95,17 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 		List<ReleaseStatsTag> stats = releaseStatsDao.findTagStatistics();
 
-		updatePECountAndPubliCountTags(stats);
+		updateTagCounts(stats);
 
 		rs.setTagStatistics(stats);
 
 		return rs;
 	}
 
-	private void updatePECountAndPubliCountTags(List<ReleaseStatsTag> stats) {
+	private void updateTagCounts(List<ReleaseStatsTag> stats) {
 
 		GlobalPublicationStatistics publisStats = statisticsService.getGlobalPublicationStatistics();
+		GlobalEntryStatistics globalEntryStats = statisticsService.getGlobalEntryStatistics();
 
 		for (ReleaseStatsTag statsTag : stats) {
 
@@ -141,6 +146,35 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 			else if ("CURATED_PUBLI".equals(statsTag.getTag())) {
 				statsTag.setCount(publisStats.getNumberOfCuratedPublications());
 			}
+
+			// Update global entry stats
+			else if ("INTERACTION".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithBinaryInteraction());
+			}
+
+			else if ("W_EXPRESSION_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithExpressionProfile());
+			}
+
+			else if ("W_DISEASE_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithDisease());
+			}
+			
+			else if ("PROTEIN_SEQUENCE_VARIANT".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfVariants());
+			}
+
+			// Update term stats
+			else if ("CVTERM".equals(statsTag.getTag())) {
+				statsTag.setCount(statisticsService.getCvTermCount());
+			}
+			
+			// Update entry-term link stats
+			else if ("MASTER_CVTERM_LINK".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntryTermLink());
+			}
+			
+			
 		}
 	}
 
@@ -156,13 +190,14 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 				Stream.of(GO_MOLECULAR_FUNCTION, GO_BIOLOGICAL_PROCESS).collect(Collectors.toSet());
 
 		long count = masterIdentifierService.findUniqueNames().parallelStream()
-											.map(ac -> annotationService.findAnnotations(ac))
-											.filter(annotList -> annotList.stream().noneMatch(
-													a -> notAllowedCategories.contains(a.getAPICategory())))
-											.filter(annotList -> annotList.stream().noneMatch(
-													a -> allowedCategories.contains(a.getAPICategory())
-															&& !NON_FUNCTIONAL_GO_ACC.contains(a.getCvTermAccessionCode())))
-											.count();
+				.filter(ac -> ! overviewService.findOverviewByEntry(ac).getProteinExistence().equals(ProteinExistence.UNCERTAIN))
+				.map(ac -> annotationService.findAnnotations(ac))
+				.filter(annotList -> annotList.stream().noneMatch(
+						a -> notAllowedCategories.contains(a.getAPICategory())))
+				.filter(annotList -> annotList.stream().noneMatch(
+						a -> allowedCategories.contains(a.getAPICategory())
+								&& !NON_FUNCTIONAL_GO_ACC.contains(a.getCvTermAccessionCode())))
+				.count();
 
 		ReleaseStatsTag releaseStatsTag = new ReleaseStatsTag();
 		releaseStatsTag.setTag("WO_FUNCTION_MASTER");

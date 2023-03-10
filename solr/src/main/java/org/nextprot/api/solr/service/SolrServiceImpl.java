@@ -40,6 +40,7 @@ public class SolrServiceImpl implements SolrService {
 
     private static final Log LOGGER = LogFactory.getLog(SolrServiceImpl.class);
     private static final int DEFAULT_ROWS = 50;
+	private static final int MAX_ROWS = 1000000;
 
     @Autowired
     private SolrCoreRepository solrCoreRepository;
@@ -241,7 +242,12 @@ public class SolrServiceImpl implements SolrService {
 		Query q = new Query(solrCore).addQuery(queryString);
 		q.setQueryMode(configuration);
 
-		q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
+		if(rows == SolrService.INFINITE) {
+			q.rows(MAX_ROWS);
+		} else {
+			q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
+		}
+
 		q.start((start != null) ? Integer.parseInt(start) : 0);
 
 		if (sort != null && sort.length() > 0)

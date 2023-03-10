@@ -1,7 +1,7 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
 
 public class UnknownFeatureQueryTypeException extends FeatureQueryException {
 

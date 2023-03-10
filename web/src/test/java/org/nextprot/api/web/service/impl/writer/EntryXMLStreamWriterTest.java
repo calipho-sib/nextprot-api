@@ -96,6 +96,7 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "        <release>\n" +
                 "            <nextprot>\n" +
                 "                <database-release>$release.databaseRelease</database-release>\n" +
+                "                <genome-assembly>GRCh38</genome-assembly>\n" +
                 "                <api-release>$release.apiRelease</api-release>\n" +
                 "            </nextprot>\n" +
                 "            <data-source-list/>\n" +
@@ -136,11 +137,11 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "                </gene-list>\n" +
                 "                <family-list>\n" +
                 "                    <family family-type=\"Superfamily\">\n" +
-                "                        <cv-term accession=\"FA-03057\" terminology=\"uniprot-family-cv\">Protein kinase</cv-term>\n" +
+                "                        <cv-term accession=\"FA-03057\" terminology=\"nextprot-family-cv\">Protein kinase</cv-term>\n" +
                 "                        <family family-type=\"Family\">\n" +
-                "                            <cv-term accession=\"FA-03117\" terminology=\"uniprot-family-cv\">Tyr protein kinase</cv-term>\n" +
+                "                            <cv-term accession=\"FA-03117\" terminology=\"nextprot-family-cv\">Tyr protein kinase</cv-term>\n" +
                 "                            <family family-type=\"Subfamily\">\n" +
-                "                                <cv-term accession=\"FA-03128\" terminology=\"uniprot-family-cv\">Insulin receptor</cv-term>\n" +
+                "                                <cv-term accession=\"FA-03128\" terminology=\"nextprot-family-cv\">Insulin receptor</cv-term>\n" +
                 "                            </family>\n" +
                 "                        </family>\n" +
                 "                    </family>\n" +
@@ -171,7 +172,7 @@ public class EntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "                </gene-list>\n" +
                 "                <family-list>\n" +
                 "                    <family family-type=\"Family\">\n" +
-                "                        <cv-term accession=\"FA-01869\" terminology=\"uniprot-family-cv\">Insulin</cv-term>\n" +
+                "                        <cv-term accession=\"FA-01869\" terminology=\"nextprot-family-cv\">Insulin</cv-term>\n" +
                 "                    </family>\n" +
                 "                </family-list>\n" +
                 "                <history>\n" +

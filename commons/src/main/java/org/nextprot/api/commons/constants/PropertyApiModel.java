@@ -24,6 +24,7 @@ public class PropertyApiModel {
 	public static final String NAME_SELF_INTERACTION="selfInteraction";
 	public static final String NAME_ANTIBODY_UNICITY="antibody unicity";
 	public static final String NAME_PEPTIDE_UNICITY="peptide unicity";
+	public static final String NAME_PEPTIDE_SET="peptideSet";
 	public static final String NAME_PEPTIDE_UNICITY_WITH_VARIANTS="peptide unicity with variants";
 	
 
@@ -35,9 +36,12 @@ public class PropertyApiModel {
 	// annotation evidence properties
 	public static final String NAME_GO_QUALIFIER = "go_qualifier";
 	public static final String NAME_EXPRESSION_LEVEL="expressionLevel";
-	public static final String NAME_INTEGRATION_LEVEL="integrationLevel";
+	public static final String NAME_EXPRESSION_SCORE="expressionScore";
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
+	public static final String NAME_PSIMI_AC="psimiAC";
+	public static final String NAME_PSIMI_CV_NAME="psimiCvName";
+	
 	public static final String NAME_CELL_LINE="CL";
 	public static final String NAME_INTENSITY="intensity";
 	
@@ -55,11 +59,11 @@ public class PropertyApiModel {
 
 		anno2props.put(AnnotationCategory.VARIANT,
 				new HashSet<>(Arrays.asList(
-						new PropertyApiModel(NAME_HOMOZYGOTE_COUNT, "homozygote-count", "integer", true, true, Parent.EVIDENCE),
-						new PropertyApiModel(NAME_ALLELE_NUMBER, "allele-number", "integer", true, true, Parent.EVIDENCE),
-						new PropertyApiModel(NAME_ALLELE_COUNT, "allele-count", "integer", true, true, Parent.EVIDENCE),
-						new PropertyApiModel(NAME_ALLELE_FREQUENCY, "allele-frequency", "double", true, true, Parent.EVIDENCE)
-						))); 
+						new PropertyApiModel(NAME_HOMOZYGOTE_COUNT, "homozygoteCount", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_NUMBER, "alleleNumber", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_COUNT, "alleleCount", "integer", true, true, Parent.EVIDENCE),
+						new PropertyApiModel(NAME_ALLELE_FREQUENCY, "alleleFrequency", "double", true, true, Parent.EVIDENCE)
+						)));
 		
 		
 		anno2props.put(AnnotationCategory.GLYCOSYLATION_SITE,
@@ -75,9 +79,8 @@ public class PropertyApiModel {
 		
 		anno2props.put(AnnotationCategory.EXPRESSION_PROFILE,
 				new HashSet<>(Arrays.asList(
-						new PropertyApiModel(NAME_ANTIBODIES_ACC,"antibodiesAcc","string", true, true, Parent.EVIDENCE), 
-						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"expressionLevel","string", true, true, Parent.EVIDENCE), 
-						new PropertyApiModel(NAME_INTEGRATION_LEVEL,"integrationLevel","string", true, true, Parent.EVIDENCE)))); 
+						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"observedExpression","string", true, true, Parent.EVIDENCE), 
+						new PropertyApiModel(NAME_EXPRESSION_SCORE,"expressionScore","double", true, true, Parent.EVIDENCE)))); 
 		anno2props.put(AnnotationCategory.PDB_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_RESOLUTION,"resolution","double", true, true, Parent.ANNOTATION), 
@@ -86,29 +89,35 @@ public class PropertyApiModel {
 		anno2props.put(AnnotationCategory.PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
-						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUnicity","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_UNICITY, "peptideUniqueness","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_SET,"peptideSource","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.SRM_PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
-						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUnicity","string", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PEPTIDE_UNICITY,"peptideUniqueness","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		
 		anno2props.put(AnnotationCategory.ANTIBODY_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODY_NAME, "antibodyName", "string", true, true, Parent.ANNOTATION),
-						new PropertyApiModel(NAME_ANTIBODY_UNICITY, "antibodyUnicity", "string", true, true, Parent.ANNOTATION)
+						new PropertyApiModel(NAME_ANTIBODY_UNICITY, "antibodyUniqueness", "string", true, true, Parent.ANNOTATION)
 						)));
 		
 		anno2props.put(AnnotationCategory.BINARY_INTERACTION,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_SELF_INTERACTION,"selfInteraction","boolean", true, true, Parent.ANNOTATION), 
+						new PropertyApiModel(NAME_PSIMI_AC, "interactionDetectionMethod","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_NUMBER_EXPERIMENTS,"numberOfExperiments","integer", true, true, Parent.EVIDENCE))));
 		
+		anno2props.put(AnnotationCategory.INTERACTION_MAPPING,
+				new HashSet<>(Arrays.asList(
+						new PropertyApiModel(NAME_PSIMI_AC, "interactionDetectionMethod","string", true, true, Parent.EVIDENCE))));
+
 		anno2props.put(AnnotationCategory.PHENOTYPIC_VARIATION,
 				new HashSet<>(Arrays.asList(
-						new PropertyApiModel(NAME_INTENSITY,"intensity","string", false, true, Parent.EVIDENCE)))); 
+						new PropertyApiModel( NAME_INTENSITY,"severity","string", true, true, Parent.EVIDENCE)))); 
 		// add other annotation - property links below
 		// ...
 	}
@@ -166,17 +175,25 @@ public class PropertyApiModel {
 				case "not detected" : return "Negative";
 				case "positive" : return "Positive";
 				case "negative" : return "Negative";
+				case "detected" : return "Positive";
 				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_EXPRESSION_LEVEL );
 			}
 		}
-			
-		if (dbName.equals(PropertyApiModel.NAME_INTEGRATION_LEVEL)) {
+		
+		if (dbName.equals(PropertyApiModel.NAME_PEPTIDE_SET)) {
 			switch (value) {
-				case "integrated" : return "Integrated";
-				case "selected"  : return "Selected";
-				case "single" : return "Single";
-				default: throw new RuntimeException("Invalid value " + value + " for property "+ PropertyApiModel.NAME_INTEGRATION_LEVEL );
+				case "PeptideAtlas human phosphoproteome" : return "PeptideAtlas_human_phosphoproteome";
+				default: return value;
 			}
+		}
+		
+		if (dbName.equals(PropertyApiModel.NAME_GO_QUALIFIER)) {
+			String tmp = value.split(",")[0];
+			return tmp.substring(0, 1).toUpperCase() + tmp.substring(1);
+		}
+		
+		if (dbName.equals(PropertyApiModel.NAME_PSIMI_AC)) {
+			return value.replace(":", "_");
 		}
 		
 		// default

@@ -1,5 +1,7 @@
 package org.nextprot.api.core.test.base;
 
+import java.util.Date;
+
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -25,6 +27,13 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:spring/core-context.xml")
 public abstract class CoreUnitBaseTest extends AbstractUnitBaseTest{
-	
+
+	public static boolean todayIsAfter(String date) {
+		Date somedate = new Date(date);
+		Date now = new Date();
+		return now.after(somedate);
+		
+	}
+
 
 }

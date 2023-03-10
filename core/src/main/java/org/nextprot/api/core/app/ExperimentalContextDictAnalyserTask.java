@@ -37,7 +37,7 @@ public class ExperimentalContextDictAnalyserTask extends SpringBasedTask<Experim
     protected void execute() throws IOException {
 
         ExperimentalContextDictionaryService bean = getBean(ExperimentalContextDictionaryService.class);
-        Map<Long, ExperimentalContext> dict = bean.getAllExperimentalContexts();
+        Map<Long, ExperimentalContext> dict = bean.getIdExperimentalContextMap();
 
         /* If instrumentation is available, use it, otherwise guess the size using sun.misc.Unsafe; if that is unavailable,
          * guess using predefined specifications -> setting jamm as -javaagent is now optional */

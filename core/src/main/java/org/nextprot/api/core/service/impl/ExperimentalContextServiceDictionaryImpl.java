@@ -1,5 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.ExperimentalContext;
@@ -10,13 +18,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 
 @Lazy
 @Service
@@ -26,8 +27,8 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	@Autowired private TerminologyService terminologyService;
 	
 	@Override
-	@Cacheable(value = "experimental-context-dictionary", sync = true)
-	public Map<Long, ExperimentalContext> getAllExperimentalContexts() {
+	@Cacheable(value = "id-experimental-context-map", sync = true)
+	public Map<Long, ExperimentalContext> getIdExperimentalContextMap() {
 		
 		//long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
 
@@ -43,7 +44,18 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		return dictionary;
 	}
 
-	
+	@Override
+	@Cacheable(value = "md5-experimental-context-map", sync = true)
+	public Map<String, ExperimentalContext> getMd5ExperimentalContextMap() {
+		
+		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
+		Map<String, ExperimentalContext> md5ExperimentalContextMap = new HashMap<>();
+		for( ExperimentalContext experimentalContext : ecs) {
+			md5ExperimentalContextMap.put(experimentalContext.getMd5(), experimentalContext);
+		}
+		return md5ExperimentalContextMap;
+	}
+
 
 	private void updateTerminologies(List<ExperimentalContext> ecs) {
 
@@ -76,7 +88,11 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		if (ec.getTissue() != null) ec.setTissue(map.get(ec.getTissueAC()));
 		if (ec.getOrganelle() != null) ec.setOrganelle(map.get(ec.getOrganelleAC()));
 		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(map.get(ec.getDetectionMethodAC()));
-		if (ec.getDisease() != null) ec.setDisease(map.get(ec.getDiseaseAC()));
+		if (ec.getDisease() != null) {
+			CvTerm cvTerm = map.get(ec.getDiseaseAC());
+			cvTerm.setXrefs(new ArrayList<>());
+			ec.setDisease(cvTerm);
+		}
 		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(map.get(ec.getDevelopmentalStageAC()));
 	}
 

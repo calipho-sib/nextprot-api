@@ -14,17 +14,20 @@ import java.util.Set;
 public enum ReleaseDataSources {
 
 	UniProtKBSwissProt("UniProtKB/Swiss-Prot", "UniProtKB", "UniProt knowledgebase Swiss-Prot section", "http://www.uniprot.org/"),
-	BGee("BGee", "BGee", "Database for gene expression evolution", "http://bgee.unil.ch"),
+	Bgee("Bgee", "BGee", "Database for gene expression evolution", "https://bgee.org/bgee14_1/"),  // change 14_1 to something else when required by new data release
+	Cellosaurus("Cellosaurus", "neXtProt cell line", "Manually curated cell line data", "https://web.expasy.org/cellosaurus/"),
 	COSMIC("COSMIC", "Cosmic", "Catalogue of somatic mutations in cancer", "http://www.sanger.ac.uk/genetics/CGP/cosmic/"),
 	Ensembl("Ensembl", "Ensembl genome", "Ensembl human genome browser", "http://www.ensembl.org/"),
 	ENZYME("ENZYME", "UniProtKB enzyme classification", "Enzyme nomenclature database", "http://www.expasy.org/enzyme/"),
+	ENYO("Enyo Pharma SA", "ENYO", "Manually curated protein-protein interaction data", "http://www.enyopharma.com/technology/interactome-datasets/"),
 	GO("GO", "GO", "Gene Ontology", "http://www.geneontology.org/"),
 	GLYCONNECT("GlyConnect", "GlyConnect", "Protein glycosylation platform", "https://glyconnect.expasy.org/"),
 	GNOMAD("gnomAD", "gnomAD", "Genome Aggregation Database", "https://gnomad.broadinstitute.org/"),
-	HPA("HPA", "HPA", "Human Protein Atlas", "https://v%v.proteinatlas.org/"),
+	HPA("HPA", "HPA", "Human Protein Atlas", "https://v21.proteinatlas.org/"),  // change v21 to something else when required by new data release
 	IntAct("IntAct", "IntAct interactions", "Molecular interaction database", "http://www.ebi.ac.uk/intact/"),
 	InterPro("InterPro", "InterPro", "Integrated resource of protein families, domains and functional sites", "http://www.ebi.ac.uk/interpro/"),
 	MeSH("MeSH", "MeSH", "Medical Subject Headings", "http://www.nlm.nih.gov/mesh/MBrowser.html"),
+	MassIVE("MassIVE", "Human MassIVE",  "Peptides identified by mass spectrometry", "https://massive.ucsd.edu"),
 	PeptideAtlas("PeptideAtlas", "Human PeptideAtlas", "Peptides identified by mass spectrometry", "http://www.peptideatlas.org/"),
 	PROSITE("PROSITE", "PROSITEDOC", "Protein domain and family database", "http://www.expasy.org/prosite/"),
 	PubMed("PubMed", "PubMed publications", "Citations for biomedical literature from MEDLINE, life science journals, and online books.", "http://www.ncbi.nlm.nih.gov/sites/entrez?db=pubmed"),

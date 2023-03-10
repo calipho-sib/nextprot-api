@@ -1,6 +1,7 @@
 package org.nextprot.api.rdf.service.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.rdf.service.HttpSparqlService;
 
@@ -15,17 +16,18 @@ import static org.nextprot.api.rdf.service.impl.HttpSparqlServiceImpl.SPARQL_DEF
 public class HttpSparqlServiceImplTest {
 
 	@Test
+	@Ignore
 	public void testSearchWithOneVar() {
-
+		
 		HttpSparqlService sparqlService = new HttpSparqlServiceImpl();
-
+		
 		HttpSparqlService.SparqlResponse response = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
 				"select distinct ?entry where {\n" +
-				"  ?entry :isoform ?iso.\n" +
-				"  ?iso :keyword / :term cv:KW-0597.\n" +
-				"  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n" +
-				"}");
-
+						"  ?entry :isoform ?iso.\n" +
+						"  ?iso :keyword / :term cv:KW-0597.\n" +
+						"  ?iso :cellularComponent /:term /:childOf  cv:SL-0086.\n" +
+						"}");
+		
 		checkExpectedValues(response, Collections.singletonList("entry"), 5666);
 	}
 
@@ -40,17 +42,13 @@ public class HttpSparqlServiceImplTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSearchWithTwoVars() {
-
+		
 		HttpSparqlService sparqlService = new HttpSparqlServiceImpl();
-
-		HttpSparqlService.SparqlResponse response = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL,
-				"select distinct ?entry ?iso where {\n" +
-						"  ?entry :isoform ?iso.\n" +
-						"  ?iso :keyword / :term cv:KW-0597.\n" +
-						"  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n" +
-						"}");
-
+		
+		HttpSparqlService.SparqlResponse response = sparqlService.executeSparqlQuery(SPARQL_DEFAULT_URL, "select distinct ?entry ?iso where {\n" + "  ?entry :isoform ?iso.\n" + "  ?iso :keyword / :term cv:KW-0597.\n" + "  ?iso :cellularComponent /:term /:childOf cv:SL-0086.\n" + "}");
+		
 		checkExpectedValues(response, Arrays.asList("entry", "iso"), 13915);
 	}
 

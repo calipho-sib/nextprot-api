@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 
 public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryException {
 

@@ -110,9 +110,9 @@ public class TermJSONIntegrationTest extends WebIntegrationBaseTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        int count = StringUtils.countOccurrencesOf(content, "accession");
-
-        Assert.assertEquals(count, 900, 50);
+        int childCount = StringUtils.countOccurrencesOf(content, "accession"); 
+        int delta = 50; // error margin
+        Assert.assertEquals(1450, childCount, delta);
 
     }
 

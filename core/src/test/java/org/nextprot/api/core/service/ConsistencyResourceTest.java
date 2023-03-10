@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -8,13 +9,20 @@ import org.nextprot.api.core.dao.impl.StatementSimpleWhereClauseQueryDSL;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.nextprot.commons.statements.specs.CoreStatementField.*;
+import static org.nextprot.commons.statements.specs.CoreStatementField.ANNOT_CV_TERM_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_ACCESSION;
+import static org.nextprot.commons.statements.specs.CoreStatementField.REFERENCE_DATABASE;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 
@@ -24,8 +32,14 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Autowired private MainNamesService mainNamesService;		
 	
 	@Test
-	public void shouldFindAllPublications() {
-		
+	public void shouldFindAllPublications_After_Jul_20() {
+
+		// We assume that at this date the nextprot db declared in application-dev.properties
+		// will contain the all publications declared in nxflat db
+		if (!CoreUnitBaseTest.todayIsAfter("20 Jul 2021")) {
+			return;
+		}
+
 		List<String> missingPublications = new ArrayList<>();
 
 		List<String> pubmeds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
@@ -99,22 +113,41 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllTerms() {
 		
-		boolean missingTerms = false;
-		List<String> terms = statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION);
-		//System.out.println("Found " + terms.size() + " distinct terms");
-		for(String t : terms) {
-			if(t != null){
-				CvTerm term = terminologyService.findCvTermByAccession(t);
-				if(term == null){
-					System.err.println("Can t find term " + t); 
-					missingTerms = true;
-				}
-			}
-		};
+		// Get term values stored in ANNOT_CV_TERM_ACCESSION
+		Set<String> terms = new HashSet<>(statementDao.findAllDistinctValuesforField(ANNOT_CV_TERM_ACCESSION));
 		
-		if(missingTerms)
+		// Get term values stored in EXTRA_FIELDS
+		Set<String> termFieldNames = new HashSet<>(Arrays.asList("DISEASE_ACC", "TISSUE_ACC", "CELL_LINE_ACC"));
+		for (String termFieldName: termFieldNames) {
+			List<String> extraFields = statementDao.findDistinctExtraFieldsTerms(termFieldName);
+			terms.addAll(extraFields.stream()
+									.filter(StringUtils::isNotBlank)
+									.map(extraValue -> {
+										Map<String, String> extraMap = org.nextprot.commons.utils.StringUtils.deserializeAsMapOrNull(extraValue);
+										String termAcc = extraMap == null? null: extraMap.get(termFieldName);
+										if (StringUtils.isNotBlank(termAcc)) {
+											return termAcc;
+										}
+										return null;
+									})
+									.collect(Collectors.toSet()));
+		}
+		
+		// an ANNOT_CV_TERM_ACCESSION or an EXTRA_FIELD can be null
+		terms.remove(null);
+		
+		System.out.println("Found " + terms.size() + " distinct term(s)");
+		
+		Set<String> cvTerms = terminologyService.findCvTermsByAccessions(terms).stream()
+												.map(CvTerm::getAccession)
+												.collect(Collectors.toSet());
+		terms.removeAll(cvTerms);
+		
+		if (terms.size() > 0) {
+			System.err.println("Missing terms: " + terms);
 			Assert.fail();
-
+		} else {
+			System.out.println("No missing terms.");
+		}
 	}
-
 }

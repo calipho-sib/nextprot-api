@@ -1,6 +1,5 @@
 package org.nextprot.api.security.service.impl;
 
-import com.auth0.spring.security.auth0.Auth0UserDetails;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.resource.UserResource;
 import org.springframework.security.core.Authentication;

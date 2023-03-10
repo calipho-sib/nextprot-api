@@ -8,3 +8,4 @@
 #parse("turtle/schema-database-list.ttl.vm")
 #parse("turtle/schema-datasource-list.ttl.vm")
 #parse("turtle/schema-experimental-context.ttl.vm")
+#parse("turtle/additional-properties-def.ttl.vm")

@@ -52,7 +52,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         Assert.assertTrue(Arrays.stream(graph.getChildren(cvId)).boxed()
                 .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0030246"));
         Assert.assertTrue(Arrays.stream(graph.getChildren(cvId)).boxed()
-                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0001871"));
+                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0019808"));
     }
 
     @Test
@@ -78,21 +78,26 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void geneOntologyShouldContainOneRoot() throws Exception {
+    public void geneOntologyMayContainMoreTanOneRoot() throws Exception {
 
         CvTermGraph graph = cvTermGraphService.findCvTermGraph(TerminologyCv.GoMolecularFunctionCv);
 
         int[] roots = graph.getSources();
+          
         Assert.assertEquals(1, roots.length);
 
         List<String> accessions = new ArrayList<>();
-        for (int i=0 ; i<roots.length ; i++) {
+        for (int i=0 ; i<roots.length ; i++) accessions.add(graph.getCvTermAccessionById(roots[i]));
 
-            accessions.add(graph.getCvTermAccessionById(roots[i]));
-        }
-
-        Assert.assertEquals(1, accessions.size());
-        Assert.assertEquals("GO:0003674", accessions.get(0));
+        Assert.assertTrue(accessions.contains("GO:0003674")); // Molecular function (the real root)
+        // pam 20.07.2020
+        // we normally expect 1 root, but, on 20.07.2020, here we have a node being a child of
+        // a biological process (another go terminology) so it appears as a root
+        // it doesn't seem to disturb any functionality
+        // val 26.03.2021
+        // the child has disappeared, so now, we check that that child doesn't exist.
+        Assert.assertFalse(accessions.contains("GO:0140312")); // Cargo adaptor activity (the fake root)
+        
     }
 
     @Test
@@ -241,15 +246,16 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
         CvTermGraph descendantSubgraph = graph.calcDescendantSubgraph(graph.getCvTermIdByAccession("GO:0043491"));
 
         CvTermGraph.View view = descendantSubgraph.toView();
-
+        
         Assert.assertEquals("GO:0043491 descendant graph", view.getLabel());
-        Assert.assertEquals(4, view.getNodes().size());
-        Assert.assertEquals(5, view.getEdges().size());
+        Assert.assertEquals(1, view.getNodes().size()); // was 4 before we exclude non subsuming relationships
+        Assert.assertEquals(0, view.getEdges().size()); // was 5 before we exclude non subsuming relationships
 
+        // we don't have edged in this example any more cos we now filter out non subsuming relationships
         for (CvTermGraph.View.Edge edge : view.getEdges()) {
-
             int tail = edge.getTail();
             int head = edge.getHead();
+        	System.out.println("was in edge with tail " + tail + " and head " + head);
 
             if (tail == 26584) {
                 Assert.assertTrue(head == 26586 || head == 26585);

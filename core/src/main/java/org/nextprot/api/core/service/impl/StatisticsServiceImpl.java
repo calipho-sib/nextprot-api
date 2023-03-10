@@ -1,22 +1,31 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.GlobalEntryStatistics;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.GlobalPublicationService;
+import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.StatisticsService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.nextprot.api.commons.constants.AnnotationCategory.*;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -28,7 +37,63 @@ public class StatisticsServiceImpl implements StatisticsService {
     private GlobalPublicationService globalPublicationService;
 
     @Autowired
+    private AnnotationService annotationService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+
+    @Autowired
     private ReleaseInfoService releaseInfoService;
+
+    @Autowired
+    private TerminologyService terminologyService;
+
+    @Cacheable(value = "global-entry-statistics", sync = true)
+    @Override
+    public GlobalEntryStatistics getGlobalEntryStatistics() {
+
+        GlobalEntryStatistics globalEntryStatistics = new GlobalEntryStatistics();
+        Set<String> distinctInteractions = new HashSet<>();
+
+        masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
+
+            List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
+
+            // Count number of annotations with a non empty term
+            globalEntryStatistics.incrementNumberOfEntryTermLink(
+            	(int)annotations.stream().filter(a -> a.getCvTermAccessionCode() != null && a.getCvTermAccessionCode().length()>0).count()
+            );
+            
+            // Count number of entries with expression profile
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
+                globalEntryStatistics.incrementNumberOfEntriesWithExpressionProfile();
+            }
+
+            // Count number of entries with disease
+            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(DISEASE))) {
+                globalEntryStatistics.incrementNumberOfEntriesWithDisease();
+            }
+
+            // Count number of variants
+            globalEntryStatistics.incrementNumberOfVariants(
+                    annotations.stream()
+                               .filter(a -> a.getAPICategory().equals(VARIANT))
+                               .count());
+
+            // Get distinct interactions to be counted at the end (defined as interactant1::interactant2)
+            Set<String> interactants = annotations.stream()
+                                             .filter(a -> a.getAPICategory().equals(BINARY_INTERACTION))
+                                             .map(a -> a.getBioObject().getAccession())
+                                             .collect(Collectors.toSet());
+            for (String interactant : interactants) {
+                // We sort interactants to not count reverse interactions such as interactant2::interactant1
+                distinctInteractions.add(Stream.of(interactant, uniqueName).sorted().collect(Collectors.joining("::")));
+            }
+        });
+        globalEntryStatistics.setNumberOfEntriesWithBinaryInteraction(distinctInteractions.size());
+
+        return globalEntryStatistics;
+    }
 
     @Cacheable(value = "global-publication-statistics", sync = true)
     @Override
@@ -61,6 +126,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         });
 
         return globalPublicationStatistics;
+    }
+
+    
+    
+    @Override
+    public int getCvTermCount() {
+        return terminologyService.findAllCVTerms().size();
     }
 
     @Override

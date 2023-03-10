@@ -57,7 +57,7 @@ public class StructuresPageView extends PageViewBase {
 	@Override
 	protected List<XrefDatabase> getXrefDatabaseWhiteList() {
 
-		return Arrays.asList(DISPROT, PDB, PDB_SUM, PROTEIN_MODEL_PORTAL, PROTEOPEDIA, SMR, UNILECTIN);
+		return Arrays.asList(ALPHAFOLD_DB, BMRB, DISPROT, PCDDB, PDB, PDB_SUM, PROTEOPEDIA, SAM, SASBDB, SMR, UNILECTIN, IDEAL);
 	}
 
 	@Override

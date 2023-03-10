@@ -2,9 +2,9 @@ package org.nextprot.api.isoform.mapper.controller;
 
 import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.MultipleFeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.result.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.query.MultipleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.query.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

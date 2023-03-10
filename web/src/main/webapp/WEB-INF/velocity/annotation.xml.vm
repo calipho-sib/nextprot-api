@@ -47,6 +47,15 @@
 		#end
 	#end
 
+## pam: to be discussed with Kasun
+	#if($annotation.getRelatedAnnotationNames())
+		<related-annotation-list>
+			#foreach($annotationName in $annotation.getRelatedAnnotationNames())
+				<related-annotation annotation-internal-ref="$annotationName"/>
+			#end
+		</related-annotation-list>
+	#end
+
 	## might have no properties so need to check
 	#set($annotationProperties = $annotation.getPropertiesExceptName("rank"))
 	#if(!$annotationProperties.isEmpty())
@@ -64,12 +73,39 @@
 			## should include qualifier-type='$evidence.getQualifierType()' 
 			<evidence is-negative='$evidence.isNegativeEvidence()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
 				<cv-term accession="$evidence.getEvidenceCodeAC()" terminology="$StringUtils.camelToKebabCase($evidence.getEvidenceCodeOntology())">$evidence.getEvidenceCodeName()</cv-term>
-				#if(!$evidence.getPropertiesNames().isEmpty())
+				#set($psimiAC=false)
+				#set($psimiAC=$evidence.getPropertyRawValue("psimiAC"))
+				#set($psimiCvName="term name not found")
+				#set($psimiCvName=$evidence.getPropertyRawValue("psimiCvName"))
+				#if($psimiAC)
+                <cv-term accession="$psimiAC" terminology="psi-mi-cv">$psimiCvName</cv-term>						
+				#end
+				#set($filteredNames=$evidence.getPropertiesNames())
+				#set($filteredNames=$NXUtils.clonedSetWithoutElement($filteredNames,"psimiAC"))
+				#set($filteredNames=$NXUtils.clonedSetWithoutElement($filteredNames,"psimiCvName"))
+				#if(!$filteredNames.isEmpty())
+				##if(!$evidence.getPropertiesNames().isEmpty())
                     <property-list>
-						#foreach($pk in $evidence.getPropertiesNames())
-							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
+					#foreach($pname in $filteredNames)
+						#set($epw=false)
+						#set($epw=$NXUtils.getXMLPropertyWriter($annotation.getAPICategory(), $pname))
+						#if($epw)
+							#set($UNESCAPED_CDATA=false)
+							#set($UNESCAPED_CDATA=$epw.formatValue($evidence.getPropertyRawValue($pname)))
+							#if($UNESCAPED_CDATA)
+							#if($pname == "intensity")
+							<property name="severity" value="$UNESCAPED_CDATA" />
+							#else
+							<property name="$pname" value="$UNESCAPED_CDATA" />
+							#end
+							#end
+						#else
+							<property name="$pname" value="$evidence.getPropertyValue($pname)" />
 						#end
-					</property-list>
+					#end
+                    </property-list>
+					
+					
 				#end
 				#if($evidence.getNote())
 					#set($UNESCAPED_CDATA = $evidence.getNote())
@@ -80,5 +116,5 @@
     </evidence-list>
 	#end
 	#set($target-isoform-list = $annotation.getTargetingIsoformsMap())
-	#parse('target-isoform-list-annotation.xml.vm')	
+	#parse('target-isoform-list-annotation.xml.vm')
 </annotation>

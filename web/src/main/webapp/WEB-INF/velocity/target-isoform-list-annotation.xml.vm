@@ -1,6 +1,6 @@
 <target-isoform-list>
 	#foreach($isospec in $target-isoform-list.values())
-		<target-isoform accession="$isospec.isoformAccession" specificity='$isospec.specificity' #if($isospec.name)name='$isospec.name'#end>
+		<target-isoform accession="$isospec.isoformAccession" specificity='$isospec.specificity' #if($isospec.name)name='$isospec.name'#end #if($isospec.hgvs)hgvs='$isospec.hgvs'#end>
 		#if($isospec.isPositional())
             <location #if($NXUtils.isDisulfideBond($annotation)) type='disulfide-bond'
 			#elseif($NXUtils.isCrossLink($annotation)) type='cross-link' #end>

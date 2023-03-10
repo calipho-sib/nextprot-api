@@ -1,5 +1,8 @@
 package org.nextprot.api.core.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -8,121 +11,118 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.annotation.AnnotationUtils;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@ActiveProfiles({ "dev" })
 public class AnnotationUtilsUnconfirmedPE1Test extends CoreUnitBaseTest {
-        
-    //@Autowired private EntryBuilderService entryBuilderService = null;
-
-	
+        	
     @Test
 	public void test11() {
 
     	ArrayList<Annotation> list = new ArrayList<>();
+    	StringBuilder msg;
     	
     	// OK - non overlapping peptides both just long enough
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 18, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 38, true)); 
-    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
 
     	// KO - non overlapping peptides 1st not long enough
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 17, true)); // size = 8
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 38, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// KO - non overlapping peptides, 2nd not long enough
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 18, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 37, true)); // size = 8
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// OK - non overlapping peptides, both just long enough plus one inclding others
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(3, "PEP_INCL", 10, 38, true)); 
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 18, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 38, true)); 
-    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
 
     	// OK - non overlapping peptides, both just long enough plus one inclding others, in another order
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 18, true)); 
     	list.add(createPeptideMappingAnnot(3, "PEP_INCL", 10, 38, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 38, true)); 
-    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
 
     	// OK - non overlapping peptides, both just long enough plus one inclding others, in another order
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 10, 18, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 30, 38, true)); 
     	list.add(createPeptideMappingAnnot(3, "PEP_INCL", 10, 38, true)); 
-    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
 
     	// OK - overlapping peptides long enough and coverage just enough
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 11, 21, true));  // size = 11 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 20, 28, true));  // size = 19, coverage = 18
-    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(true, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
 
     	// KO - overlapping peptides long enough but coverage too small
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 12, 22, true));  // size = 11 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 20, 28, true));  // size = 19, coverage = 17
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
       	// KO - peptides including each other
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_INCLUDING", 10, 40, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_MIDDLE", 12, 30, true)); 
     	list.add(createPeptideMappingAnnot(3, "PEP_INCLUDED", 14, 20, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// KO - same peptides but other id, exists ???
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 11, 20, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_2", 11, 20, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// KO - non overlapping peptides but same peptide id
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, "PEP_1", 11, 20, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_1", 31, 39, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
     	
     	// KO - non overlapping peptides but 1 peptide without name
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, null, 11, 20, true)); 
     	list.add(createPeptideMappingAnnot(2, "PEP_1", 31, 39, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// OK - non overlapping peptides but no peptide name at all
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, null, 11, 20, true)); 
     	list.add(createPeptideMappingAnnot(2, null, 31, 39, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
+    	System.out.println(msg);
     	
     	// KO - ok but 1 annotation is not peptide  mapping annotation
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, null, 11, 20, true)); 
     	Annotation a2 = createPeptideMappingAnnot(2, null, 31, 39, true); 
     	a2.setAnnotationCategory(AnnotationCategory.PTM_INFO);
     	list.add(a2);
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// KO - ok but just 1 peptide 
-    	list.clear();
+    	list.clear(); msg = new StringBuilder();
     	list.add(createPeptideMappingAnnot(1, null, 11, 20, true)); 
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     	// KO - no peptide
-    	list.clear();
-    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, true));
-
+    	list.clear(); msg = new StringBuilder();
+    	Assert.assertEquals(false, AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(list, msg));
 
     }
 	

@@ -22,8 +22,10 @@ public enum DbXrefURLResolverSupplier {
     CHITARS(XrefDatabase.CHITARS,                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.CHITARS)),
     CLINVAR(XrefDatabase.CLINVAR,                   new ClinvarXrefURLResolver()),
     COSMIC(XrefDatabase.COSMIC,                     new CosmicXrefURLResolver()),
+    DECIPHER(XrefDatabase.DECIPHER,                 new DecipherXrefURLResolver()),
     ECO(XrefDatabase.ECO,                         	new EcoXrefURLResolver()),
     EMBL(XrefDatabase.EMBL,                         new EmblXrefURLResolver()),
+    EMBL_CDS(XrefDatabase.EMBL_CDS,                 new EmblCdsXrefURLResolver()),
     ENSEMBL(XrefDatabase.ENSEMBL,                   new EnsemblXrefURLResolver()),
     EVOC(XrefDatabase.EVOC,				 			new UnresolvedXrefURLResolver()),
     EXPRESSION_ATLAS(XrefDatabase.EXPRESSION_ATLAS, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.EXPRESSION_ATLAS)),
@@ -32,13 +34,14 @@ public enum DbXrefURLResolverSupplier {
     GERMONLINE(XrefDatabase.GERM_ONLINE,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
     GLY_CONNECT(XrefDatabase.GLY_CONNECT,           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GLY_CONNECT)),
     HAMAP_RULE(XrefDatabase.HAMAP_RULE,             new ConstantXrefDatabasebURLResolver("http://hamap.expasy.org/")),
-    HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver(18)), // change the version number here if another version has to be used
+    HPA(XrefDatabase.HPA,                           new HpaXrefURLResolver()), 
     HSSP(XrefDatabase.HSSP,                         new HsspXrefURLResolver()),
     IFO(XrefDatabase.IFO,                           new JcrbXrefURLResolver()),
     INTACT(XrefDatabase.INT_ACT,                    new IntactXrefURLResolver()),
     JCRB(XrefDatabase.JCRB,                         new JcrbXrefURLResolver()),
     LOC(XrefDatabase.LOC,                 		    new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.LOC)),
     MESH(XrefDatabase.MESH,                         new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.MESH)),
+    MASSIVE(XrefDatabase.MASSIVE, 					new MassiveXrefURLResolver() ),
     NIH_ARP(XrefDatabase.NIH_ARP,                   new NihArpXrefURLResolver()),
     OBO(XrefDatabase.OBO,                           new OboLibraryXrefURLResolver()),
     PDB(XrefDatabase.PDB,                           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB)),
@@ -50,6 +53,7 @@ public enum DbXrefURLResolverSupplier {
     PROTEOPEDIA(XrefDatabase.PROTEOPEDIA,           new DefaultDbXrefURLResolver()),
     PSIMOD(XrefDatabase.PSIMOD, 					new PsiModXrefURLResolver()),
     REF_SEQ(XrefDatabase.REF_SEQ,                   new DefaultDbXrefURLResolver()),
+    RNACT(XrefDatabase.RNACT,                     	new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.RNACT)),
     RULEBASE(XrefDatabase.RULEBASE,                 new RuleBaseXrefURLResolver()),
     SIGNOR(XrefDatabase.SIGNOR,                     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.SIGNOR)),
     SMR(XrefDatabase.SMR,                           new SmrXrefURLResolver()),
@@ -60,6 +64,7 @@ public enum DbXrefURLResolverSupplier {
     UNI_GENE(XrefDatabase.UNI_GENE,                 new UnigeneXrefURLResolver()),
     UNIPROT_CV(XrefDatabase.UNIPROT_CONTROL_VOC,    new UniprotControlVocabularyXrefURLResolver()),
     UNIPROT_DOMAIN(XrefDatabase.UNIPROT_DOMAIN,     new UniprotDomainXrefURLResolver()),
+    VARIO(XrefDatabase.VARIO     ,                  new VariOXrefURLResolver()),
     WEBINFO(XrefDatabase.WEBINFO,                   new WebInfoXrefURLResolver())
     ;
 
