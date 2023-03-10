@@ -144,7 +144,7 @@ public class EntryController {
 					.stream()
 					.forEach(category -> {
 						System.out.println("Adding " + category.getApiTypeName());
-						allCategories.add(category.getApiTypeName());
+						allCategories.add(category.name());
 					});
 		}
 
