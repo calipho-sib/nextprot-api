@@ -138,13 +138,13 @@ public class EntryController {
 			HttpServletRequest request, Model model){
     	List<String> allCategories = new ArrayList<>();
     	for(String annotationCatrgory : categories) {
-    		allCategories.add(annotationCatrgory);
-    		AnnotationCategory.getByDbAnnotationTypeName(annotationCatrgory)
+    		String categoryName = AnnotationCategory.getDecamelizedAnnotationTypeName(annotationCatrgory).toString();
+    		allCategories.add(categoryName);
+    		AnnotationCategory.getByDbAnnotationTypeName(categoryName.toString())
 					.getChildren()
 					.stream()
 					.forEach(category -> {
-						System.out.println("Adding " + category.getApiTypeName());
-						allCategories.add(category.name());
+						allCategories.add(category.getDbAnnotationTypeName());
 					});
 		}
 
