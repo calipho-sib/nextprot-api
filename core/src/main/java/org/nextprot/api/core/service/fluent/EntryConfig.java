@@ -220,7 +220,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	public EntryConfig withSubParts(List<String> subparts) {
 		for(String category: subparts) {
 			try {
-				this.subparts.add(AnnotationCategory.getDecamelizedAnnotationTypeName(category));
+				this.subparts.add(AnnotationCategory.getByDbAnnotationTypeName(category));
 			} catch (IllegalArgumentException ec) {
 				throw new NextProtException("Block or subpart " + category + " not found. Please look into...");
 			}
