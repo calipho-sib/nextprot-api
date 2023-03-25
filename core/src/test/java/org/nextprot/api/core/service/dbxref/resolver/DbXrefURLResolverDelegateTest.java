@@ -78,6 +78,14 @@ public class DbXrefURLResolverDelegateTest {
         		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=MSVp000780371", 
         		resolver.resolve(xref)
         );
+        
+        xref = createDbXref("Q8WWF1", "MassIVE", "");
+        Assert.assertEquals(
+        		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer.jsp?libraries=2&protein_name=Q8WWF1", 
+        		resolver.resolve(xref)
+        );
+        
+        
     }
 
     @Test
