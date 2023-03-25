@@ -196,8 +196,8 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     }
     
     private boolean isExpressionAnnotation(Annotation a) {
-    	if (a.getAPICategory()!=AnnotationCategory.EXPRESSION_PROFILE) return true;
-    	if (a.getAPICategory()!=AnnotationCategory.EXPRESSION_INFO) return true;
+    	if (a.getAPICategory() == AnnotationCategory.EXPRESSION_PROFILE) return true;
+    	if (a.getAPICategory() == AnnotationCategory.EXPRESSION_INFO) return true;
    		return false;
     }
     
