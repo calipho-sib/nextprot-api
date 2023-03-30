@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
@@ -50,6 +51,40 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
 
     @Autowired
     private AnnotationService annotationService;
+
+    static final ImmutableList<String> diseaseRelatedKeywords = ImmutableList.of(
+            "KW-0014","KW-0015","KW-0020","KW-0023","KW-0026",
+            "KW-0036","KW-0038","KW-0043","KW-0065","KW-0069",
+            "KW-0070","KW-0083","KW-0087","KW-0122","KW-0144",
+            "KW-0161","KW-0172","KW-0182","KW-0192","KW-0199",
+            "KW-0209","KW-0213","KW-0214","KW-0218","KW-0219",
+            "KW-0225","KW-0241","KW-0242","KW-0248","KW-0250",
+            "KW-0263","KW-0307","KW-0316","KW-0322","KW-0331",
+            "KW-0335","KW-0355","KW-0360","KW-0361","KW-0362",
+            "KW-0363","KW-0367","KW-0370","KW-0380","KW-0429",
+            "KW-0431","KW-0435","KW-0451","KW-0454", "KW-0461",
+            "KW-0466","KW-0478","KW-0510","KW-0523","KW-0525",
+            "KW-0550","KW-0553","KW-0586","KW-0622","KW-0656",
+            "KW-0657","KW-0668","KW-0682","KW-0685","KW-0705",
+            "KW-0751","KW-0757","KW-0772","KW-0792","KW-0821",
+            "KW-0836","KW-0852","KW-0855","KW-0856","KW-0857",
+            "KW-0861","KW-0867","KW-0887","KW-0890","KW-0897",
+            "KW-0898","KW-0900","KW-0901","KW-0905","KW-0907",
+            "KW-0908","KW-0910","KW-0911","KW-0912","KW-0913",
+            "KW-0923","KW-0935","KW-0940","KW-0942","KW-0947",
+            "KW-0948","KW-0950","KW-0951","KW-0953","KW-0954",
+            "KW-0955","KW-0956","KW-0958","KW-0976","KW-0977",
+            "KW-0979","KW-0980","KW-0981","KW-0982","KW-0983",
+            "KW-0984","KW-0985","KW-0986","KW-0987","KW-0988",
+            "KW-0989","KW-0990","KW-0991","KW-0992","KW-0993",
+            "KW-1004","KW-1007","KW-1008","KW-1010","KW-1011",
+            "KW-1012","KW-1013","KW-1014","KW-1016","KW-1020",
+            "KW-1021","KW-1022","KW-1023","KW-1024","KW-1026",
+            "KW-1054","KW-1055","KW-1056","KW-1057","KW-1058",
+            "KW-1059","KW-1060","KW-1062","KW-1063","KW-1065",
+            "KW-1066","KW-1067","KW-1068","KW-1186","KW-1211",
+            "KW-1212","KW-1215","KW-1268","KW-1269","KW-1270",
+            "KW-1274");
 
     @Cacheable(value = "entry-report-stats", sync = true)
     @Override
@@ -207,6 +242,8 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     	if (a.getAPICategory() != AnnotationCategory.UNIPROT_KEYWORD) return false;
     	if ( ! "Disease".equals(a.getCvTermType())) return false;
     	if ( "Proto-oncogene".equals(a.getCvTermName())) return false;
+        if(!diseaseRelatedKeywords.contains(a.getCvTermAccessionCode())) return false;
+
      	return true;
     }
     
