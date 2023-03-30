@@ -242,7 +242,9 @@ public class EntryReportStatsServiceImpl implements EntryReportStatsService {
     	if (a.getAPICategory() != AnnotationCategory.UNIPROT_KEYWORD) return false;
     	if ( ! "Disease".equals(a.getCvTermType())) return false;
     	if ( "Proto-oncogene".equals(a.getCvTermName())) return false;
-        if(!diseaseRelatedKeywords.contains(a.getCvTermAccessionCode())) return false;
+
+    	String cvTermAccession = a.getCvTermAccessionCode();
+        if(cvTermAccession != null && !diseaseRelatedKeywords.contains(cvTermAccession)) return false;
 
      	return true;
     }
