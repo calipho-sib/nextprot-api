@@ -160,6 +160,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithDisease());
 			}
 			
+			else if ("W_MUTAGENESIS_MASTER".equals(statsTag.getTag())) {
+				statsTag.setCount(globalEntryStats.getNumberOfEntriesWithMutagenesis());
+			}
+			
 			else if ("PROTEIN_SEQUENCE_VARIANT".equals(statsTag.getTag())) {
 				statsTag.setCount(globalEntryStats.getNumberOfVariants());
 			}

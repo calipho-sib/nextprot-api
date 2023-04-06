@@ -80,6 +80,11 @@ public class StatisticsServiceImpl implements StatisticsService {
                 globalEntryStatistics.incrementNumberOfEntriesWithDisease();
             }
 
+            // Count number of entries with mutagenesis data
+            if (entryReportStats.isMutagenesis()) {
+                globalEntryStatistics.incrementNumberOfEntriesWithMutagenesis();
+            }
+            
             // Count number of variants
             globalEntryStatistics.incrementNumberOfVariants(entryReportStats.countVariants());
 
