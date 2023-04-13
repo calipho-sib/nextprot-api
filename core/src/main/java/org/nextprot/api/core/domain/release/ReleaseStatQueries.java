@@ -53,10 +53,10 @@ public enum ReleaseStatQueries {
     CHR_X_MASTER("W5ZS843N"),
     CHR_Y_MASTER("9HXWPJPL"),
     CHR_MT_MASTER("B0D3F4X1"),
-    CHR_UNKNOWN_MASTER("WQTUJUIP");
+    CHR_UNKNOWN_MASTER("WQTUJUIP"),
     //    CITED_PUBLI(""),
     //    COMPUTED_PUBLI(""),
-    //    LARGE_SCALE_PUBLI(""),
+    LARGE_SCALE_PUBLI("9WD26PSY");
     //    CURATED_PUBLI("");
 
     private final String queryId;
