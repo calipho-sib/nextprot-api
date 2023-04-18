@@ -113,6 +113,11 @@ public class JSONDocRoleController extends JSONDocController {
 						if(!model.equals(AnnotationCategory.VIRTUAL_ANNOTATION) && !model.isChildOf(AnnotationCategory.VIRTUAL_ANNOTATION)){
 
 							String name = model.getApiTypeName();
+
+							if("FamilyName".equals(name)) {
+								continue;
+							}
+
 							String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
 							String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
 
