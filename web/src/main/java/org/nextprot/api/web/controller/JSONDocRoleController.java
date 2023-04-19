@@ -114,7 +114,7 @@ public class JSONDocRoleController extends JSONDocController {
 
 							String name = model.getApiTypeName();
 
-							if("FamilyName".equals(name)) {
+							if("FamilyName".equals(name) || "Name".equals(name)) {
 								continue;
 							}
 
