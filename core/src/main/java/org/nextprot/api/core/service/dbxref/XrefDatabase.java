@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
 
-	ABCD, ALLERGOME("Allergome"), ANTIBODYPEDIA("Antibodypedia"),
+	ABCD, AGR, ALLERGOME("Allergome"), ALPHAFOLD_DB("AlphaFoldDB"), ANTIBODYPEDIA("Antibodypedia"),
     BGEE("Bgee"), BINDING_DB("BindingDB"), BIO_CYC("BioCyc"), BIO_GRID("BioGRID"), BIO_GRID_ORCS("BioGRID-ORCS"), BIO_MUTA("BioMuta"), BRENDA, BMRB,
     CARBONYL_DB("CarbonylDB"), CAZY("CAZy"), CCDS, CDD, CELLOSAURUS("Cellosaurus"), CH_EMBL("ChEMBL"), CHITARS("ChiTaRS"), CGH_DB("CGH-DB"), CLEAN_EX("CleanEx"), COMPLEX_PORTAL("ComplexPortal"), CPTC,
     CLINVAR("Clinvar"), CORUM, COSMIC("Cosmic"), CPTAC, CTD,
@@ -27,7 +27,7 @@ public enum XrefDatabase implements EnumDictionarySupplier<XrefDatabase> {
     JCRB, JPOST("jPOST"),
     KEGG, KO,
     LOC,
-    MALA_CARDS("MalaCards"), MASSIVE("MassIVE"), MAX_QB("MaxQB"), MESH("MeSH"), MEROPS, METOSITE("MetOSite"), MGI, MIM, MINT, MOON_DB("MoonDB"), MOON_PROT("MoonProt"),
+    MALA_CARDS("MalaCards"), MANE_SELECT("MANE-Select"), MASSIVE("MassIVE"), MAX_QB("MaxQB"), MESH("MeSH"), MEROPS, METOSITE("MetOSite"), MGI, MIM, MINT, MOON_DB("MoonDB"), MOON_PROT("MoonProt"),
     NEXT_BIO("NextBio"), NEXTPROT_SUBMISSION("neXtProtSubmission"),NIAGADS, NIH_ARP("NIH-ARP"),
     OBO, OGP, OMA, OPEN_TARGETS("OpenTargets"), ORPHANET("Orphanet"), ORTHO_DB("OrthoDB"),
     PANTHER, PATHWAY_COMMONS("PathwayCommons"), PAX_DB("PaxDb"), PCDDB, PDB, PDB_SUM("PDBsum"), PEPTIDE_ATLAS("PeptideAtlas"), PEROXIBASE("PeroxiBase"),

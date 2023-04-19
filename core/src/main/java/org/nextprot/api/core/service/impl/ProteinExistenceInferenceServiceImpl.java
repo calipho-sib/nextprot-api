@@ -99,26 +99,14 @@ class ProteinExistenceInferenceServiceImpl implements ProteinExistenceInferenceS
 	// and since 2020 the 2 peptides should belong to the same peptide set
 	@Override
 	public boolean promotedAccordingToRule2(String entryAccession) {
-
-        List<Annotation> filteredPeptideMappingList =
-				annotationService.findAnnotations(entryAccession).stream()
-				.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.PEPTIDE_MAPPING)
-				.filter(AnnotationUtils::isProteotypicPeptideMapping)
-	            .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
-	            .collect(Collectors.toList());
-        
-        List<PeptideSet> list = AnnotationUtils.buildPeptideSets(filteredPeptideMappingList);
-        
-        for (PeptideSet ps: list) {
-        	StringBuilder pairFound = new StringBuilder();
-        	if (AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(ps.getAnnotations(), pairFound)) {
-        		LOGGER.info("ProteinExistence: promotion using peptideSet: " + ps.getName() + " : " + pairFound.toString());
-        		return true;
-        	}
-        }
-        return false;
-        
+		List<Annotation> annots = annotationService.findAnnotations(entryAccession);
+		AnnotationUtils.Rule2Result result = AnnotationUtils.entryAnnotationsMeetProteinExistenceRule2(annots);
+		if (result.success) {
+			LOGGER.info("ProteinExistence: promotion using peptideSet: " + result.peptideSet + " : " + result.pairFound);
+		}
+		return result.success;
 	}
+	
 
 	// Spec: Entry must have an expression information annotation containing the text "(at protein level)"
     // with evidence assigned by neXtProt of quality GOLD AND ECO experimental evidence (or child thereof)

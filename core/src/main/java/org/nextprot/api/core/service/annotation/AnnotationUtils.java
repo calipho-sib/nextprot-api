@@ -625,7 +625,39 @@ public class AnnotationUtils {
 		return false;
 	}
 
-
+	// related to  rule to PE1 upgrade, rule 2
+	public static class Rule2Result {
+		public boolean success = false;
+		public String peptideSet = null;
+		public String pairFound = null;
+		public Rule2Result(boolean success, String peptideSet, String pairFound) {
+			this.success=success;
+			this.pairFound=pairFound;
+			this.peptideSet=peptideSet;
+		}
+	}
+	
+	// related to  rule to PE1 upgrade, rule 2
+	public static Rule2Result entryAnnotationsMeetProteinExistenceRule2(List<Annotation> annotations) {
+		
+        List<Annotation> filteredPeptideMappingList = annotations.stream()
+			.filter(annotation -> annotation.getAPICategory() == AnnotationCategory.PEPTIDE_MAPPING)
+			.filter(AnnotationUtils::isProteotypicPeptideMapping)
+	        .filter(pm -> pm.getQualityQualifier().equals(QualityQualifier.GOLD.name()))
+	        .collect(Collectors.toList());
+        
+        List<PeptideSet> list = AnnotationUtils.buildPeptideSets(filteredPeptideMappingList);
+        
+        for (PeptideSet ps: list) {
+        	StringBuilder pairFound = new StringBuilder();
+        	if (AnnotationUtils.containsAtLeast2NonInclusivePeptidesMinSize9Coverage18(ps.getAnnotations(), pairFound)) {
+        		return new Rule2Result(true, ps.getName(), pairFound.toString());
+        	}
+        }
+		return new Rule2Result(false, null, null);
+	}
+	
+	
 	public static boolean onlyNegativeEvidences(Annotation annot) {
 
 		if(annot == null || (annot.getEvidences() == null) || annot.getEvidences().isEmpty()){

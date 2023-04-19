@@ -1,12 +1,14 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.EntryReportStats;
 import org.nextprot.api.core.domain.GlobalEntryStatistics;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.publication.EntryPublication;
 import org.nextprot.api.core.domain.publication.GlobalPublicationStatistics;
 import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.EntryReportStatsService;
 import org.nextprot.api.core.service.GlobalPublicationService;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
@@ -40,6 +42,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     private AnnotationService annotationService;
 
     @Autowired
+    EntryReportStatsService entryReportStatsService;
+
+    @Autowired
     private MasterIdentifierService masterIdentifierService;
 
     @Autowired
@@ -58,6 +63,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         masterIdentifierService.findUniqueNames().forEach(uniqueName -> {
 
             List<Annotation> annotations = annotationService.findAnnotations(uniqueName);
+            EntryReportStats entryReportStats = entryReportStatsService.reportEntryStats(uniqueName);
 
             // Count number of annotations with a non empty term
             globalEntryStatistics.incrementNumberOfEntryTermLink(
@@ -65,20 +71,22 @@ public class StatisticsServiceImpl implements StatisticsService {
             );
             
             // Count number of entries with expression profile
-            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(EXPRESSION_PROFILE))) {
+            if (entryReportStats.isExpression()) {
                 globalEntryStatistics.incrementNumberOfEntriesWithExpressionProfile();
             }
 
             // Count number of entries with disease
-            if (annotations.stream().anyMatch(a -> a.getAPICategory().equals(DISEASE))) {
+            if (entryReportStats.isDisease()) {
                 globalEntryStatistics.incrementNumberOfEntriesWithDisease();
             }
 
+            // Count number of entries with mutagenesis data
+            if (entryReportStats.isMutagenesis()) {
+                globalEntryStatistics.incrementNumberOfEntriesWithMutagenesis();
+            }
+            
             // Count number of variants
-            globalEntryStatistics.incrementNumberOfVariants(
-                    annotations.stream()
-                               .filter(a -> a.getAPICategory().equals(VARIANT))
-                               .count());
+            globalEntryStatistics.incrementNumberOfVariants(entryReportStats.countVariants());
 
             // Get distinct interactions to be counted at the end (defined as interactant1::interactant2)
             Set<String> interactants = annotations.stream()

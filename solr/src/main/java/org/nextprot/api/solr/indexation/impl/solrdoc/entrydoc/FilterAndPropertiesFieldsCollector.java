@@ -44,8 +44,8 @@ public class FilterAndPropertiesFieldsCollector extends EntrySolrFieldCollector 
 			addEntrySolrFieldValue(fields, EntrySolrField.VAR_NUM, cnt);
 		}
 		String filters = "";
-		if (props.getFilterstructure()) filters += "filterstructure ";
-		if (props.getFilterdisease()) filters += "filterdisease ";
+		if (ers.is3D()) filters += "filterstructure ";
+		if (ers.isDisease()) filters += "filterdisease ";
 		//if (props.getFilterexpressionprofile()) filters += "filterexpressionprofile "; // old NP1 value
 		if (ers.isExpression()) filters += "filterexpressionprofile ";                   // new NP2 computed value
 		if (ers.isMutagenesis()) filters += "filtermutagenesis ";

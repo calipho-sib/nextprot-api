@@ -40,14 +40,14 @@ public class DbXrefURLResolverDelegateTest {
     public void testsUsefulForNP2Pipeline() throws Exception {
     	DbXref xref;
     	
-    	xref = createDbXref("EBI-bla,bla", "IntAct", null);
+    	xref = createDbXref("EBI-bla,EBI-blu", "IntAct", null);
     	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
     	System.out.println("ac:" + xref.getAccession());
     	System.out.println("db:" + xref.getDatabaseName());
     	System.out.println("lu:" + xref.getLinkUrl());
     	System.out.println("ru:" + xref.getResolvedUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=%s", xref.getLinkUrl());
-    	Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-bla,bla", xref.getResolvedUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
+    	Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-bla%20AND%20id:EBI-blu)#interactor", xref.getResolvedUrl());
 
     	xref = createDbXref("ENSGblabla", "Bgee", null);
     	resolver.resolve(xref); // also called by getResolvedUrl() but this is to make sure getLinkUrl() is not null
@@ -78,6 +78,14 @@ public class DbXrefURLResolverDelegateTest {
         		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer_splash.jsp?peptide=MSVp000780371", 
         		resolver.resolve(xref)
         );
+        
+        xref = createDbXref("Q8WWF1", "MassIVE", "");
+        Assert.assertEquals(
+        		"https://massive.ucsd.edu/ProteoSAFe/protein_explorer.jsp?libraries=2&protein_name=Q8WWF1", 
+        		resolver.resolve(xref)
+        );
+        
+        
     }
 
     @Test
@@ -445,12 +453,10 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveIntAct() throws Exception {
 
-        DbXref xref = createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
+        DbXref xref = createDbXref("EBI-1234,EBI-98765", "IntAct", "whatever");
 
-        //Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
-        //Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=%s", xref.getLinkUrl());
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
-        Assert.assertEquals("https://www.ebi.ac.uk/intact/pages/details/details.xhtml?binary=%s", xref.getLinkUrl());
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:EBI-1234%20AND%20id:EBI-98765)#interactor", resolver.resolve(xref));
+        Assert.assertEquals("https://www.ebi.ac.uk/intact/search?query=(id:%s1%20AND%20id:%s2)#interactor", xref.getLinkUrl());
     }
 
     @Test
