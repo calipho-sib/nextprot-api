@@ -33,6 +33,45 @@ public class NXVelocityUtilsTest extends CoreUnitBaseTest {
     }
 	
     @Test
+    public void test_parsing_of_ligand_properties() {
+    	Map map;
+    	map = NXVelocityUtils.parseLigandLikeProperty("unexpected prop name", "any");
+    	Assert.assertNull(map);
+    	
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligand", "CHEBI_12345 ! hello");
+    	Assert.assertNull(map);
+    	
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligand", "CHEBI_12345");
+    	Assert.assertNull(map);
+    	
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligand", "CHEBI:12345 ! hello");
+    	Assert.assertEquals("CHEBI", map.get("db"));
+    	Assert.assertEquals("12345", map.get("ac"));
+    	Assert.assertEquals("hello", map.get("label"));
+    	Assert.assertEquals(":interactant", map.get("property"));
+
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligandPart", "CHEBI:12345 ! hello");
+    	Assert.assertEquals("CHEBI", map.get("db"));
+    	Assert.assertEquals("12345", map.get("ac"));
+    	Assert.assertEquals("hello", map.get("label"));
+    	Assert.assertEquals(":interactant", map.get("property"));
+    	
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligand", "CHEBI:12345!hello");
+    	Assert.assertEquals("CHEBI", map.get("db"));
+    	Assert.assertEquals("12345", map.get("ac"));
+    	Assert.assertEquals("hello", map.get("label"));
+    	Assert.assertEquals(":interactant", map.get("property"));
+    	
+    	map = NXVelocityUtils.parseLigandLikeProperty("ligand", "CHEBI:12345");
+    	Assert.assertEquals("CHEBI", map.get("db"));
+    	Assert.assertEquals("12345", map.get("ac"));
+    	Assert.assertEquals(null, map.get("label"));
+    	Assert.assertEquals(":interactant", map.get("property"));
+
+    }
+    
+    
+    @Test
     public void test_expected_property_behavior_for_uri_property() {
     	
     	PropertyWriter w = NXVelocityUtils.getTtlPropertyWriter(AnnotationCategory.EXPRESSION_PROFILE, PropertyApiModel.NAME_EXPRESSION_LEVEL);

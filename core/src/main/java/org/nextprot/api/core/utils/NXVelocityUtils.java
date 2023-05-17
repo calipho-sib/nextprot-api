@@ -46,6 +46,37 @@ public class NXVelocityUtils {
         throw new AssertionError("should not be instanciable");
     }
 
+    public static Map<String,String> parseLigandLikeProperty(String propName, String propValue) {
+    	
+    	// example of propValue: 
+    	// CHEBI:58088 ! a 1,2-diacyl-sn-glycero-3-phospho-(1D-myo-inositol-3-phosphate)
+
+    	Map<String,String> map = new HashMap<>();
+    	if (propName.equals("ligand")) {
+    		map.put("property", ":interactant");
+    	} else if (propName.equals("ligandPart")) {
+        	map.put("property", ":interactant");
+    	} else {
+    		return null;
+    	}
+    	
+    	int pos = propValue.indexOf("!");
+    	String dbac;
+    	if (pos==-1) {
+    		map.put("label", null);
+    		dbac = propValue;
+    	} else { 
+    		map.put("label", propValue.substring(pos+1).trim());
+        	dbac = propValue.substring(0,pos);
+    	}
+    	String[] elements = dbac.split(":");
+    	if (elements.length==1) return null;
+    	String db = elements[0].trim();
+    	String ac = elements[1].trim();		
+    	map.put("db", db);
+    	map.put("ac", ac);
+    	return map;
+    }
     
 	public static String getRdfClass(EntityName name) {
 		String key = name.getClazz().name() + " | " + name.getType() + " | " + name.getQualifier();
