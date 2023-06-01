@@ -63,7 +63,23 @@ annotation:$annotation-uri a :$annotation-type;
 #end ## is bio object
 
 #foreach($prop in $annotation.getProperties())
-## don't remove the presetting to false in next line otherewise problems (pam)
+#set($ligmap=false)
+#set($ligmap=$NXUtils.parseLigandLikeProperty($prop.getName(), $prop.getValue()))
+#if($ligmap)
+  $ligmap.get("property") [
+    rdf:type :Xref ;
+    :provenance db:ChEBI ;
+#set($ac = $ligmap.get('ac'))
+    :accession "CHEBI:$ac"^^xsd:string ;
+#if($ligmap)
+#set($UNESCAPED_CDATA = $ligmap.get('label'))
+    rdfs:label "$UNESCAPED_CDATA"^^xsd:string ;
+#end
+#set($ac = $ligmap.get('ac'))
+    skos:exactMatch chebi:CHEBI_$ac ;
+  ] ;
+#end
+## don't remove the presetting to false in next line otherwise problems (pam)
 #set($pmodel=false)
 #set($pmodel=$NXUtils.getTtlPropertyWriter($annotation.getAPICategory(), $prop.getName()))
 #if($pmodel)
