@@ -36,9 +36,6 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
         entryAccessions.stream()
                 .forEach((entryAccession -> {
 
-                    if(entryAccession.equals("NX_P35498")) {
-                        int i = 8;
-                    }
                     System.out.println("Entry " + entryAccession + "---------");
                     // Get the isoforms for each entry
                     List isoforms = new ArrayList();
@@ -48,8 +45,6 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
 
                     int mappedIsoforms = 0;
                     for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
-                        List isoformMappings = new ArrayList<Map>();
-
                         String isoformAccession = isoform.getIsoformAccession();
                         Map isoformMapping = new HashMap();
                         isoformMapping.put("isoform", isoformAccession);
@@ -68,7 +63,7 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                                     entry.put("ENSG", ensg);
                                     isoformMapping.put("ENST", enst);
                                     isoformMapping.put("ENSP", ensp);
-                                    isoformMappings.add(isoformMapping);
+                                    isoforms.add(isoformMapping);
                                     mappedIsoforms++;
                                     updateStatistics("Aligned isoform", 1);
                                 } else {
@@ -76,7 +71,6 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                                     updateStatistics("No aligned ENST", 1);
                                 }
                             }
-                            isoforms.add(isoformMappings);
                             entry.put("isoforms", isoforms);
                         }
                     }
