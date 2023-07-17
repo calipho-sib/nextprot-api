@@ -35,6 +35,10 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
         List<Map<String, Object>> entries = new ArrayList<>();
         entryAccessions.stream()
                 .forEach((entryAccession -> {
+
+                    if(entryAccession.equals("NX_P35498")) {
+                        int i = 8;
+                    }
                     System.out.println("Entry " + entryAccession + "---------");
                     // Get the isoforms for each entry
                     List isoforms = new ArrayList();
@@ -105,15 +109,15 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
         for (IsoformGeneMapping igm : gm.getIsoformGeneMappings()) {
             if (igm.getIsoformAccession().equals(isoformAccession)) {
                 List<TranscriptGeneMapping> tgmList = igm.getTranscriptGeneMappings();
-                if (tgmList==null || tgmList.size()==0) return null;
-                Map<String,String> result = new HashMap<>();
-                result.put("ENSG", gm.getAccession());
-                // the first mapping in list is the shortest and is always chosen as "main" (or best) transcript
-                TranscriptGeneMapping tgm = tgmList.get(0);
-                result.put("ENST", tgm.getDatabaseAccession());
-                if (tgm.getProteinId()!=null) result.put("ENSP", tgm.getProteinId());
-                result.put("quality", tgm.getQuality());
-                results.add(result);
+                for(TranscriptGeneMapping tgm : tgmList) {
+                    if (tgmList==null || tgmList.size()==0) return null;
+                    Map<String,String> result = new HashMap<>();
+                    result.put("ENSG", gm.getAccession());
+                    result.put("ENST", tgm.getDatabaseAccession());
+                    if (tgm.getProteinId()!=null) result.put("ENSP", tgm.getProteinId());
+                    result.put("quality", tgm.getQuality());
+                    results.add(result);
+                }
             }
         }
         return results;
