@@ -44,30 +44,37 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
 
                     int mappedIsoforms = 0;
                     for (Isoform isoform : isoformService.findIsoformsByEntryName(entryAccession)) {
-                        Map<String, String> isoformMappings = new HashMap<>();
+                        List isoformMappings = new ArrayList<Map>();
 
                         String isoformAccession = isoform.getIsoformAccession();
-                        isoformMappings.put("isoform", isoformAccession);
-                        isoformMappings.put("sequence", isoform.getSequence());
+                        Map isoformMapping = new HashMap();
+                        isoformMapping.put("isoform", isoformAccession);
+                        isoformMapping.put("sequence", isoform.getSequence());
 
-                        Map<String, String> result = getEnstAlignedWithIsoform(isoformAccession);
-                        if(result != null) {
-                            String ensg = result.get("ENSG");
-                            String enst = result.get("ENST");
-                            String ensp = result.get("ENSP");
-                            System.out.println("Aligned " + isoformAccession + "," + ensg  + "," + enst + "," + ensp);
 
-                            entry.put("ENSG", ensg);
-                            isoformMappings.put("ENST", enst);
-                            isoformMappings.put("ENSP", ensp);
-                            mappedIsoforms++;
-                            updateStatistics("Aligned isoform", 1);
-                        } else {
-                            System.out.println("No aligned ENST for isform " + isoformAccession);
-                            updateStatistics("No aligned ENST", 1);
+                        List<Map<String, String>> results = getEnstAlignedWithIsoform(isoformAccession);
+                        if(results != null) {
+                            for(Map result : results) {
+                                if(result != null) {
+                                    String ensg = (String) result.get("ENSG");
+                                    String enst = (String) result.get("ENST");
+                                    String ensp = (String) result.get("ENSP");
+                                    System.out.println("Aligned " + isoformAccession + "," + ensg  + "," + enst + "," + ensp);
+
+                                    entry.put("ENSG", ensg);
+                                    isoformMapping.put("ENST", enst);
+                                    isoformMapping.put("ENSP", ensp);
+                                    isoformMappings.add(isoformMapping);
+                                    mappedIsoforms++;
+                                    updateStatistics("Aligned isoform", 1);
+                                } else {
+                                    System.out.println("No aligned ENST for isform " + isoformAccession);
+                                    updateStatistics("No aligned ENST", 1);
+                                }
+                            }
+                            isoforms.add(isoformMappings);
+                            entry.put("isoforms", isoforms);
                         }
-                        isoforms.add(isoformMappings);
-                        entry.put("isoforms", isoforms);
                     }
                     if(mappedIsoforms == 0) {
                         updateStatistics("Full entry without mappings", 1);
@@ -88,12 +95,13 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
         return null;
     }
 
-    private Map<String,String> getEnstAlignedWithIsoform(String isoformAccession) {
+    private List<Map<String,String>> getEnstAlignedWithIsoform(String isoformAccession) {
 
         String entryAc = isoformAccession.split("-")[0];
         GenomicMapping gm = getGenomicMappingOfEnsgAlignedWithEntry(entryAc);
         if (gm==null) return null;
 
+        List results = new ArrayList<Map>();
         for (IsoformGeneMapping igm : gm.getIsoformGeneMappings()) {
             if (igm.getIsoformAccession().equals(isoformAccession)) {
                 List<TranscriptGeneMapping> tgmList = igm.getTranscriptGeneMappings();
@@ -105,10 +113,10 @@ public class ENSPLoadServiceImpl implements ENSPLoadService {
                 result.put("ENST", tgm.getDatabaseAccession());
                 if (tgm.getProteinId()!=null) result.put("ENSP", tgm.getProteinId());
                 result.put("quality", tgm.getQuality());
-                return result;
+                results.add(result);
             }
         }
-        return null;
+        return results;
     }
 
     private void updateStatistics(String key, int statistic) {
