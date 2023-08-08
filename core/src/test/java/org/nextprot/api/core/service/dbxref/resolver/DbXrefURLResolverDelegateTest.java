@@ -21,6 +21,23 @@ public class DbXrefURLResolverDelegateTest {
 
     
     @Test
+    public void testGO_REF() throws Exception {
+    	DbXref xref = createDbXref("GO_REF:0000043", "GO_REF","don't care");
+    	String result = resolver.resolve(xref);
+    	System.out.println("accession    :  "+xref.getAccession());
+    	System.out.println("resolved url : "+result);
+    	System.out.println("url          : "+xref.getUrl());
+    	Assert.assertEquals("https://github.com/geneontology/go-site/blob/master/metadata/gorefs/goref-0000043.md", result);
+    	/*
+    	System.out.println("accession:"+xref.getAccession());
+    	System.out.println("db cat:"+xref.getDatabaseCategory());
+    	System.out.println("db name:"+xref.getDatabaseName());
+    	System.out.println("linkurl:"+xref.getLinkUrl());
+    	*/
+    }
+    
+    
+    @Test
     public void test1() throws Exception {
     	DbXref xref;
     	
