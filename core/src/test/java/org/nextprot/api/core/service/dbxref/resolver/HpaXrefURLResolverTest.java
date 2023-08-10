@@ -22,6 +22,7 @@ public class HpaXrefURLResolverTest {
     	// towards page summary
     	// OK with redirection to https://www.proteinatlas.org/ENSG00000254647-INS
         DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
+        //System.out.println(ReleaseDataSources.HPA.getUrl());
         Assert.assertEquals(ReleaseDataSources.HPA.getUrl() + "ENSG00000254647", resolver.resolve(xref));
     }
 
