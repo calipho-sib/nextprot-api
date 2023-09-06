@@ -56,7 +56,7 @@
     :sourceFile "additional-properties-def.ttl.vm"^^xsd:string ;
     rdfs:label "interactant"^^xsd:string ;
     rdf:type  owl:ObjectProperty ;
-    rdfs:domain [ a owl:Class ; owl:unionOf (:BinaryInteraction :SmallMoleculeInteraction :Cofactor :InteractionMapping) ; ] ;
+    rdfs:domain [ a owl:Class ; owl:unionOf (:BinaryInteraction :SmallMoleculeInteraction :Cofactor :InteractionMapping :BindingSite ) ; ] ;
     rdfs:range [ a owl:Class ; owl:unionOf (:Xref :Entry :Isoform) ; ] ;
     . 
  
